@@ -1,0 +1,5 @@
+GIT_COMMAND_LOG.log 
+build\* 
+application\*
+app\SSHDebug\*
+ 

@@ -1,0 +1,32 @@
+{
+	"success": true,
+	"total" : 26,
+	"records": [
+		{ "cat" : 1, "soc" : "Blood and lymphatic system disorders" },
+		{ "cat" : 2, "soc" : "Cardiac disorders" },
+		{ "cat" : 3, "soc" : "Congenital, familial and genetic disorders" },
+		{ "cat" : 4, "soc" : "Ear and labyrinth disorders" },
+		{ "cat" : 5, "soc" : "Endocrine disorders" },
+		{ "cat" : 6, "soc" : "Eye disorders" },
+		{ "cat" : 7, "soc" : "Gastrointestinal disorders" },
+		{ "cat" : 8, "soc" : "General disorders and administration site conditions" },
+		{ "cat" : 9, "soc" : "Hepatobiliary disorders" },
+		{ "cat" : 10, "soc" : "Immune system disorders" },
+		{ "cat" : 11, "soc" : "Infections and infestations" },
+		{ "cat" : 12, "soc" : "Injury, poisoning and procedural complications" },
+		{ "cat" : 13, "soc" : "Investigations" },
+		{ "cat" : 14, "soc" : "Metabolism and nutrition disorders" },
+		{ "cat" : 15, "soc" : "Musculoskeletal and connective tissue disorders" },
+		{ "cat" : 16, "soc" : "Neoplasms benign, malignant and unspecified (incl cysts and polyps)" },
+		{ "cat" : 17, "soc" : "Nervous system disorders" },
+		{ "cat" : 18, "soc" : "Pregnancy, puerperium and perinatal conditions" },
+		{ "cat" : 19, "soc" : "Psychiatric disorders" },
+		{ "cat" : 20, "soc" : "Renal and urinary disorders" },
+		{ "cat" : 21, "soc" : "Reproductive system and breast disorders" },
+		{ "cat" : 22, "soc" : "Respiratory, thoracic and mediastinal disorders" },
+		{ "cat" : 23, "soc" : "Skin and subcutaneous tissue disorders" },
+		{ "cat" : 24, "soc" : "Social circumstances" },
+		{ "cat" : 25, "soc" : "Surgical and medical procedures" },
+		{ "cat" : 26, "soc" : "Vascular disorders" }
+	]
+}

@@ -1,0 +1,406 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" 
+    href="ant2html.xsl"?>
+<!-- ======================================================================
+	This file is intended to be included (via an
+		<import file='gitmacros.xml' />
+	tag) into a normal BUILD.XML file
+
+	Refer to http://wiki.apache.org/ant/TheElementsOfAntStyle 
+	for how this script conforms to standards
+	As well as http://www.ibm.com/developerworks/library/x-antxsl/ for styling the build file
+	And https://raw.github.com/FrancisVarga/ant-git-macros for the GIT Macros
+	====================================================================== -->
+
+<project>
+<!-- ======================================================================
+		Start Git Macros
+     ====================================================================== -->
+	<macrodef name="git">
+		<attribute name="command" />
+		<attribute name="options" default="" />
+		<attribute name="dir" default="" />
+		<attribute name="failerror" default="false" />
+		<element name="args" optional="true" />
+		<sequential>
+			<record name="${basedir}\build\logs\${LogFile.name}.log" append="true" action="start" />
+			<echo file="${basedir}\build\logs\${LogFile.name}.log" message="@{command} &#xa;" append="yes" />
+
+			<exec executable="git" dir="@{dir}" failonerror="@{failerror}">
+				<arg line="@{command} @{options}" />
+				<args />
+			</exec>
+			<record name="${basedir}\build\logs\${LogFile.name}.log" action="stop" />
+
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-config">
+		<attribute name="name" />
+		<attribute name="value" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="config" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg line="@{name} '@{value}'" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="git-branch">
+		<attribute name="branch" />
+		<attribute name="options" default="" />
+		<attribute name="dir" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="branch" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{branch}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-push">
+		<attribute name="remote" default="origin"/>
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="localRef" />
+		<attribute name="remoteRef" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="push" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{remote}" />
+					<arg value="@{localRef}:@{remoteRef}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-push-to-branch">
+		<attribute name="branch" />
+		<attribute name="remoteRepositoryName" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="push" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{remoteRepositoryName}" />
+					<arg value="@{branch}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-add-remote">
+		<attribute name="repository" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="rem" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{repository}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-submodule-add">
+		<attribute name="repository" />
+		<attribute name="destination" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="ads" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{repository}" />
+					<arg value="${submodule.dir}/@{destination}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-commit">
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="commit" dir="@{dir}" options="@{options}" failerror="@{failerror}" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-commit-with-message">
+		<attribute name="message" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="commit" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="-m @{message}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="git-checkout-local">
+		<attribute name="branch" />
+		<attribute name="dir" />
+		<attribute name="options" default=""  />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="checkout" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{branch}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="git-checkout">
+		<attribute name="branch" />
+		<attribute name="targetbranch" />
+		<attribute name="dir" />
+		<attribute name="options" default=""  />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="checkout" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{branch}" />
+					<arg value="-b@{targetbranch}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-merge-branch">
+		<attribute name="branchFrom" />
+		<attribute name="branchInTo" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="checkout" dir="@{dir}"  failerror="@{failerror}" >
+				<args>
+					<arg value="@{branchInTo}" />
+				</args>
+			</git>
+			<git command="merge" dir="@{dir}" options="@{options}" >
+				<args>
+					<arg value="@{branchFrom}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-add">
+		<attribute name="file" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="add" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{file}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-tag">
+		<attribute name="tagName" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="tag" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{tagName}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-clone">
+		<attribute name="repository" />
+		<attribute name="dest" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="clone" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{repository}" />
+					<arg value="@{dest}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-log">
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="log" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="--stat" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="git-fetch">
+		<attribute name="remote" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="fetch" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{remote}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="git-pull">
+		<attribute name="remote" />
+		<attribute name="dir" />
+		<attribute name="options" default="" />
+		<attribute name="failerror" default="false" />
+		<sequential>
+			<git command="pull" dir="@{dir}" options="@{options}" failerror="@{failerror}" >
+				<args>
+					<arg value="@{remote}" />
+				</args>
+			</git>
+		</sequential>
+	</macrodef>
+
+<!-- ======================================================================
+		END Git Macros
+     ====================================================================== -->
+
+
+
+
+
+
+<!-- ======================================================================
+		Some Standard Common Targets
+     ====================================================================== -->
+
+	<target name="[Git] Show Log">
+		<git-log />
+	</target>
+
+	<target name="[Git] Show Status">
+		<git command="status" />
+	</target>
+
+
+	<target name="[Git] Cleanup Repository">
+		<git command="gc" options="--prune" />
+	</target>
+
+	<target name="[Git] Search">
+		<input message="Search" addproperty="search" />
+		<git command="grep" options="'${search}'" />
+	</target>
+
+	<target name="[Git] Show Diff">
+		<git command="diff" />
+	</target>
+
+	<target name="[Git] Show Help of a Command">
+		<input message="Command for showing help" addproperty="helpCMD" />
+		<git command="help">
+			<args>
+				<arg value="${helpCMD}" />
+			</args>
+		</git>
+	</target>
+
+	<target name="[Git] Add Properties to Config" depends="[Git] Init Ignore File">
+		<git-config name="user.name" value="${author.name}" />
+		<git-config name="user.email" value="${author.email}" />
+		<git-config name="alias.st" value="status" />
+		<git-config name="alias.d" value="diff" />
+		<git-config name="alias.ci" value="commit -v" />
+		<git-config name="alias.cia" value="commit -v -a" />
+		<git-config name="alias.ca" value="commit -a -m" />
+		<git-config name="alias.co" value="checkout -b" />
+		<git-config name="alias.cp" value="cherry-pick" />
+		<git-config name="alias.l" value="log" />
+		<git-config name="alias.ll" value="log -p" />
+		<git-config name="alias.lt" value="log trunk.." />
+		<git-config name="alias.lm" value="log master.." />
+		<git-config name="alias.llm" value="log -p master.." />
+		<git-config name="alias.b" value="branch" />
+		<git-config name="alias.pom" value="push origin master" />
+		<git-config name="alias.ads" value="submodule add" />
+		<git-config name="alias.rem" value="remote add origin" />
+	</target>
+
+	<target name="[Git] Init Ignore File">
+		<echo file=".gitignore">${LogFile.name}.* &#xa;</echo>
+		<echo file=".gitignore" append="yes">${basedir}\build\* &#xa;</echo>
+		<echo file=".gitignore" append="yes">${ignore.pattern} &#xa;</echo>
+		<echo file=".gitignore" append="yes">${basedir}\temp\* &#xa;</echo>
+		<echo file=".gitignore" append="yes">${basedir}\app\SSHDebug\* &#xa;</echo>
+	</target>
+
+	<target name="[Git] post-receive">
+		<echo file="post-receive.bat">echo "running CURL..." &#xa;
+curl http://dbitbuild.dbitpro.com:8081/git/notifyCommit?url=${git.repository}
+		</echo>
+	</target>
+
+
+
+	<target name="[Git] Init Git">
+		<git command="init" />
+	</target>
+
+	<target name="[Git] Add all files">
+		<git command="add">
+			<args>
+				<arg value="${basedir}" />
+			</args>
+		</git>
+	</target>
+
+	<target name="[Git] Commit all with message">
+		<input message="Type your message!" addproperty="commitMsg" defaultvalue="Please insert here your commit message!" />
+		<git-commit-with-message message="${commitMsg}" />
+	</target>
+
+	<target name="[Git] Initial Commit">
+		<git-commit-with-message dir="${basedir}" message="Initial Commit" />
+		<!-- <git-commit dir="${basedir}" /> -->
+	</target>
+
+	<property environment="env"/>
+
+		<!-- Taken from - http://stackoverflow.com/questions/11851128/how-to-determine-jenkins-build-directory-from-ant -->
+	<target name="run">
+		<echo message="Jenkins workspace: ${env.WORKSPACE}"/>
+		<echo message="Job directory: ${env.WORKSPACE}../../jobs/${env.JOB_NAME}"/>
+		<echo message="Build data: ${env.WORKSPACE}../../jobs/${env.JOB_NAME}/build/${env.BUILD_ID}"/>
+	</target>
+
+
+<!-- ======================================================================
+		END Standard Common Targets
+     ====================================================================== -->
+</project>
