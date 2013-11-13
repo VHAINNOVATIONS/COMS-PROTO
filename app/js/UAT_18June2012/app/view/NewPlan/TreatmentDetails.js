@@ -30,32 +30,98 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 					"</tr>",
 
 					"<tr>",
-						"<th>Template:</th><td colspan=\"5\">{TD.TemplateName} - {TD.TemplateDescription}</td>",
+						"<th>Template:</th><td colspan=\"5\">{TemplateName} - {TemplateDescription}</td>",
 					"</tr>",
 
 					"<tr>",
-						"<th>Regimen Status:</th><td>{TD.TreatmentStatus}</td>",
-						"<th>Regimen Start Date:</th><td>{TD.TreatmentStart}</td>",
-						"<th>Regimen End Date:</th><td>{TD.TreatmentEnd}",
+						"<th>Regimen Status:</th><td>{TreatmentStatus}</td>",
+						"<th>Regimen Start Date:</th><td>{TreatmentStart}</td>",
+						"<th>Regimen End Date:</th><td>{TreatmentEnd}",
 						"</td>",
 					"</tr>",
-				"</table>",
+//				"</table>",
 
-				"<table border=\"1\" class=\"InformationTable\">",
-					"<tr><th>Type(s) of Cancer: </th><td colspan=3>",
+				// "<table border=\"1\" class=\"InformationTable\">",
+					"<tr><th colspan=\"2\">Type(s) of Cancer: </th><td colspan=\"4\">",
 						"<tpl for=\"Disease\">",
 							"<div>{Type}&nbsp;-&nbsp;{Stage}</div>",
 						"</tpl>",
 					"</td></tr>",
-					"<tr><th>Allergies: </th><td colspan=3>",
+					"<tr><th colspan=\"2\">Allergies: </th><td colspan=\"4\">",
 						"<table width=\"100%\" class=\"centerHead\"><tr><th>Name</th><th>Type</th><th>Comment</th></tr>",
 						"<tpl for=\"Allergies\">",
 							"<tr><td>{name}</td><td>{type}</td><td>{comment}</td>",
 						"</tpl>",
 						"</table>",
 					"</td></tr>",
-					"<tr><th>Clinical Trial: </th><td colspan=3>{ClinicalTrial}</td></tr>",
+					"<tr><th colspan=\"2\">Clinical Trial: </th><td colspan=\"4\">{ClinicalTrial}</td></tr>",
+
+					"<tr><th colspan=\"6\" style=\"text-align: center;\">Patient Vitals</th></tr>",
+					"<tr><td colspan=\"6\" style=\"padding:0;\">",
+
+
+
+
+
+		"<table style=\"margin:0 auto; width:100%;\" class=\"PatHistResults InformationTable\">",
+
+			"<tr>",		// Pulse, BP, Respiration, 
+				"<th rowspan=\"2\">Date</th>",
+				"<th rowspan=\"2\">Temp</th>",
+				"<th rowspan=\"2\">Pulse</th>",
+				"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
+				"<th rowspan=\"2\"><abbr title=\"Respiration in breaths per minute\">Resp</abbr></th>",
+				"<th rowspan=\"2\">Pain</th>",
+				"<th rowspan=\"2\"><abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub></abbr></th>",
+				"<th rowspan=\"2\"><abbr title=\"Performance Status - Using the ECOG (Eastern Cooperative Oncology Group) Scale\">PS</abbr></th>",
+				"<th rowspan=\"2\">Height<br />in Inches</th>",
+				"<th rowspan=\"2\">Weight<br />in lbs.</th>",
+				"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
+			"</tr>",
+			"<tr>",		// Pulse, BP, Respiration, 
+				"<th ><abbr title=\"Body Surface Area Weight Formula\">Weight Form.</abbr></th>",
+				"<th ><abbr title=\"Body Surface Area Weight \">Weight</abbr> in KG</th>",
+				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
+				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
+			"</tr>",
+			"<tpl for=\"Vitals\">",
+				"<tr>",
+					"<td>{DateTaken}</td>",
+					"<td>{Temperature}</td>",
+					"<td>{Pulse}</td>",
+					"<td>{BP}</td>",
+					"<td>{Respiration}</td>",
+					"<td>{Pain}</td>",
+					"<td>{SPO2}</td>",
+					"<td><abbr title=\"{PS}\">{PSID}</abbr></td>",
+					"<td>{Height}</td>",
+					"<td>{Weight}</td>",
+					"<td>{WeightFormula}</td>",
+					"<td>{BSA_Weight}</td>",
+					"<td>{BSA_Method}</td>",
+					"<td>{[this.BSACalc(values, parent)]}</td>",
+				"</tr>",
+			"</tpl>",
+		"</table>",
+
+
+
+
+
+
+
+
+					"</td></tr>",
+
+
+
+
+
+
 				"</table>",
+
+
+
 
 				"<br /><br />",
 				{
@@ -98,7 +164,21 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 							}
 						}
 						return(retBuf);
+					},
+				BSACalc: function (data, pData) {
+					data.Amputations = pData.Amputations;
+					var BSA = Ext.BSA_Calc(data);
+					if ("" !== BSA && 0 !== BSA) {
+						return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " + 
+							"weight=\"" + data.Weight + "\" " + 
+							"height=\"" + data.Height + "\" " + 
+							"weightFormula=\"" + data.WeightFormula + "\" " + 
+							"bsa_Weight=\"" + data.BSA_Weight + "\" " + 
+							"bsa_Method=\"" + data.BSA_Method + "\" " + 
+						">" + BSA + "</button> m<sup>2</sup>");
 					}
+					return ("");
+				}
 				}
 			)
 		}

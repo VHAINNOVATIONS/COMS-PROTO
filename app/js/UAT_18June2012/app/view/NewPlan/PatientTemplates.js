@@ -63,7 +63,7 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 			"</tpl>",
 
 			"<tpl for=\"Historical\">",
-				"<tpl if=\"''!== TemplateName\">",
+				"<tpl if=\"(''!== TemplateName) && (!current)\">",
 					"<tr>",
 						"<th>Historical Template:</th>",
 						"<td>{TemplateName}</td>",

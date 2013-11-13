@@ -32,7 +32,6 @@ Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
 
 	// Resize the TD Window based on the browser's size via the "onWindowResize" event handler
 	AfterRenderWindow : function(theWin, eOPts) {
-		debugger;
 		Ext.EventManager.onWindowResize( this.ResizeTheTDWin, theWin );
 		var max = Ext.getBody().getViewSize().height;
 		var smaller = max * .1;

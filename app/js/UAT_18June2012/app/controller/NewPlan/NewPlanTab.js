@@ -1859,7 +1859,7 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 	},
 
 	buildTemplateInfo : function(thisCtl, Patient) {
-		var patientTemplates, TemplateData, pTID, pTH, pCurTemplate, pTID_IsNOTHistorical = true;
+		var patientTemplates, TemplateData, pTID, pTH, pCurTemplate, pTID_IsNOTHistorical = true, pHistLen, i;
 			// Templates - Previously applied templates
 
 			patientTemplates = thisCtl.getPatientTemplates();
@@ -1869,9 +1869,12 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 
 			pTID = Patient.TemplateID;
 			pTH = Patient.TemplateHistory;
+			pHistLen = pTH.length;
+
 // debugger;
 // MWB - 11/11/2013 - Need to walk through this to see if the current template really is historical or not.
 // Basing off of a template id is not valid as we can apply the same template more than once.
+
 
 			if ("" !== pTID) {
 				len++;
@@ -1886,7 +1889,7 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 					"id" : Patient.AppliedTemplate.id
 				};
 			}
-
+/**
 			if (pTH) {
 				len += pTH.length;
 				var i, pTH_TID;
@@ -1898,6 +1901,20 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 					}
 				}
 			}
+**/
+			// The TemplateHistory also contains the currently applied template
+			// So find the current template (if any) and flag it in the history as the current
+			// This record is then NOT listed in the History section of TR&S
+			if (pTH && ("" !== pTID)) {
+				len += pTH.length;
+				for (i = 0; i < pHistLen; i++) {
+					if ((pTH[i].TemplateID === pTID) && (Patient.TreatmentStart === pTH[i].DateStarted)) {
+						len--;
+						pTH[i].current = true;
+					}
+				}
+			}
+
 
 			if (len > 0) {
 				tmp = len + " Record";
