@@ -204,7 +204,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         var values = win.down('form').getValues();
 		if ("" !== values.AccessCode && "" !== values.VerifyCode) {
 			if (values.AccessCode === Sig1 || values.AccessCode === Sig2) {
-				alert("You can't sign this record twice. Please have another sign to verify");
+				Ext.MessageBox.alert("Authentication Error", "You can't sign this record twice. Please have another sign to verify");
 			}
 			else {
 				Ext.Ajax.request({
@@ -218,11 +218,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 							SigField.setValue(values.AccessCode);
 						}
 						else {
-							alert("Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+							Ext.MessageBox.alert("Authentication Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 						}
 					},
 					failure : function( response, opts ) {
-						alert("Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+						Ext.MessageBox.alert("Authentication Error", "Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 					}
 				});
 			}
@@ -236,12 +236,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of first verifier", SigName : SigNameFld1, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
+Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
+
+
+
 	},
 
 	btnSecondSignature : function( button ) {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of second verifier", SigName : SigNameFld2, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
+Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
 	},
 
 	ConvertWeight : function( fld, eOpts ) {
@@ -628,7 +633,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				VSFormBtns.on("click", this.HandleVSFormShowCalcButtons, this);
 			}
 			else {
-				alert("Vital Signs Form not yet rendered");
+				Ext.MessageBox.alert("Error", "Vital Signs Form not yet rendered");
 			}
 
 
