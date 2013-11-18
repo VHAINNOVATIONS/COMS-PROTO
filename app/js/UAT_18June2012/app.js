@@ -1483,16 +1483,16 @@ Ext.application({
 				var infTime = vol / rate;
 				var Hrs = infTime.toFixed(3);
 				var tmp = Hrs.split(".");
-				var frac;
+				var Frac;
 				if (tmp.length > 1) {
 					Hrs = tmp[0];
 					Frac = tmp[1];
 				}
-				var Min;
+				var Min = 0;
 				if (infTime > 1) {
 					Min = ((infTime - Hrs)*60).toFixed(0);
 				}
-				else {
+				else if (infTime < 1) {
 					Min = (infTime*60).toFixed(0);
 				}
 				if (Min > 50) {		// Handle rounding of weird flow rates, should never happen in Real World but does in testing.

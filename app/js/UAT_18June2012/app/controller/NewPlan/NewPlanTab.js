@@ -1859,17 +1859,22 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 	},
 
 	buildTemplateInfo : function(thisCtl, Patient) {
-		var patientTemplates, TemplateData, pTID, pTH, pCurTemplate, pTID_IsNOTHistorical = true, pHistLen, i;
 			// Templates - Previously applied templates
+		var patientTemplates = thisCtl.getPatientTemplates(),
+			TemplateData =  "<div class='errMsg'>No applied templates for patient " + this.application.Patient.name + "</div>", 
+			pTID = Patient.TemplateID,
+			pTH = Patient.TemplateHistory, 
+			pTID_IsNOTHistorical = true, 
+			pHistLen = 0, 
+			tmp = "No Records Available", 
+			pCurTemplate, 
+			len, 
+			i;
 
-			patientTemplates = thisCtl.getPatientTemplates();
-			tmp = "No Records Available";
-			len = 0;
-			TemplateData =  "<div class='errMsg'>No applied templates for patient " + this.application.Patient.name + "</div>";
-
-			pTID = Patient.TemplateID;
-			pTH = Patient.TemplateHistory;
-			pHistLen = pTH.length;
+			if (pTH) {
+				pHistLen = pTH.length;
+			}
+			len = pHistLen;
 
 // debugger;
 // MWB - 11/11/2013 - Need to walk through this to see if the current template really is historical or not.
@@ -1879,11 +1884,11 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 			if ("" !== pTID) {
 				len++;
 				pCurTemplate = {
-					"DateApplied" : "",
+					"DateApplied" : (Patient.DateApplied ? Patient.DateApplied : ""),
 					"DateEnded" : Patient.TreatmentEnd,
-					"DateEndedActual" : "",
+					"DateEndedActual" : "",	// current template so hasn't ended yet
 					"DateStarted" : Patient.TreatmentStart,
-					"EotsID" : "",
+					"EotsID" : "",	// current template so no EoTS yet
 					"TemplateID" : pTID,
 					"TemplateName" : Patient.TemplateName,
 					"id" : Patient.AppliedTemplate.id
@@ -1906,7 +1911,6 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 			// So find the current template (if any) and flag it in the history as the current
 			// This record is then NOT listed in the History section of TR&S
 			if (pTH && ("" !== pTID)) {
-				len += pTH.length;
 				for (i = 0; i < pHistLen; i++) {
 					if ((pTH[i].TemplateID === pTID) && (Patient.TreatmentStart === pTH[i].DateStarted)) {
 						len--;
@@ -1915,13 +1919,11 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				}
 			}
 
-
 			if (len > 0) {
 				tmp = len + " Record";
 				tmp += (1 === len) ? "" : "s";
 				TemplateData = pTH;
 			}
-// debugger;
 			var TemplateInfo = {Historical : TemplateData};
 //			if ("" !== pTID && pTID_IsNOTHistorical) {		// if Template pointed to by TID is NOT in the Historical array then add it as the current template. This is really a sanity check as we should never have this happen but did during testing - MWB - 11/11/2013
 			if ("" !== pTID ) {

@@ -37,8 +37,6 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 
 
 	tpl : new Ext.XTemplate(
-//		"{[this.fnc1(values)]}",
-
 		"<table border=\"1\" style=\"margin: 10px auto;\" class=\"PatHistResults InformationTable\">",
 			"<tr>",
 				"<th>&nbsp;</th>",
@@ -47,7 +45,7 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 				"<th>End Date</th>",
 				"<th>&nbsp;</th><th>&nbsp;</th>",
 			"</tr>",
-
+			"{[this.fnc1(values)]}",
 			"<tpl if=\"''!== CurTemplate\">",
 				"<tr>",
 					"<th>Current Template:</th>",
@@ -63,12 +61,14 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 			"</tpl>",
 
 			"<tpl for=\"Historical\">",
-				"<tpl if=\"(''!== TemplateName) && (!current)\">",
+				"{[this.fnc1(values)]}",
+//				"<tpl if=\"(''!== TemplateName) && (!current)\">",
+				"<tpl if=\"(''!== TemplateName)\">",
 					"<tr>",
 						"<th>Historical Template:</th>",
 						"<td>{TemplateName}</td>",
 						"<td>{DateStarted}</td>",
-						"<td>{DateEndedActual}</td>",
+						"<td>{[this.dspDateEnded(values)]}</td>",
 						"<td><button class=\"anchor\" name=\"ShowTemplateDetails\" EotsID=\"{EotsID}\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Show Details</button></td>",
 						"<td>",
 							"<tpl if=\"''=== EotsID\">",
@@ -87,19 +87,13 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 			"</tpl>",
 		"</table>",
 		{
+			dspDateEnded : function(data) {
+				if ("" !== data.DateEndedActual) {
+					return data.DateEndedActual;
+				}
+				return data.DateEnded;
+			},
 			fnc1 : function(data) {
-				// debugger;
-				/**
-				console.log(data);
-				if (data.CurTemplate) {
-					console.log(data.CurTemplate);
-				}
-				if (data.Historical) {
-					for (x = 0; x < data.Historical.length; x++) {
-						console.log(data.Historical[x]);
-					}
-				}
-				**/
 				return "";
 			}
 		}
