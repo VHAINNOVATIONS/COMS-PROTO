@@ -385,13 +385,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			icon: Ext.Msg.QUESTION,
 			callback: function(btn, text){
 				if ("yes" === btn) {
-					alert("Treatment is complete");
+					Ext.MessageBox.alert("Treatment completion", "Treatment is complete, Save complete");
 				}
 				else {
-					alert("Treatment is NOT complete");
+					Ext.MessageBox.alert("Treatment completion", "Treatment is NOT complete, No data specified to be saved");
 				}
 			}
 		});
 	}
 });
-
