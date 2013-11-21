@@ -32,18 +32,18 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{
 					title: "Chemotherapy Template Order Source",
 					items : [
-/***
+/***/
 						{ xtype : 'fieldcontainer', 
 							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 							defaultType: 'radiofield', defaults: { flex: 1 },
 							items: [ 
-								{ boxLabel  : 'Select from Templates currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
+								{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
 								{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
 							]
 						},
-***/
-//						{ xtype : 'selTemplate', name : 'MyTemplates'},
-//						{ xtype : "selCTOSTemplate", hidden : true },
+/***/
+						{ xtype : 'selTemplate', name : 'MyTemplates'},
+						{ xtype : "selCTOSTemplate", hidden : true },
 						{ xtype : "selCTOSTemplate" },
 						{ xtype : 'dspTemplateData'},
 						{ xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' },
@@ -63,7 +63,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{
 					title: "Chemotherapy Template Order Source",
 					items : [
-/***
+/***/
 						{ xtype : 'fieldcontainer', 
 							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 							defaultType: 'radiofield', defaults: { flex: 1 },
@@ -72,9 +72,9 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 								{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
 							]
 						},
-***/
-//						{ xtype : 'selTemplate', name : 'MyTemplates'},
-//						{ xtype : "selCTOSTemplate", hidden : true },
+/***/
+						{ xtype : 'selTemplate', name : 'MyTemplates'},
+						{ xtype : "selCTOSTemplate", hidden : true },
 						{ xtype : "selCTOSTemplate" },
 						{ xtype : 'dspTemplateData'}
 					]
