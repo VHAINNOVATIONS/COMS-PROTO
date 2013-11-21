@@ -81,7 +81,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
-				alert("You MUST specify at least a \"Start Time\" for this treatment");
+				Ext.MessageBox.alert("Error", "You MUST specify at least a \"Start Time\" for this treatment");
 			}
 			else {
 				this.curTreatmentRecord = record;
@@ -128,20 +128,20 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 							if (operation.success) {
 							}
 							else {
-								alert("Treatment Record Save failed... unknown reason");
+								Ext.MessageBox.alert("Error", "Treatment Record Save failed... unknown reason");
 							}
 						}
 					});
 					this.curTreatmentRecord = null;
 				}
 				else {
-					alert("Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+					Ext.MessageBox.alert("Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 					this.SignRecordBtn.show();
 				}
 			},
 			failure : function( response, opts ) {
 				this.application.unMask();
-				alert("Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+				Ext.MessageBox.alert("Error", "Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 				this.SignRecordBtn.show();
 			}
 		});
@@ -188,6 +188,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
  ****/
 	},
 
+/**
+ * Load all the current (e.g. dispensed) orders in the system
+ * select orders for the current patient for the current day
+ * This is what should get sent to the Nursing Doc Treatment Store
+ **/
 	LoadPreviousTreatmentData : function() {
 		var Patient = this.application.Patient;
 		var PAT_ID = Patient.PAT_ID;
@@ -196,6 +201,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			scope : this,
 			url: Ext.URLs.ReadND_Treatment + "/" + PAT_ID,
 			success: function( response, opts ){
+				var tempData, tsRecord;
 				var obj = Ext.decode(response.responseText);
 				var TreatmentHistoryRecords = obj.records;
 				this.application.Patient.TreatmentHistory = TreatmentHistoryRecords;			// Treatment History (all days)
@@ -212,25 +218,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					aRec = TreatmentHistoryRecords[i];
 					this.Record2Find = aRec;
 					MatchingRecord = treatmentStore.findBy(function (record, id) {
-							var cmpRecord = this.Record2Find;
-							var cAdminDate = cmpRecord.AdminDate;
-							var cDrug = cmpRecord.Drug;
-							var cType = cmpRecord.Type;
 
-							var adminDate = record.get("adminDate");
-							var drug = record.get("drug");
-							var type = record.get("type");
+wccConsoleLog("Admin Date - " + this.Record2Find.AdminDate + " : " + record.get("adminDate"));
+wccConsoleLog("Drug - " + this.Record2Find.Drug + " : " + record.get("drug"));
+wccConsoleLog("Type - " + this.Record2Find.Type + " : " + record.get("type"));
 
-							if (cAdminDate == adminDate && cDrug == drug && cType == type) {
-								return true;
-							}
-							return false;
+							return this.Record2Find.AdminDate === record.get("adminDate") && 
+								this.Record2Find.Drug === record.get("drug") && 
+								this.Record2Find.Type === record.get("type");
 						},
 						this
 					);
-					if (MatchingRecord >= 0) {
-						var tsRecord = treatmentStore.getAt(MatchingRecord);
+					tsRecord = treatmentStore.getAt(MatchingRecord);
+					if (tsRecord) {
+						var dbg_temp = tsRecord.data;
 						tsRecord.set("StartTime", aRec.StartTime);
+						tsRecord.set("EndTime", aRec.EndTime);
+						tsRecord.set("Comments", aRec.Comments);
+
+						/* May not need this process, but might need to pull the "OriginalValue" from the aRec */
+						temp = tsRecord.get("dose");
+						tsRecord.set("dose_originalValue", temp);
+						temp = tsRecord.get("drug");
+						tsRecord.set("drug_originalValue", temp);
+						temp = tsRecord.get("route");
+						tsRecord.set("route_originalValue", temp);
+						tsRecord.set("dose", aRec.Dose);
+						tsRecord.set("drug", aRec.Drug);
+						tsRecord.set("route", aRec.Route);
 						tsRecord.set("PAT_ID", aRec.PAT_ID);
 						tsRecord.set("Treatment_User", aRec.Treatment_User);
 						tsRecord.set("Treatment_Date", aRec.Treatment_Date);
@@ -238,7 +253,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				}
 			},
 			failure : function( response, opts ) {
-				alert("Treatment Information failed to load");
+				Ext.MessageBox.alert("Error", "Treatment Information failed to load");
 			}
 		});
 	},
@@ -266,13 +281,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				this.application.unMask();
 				if(success){
 					var theStore = Ext.getStore("ND_Treatment");
-					// alert(theStore.data.items.length);
-
 					this.application.Patient.TreatmentStore = theStore;	// The store containing all the records for today's treatment
 					this.LoadPreviousTreatmentData();
 				}
 				else {
-					alert("Treatment Grid store failed to load");
+					Ext.MessageBox.alert("Error", "Treatment Grid store failed to load");
 				}
 			}
 		});
@@ -294,7 +307,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		}
 		catch (e) {
-			alert("Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTabData() " + e.message );
+			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTabData() " + e.message );
 		}
 	},
 
@@ -310,7 +323,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		}
 		catch (e) {
-			alert("Loading Error - Nursing Docs Treatment Tab Render() - Error - " + e.message );
+			Ext.MessageBox.alert("Error", "Loading Error - Nursing Docs Treatment Tab Render() - Error - " + e.message );
 			return;
 		}
 

@@ -1883,6 +1883,10 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 
 			if ("" !== pTID) {
 				len++;
+				var patid = "";
+				if (Patient.AppliedTemplate && Patient.AppliedTemplate.id) {
+					patid = Patient.AppliedTemplate.id;
+				}
 				pCurTemplate = {
 					"DateApplied" : (Patient.DateApplied ? Patient.DateApplied : ""),
 					"DateEnded" : Patient.TreatmentEnd,
@@ -1891,7 +1895,7 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 					"EotsID" : "",	// current template so no EoTS yet
 					"TemplateID" : pTID,
 					"TemplateName" : Patient.TemplateName,
-					"id" : Patient.AppliedTemplate.id
+					"id" : patid
 				};
 			}
 /**
