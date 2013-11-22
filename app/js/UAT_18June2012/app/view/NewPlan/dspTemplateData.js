@@ -166,7 +166,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				"<th>Route</th>",
 				"<th>Administration Day</th>",
 			"</tr>",
-			"<tpl for=\"PreMHMeds\">",
+			"<tpl for=\"PostMHMeds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
 					"<td>{Drug}</td>",
