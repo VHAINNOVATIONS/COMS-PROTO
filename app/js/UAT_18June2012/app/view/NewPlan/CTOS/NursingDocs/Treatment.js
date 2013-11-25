@@ -54,21 +54,13 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 		{ header : "Start Time", dataIndex : "StartTime", 
 			// renderer: Ext.util.Format.dateRenderer("h:i A"),
 			editor : {
-				xtype : "timefield", 
-				format : "h:i A",
-				minValue: Ext.Date.parse("06:00 AM", "h:i A"),
-				maxValue: Ext.Date.parse("08:00 PM", "h:i A"),
-				increment: 15
+				xtype : "textfield", 
 			}
 		},
 		{ header : "End Time", dataIndex : "EndTime", 
 			// renderer: Ext.util.Format.dateRenderer("h:i A"),
 			editor : {
-				xtype : "timefield", 
-				format : "h:i A",
-				minValue: Ext.Date.parse("06:00 AM", "h:i A"),
-				maxValue: Ext.Date.parse("08:00 PM", "h:i A"),
-				increment: 15
+				xtype : "textfield", 
 			}
 		},
 		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },

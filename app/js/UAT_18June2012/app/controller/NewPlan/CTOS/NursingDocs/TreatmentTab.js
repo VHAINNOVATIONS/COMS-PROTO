@@ -163,11 +163,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			this.curTreatmentRecord.set("rowIdx", rowIndex);
 		}
 
-		if ("StartTime" === eObj.field || "EndTime" === eObj.field) {
-			var eObjValue1 = Ext.Date.format( eObj.value, "h:i A");
-			eObj.value = Ext.Date.format( eObj.value, "h:i A");
-		}
-
 		this.curTreatmentRecord.set(eObj.field + "_originalValue", eObj.originalValue);
 		this.curTreatmentRecord.set(eObj.field, eObj.value);
 		this.curTreatmentRecord.set("Cycle", Cycle);		// MWB - 6/17/2012 - Carry over from CourseNum from Orders data

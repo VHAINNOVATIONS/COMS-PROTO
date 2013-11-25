@@ -108,7 +108,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							html: "<span style='margin-left: 15px; font-weight: bold;'>&nbsp;</span>",
 							hidden: false
 						}, {
-							xtype: 'timefield',
+							xtype: 'textfield',
 							name: 'AdminTime',
 							fieldLabel: 'Administration Time <em>*</em>',
 							width: 200,
