@@ -14,11 +14,6 @@ Ext.define('COMS.view.NewPlan.PatientInfo' ,{
 		{ xtype : 'PatientTemplates' },
 		{ xtype : 'PatientHistory' },
 		{ xtype : 'LabInfo' },
-			// MWB - 12/12/2011
-			// Removed - During 09-Dec customer meeting, client said DiagImage & Pharmacy were not needed
-			// Also removed from NewPlanTab view
-		// { xtype : 'DiagImage' },
-		// { xtype : 'Pharmacy' }
 		{ xtype : 'CTOS' }
 	]
 });

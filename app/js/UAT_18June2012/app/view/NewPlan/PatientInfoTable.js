@@ -155,9 +155,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	title : "Patient Information",
 	
 	autoEl : { tag : "section" },
-//	cls : "PI_PatientInformationTable",
 	cls : "xPandablePanel",
-	width: 950,
 	collapsible : true,
 	collapsed : true,
 

@@ -43,24 +43,17 @@ function getPHVitalsTableTemplate () {
 Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 	extend: "Ext.panel.Panel",
 	alias : "widget.PatientHistory",
-	name : "Patient History",
-	title : "Patient History",
+	name : "Patient Vitals",
+	title : "Patient Vitals",
 
 	autoEl : { tag : "section" },
 //	cls : "PI_PatientInformationTable",
 	cls : "xPandablePanel",
-	width: 950,
 	collapsible : true,
 	collapsed : true,
 
 	items : [
-		{
-			xtype : "fieldset", name : "Vital Statistics History",
-			title : "Vital Statistics",
-			collapsible : true,
-			margin : "5 10 5 10",
-			items : [ { xtype : "VitalSignsHistory" } ]
-		}
+		{ xtype : "VitalSignsHistory" }
 	],
 
 	initComponent: function() {

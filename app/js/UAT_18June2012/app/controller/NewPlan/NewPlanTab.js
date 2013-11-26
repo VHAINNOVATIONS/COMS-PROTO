@@ -67,7 +67,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientInfoTableBSACalcs",		selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"]"},
 		{ ref: "PatientTemplates",				selector: "NewPlanTab PatientInfo PatientTemplates"},
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
-		{ ref: "PatientHistoryGeneral",			selector: "NewPlanTab PatientInfo PatientHistory [name=\"General Patient History\"]"},
 		{ ref: "LaboratoryInfo",				selector: "NewPlanTab PatientInfo LabInfo"},
 		{ ref: "VitalSigns",					selector: "NewPlanTab PatientHistory VitalSignsHistory"},
 		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
@@ -1979,7 +1978,7 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				tmp += (1 === len) ? "" : "s";
 				}
 			}
-			PatientHistory.setTitle("Patient History <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
 
 			// MWB - 6/27/2012 - Handle the OnClick Event for the BSA Button in the Vital Signs table
 			dspVSHTemplateData = this.getVitalSigns();
@@ -2065,7 +2064,7 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				tmp += (1 === len) ? "" : "s";
 				}
 			}
-			PatientHistory.setTitle("Patient History <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
 
 			// MWB - 6/27/2012 - Handle the OnClick Event for the BSA Button in the Vital Signs table
 			dspVSHTemplateData = this.getVitalSigns();

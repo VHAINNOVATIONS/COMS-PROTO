@@ -16,7 +16,6 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	margin : '0 0 20 0',
 	plain : true,
 	autoEl : { tag : 'nav' },
-	width: 950,
 
 
 	initComponent: function() {

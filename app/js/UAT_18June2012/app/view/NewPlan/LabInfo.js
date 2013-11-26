@@ -5,7 +5,6 @@ Ext.define('COMS.view.NewPlan.LabInfo' ,{
 
 	autoEl : { tag : 'section' },
 	cls : 'xPandablePanel',
-	width: 950,
 	collapsible : true,
 	collapsed : true,
 
