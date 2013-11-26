@@ -5,36 +5,36 @@
  *	The reference to the "Cancel" button is Ext.ComponentQuery.query('AddDrugRegimen button[action="save"]')[0].el.dom
  */
 Ext.define('COMS.view.Authoring.AddDrugRegimen', {
-	extend: 'Ext.window.Window',
-	alias: 'widget.AddDrugRegimen',
+	'extend' : 'Ext.window.Window',
+	'alias' : 'widget.AddDrugRegimen',
 
-	title: 'Add New Drug Regimen',
-	layout: 'fit',
-	autoShow: true,
-	width: 800,
-	items: [{
-		xtype: "form",
+	'title' : 'Add New Drug Regimen',
+	'layout' : 'fit',
+	'autoShow' : true,
+	'width' : 800,
+	'items' : [{
+		'xtype' : "form",
 		//defaults : { margin: '5', labelAlign: "right" },
-		items: [
+		'items' : [
 			{
-				xtype: 'container',
-				margin: '10 0 10 5',
-				html: '<b>Fields with a <span style="color:red">*</span> are required fields</b>',
-				width: 220
+				'xtype' : 'container',
+				'margin' : '10 0 10 5',
+				'html' : '<b>Fields with a <span style="color:red">*</span> are required fields</b>',
+				'width' : 220
 			},
 			{
-				xtype: 'container',
-				layout: 'hbox',
-				defaults: { labelAlign: 'right', margin: '5 5 5 0'},
-				items: [
+				'xtype' : 'container',
+				'layout' : 'hbox',
+				'defaults' : { labelAlign: 'right', margin: '5 5 5 0'},
+				'items' : [
 					{
-						xtype: 'radiogroup',
-						labelAlign: 'left',
-						name: 'patientRadio',
-						fieldLabel: 'Medication Type',
-						itemId: 'patientRadios',
-						columns: 2,
-						items: [
+						'xtype' : 'radiogroup',
+						'labelAlign' : 'left',
+						'name' : 'patientRadio',
+						'fieldLabel' : 'Medication Type',
+						'itemId' : 'patientRadios',
+						'columns' : 2,
+						'items' : [
 							{ boxLabel  : 'InPatient', name : 'PatientType', inputValue: 'InPatient', width: 100, checked: true  },
 							{ boxLabel  : 'OutPatient', name  : 'PatientType', inputValue: 'OutPatient', width: 125  }
 						]
@@ -42,101 +42,99 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 				]
 			},
 			{
-				xtype: 'container',
-				layout: 'hbox',
-				defaults: { labelAlign: 'right', margin: '5 5 5 0'},
-				items: [
+				'xtype' : 'container',
+				'layout' : 'hbox',
+				'defaults' : { labelAlign: 'right', margin: '5 5 5 0'},
+				'items' : [
 					{
-						xtype: 'combo',
-						fieldLabel: 'Select Drug <em>*</em>',
-						labelWidth: 80,
-						width: 425,
-						name: 'Drug',
-						store: 'DrugStore',
-						queryMode: 'local',
-						displayField: 'name',
-						valueField: 'name',
-						allowBlank: false
+						'xtype' : 'combo',
+						'fieldLabel' : 'Select Drug <em>*</em>',
+						'labelWidth' : 80,
+						'width' : 425,
+						'name' : 'Drug',
+						'store' : 'DrugStore',
+						'queryMode' : 'local',
+						'displayField' : 'name',
+						'valueField' : 'name',
+						'allowBlank' : false
 					}
 				]
 			},
 			{
-				xtype: 'container',
-				layout: 'hbox',
-				defaults: { labelAlign: 'right', margin: '0 5 5 0'},
-				items: [
+				'xtype' : 'container',
+				'layout' : 'hbox',
+				'defaults' : { labelAlign: 'right', margin: '0 5 5 0'},
+				'items' : [
 					{
-						xtype: 'selSequence'
+						'xtype' : 'selSequence'
 					},
 					{
-						xtype: 'textfield',
-						fieldLabel: 'Administration Day(s) <em>*</em>',
-						labelWidth: 140,
-						width: 285,
-						maskRe: /^[-,0-9 ]+$/,
-						name: 'Day',
-						allowBlank: false,
-						colspan : 4,
-						margin: '0 0 5 30'
+						'xtype' : 'textfield',
+						'fieldLabel' : 'Administration Day(s) <em>*</em>',
+						'labelWidth' : 140,
+						'width' : 285,
+						'maskRe' : /^[-,0-9 ]+$/,
+						'name' : 'Day',
+						'allowBlank' : false,
+						'colspan ' : 4,
+						'margin' : '0 0 5 30'
 					}
 				]
 			},
 			{
-				xtype: 'container',
-				layout: 'hbox',
-				defaults: {
-					labelAlign: 'right',
-					margin: '5 5 5 0'
+				'xtype' : 'container',
+				'layout' : 'hbox',
+				'defaults' : {
+					'labelAlign' : 'right',
+					'margin' : '5 5 5 0'
 				},
-				items: [
+				'items' : [
 					{
-						xtype: 'textfield',
-						maskRe: /[0-9\.]/,
-						name: 'Amt',
-						fieldLabel: 'Dosage Amount <em>*</em>',
-						width: 205,
-						labelWidth: 115,
-						allowBlank: false
+						'xtype' : 'container',
+						'width' : 10,
+						'name' : 'dosespacer',
+						'html' : "<span style='margin-left: 15px; font-weight: bold;'>&nbsp;</span>",
+						'hidden' : false
 					},
 					{
-						xtype: 'combo',
-						fieldLabel: 'Units <em>*</em>',
-						width: 150,
-						labelWidth: 45,
-						name: 'Units',
-						store: 'DrugUnitsStore',
-						displayField: 'name',
-						valueField: 'name',
-						allowBlank: false
+						'xtype' : 'textfield',
+						'fieldLabel' : 'Administration Time <em>*</em>',
+						'width' : 210,
+						'hidden' : true,
+						'labelWidth' : 130,
+						'allowBlank' : false,
+						'name' : 'AdminTime'
 					},
 					{
-						xtype: 'combo',
-						fieldLabel: 'Route <em>*</em>',
-						name: 'Route',
-						labelWidth: 50,
-						width: 195,
-						store: 'InfusionStore',
-						displayField: 'name',
-						valueField: 'name' ,
-						allowBlank: false
+						'xtype' : 'textfield',
+						'maskRe' : /[0-9\.]/,
+						'fieldLabel' : 'Dosage Amount <em>*</em>',
+						'width' : 180,
+						'labelWidth' : 100,
+						'allowBlank' : false,
+						'name' : 'Amt'
 					},
 					{
-						xtype: 'container',
-						width: 195,
-						name: 'dosespacer',
-						html: "<span style='margin-left: 150px; font-weight: bold;'>&nbsp;</span>",
-						hidden: false
-					},
+						'xtype' : 'combo',
+						'fieldLabel' : 'Units <em>*</em>',
+						'width' : 150,
+						'labelWidth' : 45,
+						'store' : 'DrugUnitsStore',
+						'displayField' : 'name',
+						'valueField' : 'name',
+						'allowBlank' : false,
+						'name' : 'Units'
+					}, 
 					{
-						xtype: 'textfield',
-						name: 'AdminTime',
-						fieldLabel: 'Administration Time <em>*</em>',
-						labelWidth: 100,
-						width: 215,
-						colspan : 2,
-						margin: '0 0 5 0',
-						hidden: true,
-						allowBlank: false
+						'xtype' : 'combo',
+						'fieldLabel' : 'Route <em>*</em>',
+						'width' : 180,
+						'labelWidth' : 65,
+						'store' : 'InfusionStore',
+						'displayField' : 'name',
+						'valueField' : 'name' ,
+						'allowBlank' : false,
+						'name' : 'Route'
 					}
 				]
 			},
@@ -174,11 +172,11 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						allowBlank: false
 					},
 					{
-						xtype: 'container',
-						html: 'ml',
-						readOnly: true,
-						name: 'fluidVolUnit',
-						width: 20
+						'xtype' : 'container',
+						'html' : 'ml',
+						'name' : 'fluidVolUnit',
+						'margin' : '8 0 0 3',
+						'width' : 20
 					},
 					{
 						xtype: 'textfield',
@@ -195,6 +193,7 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						html: 'ml/hr',
 						readOnly: true,
 						name: 'flowRateUnit',
+						margin: '8 0 0 3',
 						width: 50
 					},
 					{

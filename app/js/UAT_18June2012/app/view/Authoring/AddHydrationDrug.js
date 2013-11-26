@@ -95,51 +95,54 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						}]
 					},
 					{
-						xtype: 'container',
-						layout: 'hbox',
-						defaults: {
-							labelAlign: 'right',
-							margin: '5 5 5 0'
+						'xtype' : 'container',
+						'layout' : 'hbox',
+						'defaults' : {
+							'labelAlign' : 'right',
+							'margin' : '5 5 5 0'
 						},
-						items: [{
-							xtype: 'container',
-							width: 10,
-							name: 'dosespacer',
-							html: "<span style='margin-left: 15px; font-weight: bold;'>&nbsp;</span>",
-							hidden: false
+						'items' : [{
+							'xtype' : 'container',
+							'width' : 10,
+							'name' : 'dosespacer',
+							'html' : "<span style='margin-left: 15px; font-weight: bold;'>&nbsp;</span>",
+							'hidden' : false
 						}, {
-							xtype: 'textfield',
-							name: 'AdminTime',
-							fieldLabel: 'Administration Time <em>*</em>',
-							width: 200,
-							margin: '0 0 5 0',
-							hidden: true,
-							lableWidth: 85,
-							allowBlank: false
+							'xtype' : 'textfield',
+							'fieldLabel' : 'Administration Time <em>*</em>',
+							'width' : 210,
+							'hidden' : true,
+							'labelWidth' : 130,
+							'allowBlank' : false,
+							'name' : 'AdminTime'
 						}, {
-							xtype: 'textfield',
-							maskRe: /[0-9\.]/,
-							name: 'Amt1',
-							fieldLabel: 'Dosage Amount <em>*</em>',
-							width: 200,
-							labelWidth: 105
+							'xtype' : 'textfield',
+							'maskRe' : /[0-9\.]/,
+							'fieldLabel' : 'Dosage Amount <em>*</em>',
+							'width' : 180,
+							'labelWidth' : 100,
+							'allowBlank' : false,
+							'name' : 'Amt1'
 						}, {
-							xtype: 'combo',
-							fieldLabel: 'Units <em>*</em>',
-							width: 155,
-							labelWidth: 45,
-							name: 'Units1',
-							store: 'DrugUnitsStore',
-							displayField: 'name',
-							valueField: 'name'
+							'xtype' : 'combo',
+							'fieldLabel' : 'Units <em>*</em>',
+							'width' : 150,
+							'labelWidth' : 45,
+							'store' : 'DrugUnitsStore',
+							'displayField' : 'name',
+							'valueField' : 'name',
+							'allowBlank' : false,
+							'name' : 'Units1'
 						}, {
-							xtype: 'combo',
-							fieldLabel: 'Route <em>*</em>',
-							name: 'Infusion1',
-							width: 200,
-							store: 'InfusionStore',
-							displayField: 'name',
-							valueField: 'name'
+							'xtype' : 'combo',
+							'fieldLabel' : 'Route <em>*</em>',
+							'width' : 180,
+							'labelWidth' : 65,
+							'store' : 'InfusionStore',
+							'displayField' : 'name',
+							'valueField' : 'name' ,
+							'allowBlank' : false,
+							'name' : 'Infusion1'
 						}]
 					},
 					{
