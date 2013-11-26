@@ -12,7 +12,7 @@ Ext.define('COMS.view.NewPlan.PatientInfo' ,{
 		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from MDWS" },
 		{ xtype : 'PatientInfoTable' },
 		{ xtype : 'PatientTemplates' },
-		{ xtype : 'PatientHistory' },
+		{ xtype : 'PatientHistory' },		// Panel Title = "Patient Vitals"
 		{ xtype : 'LabInfo' },
 		{ xtype : 'CTOS' }
 	]

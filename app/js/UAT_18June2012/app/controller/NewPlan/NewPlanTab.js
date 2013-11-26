@@ -58,19 +58,23 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ],
 
     refs: [
+		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
+
+		{ ref: "CTOS",							selector: "NewPlanTab CTOS"},
 		{ ref: "ApplyTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Apply\"]"},
 		{ ref: "EditTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Edit\"]"},
-		{ ref: "ResetButton",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]"},
+
 		{ ref: "PatientInfo",					selector: "NewPlanTab PatientInfo"},
+		{ ref: "ResetButton",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]"},
+
 		{ ref: "PatientInfoTable",				selector: "NewPlanTab PatientInfo PatientInfoTable"},
 		{ ref: "PatientInfoTableInformation",	selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableBSACalcs",		selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"]"},
+
 		{ ref: "PatientTemplates",				selector: "NewPlanTab PatientInfo PatientTemplates"},
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
 		{ ref: "LaboratoryInfo",				selector: "NewPlanTab PatientInfo LabInfo"},
-		{ ref: "VitalSigns",					selector: "NewPlanTab PatientHistory VitalSignsHistory"},
-		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
-		{ ref: "selCTOSTemplate",				selector: "NewPlanTab selCTOSTemplate"},
+
 		{ ref: "selTemplateType",				selector: "NewPlanTab PatientInfo CTOS selTemplateType"},
 		{ ref: "DiseaseAndStage",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage"},
 		{ ref: "Disease",						selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDisease"},
@@ -78,14 +82,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "Template",						selector: "NewPlanTab PatientInfo CTOS selTemplate[name=\"AllTemplates\"]"},
 		{ ref: "MyTemplates",					selector: "NewPlanTab PatientInfo CTOS selTemplate[name=\"MyTemplates\"]"},
 		{ ref: "CTOSDataDsp",					selector: "NewPlanTab PatientInfo CTOS dspTemplateData"},
-		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
-		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
+
+		{ ref: "VitalSigns",					selector: "NewPlanTab PatientHistory VitalSignsHistory"},
+
+		{ ref: "selCTOSTemplate",				selector: "NewPlanTab selCTOSTemplate"},
 		{ ref: "SelectPatientSection",			selector: "NewPlanTab SelectPatient"},
 		{ ref: "PatientSelectionPanel",			selector: "NewPlanTab PatientSelection"},
-		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
 		{ ref: "SelectPatient",					selector: "NewPlanTab SelectPatient combobox"},
 		{ ref: "ConfirmPatient",				selector: "NewPlanTab SelectPatient container[name=\"Confirm\"]"},
-		{ ref: "CTOS",							selector: "NewPlanTab CTOS"},
+
+		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
+		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
+
+		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
+
 		{ ref: "TypeOfTrial",					selector: "AddDate textfield[name=\"TypeOfTrial\"]"},
 		{ ref: "Goal",							selector: "AddDate form radiogroup[name=\"goalRadio\"]"},
 		{ ref: "AmputeeType",					selector: "AddDate form panel[name=\"amputationLocation\"]"}
@@ -169,6 +179,53 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
+	resetPatientInfoPanel: function(thisCtl) {
+		var PatientInformationPanel = thisCtl.getPatientInfo();
+		PatientInformationPanel.collapse();
+	},
+
+	resetTRSPanel: function(thisCtl, numTemplates) {
+		var TRSPanel = thisCtl.getPatientTemplates(),
+			buf =  "Treatment Regimens & Summaries";
+		if (numTemplates && "" !== numTemplates) {
+			buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + numTemplates + ")</span>";
+		}
+		TRSPanel.collapse();
+		TRSPanel.setTitle(buf);
+	},
+
+	resetVitalsPanel: function(thisCtl, numVitals) {
+		var VitalsPanel = thisCtl.getPatientHistory(),
+			buf =  "Patient Vitals ";
+		if (numVitals && "" !== numVitals) {
+			buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + numVitals + ")</span>";
+		}
+		VitalsPanel.collapse();
+		VitalsPanel.setTitle(buf);
+	},
+
+	resetLabInfoPanelPanel: function(thisCtl, numLabResults) {
+		var LabInfoPanel = thisCtl.getLaboratoryInfo(),
+			buf =  "Laboratory Information ";
+		if (numLabResults && "" !== numLabResults) {
+			buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + numLabResults + ")</span>";
+		}
+		LabInfoPanel.collapse();
+		LabInfoPanel.setTitle(buf);
+	},
+
+	resetCTOSPanel: function(thisCtl) {
+		var CTOSPanel = thisCtl.getCTOS();
+		CTOSPanel.setActiveTab(0);
+	},
+
+	resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
+		this.resetPatientInfoPanel(thisCtl);
+		this.resetTRSPanel(thisCtl, numTemplates);
+		this.resetVitalsPanel(thisCtl, numVitals);
+		this.resetLabInfoPanelPanel(thisCtl, numLabResults);
+		this.resetCTOSPanel(thisCtl);
+	},
 
 
     AmputeeSelected: function (rbtn, newValue, oldValue, eOpts ) {
@@ -844,7 +901,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             this.afterFindTemplate(templateRecord,thisCtl,template);
         }
     },
-    afterFindTemplate : function(templateRecord,controller,template){
+	afterFindTemplate : function(templateRecord,controller,template){
         var templateRecords = [];
 
         this.collapseCombo(template,null);
@@ -1285,39 +1342,39 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 		var Patient_ID = btn.getAttribute("pid");
 		var Patient_Name = btn.getAttribute("pn");
 
-        var pModel = this.getModel("PatientInfo");
-        var pModelParam = btn.getAttribute("pid");
+		var pModel = this.getModel("PatientInfo");
+		var pModelParam = btn.getAttribute("pid");
 		this.application.loadMask("Loading Patient Records");
 
-// wccConsoleLog("ConfirmPatientClick- " + pModelParam);
 		pModel.load(pModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
-// wccConsoleLog("ConfirmPatientClick - PatientInfo Model - Load Complete");
-		var recs = [];
+				var recs = [];
 				recs[0] = { data : patientInfo.data };
 
-		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		var NewPlanTab = thisCtl.getNewPlanTab();
-		var PatientSelection = thisCtl.getPatientSelectionPanel();
-		PatientSelection.collapse();
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				var NewPlanTab = thisCtl.getNewPlanTab();
+				var PatientSelection = thisCtl.getPatientSelectionPanel();
+				PatientSelection.collapse();
 
-		var ConfirmPatient = thisCtl.getConfirmPatient();
-		ConfirmPatient.hide();
+				this.resetPanels(thisCtl, "", "", "");
 
-		this.PatientSelected(null, recs, null);
+				var ConfirmPatient = thisCtl.getConfirmPatient();
+				ConfirmPatient.hide();
 
-		// Attach event handler to the "Update" and "Show" MDWS Data buttons (styled to look like links) in "view\NewPlan\PatientInfo.js"
-//		{ xtype : "container", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from MDWS" },
-//		{ xtype : "container", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
+				this.PatientSelected(null, recs, null);
 
-		var Btns = Ext.ComponentQuery.query("NewPlanTab PatientInfo")[0].el.select("button.anchor");
-		Btns.on("click", this.handleShowUpdateMDWSClickEvent, this);
-		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].show();
-		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].hide();
-		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
-	},
-           failure : function (record, operation) {
+				// Attach event handler to the "Update" and "Show" MDWS Data buttons (styled to look like links) in "view\NewPlan\PatientInfo.js"
+		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from MDWS" },
+		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
+
+				var Btns = Ext.ComponentQuery.query("NewPlanTab PatientInfo")[0].el.select("button.anchor");
+				Btns.on("click", this.handleShowUpdateMDWSClickEvent, this);
+				Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].show();
+				Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].hide();
+				Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
+			},
+			failure : function (record, operation) {
 				this.application.unMask();
 				// Ext.MessageBox.alert('MDWS Error', 'Patient Info failed to load properly from MDWS.<br />' + operation.error);
 				// debugger;		// check message value of record/operation
@@ -1937,7 +1994,8 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 
 				// Render # of templates for initial display of the panel - MWB - 11/11/2013
 		patientTemplates.update( TemplateInfo );
-		patientTemplates.setTitle("Treatment Regimens & Summaries <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+//		patientTemplates.setTitle("Treatment Regimens & Summaries <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+		this.resetTRSPanel(thisCtl, tmp);
 
 		return patientTemplates;
 	},
@@ -1978,7 +2036,8 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				tmp += (1 === len) ? "" : "s";
 				}
 			}
-			PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+//			PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			this.resetVitalsPanel(thisCtl, tmp);
 
 			// MWB - 6/27/2012 - Handle the OnClick Event for the BSA Button in the Vital Signs table
 			dspVSHTemplateData = this.getVitalSigns();
@@ -2047,7 +2106,8 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				tmp += (1 === len) ? "" : "s";
 				}
 			}
-			LaboratoryInfo.setTitle("Laboratory Information<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			// LaboratoryInfo.setTitle("Laboratory Information<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			this.resetLabInfoPanelPanel(thisCtl, tmp);
 
 
 				// History (e.g. Vitals)
@@ -2064,7 +2124,8 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				tmp += (1 === len) ? "" : "s";
 				}
 			}
-			PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			// PatientHistory.setTitle("Patient Vitals <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
+			this.resetVitalsPanel(thisCtl, tmp);
 
 			// MWB - 6/27/2012 - Handle the OnClick Event for the BSA Button in the Vital Signs table
 			dspVSHTemplateData = this.getVitalSigns();
