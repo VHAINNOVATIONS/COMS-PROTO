@@ -72,10 +72,10 @@ class NursingDocController extends Controller {
             }
 
             $this->NursingDoc->endTransaction();
-                       
+
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = 1;
-            $jsonRecord['records'] = array('Treatment_ID' => $this->NursingDoc->getTreatmentId());
+            $jsonRecord['records'] = array_merge(array('Treatment_ID' => $this->NursingDoc->getTreatmentId()), get_object_vars($form_data));
             $this->set('jsonRecord', $jsonRecord);
         
         } else {
