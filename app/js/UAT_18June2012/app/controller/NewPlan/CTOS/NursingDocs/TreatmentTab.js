@@ -88,6 +88,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				record.set("Treatment_User", "In Process...");
 					// Prompt user and issue AJAX call to verify their credentials and save this record if credentials verified.
 				var EditRecordWin = Ext.widget("Authenticate");
+				var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
+				initialField.focus(true, true);
 			}
 		}
 	},
