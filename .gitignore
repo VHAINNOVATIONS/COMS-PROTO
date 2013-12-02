@@ -1,6 +1,10 @@
 GIT_COMMAND_LOG.log 
-build\* 
+*\*.bak
 application\*
 app\SSHDebug\*
-*\*.bak
+app\dbitcon.php
+aspnet_client\*
+build\* 
+framework\config\* 
+web.xml
  
