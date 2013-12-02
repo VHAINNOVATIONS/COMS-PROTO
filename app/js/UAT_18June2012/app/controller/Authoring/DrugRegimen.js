@@ -5,7 +5,7 @@ Ext.apply(Ext.data.validations, {
         var values = form.getValues();
         var route = values.Route;
 
-        if ("IVPB" == route || "IV" == route || "IVP" == route) {
+        if ("IVPB" == route || "IV" == route) {
             if ('' == value) {
                 return false;
             }
@@ -19,7 +19,7 @@ Ext.apply(Ext.data.validations, {
         var values = form.getValues();
         var route = values.Route;
 
-        if ("IVPB" == route || "IV" == route || "IVP" == route) {
+        if ("IVPB" == route || "IV" == route) {
             if ('' == value) {
                 return false;
             }
@@ -33,7 +33,7 @@ Ext.apply(Ext.data.validations, {
         var values = form.getValues();
         var route = values.Route;
 
-        if ("IVPB" == route || "IV" == route || "IVP" == route) {
+        if ("IVPB" == route || "IV" == route) {
             if ('' == value) {
                 return false;
             }
@@ -47,7 +47,7 @@ Ext.apply(Ext.data.validations, {
         var values = form.getValues();
         var route = values.Route;
 
-        if ("IVPB" == route || "IV" == route || "IVP" == route) {
+        if ("IVPB" == route || "IV" == route) {
             if ('' == value) {
                 return false;
             }
@@ -226,23 +226,30 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
             route = combo.getValue();
         }
 
-        if (null != route && '' != route) {
-            if ("IVPB" == route || "IV" == route || "IVP" == route) {
-                this.getFluidInfo().show();
-                this.getDoseSpacer().hide();
-                this.getDrugRegimenAdminTime().show();
-                this.getStore('LookupStore').load({
-                    params: {
-                        URL: Ext.URLs.Lookups,
-                        id: '/FluidType'
-                    }
-                });
-            } else {
-                this.getDoseSpacer().show();
-                this.getDrugRegimenAdminTime().hide();
-                this.getFluidInfo().hide();
-            }
-        }
+		if (null != route && '' != route) {
+			if ("IVPB" == route || "IV" == route) {
+				this.getFluidInfo().show();
+				this.getDoseSpacer().hide();
+				this.getDrugRegimenAdminTime().show();
+				this.getStore('LookupStore').load({
+					params: {
+						URL: Ext.URLs.Lookups,
+						id: '/FluidType'
+					}
+				});
+			} 
+			else if("IVP" === route){
+				this.getDrugRegimenAdminTime().show();
+			}
+			else {
+				this.getDoseSpacer().show();
+				this.getDrugRegimenAdminTime().hide();
+				this.getFluidInfo().hide();
+			}
+		}
+
+
+
     },
 
     SaveSequence: function (button) {

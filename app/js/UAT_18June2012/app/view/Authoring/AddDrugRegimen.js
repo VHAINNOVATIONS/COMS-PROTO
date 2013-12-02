@@ -99,7 +99,7 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 					{
 						'xtype' : 'textfield',
 						'fieldLabel' : 'Administration Time <em>*</em>',
-						'width' : 210,
+						'width' : 220,
 						'hidden' : true,
 						'labelWidth' : 130,
 						'allowBlank' : false,

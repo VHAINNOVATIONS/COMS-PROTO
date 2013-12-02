@@ -91,7 +91,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route1 = values.Infusion1;
 
-				if("IVPB" === route1 || "IV" === route1 || "IVP" === route1){
+				if("IVPB" === route1 || "IV" === route1){
 					if('' === value){
 						return false;
 					}
@@ -108,7 +108,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route2 = values.Infusion2;
 
-				if("IVPB" === route2 || "IV" === route2 || "IVP" === route2){
+				if("IVPB" === route2 || "IV" === route2){
 					if('' === value){
 						return false;
 					}
@@ -126,7 +126,7 @@ Ext.apply(Ext.data.validations,{
 				var route1 = values.Infusion1;
 				var route2 = values.Infusion2;
 
-				if("IVPB" === route1 || "IV" === route1 || "IVP" === route1){
+				if("IVPB" === route1 || "IV" === route1){
 					if('' === value){
 						return false;
 					}
@@ -141,7 +141,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route1 = values.Infusion1;
 
-				if("IVPB" === route1 || "IV" === route1 || "IVP" === route1){
+				if("IVPB" === route1 || "IV" === route1){
 					if('' === value){
 						return false;
 					}
@@ -157,7 +157,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route2 = values.Infusion2;
 
-				if("IVPB" === route2 || "IV" === route2 || "IVP" === route2){
+				if("IVPB" === route2 || "IV" === route2){
 					if('' === value){
 						return false;
 					}
@@ -173,7 +173,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route1 = values.Infusion1;
 
-				if("IVPB" === route1 || "IV" === route1 || "IVP" === route1){
+				if("IVPB" === route1 || "IV" === route1){
 					if('' === value){
 						return false;
 					}
@@ -189,7 +189,7 @@ Ext.apply(Ext.data.validations,{
 				var values = hydrationForm.getValues();
 				var route2 = values.Infusion2;
 
-				if("IVPB" === route2 || "IV" === route2 || "IVP" === route2){
+				if("IVPB" === route2 || "IV" === route2){
 					if('' === value){
 						return false;
 					}
@@ -442,15 +442,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		}
 
 		if(null !== route && '' !== route){
-			if("IVPB" === route || "IV" === route || "IVP" === route){
+			if("IVPB" === route || "IV" === route){
 				if('Infusion1' === combo.getName()){
 					this.getFluidInfo().show();
 				}
-				/**
-				else if('Infusion2' === combo.getName()){
-					this.getFluidInfo1().show();
-				}
-				**/
 				this.getDose1Spacer().hide();
 				this.getHydrationAdminTime().show();
 				this.getStore('LookupStore').load({
@@ -459,24 +454,16 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 						id  : '/FluidType'
 					}
 				});
-
+			}
+			else if("IVP" === route){
+				this.getHydrationAdminTime().show();
 			}
 			else {
 				if('Infusion1' === combo.getName()){
 					this.getFluidInfo().hide();
-				}
-				/**
-				else if('Infusion2' === combo.getName()){
-					this.getFluidInfo1().hide();
-				}
-				**/
-
-				// if(this.getFluidInfo().isHidden() && this.getFluidInfo1().isHidden()){
-				if(this.getFluidInfo().isHidden()){
 					this.getDose1Spacer().show();
 					this.getHydrationAdminTime().hide();
 				}
-
 			}
 		}
 
