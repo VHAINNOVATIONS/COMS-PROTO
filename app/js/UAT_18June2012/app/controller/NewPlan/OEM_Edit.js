@@ -100,10 +100,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 	routeSelected : function(combo, records, eOpts) {
 		var thisCtl = this.getController("NewPlan.OEM_Edit");
-		var theData = combo.getValue();
+		var route = combo.getValue();
 		var theContainer = this.getFluidInfo();
 		var aContainer;
-		if ("IV" === theData.substr(0,2)) {
+        if ("IVPB" == route || "IV" == route) {
 			theContainer.show();
 		}
 		else {
