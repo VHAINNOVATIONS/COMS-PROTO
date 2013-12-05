@@ -4,8 +4,8 @@
 
 // MWB - 12/2/2011 - Defines which environment to use
 // define('Local', true);
-define('DBITPro_Dev', true);
-// define('MWBarlow', true );
+// define('DBITPro_Dev', true);
+define('MWBarlow', true );
 
 define ('DEVELOPMENT_ENVIRONMENT',true);
 
