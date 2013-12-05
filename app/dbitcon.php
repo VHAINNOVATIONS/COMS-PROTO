@@ -1,7 +1,14 @@
 <?php
 
-	$serverName = "DBITDATA\DBIT";
-	$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_VA_TEST");
+	$dbConfigFilePath = 'config_Constants.php';
+	if (file_exists($dbConfigFilePath)) {
+		require_once $dbConfigFilePath;
+	}
+	else {
+		echo "FATAL ERROR - Can't access DB Configuration file - $dbConfigFilePath <br>";
+	}
+
+	$serverName = $DB_HOST;
+	$connectionOptions = array("UID"=>DB_USER, "PWD"=>DB_PASSWORD, "Database"=>DB_NAME);
 	$conn =  sqlsrv_connect( $serverName, $connectionOptions);
-	
 ?>
