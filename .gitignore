@@ -3,6 +3,7 @@ GIT_COMMAND_LOG.log
 *.db
 application\*
 app\SSHDebug\*
+app\config_Constants.php
 aspnet_client\*
 build\* 
 framework\config\* 

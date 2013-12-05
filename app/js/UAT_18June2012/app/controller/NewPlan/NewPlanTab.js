@@ -367,7 +367,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             success: function (data) {
                 wccConsoleLog("Saved Template " );
 					Ext.MessageBox.hide();
-					// Ext.MessageBox.alert('Success', 'Template applied to Patient ');
+
+					var thisCtl = this.getController("NewPlan.NewPlanTab");
+					var PatientSelection = thisCtl.getPatientSelectionPanel();
+					PatientSelection.collapse();
+					this.resetPanels(thisCtl, "", "", "");
 
 					/**********
 					 *	data.data = {
@@ -386,6 +390,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					 *	}
 					 ***********/
 					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientId, data.data.id);
+					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
             },
             failure : function(record, op) {
 
@@ -973,10 +978,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
         if(this.getCTOSDataDsp().hidden==false){
             this.getCTOSDataDsp().hide();
-			if ("1" === SessionTemplateAuthoring) {
-            this.getApplyTemplateBtn().hide();
-            this.getEditTemplateBtn().hide();
-			}
+            if ("1" === SessionTemplateAuthoring) {
+                this.getApplyTemplateBtn().hide();
+                this.getEditTemplateBtn().hide();
+            }
             this.getDiseaseAndStage().hide();
             this.getResetButton().hide();
             this.getDisease().setValue('');
@@ -1056,140 +1061,45 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	// Called to complete the "TemplateApplied" process. Called from the success event of the patientTemplate.save() AJAX call in the "ApplyTemplate()" function above.
 	PatientModelLoadSQLPostTemplateApplied : function( PatientGUID, TreatmentID ) {
-        var pModel = this.getModel("PatientInfo");
-        var pModelParam = PatientGUID;
+		var pModel = this.getModel("PatientInfo");
+		var pModelParam = PatientGUID;
 		this.application.PatientID = PatientGUID;	// Not yet used... MWB - 5/25/2012
 		this.application.TreatmentID = TreatmentID;
 		this.application.PAT_ID = TreatmentID;		// PAT_ID and TreatmentID are the same thing, just set differently in different places.
 
-        pModel.load(pModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
-
-// wccConsoleLog("PatientModelLoadSQLPostTemplateApplied - Load Complete - Refreshing Patient Info Table...");
-// debugger;
-				// duplicate of code in the ConfirmPatientClick event handler...
-//				var recs = [];
-//				recs[0] = { data : patientInfo.data };
-//				this.PatientSelected(null, recs, null);
-
-
-
-//		this.application.Patient = patientInfo.data;
-
-this.application.Patient.Amputations = patientInfo.data.Amputations;
-this.application.Patient.BSA = patientInfo.data.BSA;
-this.application.Patient.BSAFormula = patientInfo.data.BSAFormula;		// This should really be the string of the formula for calculating the BSA
-this.application.Patient.BSA_Method = patientInfo.data.BSAFormula;		// but the Framework returns the name of the method (e.g. DuBois) as the BSAFormula
-this.application.Patient.BSA_Weight = patientInfo.data.BSA_Weight;
-this.application.Patient.TemplateDescription = patientInfo.data.TemplateDescription;
-this.application.Patient.TemplateID = patientInfo.data.TemplateID;
-this.application.Patient.TemplateName = patientInfo.data.TemplateName;
-this.application.Patient.TreatmentEnd = patientInfo.data.TreatmentEnd;
-this.application.Patient.TreatmentStart = patientInfo.data.TreatmentStart;
-this.application.Patient.TreatmentStatus = patientInfo.data.TreatmentStatus;
-this.application.Patient.TreatmentID = this.application.TreatmentID;
-this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
-
-
-
-
-
-
-
-
-// Try this...
-		this.application.loadMask("Loading Patient Records");
-		this.application.DataLoadCount = 4;		// There are 6 modules to be loaded...
-		this.loadMDWSData();					// module 1
-		this.loadTemplates("Templates");					// module 5
-		this.loadOrderRecords();				// module 6
-		this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
-
-
-
-
-
-//		this.application.Patient = patientInfo.data;
-/**********
-		// Get a handle to the frameset itself
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var fs = thisCtl.getPatientInfo();
-
-        // Update the legend (via the setTitle method) of the Frameset and expand it
-        fs.setTitle("<h2>Patient Information for - " + this.application.Patient.name + "</h2>");
-        fs.show();
-		fs.expand();
-
-        // Display the selected patient's info in the table via it's template
-		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].show();
-		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
-
-			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
-		var piTable = thisCtl.getPatientInfoTable();
-        piTable.update(this.application.Patient );
-		piTable.collapse();
-
-		var piTable1 = thisCtl.getPatientInfoTableInformation();
-        piTable1.update(this.application.Patient );
-
-		var CTOSData = thisCtl.getCTOSDataDsp();
-		CTOSData.update("");
-		CTOSData.hide();
-		this.getApplyTemplateBtn().hide();
-		this.getEditTemplateBtn().hide();
-
-*****************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            },
-            failure : function (record, operation) {
+		pModel.load(pModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
+
+				this.application.Patient.Amputations = patientInfo.data.Amputations;
+				this.application.Patient.BSA = patientInfo.data.BSA;
+				this.application.Patient.BSAFormula = patientInfo.data.BSAFormula;		// This should really be the string of the formula for calculating the BSA
+				this.application.Patient.BSA_Method = patientInfo.data.BSAFormula;		// but the Framework returns the name of the method (e.g. DuBois) as the BSAFormula
+				this.application.Patient.BSA_Weight = patientInfo.data.BSA_Weight;
+				this.application.Patient.TemplateDescription = patientInfo.data.TemplateDescription;
+				this.application.Patient.TemplateID = patientInfo.data.TemplateID;
+				this.application.Patient.TemplateName = patientInfo.data.TemplateName;
+				this.application.Patient.TreatmentEnd = patientInfo.data.TreatmentEnd;
+				this.application.Patient.TreatmentStart = patientInfo.data.TreatmentStart;
+				this.application.Patient.TreatmentStatus = patientInfo.data.TreatmentStatus;
+				this.application.Patient.TreatmentID = this.application.TreatmentID;
+				this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
+
+				this.application.loadMask("Loading Patient Records");
+				this.application.DataLoadCount = 4;		// There are 6 modules to be loaded...
+				this.loadMDWSData();					// module 1
+				this.loadTemplates("Templates");					// module 5
+				this.loadOrderRecords();				// module 6
+				this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+
+				var theRealID = this.application.Patient.id;
+				this.LoadAllData4PatientByMDWSGUID( theRealID );
+			},
+			failure : function (record, operation) {
 				this.application.unMask();
-	            // Ext.MessageBox.alert('MDWS Error', 'Patient Info failed to load properly from MDWS.<br />' + operation.error);
-				// debugger;		// check message value of record/operation
-				// Unknown MDWS Error; No further details to report
-                wccConsoleLog("Patient Info failed to load properly from MDWS");
-            }
-        });
+				wccConsoleLog("Patient Info failed to load properly from MDWS");
+			}
+		});
 	},
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -1338,15 +1248,16 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 		}
 	},
 
-	ConfirmPatientClick : function(evt, btn) {
-		var Patient_ID = btn.getAttribute("pid");
-		var Patient_Name = btn.getAttribute("pn");
+
+	LoadAllData4PatientByMDWSGUID : function(patientMDWSGUID) {
+
+console.log("Loading Patient Data for ");
+console.log("Patient GUID - " + patientMDWSGUID );
 
 		var pModel = this.getModel("PatientInfo");
-		var pModelParam = btn.getAttribute("pid");
 		this.application.loadMask("Loading Patient Records");
 
-		pModel.load(pModelParam, {
+		pModel.load(patientMDWSGUID, {
 			scope : this,
 			success : function( patientInfo, response ) {
 				var recs = [];
@@ -1381,6 +1292,11 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 				wccConsoleLog("Patient Info failed to load properly from MDWS");
 			}
 		});
+	},
+
+	ConfirmPatientClick : function(evt, btn) {
+		var patientMDWSGUID = btn.getAttribute("pid");
+		this.LoadAllData4PatientByMDWSGUID( patientMDWSGUID );
 	},
 
 	handleShowUpdateMDWSClickEvent : function( evt, btn ) {
@@ -1781,10 +1697,8 @@ this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 	//		When we change from a Combo Box to an Edit Field to enter Patient ID this should be the only place which needs to get changed.
 	//
     PatientSelected : function(combo, recs, eOpts) {
-        wccConsoleLog("NewPlanTab - Patient Selected has changed");
-
-
-        if(null === recs){		// MWB 10 Feb 2012 - If the recs come back as null then something's wrong, exit the function
+		wccConsoleLog("NewPlanTab - Patient Selected has changed or been refreshed");
+		if(null === recs){		// MWB 10 Feb 2012 - If the recs come back as null then something's wrong, exit the function
 			return;
 		}
 
