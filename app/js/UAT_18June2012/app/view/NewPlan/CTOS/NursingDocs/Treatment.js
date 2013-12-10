@@ -20,8 +20,13 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 		})
 	],
 
+
+
 	initComponent: function() {
 		wccConsoleLog("Treatment Meds Grid - Initialization");
+		var startTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "startTimeEditor", format : "g:i" });
+		var endTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "endTimeEditor", format : "g:i" });
+
 		this.columns = [
 		{ header : "", dataIndex : "typeOrder", hidden : true,
 	        renderer: function(value) {
@@ -52,16 +57,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 			} 
 		},
 		{ header : "Start Time", dataIndex : "StartTime", 
-			// renderer: Ext.util.Format.dateRenderer("h:i A"),
-			editor : {
-				xtype : "textfield", 
-			}
+			renderer: Ext.util.Format.dateRenderer("h:i A"),
+			editor : startTimeField
 		},
 		{ header : "End Time", dataIndex : "EndTime", 
-			// renderer: Ext.util.Format.dateRenderer("h:i A"),
-			editor : {
-				xtype : "textfield", 
-			}
+			renderer: Ext.util.Format.dateRenderer("h:i A"),
+			editor : endTimeField
 		},
 		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
 		{ header : "Signature", dataIndex : "Treatment_User", renderer: 
@@ -85,30 +86,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 //			}
 //		]}
 	];
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-		
-		
 		this.callParent(arguments);
 	}
 });

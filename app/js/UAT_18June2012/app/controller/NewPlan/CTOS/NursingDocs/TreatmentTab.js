@@ -48,11 +48,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 		this.control({
 			"NursingDocs_Treatment" : { afterrender : this.TabRendered },
-
 			"NursingDocs_Treatment_Meds" : { // Handles the Cell Edit (both start and end of edit cycle.
 				cellclick : this.AssignVerify2SignHandler6,
-				beforeedit : this.CellEdit,	// Start Cell Editing
-				edit : this.CellEditCommit,	// Cell Editing finished
+				beforeedit : this.beforeCellEdit,
 				scope : this
 			},
 			"NursingDocs_Treatment button[name=\"btnPreMed\"]" : { click : this.BtnClicked },
@@ -61,21 +59,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			"NursingDocs_Treatment button[name=\"btnPostMed\"]" : { click : this.BtnClicked },
 			"NursingDocs_Treatment button[name=\"btnHydration\"]" : { click : this.BtnClicked },
 
-            "Authenticate[title=\"Authenticate\"] button[action=\"save\"]": {
-                click: this.AuthenticateUser
-            },
+			"Authenticate[title=\"Authenticate\"] button[action=\"save\"]": {
+				click: this.AuthenticateUser
+			},
 			"NursingDocs_Treatment button[text=\"Treatment Complete\"]" : { click : this.TreatmentCompleteClicked }
-
-
 		});
 	},
-
 
 	TreatmentStore : null,
 	TreatmentRecords : [],
 	curTreatmentRecord : null,
-
-
 
 	AssignVerify2SignHandler6 : function(tableView, cellElement, cellIdx, record, rowElement, rowIndex, evt, opts) {		// 		<-- MWB - 7/4/2012 - Assignment is done as part of the renderer for the grid
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
@@ -98,10 +91,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	AuthenticateUser : function (button) {
 		this.SignRecordBtn = button;
 		button.hide();
-        this.application.loadMask("Authenticating digital signature");
+		this.application.loadMask("Authenticating digital signature");
 		var win = button.up('window');
-        var form = win.down('form');
-        var values = form.getValues();
+		var form = win.down('form');
+		var values = form.getValues();
 		var SignData = window.SessionUser + " - " + Ext.Date.format(new Date(), "m/d/Y - g:i a");
 
 		this.curTreatmentRecord.set("AccessCode", values.AccessCode);
@@ -149,40 +142,22 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		});
 	},
 
-	CellEditCommit : function (editor, eObj) {
-		var theRecord = eObj.record;
-		var theStore = eObj.grid.getStore();
-		var newValue = eObj.value;
-		var oldValue = eObj.originalValue;
-		var rowIndex = eObj.rowIdx;
-		var Cycle = eObj.record.get("CourseNum");
+	beforeCellEdit : function (plugin, eObj, beforeEdit) {
+		var StartTimeField = Ext.getCmp("startTimeEditor");
+		var EndTimeField = Ext.getCmp("endTimeEditor");
 
-		if (null === this.curTreatmentRecord) {
-			this.TreatmentStore = eObj.grid.getStore();
-			this.curTreatmentRecord = eObj.record;		// this.TreatmentStore.getAt(rowIndex);
-			this.curTreatmentRecord.set("TreatmentID", this.application.Patient.PAT_ID);
-			this.curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
-			this.curTreatmentRecord.set("rowIdx", rowIndex);
-		}
-
-		this.curTreatmentRecord.set(eObj.field + "_originalValue", eObj.originalValue);
-		this.curTreatmentRecord.set(eObj.field, eObj.value);
-		this.curTreatmentRecord.set("Cycle", Cycle);		// MWB - 6/17/2012 - Carry over from CourseNum from Orders data
-		return true;
-	},
-
-
-	CellEdit : function (plugin, eObj, beforeEdit) {
 		if ("" === eObj.record.get("Treatment_User")) {
+			var StartTimeFieldValue = eObj.record.get("StartTime");
+			if ("EndTime" === eObj.field && "" !== StartTimeFieldValue) {
+				EndTimeField.setMinValue(StartTimeFieldValue);
+			}
+			else {
+				EndTimeField.setMinValue("");
+				StartTimeField.setMinValue("");
+			}
 			return true;		// This record hasn't been signed so it is editable
 		}
 		return false;	// Can't edit record that's been signed.
-/****
-		if ("" !== eObj.record.get("StartTime")) {		// if we have a start time then this record has been edited and saved, so it can't be edited again
-			return false;
-		};
-		return true;
- ****/
 	},
 
 /**
@@ -215,14 +190,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					aRec = TreatmentHistoryRecords[i];
 					this.Record2Find = aRec;
 					MatchingRecord = treatmentStore.findBy(function (record, id) {
-
-wccConsoleLog("Admin Date - " + this.Record2Find.AdminDate + " : " + record.get("adminDate"));
-wccConsoleLog("Drug - " + this.Record2Find.Drug + " : " + record.get("drug"));
-wccConsoleLog("Type - " + this.Record2Find.Type + " : " + record.get("type"));
-
-							return this.Record2Find.AdminDate === record.get("adminDate") && 
-								this.Record2Find.Drug === record.get("drug") && 
-								this.Record2Find.Type === record.get("type");
+						return this.Record2Find.AdminDate === record.get("adminDate") && 
+							this.Record2Find.Drug === record.get("drug") && 
+							this.Record2Find.Type === record.get("type");
 						},
 						this
 					);
@@ -271,7 +241,7 @@ wccConsoleLog("Type - " + this.Record2Find.Type + " : " + record.get("type"));
 			,{property: "orderstatus", value: reDispensed}
 		]);
 
-        this.application.loadMask("Loading Treatment Information");
+		this.application.loadMask("Loading Treatment Information");
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){
@@ -327,7 +297,6 @@ wccConsoleLog("Type - " + this.Record2Find.Type + " : " + record.get("type"));
 		this.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
 		var ThisAdminDay = this.ThisAdminDay;
 		var theMeds, MedsLen, newMeds, i, aMed, Dose, Dose1, Dose2, am1, am2;
-
 
 		var tcBtns = Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Treatment Complete\"]");
 		if (ThisAdminDay) {

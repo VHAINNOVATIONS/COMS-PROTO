@@ -93,8 +93,8 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 
 
 		"<table border=\"1\" class=\"InformationTable\" style=\"border: thick solid blue; margin-top: 1em; margin-bottom: 1em;\">",
-			"<tr><th colspan=\"6\" style=\"text-align: left; border: none !important;\"><h2 style=\"text-align: left;\">Therapy</h2></th><tr>",
-			"<tr><th colspan=\"6\" style=\"text-align: left; border: none !important; font-weight: normal;\">Instructions: {RegimenInstruction}</th><tr>",
+			"<tr><th colspan=\"5\" style=\"text-align: left; border: none !important;\"><h2 style=\"text-align: left;\">Therapy</h2></th><tr>",
+			"<tr><th colspan=\"5\" style=\"text-align: left; border: none !important; font-weight: normal;\">Instructions: {RegimenInstruction}</th><tr>",
 
 			"<tr class=\"TemplateHeader\">",
 				"<th>Sequence #</th>",
@@ -114,7 +114,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				"</tr>",
 				"<tr>",
 					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{FluidVol}</td>",
-					"<th class=\"NoBorder\">Infusion Time: </th><td class=\"NoBorder\" colspan=\"2\">{InfusionTime}</td>",
+					"<th class=\"NoBorder\">Infusion Time: </th><td class=\"NoBorder\">{InfusionTime}</td>",
 				"</tr>",
 				"<tpl if=\"''!== Instructions\">",
 					"<tr><td colspan=\"5\">{Instructions}</td></tr>",
