@@ -5,6 +5,7 @@
 // MWB - 12/2/2011 - Defines which environment to use
 // define('Local', true);
 // define('DBITPro_Dev', true);
+// define('VASandbox', true );
 define('MWBarlow', true );
 
 define ('DEVELOPMENT_ENVIRONMENT',true);
@@ -43,4 +44,11 @@ else if (defined('KDean')) {
 	define('DB_SERVER', 'localhost:3306');
 	define('DB_USER', 'milo');
 	define('DB_PASSWORD', 'F00B@milo');
+}
+else if (defined('VASandbox')) {
+	define('DB_NAME', 'coms');
+	define('DB_TYPE', 'sqlsrv');
+	define('DB_SERVER', 'VAPHS355SQL');
+	define('DB_USER', 'coms_db_user');
+	define('DB_PASSWORD', 'COMSpass88');
 }

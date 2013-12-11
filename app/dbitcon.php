@@ -1,11 +1,11 @@
 <?php
 
-	$dbConfigFilePath = 'config_Constants.php';
+	$dbConfigFilePath = __DIR__ . DIRECTORY_SEPARATOR . 'config_Constants.php';
 	if (file_exists($dbConfigFilePath)) {
 		require_once $dbConfigFilePath;
 	}
 	else {
-		echo "FATAL ERROR - Can't access DB Configuration file - $dbConfigFilePath <br>";
+		echo 'FATAL ERROR - Can\'t access DB Configuration file - ' . $dbConfigFilePath;
 	}
 
 	$serverName = $DB_HOST;
