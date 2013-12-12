@@ -24,8 +24,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 
 	initComponent: function() {
 		wccConsoleLog("Treatment Meds Grid - Initialization");
-		var startTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "startTimeEditor", format : "g:i" });
-		var endTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "endTimeEditor", format : "g:i" });
+		var startTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "startTimeEditor", format : "g:i A" });
+		var endTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "endTimeEditor", format : "g:i A" });
 
 		this.columns = [
 		{ header : "", dataIndex : "typeOrder", hidden : true,

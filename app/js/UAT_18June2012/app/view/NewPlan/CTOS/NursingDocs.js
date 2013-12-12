@@ -23,7 +23,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.NursingDocs",
 	name : "Nursing Documentation Tabs",
-	title: "Nursing Documentation",
+	title: "Treatment Documentation",
 	padding : "10",
 	bodyCls : "Level1",
 bodyStyle: {
