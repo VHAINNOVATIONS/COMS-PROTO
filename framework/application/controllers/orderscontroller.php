@@ -178,10 +178,8 @@ class OrdersController extends Controller {
 						
 						//var_dump($orderRecord);
 
-                        //$orderStatus = $this->Orders->getOrderStatus($templateId,$drug,$PID,$Order_ID);
                         $orderStatus = $this->Orders->getOrderStatus($Order_ID);
 						//var_dump($orderStatus);
-						//$orderid = $this->Orders->getOrderStatus($templateId,$drug,$PID,$Order_ID);
 						$orderid = $this->Orders->getOrderStatus($Order_ID);
                         if(!empty($orderStatus) && count($orderStatus) > 0){
                             $orderRecord['orderstatus'] = $orderStatus[0]['orderStatus'];
