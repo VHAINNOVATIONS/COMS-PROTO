@@ -24,8 +24,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 
 	initComponent: function() {
 		wccConsoleLog("Treatment Meds Grid - Initialization");
-		var startTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "startTimeEditor", format : "g:i A" });
-		var endTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "endTimeEditor", format : "g:i A" });
+		var startTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "startTimeEditor", format : "h:i A" });
+		var endTimeField = new Ext.form.field.Time( { increment : 1, snapToIncrement : true, id : "endTimeEditor", format : "h:i A" });
 
 		this.columns = [
 		{ header : "", dataIndex : "typeOrder", hidden : true,
@@ -36,7 +36,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 					case 2:
 						return "Therapy";
 					case 3:
-						return "Post Therapy";			
+						return "Post Therapy";
 				}
 			}
 		},
@@ -57,11 +57,47 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 			} 
 		},
 		{ header : "Start Time", dataIndex : "StartTime", 
-			renderer: Ext.util.Format.dateRenderer("h:i A"),
+			renderer: function(v) {
+				if ("" !== v) {
+					var v1, v2, v3;
+					try {
+						v2 = Ext.Date.format(v, "h:i A");
+					}
+					catch (e) {
+						try {
+							v1 = Ext.Date.parse(v, "c");
+							v2 = Ext.Date.format(v1, "h:i A");
+						}
+						catch (e) {
+							wccConsoleLog("Error in time renderer");
+						}
+					}
+					return v2;
+				}
+				return v;
+			},
 			editor : startTimeField
 		},
 		{ header : "End Time", dataIndex : "EndTime", 
-			renderer: Ext.util.Format.dateRenderer("h:i A"),
+			renderer: function(v) {
+				if ("" !== v) {
+					var v1, v2, v3;
+					try {
+						v2 = Ext.Date.format(v, "h:i A");
+					}
+					catch (e) {
+						try {
+							v1 = Ext.Date.parse(v, "c");
+							v2 = Ext.Date.format(v1, "h:i A");
+						}
+						catch (e) {
+							wccConsoleLog("Error in time renderer");
+						}
+					}
+					return v2;
+				}
+				return v;
+			},
 			editor : endTimeField
 		},
 		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },

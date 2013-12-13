@@ -51,6 +51,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			"NursingDocs_Treatment_Meds" : { // Handles the Cell Edit (both start and end of edit cycle.
 				cellclick : this.AssignVerify2SignHandler6,
 				beforeedit : this.beforeCellEdit,
+				edit : this.afterCellEdit,
 				scope : this
 			},
 			"NursingDocs_Treatment button[name=\"btnPreMed\"]" : { click : this.BtnClicked },
@@ -158,6 +159,33 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			return true;		// This record hasn't been signed so it is editable
 		}
 		return false;	// Can't edit record that's been signed.
+	},
+
+	afterCellEdit : function (editor, eObj) {
+		var theRecord = eObj.record;
+		var theStore = eObj.grid.getStore();
+		var newValue = eObj.value;
+		var oldValue = eObj.originalValue;
+		var rowIndex = eObj.rowIdx;
+		var Cycle = eObj.record.get("CourseNum");
+
+		if (null === this.curTreatmentRecord) {
+			this.TreatmentStore = eObj.grid.getStore();
+			this.curTreatmentRecord = eObj.record;    // this.TreatmentStore.getAt(rowIndex);
+			this.curTreatmentRecord.set("TreatmentID", this.application.Patient.PAT_ID);
+			this.curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
+			this.curTreatmentRecord.set("rowIdx", rowIndex);
+		}
+  
+		if ("StartTime" === eObj.field || "EndTime" === eObj.field) {
+			var eObjValue1 = Ext.Date.format( eObj.value, "h:i A");
+			eObj.value = Ext.Date.parse(eObjValue1, "h:i A");
+		}
+
+		this.curTreatmentRecord.set(eObj.field + "_originalValue", eObj.originalValue);
+		this.curTreatmentRecord.set(eObj.field, eObj.value);
+		this.curTreatmentRecord.set("Cycle", Cycle);    // MWB - 6/17/2012 - Carry over from CourseNum from Orders data
+		return true;
 	},
 
 /**
