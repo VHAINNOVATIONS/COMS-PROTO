@@ -1251,8 +1251,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	LoadAllData4PatientByMDWSGUID : function(patientMDWSGUID) {
 
-console.log("Loading Patient Data for ");
-console.log("Patient GUID - " + patientMDWSGUID );
+// console.log("Loading Patient Data for ");
+// console.log("Patient GUID - " + patientMDWSGUID );
 
 		var pModel = this.getModel("PatientInfo");
 		this.application.loadMask("Loading Patient Records");
