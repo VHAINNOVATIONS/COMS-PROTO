@@ -47,9 +47,7 @@
 	    <ul style="text-align: right; font-size:small;">
 	    <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
 	    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
-<!--	    <li style="display: inline;"><button class="anchor" onclick="switchQueryMethod();">Switch</button> <span id="QueryType">MDWS Match Query in use</span></li> -->
-	    <li style="display: inline;"><button class="anchor" type="submit" name="logout"><b>Logout</b></button></li>
-		<!--<li style="display: inline;"><form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>"><input type="submit" name="logout" value="&nbsp;Logout&nbsp;" style="Border: none; background: none"  /></form></li>-->
+	    <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
 	    </ul>
 	</navigation>
 	</form>
@@ -110,6 +108,29 @@
 				if (el) {
 					el.innerHTML = msg2Use;
 				}
+			}
+		}
+
+		var LogoutCancelled = true;
+		function logoutConfirmed(btn) {
+			if ("yes" === btn) {
+				LogoutCancelled = false;
+				document.location.href="/logout.php";
+			}
+			else {
+				LogoutCancelled = true;
+			}
+		}
+		function logoutPrompt(e) {
+			Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', logoutConfirmed);
+		}
+
+		window.onbeforeunload = function(e) { // see: http://jsfiddle.net/zalun/yFuPr/
+			if (LogoutCancelled) {
+				e = e || window.event;
+				e.preventDefault = false;
+				e.cancelBubble = false;
+				e.returnValue = '';
 			}
 		}
 	</script>
