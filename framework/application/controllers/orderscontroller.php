@@ -22,7 +22,8 @@ class OrdersController extends Controller {
         return false;
     }
 
-   function Orders() {
+
+   function grabOrders() {
 
         $form_data = json_decode(file_get_contents('php://input'));
         $jsonRecord = array();
@@ -79,12 +80,11 @@ class OrdersController extends Controller {
             $patientModel = new Patient();
             $modOemRecords = array();
 
-            foreach ($patientTemplates as $patient) {
 
+            foreach ($patientTemplates as $patient) {
                 //$oemrecords = $patientModel->getTopLevelOEMRecords($patient['patientID'],$patient['templateID']);
                 $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays($patient['patientID'], $patient['templateID']);
 				
-				//var_dump($oemrecords);
 
                 if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
                     $jsonRecord['success'] = 'false';
@@ -146,7 +146,6 @@ class OrdersController extends Controller {
 					$typeOrder = 3;
 
                     $tmpOemRecord = $this->analyzeTherapys($postTherapyCount, $postTherapys, $type, $typeOrder, $patient, $oemrecord, $postTherapyDoseDetailsMap);
-
                     $modOemRecords = array_merge($modOemRecords, $tmpOemRecord);
 
                     $retVal = $patientController->Regimens($oemrecord['TemplateID']);
@@ -192,18 +191,18 @@ class OrdersController extends Controller {
                         array_push($finalOrders, $orderRecord);
 
                     }
-
-                    
-                    //$PostOemRecord = $this->Orders->setOrders($modOemRecords);
                 }
             }
 
             $jsonRecord['success'] = true;
             $jsonRecord['total'] = count($finalOrders);
             $jsonRecord['records'] = $finalOrders;
-
             $this->set('jsonRecord', $jsonRecord);
         }
+   }
+   
+   function Orders() {
+	   $this->grabOrders();
     }
 
     private function analyzeTherapys($therapyCount, $therapys, $type, $typeOrder, $patient, $oemrecord, $therapyDoseDetailsMap = null) {

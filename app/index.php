@@ -8,9 +8,15 @@ include "session.php";
 //https://xxx.dbitpro.com/Session/SessionVars
 //https://xxx.dbitpro.com/Session/SessionGlobalVars
 
-require_once '../PhpConsole/PhpConsole.php';
-PhpConsole::start(true, true, dirname(__FILE__));
+//require_once '../PhpConsole/PhpConsole.php';
+//PhpConsole::start(true, true, dirname(__FILE__));
 // debug('debug message');
+
+
+require_once "/ChromePhp.php";
+ChromePhp::log("  ");
+ChromePhp::log("Start of Application");
+
 
 	if (empty($_POST)) {
 	//	debug('No POST data available');

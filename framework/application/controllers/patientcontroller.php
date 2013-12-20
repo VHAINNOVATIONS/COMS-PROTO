@@ -1,5 +1,5 @@
 <?php
-
+require_once "/ChromePhp.php";
 /**
  * @property Patient $Patient
  *
@@ -109,7 +109,7 @@ class PatientController extends Controller
                     'Removed several columns from Patient History so the query has been removed.');
         } else {
             $this->set('history', null);
-            $this->set('frameworkErr', 'No Patient ID provided.');
+            $this->set('frameworkErr', 'No Patient ID provided. - 123');
         }
     }
 
@@ -118,8 +118,7 @@ class PatientController extends Controller
         if ($id != NULL) {
             $patientTemplate = $this->Patient->getPriorPatientTemplates($id);
             
-            if ($this->checkForErrors('Get Patient Template Failed. ', 
-                    $patientTemplate)) {
+            if ($this->checkForErrors('Get Patient Template Failed. ', $patientTemplate)) {
                 return;
             }
             
@@ -129,6 +128,84 @@ class PatientController extends Controller
             $this->set('frameworkErr', 'No Patient ID provided.');
         }
     }
+
+
+
+
+
+	function PrintOrders($id) {
+		$hasErrors = false;
+
+		if ($id != NULL) {
+			// Call the "selectByPatientId" function of the Patient model to retrieve all the basic Patient Info
+			$patientData = $this->Patient->selectByPatientId($id);
+			if ($this->checkForErrors('Get Patient Details Failed. ', $patientData)) {
+				$this->set('templatedata', null);
+				$hasErrors = true;
+				return;
+			}
+			$this->set('PatientInfo', $patientData[0]);
+			ChromePhp::log("PatientInfo");
+			$temp = json_encode($patientData);
+			ChromePhp::log($temp);
+
+
+
+			$patientTemplate = $this->Patient->getPriorPatientTemplates($id);
+			if ($this->checkForErrors('Get Patient Template Failed. ', $patientTemplate)) {
+				return;
+			}
+
+			$this->set('patientTemplate', $patientTemplate);
+			$this->set('frameworkErr', null);
+
+			ChromePhp::log("patientTemplate");
+			$temp = json_encode($patientTemplate);
+			ChromePhp::log($temp);
+
+
+
+
+			// Function is also used by the OEM controller function to retrieve all the current OEM Data
+			$this->genOEMData($id);
+/**
+			$temp = json_encode($oemMap);
+			ChromePhp::log("oemMap");
+			ChromePhp::log($temp);
+
+			$temp = json_encode($oemrecords);
+			ChromePhp::log("oemrecords");
+			ChromePhp::log($temp);
+**/
+			$PatientDetails = $this->Patient->getPatientDetailInfo($id);
+			if ($this->checkForErrors('Get Patient Details Failed. ', $PatientDetails)) {
+				$this->set('templatedata', null);
+				$hasErrors = true;
+				ChromePhp::log("Get Patient Details FAILED");
+				return;
+			}
+
+			if (!empty($PatientDetails[0])) {
+				$detail = $this->TreatmentStatus($PatientDetails[0]);
+				if ($detail["TreatmentStatus"] == 'Ended') {
+					$detail = null;
+				}
+				$patientDetailMap[$id] = $detail;
+			} 
+			else {
+				$patientDetailMap[$id] = $PatientDetails;
+			}
+			$this->set('PatientDetailMap', $patientDetailMap);
+			$temp = json_encode($patientDetailMap);
+			ChromePhp::log("PatientDetailMap");
+			ChromePhp::log($temp);
+		}
+		else {
+			$this->set('frameworkErr', 'No Patient ID provided.');
+		}
+	}
+
+
 
     /**
      * savePatientTemplate action
@@ -631,96 +708,93 @@ class PatientController extends Controller
         return $startDate->format('Y-m-d');
     }
 
+/**
+ * $id = Patient GUID
+ **/
+	private function genOEMData($id) {
+		$lookup = new LookUp();
+		$templateId = $this->Patient->getTemplateIdByPatientID($id);
+		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
+			$this->set('masterRecord', null);
+			ChromePhp::log("genOEMData() - Template ID not available for Patient.");
+			return;
+		}
+
+		$temp = json_encode($templateId);
+		ChromePhp::log("Template ID " . $temp);
+
+		if (0 == count($templateId)) {
+			$this->set('oemsaved', null);
+			$this->set('oemrecords', null);
+			$this->set('masterRecord', null);
+			$this->set('frameworkErr', null);
+			ChromePhp::log("No Records in Template");
+			return;
+		}
+
+		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
+		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
+			$this->set('masterRecord', null);
+			ChromePhp::log("Master Record not set");
+			return;
+		}
+		$this->set('masterRecord', $masterRecord);
+
+
+		$oemrecords = $this->Patient->getTopLevelOEMRecords($id, $templateId[0]['id']);
+		if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
+			$this->set('oemrecords', null);
+			return;
+		}
+		$this->set('oemrecords', $oemrecords);
+
+//		$temp = json_encode($oemrecords);
+//		ChromePhp::log("OEM Records (during generation) ");
+//		ChromePhp::log($temp);
+
+		$oemMap = array();
+		foreach ($oemrecords as $oemrecord) {
+			$oemDetails = array();
+			$retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
+				ChromePhp::log('Get Pre Therapy Failed. ');
+				$this->set('oemrecords', null);
+				return;
+			}
+			$oemDetails['PreTherapy'] = $this->get('prehydrations');
+			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
+			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
+				ChromePhp::log('Get Post Therapy Failed. ');
+				$this->set('oemrecords', null);
+				return;
+			}
+			$oemDetails['PostTherapy'] = $this->get('posthydrations');
+			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
+			$retVal = $this->Regimens($oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
+				ChromePhp::log('Get Therapy Failed. ');
+				$this->set('oemrecords', null);
+				return;
+			}
+			$oemDetails['Therapy'] = $this->get('regimens');
+			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
+		}
+
+		$this->set('oemMap', $oemMap);
+		$this->set('oemsaved', null);
+		$this->set('frameworkErr', null);
+	}
+
+
     function OEM($id = null)
     {
         $form_data = json_decode(file_get_contents('php://input'));
         
         if ($id != NULL) {
-            
-            $lookup = new LookUp();
-            
-            $templateId = $this->Patient->getTemplateIdByPatientID($id);
-            
-            if ($this->checkForErrors(
-                    'Template ID not available in Patient_Assigned_Templates. ', 
-                    $templateId)) {
-                $this->set('masterRecord', null);
-                return;
-            }
-            
-            if (0 == count($templateId)) {
-                $this->set('oemsaved', null);
-                $this->set('oemrecords', null);
-                $this->set('masterRecord', null);
-                $this->set('frameworkErr', null);
-                return;
-            }
-            
-            $masterRecord = $this->Patient->getTopLevelPatientTemplateDataById(
-                    $id, $templateId[0]['id']);
-            
-            if ($this->checkForErrors('Get Top Level Template Data Failed. ', 
-                    $masterRecord)) {
-                $this->set('masterRecord', null);
-                return;
-            }
-            
-            $this->set('masterRecord', $masterRecord);
-            
-            $oemrecords = $this->Patient->getTopLevelOEMRecords($id, 
-                    $templateId[0]['id']);
-            
-            if ($this->checkForErrors('Get Top Level OEM Data Failed. ', 
-                    $oemrecords)) {
-                $this->set('oemrecords', null);
-                return;
-            }
-            
-            $this->set('oemrecords', $oemrecords);
-            
-            $oemMap = array();
-            
-            foreach ($oemrecords as $oemrecord) {
-                
-                $oemDetails = array();
-                
-                $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['PreTherapy'] = $this->get('prehydrations');
-                $oemDetails['PreTherapyInfusions'] = $this->get(
-                        'preorigInfusions');
-                
-                $retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['PostTherapy'] = $this->get('posthydrations');
-                $oemDetails['PostTherapyInfusions'] = $this->get(
-                        'postorigInfusions');
-                
-                $retVal = $this->Regimens($oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['Therapy'] = $this->get('regimens');
-                $oemMap[$oemrecord['TemplateID']] = $oemDetails;
-            }
-            
-            $this->set('oemMap', $oemMap);
-            $this->set('oemsaved', null);
-            $this->set('frameworkErr', null);
-        } else if ($form_data) {
+			$this->genOEMData($id);
+        }
+		else if ($form_data) {
             
             $this->Patient->beginTransaction();
             

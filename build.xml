@@ -7,7 +7,7 @@
 	As well as http://www.ibm.com/developerworks/library/x-antxsl/ for styling the build file
 	And https://raw.github.com/FrancisVarga/ant-git-macros for the GIT Macros
 	====================================================================== -->
-<project name="${git.projname}" default="build">
+<project name="${git.projname}" default="jshint">
     <description>
         Build file for the VA COMS project
     </description>
