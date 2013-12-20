@@ -57,7 +57,7 @@ echo "<tr>";
 echo "<td align='center'><img src='app/images/valogo.png'></td>";
 echo "<td align='left'>";
 echo "<table><tr><td align='right'><form name='input' action='index.php' method='post' accept-charset='ISO-8859-1'><br>
-Access Code:</td><td align='left'> <input type='text' name='AccessCode' /></td></tr><tr><td align='right'>Verify Code:</td><td align='left'> <input type='text' name='VerifyCode' /></td></tr><tr><td align='center' colspan=2>
+Access Code:</td><td align='left'> <input type='text' name='AccessCode' /></td></tr><tr><td align='right'>Verify Code:</td><td align='left'> <input type='password' name='VerifyCode' /></td></tr><tr><td align='center' colspan=2>
 <input type='submit' value='&nbsp;Submit&nbsp;' />&nbsp;&nbsp;<input type='reset' value='&nbsp;Clear&nbsp;' />
 </form></tr></table>";
 echo "</td></tr>";
