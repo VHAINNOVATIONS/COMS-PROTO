@@ -25,7 +25,8 @@ Execute 'ant commit' Performs a commit of all changed files
 Execute 'ant commit-build' Add changed files to commit process and push to remote repository Also launches Jenkins CI Tasks
 Execute 'ant Unit-Tests' Runs all unit tests
 Execute 'ant Code-Sniffer' Run Code Sniffer Syntax Checking Tools
-Execute 'ant Build-Dev' Builds the development environment from the Jenkins CI Server</echo>
+Execute 'ant Build-Dev' Builds the development environment from the Jenkins CI Server
+Execute 'ant jshint' checks the JavaScript files against JS-Lint</echo>
 	</target>
 
 
@@ -241,5 +242,19 @@ Execute 'ant Build-Dev' Builds the development environment from the Jenkins CI S
 			<arg line="-process app\js\UAT_18June2012\app\model\HydrationDrug.js >> ${basedir}\build\logs\JSLint.log" />
 		</exec>
 	</target>
+
+
+<!-- Define the task -->
+<taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" 
+    classpath="ant-jshint-0.3.6-deps.jar" />
+
+<target name="jshint">
+
+  <!-- Lint the code -->
+  <jshint dir="${basedir}/app/js" globalsFile="jshint_globals.properties" optionsFile="jshint_options.properties">
+    <include name="**/*.js" />
+    <report type="plain" destFile="${basedir}\build\logs\jshint-report.txt"/>
+  </jshint>
+</target>
 
 </project>
