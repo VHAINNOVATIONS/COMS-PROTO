@@ -133,25 +133,33 @@ class PatientController extends Controller
 
 
 
-	function PrintOrders($id) {
+	function PrintOrders($patientID) {
 		$hasErrors = false;
 
-		if ($id != NULL) {
+		if ($patientID != NULL) {
 			// Call the "selectByPatientId" function of the Patient model to retrieve all the basic Patient Info
-			$patientData = $this->Patient->selectByPatientId($id);
+			$patientData = $this->Patient->selectByPatientId($patientID);
 			if ($this->checkForErrors('Get Patient Details Failed. ', $patientData)) {
 				$this->set('templatedata', null);
 				$hasErrors = true;
 				return;
 			}
 			$this->set('PatientInfo', $patientData[0]);
-			ChromePhp::log("PatientInfo");
-			$temp = json_encode($patientData);
-			ChromePhp::log($temp);
+//			$temp = json_encode($patientData);
+//			ChromePhp::log("PatientInfo - \n$temp\n\n");
 
 
 
-			$patientTemplate = $this->Patient->getPriorPatientTemplates($id);
+			$patientAllergies = $this->Allergies($patientID);
+			if ($this->checkForErrors('Get Patient Allergies Failed. ', $patientAllergies)) {
+				return;
+			}
+
+			$this->set('patientAllergies', $patientAllergies);
+			$this->set('frameworkErr', null);
+
+
+			$patientTemplate = $this->Patient->getPriorPatientTemplates($patientID);
 			if ($this->checkForErrors('Get Patient Template Failed. ', $patientTemplate)) {
 				return;
 			}
@@ -159,29 +167,20 @@ class PatientController extends Controller
 			$this->set('patientTemplate', $patientTemplate);
 			$this->set('frameworkErr', null);
 
-			ChromePhp::log("patientTemplate");
-			$temp = json_encode($patientTemplate);
-			ChromePhp::log($temp);
+//			$temp = json_encode($patientTemplate);
+//			ChromePhp::log("patientTemplate - \n$temp\n\n");
+
 
 
 
 
 			// Function is also used by the OEM controller function to retrieve all the current OEM Data
-			$this->genOEMData($id);
-/**
-			$temp = json_encode($oemMap);
-			ChromePhp::log("oemMap");
-			ChromePhp::log($temp);
-
-			$temp = json_encode($oemrecords);
-			ChromePhp::log("oemrecords");
-			ChromePhp::log($temp);
-**/
-			$PatientDetails = $this->Patient->getPatientDetailInfo($id);
+			$this->genOEMData($patientID);
+			$PatientDetails = $this->Patient->getPatientDetailInfo($patientID);
 			if ($this->checkForErrors('Get Patient Details Failed. ', $PatientDetails)) {
 				$this->set('templatedata', null);
 				$hasErrors = true;
-				ChromePhp::log("Get Patient Details FAILED");
+				ChromePhp::error("Get Patient Details FAILED");
 				return;
 			}
 
@@ -190,15 +189,31 @@ class PatientController extends Controller
 				if ($detail["TreatmentStatus"] == 'Ended') {
 					$detail = null;
 				}
-				$patientDetailMap[$id] = $detail;
+				$patientDetailMap[$patientID] = $detail;
 			} 
 			else {
-				$patientDetailMap[$id] = $PatientDetails;
+				$patientDetailMap[$patientID] = $PatientDetails;
 			}
 			$this->set('PatientDetailMap', $patientDetailMap);
-			$temp = json_encode($patientDetailMap);
-			ChromePhp::log("PatientDetailMap");
-			ChromePhp::log($temp);
+			// $temp = json_encode($patientDetailMap);
+			// ChromePhp::log("PatientDetailMap - \n$temp\n\n");
+
+
+
+
+/**
+			$lookup = new LookUp();
+			$Disease = $lookup->selectByNameAndDesc('DiseaseType', $this->masterRecord[0]['Disease']);
+			if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
+				ChromePhp::error("Get Disease Info Failed\n");
+				$this->set('templatedata', null);
+				return;
+			}
+			$this->masterRecord[0]['DiseaseRecord'] = $Disease;
+			// $temp = json_encode($Disease);
+			// ChromePhp::log("Disease Info  - \n$temp\n\n");
+**/
+
 		}
 		else {
 			$this->set('frameworkErr', 'No Patient ID provided.');
@@ -298,10 +313,8 @@ class PatientController extends Controller
         foreach ($patients as $patient) {
             if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
                 $lookup = new LookUp();
-                $amputations = $lookup->getLookupDescByNameAndType(
-                        $patient['ID'], '30');
-                if ($this->checkForErrors('Get Patient Amputations Failed. ', 
-                        $amputations)) {
+                $amputations = $lookup->getLookupDescByNameAndType( $patient['ID'], '30');
+                if ($this->checkForErrors('Get Patient Amputations Failed. ',  $amputations)) {
                     $this->set('templatedata', null);
                     return;
                 }
@@ -716,28 +729,38 @@ class PatientController extends Controller
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
 			$this->set('masterRecord', null);
-			ChromePhp::log("genOEMData() - Template ID not available for Patient.");
+			ChromePhp::error("genOEMData() - Template ID not available for Patient.");
 			return;
 		}
 
-		$temp = json_encode($templateId);
-		ChromePhp::log("Template ID " . $temp);
 
 		if (0 == count($templateId)) {
 			$this->set('oemsaved', null);
 			$this->set('oemrecords', null);
 			$this->set('masterRecord', null);
 			$this->set('frameworkErr', null);
-			ChromePhp::log("No Records in Template");
+			ChromePhp::warn("No Records in Template");
 			return;
 		}
 
 		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
 			$this->set('masterRecord', null);
-			ChromePhp::log("Master Record not set");
+			ChromePhp::error("Master Record not set");
 			return;
 		}
+
+
+		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
+		$lookup = new LookUp();
+		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
+		if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
+			ChromePhp::error("Get Disease Info Failed\n");
+			$this->set('templatedata', null);
+			return;
+		}
+		$masterRecord[0]['DiseaseRecord'] = $Disease;
+
 		$this->set('masterRecord', $masterRecord);
 
 
@@ -748,32 +771,32 @@ class PatientController extends Controller
 		}
 		$this->set('oemrecords', $oemrecords);
 
-//		$temp = json_encode($oemrecords);
-//		ChromePhp::log("OEM Records (during generation) ");
-//		ChromePhp::log($temp);
 
 		$oemMap = array();
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
+
 			$retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
-				ChromePhp::log('Get Pre Therapy Failed. ');
+				ChromePhp::error('Get Pre Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
 			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
+
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
-				ChromePhp::log('Get Post Therapy Failed. ');
+				ChromePhp::error('Get Post Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
 			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
+
 			$retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
-				ChromePhp::log('Get Therapy Failed. ');
+				ChromePhp::error('Get Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
@@ -787,17 +810,14 @@ class PatientController extends Controller
 	}
 
 
-    function OEM($id = null)
-    {
+    function OEM($id = null) {
         $form_data = json_decode(file_get_contents('php://input'));
         
         if ($id != NULL) {
-			$this->genOEMData($id);
+            $this->genOEMData($id);
         }
-		else if ($form_data) {
-            
+        else if ($form_data) {
             $this->Patient->beginTransaction();
-            
             $retVal = $this->Patient->updateOEMRecord($form_data);
             // this works
             // $this->Patient->CreateOrderStatus($form_data);
@@ -820,15 +840,13 @@ class PatientController extends Controller
             }
             
             if (! empty($form_data->Reason) && ! empty($form_data->Order_ID)) {
-                
                 if ($form_data->Reason == Workflow::REASON_CANCELLED) {
                     $this->Patient->updateOrderStatus($form_data->Order_ID, 
                             Orders::STATUS_CANCELLED);
                 } else {
-                    
                     $workflow = new Workflow();
                     $workflow->OEMeditWorkflow($form_data);
-                    
+
                     // Update order status of this order if number of steps for
                     // the given reason is greater than 1
                     $workflows = $workflow->getWorkflowsByReasonNo(
@@ -838,7 +856,7 @@ class PatientController extends Controller
                         $this->Patient->updateOrderStatus($form_data->Order_ID, 
                                 Orders::STATUS_INCOORDINATION);
                     }
-                    
+
                     // Update order status for all instances of this drug for
                     // this patient if route is 'Oral'
                     $patientIds = $this->Patient->getPatientIdByOrderId(
@@ -852,7 +870,7 @@ class PatientController extends Controller
                     }
                 }
             }
-            
+
             $this->Patient->endTransaction();
             
             $this->set('oemsaved', '');
