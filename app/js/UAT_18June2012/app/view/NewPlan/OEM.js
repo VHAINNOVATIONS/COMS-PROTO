@@ -26,6 +26,9 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 	autoEl : { tag : "section" },
 	cls : "Tab", 
 	tpl : new Ext.XTemplate(
+		"<tpl for=\"Patient\">",
+			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders",
+		"</tpl>",
 		"<table border=\"1\" width=\"100%\" class=\"Therapy InformationTable\">",
 			"<colgroup width=12%></colgroup>",
 			"<colgroup width=15%></colgroup>",

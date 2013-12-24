@@ -14,9 +14,6 @@ include "session.php";
 
 
 require_once "/ChromePhp.php";
-ChromePhp::log("  ");
-ChromePhp::log("Start of Application");
-
 
 	if (empty($_POST)) {
 	//	debug('No POST data available');
