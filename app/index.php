@@ -237,11 +237,11 @@ require_once "/ChromePhp.php";
 
 	if ( empty( $_SESSION[ 'role' ] ) ) {
 		include "login.php";
-	} //empty( $_SESSION[ 'role' ] )
+	}
 	else {
 		if ( isset( $_POST[ 'logout' ] ) ) {
 				sessionkill();
-		} //isset( $_POST[ 'logout' ] )
+		}
 
 		include_once "workflow.php";
 		include_once "template.php";
@@ -249,10 +249,12 @@ require_once "/ChromePhp.php";
 		define( 'DS', DIRECTORY_SEPARATOR );
 		define( 'ROOT', dirname( dirname( __FILE__ ) ) );
 
-		$url = $_GET[ 'url' ];
-
+		$url = "";
 		$urlArray = array();
-		$urlArray = explode( "/", $url );
+		if (isset($_GET[ 'url' ])) {
+			$url = $_GET[ 'url' ];
+			$urlArray = explode( "/", $url );
+		}
 
 		$Version = "js"; // Demo Server version
 		$Version = "js/UAT_18June2012";

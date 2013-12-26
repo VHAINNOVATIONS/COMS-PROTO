@@ -8,6 +8,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 	autoEl : { tag : 'section' },
 	hidden : true,
 	tpl : new Ext.XTemplate(
+		"<a href=\"LookUp/PrintTemplate/{id}\" target=\"_blank\">Print</a> Template",
 		"<h1>CANCER CHEMOTHERAPY IV ORDER SHEET</h1>",
 		"<table>",
 		"<tr>",

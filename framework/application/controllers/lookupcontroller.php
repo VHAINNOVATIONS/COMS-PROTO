@@ -351,6 +351,12 @@ class LookupController extends Controller {
         }
     }
 
+
+	function PrintTemplate($templateId = NULL) {
+		$this->TemplateData($templateId);
+	}
+
+
     function TemplateData($id = NULL) {
         if ($id != NULL) {
             $retVal = $this->LookUp->getTopLevelTemplateDataById($id);
