@@ -1,30 +1,6 @@
 <?php
 require_once "/ChromePhp.php";
-ChromePhp::log("\nStart of PrintTemplate output");
 ob_start();		// See article - http://digitalpbk.com/php/warning-cannot-modify-header-information-headers-already-sent
-
-if (!is_null($templatedata)) {
-	$temp = json_encode($templatedata);
-	ChromePhp::log("Template Data\n" . $temp . "\n\n");
-
-	$temp = json_encode($references);
-	ChromePhp::log("References\n" . $temp . "\n\n");
-
-
-/**
-<section id="dspTemplateData-1087" class="x-container CCOrderSheet x-container-default" style="margin: 10px;">
-<h1>CANCER CHEMOTHERAPY IV ORDER SHEET</h1>
-
-<table><tbody><tr><td colspan="2"><table><tbody><tr><th>Max Number of Cycles:</th><td>4</td><th>Cycle Length:</th><td>4 Weeks</td></tr></tbody></table></td></tr><tr><th>Chemotherapy Regimen Name:</th><td>2012-2-0001-ABCD-CISPLATIN INJ,SOLN   50VINORELBINE INJ   25-20120614</td></tr><tr><th>Emetogenic level:</th><td>High</td></tr><tr><th>Febrile Neutropenia risk:</th><td>7 %</td></tr><tr><th>Reference:</th><td><table><tbody><tr><td>Winton T, Livingston R, Johnson D, et al. Vinorelbine plus cisplatin vs. observation in resected non-small-lung cancer. N Engl J Med 2005;352:2589-2597</td></tr><tr><td>(<a href="http://www.ncbi.nlm.nih.gov/pubmed/15972865" title="Link to PMID" target="_blank">Link to PMID</a>)</td></tr></tbody></table></td></tr></tbody></table><table border="1" class="InformationTable"><tbody><tr><th colspan="6" style="text-align: left; border: none !important;"><h2 style="text-align: left;">Pre Therapy</h2></th></tr><tr></tr><tr><th colspan="6" style="text-align: left; border: none !important; font-weight: normal;">Instructions: Administer as directed on Days 1 &amp; 8 prior to Cisplatin Chemotherapy</th></tr><tr></tr><tr class="TemplateHeader"><th>Sequence #</th><th>Drug</th><th>Dose</th><th>Route</th><th>Administration Day</th></tr><tr><th rowspan="2">1</th><td>APREPITANT CAP,ORAL   </td><td>125 mg  </td><td>Oral</td><td>1,8</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><th rowspan="2">2</th><td>DEXAMETHASONE TAB   </td><td>12 mg  </td><td>Oral</td><td>1,8</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><td colspan="5">Take on chemotherapy days</td></tr><tr><th rowspan="2">3</th><td>ONDANSETRON TAB   </td><td>24 mg  </td><td>Oral</td><td>1,8</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><td colspan="5">For chemotherapy days</td></tr></tbody></table><table border="1" class="InformationTable" style="border: thick solid blue; margin-top: 1em; margin-bottom: 1em;"><tbody><tr><th colspan="5" style="text-align: left; border: none !important;"><h2 style="text-align: left;">Therapy</h2></th></tr><tr></tr><tr><th colspan="5" style="text-align: left; border: none !important; font-weight: normal;">Instructions: Provide warm rice bags as needed for patient comfort</th></tr><tr></tr><tr class="TemplateHeader"><th>Sequence #</th><th>Drug</th><th>Dose</th><th>Route</th><th>Administration Day</th></tr><tr><th rowspan="2">1</th><td>CISPLATIN INJ,SOLN   </td><td>50 mg/m2</td><td>IV</td><td>1,8</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder">250</td><th class="NoBorder">Infusion Time: </th><td class="NoBorder">1 hrs / 0 min</td></tr><tr><td colspan="5">Use Normal Saline</td></tr><tr><th rowspan="2">2</th><td>VINORELBINE INJ   </td><td>25 mg/m2</td><td>IVPB</td><td>1,8,15,22</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder">25</td><th class="NoBorder">Infusion Time: </th><td class="NoBorder">0 hrs / 8 min</td></tr><tr><td colspan="5">Administer in Normal Saline over 6-10 minutes through line running Normal Saline</td></tr></tbody></table><table border="1" class="InformationTable"><tbody><tr><th colspan="6" style="text-align: left; border: none !important;"><h2 style="text-align: left;">Post Therapy</h2></th></tr><tr></tr><tr><th colspan="6" style="text-align: left; border: none !important; font-weight: normal;">Instructions: Administer or provide prescriptions to take as directed on specified days</th></tr><tr></tr><tr class="TemplateHeader"><th>Sequence #</th><th>Drug</th><th>Dose</th><th>Route</th><th>Administration Day</th></tr><tr><th rowspan="2">1</th><td>APREPITANT CAP,ORAL   </td><td>80 mg  </td><td>Oral</td><td>2-3, 9-10</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><td colspan="5">Patient to take by mouth daily on Days  2 &amp; 3 and 9 &amp; 10</td></tr><tr><th rowspan="2">2</th><td>DEXAMETHASONE TAB   </td><td>8 mg  </td><td>Oral</td><td>2-4, 9-11</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><td colspan="5">Patient to take 2 tablets (8mg total) by mouth daily on Days 2 thru 4 and Days 9 thru 11</td></tr><tr><th rowspan="2">3</th><td>PROCHLORPERAZINE TAB   </td><td>10 mg  </td><td>Oral</td><td>1-4</td></tr><tr><th class="NoBorder">Fluid/Volume: </th><td class="NoBorder"></td><th class="NoBorder">Infusion Time: </th><td class="NoBorder" colspan="2"></td></tr><tr><td colspan="5">Take 2 tablets (10mg total) by mouth every 6 hours as needed for nausea/vomiting</td></tr></tbody></table>
-
-</section>
-**/
-
-
-} else {
-    echo "{\"success\" : false, \"msg\" : \"No records found.\", \"frameworkErr\" : \"" . $frameworkErr . "\"}";
-}
-
 
 function renderTemplateHeading($tData, $references) {
 ?>
@@ -76,9 +52,6 @@ function getReferences($references) {
 }
 
 function renderTherapy($tData, $tag, $hydrations, $infusions) {
-		$temp = json_encode($tData);
-// 		ChromePhp::log("Therapy Data - \n $temp\n\n");
-
 ?>
 <table border="1" class="InformationTable">
 <tbody>
@@ -113,61 +86,85 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		<th>Administration Day</th>
 	</tr>
 
-
-
 	<?php
+	foreach($hydrations as $hydration) {
 		if ("" !== $tag) {
-			foreach($hydrations as $hydration) {
-				$infusion = $infusions[$hydration['id']][0];
-				$temp = json_encode($infusion);
-				ChromePhp::log("Infusion - " . $temp);
+			$infusion = $infusions[$hydration['id']][0];
 
-				// Infusion - [{"id":"60C702AE-2FB6-E111-A560-000C2935B86F","amt":125,"unit":"mg","type":"Oral","bsaDose":null,"fluidType":"","fluidVol":0,"flowRate":"","infusionTime":"","Order_ID":null}] 
-				$sequence = "";
-				if (array_key_exists("Sequence", $hydration)) {
-					$sequence = $hydration['Sequence'];
-				}
-				else {
-					$sequence = $hydration['sequence'];
-				}
-		?>
-		<tr>
-		<?php if ("" === $hydration['description']) {?>
-		<th><?php echo $sequence; ?></th>
-		<?php } else { ?>
-		<th rowspan="2"><?php echo $sequence; ?></th>
-		<?php } ?>
-		<td><?php echo $hydration['drug']; ?></td>
-		<td><?php echo $infusion['amt']; ?></td>
-		<td><?php echo $infusion['type']; ?></td>
-		<?php if ("IV" === $infusion['type'] || "IVPB" == $infusion['type']) { ?>
-		<td><?php echo $infusion['fluidVol']; ?></td>
-		<td><?php echo $infusion['infusionTime']; ?></td>
-		<?php } else { ?>
-		<td><?php echo "N/A"; ?></td>
-		<td><?php echo "N/A"; ?></td>
-		<?php } ?>
-		<td><?php echo $hydration['adminDay']; ?></td>
+//	$temp = json_encode($hydration);
+//	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
 
-		<?php if ("" === $hydration['description']) {?>
-		<?php } else { ?>
-		</tr><tr><td colspan="6"><?php echo $hydration['description'] ?></td>
-		<?php } ?>
+//	$temp = json_encode($infusion);
+//	ChromePhp::log("Infusion Data\n" . $temp . "\n\n");
 
-		</tr>
-
-	<?php
-			}
+			//Pre/Post Therapy Section Hydration - 
+			$drug = $hydration['drug'];
+			$dose = $infusion['amt'];
+			$units = $infusion['unit'];
+			$route = $infusion['type'];
+			$fluidVol = $infusion['fluidVol'];
+			// $fluidUnits = $hydration['flunit'];
+			$infusionTime = $infusion['infusionTime'];
+			$flowRate = $hydration['flowRate'];
+			$instructions = $hydration['description'];
+			$sequence = $hydration['Sequence'];
+			$adminDay = $hydration['adminDay'];
+			$adminTime = $hydration['adminTime'];
+			// $fluidType = $hydration['fluidType'];
 		}
+		else {
+//	$temp = json_encode($hydration);
+//	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
+
+			//Therapy Section Hydration - 
+			$drug = $hydration['drug'];
+			$dose = $hydration['regdose'];
+			$units = $hydration['regdoseunit'];
+			$route = $hydration['route'];
+			$adminDay = $hydration['adminDay'];
+			$fluidVol = $hydration['flvol'];
+			$fluidUnits = $hydration['flunit'];
+			$infusionTime = $hydration['infusion'];
+			$flowRate = $hydration['flowRate'];
+			$instructions = $hydration['instructions'];
+			$sequence = $hydration['sequence'];
+			$adminTime = $hydration['adminTime'];
+			$fluidType = $hydration['fluidType'];
+		}
+		echo "<tr>";
+		if ("" === $instructions) {
+			echo "<th>$sequence</th>\n";
+		} else {
+			echo "<th rowspan=\"2\">$sequence</th>\n";
+		}
+		echo "<td>$drug</td>\n";
+		echo "<td>$dose $units</td>\n";
+		echo "<td>$route</td>\n";
+		if ("IV" === $route || "IVPB" == $route) {
+			echo "<td>$fluidVol $fluidUnits</td>\n";
+			echo "<td>$infusionTime</td>\n";
+		} else {
+			echo "<td>N/A</td>\n";
+			echo "<td>N/A</td>\n";
+		}
+		echo "<td>$adminDay";
+		if ("" === $adminTime) {
+			echo "</td>\n";
+		}
+		else {
+			echo " @ $adminTime</td>\n";
+		}
+		if ("" === $instructions) {
+		} else {
+			echo "</tr><tr><td colspan=\"6\">$instructions</td>\n";
+		}
+		echo "</tr>\n";
+	}
 	?>
 </tbody></table>
 <?php
 }
-
-
 ?>
-
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -212,24 +209,13 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		echo "<h2 style=\"margin-top:3em; text-align: center;\">No Template Found</h2>";
 	}
 	else {
-		$temp = json_encode($prehydrations);
-		ChromePhp::log("Hydrations - \n$temp\n\n");
-
-        foreach ($templatedata as $oemrecord) {
-			$temp = json_encode($oemrecord);
-			ChromePhp::log("Template Data\n$temp\n\n");
-		}
-//		$temp = json_encode($templatedata);
-//		ChromePhp::log("Template Data\n$temp\n\n");
 		renderTemplateHeading($templatedata[0], $references);
 		renderTherapy($templatedata[0], "Pre", $prehydrations, $preinfusions);
-		renderTherapy($templatedata[0], "", "", "");
+		renderTherapy($templatedata[0], "", $regimens, "");
 		renderTherapy($templatedata[0], "Post", $posthydrations, $postinfusions);
 	}
 	?>
 	</section>
-	<footer>
-	</footer>
 </div>
 
 <?php
