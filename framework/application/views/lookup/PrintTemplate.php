@@ -61,12 +61,12 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 <table border="1" class="InformationTable">
 <tbody>
 	<tr>
-		<th colspan="7" style="text-align: left; border: none !important;">
+		<th colspan="8" style="text-align: left; border: none !important;">
 			<h2 style="text-align: left;"><?php echo $tag;?> Therapy</h2>
 		</th>
 	</tr>
 
-	<tr><th colspan="7" style="text-align: left; border: none !important; font-weight: normal;">Instructions: 
+	<tr><th colspan="8" style="text-align: left; border: none !important; font-weight: normal;">Instructions: 
 
 	<?php 
 		if ("Pre" === $tag) {
@@ -87,6 +87,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		<th>Dose</th>
 		<th>Route</th>
 		<th>Fluid/Volume</th>
+		<th>Fluid Type</th>
 		<th>Infusion Time</th>
 		<th>Administration Day</th>
 	</tr>
@@ -115,7 +116,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 			$sequence = $hydration['Sequence'];
 			$adminDay = $hydration['adminDay'];
 			$adminTime = $hydration['adminTime'];
-			// $fluidType = $hydration['fluidType'];
+			$fluidType = $infusion['fluidType'];
 		}
 		else {
 //	$temp = json_encode($hydration);
@@ -147,8 +148,10 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		echo "<td>$route</td>\n";
 		if ("IV" === $route || "IVPB" == $route) {
 			echo "<td>$fluidVol $fluidUnits</td>\n";
+			echo "<td>$fluidType</td>\n";
 			echo "<td>$infusionTime</td>\n";
 		} else {
+			echo "<td>N/A</td>\n";
 			echo "<td>N/A</td>\n";
 			echo "<td>N/A</td>\n";
 		}
@@ -161,7 +164,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		}
 		if ("" === $instructions) {
 		} else {
-			echo "</tr><tr><td colspan=\"6\">$instructions</td>\n";
+			echo "</tr><tr><td colspan=\"7\">$instructions</td>\n";
 		}
 		echo "</tr>\n";
 	}
