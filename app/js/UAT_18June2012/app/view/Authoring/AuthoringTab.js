@@ -9,6 +9,7 @@ Ext.define('COMS.view.Authoring.AuthoringTab' ,{
     extend: 'Ext.container.Container',
     alias : 'widget.AuthoringTab',
     name : 'Template Author Tab',
+		height: 'auto',
 
     //	margin : '10',
     autoEl : {
@@ -158,4 +159,3 @@ Ext.define('COMS.view.Authoring.AuthoringTab' ,{
         wccConsoleLog(this.name + " - Initialization complete...");
     }
 });
-

@@ -9,6 +9,7 @@ Ext.define('COMS.model.CTOS', {
             'Disease',
             'DiseaseStage',
             'RegimenName',			// via lookup into Lookup Table for Regimen Name Data Type
+			'Description',			// raw data
             'CourseNum',
             'CourseNumMax',
             'CycleLength',			// raw data
@@ -47,7 +48,8 @@ Ext.define('COMS.model.CTOS', {
         type: 'rest',
         api: {
                 read: Ext.URLs.CTOS,
-                create: Ext.URLs.AddCTOS		// KD - 1/03/11 - Added new URI to PUT data back to PHP
+                create: Ext.URLs.AddCTOS,		// KD - 1/03/11 - Added new URI to PUT data back to PHP
+				update: Ext.URLs.UpdateCTOS
         },
         
         reader: {

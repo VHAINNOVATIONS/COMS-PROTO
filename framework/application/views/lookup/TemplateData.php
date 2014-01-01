@@ -8,12 +8,19 @@ if (!is_null($templatedata)) {
         //display the results 
         foreach ($templatedata as $oemrecord) {
 
+$temp = json_encode($oemrecord);
+ChromePhp::log("Template Data Record - \n$temp\n\n");
+
+
 
 
             echo "{\n\t\"id\" : \"" . $oemrecord['id'] . "\", \n";
             echo "\t\"RegimenName\" : \"" . $oemrecord['name'] . "\", \n";
+            echo "\t\"RegimenID\" : \"" . $oemrecord['Regimen_ID'] . "\", \n";
+            echo "\t\"Description\" : \"" . $oemrecord['description'] . "\", \n";
+
             echo "\t\"Disease\" : \"" . $oemrecord['Disease'] . "\", \n";
-            //echo "\t\"DiseaseStage\" : \"" . $template['DiseaseStage'] . "\", \n";
+            echo "\t\"DiseaseName\" : \"" . $oemrecord['DiseaseName'] . "\", \n";
 
             echo "\t\"DiseaseStage\" : [{\"id\":\"" . $oemrecord['DiseaseStage'] . "\", \"name\":\"" . $oemrecord['DiseaseStageName'] . "\"}], \n";
 
@@ -32,11 +39,10 @@ if (!is_null($templatedata)) {
             echo "\t\"References\" : [\n";
             if ($numreferences) {
                 foreach ($references as $reference) {
-//						echo "Array Keys<br>";
-//						print_r(array_keys($reference));
-//						if(1 == $refCount){
-//							break;
-//						}
+
+$temp = json_encode($reference);
+ChromePhp::log("Template reference Record - \n$temp\n\n");
+
 
                     echo "\t\t{ \"id\" : \"" . $reference['id'] . "\", ";
                     echo "\"Reference\" : \"" . $reference['name'] . "\", ";

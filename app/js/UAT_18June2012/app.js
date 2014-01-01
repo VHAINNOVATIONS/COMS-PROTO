@@ -113,6 +113,12 @@ Ext.URLs.Vitals = "/Patient/Vitals";
 
 Ext.URLs.AddVitals = "/Patient/Vitals";
 
+Ext.URLs.PrintTemplate = "/LookUp/PrintTemplate";
+// Param = Template GUID
+// Opens a new window showing the specified template as a stand alone page for printing.
+// Example Usage - https://mwb.dbitpro.com/LookUp/PrintTemplate/D7356037-A3B5-E111-A560-000C2935B86F
+
+
 Ext.URLs.Templates = "/LookUp/Templates";
 // No Param - Returns list of templates available
 
@@ -138,6 +144,7 @@ Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug R
 Ext.URLs.Infusion = "/LookUp/view/Route"; // MWB - 12/30/2011 - Added Infusion
 Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/CTOS
 Ext.URLs.AddCTOS = "/LookUp/saveTemplate/";
+Ext.URLs.UpdateCTOS = "/LookUp/updateTemplate/";
 Ext.URLs.DeleteTemplate = "/LookUp/deleteTemplate"; //KD 1/26/12 - To delete Templates.
 
 Ext.URLs.FluidType = "/LookUp/view/FluidType"; //KD 3/7/2012 - Retrieve Fluid Types

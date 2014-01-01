@@ -596,3 +596,8 @@ table.OEMRecord_Element tr {
 
 .Report h1 { text-align: center; }
 /* .Report h2 { margin: 0 0 0 1.5em; } */
+
+
+.NoWrapHeader th {
+	white-space: nowrap;
+}

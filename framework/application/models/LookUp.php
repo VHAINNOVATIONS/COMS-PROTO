@@ -438,8 +438,10 @@ class LookUp extends Model {
      */
     public function saveRegimen($regimens, $templateId, $orderId)
     {
+		ChromePhp::log("saveRegimen - $orderId\n");
         foreach ($regimens as $regimenObject) {
-            
+            ChromePhp::log("saveRegimen - Object");
+
             $regimen = $regimenObject->data;
             
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
@@ -797,18 +799,41 @@ class LookUp extends Model {
         return $this->query($query);
     }
 
+
+
+
     /**
      * 
      * @param string $id
      * @return array
      */
-    public function getTopLevelTemplateDataById($id)
-    {
-            
+    public function getTopLevelTemplateDescriptionById($id) {
         $query = "
             SELECT 
                 mt.Template_ID AS id, 
-                lu.Description AS name, 
+                mt.Regimen_ID As Regimen_ID
+            FROM Master_Template mt
+            WHERE mt.Template_ID = '$id'
+        ";
+        $FirstPass = $this->query($query);
+        return $FirstPass;
+    }
+
+
+    /**
+     * 
+     * @param string $id
+     * @return array
+     */
+    public function getTopLevelTemplateDataById($id, $Regimen_ID)
+    {
+
+        $query = "
+            SELECT 
+                mt.Template_ID AS id, 
+                mt.Regimen_ID As Regimen_ID,
+                lu.Description AS name,
+                l5.Description AS description,
                 mt.Cycle_Length AS length, 
                 mt.Emotegenic_ID AS emoID, 
                 l2.Name AS emoLevel, 
@@ -822,6 +847,7 @@ class LookUp extends Model {
                 mt.Regimen_ID RegimenId, 
                 mt.Version AS version, 
                 CASE WHEN l3.Name IS NOT NULL THEN l3.Name ELSE '' END AS DiseaseStageName, 
+                CASE WHEN l4.Name IS NOT NULL THEN l4.Name ELSE '' END AS DiseaseName, 
                 mt.Course_Number AS CourseNum, 
                 mt.Total_Courses AS CourseNumMax, 
                 mt.Regimen_Instruction AS regimenInstruction 
@@ -829,6 +855,8 @@ class LookUp extends Model {
                 JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                 JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                 JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
+                JOIN LookUp l5 ON l5.Name = '$Regimen_ID'
                 LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
             WHERE mt.Template_ID = '$id'
         ";
@@ -880,28 +908,36 @@ class LookUp extends Model {
     }
 
     function getTemplates($id) {
-
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-
-            $query = "select lu.Name as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
-                    "case when l3.Name is not null then l3.Description else lu.Description end as description, " .
-                    "mt.Cycle_Length as length, l1.Name as unit, mt.Total_Courses as totnum, mt.Course_Number as coursenum, mt.Version as version, " .
-                    "l2.Name as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk " .
-                    "from Master_Template mt " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                    "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                    "LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
-            
+            $query = "select 
+                    lu.Name as name
+                    ,mt.Template_ID as id
+                    ,mt.Regimen_ID as regimenId
+                    ,lu.Lookup_Type as type
+                    ,case when l3.Name is not null then l3.Description else lu.Description end as description
+                    ,mt.Cycle_Length as length
+                    ,l1.Name as unit
+                    ,mt.Total_Courses as totnum
+                    ,mt.Course_Number as coursenum
+                    ,mt.Version as version
+                    ,l2.Name as emoLevel
+                    ,mt.Febrile_Neutropenia_Risk as fnRisk
+                    ,l4.Name as DiseaseName
+                    ,mt.Disease_Stage_ID 
+                    ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
+                    from Master_Template mt
+                    INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID
+                    INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
+                    INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID
+                    INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+                    LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
+                    LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
             if (NULL != $id) {
-
                 $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = 1";
-
             }else{
-
                 $query .= " WHERE Is_Active = 1";
             }
         } else if (DB_TYPE == 'mysql') {
-
             $query = "select lu.`Name` as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
                     "case when l3.`Name` is not null then l3.Description else lu.Description end as description, " .
                     "mt.Cycle_Length as length, l1.`Name` as unit, mt.Total_Courses as totnum, mt.Course_Number as coursenum, mt.Version as version, " .
@@ -910,33 +946,35 @@ class LookUp extends Model {
                     "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
                     "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
                     "LEFT OUTER JOIN LookUp l3 ON l3.Name = mt.Regimen_ID";
-            
             if (NULL != $id) {
-
                 $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = true";
-
             }else{
-
                 $query .= " WHERE Is_Active = true";
             }
         }
-
         return $this->query($query);
     }
 
     function getTemplatesByType($field, $id) {
-
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-
-            $query = "select lu.Name as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
-                    "case when l3.Name is not null then l3.Description else lu.Description end as description, " .
-                    "mt.Cycle_Length as length, l1.Name as unit, mt.Total_Courses as totnum, mt.Course_Number as coursenum, mt.Version as version, " .
-                    "l2.Name as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk " .
-                    "from Master_Template mt " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                    "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                    "LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
-
+            $query = "select 
+                lu.Name as name
+                , mt.Template_ID as id
+                , mt.Regimen_ID as regimenId
+                , lu.Lookup_Type as type
+                , case when l3.Name is not null then l3.Description else lu.Description end as description
+                , mt.Cycle_Length as length
+                , l1.Name as unit
+                , mt.Total_Courses as totnum
+                , mt.Course_Number as coursenum
+                , mt.Version as version
+                , l2.Name as emoLevel
+                , mt.Febrile_Neutropenia_Risk as fnRisk 
+                from Master_Template mt 
+                INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
+                INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
+                INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
                 $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = 1";
             } else if ($field != NULL && strtoupper($field) == 'PATIENT') {

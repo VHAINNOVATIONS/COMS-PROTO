@@ -2396,7 +2396,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             scope : this,
             success : function( CTOSTemplateData, response ) {
                 wccConsoleLog("CTOS Loaded - Processing");
-
                 var thisCtl = this.getController("NewPlan.NewPlanTab");
                 var CTOSData = thisCtl.getCTOSDataDsp();
                 CTOSData.update( CTOSTemplateData.data );

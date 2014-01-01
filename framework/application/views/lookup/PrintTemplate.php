@@ -22,6 +22,11 @@ function renderTemplateHeading($tData, $references) {
 			<td colspan="3"><?php echo $tData['name']; ?></td>
 		</tr>
 		<tr>
+			<th>Description:</th>
+			<td colspan="3"><?php echo $tData['description']; ?></td>
+		</tr>
+        <tr><th colspan="4">&nbsp;</th></tr>
+		<tr>
 			<th>Emetogenic level:</th>
 			<td colspan="3"><?php echo $tData['emoLevel']; ?></td>
 		</tr>

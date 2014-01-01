@@ -45,6 +45,8 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			items: [
 				{xtype : 'button', text : 'Save Template', action: 'save'},
 				{xtype : 'container',html : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'},
+//				{xtype : 'button', text : 'Save Template As...', action: 'saveAs'},
+//				{xtype : 'container',html : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'},
 				{xtype : 'button',text : 'Clear Template', action: 'clear'}
 			]
 		}

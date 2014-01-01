@@ -1,4 +1,5 @@
 <?php
+require_once "/ChromePhp.php";
 
 /**
  * @property LookUp $LookUp
@@ -69,11 +70,22 @@ class LookupController extends Controller {
 		$this->set('frameworkErr', null);
 		
 		$this->LookUp->endTransaction();
-    }
+
+	}
+
+	function updateTemplate() {
+		ChromePhp::log("Template Update Entry Point");
+	}
 
     function saveTemplate() {
-
         $form_data = json_decode(file_get_contents('php://input'));
+        $temp = json_encode($form_data);
+        ChromePhp::log("Save Template Entry Point\nData - \n$temp\n\n");
+
+
+
+
+
         $regimens = $form_data->{'Meds'};
 
         $usersuppliedname = $form_data->{'RegimenName'};
@@ -81,33 +93,26 @@ class LookupController extends Controller {
         $regimenName = '';
 
         for ($index = 0; $index < count($regimens); $index++) {
-
             $regimendata = $regimens[$index]->{'data'};
             $amt = $regimendata->{'Amt'};
             $drugname = $regimendata->{'Drug'};
-
             $regimenName .= $drugname . $amt;
         }
 
-        $this->LookUp->beginTransaction();
 
+        $this->LookUp->beginTransaction();
         $lookupinfo = $this->LookUp->getLookupIdByNameAndType($regimenName, 4);
         $templateNum = count($lookupinfo) + 1;
 
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
-
         while(null == $templatelookupid[0]["lookupid"]){
-
             $templateNum++;
-
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
-
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
-
         }
-		
+
         if ($usersuppliedname) {
             $this->LookUp->save(25, $templatelookupid[0]["lookupid"], $usersuppliedname);
         }
@@ -121,13 +126,13 @@ class LookupController extends Controller {
          * 
          * @todo Fix these 4 lines later
          */
+
         $cycleLengthUnit = $this->LookUp->getIdByNameAndType($form_data->CycleLengthUnit, LookUp::TYPE_TIMEFRAMEUNIT);
         $eLevel = $this->LookUp->getIdByNameAndType($form_data->ELevel, LookUp::TYPE_ELEVEL);
         $form_data->CycleLengthUnit = (!empty($cycleLengthUnit)) ? $cycleLengthUnit : $form_data->CycleLengthUnit;
         $form_data->ELevel = (!empty($eLevel)) ? $eLevel : $form_data->ELevel;
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
-
         if($this->checkForErrors('Insert Master Template Failed. ', $templateid)){
             $this->LookUp->rollbackTransaction();
             return;
@@ -135,61 +140,43 @@ class LookupController extends Controller {
         
         if ($templateid) {
             $templateid = $templateid[0]['lookupid'];
-
             $references = $form_data->{'References'};
-
             $this->LookUp->saveTemplateReferences($references, $templateid);
-			
-			//var_dump($form_data);
-			$Order_IDR = $form_data->{'Order_IDR'};
-			//var_dump($Order_IDR);
-
+            $Order_IDR = $form_data->{'Order_IDR'};
             $prehydrations = $form_data->{'PreMHMeds'};
-
             if ($prehydrations) {
-			//var_dump($prehydrations);
                 $retVal = $this->LookUp->saveHydrations($prehydrations, 'Pre', $templateid, $Order_IDR);
-
                 if($this->checkForErrors('Insert Pre Therapy Failed. ', $retVal)){
                     $this->LookUp->rollbackTransaction();
                     return;
                 }
-                
             }
 
             $posthydrations = $form_data->{'PostMHMeds'};
-
             if ($posthydrations) {
                 $retVal = $this->LookUp->saveHydrations($posthydrations, 'Post', $templateid, $Order_IDR);
-
                 if($this->checkForErrors('Insert Post Therapy Failed. ', $retVal)){
                     $this->LookUp->rollbackTransaction();
                     return;
                 }
-                
             }
 
             if ($regimens) {
-			if ($Order_IDR == ''){
-			$Order_IDR = '00000000-0000-0000-0000-000000000000';
-			}
+                if ($Order_IDR == ''){
+                    $Order_IDR = '00000000-0000-0000-0000-000000000000';
+                }
                 $retVal = $this->LookUp->saveRegimen($regimens, $templateid, $Order_IDR);
-
                 if($this->checkForErrors('Insert Template Regimens Failed.', $retVal)){
                     $this->LookUp->rollbackTransaction();
                     return;
                 }
-                
             }
-        }else{
-            
+        }
+        else {
             $this->set('templateid', $templateid);
             $this->set('frameworkErr', 'Template Id was not generated');
             $this->LookUp->rollbackTransaction();
-
             return;
-            
-            
         }
 
         $this->set('templateid', $templateid);
@@ -202,7 +189,6 @@ class LookupController extends Controller {
         }
 
         $this->LookUp->endTransaction();
-		
         //Update Template Availability using app/template.php
         $NationalLevel = 'No';
         
@@ -211,11 +197,10 @@ class LookupController extends Controller {
         
         $mdws = new Mymdws();
         $roles = $mdws->getRoleInfo($username);
-		$rid = $_SESSION['rid'];
-		$sitelist = $_SESSION['sitelist'];
-
+        $rid = $_SESSION['rid'];
+        $sitelist = $_SESSION['sitelist'];
         $this->LookUp->TemplateLevel($templateid,$sitelist,$NationalLevel,$rid);
-		
+
     }
 
     function delete() {
@@ -320,21 +305,17 @@ class LookupController extends Controller {
     }
 
     function Templates($field = NULL, $id = NULL) {
-
         if ($field == NULL && $id == NULL) {
             $this->set('templates', $this->LookUp->getTemplates(null));
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
             $this->set('templates', $this->LookUp->getTemplates($field));
-            //$this->set('frameworkErr', 'Please provide an id for '.$field.' type');
         } else {
             $retVal = $this->LookUp->getTemplatesByType($field, $id);
-
             if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
                 $this->set('templates', null);
                 return;
             }
-            
             $this->set('templates', $retVal);
         }
     }
@@ -359,8 +340,18 @@ class LookupController extends Controller {
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
-            $retVal = $this->LookUp->getTopLevelTemplateDataById($id);
 
+            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
+            if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+                $this->set('templatedata', null);
+                return;
+            }
+            $Regimen_ID = $retVal[0]["Regimen_ID"];
+            $temp = json_encode($retVal);
+            ChromePhp::log("First Pass - \n$temp\n$Regimen_ID\n");
+
+
+            $retVal = $this->LookUp->getTopLevelTemplateDataById($id, $Regimen_ID);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;

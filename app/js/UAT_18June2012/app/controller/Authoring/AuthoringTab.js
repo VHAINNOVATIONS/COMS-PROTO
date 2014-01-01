@@ -1,7 +1,6 @@
 /*jslint devel: true, undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 // var tmpRecord; MWB - 28 Dec 2011; Eliminated need for global variable by using the "getSelectedRecord()" function below
 // Also cleaned up code below to not require the tmpRecord variable
-//test
 Ext.apply(Ext.data.validations, {
 	regimenVal: function (config, value) {
 		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
@@ -13,6 +12,7 @@ Ext.apply(Ext.data.validations, {
 		return true;
 	}
 });
+
 
 Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	extend: 'Ext.app.Controller',
@@ -253,6 +253,9 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			'AuthoringTab CreateNewTemplate button[action="save"]': {
 				click: this.saveTemplate
 			},
+			'AuthoringTab CreateNewTemplate button[action="saveAs"]': {
+				click: this.saveTemplateAs
+			},
 			'AuthoringTab CreateNewTemplate button[action="clear"]': {
 				click: this.clearTemplate
 			},
@@ -261,8 +264,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			},
 			"AuthoringTab selDisease": {
 				select: this.DiseaseSelected,
-                                collapse: this.collapseCombo,
-                                expand: this.loadCombo
+				collapse: this.collapseCombo,
+				expand: this.loadCombo
 			},
 			//KD - 01/23/2012 - Added collapse and expand handlers for disease stage combo
 			//This was done to handle the loading issues when going back and forth between
@@ -360,17 +363,26 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		this.application.ResetClicked = true;
 		this.loadCombo(this.getTemplate());
-                //this.loadCombo(this.getDisease(),"Refresh");
-                this.loadCombo(this.getDisease());
-
+		this.loadCombo(this.getDisease());
 		Ext.MessageBox.alert('Success', 'Template filters have been removed. All available Templates and Cancer Types will be displayed. ');
 
 	},
 
+	saveTemplateAs: function (button) {
+		alert("Saving Template with new name...");
+		var Template = this.PrepareTemplate2Save();
+		this.SaveTemplate2DB(Template, button);
+		return;
+	},
+
 	saveTemplate: function (button) {
-
 		this.application.loadMask("Please wait; Saving Template");
+		var Template = this.PrepareTemplate2Save();
+		this.SaveTemplate2DB(Template, button);
+		return;
+	},
 
+	PrepareTemplate2Save: function () {
 		var diseaseId = null;
 		var diseaseStageId = null;
 
@@ -558,11 +570,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				adminDay: postMhModel.data.Day,
 				sequence: postMhModel.data.Sequence,
 				adminTime: postMhModel.data.AdminTime
-
 			});
-
 			postMHArray.push(postMH);
-
 		}
 
 		var template = Ext.create(Ext.COMSModels.CTOS, {
@@ -574,16 +583,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			CycleLengthUnit: cycleLengthUnit,
 			ELevel: emotegenicLevel,
 			FNRisk: fnRisk,
-			//References: refstore.getRange(0,refstore.count()),
 			References: referencesArray,
 			PreMHInstructions: preMhInstructions,
 			PostMHInstructions: postMhInstructions,
 			RegimenInstruction: therapyInstructions,
-			//PreMHMeds: preMhStore.getRange(0,preMhStore.count()),
 			PreMHMeds: preMHArray,
-			//PostMHMeds:  postMhStore.getRange(0,postMhStore.count()),
 			PostMHMeds: postMHArray,
-			//Meds: drugstore.getRange(0,drugstore.count()),
 			Meds: drugArray,
 			Disease: diseaseId,
 			DiseaseStage: diseaseStageId
@@ -592,9 +597,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var errors = template.validate();
 
 		if (errors.length > 0) {
-
 			var msg = '';
-
 			errors.each(function (error) {
 				//msg += "field: " + error.field + " message: " + error.message + "<br/>";
 				msg += " message: " + error.message + "<br/>";
@@ -602,9 +605,13 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 			Ext.MessageBox.alert('Invalid', 'Validation Errors:<br/>' + msg);
 			this.application.unMask();
-			return;
+			return null;
 		}
+		return template;
+	},
 
+
+	SaveTemplate2DB: function (template, button) {
 		template.save({
 			scope: this,
 			success: function (data) {
@@ -630,8 +637,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				Ext.MessageBox.alert('Failure', 'Template was not saved: ' + ErrMsg);
 			}
 		});
-
-
 	},
 
 	clearTemplate: function (button) {

@@ -10,7 +10,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 	tpl : new Ext.XTemplate(
 		"<a href=\"LookUp/PrintTemplate/{id}\" target=\"_blank\">Print</a> Template",
 		"<h1>CANCER CHEMOTHERAPY IV ORDER SHEET</h1>",
-		"<table>",
+		"<table class=\"NoWrapHeader\">",
 		"<tr>",
 			"<td colspan=\"2\">",
 				"<table><tr>",
@@ -22,6 +22,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"</td>",
 		"</tr>",
 		"<tr><th>Chemotherapy Regimen Name:</th><td>{RegimenName}</td></tr>",
+		"<tr><th>Description:</th><td>{Description}</td></tr>",
 		"<tr><th>Emetogenic level:</th><tpl for=\"ELevel\"><td>{name}</td></tpl></tr>",
 		"<tr><th>Febrile Neutropenia risk:</th><td>{FNRisk} %</td></tr>",
 		"<tr><th>Reference:</th><td>",
