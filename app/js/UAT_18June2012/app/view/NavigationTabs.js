@@ -3,6 +3,9 @@ Ext.define('COMS.view.NavigationTabs' ,{
     alias : 'widget.NavigationTabs',
     name : 'Main Navigation Tabs',
 
+// Add these when working through rest of panels - MWB 1/2/2014
+// resizable: true,
+// autoScroll : true,
     plain : true,
 
     initComponent: function() {

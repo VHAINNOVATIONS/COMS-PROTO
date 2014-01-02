@@ -97,11 +97,11 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		if ("" !== $tag) {
 			$infusion = $infusions[$hydration['id']][0];
 
-//	$temp = json_encode($hydration);
-//	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
+	$temp = json_encode($hydration);
+	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
 
-//	$temp = json_encode($infusion);
-//	ChromePhp::log("Infusion Data\n" . $temp . "\n\n");
+	$temp = json_encode($infusion);
+	ChromePhp::log("Infusion Data\n" . $temp . "\n\n");
 
 			//Pre/Post Therapy Section Hydration - 
 			$drug = $hydration['drug'];
@@ -109,7 +109,13 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 			$units = $infusion['unit'];
 			$route = $infusion['type'];
 			$fluidVol = $infusion['fluidVol'];
-			// $fluidUnits = $hydration['flunit'];
+            if (array_key_exists("flunit", $infusion)) {
+                $fluidUnits = $infusion['flunit'];
+            }
+            else {
+                $fluidUnits = "";
+            }
+
 			$infusionTime = $infusion['infusionTime'];
 			$flowRate = $hydration['flowRate'];
 			$instructions = $hydration['description'];
