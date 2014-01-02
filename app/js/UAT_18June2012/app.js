@@ -1,7 +1,4 @@
-/*global $, Ext*/
-/*jslint undef: true, unparam: true, sloppy: true, eqeq: false, vars: true, white: true, maxerr: 50, indent: 4 */
-// MWB - JSLint run successfully on 6/1/2012
-// MWB - Needs JSLint cleanup - 10/30/2013
+"use strict";
 
 // Useful functions within the application
 /**
@@ -121,6 +118,8 @@ Ext.URLs.PrintTemplate = "/LookUp/PrintTemplate";
 
 Ext.URLs.Templates = "/LookUp/Templates";
 // No Param - Returns list of templates available
+
+Ext.URLs.TemplateList = "/LookUp/Templates";
 
 Ext.URLs.BaseView = "/LookUp/view";
 Ext.URLs.TimeFrameUnit = "/LookUp/view/TimeFrameUnit";
@@ -431,6 +430,7 @@ Ext.COMSModels.MHMed = "COMS.model.MHMed";
 Ext.COMSModels.PatientHistory = "COMS.model.PatientHistory";
 Ext.COMSModels.PatientInfo = "COMS.model.PatientInfo";
 Ext.COMSModels.PatientInfoMDWS = "COMS.model.PatientInfoMDWS";
+Ext.COMSModels.TemplateList = "COMS.model.TemplateList";
 
 Ext.COMSModels.GlobalsTable = "COMS.model.GlobalsTable";
 Ext.COMSModels.GlobalLookupModel = "COMS.model.GlobalLookupModel";
@@ -522,6 +522,7 @@ Ext.require([
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.Authoring.AuthoringTab",
+	"COMS.controller.Authoring.TemplateListTab",
 	"COMS.controller.Authoring.DrugRegimen",
 	"COMS.controller.Authoring.Hydration",
 	"COMS.controller.Management.AdminTab",
@@ -1398,6 +1399,7 @@ Ext.application({
 		,"NewPlan.NewPlanTab"
 		,"Orders.OrdersTab"
 		,"Authoring.AuthoringTab"
+		,"Authoring.TemplateListTab"
 		,"Authoring.DrugRegimen"
 		,"Authoring.Hydration"
 		,"Management.AdminTab"	//KD - 12/20/11 - new URI associated with adding data to the lookup table

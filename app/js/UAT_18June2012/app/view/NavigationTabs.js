@@ -16,6 +16,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
                 ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
+                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
                 ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
             ];
@@ -25,6 +26,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
                 ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
+                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
@@ -32,6 +34,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
             this.items = [
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
+                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
