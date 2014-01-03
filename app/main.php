@@ -54,8 +54,11 @@
     </div>    <!-- end of #Application -->
     <div id="footer" class="initialHide" >
 <!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Prototype, 0.1, June, 18, 2012<br> -->
-	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.2, November 22, 2013<br>
-	Page last modified - <?php echo date( "d F Y", filemtime( 'index.php' ) );?>
+<!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.1, November 22, 2013 -->
+<!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.2, December 13, 2013 -->
+	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.3, January 3, 2014
+    <!-- <br>
+	Page last modified - <?php echo date( "d F Y", filemtime( 'index.php' ) );?> -->
 
 	<!-- Display MDWS Notational information here -->
 	<div id="MDWs_Info"></div>

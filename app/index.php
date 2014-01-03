@@ -249,12 +249,6 @@ require_once "/ChromePhp.php";
 		define( 'DS', DIRECTORY_SEPARATOR );
 		define( 'ROOT', dirname( dirname( __FILE__ ) ) );
 
-		$url = "";
-		$urlArray = array();
-		if (isset($_GET[ 'url' ])) {
-			$url = $_GET[ 'url' ];
-			$urlArray = explode( "/", $url );
-		}
 
 		$Version = "js"; // Demo Server version
 		$Version = "js/UAT_18June2012";
@@ -262,7 +256,6 @@ require_once "/ChromePhp.php";
 		// $Deployment = "app-all.js";
 		$Deployment = "app.js";
 		$LibsVersion2 = "/libs/ExtJS_4.1RC1";
-
 
 		/*
 		 * Temporarily modifying the ExtJS library because
@@ -272,24 +265,40 @@ require_once "/ChromePhp.php";
 		 */
 		
 		$LibsVersion = $LibsVersion2; // New Default Library <--- MWB - 6/29/2012 - Old Library Version
-		$FirstParam = $urlArray[ 0 ];
 
-		// Adjust the if statement below when new classes are added to the framework
-		if ( "Patient" === $urlArray[ 0 ] || 
-			"LookUp" === $urlArray[ 0 ] || 
-			"NursingDoc" === $urlArray[ 0 ] || 
-			"Mymdws" === $urlArray[ 0 ] || 
-			"Messages" === $urlArray[ 0 ] || 
-			"Workflow" === $urlArray[ 0 ] || 
-			"Admin" === $urlArray[ 0 ] || 
-			"Session" === $urlArray[ 0 ] || 
-			"Orders" === $urlArray[ 0 ] || 
-			"EndTreatmentSummary" === $urlArray[ 0 ] || 
-			"Flowsheet" === $urlArray[ 0 ] || 
-			"Search" === $urlArray[ 0 ] ) {
-				$bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
-				require_once $bootstrap_path;
-		}		
+		$url = "";
+		$urlArray = array();
+		if (isset($_GET[ 'url' ])) {
+			$url = $_GET[ 'url' ];
+			$urlArray = explode( "/", $url );
+            $FirstParam = $urlArray[ 0 ];
+            // Adjust the if statement below when new classes are added to the framework
+            if ( "Patient" === $urlArray[ 0 ] || 
+                "LookUp" === $urlArray[ 0 ] || 
+                "NursingDoc" === $urlArray[ 0 ] || 
+                "Mymdws" === $urlArray[ 0 ] || 
+                "Messages" === $urlArray[ 0 ] || 
+                "Workflow" === $urlArray[ 0 ] || 
+                "Admin" === $urlArray[ 0 ] || 
+                "Session" === $urlArray[ 0 ] || 
+                "Orders" === $urlArray[ 0 ] || 
+                "EndTreatmentSummary" === $urlArray[ 0 ] || 
+                "Flowsheet" === $urlArray[ 0 ] || 
+                "Search" === $urlArray[ 0 ] ) {
+                    $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
+                    require_once $bootstrap_path;
+            }		
+            else {
+                $user     = $_SERVER[ 'LOGON_USER' ];
+                $authtype = $_SERVER[ 'AUTH_TYPE' ];
+                $rid      = $_SESSION[ 'rid' ];
+                $role     = $_SESSION[ 'role' ];
+                $sessionUser = $_SESSION[ "dname" ];
+                $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
+
+                include_once "main.php";
+            }
+		}
 		else {
 			$user     = $_SERVER[ 'LOGON_USER' ];
 			$authtype = $_SERVER[ 'AUTH_TYPE' ];
@@ -300,5 +309,8 @@ require_once "/ChromePhp.php";
 
 			include_once "main.php";
 		}
+
+
+
 	}
 ?>

@@ -60,8 +60,8 @@ function drug_dose_admin_table($drug, $sequence, $doseNum, $instru, $dose, $unit
 		</tr>
 		<tr>
 			<td><?php echo $fluid; ?></td>
-			<td><?php echo $vol; ?></td>
-			<td><?php echo $flowRate; ?></td>
+			<td><?php echo $vol; ?> ml</td>
+			<td><?php echo $flowRate; ?> ml/hr</td>
 			<td><?php echo $infusionTime; ?></td>
 		</tr>
 		</table>
@@ -257,8 +257,8 @@ function OEM_PatientInfo($pInfo, $mRecord, $pDetailMap) {
 <tr>
 <th>Age:</th><td><?php echo $pInfo['Age'] ?></td>
 <th>Date of Birth:</th><td><?php echo $pInfo['DOB'] ?></td>
-<th>Gender:</th><td><?php echo $pInfo['Gender'] ?></td>
-<th>DFN:</th><td><?php echo $pInfo['DFN'] ?></td>
+<th colspan="2">Gender:</th><td colspan="2"><?php echo $pInfo['Gender'] ?></td>
+<!-- <th>DFN:</th><td><?php echo $pInfo['DFN'] ?></td> -->
 </tr>
 
 <tr>
@@ -268,7 +268,7 @@ function OEM_PatientInfo($pInfo, $mRecord, $pDetailMap) {
 <tr>
 <th>Goal:</th><td><?php echo $pDetailMap['Goal']; ?></td>
 <th>Clinical Trial:</th><td><?php echo ("" === $mRecord['ClinicalTrial'] ? "NOT a clinical trial" : $mRecord['ClinicalTrial']) ; ?></td>
-<th>Performance&nbsp;Status:</th><td colspan="3"><?php echo $mRecord['PerfStatus']; ?></td>
+<th colspan="2">Performance&nbsp;Status:</th><td colspan="2"><?php echo $mRecord['PerfStatus']; ?></td>
 </tr>
 
 <tr>

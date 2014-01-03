@@ -9,11 +9,12 @@ Ext.define('COMS.view.Authoring.TemplateListTab', {
     bodyStyle: 'padding:5px',
     autoScroll : true,
     store: "TemplateListStore",
+    features: [ Ext.create('Ext.grid.feature.Grouping')],
     columns: [
         { text: 'Template Name', dataIndex: 'name' },
         { text: 'Description', dataIndex: 'description', flex: 1 },
-        { text: 'Disease Type', dataIndex: 'DiseaseName' },
-        { text: '', dataIndex: 'id', renderer: function(value) {
+        { text: 'Disease Type', dataIndex: 'DiseaseName', hidden: true },
+        { text: '', hideable: false, sortable: false, groupable: false, dataIndex: 'id', renderer: function(value) {
             var buf = '<a href="' + Ext.URLs.PrintTemplate + '/' + value + '" target="print_template">View/Print</a>';
             return buf;
             // Ext.String.format('<a href="' + Ext.URLs.PrintTemplate + '/{1}" target="print_template">View/Print</a>', value);
