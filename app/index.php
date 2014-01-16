@@ -284,6 +284,7 @@ require_once "/ChromePhp.php";
                 "Orders" === $urlArray[ 0 ] || 
                 "EndTreatmentSummary" === $urlArray[ 0 ] || 
                 "Flowsheet" === $urlArray[ 0 ] || 
+                "Git" === $urlArray[ 0 ] || 
                 "Search" === $urlArray[ 0 ] ) {
                     $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
                     require_once $bootstrap_path;
