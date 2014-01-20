@@ -631,8 +631,7 @@ class PatientController extends Controller
         $lookup = new LookUp();
         $templateId = $lookup->saveTemplate($data, $template['RegimenId']);
         
-        if ($this->checkForErrors('Insert Master Template Failed. ', 
-                $templateId)) {
+        if ($this->checkForErrors("Insert Master Template (in Patient Controller) Failed. (id=$templateid)", $templateid)){
             $this->Patient->rollbackTransaction();
             return;
         }

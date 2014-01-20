@@ -27,7 +27,6 @@
 	echo "		var FirstURL = '$FirstParam';\n";
 	echo "		var SessionUser = '$sessionUser';\n";
 ?>
-
 		</script>
 	</head>
 <body>
@@ -48,6 +47,7 @@
 	    <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
 	    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
 	    <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
+	    <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
 	    </ul>
 	</navigation>
 	</form>
@@ -59,6 +59,9 @@
 	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.3, January 3, 2014
     <!-- <br>
 	Page last modified - <?php echo date( "d F Y", filemtime( 'index.php' ) );?> -->
+
+This application works best in MS-IE Version 9 or above, Mozilla Firefox Version 20 and above, Google Chrome Version 30 and above
+
 
 	<!-- Display MDWS Notational information here -->
 	<div id="MDWs_Info"></div>

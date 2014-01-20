@@ -147,6 +147,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var StartTimeField = Ext.getCmp("startTimeEditor");
 		var EndTimeField = Ext.getCmp("endTimeEditor");
 
+        var timeMax = Ext.Date.format(new Date(), 'h:i A');
+		EndTimeField.setMaxValue(timeMax);
+		StartTimeField.setMaxValue(timeMax);
+
 		if ("" === eObj.record.get("Treatment_User")) {
 			var StartTimeFieldValue = eObj.record.get("StartTime");
 			if ("EndTime" === eObj.field && "" !== StartTimeFieldValue) {

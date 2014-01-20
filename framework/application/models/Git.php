@@ -22,43 +22,58 @@ class Git extends Model {
             CURLOPT_VERBOSE => TRUE,
             CURLOPT_STDERR => $verbose = fopen('php://temp', 'rw+')
         );
-        $url = 'https://api.github.com/repos/dbitpro/coms/issues?direction=asc';
-        $handle = curl_init($url);
-        curl_setopt_array($handle, $curlDefault);
-        $html = curl_exec($handle);
-        $urlEndpoint = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);
-        curl_close($handle);
         $StoreResponse = "";
         $retArray = array();
-        if ($html) {
-            $json = json_decode($html);
-            if (array_key_exists('message', $json)) {
-                $retArray['message'] = $json->message;
-            }
-            else {
-                foreach ($json as $issue) {
-                    $tmp = array();
-                    $tmp['url'] = $issue->html_url;
-                    $tmp['number'] = $issue->number;
-                    $tmp['title'] = $issue->title;
-                    $tmp['state'] = $issue->state;
-                    $tmp['created_at'] = $issue->created_at;
-                    $tmp['body'] = mb_convert_encoding($issue->body_html, 'HTML-ENTITIES', 'UTF-8');
-                    $tmp['label'] = "";
-                    foreach ($issue->labels as $label) {
-                        if ("Product Backlog - PoC" === $label->name 
-                            || "Product Backlog - Prototype" === $label->name 
-                            || "Defect Log" === $label->name) {
-                            $tmp['label'] = $label->name;
+        $baseUrl = 'https://api.github.com/repos/dbitpro/coms/issues?direction=asc';
+        for ($i=1; $i < 20; $i++) {
+            $url = $baseUrl . "&page=" . $i;
+            $handle = curl_init($url);
+            curl_setopt_array($handle, $curlDefault);
+            $html = curl_exec($handle);
+            $urlEndpoint = curl_getinfo($handle, CURLINFO_EFFECTIVE_URL);
+            curl_close($handle);
+
+            if ($html) {
+                $json = json_decode($html);
+                if (count($json) > 0) {
+                    if (array_key_exists('message', $json)) {
+                        $retArray['message'] = $json->message;
+                    }
+                    else {
+                        foreach ($json as $issue) {
+                            $tmp = array();
+                            $tmp['url'] = $issue->html_url;
+                            $tmp['number'] = $issue->number;
+                            $tmp['title'] = $issue->title;
+                            $tmp['state'] = $issue->state;
+                            $tmp['created_at'] = substr($issue->created_at, 0, 10);
+                            $tmp['body'] = mb_convert_encoding($issue->body_html, 'HTML-ENTITIES', 'UTF-8');
+                            $tmp['body'] = preg_replace("/<img[^>]+\>/i", "", $tmp['body']); 
+                            $tmp['label'] = "";
+                            foreach ($issue->labels as $label) {
+                                if ("Product Backlog - POC" === $label->name) {
+                                    $tmp['label'] = "01 " . $label->name;
+                                }
+                                else if ("Product Backlog - Prototype" === $label->name) {
+                                    $tmp['label'] = "02 " . $label->name;
+                                }
+                                else if ("Defect Log" === $label->name) {
+                                    $tmp['label'] = "03 " . $label->name;
+                                }
+                            }
+                            if ("" !== $tmp['label']) {
+                                $retArray[] = $tmp;
+                            }
                         }
                     }
-                    $retArray[] = $tmp;
+                }
+                else {
+                    return $retArray;
                 }
             }
-        }
-        else {
-            !rewind($verbose);
-            $retArray['message'] = htmlspecialchars(stream_get_contents($verbose));
+            else {
+                return $retArray;
+            }
         }
         return $retArray;
     }

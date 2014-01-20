@@ -4,6 +4,13 @@ require_once "/ChromePhp.php";
 /**
  * @property LookUp $LookUp
  * 
+ * function checkForErrors($errorMsg,$retVal){
+ * function save() {
+ * function saveTemplate() {
+ * function delete() {
+ * function deleteTemplate(){
+ * function view($name = null, $description = null, $id = null) {
+ * function 
  */
 class LookupController extends Controller {
     
@@ -77,19 +84,36 @@ class LookupController extends Controller {
 		ChromePhp::log("Template Update Entry Point");
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+     *
+     * Note: Magic Numbers used...
+     *    "Magic Number" 4 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'Regimen' records (description = Template Selector Values with Template Name in Description)
+     *    "Magic Number" 25 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'TemplateAlias' records (description = Alias for template name)
+     *
+     */
+
+
     function saveTemplate() {
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         ChromePhp::log("Save Template Entry Point\nData - \n$temp\n\n");
-
-
-
-
+        // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
 
         $regimens = $form_data->{'Meds'};
-
         $usersuppliedname = $form_data->{'RegimenName'};
-
         $regimenName = '';
 
         for ($index = 0; $index < count($regimens); $index++) {
@@ -99,11 +123,11 @@ class LookupController extends Controller {
             $regimenName .= $drugname . $amt;
         }
 
-
         $this->LookUp->beginTransaction();
         $lookupinfo = $this->LookUp->getLookupIdByNameAndType($regimenName, 4);
         $templateNum = count($lookupinfo) + 1;
 
+        // Builds new Chemotherapy Regimen Name based on versioning scheme
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
@@ -114,6 +138,8 @@ class LookupController extends Controller {
         }
 
         if ($usersuppliedname) {
+            $temp = "Saving Uuser Supplied Name into Lookup Table - Name = $usersuppliedname; ID = " . $templatelookupid[0]["lookupid"];
+            ChromePhp::log($temp);
             $this->LookUp->save(25, $templatelookupid[0]["lookupid"], $usersuppliedname);
         }
 
@@ -131,9 +157,12 @@ class LookupController extends Controller {
         $eLevel = $this->LookUp->getIdByNameAndType($form_data->ELevel, LookUp::TYPE_ELEVEL);
         $form_data->CycleLengthUnit = (!empty($cycleLengthUnit)) ? $cycleLengthUnit : $form_data->CycleLengthUnit;
         $form_data->ELevel = (!empty($eLevel)) ? $eLevel : $form_data->ELevel;
+        /*
+         * END of Bandaid
+         */
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
-        if($this->checkForErrors('Insert Master Template Failed. ', $templateid)){
+        if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
             $this->LookUp->rollbackTransaction();
             return;
         }
@@ -193,14 +222,11 @@ class LookupController extends Controller {
         $NationalLevel = 'No';
         
         $username = get_current_user();
-        //$username = 'kevin.dean';
-        
         $mdws = new Mymdws();
         $roles = $mdws->getRoleInfo($username);
         $rid = $_SESSION['rid'];
         $sitelist = $_SESSION['sitelist'];
-        $this->LookUp->TemplateLevel($templateid,$sitelist,$NationalLevel,$rid);
-
+        $this->LookUp->saveTemplateLevel($templateid,$sitelist,$NationalLevel,$rid);
     }
 
     function delete() {
@@ -218,6 +244,13 @@ class LookupController extends Controller {
         $this->set('savedescription', $description);
     }
 
+
+
+
+
+    /*
+     * Deletes the template specified by the TemplateID (this would be the "name" field in the Lookup Table where ID = 25 and Description is the user defined name)
+     */
     function deleteTemplate(){
         
         $form_data = json_decode(file_get_contents('php://input'));
@@ -250,7 +283,7 @@ class LookupController extends Controller {
     }
     
     function view($name = null, $description = null, $id = null) {
-
+ChromePhp::log("View - Name = $name");
         $this->set('title', 'All Lookups For - ' . $name);
 
         if (NULL === $description && NULL != $name && NULL === $id) {

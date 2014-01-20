@@ -38,6 +38,8 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
                         { xtype : "textfield", name : "TemplateAlias", fieldLabel : "Template Name", labelAlign : "right", width : 700 },
                         { xtype : "container", margin: "2 0 0 5", html : "<span style=\"color: blue;\">Optional</span>" }
                 ]},
+                { xtype : "textfield", name : "KeepActive", hidden: true, value:"1" },
+
 
 		{
 			layout: 'hbox', 

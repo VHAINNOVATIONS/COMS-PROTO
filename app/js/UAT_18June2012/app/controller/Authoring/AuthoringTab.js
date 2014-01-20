@@ -213,7 +213,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		{
 		ref: "ReferencesGrid",
 		selector: "TemplateReferences"
-	}
+	},
+		{
+		ref: "Active",
+		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
+	},
+
 
 
 	],
@@ -374,14 +379,72 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		alert("Saving Template with new name...");
 		var Template = this.PrepareTemplate2Save();
 		this.SaveTemplate2DB(Template, button);
-		return;
 	},
 
-	saveTemplate: function (button) {
-		this.application.loadMask("Please wait; Saving Template");
-		var Template = this.PrepareTemplate2Save();
-		this.SaveTemplate2DB(Template, button);
-		return;
+
+    
+    isDuplicateDescription: function(description, alias) {
+        if (description === alias) {
+            return true;
+        }
+        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+        if (description.search(patt) > 0) {
+            description = description.replace(patt, "").trim();
+            return (description === alias);
+        }
+        return false;
+    },
+    
+    saveTemplate: function (button) {
+        var UserAlias = this.getTemplateAlias().getValue();
+        var haveDuplicate = false;
+        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+        if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
+            UserAlias = UserAlias.replace(patt, "").trim();
+        }
+        Ext.Ajax.request({
+            url: Ext.URLs.TemplateAlias,
+            scope: this,
+            alias: UserAlias,
+            success: function(response, opts) {
+                var obj = Ext.decode(response.responseText);
+                var Records = obj.records;
+                var i, alias = opts.alias, dupCount = 0;
+                for (i = 0; i < obj.total; i++ ) {
+                    if (this.isDuplicateDescription(Records[i].description, alias)) {
+                        dupCount++;
+                    }
+                }
+                if (dupCount > 0) {
+                    alias += " Ver " + (dupCount+1);
+                    this.getTemplateAlias().setValue(alias);
+                    var temp = this.getTemplateAlias().getValue();
+                    this.haveDuplicate = true;
+                }
+
+                if (this.haveDuplicate) {
+                    Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
+                        if ("ok" === btn) {
+                            Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
+                        }
+                        else {
+                            Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
+                        }
+                    }, this);
+                }
+//        this.application.loadMask("Please wait; Saving Template");
+//        var Template = this.PrepareTemplate2Save();
+//        this.SaveTemplate2DB(Template, button);
+
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+            }
+        });
+
+
+
+        return;
 	},
 
 	PrepareTemplate2Save: function () {
@@ -593,7 +656,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			PostMHMeds: postMHArray,
 			Meds: drugArray,
 			Disease: diseaseId,
-			DiseaseStage: diseaseStageId
+			DiseaseStage: diseaseStageId,
+            KeepAlive: KeepAlive
 		});
 
 		var errors = template.validate();
@@ -900,57 +964,42 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                     this.afterFindDisease(template);
                 }
         },
-        
+
+        /* Load Form with existing data */
         afterFindDisease: function (template){
-
-		this.getExistingDisease().setValue(template.data.Disease);
-
-		this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
-
-		this.getCourseNum().setValue(template.data.CourseNum);
-		this.getCourseNumMax().setValue(template.data.CourseNumMax);
-
-		this.getCycleLength().setValue(template.data.CycleLength);
-
-		this.getCycleLengthUnit().setValue(template.data.CycleLengthUnit[0].name);
-
-		this.getRegimenName().setValue(template.data.RegimenName);
-
-		this.getEmotegenicLevel().setValue(template.data.ELevel[0].name);
-
-		this.getFebrileNeutropeniaRisk().setValue(template.data.FNRisk);
-
-		this.getPreHydrationInstructions().setValue(template.data.PreMHInstructions);
-
-		this.getPostHydrationInstructions().setValue(template.data.PostMHInstructions);
-
-		this.getRegimenInstruction().setValue(template.data.RegimenInstruction);
-
-
-		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-		var refstore = refgrid.getStore();
-		refstore.removeAll();
-
-		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
-		var drugstore = druggrid.getStore();
-		drugstore.removeAll();
-
-		var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
-		var preMhStore = preMHgrid.getStore();
-		preMhStore.removeAll();
-
-		var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
-		var postMhStore = postMHgrid.getStore();
-		postMhStore.removeAll();
-
-		preMhStore.add(template.data.PreMHMeds);
-		refstore.add(template.data.References);
-		drugstore.add(template.data.Meds);
-		postMhStore.add(template.data.PostMHMeds);
-
-		this.application.unMask();
-
-	},
+            // debugger;
+            // var UserDefinedAlias = template.data.Description;
+            this.getTemplateAlias().setValue(template.data.Description);
+            this.getExistingDisease().setValue(template.data.Disease);
+            this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
+            this.getCourseNum().setValue(template.data.CourseNum);
+            this.getCourseNumMax().setValue(template.data.CourseNumMax);
+            this.getCycleLength().setValue(template.data.CycleLength);
+            this.getCycleLengthUnit().setValue(template.data.CycleLengthUnit[0].name);
+            this.getRegimenName().setValue(template.data.RegimenName);
+            this.getEmotegenicLevel().setValue(template.data.ELevel[0].name);
+            this.getFebrileNeutropeniaRisk().setValue(template.data.FNRisk);
+            this.getPreHydrationInstructions().setValue(template.data.PreMHInstructions);
+            this.getPostHydrationInstructions().setValue(template.data.PostMHInstructions);
+            this.getRegimenInstruction().setValue(template.data.RegimenInstruction);
+            var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
+            var refstore = refgrid.getStore();
+            refstore.removeAll();
+            var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
+            var drugstore = druggrid.getStore();
+            drugstore.removeAll();
+            var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
+            var preMhStore = preMHgrid.getStore();
+            preMhStore.removeAll();
+            var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
+            var postMhStore = postMHgrid.getStore();
+            postMhStore.removeAll();
+            preMhStore.add(template.data.PreMHMeds);
+            refstore.add(template.data.References);
+            drugstore.add(template.data.Meds);
+            postMhStore.add(template.data.PostMHMeds);
+            this.application.unMask();
+        },
 
 	selTemplateChange: function (combo, recs, eOpts) {
 		wccConsoleLog("Template has been selected");

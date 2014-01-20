@@ -1,7 +1,7 @@
 <?php
 
 class GitController extends Controller {
-    function Issues(){
+    function ListIssues(){
         $jsonRecord = array();
         $records = array();
         $records = $this->Git->getIssues();

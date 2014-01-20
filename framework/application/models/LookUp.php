@@ -1,10 +1,26 @@
 <?php
-
+/**
+ * Lookup Model
+ *
+ * PHP Version 5
+ *
+ */
 class LookUp extends Model {
 
     const TYPE_TIMEFRAMEUNIT = 18;
     const TYPE_ELEVEL = 13;
     
+    /**
+     * This function needs some work. 
+     * The function name is "save" but if given an ID which currently exists in the table, 
+     * it merely returns the record(s) from the lookup table which match that ID.
+     * It doesn't (appear) to have the ability to "update" an existing record (based on the ID)
+     * with (potentially) modified data
+     *
+     * @param string id - 
+     * @param string name - 
+     * @param string description -
+     */
     function save($id, $name, $description) {
 
         $name = str_replace("'","''",$name);
@@ -26,6 +42,16 @@ class LookUp extends Model {
         return $this->query($query);
     }
 
+    /**
+     * deleteTemplate -It looks like if force is true this function assumes potentially multiple records
+     *                 but if force is false it assumes only a single record. Shouldn't the check for multiple
+     *                 records always be done?
+     *
+     * @param string id - Template_ID of the template in the Master_Template table
+     * @param bool   force, true forces the delete for all templates with a given Regimen_ID whether or not they're applied to a patient
+     *                      false prompts the user to configm the delete if the template is applied to a patient
+     *
+     */
     function deleteTemplate($id,$force){
         
         $query = "SELECT Regimen_ID as regid from Master_Template where Template_ID = '" .$id."'";
@@ -66,12 +92,16 @@ class LookUp extends Model {
         
     }
     
-    
+    /**
+     * innerDeleteTemplate - Actual Template Delete function. Checks to see if a template is currently applied to a patient before deleting
+     *
+     * @param string id - Template_ID of the template in the Master_Template table
+     * @param bool   force - true forces the delete for all templates with a given Regimen_ID whether or not they're applied to a patient
+     *                      false prompts the user to configm the delete if the template is applied to a patient
+     *
+     */
     function innerDeleteTemplate($id,$force,$regid){
-        
-        
         if('false' == $force){
-        
             $query = "SELECT Patient_ID as patientid from Patient_Assigned_Templates where Template_ID = '" .$id."'";
 
             $retVal = $this->query($query);
@@ -203,6 +233,8 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
+        ChromePhp::log("save Template - $regimenId");
+
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
         $cycleLength = $formData->CycleLength;
@@ -210,6 +242,8 @@ class LookUp extends Model {
         $emotegnicLevel = $formData->ELevel;
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
+        $keepActive = $formData->KeepActive;
+        ChromePhp::log("Keep Active - $keepActive");
         
         $preMHInstructions = str_replace("'", "''", $formData->PreMHInstructions);
         $postMHInstructions = str_replace("'", "''", $formData->PostMHInstructions);
@@ -256,7 +290,7 @@ class LookUp extends Model {
         }
 
         if($diseaseStage){
-            if(DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql'){            
+            if(DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql'){
                 $isActive = '1';
             }else if(DB_TYPE == 'mysql'){
                 $isActive = 'true';
@@ -1283,7 +1317,7 @@ class LookUp extends Model {
         return $this->query($query);
     }
     
-    function TemplateLevel($templateid, $Location, $NationalLevel, $TemplateOwner) {
+    function saveTemplateLevel($templateid, $Location, $NationalLevel, $TemplateOwner) {
 
         //Insert into Template Availability
         $query = "INSERT INTO Template_Availability (TemplateID,Location,NationalLevel,TemplateOwner) VALUES (".
@@ -1310,6 +1344,12 @@ class LookUp extends Model {
         if (!empty($result[0]['id'])) {
             return $result[0]['id'];
         }
+    }
+
+
+    public function ck4DuplicateTemplateByUserName($name) {
+        $query = "SELECT Lookup_ID as id  FROM LookUp WHERE Lookup_Type = 25 and Description = $name";
+        return $this->query($query);
     }
 
 }

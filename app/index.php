@@ -1,24 +1,71 @@
 <?php	
 
 include "session.php";
-//include "session.php";
-//To use the Session within the Framework comment out include "session.php" and uncomment next line
-//session_start();
-//Not sure how to call the framework to get the session variables, below are the framework calls
-//https://xxx.dbitpro.com/Session/SessionVars
-//https://xxx.dbitpro.com/Session/SessionGlobalVars
-
-//require_once '../PhpConsole/PhpConsole.php';
-//PhpConsole::start(true, true, dirname(__FILE__));
-// debug('debug message');
-
-
 require_once "/ChromePhp.php";
+
+
+function PostActionTracking($action, $ref) {
+/***
+USE [COMS_Tracking]
+CREATE TABLE [dbo].[COMS_Action_Track]
+(
+id int IDENTITY(1,1) PRIMARY KEY,
+ip varchar(255) NULL,
+date varchar(255) NULL,
+timestamp varchar(255) NULL,
+access varchar(255) NULL,
+verify varchar(255) NULL,
+action varchar(255) NULL,
+ref varchar(255) NULL
+)
+***/
+
+    
+    $t = time();
+    $d = date("m/d/Y", $t);
+    $ts = date("g:i:s A", $t);
+    $ip_vistor=$_SERVER['REMOTE_ADDR'];
+    $compname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+
+    $AccessCode = "";
+    $VerifyCode = "";
+    if (!empty($_POST)) {
+        $AccessCode = $_POST['AccessCode'];
+        $VerifyCode = $_POST['VerifyCode'];
+    }
+
+    $serverName = "DBITDATA\DBIT";
+    $connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_Tracking");
+    $conn =  sqlsrv_connect( $serverName, $connectionOptions);
+    if( ($errors = sqlsrv_errors() ) != null) {
+        foreach( $errors as $error ) {
+            ChromePhp::log( "SQLSTATE: ".$error[ 'SQLSTATE']."\n code: ".$error[ 'code']."\nmessage: ".$error[ 'message'] );
+        }
+    }
+
+    $tsql = "INSERT INTO COMS_Action_Track (ip,date,timestamp, access, verify, action, ref) VALUES ('$ip_vistor', '$d', '$ts', '$AccessCode', '$VerifyCode', '$action', '$ref')";
+    $posttrack = sqlsrv_query($conn, $tsql);
+
+    if( $posttrack === false ) {
+        if( ($errors = sqlsrv_errors() ) != null) {
+            foreach( $errors as $error ) {
+                ChromePhp::log( "SQLSTATE: ".$error[ 'SQLSTATE']."\n code: ".$error[ 'code']."\nmessage: ".$error[ 'message'] );
+            }
+        }
+    }
+    sqlsrv_close ( $conn );
+}
+
+global $DurationCheckerTimeStamp;
+$DurationCheckerTimeStamp[] = "Index Start - " . date('g:i:s A', time());
+PostActionTracking("Top of Index.php", "1");
 
 	if (empty($_POST)) {
 	//	debug('No POST data available');
+        PostActionTracking("No POST data available", "1");
 	}
 	else {
+        PostActionTracking("POST data available", "1");
 		$tempPost = implode($_POST, ", ");
 
 		$AccessCode = $_POST['AccessCode'];
@@ -29,31 +76,31 @@ require_once "/ChromePhp.php";
 	}
 	if (array_key_exists ( "AccessCode" , $_POST ) && array_key_exists ( "VerifyCode" , $_POST )) {
 	//	debug("Got POST Data");
+    PostActionTracking("Got POST Data", "1");
 	}
 
 
 	if (empty($AccessCode) AND empty($VerifyCode)) {
+        PostActionTracking("Access and Verify Codes are empty", "1");
 	}
 	elseif (empty($AccessCode)){
-		echo "<center><b>Missing account ID</center></b>";
+        PostActionTracking("No Access Code", "1");
 	}
 	elseif(empty($VerifyCode)){
-		echo "<center><b>Missing Verify Code</center></b>";
+        PostActionTracking("No Verify Code", "1");
 	}
 	else{
 		//echo "check account";
+        PostActionTracking("Calling MDWS", "1");
 		$chkacctret =  chkacct($AccessCode);
 		$veracctret =  veracct($VerifyCode);
 
 		$mdwscheck = checkmdwsconnect($AccessCode,$VerifyCode);
-		//echo $mdwscheck;
+        PostActionTracking("Return from MDWS Connect", "1");
 
 		if ($chkacctret === $AccessCode){
 			if ($veracctret === $VerifyCode){
 				$_SESSION['sessionStatus'] = 0;
-				//$serverName = "DBITDATA\DBIT";
-				//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-				//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
 				include "dbitcon.php";
 				$tsql = "SELECT * FROM Roles WHERE username = '$AccessCode'";
 				$getrole = sqlsrv_query($conn, $tsql);
@@ -106,7 +153,6 @@ require_once "/ChromePhp.php";
 					$_SESSION['chktrack']=1;
 				}
 				
-				//$To = 'dbitpro@gmail.com,lferrucci@caci.com';
 				$To = 'dbitpro@gmail.com';
 				$MFrom = 'dbitpro@gmail.com';
 				$Subject = "User accessing COMS UAT Testing Site (coms-uat-test)";
@@ -115,9 +161,6 @@ require_once "/ChromePhp.php";
 				$headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 				$headers .= "MIME-Version: 1.0\r\n";
 				$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-				if ($AccessCode != '1programmer'){
-				//mail($To, $Subject, $message, $headers);
-				}
 			}
 		}
 		if ($AccessCode === '1pharmacist'
@@ -229,18 +272,14 @@ require_once "/ChromePhp.php";
 	}
 
 
-
-
-
-
-
-
 	if ( empty( $_SESSION[ 'role' ] ) ) {
+        PostActionTracking("Calling Login", "1");
 		include "login.php";
 	}
 	else {
 		if ( isset( $_POST[ 'logout' ] ) ) {
-				sessionkill();
+            PostActionTracking("Logging Out", "1");
+            sessionkill();
 		}
 
 		include_once "workflow.php";
@@ -307,11 +346,7 @@ require_once "/ChromePhp.php";
 			$role     = $_SESSION[ 'role' ];
 			$sessionUser = $_SESSION[ "dname" ];
 			$TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
-
-			include_once "main.php";
+            include_once "main.php";
 		}
-
-
-
 	}
 ?>

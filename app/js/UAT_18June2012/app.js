@@ -71,6 +71,11 @@ Ext.URLs.DiseaseType = "/LookUp/view/DiseaseType";
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
 
+Ext.URLs.TemplateAlias = "/LookUp/view/TemplateAlias";
+// No Params,
+// Returns list of all Template Aliases (e.g. User Defined Template Name)
+// Used to determine duplicate Template by User Name
+
 Ext.URLs.LabInfo = "/Patient/LabInfoResults";
 // Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
 // Returns list of Lab Info Results for specified patient
