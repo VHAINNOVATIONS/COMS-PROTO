@@ -56,16 +56,27 @@ function valuecheck($value){
 	}
 
 	//Set Variables
-	$host = '172.19.100.94';
-	$username = 'cachemgr355';
-	$password = 'vhaino355';
-	$csession = 'csession cache355';
+	//$host = '172.19.100.94';
+	//$username = 'cachemgr355';
+	//$password = 'vhaino355';
+	//$csession = 'csession cache355';
+	//$cdUnix = 'D ^%CD';
+	//$instance = 'CPM355';
+	//$cprsLogin = 'S DUZ=1';
+	//$patientLocation = 'GEN MED';
+	//$actingProvider = 'v107';
+	//$routine = 'ROUTINE';
+	$host = '199.179.23.117';
+	$username = 'sean.cassidy';
+	$password = 'dbitPASS22';
+	$csession = 'csession VistA';
 	$cdUnix = 'D ^%CD';
 	$instance = 'CPM355';
 	$cprsLogin = 'S DUZ=1';
 	$patientLocation = 'GEN MED';
 	$actingProvider = 'v107';
 	$routine = 'ROUTINE';
+
 
 	/**
 	 * Writes the new order for the patient to VistA???

@@ -305,6 +305,32 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 	},
 
 
+    getNextAdminDate : function() {
+        var ListOfAdminDays = this.application.Patient.OEMRecords.OEMRecords,
+            today = new Date(), 
+            AdminDate, 
+            AdminDate1 = null, 
+            LastAdminDate = null,
+            msg = "";
+        for (i = 0; i < ListOfAdminDays.length; i++ ) {
+            LastAdminDate = AdminDate;
+            AdminDate = ListOfAdminDays[i].AdminDate;
+            AdminDate1 = new Date(AdminDate);
+            if (AdminDate1.getTime() > today.getTime()) {
+                if (LastAdminDate !== null) {
+                    msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b>";
+                }
+                msg += "<br />Next Administration Date: <b>" + AdminDate + "</b>";
+                return msg;
+            }
+        }
+        if (LastAdminDate !== null) {
+            msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b><br />There are no additional Administration Dates";
+        }
+
+        return msg;
+    },
+
 	ChemoBioSectionHandler : function ( Clear, ThisAdminDay ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
 		// if Clear is true then clear out the fields
 		var ndctWarning = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"ndctWarning\"]");
@@ -348,8 +374,10 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 				ndctDate[1].setValue(ThisAdminDay.AdminDate);
 			}
 			else {
-				ndctWarning[0].setValue("Warning - This is not a scheduled Administration Day for this Regimen");
-				ndctWarning[1].setValue("Warning - This is not a scheduled Administration Day for this Regimen");
+                debugger;
+                var msg = this.getNextAdminDate();
+				ndctWarning[0].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);
+				ndctWarning[1].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);
 				ndctWarning[0].show();
 				ndctWarning[1].show();
 

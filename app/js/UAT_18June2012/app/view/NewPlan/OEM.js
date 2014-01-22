@@ -626,7 +626,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 						"type=\"" + Type + "\" " + 
 						"medidx=\"" + idx + "\" " + 
 						"typeidx=\"" + pIndex + "\"" ;
-					return "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Edit</button>";
+					return "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Edit</button>"; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
 				},
 				CalcEditAdminDate : function( current ) {
 					var AdminDate = current.AdminDate;
