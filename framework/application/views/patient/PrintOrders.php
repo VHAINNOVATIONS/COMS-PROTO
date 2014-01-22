@@ -1,7 +1,6 @@
 <?php 
 // PatientID = 6855D2FD-27A1-E111-903E-000C2935B86F
-require_once "/ChromePhp.php";
-// ChromePhp::log("\nStart of PrintOrders output");
+//require_once "/ChromePhp.php";
 ob_start();		// See article - http://digitalpbk.com/php/warning-cannot-modify-header-information-headers-already-sent
 
 /**
@@ -35,8 +34,6 @@ $temp = json_encode($pDetailMap);
 if (!is_null($oemrecords) && is_null($oemsaved)) {
     $numeoemrecords = count($oemrecords);
     $numtemplates = count($masterRecord);
-	ChromePhp::log("# OEM Records = $numeoemrecords");
-	ChromePhp::log("# Templates = $numtemplates");
 }
 
 function Log_drug_dose_admin_table($doseNum, $instru, $drug, $dose, $units, $calcDose, $admin, $adminTime, $fluid, $vol, $flowRate, $infusionTime) {
@@ -88,25 +85,10 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 
 
 	$temp = json_encode($hydrations);
-	if ("Pre" === $tag) {
-		ChromePhp::log("$tag Therapy Hydrations\n$temp\n\n");
-	}
-	if ("Post" === $tag || "" === $tag) {
-		if (strlen($temp) < 700) {
-			ChromePhp::log("$tag Therapy Hydrations\n$temp\n\n");
-		}
-		else {
-//			echo "POST - <br>";
-//			var_dump($temp);
-//			echo "<hr>";
-		}
-	}
-
 
 	if ("" !== $tag) {
 		$infusions = $oemDetails[$tag . 'TherapyInfusions'];
 		$temp = json_encode($infusions);
-		ChromePhp::log("$tag Therapy Infusions\n$temp\n\n");
 	}
 
 ?>

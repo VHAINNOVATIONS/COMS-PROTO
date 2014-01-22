@@ -1,5 +1,4 @@
-"use strict";
-
+// Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /**
  *
@@ -125,6 +124,7 @@ Ext.URLs.Templates = "/LookUp/Templates";
 // No Param - Returns list of templates available
 
 Ext.URLs.TemplateList = "/LookUp/Templates";
+Ext.URLs.FlagTemplateInactive = "/LookUp/flagTemplateInactive";
 
 Ext.URLs.BaseView = "/LookUp/view";
 Ext.URLs.TimeFrameUnit = "/LookUp/view/TimeFrameUnit";

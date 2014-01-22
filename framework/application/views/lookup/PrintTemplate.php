@@ -1,5 +1,5 @@
 <?php
-require_once "/ChromePhp.php";
+// require_once "/ChromePhp.php";
 ob_start();		// See article - http://digitalpbk.com/php/warning-cannot-modify-header-information-headers-already-sent
 
 function renderTemplateHeading($tData, $references) {
@@ -96,13 +96,6 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 	foreach($hydrations as $hydration) {
 		if ("" !== $tag) {
 			$infusion = $infusions[$hydration['id']][0];
-
-	$temp = json_encode($hydration);
-	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
-
-	$temp = json_encode($infusion);
-	ChromePhp::log("Infusion Data\n" . $temp . "\n\n");
-
 			//Pre/Post Therapy Section Hydration - 
 			$drug = $hydration['drug'];
 			$dose = $infusion['amt'];
@@ -125,9 +118,6 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 			$fluidType = $infusion['fluidType'];
 		}
 		else {
-//	$temp = json_encode($hydration);
-//	ChromePhp::log("Hydration Data\n" . $temp . "\n\n");
-
 			//Therapy Section Hydration - 
 			$drug = $hydration['drug'];
 			$dose = $hydration['regdose'];

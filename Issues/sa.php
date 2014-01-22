@@ -5,12 +5,7 @@
  */
 $ChromePHP_File = __DIR__ . "/../../app/ChromePhp.php";
 if (file_exists($ChromePHP_File)) {
-    // echo "Got ChromePHP - <br>$ChromePHP_File<br>";
     require_once $ChromePHP_File;
-    ChromePhp::log("Chrome PHP Working...");
-}
-else {
-    echo "ChromePHP - $ChromePHP_File is invalid<br>";
 }
 
 $curlDefault = array(

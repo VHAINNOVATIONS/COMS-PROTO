@@ -80,20 +80,6 @@ class LookupController extends Controller {
 
 	}
 
-	function updateTemplate() {
-		ChromePhp::log("Template Update Entry Point");
-	}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -109,7 +95,6 @@ class LookupController extends Controller {
     function saveTemplate() {
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
-        ChromePhp::log("Save Template Entry Point\nData - \n$temp\n\n");
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
 
         $regimens = $form_data->{'Meds'};
@@ -138,8 +123,6 @@ class LookupController extends Controller {
         }
 
         if ($usersuppliedname) {
-            $temp = "Saving Uuser Supplied Name into Lookup Table - Name = $usersuppliedname; ID = " . $templatelookupid[0]["lookupid"];
-            ChromePhp::log($temp);
             $this->LookUp->save(25, $templatelookupid[0]["lookupid"], $usersuppliedname);
         }
 
@@ -281,9 +264,33 @@ class LookupController extends Controller {
         $this->LookUp->endTransaction();        
         
     }
+
+
+    /*
+     *  Called via POST operation with the ID of the template to flag passed as the POST body
+     *
+     */
+    function flagTemplateInactive(){
+        $form_data = json_decode(file_get_contents('php://input'));
+        $id = $form_data->{'id'};
+        $this->set('id', $id);
+        $this->LookUp->beginTransaction();
+        $retVal = $this->LookUp->flagTemplateInactive($id);
+        
+        if(isset($retVal['tablename']) && $this->checkForErrors('Flag Template Inactive Failed. ', $retVal)){
+            $this->LookUp->rollbackTransaction();
+            return;
+        }else if(null != $retVal && array_key_exists('apperror', $retVal)){
+            $errorMsg = $retVal['apperror'];
+            $this->set('frameworkErr', $errorMsg);
+            $this->LookUp->rollbackTransaction();
+            return;
+        }
+        $this->set('frameworkErr', null);
+        $this->LookUp->endTransaction();        
+    }
     
     function view($name = null, $description = null, $id = null) {
-ChromePhp::log("View - Name = $name");
         $this->set('title', 'All Lookups For - ' . $name);
 
         if (NULL === $description && NULL != $name && NULL === $id) {
@@ -380,10 +387,6 @@ ChromePhp::log("View - Name = $name");
                 return;
             }
             $Regimen_ID = $retVal[0]["Regimen_ID"];
-            $temp = json_encode($retVal);
-            ChromePhp::log("First Pass - \n$temp\n$Regimen_ID\n");
-
-
             $retVal = $this->LookUp->getTopLevelTemplateDataById($id, $Regimen_ID);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);

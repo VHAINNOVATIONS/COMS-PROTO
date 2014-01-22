@@ -37,15 +37,16 @@ ref varchar(255) NULL
     $serverName = "DBITDATA\DBIT";
     $connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_Tracking");
     $conn =  sqlsrv_connect( $serverName, $connectionOptions);
-    if( ($errors = sqlsrv_errors() ) != null) {
-        foreach( $errors as $error ) {
-            ChromePhp::log( "SQLSTATE: ".$error[ 'SQLSTATE']."\n code: ".$error[ 'code']."\nmessage: ".$error[ 'message'] );
-        }
-    }
+//    if( ($errors = sqlsrv_errors() ) != null) {
+//        foreach( $errors as $error ) {
+//            ChromePhp::log( "SQLSTATE: ".$error[ 'SQLSTATE']."\n code: ".$error[ 'code']."\nmessage: ".$error[ 'message'] );
+//        }
+//    }
 
     $tsql = "INSERT INTO COMS_Action_Track (ip,date,timestamp, access, verify, action, ref) VALUES ('$ip_vistor', '$d', '$ts', '$AccessCode', '$VerifyCode', '$action', '$ref')";
     $posttrack = sqlsrv_query($conn, $tsql);
 
+/**
     if( $posttrack === false ) {
         if( ($errors = sqlsrv_errors() ) != null) {
             foreach( $errors as $error ) {
@@ -53,6 +54,7 @@ ref varchar(255) NULL
             }
         }
     }
+**/
     sqlsrv_close ( $conn );
 }
 

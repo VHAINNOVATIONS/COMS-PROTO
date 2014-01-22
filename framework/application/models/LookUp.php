@@ -91,7 +91,7 @@ class LookUp extends Model {
         return $retVal;
         
     }
-    
+
     /**
      * innerDeleteTemplate - Actual Template Delete function. Checks to see if a template is currently applied to a patient before deleting
      *
@@ -224,7 +224,15 @@ class LookUp extends Model {
         
         return $retVal;
     }
-    
+
+
+
+    function flagTemplateInactive($id){
+        $query = "UPDATE Master_Template SET Is_Active = 0 WHERE Regimen_ID = '" .$id."'";
+        $retVal = $this->query($query);
+        return $retVal;
+    }
+
     /**
      * 
      * @param stdClass $formData
@@ -242,8 +250,7 @@ class LookUp extends Model {
         $emotegnicLevel = $formData->ELevel;
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
-        $keepActive = $formData->KeepActive;
-        ChromePhp::log("Keep Active - $keepActive");
+        $keepActive = $formData->KeepAlive;
         
         $preMHInstructions = str_replace("'", "''", $formData->PreMHInstructions);
         $postMHInstructions = str_replace("'", "''", $formData->PostMHInstructions);
@@ -1008,7 +1015,7 @@ class LookUp extends Model {
                 INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                 INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                 INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
-                LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
+                LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) ";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
                 $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = 1";
             } else if ($field != NULL && strtoupper($field) == 'PATIENT') {
@@ -1017,6 +1024,7 @@ class LookUp extends Model {
             }else{
                 $query .= "WHERE Is_Active = 1";
             }
+            $query .= " Order By description";
         } else if (DB_TYPE == 'mysql') {
 
             $query = "select lu.`Name` as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .

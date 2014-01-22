@@ -8,12 +8,6 @@ if (!is_null($templatedata)) {
         //display the results 
         foreach ($templatedata as $oemrecord) {
 
-$temp = json_encode($oemrecord);
-ChromePhp::log("Template Data Record - \n$temp\n\n");
-
-
-
-
             echo "{\n\t\"id\" : \"" . $oemrecord['id'] . "\", \n";
             echo "\t\"RegimenName\" : \"" . $oemrecord['name'] . "\", \n";
             echo "\t\"RegimenID\" : \"" . $oemrecord['Regimen_ID'] . "\", \n";
@@ -39,11 +33,6 @@ ChromePhp::log("Template Data Record - \n$temp\n\n");
             echo "\t\"References\" : [\n";
             if ($numreferences) {
                 foreach ($references as $reference) {
-
-$temp = json_encode($reference);
-ChromePhp::log("Template reference Record - \n$temp\n\n");
-
-
                     echo "\t\t{ \"id\" : \"" . $reference['id'] . "\", ";
                     echo "\"Reference\" : \"" . $reference['name'] . "\", ";
                     echo "\"ReferenceLink\" : \"" . $reference['description'] . "\"}";

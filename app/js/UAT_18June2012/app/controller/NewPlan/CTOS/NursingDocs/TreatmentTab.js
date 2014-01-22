@@ -90,6 +90,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 
 	AuthenticateUser : function (button) {
+
+// get Route
+// if Route !== Oral the End Time MUST be set before signing
+// IF the medication is ORAL, SubQ, IM or IVP then only a start time is required before the user can sign off on the record
+// ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
+
+
+
+
+
+
+
+
+
+
+
+
 		this.SignRecordBtn = button;
 		button.hide();
 		this.application.loadMask("Authenticating digital signature");
@@ -146,6 +163,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	beforeCellEdit : function (plugin, eObj, beforeEdit) {
 		var StartTimeField = Ext.getCmp("startTimeEditor");
 		var EndTimeField = Ext.getCmp("endTimeEditor");
+
+
+// IF the medication is ORAL, SubQ, IM or IVP then only a start time is required before the user can sign off on the record
+// ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
+
 
         var timeMax = Ext.Date.format(new Date(), 'h:i A');
 		EndTimeField.setMaxValue(timeMax);

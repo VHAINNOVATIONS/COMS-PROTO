@@ -402,6 +402,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
         if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
             UserAlias = UserAlias.replace(patt, "").trim();
         }
+
+        /* Get a list of all templates by alias */
         Ext.Ajax.request({
             url: Ext.URLs.TemplateAlias,
             scope: this,
@@ -409,10 +411,19 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
             success: function(response, opts) {
                 var obj = Ext.decode(response.responseText);
                 var Records = obj.records;
-                var i, alias = opts.alias, dupCount = 0;
+                var i, matchingRecord, record2Flag,
+                    alias = opts.alias, 
+                    origAlias = this.getTemplateAlias().getValue(),
+                    dupCount = 0;
                 for (i = 0; i < obj.total; i++ ) {
                     if (this.isDuplicateDescription(Records[i].description, alias)) {
                         dupCount++;
+                        if (Records[i].description === alias) {
+                            matchingRecord = Records[i];
+                        }
+                        if (Records[i].description === origAlias) {
+                            record2Flag = Records[i];
+                        }
                     }
                 }
                 if (dupCount > 0) {
@@ -421,33 +432,54 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                     var temp = this.getTemplateAlias().getValue();
                     this.haveDuplicate = true;
                 }
-
                 if (this.haveDuplicate) {
                     Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
-                        if ("ok" === btn) {
+                        if ("yes" === btn) {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
+                            this.application.loadMask("Please wait; Saving Template");
+                            var Template = this.PrepareTemplate2Save(true);
+                            this.SaveTemplate2DB(Template, button);
+
                         }
                         else {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
+                            this.application.loadMask("Please wait; Saving Template");
+                            var Template = this.PrepareTemplate2Save(true);
+                            this.SaveTemplate2DB(Template, button);
+                            this.flagTemplateInactive(record2Flag.name);
                         }
                     }, this);
                 }
-//        this.application.loadMask("Please wait; Saving Template");
-//        var Template = this.PrepareTemplate2Save();
-//        this.SaveTemplate2DB(Template, button);
 
             },
             failure: function(response, opts) {
                 console.log('server-side failure with status code ' + response.status);
             }
         });
-
-
-
         return;
 	},
 
-	PrepareTemplate2Save: function () {
+    flagTemplateInactive: function (record2FlagID) {
+        var id2LookFor = record2FlagID;
+        Ext.Ajax.request({
+            url: Ext.URLs.FlagTemplateInactive,
+            method: "POST",
+            jsonData: {
+                id : id2LookFor
+            },
+            scope: this,
+            success: function(response, opts) {
+                var obj = Ext.decode(response.responseText);
+                var Records = obj.records;
+                var i, alias = opts.alias, dupCount = 0;
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+            }
+        });
+    },
+
+	PrepareTemplate2Save: function (KeepAlive) {
 		var diseaseId = null;
 		var diseaseStageId = null;
 

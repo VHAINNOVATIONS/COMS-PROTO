@@ -1,5 +1,4 @@
 <?php
-require_once "/ChromePhp.php";
 /**
  * @property Patient $Patient
  *
@@ -145,10 +144,6 @@ class PatientController extends Controller
 				return;
 			}
 			$this->set('PatientInfo', $patientData[0]);
-//			$temp = json_encode($patientData);
-//			ChromePhp::log("PatientInfo - \n$temp\n\n");
-
-
 
 			$patientAllergies = $this->Allergies($patientID);
 			if ($this->checkForErrors('Get Patient Allergies Failed. ', $patientAllergies)) {
@@ -167,20 +162,12 @@ class PatientController extends Controller
 			$this->set('patientTemplate', $patientTemplate);
 			$this->set('frameworkErr', null);
 
-//			$temp = json_encode($patientTemplate);
-//			ChromePhp::log("patientTemplate - \n$temp\n\n");
-
-
-
-
-
 			// Function is also used by the OEM controller function to retrieve all the current OEM Data
 			$this->genOEMData($patientID);
 			$PatientDetails = $this->Patient->getPatientDetailInfo($patientID);
 			if ($this->checkForErrors('Get Patient Details Failed. ', $PatientDetails)) {
 				$this->set('templatedata', null);
 				$hasErrors = true;
-				ChromePhp::error("Get Patient Details FAILED");
 				return;
 			}
 
@@ -195,23 +182,15 @@ class PatientController extends Controller
 				$patientDetailMap[$patientID] = $PatientDetails;
 			}
 			$this->set('PatientDetailMap', $patientDetailMap);
-			// $temp = json_encode($patientDetailMap);
-			// ChromePhp::log("PatientDetailMap - \n$temp\n\n");
-
-
-
 
 /**
 			$lookup = new LookUp();
 			$Disease = $lookup->selectByNameAndDesc('DiseaseType', $this->masterRecord[0]['Disease']);
 			if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
-				ChromePhp::error("Get Disease Info Failed\n");
 				$this->set('templatedata', null);
 				return;
 			}
 			$this->masterRecord[0]['DiseaseRecord'] = $Disease;
-			// $temp = json_encode($Disease);
-			// ChromePhp::log("Disease Info  - \n$temp\n\n");
 **/
 
 		}
@@ -728,7 +707,6 @@ class PatientController extends Controller
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
 			$this->set('masterRecord', null);
-			ChromePhp::error("genOEMData() - Template ID not available for Patient.");
 			return;
 		}
 
@@ -738,14 +716,12 @@ class PatientController extends Controller
 			$this->set('oemrecords', null);
 			$this->set('masterRecord', null);
 			$this->set('frameworkErr', null);
-			ChromePhp::warn("No Records in Template");
 			return;
 		}
 
 		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
 			$this->set('masterRecord', null);
-			ChromePhp::error("Master Record not set");
 			return;
 		}
 
@@ -754,7 +730,6 @@ class PatientController extends Controller
 		$lookup = new LookUp();
 		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
 		if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
-			ChromePhp::error("Get Disease Info Failed\n");
 			$this->set('templatedata', null);
 			return;
 		}
@@ -777,7 +752,6 @@ class PatientController extends Controller
 
 			$retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
-				ChromePhp::error('Get Pre Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
@@ -786,7 +760,6 @@ class PatientController extends Controller
 
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
-				ChromePhp::error('Get Post Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
@@ -795,7 +768,6 @@ class PatientController extends Controller
 
 			$retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
-				ChromePhp::error('Get Therapy Failed. ');
 				$this->set('oemrecords', null);
 				return;
 			}
