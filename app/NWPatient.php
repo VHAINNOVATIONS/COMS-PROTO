@@ -71,7 +71,7 @@ function valuecheck($value){
 	$password = 'dbitPASS22';
 	$csession = 'csession VistA';
 	$cdUnix = 'D ^%CD';
-	$instance = 'CPM355';
+	$instance = 'VistA';
 	$cprsLogin = 'S DUZ=1';
 	$patientLocation = 'GEN MED';
 	$actingProvider = 'v107';
