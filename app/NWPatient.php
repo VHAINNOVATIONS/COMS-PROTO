@@ -51,9 +51,11 @@ function valuecheck($value){
 	// debug("Include Path added with - $incPath");
 
 	//Include SSH2 file
-	if (file_exists('Net/SSH2.php')) {
-		require 'Net/SSH2.php';
-	}
+	//if (file_exists('Net/SSH2.php')) {
+	//	require 'Net/SSH2.php';
+	//}
+	
+	include ("phpseclib/Net/SSH2.php");
 
 	//Set Variables
 	//$host = '172.19.100.94';
@@ -67,8 +69,8 @@ function valuecheck($value){
 	//$actingProvider = 'v107';
 	//$routine = 'ROUTINE';
 	$host = '199.179.23.117';
-	$username = 'sean.cassidy';
-	$password = 'dbitPASS22';
+	$username = 'VISTAP1';
+	$password = 'VISTAP1!!';
 	$csession = 'csession VistA';
 	$cdUnix = 'D ^%CD';
 	$instance = 'VistA';
@@ -100,10 +102,14 @@ function NewOrderPatient($drug,$dose,$Regimen_Dose_Unit,$Description,$match,$Num
 		$orderday = date('m_d_Y');
 
 		//Set Variables
-		$host = '172.19.100.94';
-		$username = 'cachemgr355';
-		$password = 'vhaino355';
-		$csession = 'csession cache355';
+		//$host = '172.19.100.94';
+		//$username = 'cachemgr355';
+		//$password = 'vhaino355';
+		//$csession = 'csession cache355';
+		$host = '199.179.23.117';
+		$username = 'VISTAP1';
+		$password = 'VISTAP1!!';
+		$csession = 'csession VistA';
 		$cdUnix = 'D ^%CD';
 		$instance = 'CPM355';
 		$cprsLogin = 'S DUZ=1';
@@ -115,6 +121,9 @@ function NewOrderPatient($drug,$dose,$Regimen_Dose_Unit,$Description,$match,$Num
 		$schedule = 'QDAY';
 		$routine = 'ROUTINE';
 		$tdrug = trim($drug);
+		
+		echo $username;
+		echo $password;
 
 		$ssh = new Net_SSH2($host);
 		if (!$ssh->login($username, $password)) {
