@@ -14,7 +14,7 @@ Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
             defaults : { labelAlign: 'top', margin: '5'},
             items: [
                 { xtype : "RequiredFieldLabel" },
-                { xtype: "textfield", name : "AccessCode", labelWidth: 100, width: 178, fieldLabel: "Access Code <em>*</em>"  },
+                { xtype: "textfield", inputType: "password", name : "AccessCode", labelWidth: 100, width: 178, fieldLabel: "Access Code <em>*</em>"  },
                 { xtype: "textfield", inputType: "password", name : "VerifyCode", labelWidth: 100, width: 178, fieldLabel: "Verify Code <em>*</em>"  }
             ]
         } ];

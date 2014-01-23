@@ -13,15 +13,20 @@
 
         <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
         <script src="/libs/modernizr-2.0.6.js"></script>
+		<style>
+			div#heading { margin: 1em; display:none; font-size: 110%; }
+			#heading ul { margin: 1em; }
+			#heading li { margin-left: 3em; list-style-type: disc; }
+		</style>
 
     </head>
 <body>
-<div style="margin:1em;">
+<div id="heading">
 This display presents open items and is stratified into the following three groups:  
-<ul style="margin-left: 3em; " >
-<li style="list-style-type: disc;">Product Backlog - PoC (Proof of Concept) for the items originally identified by PoC COMS Stakeholders, deferred for higher priority concerns, and required for this current COMS project</li>
-<li style="list-style-type: disc;">Product Backlog - Prototype COMS for functionality requested by the current group of Stakeholders</li>
-<li style="list-style-type: disc;">Defect Log for application defects</li>
+<ul>
+<li><b>Product Backlog - PoC</b> (Proof of Concept) for the items originally identified by PoC COMS Stakeholders, deferred for higher priority concerns, and required for this current COMS project</li>
+<li><b>Product Backlog - Prototype</b> COMS for functionality requested by the current group of Stakeholders</li>
+<li><b>Defect Log</b> for application defects</li>
 </ul>
 To sort the lists within their respective categories, select the pull down menu for Issue Title and select "Sort Ascending".  The issue titles with an asterisk (*) are designated for development during the current sprint to be presented during the next COMS Demonstration.  After successful demonstration at this Stakeholder Review, these items will be closed and removed from the Backlogs and Defects display.   
 </div>
@@ -31,6 +36,8 @@ To sort the lists within their respective categories, select the pull down menu 
 
 <script>
 Ext.onReady(function(){
+	var heading = Ext.get("heading");
+	heading.dom.style.display="block";
 	var minWidth = Ext.getBody().getViewSize().width - 150;
 	var minHeight = Ext.getBody().getViewSize().height - 200;
 	if (minWidth < 0) {
