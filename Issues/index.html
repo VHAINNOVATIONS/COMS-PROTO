@@ -16,6 +16,16 @@
 
     </head>
 <body>
+<div style="margin:1em;">
+This display presents open items and is stratified into the following three groups:  
+<ul style="margin-left: 3em; " >
+<li style="list-style-type: disc;">Product Backlog - PoC (Proof of Concept) for the items originally identified by PoC COMS Stakeholders, deferred for higher priority concerns, and required for this current COMS project</li>
+<li style="list-style-type: disc;">Product Backlog - Prototype COMS for functionality requested by the current group of Stakeholders</li>
+<li style="list-style-type: disc;">Defect Log for application defects</li>
+</ul>
+To sort the lists within their respective categories, select the pull down menu for Issue Title and select "Sort Ascending".  The issue titles with an asterisk (*) are designated for development during the current sprint to be presented during the next COMS Demonstration.  After successful demonstration at this Stakeholder Review, these items will be closed and removed from the Backlogs and Defects display.   
+</div>
+
 <div id="GridPanel"></div>
  <script type="text/javascript" src="/libs/ExtJS_4.1RC1/ext-all-debug.js"></script>
 
@@ -69,9 +79,15 @@ Ext.onReady(function(){
         margin: '25',
         frame: true,
 		layout: "fit",
-		features: [{
-            ftype: 'grouping'
-        }],
+		features: [
+        Ext.create('Ext.grid.feature.GroupingSummary', {
+            id: 'groupSummary',
+            groupHeaderTpl: '{name} ({rows.length} {[values.rows.length > 1 ? "Entries" : "Entry"]})'
+        }) 
+//		{
+//            ftype: 'grouping'
+//        }
+		],
 		listeners: {
 			'cellclick': function(scope, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 				puWin(record.data.title, record.data.body);
@@ -89,7 +105,7 @@ Ext.onReady(function(){
             },
             { text: '', labelSeparator: '', dataIndex: 'label', hidden: true}
         ],
-        renderTo: Ext.getBody()
+        renderTo: Ext.get("GridPanel")
     });
 
 	Ext.EventManager.onWindowResize(function () {

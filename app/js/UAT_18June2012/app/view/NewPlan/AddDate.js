@@ -150,25 +150,7 @@ Ext.define('COMS.view.NewPlan.AddDate', {
                                         { boxLabel : "Right Foot", name : "bodyPart12" }
                                         
                                         ]
-                                    }/*,
-                                    { xtype: "checkboxgroup",
-                                        fieldLabel: "Right Side",
-                                        vertical: true,
-                                        columns: 1,
-                                        width: 160,
-                                        height: 150,
-                                        shadow: true,
-                                        //border: '1',
-                                        //style: {borderColor:'#000000', borderStyle:'solid', borderWidth:'1px'},
-                                        items: [
-                                        { boxLabel : "Upper Right Arm", name : "ND_PT_SA_Swelling" },
-                                        { boxLabel : "Lower Right Arm", name : "ND_PT_SA_Pain" },
-                                        { boxLabel : "Right Hand and Fingers", name : "ND_PT_SA_Absence" },
-                                        { boxLabel : "Right Thigh", name : "ND_PT_SA_Removed" },
-                                        { boxLabel : "Lower Right Leg", name : "ND_PT_SA_Removed" },
-                                        { boxLabel : "Right Foot", name : "ND_PT_SA_Redness" }
-                                        ]
-                                    }*/
+                                    }
                                 ]
                             },                            
                             {

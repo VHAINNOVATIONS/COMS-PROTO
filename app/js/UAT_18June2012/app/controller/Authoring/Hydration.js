@@ -893,7 +893,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			if (ckRec.hasRecord) {
 				var record = Ext.create(Ext.COMSModels.Hydration, ckRec.record.data);
 				if ("Remove Drug" === button.text) {
-                    Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this treatment?", function(btn, text) {
+                    Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", function(btn, text) {
                         if ("no" === btn) {
                             var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex;
                             theGrid = Ext.ComponentQuery.query(theQuery)[0];

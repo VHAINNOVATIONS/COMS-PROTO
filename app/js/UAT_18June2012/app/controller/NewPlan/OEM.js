@@ -1013,6 +1013,16 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 handleEditOEM_Record : function (event, element) {
 
 	event.stopEvent(  );
+    if (element.text = "Edit") {
+        this.handleActualEditOfOEM_Record(event, element);
+    }
+    else {
+//        debugger;
+    }
+},
+
+handleActualEditOfOEM_Record : function( event, element) {
+
 		var anchorName = element.getAttribute("name");
 		var anchorCycle = element.getAttribute("cycle");
 		var anchorDay = element.getAttribute("day");

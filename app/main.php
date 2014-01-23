@@ -1,3 +1,13 @@
+<?php 
+/** Archived Version Info
+$ProjType = "Prototype, 0.1, June 18, 2012";
+$ProjType = "Proof of Concept, 0.1, November 22, 2013";
+$ProjType = "Proof of Concept, 0.2, December 13, 2013";
+$ProjType = "Proof of Concept, 0.3, January 3, 2014";
+*/
+$ProjType = "Proof of Concept, 0.4, January 24, 2014";
+?>
+
 <!doctype html>
 <!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
@@ -58,14 +68,13 @@
 	</form>
     </div>    <!-- end of #Application -->
     <div id="footer" class="initialHide" >
-<!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Prototype, 0.1, June, 18, 2012<br> -->
-<!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.1, November 22, 2013 -->
-<!--	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.2, December 13, 2013 -->
-	<abbr title="Chemotherapy Order Management System">COMS</abbr> Proof of Concept, 0.3, January 3, 2014<br />
-    <!--  Page last modified - <?php echo date( "d F Y", filemtime( 'index.php' ) );?> <br /> -->
-
-This application works best in MS-IE Version 9 or above, Mozilla Firefox Version 20 and above, Google Chrome Version 30 and above
-
+	<abbr title="Chemotherapy Order Management System">COMS</abbr> <?php echo $ProjType; ?>
+    <div>
+    This application works best in 
+        MS-IE Version 9 or above, 
+        Mozilla Firefox Version 20 and above, 
+        Google Chrome Version 30 and above
+    </div>
 
 	<!-- Display MDWS Notational information here -->
 	<div id="MDWs_Info"></div>

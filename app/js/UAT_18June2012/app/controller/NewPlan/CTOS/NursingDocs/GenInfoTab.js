@@ -374,7 +374,6 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 				ndctDate[1].setValue(ThisAdminDay.AdminDate);
 			}
 			else {
-                debugger;
                 var msg = this.getNextAdminDate();
 				ndctWarning[0].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);
 				ndctWarning[1].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);

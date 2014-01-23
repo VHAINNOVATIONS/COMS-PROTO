@@ -15,71 +15,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 					name : "ND_PT_IVAccess",
 					defaults : { labelAlign : "right", labelWidth: 60, labelClsExtra : "NursingDocs-label" },
 					items : [
-/*********** OLD *******************
-						{ xtype : "container",
-							layout : "hbox",
-							defaults : { labelAlign : "right", labelWidth: 60, labelClsExtra : "NursingDocs-label" },
-						items : [
-							{ xtype : "datefield", labelWidth: 95, fieldLabel : "Date Accessed", width: 200, name : "ND_PT_IVA_Date" },
-		
-							// MWB - 28 Feb 2012 - Currently this is static data but will eventually be replaced by a SQL Based Store
-							{ xtype : "combo", 
-								fieldLabel : "Device", 
-								name : "ND_PT_IVA_Device",
-								width : 180,
-								store : { fields : [ "name", "value" ], data : [
-								{name : "Peripheral IV", value : 1},  
-								{name : "Port", value : 2},  
-								{name : "Hickman", value : 3},  
-								{name : "PICC", value : 4},  
-								{name : "Central Line", value : 5}
-							] }, displayField : "name", valueField : "value" },
-		
-							// MWB - 28 Feb 2012 - Currently this is static data but will eventually be replaced by a SQL Based Store
-							{ xtype : "combo", 
-								fieldLabel : "Gauge", 
-								name : "ND_PT_IVA_Gauge",
-								width : 150,
-								store : { fields : [ "name", "value" ], data : [
-								{name : "22g", value : 1},  
-								{name : "20g", value : 2}
-							] }, displayField : "name", valueField : "value" },
-		
-							// MWB - 28 Feb 2012 - Currently this is static data but will eventually be replaced by a SQL Based Store
-							{ xtype : "combo", 
-								fieldLabel : "Location", 
-								name : "ND_PT_IVA_Location",
-								width : 310,
-								store : { fields : [ "name", "value" ], data : [
-								{name : "Left Ventral Proximal Forearm", value : 1},  
-								{name : "Right Ventral Proximal Forearm", value : 2},  
-								{name : "Left Ventral Distal Forearm", value : 3},  
-								{name : "Right Ventral Distal Forearm", value : 4},  
-		
-								{name : "Left Dorsal Proximal Forearm", value : 5},  
-								{name : "Right Dorsal Proximal Forearm", value : 6},  
-		
-								{name : "Left Dorsal Distal Forearm", value : 7},  
-								{name : "Right Dorsal Distal Forearm", value : 8},  
-
-								{name : "Left Dorsum of hand", value : 9},  
-								{name : "Right Dorsum of hand", value : 10},  
-		
-								{name : "Left Port", value : 11},  
-								{name : "Right Port", value : 12},  
-		
-								{name : "Left Hickman", value : 13},  
-								{name : "Right Hickman", value : 14},  
-		
-								{name : "Left PICC", value : 15},  
-								{name : "Right PICC", value : 16}
-		
-							] }, displayField : "name", valueField : "value" }
-						]
-						},
-						{ xtype : "textarea", grow : true, labelWidth: 95, fieldLabel : "Comments", name : "ND_PT_SA_Comments", width: 850 }
-****************************************/
-/********** NEW - SIC - 1 Aug 2012 ***************/
 						{ xtype : "datefield", labelWidth: 95, fieldLabel : "Date Accessed", width: 200, name: "ND_PT_IVA_Date" },
 
 						// MWB - 28 Feb 2012 - Currently this is static data but will eventually be replaced by a SQL Based Store
@@ -129,7 +64,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 							{name : "Left side of Chest", value : 11},
 							{name : "Right side of Chest", value : 12}
 							] }, displayField : "name", valueField : "value" }
-/********** END NEW - SIC - 1 Aug 2012 ***************/
 					]
 				},
 
@@ -144,7 +78,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 						defaultType: "checkboxfield",
 						defaults : { margin : "5 10 5 0", labelAlign : "right", labelWidth: 60, labelClsExtra : "NursingDocs-label" },
 						items : [
-							{ boxLabel : "Absence of symptoms", name : "ND_PT_SA_Absence" },
+							{ boxLabel : "Absence of symptoms", name : "ND_PT_SA_Absence", id : "ckSymptomAbsence" },
 							{ boxLabel : "Pain", name : "ND_PT_SA_Pain" },
 							{ boxLabel : "Swelling", name : "ND_PT_SA_Swelling" },
 							{ boxLabel : "Erythema", name : "ND_PT_SA_Redness" },
