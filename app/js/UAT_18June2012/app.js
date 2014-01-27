@@ -1050,7 +1050,7 @@ Ext.require([
 	if (pAmpu.length > 0) {
 		var Reduction = 0;
 		var AmpuList = Ext.Amputations;
-		var y, z;
+		var i, y, z;
 		for (i = 0; i < pAmpu.length; i++) {
 			y = pAmpu[i].description;
 			z = AmpuList[y];
@@ -1204,7 +1204,7 @@ Ext.BSA_Calc = function(PatientInfo) {
 	if ( pAmpu && pAmpu.length > 0) {
 		var Reduction = 0;
 		var x = Ext.Amputations;
-		var y, z;
+		var i, y, z;
 		for (i = 0; i < pAmpu.length; i++) {
 			y = pAmpu[i].description;
 			z = x[y];
@@ -1245,25 +1245,26 @@ Ext.DoseCalc = function(Patient, d, du) {
 // console.log("Return Dose = " + d + " - " + du );
 
 	var ReturnDose = Ext.GeneralRounding2Digits(d) + " " + du;
-	if ("AUC" === du.toUpperCase()) {
-		// Use Calvert Formula
-		// alert("AUC Dosing requires Calvert Formula, Not Yet Available");
-		consle.log("AUC Dosing requires Calvert Formula, Not Yet Available - " + d + " = " + du);
-	}
-	else {
+	if ("AUC" !== du.toUpperCase()) {
 		var x = du.split("/");
 		if (x.length > 0) {
 			if ("M2" === x[1].toUpperCase()) {	// Use BSA Calculation
 				ReturnDose = Ext.GeneralRounding2Digits(d * PatientBSA) + " " + x[0];
 			}
 			else if ("KG" === x[1].toUpperCase()) {
-				ReturnDose = Ext.GeneralRounding2Digits(d * w) + " " + x[0];
+				ReturnDose = Ext.GeneralRounding2Digits(d * PatientWeight) + " " + x[0];
 			}
 			else {
 				alert("Unknown Dosage Calculation required - " + du);
 			}
 		}
 	}
+//	else {
+		// Use Calvert Formula
+		// alert("AUC Dosing requires Calvert Formula, Not Yet Available");
+		// consle.log("AUC Dosing requires Calvert Formula, Not Yet Available - " + d + " = " + du);
+//	}
+
 	return ReturnDose;
 };
 

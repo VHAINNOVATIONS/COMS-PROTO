@@ -26,21 +26,43 @@ $ProjType = "Proof of Concept, 0.4, January 24, 2014";
 		<script src="/libs/modernizr-2.0.6.js"></script>
 
 		<script>
-<?php
+<?php 
+/* Session Variables available - MWB 1/24/2014
+            ["chktrack"]=> 1
+            ["sessionid"]=> "iv3e8v7mi7jcokep9d3rnotah7" 
+            ["sessionStatus"]=> 0
+            ["role"]=> "All Roles" 
+            ["dname"]=> "Programmer" 
+            ["rid"]=> 26
+            ["cprsUsername"]=> "1programmer" 
+            ["cprsPass"]=> "programmer1" 
+            ["Email"]=> "programmer1@dbitmail.com" 
+            ["TemplateAuthoring"]=> 1
+            ["Role_ID"]=> "63C5D238-9AB6-E111-A560-000C2935B86F" ; NOTE: This is really the unique User Id and maps to the "created_by" column in the Master Templates table.
+            ["sitelist"]=> "901" 
+            ["domain"]=> "mwb.dbitpro.com" 
+            ["MDWS_Status"]=> "Crashed" 
+            ["MDWS_Type"]=> "Disconnect" 
+            ["MDWS_Msg"]=> "There are no open connections" 
+            ["MDWS_Suggestion"]=> "" 
+ *************************************/
+/* Initializing of global JavaScript variables */
 	echo "		var theJSPath = '$Version/';\n";
-	echo "		var User = '$user';\n";
+    echo "      var session_ID = '$_SESSION[\"sessionid\"]';\n";    /* Unique Session ID */
+    echo "      var User_ID = '$_SESSION[\"Role_ID\"]';\n";         /* Unique User ID */
+	echo "		var User = '$user';\n";     /* Domain\User name of user currently logged into the domain */
+	echo "		var CurUser = '" . get_current_user() . "';\n";     /* User name of user currently logged into the domain */
 	echo "		var Sessionrid = '$rid';\n";
 	echo "		var Sessionrole = '$role';\n";
 	echo "		var SessionTemplateAuthoring = '$TemplateAuthoring';\n";
 	echo "		var AuthType = '$authtype';\n";
-	echo "		var CurUser = '" . get_current_user() . "';\n";
     if (isset($FirstParam)) {
     	echo "		var FirstURL = '$FirstParam';\n";
     }
     else {
     	echo "		var FirstURL = '';\n";
     }
-	echo "		var SessionUser = '$sessionUser';\n";
+	echo "		var SessionUser = '$sessionUser';\n";   /* CPRS User Name of user currently logged into App via CPRS */
 ?>
 		</script>
 	</head>

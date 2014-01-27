@@ -248,6 +248,7 @@ Execute 'ant jshint' checks the JavaScript files against JS-Lint</echo>
 <taskdef name="jshint" classname="com.philmander.jshint.JsHintAntTask" 
     classpath="ant-jshint-0.3.6-deps.jar" />
 
+
 <target name="jshint">
 
   <!-- Lint the code -->

@@ -1,4 +1,3 @@
-/*jslint devel: true, undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 // var tmpRecord; MWB - 28 Dec 2011; Eliminated need for global variable by using the "getSelectedRecord()" function below
 // Also cleaned up code below to not require the tmpRecord variable
 Ext.apply(Ext.data.validations, {
@@ -217,7 +216,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		{
 		ref: "Active",
 		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
-	},
+	}
 
 
 
@@ -411,7 +410,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
             success: function(response, opts) {
                 var obj = Ext.decode(response.responseText);
                 var Records = obj.records;
-                var i, matchingRecord, record2Flag,
+                var i, matchingRecord, record2Flag, Template,
                     alias = opts.alias, 
                     origAlias = this.getTemplateAlias().getValue(),
                     dupCount = 0;
@@ -437,14 +436,14 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                         if ("yes" === btn) {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
                             this.application.loadMask("Please wait; Saving Template");
-                            var Template = this.PrepareTemplate2Save(true);
+                            Template = this.PrepareTemplate2Save(true);
                             this.SaveTemplate2DB(Template, button);
 
                         }
                         else {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
                             this.application.loadMask("Please wait; Saving Template");
-                            var Template = this.PrepareTemplate2Save(true);
+                            Template = this.PrepareTemplate2Save(true);
                             this.SaveTemplate2DB(Template, button);
                             this.flagTemplateInactive(record2Flag.name);
                         }
@@ -453,7 +452,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
             }
         });
         return;
@@ -474,7 +473,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                 var i, alias = opts.alias, dupCount = 0;
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
             }
         });
     },
@@ -729,8 +728,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				wccConsoleLog("Save Template Failed");
 				this.application.unMask();
 				var ErrMsg = "Unknown Framework Error when attempting to save Template";
-				if (op.request.scope.reader.jsonData["frameworkErr"]) {
-					ErrMsg = op.request.scope.reader.jsonData["frameworkErr"];
+				if (op.request.scope.reader.jsonData.frameworkErr) {
+					ErrMsg = op.request.scope.reader.jsonData.frameworkErr;
 				}
 				Ext.MessageBox.alert('Failure', 'Template was not saved: ' + ErrMsg);
 			}
@@ -1063,7 +1062,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					authoringCtl.afterCTOSLoaded(mytemplate);
 				} else {
 					authoringCtl.application.unMask();
-					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData["frameworkErr"]);
+					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData.frameworkErr);
 
 				}
 			}
@@ -1240,7 +1239,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				} else {
 					try {
 						ref = Ext.create(Ext.COMSModels.References, {
-							id: op.request.scope.reader.jsonData["lookupid"],
+							id: op.request.scope.reader.jsonData.lookupid,
 							Reference: record.data.value,
 							ReferenceLink: record.data.description
 						});
