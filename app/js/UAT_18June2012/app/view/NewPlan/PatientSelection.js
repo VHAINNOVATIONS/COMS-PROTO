@@ -8,9 +8,22 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 	collapsible : true,
 	collapsed : false,
 	title : "Patient Selection",
+/** NEW **
+    resizable : true,
+    autoScroll : true,
+    autoHeight: true,
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+    defaults : {
+        margin: "5 0 5 10"
+    },
+** END NEW **/
+
 
 	items : [
-		{ xtype : "container", margin : "10 0 0 10", layout : "hbox", items : [
+		{ xtype : "container", layout : "hbox", items : [
 			{
 			    xtype : "datefield",
 				width: 420,
@@ -37,8 +50,8 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 			}
 		]},
 
-		{ xtype : "container", margin: "0 0 0 10", html : "<b>OR</b>" },
-		{ xtype : "container", margin : "0 0 0 10", layout : "hbox", items : [
+		{ xtype : "container", margin: 0, contentEl : "SelectionOr" },
+		{ xtype : "container", layout : "hbox", items : [
 			{
 			    xtype: 'textfield',
 				labelWidth : 280,
@@ -53,7 +66,7 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 				html : "&nbsp;<button type=\"button\" class=\"anchor\" name=\"QueryCPRS4Patient\">Query CPRS for Patient</button>" 
 			}
 		]},
-		{ xtype : "container", html : "<div style=\"background: #EFEFEF; padding: 0.5em; margin: 0.5em 5em; border: thin solid navy;\">(Note: For testing purposes, there are hundreds of patients available between 0010 and 0603. To search for a patient, use the spelling of the number for a last name and the number. For example: <b>FiveHundredTwenty, Patient</b> would be <b>f0520</b> or <b>OneHundredThirty, Patient</b> would be <b>o0130</b>).</div>" },
-		{ xtype : "SelectPatient", margin: "0 0 10 10" }		
+		{ xtype : "container", margin: 0, contentEl : "TestInfo" },
+		{ xtype : "SelectPatient" }
 	]
 });

@@ -32,7 +32,7 @@ else if (defined('MWBarlow_old')) {
 	define('DB_PASSWORD', 'F00B@r00t');
 }
 else if (defined('MWBarlow')) {
-	define('DB_NAME', 'COMS_UAT_VA_TEST_MWB');
+	define('DB_NAME', 'COMS_MWB_TEST');
 	define('DB_TYPE', 'sqlsrv');
 	define('DB_HOST', "DBITDATA\DBIT");
 	define('DB_USER', 'coms_db_user');

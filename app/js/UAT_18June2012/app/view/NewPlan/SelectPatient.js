@@ -11,7 +11,7 @@ Ext.define("COMS.view.NewPlan.SelectPatient" ,{
 			hidden : true,
 			store : "Patients", 
 			labelWidth: 150,
-			width: 450,
+			// width: 450,
 			fieldLabel: "Select Patient from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>",
 			displayField: "name",
 			valueField: "id"

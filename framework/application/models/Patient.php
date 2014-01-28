@@ -304,8 +304,10 @@ class Patient extends Model
                      "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
                      "LEFT OUTER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID) " .
                      "LEFT JOIN EoTS eots ON eots.PAT_ID = pat.PAT_ID " .
-                     "WHERE pat.Patient_ID = '" . $id . "' " .
-                     "AND pat.Is_Active = 0";
+                     "WHERE pat.Patient_ID = '" . $id . "' ";
+//            .
+//                     "AND pat.Is_Active = 0"; // MWB - 1/27/2014 - We need to return ALL Templates, no only the ones that are "Is_Active == 0"
+                      "ORDER BY Date_Started Desc, Date_Ended Desc";
         } else if (DB_TYPE == 'mysql') {
             $query = "SELECT mt.Template_ID as templateId, pat.PAT_ID as ID, case when l2.Name is not null then l2.Description else l1.Description end as templatename, " .
                      "date_format(pat.Date_Started, '%m/%d/%Y') as started, date_format(pat.Date_Ended, '%m/%d/%Y') as ended, " .

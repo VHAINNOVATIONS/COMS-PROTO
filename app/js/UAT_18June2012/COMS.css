@@ -47,8 +47,8 @@ body{
 	}
 
 	header.application  {
-		border-top: 3px solid #C9E0ED;
-		margin:0 ;
+		// border: 3px solid #C9E0ED;
+		// margin:0 ;
 		padding: 0 0 1em 1em;
 	}
 
