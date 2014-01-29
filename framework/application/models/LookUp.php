@@ -907,7 +907,7 @@ class LookUp extends Model {
 
     function selectAll() {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM " . $this->_table . " WHERE Lookup_Type = 0";
+            $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM " . $this->_table . " WHERE Lookup_Type = 0 order by 'Name'";
         } else if (DB_TYPE == 'mysql') {
             $query = "SELECT Lookup_Type_ID as ID, Name, Lookup_Type as type, Description as description FROM " . $this->_table . " WHERE Lookup_Type = 0";
         }
@@ -978,6 +978,7 @@ class LookUp extends Model {
             }else{
                 $query .= " WHERE Is_Active = 1";
             }
+            $query .= " Order By 'description'";
         } else if (DB_TYPE == 'mysql') {
             $query = "select lu.`Name` as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
                     "case when l3.`Name` is not null then l3.Description else lu.Description end as description, " .

@@ -48,8 +48,8 @@ $ProjType = "Proof of Concept, 0.4, January 24, 2014";
  *************************************/
 /* Initializing of global JavaScript variables */
 	echo "		var theJSPath = '$Version/';\n";
-    echo "      var session_ID = '$_SESSION[\"sessionid\"]';\n";    /* Unique Session ID */
-    echo "      var User_ID = '$_SESSION[\"Role_ID\"]';\n";         /* Unique User ID */
+    echo "      var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
+    echo "      var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
 	echo "		var User = '$user';\n";     /* Domain\User name of user currently logged into the domain */
 	echo "		var CurUser = '" . get_current_user() . "';\n";     /* User name of user currently logged into the domain */
 	echo "		var Sessionrid = '$rid';\n";
@@ -71,44 +71,48 @@ $ProjType = "Proof of Concept, 0.4, January 24, 2014";
     <div id="Loader" style="position: absolute; left: 20%; margin: 20%; font-size: 24px; font-family: tahoma,arial,verdana,sans-serif">Loading Application</div>
 
     <div id="application" class="container initialHide">
-	<header id="Header" class="application">
-	    <h1 id="title">Chemotherapy Order Management System (COMS)</h1>
-	    <h2 style="text-align: center;font-size: 1.5em; color: red;">Proof of Concept - Demo System</h2>
-	    <div id="welcome">Welcome <?php echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";?> -- <a href="support/" target='_blank'>Help</a></div>
-	</header>
+        <header id="Header" class="application">
+            <h1 id="title">Chemotherapy Order Management System (COMS)</h1>
+            <h2 style="text-align: center;font-size: 1.5em; color: red;">Proof of Concept - Demo System</h2>
+            <div id="welcome">
+                Welcome <?php echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";?> -- 
+                <a href="support/" target='_blank'>Help</a>
+            </div>
+        </header>
 
-	<section id="MainContent"></section>
-	<form method="POST" action="<?php echo $_SERVER[ 'PHP_SELF' ];?>">
-	<navigation id="EndControls" >
-	    <ul style="text-align: right; font-size:small;">
-	    <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
-	    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
-	    <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
-	    <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
-	    </ul>
-	</navigation>
-	</form>
+        <section id="MainContent"></section>
+        <form method="POST" action="<?php echo $_SERVER[ 'PHP_SELF' ];?>">
+            <navigation id="EndControls" >
+                <ul style="text-align: right; font-size:small;">
+                    <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
+                    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
+                    <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
+                    <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
+                </ul>
+            </navigation>
+        </form>
     </div>    <!-- end of #Application -->
+
     <div id="footer" class="initialHide" >
-	<abbr title="Chemotherapy Order Management System">COMS</abbr> <?php echo $ProjType; ?>
-    <div>
-    This application works best in 
-        MS-IE Version 9 or above, 
-        Mozilla Firefox Version 20 and above, 
-        Google Chrome Version 30 and above
+        <abbr title="Chemotherapy Order Management System">COMS</abbr> <?php echo $ProjType; ?>
+        <div>
+            This application works best in 
+            MS-IE Version 9 or above, 
+            Mozilla Firefox Version 20 and above, 
+            Google Chrome Version 30 and above
+        </div>
+
+        <!-- Display MDWS Notational information here -->
+        <div id="MDWs_Info"></div>
+
+        <!-- Display Boomerang Page Load Statistics here -->
+        <div id="results"></div>
     </div>
 
-	<!-- Display MDWS Notational information here -->
-	<div id="MDWs_Info"></div>
-
-	<!-- Display Boomerang Page Load Statistics here -->
-	<div id="results"></div>
-    </div>
-
-	<!-- Display ConsoleLog information here -->
+    <!-- Display ConsoleLog information here -->
     <section style="color: silver; margin-left: 1em;">
-	<h2>Log Info</h2>
-	<div id="LogInfo" style="height:100px; overflow: auto;"></div>
+        <h2>Log Info</h2>
+        <div id="LogInfo" style="height:100px; overflow: auto;"></div>
     </section>
 
     <script type="text/javascript" <?php echo "src=\"$LibsVersion/ext-all-debug.js\"";?>></script>

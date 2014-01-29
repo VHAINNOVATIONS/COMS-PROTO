@@ -8,7 +8,6 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 	collapsible : true,
 	collapsed : false,
 	title : "Patient Selection",
-/** NEW **
     resizable : true,
     autoScroll : true,
     autoHeight: true,
@@ -19,7 +18,6 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
     defaults : {
         margin: "5 0 5 10"
     },
-** END NEW **/
 
 
 	items : [
@@ -50,7 +48,7 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 			}
 		]},
 
-		{ xtype : "container", margin: 0, contentEl : "SelectionOr" },
+        { xtype: 'box', autoEl: { tag: 'b', html: 'OR' } },
 		{ xtype : "container", layout : "hbox", items : [
 			{
 			    xtype: 'textfield',
@@ -66,7 +64,7 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 				html : "&nbsp;<button type=\"button\" class=\"anchor\" name=\"QueryCPRS4Patient\">Query CPRS for Patient</button>" 
 			}
 		]},
-		{ xtype : "container", margin: 0, contentEl : "TestInfo" },
+        { xtype: 'box', margin: "10 60 10 60", autoEl: { tag: 'div', style: "background: #EFEFEF; padding: 0.5em; border: thin solid navy;", html: '(Note: For testing purposes, there are hundreds of patients available between 0010 and 0603. To search for a patient, use the spelling of the number for a last name and the number. For example: <b>FiveHundredTwenty, Patient</b> would be <b>f0520</b> or <b>OneHundredThirty, Patient</b> would be <b>o0130</b>).' } },
 		{ xtype : "SelectPatient" }
 	]
 });
