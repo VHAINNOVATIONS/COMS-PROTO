@@ -18,7 +18,8 @@ Ext.define('COMS.view.Management.Users', {
 		forceFit: true
 	},
 	store: {
-		autoLoad: true,
+		// autoLoad: true,
+        autoLoad: false,
 		fields: ["username", "role", "DisplayName", "Email", "cprsUsername"],
 		proxy: {
 			type: "rest",

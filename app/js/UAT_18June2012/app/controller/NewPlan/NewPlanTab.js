@@ -53,7 +53,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"Common.selTemplate"
 	,"Common.VitalSignsHistory"
     ,"NewPlan.dspTemplateData"
-    ,"NewPlan.AddDate"
+    ,"NewPlan.AskQues2ApplyTemplate"
 	,"NewPlan.EndTreatmentSummary"
     ],
 
@@ -96,9 +96,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
 
-		{ ref: "TypeOfTrial",					selector: "AddDate textfield[name=\"TypeOfTrial\"]"},
-		{ ref: "Goal",							selector: "AddDate form radiogroup[name=\"goalRadio\"]"},
-		{ ref: "AmputeeType",					selector: "AddDate form panel[name=\"amputationLocation\"]"}
+		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
+		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
+		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form panel[name=\"amputationLocation\"]"}
 
     ],
 
@@ -153,16 +153,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 click: this.resetTemplateFilter
             },
 
-            'AddDate button[action="save"]': {
+            'AskQues2ApplyTemplate button[action="save"]': {
                 click: this.ApplyTemplate
             },
-            'AddDate button[action="cancel"]': {
+            'AskQues2ApplyTemplate button[action="cancel"]': {
                 click: this.cancelDate
             },
-            'AddDate form radiogroup[name=\"clinicalTrialRadio\"]':{
+            'AskQues2ApplyTemplate form radiogroup[name=\"clinicalTrialRadio\"]':{
                 change : this.ClinicalTrialTypeSelected
             },
-            'AddDate form radiogroup[name=\"amputeeRadio\"]':{
+            'AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"]':{
                 change : this.AmputeeSelected
             }
         });
@@ -252,8 +252,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     },
 
-	// Save button for the AddDate Widget. This widget is for applying a new template to a patient
+	// Save button for the AskQues2ApplyTemplate Widget. This widget is for applying a new template to a patient
     ApplyTemplate: function(button){
+        debugger;
         var win = button.up('window');
         var form = win.down('form');
         var values = form.getValues();
@@ -295,7 +296,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }
 
         if(true === values.Amputee){
-            var amputationsCB = Ext.ComponentQuery.query('AddDate form panel checkboxgroup[name=\"amputations\"]')[0];
+            var amputationsCB = Ext.ComponentQuery.query('AskQues2ApplyTemplate form panel checkboxgroup[name=\"amputations\"]')[0];
             var checkedVals = amputationsCB.getChecked();
 			var i;
 
@@ -964,13 +965,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				buttons: Ext.MessageBox.OKCANCEL,
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
-						Ext.widget('AddDate',{itemsInGroup: itemsInGroup});
+						Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: true});
 					}
 				}
 			});
         }
 		else{
-			Ext.widget('AddDate',{itemsInGroup: itemsInGroup});
+			Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
 		}
     },
 

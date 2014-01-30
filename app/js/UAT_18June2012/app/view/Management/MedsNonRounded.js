@@ -18,7 +18,8 @@ Ext.define('COMS.view.Management.MedsNonRounded', {
 		forceFit: true
 	},
 	store: {
-		autoLoad: true,
+		// autoLoad: true,
+        autoLoad: false,
 		fields: ["Lookup_ID", "Name", "NonRounding"],
 		proxy: {
 			type: "rest",

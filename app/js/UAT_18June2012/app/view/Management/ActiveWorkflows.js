@@ -18,7 +18,8 @@ Ext.define('COMS.view.Management.ActiveWorkflows', {
 		forceFit: true
 	},
 	store: {
-		autoLoad: true,
+		// autoLoad: true,
+        autoLoad: false,
 		fields: ["WorkFlowName", "Active", "Reason", "NoSteps", "Body"],
 		proxy: {
 			type: "rest",

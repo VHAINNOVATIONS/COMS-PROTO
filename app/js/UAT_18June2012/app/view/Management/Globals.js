@@ -18,7 +18,8 @@ Ext.define('COMS.view.Management.Globals', {
 		forceFit: true
 	},
 	store: {
-		autoLoad: true,
+		// autoLoad: true,
+        autoLoad: false,
 		fields: ["sitelist", "domain"],
 		proxy: {
 			type: "rest",

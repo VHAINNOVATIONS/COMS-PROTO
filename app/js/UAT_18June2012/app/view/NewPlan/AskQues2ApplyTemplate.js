@@ -1,8 +1,8 @@
-Ext.define('COMS.view.NewPlan.AddDate', {
+Ext.define('COMS.view.NewPlan.AskQues2ApplyTemplate', {
 	extend: 'Ext.window.Window',
-	alias : 'widget.AddDate',
+	alias : 'widget.AskQues2ApplyTemplate',
         buttonAlign: 'center',
-	title : 'Apply Template',
+	title : 'Apply Template to Patient',
 	layout: 'fit',
 	autoShow: true,
 	width: 400,
@@ -13,7 +13,10 @@ Ext.define('COMS.view.NewPlan.AddDate', {
 //        },
 
 	initComponent: function() {
-            
+            debugger;
+            if (this.ChangeTemplate) {
+                alert("Ask for reason of changing template");
+            }
 
             this.items = [ {
                     xtype: 'form',
@@ -21,6 +24,38 @@ Ext.define('COMS.view.NewPlan.AddDate', {
                     defaults : { labelAlign: 'top', margin: '5'},
                     items: [
 							{ xtype : "RequiredFieldLabel" },
+
+
+
+
+
+			{ xtype : "radiogroup", name : "Reason4EOTSAnswer", width: 200, hideLabel : true, columns : 1, vertical : true, hidden: !(this.ChangeTemplate), 
+				items : [
+					{ boxLabel : "Completed Prescribed Course", name : "EOTS_Reason", inputValue : "Completed Prescribed Course"},
+					{ boxLabel : "Treatment Change", name : "EOTS_Reason", inputValue : "Treatment Change"},
+					{ xtype : "radiogroup", name : "Reason4EOTS_TCReason", width: 200, hidden : true, hideLabel : true, margin: "0 10 0 20", columns : 1, vertical : true, items : [
+						{ boxLabel : "Toxicity", name : "EOTS_TChange", inputValue : "Toxicity"},
+						{ boxLabel : "Progression of the Disease", name : "EOTS_TChange", inputValue : "Progression of the Disease"},
+						{ boxLabel : "Patient Refusal", name : "EOTS_TChange", inputValue : "Patient Refusal"},
+						{ boxLabel : "Other", name : "EOTS_TChange", inputValue : "Other"},
+						{ xtype : "textfield", margin: "0 10 0 20", hidden : true, name : "EOTS_TChangeOther", hideLabel : true }
+					]},
+					{ boxLabel : "Patient Discontinuation", name : "EOTS_Reason", inputValue : "Patient Discontinuation"},
+					{ xtype : "radiogroup", name : "Reason4EOTS_PDReason", width: 200, hideLabel : true, hidden : true, margin: "0 10 0 20", columns : 1, vertical : true, items : [
+						{ boxLabel : "Patient Terminated Regimen", name : "EOTS_PDChange", inputValue : "Patient Terminated Regimen"},
+						{ boxLabel : "Patient Left VA System", name : "EOTS_PDChange", inputValue : "Patient Left VA System"},
+						{ boxLabel : "Other", name : "EOTS_PDChange", inputValue : "Other"},
+						{ xtype : "textfield", margin: "0 10 0 20", hidden : true, name : "EOTS_PDChangeOther", hideLabel : true }
+					]},
+
+					{ boxLabel : "Other ", name : "EOTS_Reason", inputValue : "Other"},
+					{ xtype : "textfield", margin: "0 10 0 20", hidden : true, name : "EOTS_ReasonOther", hideLabel : true }
+				]
+			},
+
+
+
+
                             {
                                 xtype: 'datefield', labelAlign: 'top', name : 'startdate', labelWidth: 100, width: 178, fieldLabel: 'Enter a Start Date <em>*</em>' 
                             },

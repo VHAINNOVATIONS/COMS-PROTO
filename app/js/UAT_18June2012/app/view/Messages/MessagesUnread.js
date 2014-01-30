@@ -12,7 +12,8 @@ Ext.define('COMS.view.Messages.MessagesUnread' ,{
 	columnLines: true,
 	viewConfig: { stripeRows: true, height: 300, forceFit: true },
 	store : {
-		autoLoad: true,
+		// autoLoad: true,
+        autoLoad: false,
 		fields: [ "mid", "MTo", "CC", "Subject", "Message", "Date", "MFrom", "rid", "wid", "dateSent", "OpenLink", "timeSent" ],
 		proxy: {
 			type: "rest",
