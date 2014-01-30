@@ -1,4 +1,4 @@
-/*jslint undef: true, sloppy: true, eqeq: true, stupid: true, sub: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
+
 Ext.define('COMS.controller.Orders.OrdersTab', {
     extend : 'Ext.app.Controller',
     stores : ['OrdersStore'],
@@ -48,25 +48,25 @@ SaveChanges : function(button, event, eOpts) {
 		win.close();
                 alert("here");
 		
-			var Template_ID = this.application.templateID().getValue();;
-			var Order_Status = this.application.orderstatus().getValue();;
-			var Drug_Name = this.application.drug().getValue();;
-			var Patient_ID = this.application.patientID().getValue();;
-			var type = this.application.type().getValue();;
-			var route = this.application.route().getValue();;
-			var orderid = this.application.orderid().getValue();;
-			var Last_Name = this.application.Last_Name().getValue();;
+			var Template_ID = this.application.templateID().getValue();
+			var Order_Status = this.application.orderstatus().getValue();
+			var Drug_Name = this.application.drug().getValue();
+			var Patient_ID = this.application.patientID().getValue();
+			var type = this.application.type().getValue();
+			var route = this.application.route().getValue();
+			var orderid = this.application.orderid().getValue();
+			var Last_Name = this.application.Last_Name().getValue();
 
 		var saveCfg = { scope : this, callback : function( records, operation, success ) {
 			
-			var Template_ID = this.application.templateID().getValue();;
-			var Order_Status = this.application.orderstatus().getValue();;
-			var Drug_Name = this.application.drug().getValue();;
-			var Patient_ID = this.application.patientID().getValue();;
-			var type = this.application.type().getValue();;
-			var route = this.application.route().getValue();;
-			var orderid = this.application.orderid().getValue();;
-			var Last_Name = this.application.Last_Name().getValue();;
+			var Template_ID = this.application.templateID().getValue();
+			var Order_Status = this.application.orderstatus().getValue();
+			var Drug_Name = this.application.drug().getValue();
+			var Patient_ID = this.application.patientID().getValue();
+			var type = this.application.type().getValue();
+			var route = this.application.route().getValue();
+			var orderid = this.application.orderid().getValue();
+			var Last_Name = this.application.Last_Name().getValue();
 
 		}};
 		record.save(saveCfg);

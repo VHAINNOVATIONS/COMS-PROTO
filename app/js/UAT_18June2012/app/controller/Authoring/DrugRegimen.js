@@ -472,7 +472,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
                 var tmpRecord = theStore.getAt(dupRecord);
                 var adminDays = tmpRecord.data.Day;
                 adminDays = adminDays.split(",");
-                newAdminDays = data.Day.split(",");
+                var newAdminDays = data.Day.split(",");
+                var day;
                 
                 for(day in newAdminDays){
                     if(Ext.Array.contains(adminDays, newAdminDays[day])){
@@ -494,8 +495,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
                         buttons: Ext.MessageBox.YESNO,
                         fn: function(buttonId) {
                             if("no" === buttonId) {
-                                    return;
                                     win.close();
+                                    return;
 
                             }else{
                                 

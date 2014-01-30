@@ -683,7 +683,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				var tmpRecord = theStore.getAt(dupRecord);
 				var adminDays = tmpRecord.data.Day;
 				adminDays = adminDays.split(",");
-				newAdminDays = data.Day.split(",");
+				var day, newAdminDays = data.Day.split(",");
 
 				for(day in newAdminDays){
 					if(Ext.Array.contains(adminDays, newAdminDays[day])){
@@ -877,8 +877,9 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 			//KD - 03/09/2012 - This is done to prevent multiple instances (windows) to be created everytime the "Add Drug" button is clicked
 			var exist = Ext.ComponentQuery.query('AddHydrationDrug')[0];
+            var view;
 			if(!exist) {
-				var view = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
+				view = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
 			}
 			else {
 				view = exist;
@@ -908,7 +909,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
                             wccConsoleLog("Remove " + panel.type + " Therapy Drug - " + ckRec.record.get('Drug'));
                             this.getSelectedRecord(true, theQuery);
                         }
-                    }, this)
+                    }, this);
 
 				}
 				else if ("Edit Drug" === button.text) {
