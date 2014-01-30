@@ -19,7 +19,7 @@ Ext.define('Ext.ux.ajax.JsonSimlet', function () {
             }
 
             return cmp(leftRec, rightRec);
-        }
+        };
     }
 
     function makeSortFns (defs, cmp) {

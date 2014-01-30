@@ -31,7 +31,7 @@ Ext.define('Ext.ux.form.SearchField', {
         }
         me.store.proxy.encodeFilters = function(filters) {
             return filters[0].value;
-        }
+        };
     },
     
     afterRender: function(){

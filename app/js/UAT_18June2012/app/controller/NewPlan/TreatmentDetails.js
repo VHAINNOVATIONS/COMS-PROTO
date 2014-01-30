@@ -34,7 +34,7 @@ Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
 	AfterRenderWindow : function(theWin, eOPts) {
 		Ext.EventManager.onWindowResize( this.ResizeTheTDWin, theWin );
 		var max = Ext.getBody().getViewSize().height;
-		var smaller = max * .1;
+		var smaller = max * 0.1;
 		smaller = max - smaller;
 		theWin.setHeight(smaller);
 		Ext.Function.defer( theWin.focus, 2000, this );
@@ -57,7 +57,7 @@ Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
 
 	ResizeTheTDWin : function() {
 		var max = Ext.getBody().getViewSize().height;
-		var smaller = max * .1;
+		var smaller = max * 0.1;
 		smaller = max - smaller;
 		this.setHeight(smaller);
 	},

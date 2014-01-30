@@ -188,7 +188,7 @@ Ext.define('Ext.ux.TreePicker', {
         me.setValue(record.get('id'));
         me.picker.hide();
         me.inputEl.focus();
-        me.fireEvent('select', me, record)
+        me.fireEvent('select', me, record);
 
     },
 
