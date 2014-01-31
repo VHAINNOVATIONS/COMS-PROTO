@@ -7,7 +7,7 @@ Ext.define('COMS.model.LUReferences', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['References'],
+		url : Ext.URLs.References,
 		reader: {
 			type: 'json',
 			root : 'records'

@@ -7,7 +7,7 @@ Ext.define('COMS.model.Drugs', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['Drugs'],
+		url : Ext.URLs.Drugs,
 		reader: {
 			type: 'json',
 			root : 'records'

@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_FluidType', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['FluidType'],
+		url : Ext.URLs.FluidType,
 		reader: {
 			type: 'json',
 			root : 'records'

@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_EmotegenicLevel', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['EmotegenicLevel'],
+		url : Ext.URLs.EmotegenicLevel,
 		reader: {
 			type: 'json',
 			root : 'records'

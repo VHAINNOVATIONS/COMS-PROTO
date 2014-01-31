@@ -1,6 +1,6 @@
 Ext.define('COMS.store.TotalCoursesMax', {
     extend : 'Ext.data.Store',
-	model : Ext.COMSModels['TotalCoursesMax'],
+	model : Ext.COMSModels.TotalCoursesMax,
 	data : [
 		{ id : '1', value : '1' },
 		{ id : '2', value : '2' },

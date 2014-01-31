@@ -17,7 +17,6 @@ Ext.define('COMS.view.Authoring.TemplateListTab', {
         { text: '', hideable: false, sortable: false, groupable: false, dataIndex: 'id', renderer: function(value) {
             var buf = '<a href="' + Ext.URLs.PrintTemplate + '/' + value + '" target="print_template">View/Print</a>';
             return buf;
-            // Ext.String.format('<a href="' + Ext.URLs.PrintTemplate + '/{1}" target="print_template">View/Print</a>', value);
         } }
     ]
 });

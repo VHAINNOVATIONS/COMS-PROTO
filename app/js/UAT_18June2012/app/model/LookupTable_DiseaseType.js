@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_DiseaseType', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['DiseaseType'],
+		url : Ext.URLs.DiseaseType,
 		reader: {
 			type: 'json',
 			root : 'records'

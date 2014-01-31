@@ -12,7 +12,7 @@ Ext.define('COMS.model.CTOS_References', {
 /**************** Proxy not needed as this data is loaded as part of the CTOS Retrieval - MWB 2 Jan 2012
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['MHMed'],
+		url : Ext.URLs.MHMed,
 		reader: {
 			type: 'json',
 			root : 'records'

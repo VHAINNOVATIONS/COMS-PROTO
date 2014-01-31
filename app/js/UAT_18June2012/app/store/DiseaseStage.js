@@ -15,5 +15,5 @@ Ext.define('COMS.store.DiseaseStage', {
 
         },
         
-	model : Ext.COMSModels['DiseaseStage']
+	model : Ext.COMSModels.DiseaseStage
 });

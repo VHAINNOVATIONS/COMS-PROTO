@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_TimeFrameUnit', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['TimeFrameUnit'],
+		url : Ext.URLs.TimeFrameUnit,
 		reader: {
 			type: 'json',
 			root : 'records'

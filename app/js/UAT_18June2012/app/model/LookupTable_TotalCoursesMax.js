@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_TotalCoursesMax', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['TotalCoursesMax'],
+		url : Ext.URLs.TotalCoursesMax,
 		reader: {
 			type: 'json',
 			root : 'records'

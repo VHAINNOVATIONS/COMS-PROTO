@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_FebrileNeutropeniaRisk', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['FebrileNeutropeniaRisk'],
+		url : Ext.URLs.FebrileNeutropeniaRisk,
 		reader: {
 		type: 'json',
 			root : 'records'

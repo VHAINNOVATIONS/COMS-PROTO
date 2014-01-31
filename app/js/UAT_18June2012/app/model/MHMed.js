@@ -19,7 +19,7 @@ Ext.define('COMS.model.MHMed', {
       
 //    proxy: {
 //        type: 'rest',
-//		url : Ext.URLs['MHMed'],
+//		url : Ext.URLs.MHMed,
 //        reader: {
 //            type: 'json',
 //			root : 'records'

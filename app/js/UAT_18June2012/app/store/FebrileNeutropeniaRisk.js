@@ -1,6 +1,6 @@
 Ext.define('COMS.store.FebrileNeutropeniaRisk', {
     extend : 'Ext.data.Store',
-	model : Ext.COMSModels['FebrileNeutropeniaRisk'],
+	model : Ext.COMSModels.FebrileNeutropeniaRisk,
 	data : [
 		{ id : '1', value : 'Low' },
 		{ id : '2', value : 'Medium' },

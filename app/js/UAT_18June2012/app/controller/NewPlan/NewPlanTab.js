@@ -149,7 +149,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]" : {
                 click: this.resetTemplateFilter
             },
-
             'AskQues2ApplyTemplate button[action="save"]': {
                 click: this.ApplyTemplate
             },
@@ -163,6 +162,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 change : this.AmputeeSelected
             }
         });
+        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
 

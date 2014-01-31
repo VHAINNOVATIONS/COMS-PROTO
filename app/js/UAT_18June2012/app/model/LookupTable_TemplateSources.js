@@ -7,7 +7,7 @@ Ext.define('COMS.model.LookupTable_TemplateSources', {
 	],
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs['TemplateSources'],
+		url : Ext.URLs.TemplateSources,
 		reader: {
 			type: 'json',
 			root : 'records'

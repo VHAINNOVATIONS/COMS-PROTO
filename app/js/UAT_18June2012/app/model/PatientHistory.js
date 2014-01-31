@@ -12,7 +12,7 @@ Ext.define('COMS.model.PatientHistory', {
 	],
     proxy: {
         type: 'rest',
-		url : Ext.URLs['PatientHistory'],
+		url : Ext.URLs.PatientHistory,
         reader: {
             type: 'json',
 			root : 'records'

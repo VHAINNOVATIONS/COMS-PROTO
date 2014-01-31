@@ -6,7 +6,7 @@ Ext.define('COMS.model.ChemoHistory', {
 	],
     proxy: {
         type: 'rest',
-		url : Ext.URLs['ChemoHistory'],
+		url : Ext.URLs.ChemoHistory,
         reader: {
             type: 'json',
             root: 'records'

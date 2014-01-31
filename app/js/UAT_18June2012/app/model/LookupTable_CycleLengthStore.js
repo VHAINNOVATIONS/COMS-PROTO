@@ -6,7 +6,7 @@ Ext.define('COMS.model.LookupTable_CycleLengthStore', {
 	],
     proxy: {
         type: 'rest',
-		url : Ext.URLs['CycleLengthStore'],
+		url : Ext.URLs.CycleLengthStore,
         reader: {
             type: 'json',
 			root : 'records'

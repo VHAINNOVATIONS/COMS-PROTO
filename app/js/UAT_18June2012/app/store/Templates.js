@@ -16,7 +16,7 @@ Ext.define('COMS.store.Templates', {
         }
         
     },
-    model : Ext.COMSModels['Templates']
+    model : Ext.COMSModels.Templates
 
         
 });

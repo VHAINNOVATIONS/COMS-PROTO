@@ -1,6 +1,6 @@
 Ext.define('COMS.store.DrugStore', {
     extend : 'Ext.data.Store',
-    model : Ext.COMSModels['Drugs'],
+    model : Ext.COMSModels.Drugs,
     listeners: {
         'beforeload' : function(store, options){
             
