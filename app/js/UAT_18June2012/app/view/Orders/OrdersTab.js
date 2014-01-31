@@ -3,8 +3,8 @@ Ext.util.Format.comboRenderer = function(combo){
     return function(value){
         var record = combo.findRecord(combo.valueField, value);
         return record ? record.get(combo.displayField) : combo.valueNotFoundText;
-    }
-}
+    };
+};
 
 // create the combo instance
 var combo = new Ext.form.ComboBox({

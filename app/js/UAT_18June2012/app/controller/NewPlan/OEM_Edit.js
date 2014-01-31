@@ -1,6 +1,3 @@
-/*jslint undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
-// MWB - JSLint run successfully on 5/31/2012
-
 Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	extend: "Ext.app.Controller",
 

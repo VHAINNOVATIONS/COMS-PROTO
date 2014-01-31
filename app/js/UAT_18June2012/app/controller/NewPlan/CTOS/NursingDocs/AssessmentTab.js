@@ -1,4 +1,3 @@
-/*jslint undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	extend: "Ext.app.Controller",
 

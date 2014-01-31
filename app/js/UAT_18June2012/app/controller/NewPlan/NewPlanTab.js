@@ -1,6 +1,3 @@
-/*jslint devel: true, eqeq: true, plusplus: true, unparam: true, sloppy: true, sub: true, vars: true, white: true, debug: true, maxerr: 100, indent: 4 */
-/*globals Ext, wccConsoleLog, fncName, alert, templateTypeModel, OEMTmpData, COMS, PatientHistory, len, tmp */
-
 Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     extend : "Ext.app.Controller",
 

@@ -1,6 +1,3 @@
-/*jslint undef: true, sloppy: true, eqeq: true, sub: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
-// MWB - JSLint run successfully on 5/31/2012
-
 Ext.define("COMS.view.OEM.selAppliedTemplate" ,{
 	extend: "Ext.form.field.ComboBox",
 	alias : "widget.selAppliedTemplate",

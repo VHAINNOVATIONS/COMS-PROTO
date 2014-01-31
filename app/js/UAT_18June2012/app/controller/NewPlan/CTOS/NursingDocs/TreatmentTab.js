@@ -9,7 +9,6 @@
 //	TabRendered : function ( component, eOpts )
 //	BtnClicked : function (button)
 
-/*jslint undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	extend: "Ext.app.Controller",
 

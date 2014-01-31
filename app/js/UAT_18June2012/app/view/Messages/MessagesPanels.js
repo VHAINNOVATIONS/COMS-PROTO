@@ -14,6 +14,3 @@ Ext.define("COMS.view.Messages.MessagesPanels" ,{
 		{ xtype : "MessagesUnread" }
 	]
 });
-
-
-/*jslint undef: true, unparam: true, sloppy: true, vars: true, white: true, maxerr: 50, indent: 4 */

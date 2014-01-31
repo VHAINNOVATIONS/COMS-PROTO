@@ -1,4 +1,3 @@
-/*jslint undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	extend: 'Ext.window.Window',
 	alias : 'widget.EndTreatmentSummary',

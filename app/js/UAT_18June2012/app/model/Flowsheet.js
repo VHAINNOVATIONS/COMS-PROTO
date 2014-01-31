@@ -1,5 +1,3 @@
-/*jslint undef: true, debug: true, sloppy: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 

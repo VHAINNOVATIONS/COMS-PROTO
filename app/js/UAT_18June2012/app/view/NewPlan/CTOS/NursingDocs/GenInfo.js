@@ -1,5 +1,3 @@
-/*jslint undef: true, unparam: true, sloppy: true, vars: true, white: true, maxerr: 50, indent: 4 */
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GoalInfo" ,{
 	extend: "Ext.form.FieldSet",
 	alias : "widget.NursingDocs_PatientID",

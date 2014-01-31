@@ -1,6 +1,3 @@
-/*globals Ext */
-/*jslint unparam: true, sloppy: true, vars: true, white: true, maxerr: 50, indent: 4 */
-
 Ext.define("COMS.view.NewPlan.CTOS.RequiredFieldLabel" ,{
 	extend: "Ext.container.Container",
 	alias : "widget.RequiredFieldLabel",

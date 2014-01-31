@@ -1,4 +1,3 @@
-/*jslint undef: true, sloppy: true, eqeq: true, stupid: true, sub: true, vars: true, white: true, plusplus: true, maxerr: 50, indent: 4 */
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
     stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore"],

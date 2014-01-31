@@ -1,6 +1,3 @@
-/*jslint undef: true, debug: true, sloppy: true, white: true, maxerr: 50, indent: 4 */
-// MWB - JSLint run successfully on 6/1/2012
-
 Ext.define("COMS.view.NewPlan.BSAInfoTable", {
 	extend: "Ext.container.Container",
 	alias: "widget.BSAInfoTable",

@@ -223,12 +223,12 @@ Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 						buf = "<tr><th style=\"text-align: left;\" colspan=\"4\">" + v.name + "</th></tr>";
 						var i, aLen = v.administered.length, aBuf;
 						if (0 === aLen) {
-							buf += "<tr><td colspan=\"4\">No " + v.name + " administered</td></tr>"
+							buf += "<tr><td colspan=\"4\">No " + v.name + " administered</td></tr>";
 						}
 						else {
 							for (i = 0; i < aLen; i++) {
 								aBuf = v.administered[i];
-								buf += "<tr><th style=\"width:10em;\">" + aBuf.day + "</th><td style=\"width:10em;\">" + aBuf.date + "</td><td colspan=\"2\">" + aBuf.dosage + "</td></tr>"
+								buf += "<tr><th style=\"width:10em;\">" + aBuf.day + "</th><td style=\"width:10em;\">" + aBuf.date + "</td><td colspan=\"2\">" + aBuf.dosage + "</td></tr>";
 							}
 						}
 						return(buf);
