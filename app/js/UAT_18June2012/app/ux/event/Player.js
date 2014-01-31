@@ -285,7 +285,7 @@ Ext.define('Ext.ux.event.Player', {
                        me.fireEvent('beforeplay', me, eventDescriptor) !== false &&
                        me.playEvent(eventDescriptor)) {
                 if(window.__x && eventDescriptor.screenshot) {
-                     __x.poll.sendSyncRequest({cmd: 'screenshot'});
+                     window.__x.poll.sendSyncRequest({cmd: 'screenshot'});
                 }       
                 me.nextEvent(eventDescriptor);
             } else {
@@ -386,9 +386,9 @@ Ext.define('Ext.ux.event.Player', {
             xy[1] += eventDescriptor.y;
         }
 
-        if ('wheel' in eventDescriptor) {
+//        if ('wheel' in eventDescriptor) {
             // see getWheelDelta
-        }
+//        }
 
         event.type = eventDescriptor.type;
         event.button = eventDescriptor.button;
@@ -418,7 +418,7 @@ Ext.define('Ext.ux.event.Player', {
             me.timer = null;
         }
         if (window.__x) {
-            __x.poll.sendSyncRequest({cmd: 'finish'});
+            window.__x.poll.sendSyncRequest({cmd: 'finish'});
         }
     },
 

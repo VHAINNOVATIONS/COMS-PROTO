@@ -176,7 +176,7 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 							items: [
 								{ xtype: "container",  width: 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
 								{ xtype: "SelectDrug", "name": "Med", colspan : 2, margin: "2 2 2 2" },
-								{ xtype: "SelectReason", name:"Reason", colspan: 2, margin: "2"},
+								{ xtype: "SelectReason", name:"Reason", colspan: 2, margin: "2"}
 							]
 						},
 
@@ -192,7 +192,7 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 								{ xtype: "container",  width: 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
 								{ xtype: "DossageAmt", name : "Dose", margin: "2 2 2 2" },
 								{ xtype: "DrugUnits", name : "Units", margin: "2 2 2 2" },
-								{ xtype: "InfusionMethod", name : "InfusionMethod",  colspan : 2, margin: "2 2 2 2" },
+								{ xtype: "InfusionMethod", name : "InfusionMethod",  colspan : 2, margin: "2 2 2 2" }
 							]
 						},
 

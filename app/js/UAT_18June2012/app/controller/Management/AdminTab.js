@@ -367,7 +367,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
         var theData = recs[0].data.value;
         var thisCtl = this.getController('Management.AdminTab');
         var theStore = thisCtl.getLookupGrid().getStore();
-        var theURL = Ext.URLs['BaseView'] + "/" + theData;
+        var theURL = Ext.URLs.BaseView + "/" + theData;
         theStore.load({
             url:theURL
         });
@@ -384,16 +384,16 @@ Ext.define('COMS.controller.Management.AdminTab', {
             
             
         var lookupRecord = Ext.create('COMS.model.LookupTable', {
-            id: values['id'],
-            value: values['value'],
-            description: values['description']
+            id: values.id,
+            value: values.value,
+            description: values.description
         });
 
         lookupRecord.save({
             scope : this,
             waitMsg : 'Saving Data...',
             success: function(data) {
-                wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data['value'] + " lookupid " + data.data['lookupid']);
+                wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
                     
                 var ref = Ext.create(Ext.COMSModels.GenericLookup, {
                     id: data.data.lookupid,

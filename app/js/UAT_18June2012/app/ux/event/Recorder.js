@@ -297,7 +297,7 @@ Ext.define('Ext.ux.event.Recorder', function () {
                 });
                 me.attachTo.Ext.fly(root).on(on);
                 watchingNodes[id] = true;
-                console.log('watch '+root.tagName+'#'+id);
+                // console.log('watch '+root.tagName+'#'+id);
             }
 
             Ext.each(root.childNodes, me.watchTree, me);
@@ -317,7 +317,7 @@ Ext.define('Ext.ux.event.Recorder', function () {
                     me.attachTo.Ext.fly(root).un(name, me.onEvent, me);
                 });
                 delete watchingNodes[id];
-                console.log('unwatch '+root.tagName+'#'+id);
+                // console.log('unwatch '+root.tagName+'#'+id);
             }
 
             Ext.each(root.childNodes, me.unwatchTree, me);
