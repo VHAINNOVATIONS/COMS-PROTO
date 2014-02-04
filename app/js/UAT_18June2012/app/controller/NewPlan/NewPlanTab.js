@@ -251,7 +251,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	// Save button for the AskQues2ApplyTemplate Widget. This widget is for applying a new template to a patient
     ApplyTemplate: function(button){
-        debugger;
         var win = button.up('window');
         var form = win.down('form');
         var values = form.getValues();
@@ -928,31 +927,19 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this );
     },
 
-    applyTemplateToPatient : function(button){
-        var startDate = new Date(this.application.Patient.TreatmentStart);
-        var dateEnded = new Date(this.application.Patient.TreatmentEnd);
-        var today = new Date();
-
-//        if(Ext.Date.between(today,startDate,dateEnded)){
-//            Ext.MessageBox.alert('Information', 'The currently applied template is still active. A new template may not be applied at this time. ');
-//            return;
-//        }
-
+    ShowAskQues2ApplyTemplate : function(records, operation, success) {
         var itemsInGroup = [];	// new Array();
-        //var myStore = this.getStore('PerfStatStore').load();
-        var myStore = this.getStore('PerfStatStore');
-
-        myStore.each( function(record){
-            if(record.data.value == '5' ){
-                return;
+        for (i = 0; i < records.length; i++ ){
+            var record = records[i];
+            if(record.data.value !== '5' ){
+                itemsInGroup.push({
+                    boxLabel : record.data.value + ' - ' + record.data.description,
+                    name : 'PerfStatus',
+                    inputValue : record.data.id,
+                    width : 450
+                });
             }
-            itemsInGroup.push({
-                boxLabel : record.data.value + ' - ' + record.data.description,
-                name : 'PerfStatus',
-                inputValue : record.data.id,
-                width : 360
-            });
-        });
+        }
 
         if(this.application.Patient.TemplateID){
 			Ext.MessageBox.show({
@@ -962,7 +949,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				buttons: Ext.MessageBox.OKCANCEL,
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
-						Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: true});
+                        try {
+                             Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: true});
+                        }
+                        catch (err) {
+                            alert("Failure to Add Date Widget");
+                        }
 					}
 				}
 			});
@@ -970,6 +962,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		else{
 			Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
 		}
+    },
+
+    applyTemplateToPatient : function(button){
+        var startDate = new Date(this.application.Patient.TreatmentStart);
+        var dateEnded = new Date(this.application.Patient.TreatmentEnd);
+        var today = new Date();
+
+        this.getStore('PerfStatStore').load({ 
+            scope : this,
+            callback : this.ShowAskQues2ApplyTemplate
+        });
     },
 
     clearCTOS : function(button){

@@ -274,8 +274,9 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 
 
 	ClearTabData : function() {
+        var thisCtl;
 		try {
-			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
 			if (!thisCtl.getNdct_GenInfoTab().rendered) {
 				return;		// Traps possible call from the PopulateNDTabs event
 			}
@@ -587,10 +588,10 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 
 
 	GenInfoRendered : function ( component, eOpts ) {
+        var tempScratch, tempScratch1, Patient, thisCtl;
 		try {
-			var tempScratch, tempScratch1;
-			var Patient = this.application.Patient;
-			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+			Patient = this.application.Patient;
+			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
 			if (!thisCtl.getNdct_GenInfoTab().rendered) {
 				return;		// Traps possible call from the PopulateNDTabs event
 			}

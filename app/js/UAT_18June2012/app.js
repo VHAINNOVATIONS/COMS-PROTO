@@ -546,6 +546,7 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
 	"COMS.controller.Messages.MessagesTab",
 	"COMS.controller.NewPlan.EndTreatmentSummary",
+//    "COMS.controller.NewPlan.AskQues2ApplyTemplate",
 	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
 	"COMS.controller.NewPlan.TreatmentDetails"
 ]);
@@ -1424,6 +1425,7 @@ Ext.application({
 		,"NewPlan.CTOS.NursingDocs.EducationTab"	// MWB 01 Mar 2012 - Added for Nursing Documentation Tab
 		,"Messages.MessagesTab"
 		,"NewPlan.EndTreatmentSummary"
+//		,"NewPlan.AskQues2ApplyTemplate"
 		,"NewPlan.ViewEndTreatmentSummary"
 		,"NewPlan.TreatmentDetails"
 

@@ -297,6 +297,7 @@ PostActionTracking("Top of Index.php", "1");
 		// $Deployment = "app-all.js";
 		$Deployment = "app.js";
 		$LibsVersion2 = "/libs/ExtJS_4.1RC1";
+        $LibsVersion3 = "/libs/ExtJS_4.2.1";
 
 		/*
 		 * Temporarily modifying the ExtJS library because
@@ -336,6 +337,8 @@ PostActionTracking("Top of Index.php", "1");
                 $rid      = $_SESSION[ 'rid' ];
                 $role     = $_SESSION[ 'role' ];
                 $sessionUser = $_SESSION[ "dname" ];
+
+                $_SESSION[ "sessionid" ] = session_id();
                 $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
 
                 include_once "main.php";
@@ -347,6 +350,8 @@ PostActionTracking("Top of Index.php", "1");
 			$rid      = $_SESSION[ 'rid' ];
 			$role     = $_SESSION[ 'role' ];
 			$sessionUser = $_SESSION[ "dname" ];
+
+            $_SESSION[ "sessionid" ] = session_id();
 			$TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
             include_once "main.php";
 		}

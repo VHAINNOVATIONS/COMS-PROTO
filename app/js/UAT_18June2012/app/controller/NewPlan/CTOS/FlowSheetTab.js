@@ -76,10 +76,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		newRecord.PAT_ID = Patient.PAT_ID;		// Treatment ID;
 		newRecord.FlowsheetAdminDay = {};
 		newRecord.FlowsheetAdminDay[fieldName] = eObj.value;
-		newRecord.FlowsheetAdminDay["PatientID"] = Patient.id;
-		newRecord.FlowsheetAdminDay["Cycle"] = cd[0].split(" ")[1];
-		newRecord.FlowsheetAdminDay["Day"] = cd[1].split(" ")[1];
-		newRecord.FlowsheetAdminDay["AdminDate"] = eObj.grid.getStore().getAt(0).get(eObj.column.dataIndex);
+		newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+		newRecord.FlowsheetAdminDay.Cycle = cd[0].split(" ")[1];
+		newRecord.FlowsheetAdminDay.Day = cd[1].split(" ")[1];
+		newRecord.FlowsheetAdminDay.AdminDate = eObj.grid.getStore().getAt(0).get(eObj.column.dataIndex);
 
         var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
 
@@ -241,10 +241,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 							newRecord.PAT_ID = Patient.PAT_ID;		// Treatment ID;
 							newRecord.FlowsheetAdminDay = {};
 							newRecord.FlowsheetAdminDay[fieldName] = value;
-							newRecord.FlowsheetAdminDay["PatientID"] = Patient.id;
-							newRecord.FlowsheetAdminDay["Cycle"] = cd[0].split(" ")[1];
-							newRecord.FlowsheetAdminDay["Day"] = cd[1].split(" ")[1];
-							newRecord.FlowsheetAdminDay["AdminDate"] = AdmDate;
+							newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+							newRecord.FlowsheetAdminDay.Cycle = cd[0].split(" ")[1];
+							newRecord.FlowsheetAdminDay.Day = cd[1].split(" ")[1];
+							newRecord.FlowsheetAdminDay.AdminDate = AdmDate;
 
 					        var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
 
@@ -326,8 +326,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				// So we need to change the label from "Type" to something that doesn't display (e.g. "&nbsp;")
 				// it's easier to create a new element and delete the old than to change the attribute name
 				for (i = 0; i < tdLen; i++) {
-					theData[i]["&nbsp;"] = theData[i]["Type"];
-					delete theData[i]["Type"];
+					theData[i]["&nbsp;"] = theData[i].Type;
+					delete theData[i].Type;
 				}
 
 
@@ -363,8 +363,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 							bRec = FSData[j];
 							var a = aRec["&nbsp;"], 
 								b = bRec["&nbsp;"], 
-								c = aRec["label"], 
-								d = bRec["label"];
+								c = aRec.label, 
+								d = bRec.label;
 							if ((a === b) && (c === d)) {
 								recLen = aRec.length;
 								for (x in aRec) {
@@ -599,7 +599,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var PreMedsListLen = PreTherapyMeds.length;
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSPreMedsList[i] = {};
-			FSPreMedsList[i]["label"] = PreTherapyMeds[i].Drug;
+			FSPreMedsList[i].label = PreTherapyMeds[i].Drug;
 			FSPreMedsList[i]["&nbsp;"] = "03 Pre Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
@@ -613,7 +613,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var PostMedsListLen = PostTherapyMeds.length;
 		for (i = 0; i < PostMedsListLen; i++) {
 			FSPostMedsList[i] = {};
-			FSPostMedsList[i]["label"] = PostTherapyMeds[i].Drug;
+			FSPostMedsList[i].label = PostTherapyMeds[i].Drug;
 			FSPostMedsList[i]["&nbsp;"] = "05 Post Therapy";
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
@@ -626,7 +626,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var MedsListLen = TherapyMeds.length;
 		for (i = 0; i < MedsListLen; i++) {
 			FSMedsList[i] = {};
-			FSMedsList[i]["label"] = TherapyMeds[i].Drug;
+			FSMedsList[i].label = TherapyMeds[i].Drug;
 			FSMedsList[i]["&nbsp;"] = "04 Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
@@ -763,8 +763,8 @@ LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
 				// So we need to change the label from "Type" to something that doesn't display (e.g. "&nbsp;")
 				// it's easier to create a new element and delete the old than to change the attribute name
 				for (i = 0; i < tdLen; i++) {
-					theData[i]["&nbsp;"] = theData[i]["Type"];
-					delete theData[i]["Type"];
+					theData[i]["&nbsp;"] = theData[i].Type;
+					delete theData[i].Type;
 				}
 
 
@@ -800,8 +800,8 @@ LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
 							bRec = FSData[j];
 							var a = aRec["&nbsp;"], 
 								b = bRec["&nbsp;"], 
-								c = aRec["label"], 
-								d = bRec["label"];
+								c = aRec.label, 
+								d = bRec.label;
 							if ((a === b) && (c === d)) {
 								recLen = aRec.length;
 								for (x in aRec) {
@@ -986,7 +986,7 @@ createFlowsheet : function (BuildGrid) {
 		var FSPreMedsList = [], PreMedsListLen = PreTherapyMeds.length;
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSPreMedsList[i] = {};
-			FSPreMedsList[i]["label"] = PreTherapyMeds[i].Drug;
+			FSPreMedsList[i].label = PreTherapyMeds[i].Drug;
 			FSPreMedsList[i]["&nbsp;"] = "03 Pre Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
@@ -1001,7 +1001,7 @@ createFlowsheet : function (BuildGrid) {
 		var MedsListLen = TherapyMeds.length;
 		for (i = 0; i < MedsListLen; i++) {
 			FSMedsList[i] = {};
-			FSMedsList[i]["label"] = TherapyMeds[i].Drug;
+			FSMedsList[i].label = TherapyMeds[i].Drug;
 			FSMedsList[i]["&nbsp;"] = "04 Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
@@ -1017,7 +1017,7 @@ createFlowsheet : function (BuildGrid) {
 		var PostMedsListLen = PostTherapyMeds.length;
 		for (i = 0; i < PostMedsListLen; i++) {
 			FSPostMedsList[i] = {};
-			FSPostMedsList[i]["label"] = PostTherapyMeds[i].Drug;
+			FSPostMedsList[i].label = PostTherapyMeds[i].Drug;
 			FSPostMedsList[i]["&nbsp;"] = "05 Post Therapy";
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
