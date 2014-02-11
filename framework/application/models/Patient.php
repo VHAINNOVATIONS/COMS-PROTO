@@ -3,49 +3,17 @@
 class Patient extends Model
 {
 
-    function selectAll ()
-    {
+    /* Retrieve all patient information for all patients from the "Patient" table */
+    /* $this->table = "Patient" */
+    function selectAll ($patientId = NULL) {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            
-            /*
-             * $query = "SELECT ID = p.Patient_ID, Name = (First_Name + ' ' +
-             * ISNULL(Middle_Name,'') + ' ' + Last_Name), " . "Height =
-             * CAST(Height as nvarchar(MAX)) + ' ' + l.Name, Weight =
-             * CAST(Weight as nvarchar(MAX)) + ' ' + l1.Name, " . "Age =
-             * DATEDIFF(YY, DOB, GETDATE()) - CASE WHEN( (MONTH(DOB)*100 +
-             * DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE
-             * 0 END, " . "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender,
-             * CONVERT(VARCHAR(10), pat.Date_Applied, 101) as datetaken " .
-             * "FROM Patient p ". "INNER JOIN LookUp l ON l.Lookup_ID =
-             * p.Height_Unit_ID ". "INNER JOIN LookUp l1 ON l1.Lookup_ID =
-             * p.Weight_Unit_ID ". "LEFT OUTER JOIN Patient_Assigned_Templates
-             * pat ON pat.Patient_ID = p.Patient_ID ". "LEFT OUTER JOIN
-             * Patient_Assigned_Templates pat1 ON pat1.Is_Active = 1 ". "Group
-             * By ID,Name,Height,Weight,Age,DOB,Gender,datetaken "; } else
-             * if(DB_TYPE == 'mysql'){ $query = "SELECT p.Patient_ID as ID,
-             * concat(First_Name, ' ', IFNULL(Middle_Name,''), ' ', Last_Name)
-             * as Name, ". "concat_ws(' ',Height, l.`Name`) as Height,
-             * concat_ws(' ',Weight, l1.`Name`) as Weight, ".
-             * "(YEAR(CURDATE())-YEAR(DOB)) - (RIGHT(CURDATE(),5)<RIGHT(DOB,5))
-             * as Age, date_format(DOB, '%m/%d/%Y') as DOB, ". "Gender,
-             * date_format(pat.Date_Applied, '%m/%d/%Y') as datetaken ". "FROM
-             * Patient p ". "INNER JOIN LookUp l ON l.Lookup_ID =
-             * p.Height_Unit_ID ". "INNER JOIN LookUp l1 ON l1.Lookup_ID =
-             * p.Weight_Unit_ID ". "LEFT OUTER JOIN Patient_Assigned_Templates
-             * pat ON pat.Patient_ID = p.Patient_ID ". "LEFT OUTER JOIN
-             * Patient_Assigned_Templates pat1 ON pat1.Is_Active = true ".
-             * "Group By ID,Name,Height,Weight,Age,DOB,Gender,datetaken ";
-             */
-            
             $query = "SELECT ID = Patient_ID, Name = (First_Name + ' ' + ISNULL(Middle_Name,'') + ' ' + Last_Name), " .
                      "Age = DATEDIFF(YY, DOB, GETDATE()) - CASE WHEN( (MONTH(DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, " .
                      "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as lname, First_Name as fname, p.DFN as dfn " .
                      "FROM " . $this->_table . " p";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT Patient_ID as ID, concat(First_Name, ' ', IFNULL(Middle_Name,''), ' ', Last_Name) as Name, " .
-                     "(YEAR(CURDATE())-YEAR(DOB)) - (RIGHT(CURDATE(),5)<RIGHT(DOB,5)) as Age, date_format(DOB, '%m/%d/%Y') as DOB, Gender, " .
-                     "Last_Name as lname, First_Name as fname, p.DFN as dfn " .
-                     "FROM " . $this->_table . " p";
+            if ($patientId != NULL) {
+                $query .= " where p.Patient_ID = '$patientId'";
+            }
         }
         return $this->query($query);
     }
@@ -54,58 +22,12 @@ class Patient extends Model
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
             
-            // $query = "select relDate = convert(varchar, Release_Date, 101) +
-            // ' ' + convert(varchar(5), Release_Date, 108), l.Name as provider,
-            // l1.Name as specimen, " .
-            // "Specimen_Info as specInfo, specColDate = convert(varchar,
-            // Spec_Col_Date, 101) + ' ' + convert(varchar(5), Spec_Col_Date,
-            // 108), " .
-            // "l2.Name as name, Result, l3.Name as units, l4.Name as ref,
-            // ISNULL(Accept_Range,'') as acceptrange, l5.Name as site,
-            // ISNULL(Comment,'') as comment ".
-            // "from LabInfo lab, LookUp l, LookUp l1, LookUp l2, LookUp l3,
-            // LookUp l4, LookUp l5 " .
-            // "where lab.Provider_ID = l.Lookup_ID and lab.Specimen_ID =
-            // l1.Lookup_ID and lab.Lab_Test_Name_ID = l2.Lookup_ID " .
-            // "and lab.Unit_ID = l3.Lookup_ID and lab.Reference_ID =
-            // l4.Lookup_ID and lab.Site_ID = l5.Lookup_ID " .
-            // "and lab.Patient_ID = '" . $patientId . "'";
-            
-            /**
-             * ****************** Original Query; changed for case of returning
-             * variables to match ExtJS Model; MWB; 4/26/2012
-             * $query = "SELECT ID = Patient_ID, Name = (First_Name + ' ' +
-             * ISNULL(Middle_Name,'') + ' ' + Last_Name), " .
-             *
-             *
-             * "Age = DATEDIFF(YY, DOB, GETDATE()) - CASE WHEN( (MONTH(DOB)*100
-             * + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1
-             * ELSE 0 END, " .
-             * "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as
-             * lname, First_Name as fname, p.DFN as dfn " .
-             * "FROM " . $this->_table . " p ".
-             * "WHERE p.Patient_ID = '".$patientId."'";
-             * *******************
-             */
-            
             $query = "SELECT id = Patient_ID, name = (First_Name + ' ' + ISNULL(Middle_Name,'') + ' ' + Last_Name), " .
                      "Age = DATEDIFF(YY, DOB, GETDATE()) - CASE WHEN( (MONTH(DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, " .
                      "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as lname, First_Name as fname, p.DFN as DFN " .
                      "FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '" .
                      $patientId . "'";
-            
-            // echo "<br>Query<br>$query<br><br>";
-        } else if (DB_TYPE == 'mysql') {
-            
-            $query = "select date_format(Release_Date, '%m/%d/%Y %H:%i') as relDate, l.`Name` as provider, l1.`Name` as specimen, Specimen_Info as specInfo, " .
-                     "date_format(Spec_Col_Date, '%m/%d/%Y %H:%i') as specColDate, l2.`Name` as name, Result, l3.`Name` as units, " .
-                     "l4.`Name` as ref, IFNULL(Accept_Range,'') as acceptrange, l5.`Name` as site, IFNULL(Comment,'') as comment " .
-                     "from LabInfo lab, LookUp l, LookUp l1, LookUp l2, LookUp l3, LookUp l4, LookUp l5 " .
-                     "where lab.Provider_ID = l.Lookup_ID  and lab.Specimen_ID = l1.Lookup_ID and lab.Lab_Test_Name_ID = l2.Lookup_ID " .
-                     "and lab.Unit_ID = l3.Lookup_ID and lab.Reference_ID = l4.Lookup_ID and lab.Site_ID = l5.Lookup_ID " .
-                     "and lab.Patient_ID = '" . $patientId . "'";
-        }
-        
+        }        
         return $this->query($query);
     }
 
@@ -141,8 +63,8 @@ class Patient extends Model
      */
     public function savePatientTemplate($formData)
     {
-        $patientId = $formData->PatientId;
-        $templateId = $formData->TemplateId;
+        $patientId = $formData->PatientID;
+        $templateId = $formData->TemplateID;
         $dateApplied = $formData->DateApplied;
         $dateStarted = $formData->DateStarted;
         $dateEnded = $formData->DateEnded;
@@ -152,36 +74,23 @@ class Patient extends Model
         $bsaFormula = $formData->BSAFormula;
         $clinicalTrial = $formData->ClinicalTrial;
         
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $isActive = '1';
-        } else if (DB_TYPE == 'mysql') {
-            $isActive = 'true';
-        }
+        $isActive = '1';
         
         $query = "
             SELECT PAT_ID AS id, Template_ID AS Template_ID 
             FROM Patient_Assigned_Templates 
-            WHERE Is_Active = $isActive AND Patient_ID = '$patientId'
+            WHERE Date_Ended_Actual is null and Patient_ID = '$patientId'
         ";
         $results = $this->query($query);
-        
+
         if ($results) {
             foreach ($results as $result) {
-                
                 $id = $result['id'];
-                
-                if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-                    $dateEndedValue = 'CONVERT(VARCHAR,GETDATE(),121)';
-                    $isActive = '0';
-                } else if (DB_TYPE == 'mysql') {
-                    $dateEndedValue = 'NOW()';
-                    $isActive = 'false';
-                }
-                
+                $dateEndedValue = 'CONVERT(VARCHAR,GETDATE(),121)';
                 $query = "
                     UPDATE Patient_Assigned_Templates SET 
-                        Is_Active = $isActive, 
-                        Date_Ended = $dateEndedValue
+                        Date_Ended = $dateEndedValue, 
+                        Date_Ended_Actual = $dateEndedValue
                     WHERE PAT_ID = '$id'
                 ";
                 
@@ -209,13 +118,6 @@ class Patient extends Model
             $clinicalTrialColumn = ', Clinical_Trial';
             $clinicalTrialValue = ", '$clinicalTrial'";
         }
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $isActive = '1';
-        } else if (DB_TYPE == 'mysql') {
-            $isActive = 'true';
-        }
-        
         $query = "
             INSERT INTO Patient_Assigned_Templates (
                 Patient_ID,
@@ -236,7 +138,7 @@ class Patient extends Model
                 '$dateApplied',
                 '$dateStarted',
                 '$dateEnded',
-                $isActive,
+                1,
                 '$goal',
                 'Ordered',
                 '$performanceStatus',
@@ -245,8 +147,8 @@ class Patient extends Model
                 $clinicalTrialValue
             )";
         
-        $this->query($query);
-        
+        $retValue = $this->query($query);
+
         /**
          * OrdersNotify in app/workflow.php
          *
@@ -273,54 +175,71 @@ class Patient extends Model
          * $this->query($query); if (null != $retVal &&
          * array_key_exists('error', $retVal)) { return $retVal; }
          */
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $isActive = '1';
-        } else if (DB_TYPE == 'mysql') {
-            $isActive = 'true';
-        }
-        
         $query = "
             SELECT PAT_ID AS id 
             FROM Patient_Assigned_Templates 
             WHERE Patient_ID = '$patientId' 
                 AND Template_ID ='$templateId' 
-                AND Is_Active = $isActive
+                AND Date_Ended_Actual is NULL
         ";
+
         $result = $this->query($query);
         
         return $result;
     }
 
+
+
+
+
+
+
+    function getCurrentAndHistoricalPatientTemplates( $patientID ) {
+        $query = "
+            SELECT 
+            case when pat.PAT_ID is not null then pat.PAT_ID else '' end as id
+            ,pat.Patient_ID as PatientID
+            ,case when pat.Date_Applied is not null then CONVERT(VARCHAR(10), pat.Date_Applied, 101) else '' end as DateApplied
+            ,case when pat.Date_Started is not null then CONVERT(VARCHAR(10), pat.Date_Started, 101) else '' end as DateStarted
+            ,case when pat.Date_Ended is not null then CONVERT(VARCHAR(10), pat.Date_Ended, 101) else '' end as DateEnded
+            ,case when pat.Date_Ended_Actual is not null then CONVERT(VARCHAR(10), pat.Date_Ended_Actual, 101) else '' end as DateEndedActual
+            ,case when mt.Template_ID is not null then mt.Template_ID else '' end as TemplateID
+            ,case when l1.Description is not null then l1.Description else '' end as TemplateName
+            ,case when l2.Description is not null then l2.Description else '' end as TemplateDescription
+            ,EoTS_ID as EotsID
+            FROM Patient_Assigned_Templates pat
+            INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID
+            INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID
+            INNER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID)
+            LEFT JOIN EoTS eots on EoTS.PAT_ID = pat.PAT_ID
+            WHERE pat.Patient_ID = '$patientID'
+            Order By DateEndedActual Desc, DateEnded Desc, DateStarted Desc
+        ";
+        return $this->query($query);
+    }
+
+
     function getPriorPatientTemplates ($id)
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-
-
-
-
-
-
-
-
-            $query = "SELECT mt.Template_ID as templateId, " .
-                "pat.PAT_ID as ID, " .
-                "case when l2.Name is not null then l2.Description else l1.Description end as templatename, " .
-                "case when pat.Date_Ended_Actual is not null then " .
-                    "CONVERT(datetime, pat.Date_Ended_Actual, 104) else " .
-                    "CONVERT(datetime, pat.Date_Ended, 104) end as LastDate," .
-                "CONVERT(VARCHAR(10), pat.Date_Started, 101) as started, " .
-                "CONVERT(VARCHAR(10), pat.Date_Ended, 101) as ended, " .
-                "CONVERT(VARCHAR(10), pat.Date_Applied, 101) as applied, " .
-                "eots.EoTS_ID as EOTS_ID, " .
-                "CONVERT(VARCHAR(10), pat.Date_Ended_Actual, 101) as ended_actual " .
-                "FROM [COMS_UAT_VA].[dbo].[Patient_Assigned_Templates] pat " .
-                "INNER JOIN [COMS_UAT_VA].[dbo].[Master_Template] mt ON mt.Template_ID = pat.Template_ID " .
-                "INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] l1 ON l1.Lookup_ID = mt.Regimen_ID " .
-                "LEFT OUTER JOIN [COMS_UAT_VA].[dbo].[LookUp] l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID) " .
-                "LEFT JOIN [COMS_UAT_VA].[dbo].[EoTS] eots ON eots.PAT_ID = pat.PAT_ID " .
-                "WHERE pat.Patient_ID = '" . $id . "' " .
-                "ORDER BY LastDate Desc, CONVERT(datetime, pat.Date_Started, 104)Desc;";
+            $query = "SELECT mt.Template_ID as templateId, 
+                pat.PAT_ID as ID, 
+                case when l2.Name is not null then l2.Description else l1.Description end as templatename, 
+                case when pat.Date_Ended_Actual is not null then 
+                    CONVERT(datetime, pat.Date_Ended_Actual, 104) else 
+                    CONVERT(datetime, pat.Date_Ended, 104) end as LastDate,
+                CONVERT(VARCHAR(10), pat.Date_Started, 101) as started, 
+                CONVERT(VARCHAR(10), pat.Date_Ended, 101) as ended, 
+                CONVERT(VARCHAR(10), pat.Date_Applied, 101) as applied, 
+                eots.EoTS_ID as EOTS_ID, 
+                CONVERT(VARCHAR(10), pat.Date_Ended_Actual, 101) as ended_actual 
+                FROM Patient_Assigned_Templates pat 
+                INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID
+                INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID
+                LEFT OUTER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID)
+                LEFT JOIN EoTS eots ON eots.PAT_ID = pat.PAT_ID
+                WHERE pat.Patient_ID = '$id' 
+                ORDER BY CONVERT(datetime, pat.Date_Started, 104) Desc, LastDate Desc;";
 
         } else if (DB_TYPE == 'mysql') {
             $query = "SELECT mt.Template_ID as templateId, pat.PAT_ID as ID, case when l2.Name is not null then l2.Description else l1.Description end as templatename, " .
@@ -332,8 +251,7 @@ class Patient extends Model
                      "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
                      "LEFT OUTER JOIN LookUp l2 ON l2.Name = mt.Regimen_ID " .
                      "LEFT JOIN EoTS eots ON eots.PAT_ID = pat.PAT_ID " .
-                     "WHERE pat.Patient_ID = '" . $id . "' " .
-                     "AND pat.Is_Active = false";
+                     "WHERE pat.Patient_ID = '" . $id . "' ";
         }
         
         return $this->query($query);
@@ -380,8 +298,7 @@ class Patient extends Model
                      "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
                      "INNER JOIN LookUp l3 ON l3.Lookup_ID = pat.Perf_Status_ID " .
                      "LEFT OUTER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID) " .
-                     "WHERE pat.Patient_ID = '" . $id . "' " .
-                     "AND pat.Is_Active = 1";
+                     "WHERE pat.Patient_ID = '" . $id . "' ";
         } else if (DB_TYPE == 'mysql') {
             $query = "SELECT mt.Template_ID as templateId, l2.Description as templatedescription, l1.Description as templatename, " .
                      "date_format(pat.Date_Started, '%m/%d/%Y') as started, date_format(pat.Date_Applied, '%m/%d/%Y') as datetaken, " .
@@ -390,12 +307,15 @@ class Patient extends Model
                      "INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID " .
                      "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
                      "LEFT OUTER JOIN LookUp l2 ON l2.Name = mt.Regimen_ID " .
-                     "WHERE pat.Patient_ID = '" . $id . "' " .
-                     "AND pat.Is_Active = true";
+                     "WHERE pat.Patient_ID = '" . $id . "' ";
         }
         
         return $this->query($query);
     }
+
+
+
+
 
     function getMeasurements ($id)
     {
@@ -656,17 +576,11 @@ class Patient extends Model
         }
         
         if (! empty($performanceId)) {
-            
-            if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-                $isActive = '1';
-            } else if (DB_TYPE == 'mysql') {
-                $isActive = 'true';
-            }
             $query = "
                 UPDATE Patient_Assigned_Templates SET
                     Perf_Status_ID = '$performanceId'
                 WHERE Patient_ID = '$patientId'
-                    AND Is_Active = $isActive
+                    AND Is_Active = 1
             ";
             
             return $this->query($query);

@@ -242,6 +242,8 @@ class LookUp extends Model {
     public function saveTemplate($formData, $regimenId)
     {
         ChromePhp::log("save Template - $regimenId");
+        ChromePhp::log("st - Form Data - " . json_encode($formData));
+
 
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
@@ -250,7 +252,7 @@ class LookUp extends Model {
         $emotegnicLevel = $formData->ELevel;
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
-        $keepActive = $formData->KeepAlive;
+        $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
         
         $preMHInstructions = str_replace("'", "''", $formData->PreMHInstructions);
         $postMHInstructions = str_replace("'", "''", $formData->PostMHInstructions);
@@ -297,11 +299,6 @@ class LookUp extends Model {
         }
 
         if($diseaseStage){
-            if(DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql'){
-                $isActive = '1';
-            }else if(DB_TYPE == 'mysql'){
-                $isActive = 'true';
-            }
             $query = "
                 INSERT INTO Master_Template (
                     Regimen_ID, 
@@ -326,7 +323,7 @@ class LookUp extends Model {
                     '$diseaseStage',
                     '$locationId',
                     1,
-                    $isActive,
+                    1,
                     '$cycleLength',
                     '$cycleLengthUnit',
                     '$emotegnicLevel',
@@ -341,11 +338,6 @@ class LookUp extends Model {
             ";
             
         } else if($cycle) {
-            if(DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql'){            
-                $isActive = '0';
-            }else if(DB_TYPE == 'mysql'){
-                $isActive = 'false';
-            }
             $query = "
                 INSERT INTO Master_Template (
                     Regimen_ID, 
@@ -372,7 +364,7 @@ class LookUp extends Model {
                     '$cancerId',
                     '$locationId',
                     1,
-                    $isActive,
+                    1,
                     '$cycleLength',
                     '$cycleLengthUnit',
                     '$emotegnicLevel',
@@ -390,11 +382,6 @@ class LookUp extends Model {
                 )
             ";
         } else {
-            if(DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql'){            
-                $isActive = '1';
-            }else if(DB_TYPE == 'mysql'){
-                $isActive = 'true';    
-            }
             $query = "
                 INSERT INTO Master_Template (
                     Regimen_ID, 
@@ -417,7 +404,7 @@ class LookUp extends Model {
                     '$cancerId',
                     '$locationId',
                     1,
-                    $isActive,
+                    1,
                     '$cycleLength',
                     '$cycleLengthUnit',
                     '$emotegnicLevel',
@@ -948,8 +935,50 @@ class LookUp extends Model {
         return $this->query($query);
     }
 
+
+
+    function getLabResults($patientID) {
+
+        $query = "SELECT labs.ID as id
+            , labs.Patient_ID
+            , pat.First_Name
+            , pat.Last_Name
+            , lab_rslts.Lab_Test_Name
+            , labs.Release_Date
+            , labs.Author
+            , labs.Specimen
+            , labs.Specimen_Info
+            , labs.Spec_Col_Date
+            , labs.Comment
+            , labs.Date_Created
+            , labs.Date_Modified
+            , lab_rslts.Lab_Info_ID
+            , lab_rslts.Lab_Test_Units
+            , lab_rslts.Lab_Test_Result
+            , lab_rslts.MDWS_Lab_Result_ID
+            , lab_rslts.Accept_Range_Low
+            , lab_rslts.Accept_Range_High
+            , lab_rslts.Site_ID
+            , lab_rslts.Out_Of_Range
+            , lab_rslts.Date_Created
+            , lab_rslts.Date_Modified
+        FROM Lab_Info labs
+        INNER JOIN Lab_Info_Results lab_rslts ON labs.ID = lab_rslts.Lab_Info_ID
+        INNER JOIN Patient pat on pat.Patient_ID = labs.Patient_ID";
+        if (null !== $patientID) {
+            $query .= " WHERE labs.Patient_ID = '$patientID'";
+        }
+        $query .= " ORDER BY pat.Patient_ID, lab_rslts.Lab_Test_Name";
+        return $this->query($query);
+    }
+
+
+
+
+
+
+
     function getTemplates($id) {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
             $query = "select 
                     lu.Name as name
                     ,mt.Template_ID as id
@@ -979,26 +1008,10 @@ class LookUp extends Model {
                 $query .= " WHERE Is_Active = 1";
             }
             $query .= " Order By 'description'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select lu.`Name` as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
-                    "case when l3.`Name` is not null then l3.Description else lu.Description end as description, " .
-                    "mt.Cycle_Length as length, l1.`Name` as unit, mt.Total_Courses as totnum, mt.Course_Number as coursenum, mt.Version as version, " .
-                    "l2.`Name` as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk " .
-                    "from Master_Template mt " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                    "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                    "LEFT OUTER JOIN LookUp l3 ON l3.Name = mt.Regimen_ID";
-            if (NULL != $id) {
-                $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = true";
-            }else{
-                $query .= " WHERE Is_Active = true";
-            }
-        }
         return $this->query($query);
     }
 
     function getTemplatesByType($field, $id) {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
             $query = "select 
                 lu.Name as name
                 , mt.Template_ID as id
@@ -1026,27 +1039,6 @@ class LookUp extends Model {
                 $query .= "WHERE Is_Active = 1";
             }
             $query .= " Order By description";
-        } else if (DB_TYPE == 'mysql') {
-
-            $query = "select lu.`Name` as name, mt.Template_ID as id, mt.Regimen_ID as regimenId, lu.Lookup_Type as type, " .
-                    "case when l3.`Name` is not null then l3.Description else lu.Description end as description, " .
-                    "mt.Cycle_Length as length, l1.`Name` as unit, mt.Total_Courses as totnum, mt.Course_Number as coursenum, mt.Version as version, " .
-                    "l2.`Name` as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk " .
-                    "from Master_Template mt " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                    "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                    "LEFT OUTER JOIN LookUp l3 ON l3.Name = mt.Regimen_ID ";
-
-            if ($field != NULL && strtoupper($field) == 'CANCER') {
-                $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = true";
-            } else if ($field != NULL && strtoupper($field) == 'PATIENT') {
-
-                $query .= "INNER JOIN Patient_Assigned_Templates pat ON pat.Template_ID = mt.Template_ID " .
-                        "WHERE pat.Patient_ID = '" . $id . "' And pat.Is_Active = true";
-            }else{
-               $query .= "WHERE Is_Active = true";
-            }
-        }
 
         return $this->query($query);
     }

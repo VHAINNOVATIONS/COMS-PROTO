@@ -31,8 +31,9 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{
 					title: "Chemotherapy Template Order Source",
 					items : [
+                    { xtype : "form", name: "NewPlan_CTOS_Form", items : [
 /***/
-						{ xtype : 'fieldcontainer', 
+						{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns',
 							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 							defaultType: 'radiofield', defaults: { flex: 1 },
 							items: [ 
@@ -47,6 +48,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 						{ xtype : 'dspTemplateData'},
 						{ xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' },
 						{ xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' }
+                    ]}
 					]
 				},
 
@@ -63,7 +65,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 					title: "Chemotherapy Template Order Source",
 					items : [
 /***/
-						{ xtype : 'fieldcontainer', 
+						{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns',
 							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 							defaultType: 'radiofield', defaults: { flex: 1 },
 							items: [ 

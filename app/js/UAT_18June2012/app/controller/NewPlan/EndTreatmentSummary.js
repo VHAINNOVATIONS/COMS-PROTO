@@ -96,7 +96,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	],
 
 
-    init: function() {
+    init: function() {  // called at application initialization time
         wccConsoleLog("Initialized End of Treatment Summary Controller!");
         this.control({
             "EndTreatmentSummary button[action=\"save\"]": {
@@ -316,12 +316,11 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	EoTS_Drugs : [],
 
 	parseFSData4EoTS : function( tType, dName, tDataStore, EoTS_DataStore, data ) {
-		var thisCtl = this.getController("NewPlan.EndTreatmentSummary");
-
-		var i, el;
-		var buf = [];
-		var HasDataFlag = false;
-		var tmpEoTS;
+		var thisCtl = this.getController("NewPlan.EndTreatmentSummary"),
+		    i, el, tmp, bl,
+		    buf = [], 
+		    HasDataFlag = false,
+		    tmpEoTS;
 		for (i in data) {
 			if (data.hasOwnProperty(i) && "&nbsp;" !== i && "label" !== i) {
 				el = data[i];
@@ -330,7 +329,12 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 					if (el.indexOf("<button") >= 0) {
 						if (el.indexOf("Write</button") < 0) {
 							var el2=el.replace(/\<button class="anchor .*data="/,"").replace(/".*$/, "");
-							el = unescape(el2);
+							if (unescape) {
+                                el = unescape(el2);
+                            }
+                            else {
+                                el = decodeURI(e12);
+                            }
 							el = el.replace(/\n/g, "<br />");
 							if ("" === el2) {
 								el = "No entry recorded";
@@ -342,14 +346,14 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 					}
 					if ("" !== el) {
 						if ("" === tType) {
-							var tmpEoTS = {};
+							tmpEoTS = {};
 							tmpEoTS.day = i;
 							tmpEoTS.date = thisCtl.CycleDates[i];
 							tmpEoTS.desc = el;
 							buf.push("<tr><th style=\"width:10em;\">" + i + "</th><td style=\"width:10em;\">" + thisCtl.CycleDates[i] + "</td><td colspan=\"2\">" + el + "</td></tr>");
 						}
 						else {
-							var tmpEoTS = {};
+							tmpEoTS = {};
 							tmpEoTS.day = i;
 							tmpEoTS.date = thisCtl.CycleDates[i];
 							tmpEoTS.dosage = el;
@@ -362,11 +366,11 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		}
 		if (HasDataFlag) {
 			if ("" === tType) {
-				var tmp = {};
+				tmp = {};
 				tmp = Ext.apply({}, tmpEoTS);
 			}
 			else {
-				var tmp = {};
+				tmp = {};
 				tmp.administered = [];
 				tmp.administered.push(tmpEoTS);
 				tmp.name = dName;
@@ -374,7 +378,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 			EoTS_DataStore.push(tmp);
 		}
 		else {
-			var tmpEoTS = {};
+			tmpEoTS = {};
 			if ("" === tType) {
 				tmpEoTS.day = "";
 				tmpEoTS.date = "";
@@ -388,7 +392,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 			}
 			EoTS_DataStore.push(tmpEoTS);
 		}
-		var b1 = "<tr><th colspan=\"4\" style=\"font-weight:bold; padding-left: 2em; text-align: left;\">" + dName + "</th></tr>" + buf.join("");
+		b1 = "<tr><th colspan=\"4\" style=\"font-weight:bold; padding-left: 2em; text-align: left;\">" + dName + "</th></tr>" + buf.join("");
 		tDataStore.push(b1);
 	},
 
@@ -647,7 +651,6 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 
 	SaveEoTS : function(button) {
         var win = button.up('window');
-
 		var ProvRep = this.getProviderReport();
 		var FUA = this.getFollowUpAppointments();
 		this.EoTSData.ClinicalTrial = this.application.Patient.ClinicalTrial;
@@ -665,6 +668,9 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
             scope: this,
             success: function (data) {
                 wccConsoleLog("Saved EoTS " );
+                if (win.widget ) {
+                    Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
+                }
 		        win.close();
 				// alert("Update History display with to display EoTS via ID returned in data");
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -796,7 +802,7 @@ Patient.TreatmentStart = "";
 		    }
 		});
 
-		var theGrid = Ext.create('Ext.grid.Panel', {
+		theGrid = Ext.create('Ext.grid.Panel', {
 		    renderTo: theGrid.getEl(),
 			autoScroll: 'y',
 			columnLines: true,

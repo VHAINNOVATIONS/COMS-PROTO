@@ -88,7 +88,13 @@ Ext.URLs.Allergies = "/Patient/Allergies";
 Ext.URLs.PatientHistory = "/Patient/History";
 // Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
 // Returns list of History Results for specified patient
-// Example Usage - https://devtest.dbitpro.com/Patient/History/28225CF5-3937-E111-9B9C-000C2935B86F
+
+
+
+Ext.URLs.PatientTemplates = "/Patient/Templates/";
+// Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
+// Returns list of all templates which have been applied to a given patient as 2 arrays (current and historical)
+// Example Usage (for Patient f0400) - https://mwb.dbitpro.com/Patient/Templates/6855D2FD-27A1-E111-903E-000C2935B86F
 
 Ext.URLs.PatientTemplate = "/Patient/Template/";
 // Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)

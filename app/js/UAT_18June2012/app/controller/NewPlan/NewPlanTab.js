@@ -15,7 +15,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-	models : ["LabInfo"],
+	models : ["LabInfo", "AllTemplatesApplied2Patient"],
 
     views : [
     "NewPlan.NewPlanTab"
@@ -60,6 +60,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "CTOS",							selector: "NewPlanTab CTOS"},
 		{ ref: "ApplyTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Apply\"]"},
 		{ ref: "EditTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Edit\"]"},
+		{ ref: "What2DoBtns",				    selector: "NewPlanTab CTOS [name=\"NewPlan_What2Do_Btns\"]"},
+		{ ref: "NewPlan_CTOS_Form",			    selector: "NewPlanTab CTOS form[name=\"NewPlan_CTOS_Form\"]"},
+
 
 		{ ref: "PatientInfo",					selector: "NewPlanTab PatientInfo"},
 		{ ref: "ResetButton",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]"},
@@ -214,6 +217,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	resetCTOSPanel: function(thisCtl) {
 		var CTOSPanel = thisCtl.getCTOS();
 		CTOSPanel.setActiveTab(0);
+        try {   /* One or more of the controls may not be available based on role of user */
+            thisCtl.getNewPlan_CTOS_Form().getForm().reset();
+            // Ext.ComponentQuery.query("NewPlanTab selCTOSTemplate")[0].hide();
+
+            // Ext.ComponentQuery.query("NewPlanTab selTemplateType")[0].hide();
+            // Ext.ComponentQuery.query("NewPlanTab selDiseaseAndStage")[0].hide();
+            // Ext.ComponentQuery.query("NewPlanTab selTemplate")[0].hide();
+
+            Ext.ComponentQuery.query("NewPlanTab dspTemplateData")[0].hide();
+            Ext.ComponentQuery.query("NewPlanTab button[name=\"Apply\"]")[0].hide();
+            Ext.ComponentQuery.query("NewPlanTab button[name=\"Edit\"]")[0].hide();
+        }
+        catch (err) {
+        }
 	},
 
 	resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
@@ -344,8 +361,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         var newCtl = this.getController("NewPlan.NewPlanTab");
 
         var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
-            PatientId: this.application.Patient.id,
-            TemplateId: this.application.Patient.Template.id,
+            PatientID: this.application.Patient.id,
+            TemplateID: this.application.Patient.Template.id,
             DateApplied : today,
             DateStarted : startDate,
             DateEnded : future,
@@ -356,13 +373,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             BSAFormula: values.BSA_Formula,
             BSA_Method: values.BSA_Formula,
             Amputations: amputations
-
         });
 
 		patientTemplate.save({
             scope: this,
             success: function (data) {
-                wccConsoleLog("Saved Template " );
+                wccConsoleLog("Apply Template SUCCESS" );
 					Ext.MessageBox.hide();
 
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -379,21 +395,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					 *	DateEnded :  "2012-11-9"
 					 *	DateStarted :  "2012-05-25"
 					 *	Goal :  "Curative"
-					 *	PatientId :  "B1781155-AAA6-E111-903E-000C2935B86F"
+					 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
 					 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
-					 *	TemplateId :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
+					 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
 					 *	WeightFormula :  "Actual Weight"
 					 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
 					 *	}
 					 ***********/
-					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientId, data.data.id);
+					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
 					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
             },
             failure : function(record, op) {
-
                 wccConsoleLog("Apply Template Failed");
                 Ext.MessageBox.hide();
-                Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.request.scope.reader.jsonData["frameworkErr"]);
+                Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
 
             }
         });
@@ -403,15 +418,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     },
 
-
-
 	HandleTemplateBtnClicks : function (event, element) {
 		wccConsoleLog("HandleTemplateBtnClicks - PatientInfoTable!");
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
 		var tab2switch2 = element.getAttribute("tabtype");
 		var btnName = element.getAttribute("name");
 		var Patient = this.application.Patient;
-		var FncName = "Unknown ";
+		var fncName = "Unknown ";
 
 
 		switch (btnName) {
@@ -434,14 +447,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fncName = "";
 				break;
 			case "GenerateEoTS":
-				fncName = "Generate End of Treatment Summary";
-				this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
-				this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
-				this.application.Patient.EoTS_Type = "Generate";
+                fncName = "Generate End of Treatment Summary";
+                this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
+                this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
+                // Have TemplateID = this.application.Patient.AppliedTemplateID
+                // TemplateName = this.application.Patient.AppliedTemplate.Description
+                this.application.Patient.EoTS_Type = "Generate";
+                Ext.widget("EndTreatmentSummary");
+                fncName = "";
+                break;
 
-				Ext.widget("EndTreatmentSummary");
-				fncName = "";
-				break;
 			case "ShowEoTS":
 				fncName = "Show End of Treatment Summary";
 				this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
@@ -927,6 +942,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this );
     },
 
+
+
     ShowAskQues2ApplyTemplate : function(records, operation, success) {
         var itemsInGroup = [];	// new Array();
         for (i = 0; i < records.length; i++ ){
@@ -940,17 +957,23 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 });
             }
         }
-
+// debugger;
         if(this.application.Patient.TemplateID){
 			Ext.MessageBox.show({
 				title: 'Information',
 				msg: 'Template already applied. Would you like to archive existing template and apply current selection?',
 				width:300,
 				buttons: Ext.MessageBox.OKCANCEL,
+                scope: this,
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
                         try {
-                             Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: true});
+                            var fncName = "Generate End of Treatment Summary";
+                            this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
+                            this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
+                            this.application.Patient.EoTS_Type = "Generate";
+                            Ext.widget("EndTreatmentSummary", { widget : "AskQues2ApplyTemplate", itemsInGroup: itemsInGroup, ChangeTemplate: true });
+                            fncName = "";
                         }
                         catch (err) {
                             alert("Failure to Add Date Widget");
@@ -1087,11 +1110,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.Patient.WeightFormula = patientInfo.data.WeightFormula;
 
 				this.application.loadMask("Loading Patient Records");
-				this.application.DataLoadCount = 4;		// There are 6 modules to be loaded...
+				this.application.DataLoadCount = 5;		// Count of # of modules to load
 				this.loadMDWSData();					// module 1
 				this.loadTemplates("Templates");					// module 5
+                this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
 				this.loadOrderRecords();				// module 6
-				this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+                if (this.application.Patient.TemplateID) {
+                    this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+                }
+                else {
+					this.application.DataLoadCount--;
+					this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+                }
 
 				var theRealID = this.application.Patient.id;
 				this.LoadAllData4PatientByMDWSGUID( theRealID );
@@ -1256,7 +1286,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 // console.log("Patient GUID - " + patientMDWSGUID );
 
 		var pModel = this.getModel("PatientInfo");
-		this.application.loadMask("Loading Patient Records");
+		this.application.loadMask("Loading Patient Records... After selecting template");
 
 		pModel.load(patientMDWSGUID, {
 			scope : this,
@@ -1289,7 +1319,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			failure : function (record, operation) {
 				this.application.unMask();
 				// Ext.MessageBox.alert('MDWS Error', 'Patient Info failed to load properly from MDWS.<br />' + operation.error);
-				// debugger;		// check message value of record/operation
 				wccConsoleLog("Patient Info failed to load properly from MDWS");
 			}
 		});
@@ -1607,6 +1636,44 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
+    /**
+     *
+     * Gets the current and historical templates applied to the patient from the "Patient_Assigned_Templates", "Master_Template", "EoTS" and "Lookup" tables
+     *
+     **/
+    loadAllTemplatesApplied2Patient : function() {
+        // console.log("loadAllTemplatesApplied2Patient Entry Point");
+        var phModel = this.getModel("AllTemplatesApplied2Patient");
+        var phModelParam = this.application.Patient.id;
+        phModel.load(phModelParam, {
+            scope : this,
+            success : function( AllTemplatesApplied2Patient, response ) {
+                this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
+                this.application.DataLoadCount--;
+                this.PatientDataLoadComplete("All Templates Applied");
+                var current = AllTemplatesApplied2Patient.get("current");
+                if (current && current[0]) {
+                    current = current[0];
+                    if (current.TemplateID) {
+                        this.LoadSpecifiedTemplate(current.TemplateID);
+                    }
+                    else {
+                        this.application.DataLoadCount--;
+                        this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+                    }
+                }
+            },
+            failure : function (err, response) {
+                // console.log("loadAllTemplatesApplied2Patient - FAILURE");
+                this.application.DataLoadCount--;
+                this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
+            }
+        });
+    },
+
+
+
+
 	loadTemplates : function() {
         var phModel = this.getModel("PatientTemplates");
         var phModelParam = this.application.Patient.id;
@@ -1714,11 +1781,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 
 
-// Check value of piData before continuing.
-// debugger;	// We should ALWAYS get here irrelivant of how we found a patient. As well as after a template has been applied.
-
-
-
 		this.application.Patient = piData;
 
 		// Get a handle to the frameset itself
@@ -1754,8 +1816,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.application.PatientSelectedRecs = recs;
 		this.application.PatientSelectedOpts = eOpts;
 
-		this.application.loadMask("Loading Patient Records");
-		this.application.DataLoadCount = 7;		// There are 6 modules to be loaded...
+		this.application.loadMask("Loading Patient Records... For selected patient");
+		this.application.DataLoadCount = 8;		// Count of # of modules to load
 
 // wccConsoleLog("Loading Patient Records");
 		this.loadMDWSData();					// module 1
@@ -1763,9 +1825,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.loadAllergyInfo();					// module 3
 		this.loadVitals("Vitals");						// module 4
 		this.loadTemplates("Templates");					// module 5
+        this.loadAllTemplatesApplied2Patient("PatientSelected");
 		this.loadOrderRecords();				// module 6
-		this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
-
+        if (this.application.Patient.TemplateID) {
+            this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+        }
+        else {
+            this.application.DataLoadCount--;
+            this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+        }
     },
     //
     //
@@ -1829,99 +1897,67 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.Function.defer( this.AssignBtnHandlers, 30000, this );
 	},
 
-	buildTemplateInfo : function(thisCtl, Patient) {
-			// Templates - Previously applied templates
-		var patientTemplates = thisCtl.getPatientTemplates(),
-			TemplateData =  "<div class='errMsg'>No applied templates for patient " + this.application.Patient.name + "</div>", 
-			pTID = Patient.TemplateID,
-			pTH = Patient.TemplateHistory, 
-			pTID_IsNOTHistorical = true, 
-			pHistLen = 0, 
-			tmp = "No Records Available", 
-			pCurTemplate, 
-			len, 
-			i;
+	buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
+        var patientTemplates = thisCtl.getPatientTemplates(),
+            currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
+            historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
+            numRecords = currentTemplates.length + historicalTemplates.length;
 
-			if (pTH) {
-				pHistLen = pTH.length;
-			}
-			len = pHistLen;
+        TemplateInfo = {};
+        TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
+        TemplateInfo.Current = this.application.Patient.CurrentTemplatesApplied2Patient;
 
-// debugger;
-// MWB - 11/11/2013 - Need to walk through this to see if the current template really is historical or not.
-// Basing off of a template id is not valid as we can apply the same template more than once.
+        // Render # of templates for initial display of the panel - MWB - 11/11/2013
+        patientTemplates.update( TemplateInfo );
 
-
-			if ("" !== pTID) {
-				len++;
-				var patid = "";
-				if (Patient.AppliedTemplate && Patient.AppliedTemplate.id) {
-					patid = Patient.AppliedTemplate.id;
-				}
-				pCurTemplate = {
-					"DateApplied" : (Patient.DateApplied ? Patient.DateApplied : ""),
-					"DateEnded" : Patient.TreatmentEnd,
-					"DateEndedActual" : "",	// current template so hasn't ended yet
-					"DateStarted" : Patient.TreatmentStart,
-					"EotsID" : "",	// current template so no EoTS yet
-					"TemplateID" : pTID,
-					"TemplateName" : Patient.TemplateName,
-					"id" : patid
-				};
-			}
-/**
-			if (pTH) {
-				len += pTH.length;
-				var i, pTH_TID;
-				for (i = 0; i < pTH.length; i++) {
-					pTH_TID = pTH[i].TemplateID;
-					if (pTH_TID === pTID) {
-						len--;
-						pTID_IsNOTHistorical = false;
-					}
-				}
-			}
-**/
-			// The TemplateHistory also contains the currently applied template
-			// So find the current template (if any) and flag it in the history as the current
-			// This record is then NOT listed in the History section of TR&S
-			if (pTH && ("" !== pTID)) {
-				for (i = 0; i < pHistLen; i++) {
-					if ((pTH[i].TemplateID === pTID) && (Patient.TreatmentStart === pTH[i].DateStarted)) {
-						len--;
-						pTH[i].current = true;
-					}
-				}
-			}
-
-			if (len > 0) {
-				tmp = len + " Record";
-				tmp += (1 === len) ? "" : "s";
-				TemplateData = pTH;
-			}
-			var TemplateInfo = {Historical : TemplateData};
-//			if ("" !== pTID && pTID_IsNOTHistorical) {		// if Template pointed to by TID is NOT in the Historical array then add it as the current template. This is really a sanity check as we should never have this happen but did during testing - MWB - 11/11/2013
-			if ("" !== pTID ) {
-				var tempObj = { TemplateName : Patient.TemplateDescription, TemplateID : pTID, ScheduledEndDate : Patient.TreatmentEnd, DateStarted : Patient.TreatmentStart };
-				var CurTemplateInfo = { CurTemplate : tempObj };
-				TemplateInfo = Ext.apply(TemplateInfo, CurTemplateInfo);
-			}
-
-				// Render # of templates for initial display of the panel - MWB - 11/11/2013
-		patientTemplates.update( TemplateInfo );
-//		patientTemplates.setTitle("Treatment Regimens & Summaries <span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>");
-		this.resetTRSPanel(thisCtl, tmp);
-
-		return patientTemplates;
+        var strRecs = "No Records Available";
+        if (1 === numRecords ) {
+            strRecs = numRecords + " Record";
+        }
+        else if (numRecords > 1) {
+            strRecs = numRecords + " Records";
+        }
+        this.resetTRSPanel(thisCtl, strRecs);
+        return patientTemplates;
 	},
 
 	PatientDataLoadComplete : function(Loaded) {
 		wccConsoleLog("PatientDataLoadComplete");
+        console.log("PatientDataLoadComplete");
 		var DataLoadCount = this.application.DataLoadCount;
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
 		var piTableInfo;
 		var dspVSHTemplateData, VSHTemplateDataBtns;
+
+        if ("All Templates Applied" === Loaded) {
+            var historical = this.application.Patient.AllTemplatesApplied2Patient.get("historical"),
+                current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
+            this.application.Patient.CurrentTemplatesApplied2Patient = current;
+            this.application.Patient.HistoricalTemplatesApplied2Patient = historical;
+            // this.application.Patient.History = historical; "History" is really LabResults
+            if (current && current[0]) {
+                current = current[0];
+                // Needed for the 
+                if (!this.application.Patient.AppliedTemplate) {
+                    this.application.Patient.AppliedTemplate = {};
+                }
+                this.application.Patient.AppliedTemplate.id = current.TemplateID; 
+                this.application.Patient.AppliedTemplate.Description = current.TemplateDescription;
+                this.application.Patient.AppliedTemplate.Name = current.TemplateName;
+
+                this.application.Patient.AppliedTemplateID = current.TemplateID;
+                this.application.Patient.TemplateDescription = current.TemplateDescription;
+                this.application.Patient.TemplateName = current.TemplateName;
+                this.application.Patient.TemplateID = current.TemplateID;
+                this.application.Patient.TreatmentStart = current.DateStarted;
+                this.application.Patient.TreatmentEnd = current.DateEnded;
+            }
+            var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
+        }
+
+
+
 
 
 		if ("Update BSA" === Loaded) {
@@ -1968,13 +2004,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 
 		if ("Update Templates" === Loaded) {
-			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient);
+//			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
 //			patientTemplates.show();
-			return;
+//			return;
 		}
 
 
 		wccConsoleLog("DataLoadCount - " + DataLoadCount + " - " + Loaded);
+        console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
 			var piTable;
@@ -2053,7 +2090,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				VSHTemplateDataBtns.on("click", this.HandleVSHCalcDoseButtons, this);
 			}
 
-			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient);
+			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
 			patientTemplates.show();
 
 			// If BSA_Dose is empty then calculate it for each record and save that record back.
@@ -2227,7 +2264,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	AssignBtnHandlers : function() {
-		// debugger;
 //		wccConsoleLog("AssignBtnHandlers...");
 		try {
 			var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -2249,7 +2285,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 		catch (e) {
 			wccConsoleLog("Error in AssignBtnHandlers");
-			// debugger;
 		}
 
 		// MWB - 7/1/2012 Should this process be called here???? This is the original location of this call
@@ -2450,6 +2485,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
+                    
+                    console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
 					this.application.DataLoadCount--;
@@ -2459,7 +2496,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	            failure : function (err, response) {
 					this.application.DataLoadCount--;
 					this.PatientDataLoadComplete("Current Applied Template - Failed to load - " + response.error);
-					// debugger;
 				}
 	        });
 	},
@@ -2489,7 +2525,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			record.Cycle = "";
 			record.Day = "";
 		}
-		record.patientId = Patient.id;
+		record.PatientID = Patient.id;
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
 		record.Height = String(Patient.Height);
 		record.Weight = String(Patient.Weight);
@@ -2529,7 +2565,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		record.Respiration = "";
 		record.SPO2 = "";
 		record.Temperature = "";
-		record.patientId = Patient.id;
+		record.PatientID = Patient.id;
 
 
 

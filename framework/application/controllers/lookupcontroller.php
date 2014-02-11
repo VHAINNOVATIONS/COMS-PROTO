@@ -93,6 +93,7 @@ class LookupController extends Controller {
 
 
     function saveTemplate() {
+
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
@@ -228,7 +229,20 @@ class LookupController extends Controller {
     }
 
 
+    function LabResults($patientID = null) {
+        $retVal = $this->LookUp->getLabResults($patientID);
+        if($this->checkForErrors('Get Lab Results Failed. ', $retVal)){
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+        }
+        else {
 
+            $jsonRecord['success'] = 'true';
+            $jsonRecord['total'] = count($retVal);
+            $jsonRecord['records'] = $retVal;
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
 
 
     /*

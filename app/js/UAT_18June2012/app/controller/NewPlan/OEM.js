@@ -613,7 +613,6 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 		var theID;
 
 /**********
-		debugger;
 		var WhichOne = 1;
 		if (0 === WhichOne) {
 			this.showAllAdminDays();

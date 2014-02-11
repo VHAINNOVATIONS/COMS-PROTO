@@ -50,13 +50,19 @@ class PatientController extends Controller
             foreach ($records as $record) {
                 
                 $results = $this->Patient->getLabInfoResults($record['ID']);
-                $modResults = array();
+                // $modResults = array();
                 
                 // MWB - 5/14/2012 - There's only ever one element in the
                 // results array returned from MDWS (why make it an array
                 // then???)
-                $result = $results[0];
-                
+                if( isset($results[0]) ) {
+                    $result = $results[0];
+                }
+                else {
+                    $result = $results;
+                }
+                ChromePhp::log("Results - " . json_encode($result));
+
                 if ('0' == $result['outOfRange']) {
                     $result['outOfRange'] = false;
                 } else {
@@ -127,6 +133,47 @@ class PatientController extends Controller
             $this->set('frameworkErr', 'No Patient ID provided.');
         }
     }
+
+    /* Get all templates assigned to a patient (past and current) */
+    function Templates($Patient_ID = NULL)
+    {
+        $jsonRecord = array();
+
+        if (NULL === $Patient_ID) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = 'No Patient ID provided.';
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $details = $this->Patient->getCurrentAndHistoricalPatientTemplates($Patient_ID);
+        if ($this->checkForErrors('Get Patient Details Failed. ', $details )) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = 'Get Patient Details Failed.';
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $currentTemplate = array();
+        $historicalTemplates = array();
+        foreach ($details as $detail) {
+            $current = strtotime($detail["DateEnded"]) > strtotime(date("m/d/Y"));
+            if ("" === $detail["DateEndedActual"] && $current) {
+                $currentTemplate[] = $detail;
+            }
+            else {
+                $historicalTemplates[] = $detail;
+            }
+        }
+        $records = array();
+        $records['current'] = $currentTemplate;
+        $records['historical'] = $historicalTemplates;
+      
+
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($details);
+        $jsonRecord['records'] = $records;
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
 
 
 
@@ -211,7 +258,7 @@ class PatientController extends Controller
         $this->Patient->beginTransaction();
         
         $returnVal = $this->Patient->savePatientTemplate($formData);
-        
+
         if ($this->checkForErrors('Apply Patient Template Failed. ', $returnVal)) {
             $this->set('patientTemplateId', null);
             $this->Patient->rollbackTransaction();
@@ -275,65 +322,90 @@ class PatientController extends Controller
         $this->Patient->endTransaction();
     }
 
+
+
+
     function viewall($id = NULL)
     {
-        // if($id == NULL){
-        $retVal = $this->Patient->selectAll();
+        if($id == NULL){
+            $retVal = $this->Patient->selectAll();
+        }
+        else {
+            $retVal = $this->Patient->selectAll($id);
+        }
         if ($this->checkForErrors('Get Patients Failed. ', $retVal)) {
             $this->set('templatedata', null);
             return;
         }
-        
+
         $patients = $retVal;
         $patientDetailMap = array();
         $measurements = array();
         $modPatients = array();
-        
-        foreach ($patients as $patient) {
-            if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
-                $lookup = new LookUp();
-                $amputations = $lookup->getLookupDescByNameAndType( $patient['ID'], '30');
-                if ($this->checkForErrors('Get Patient Amputations Failed. ',  $amputations)) {
-                    $this->set('templatedata', null);
-                    return;
-                }
-                
-                $tmpAmputations = array();
-                foreach ($amputations as $amputation) {
-                    array_push($tmpAmputations, $amputation);
-                }
-                
-                $patient['amputations'] = $tmpAmputations;
-                array_push($modPatients, $patient);
-                
-                $retVal = $this->Patient->getPatientDetailInfo($patient['ID']);
-                
-                if ($this->checkForErrors('Get Patient Details Failed. ', 
-                        $retVal)) {
-                    $this->set('templatedata', null);
-                    return;
-                }
-                
-                $details = $retVal;
-                if (!empty($details[0])) {
-                    $detail = $this->TreatmentStatus($details[0]);
-                    if ($detail["TreatmentStatus"] == 'Ended') {
-                        $detail = null;
+            
+            foreach ($patients as $patient) {
+                if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
+                    $lookup = new LookUp();
+                    $amputations = $lookup->getLookupDescByNameAndType( $patient['ID'], '30');
+                    if ($this->checkForErrors('Get Patient Amputations Failed. ',  $amputations)) {
+                        $this->set('templatedata', null);
+                        return;
                     }
-                    $patientDetailMap[$patient['ID']] = $detail;
-                } else {
-                    $patientDetailMap[$patient['ID']] = $details;
+                    
+                    $tmpAmputations = array();
+                    foreach ($amputations as $amputation) {
+                        array_push($tmpAmputations, $amputation);
+                    }
+                    
+                    $patient['amputations'] = $tmpAmputations;
+                    array_push($modPatients, $patient);
+                    
+                    $retVal = $this->Patient->getPatientDetailInfo($patient['ID']);
+                    
+                    if ($this->checkForErrors('Get Patient Details Failed. ', $retVal)) {
+                        $this->set('templatedata', null);
+                        return;
+                    }
+
+                    
+                    /*********************
+                    error_log("Reporting Patient Details");
+                    $details = $retVal;
+                    if (!empty($details[0])) {
+                        error_log("Reporting Patient Details - !Empty");
+                        $n = 1;
+                        foreach($details as $d) {
+                            error_log($n++ . " - " . json_encode($d));
+                        }
+                        $detail = $this->TreatmentStatus($details[0]);
+                        error_log($n++ . " - " . json_encode($detail));
+                        if ($detail["TreatmentStatus"] == 'Ended') {
+                            error_log("Ended");
+                            $detail = null;
+                        }
+                        $patientDetailMap[$patient['ID']] = $detail;
+                        error_log($detail);
+                    } else {
+                        error_log("Reporting Patient Details - IS Empty");
+                        $patientDetailMap[$patient['ID']] = $details;
+                        foreach($details as $d) {
+                            error_log("1 - " . $d);
+                        }
+                    }
+                    **************************/
+
+                    $details = $retVal;
+                    foreach($details as $d) {
+                        $detail = $this->TreatmentStatus($d);
+                        if ($detail["TreatmentStatus"] != 'Ended') {
+                            $patientDetailMap[$patient['ID']] = $detail;
+                        }
+                    }
                 }
             }
-        }
         
         $this->set('patients', $modPatients);
         $this->set('templatedetails', $patientDetailMap);
-        
-        // }else {
-        // $this->set('patients',null);
-        // $this->set('frameworkErr', 'Unrecognized Parameter passed.');
-        // }
     }
 
     /**
@@ -346,8 +418,8 @@ class PatientController extends Controller
      */
     private function _insertOrderStatus($formData, $preHydrationRecord)
     {
-        $templateId = $formData->TemplateId;
-        $patientid = $formData->PatientId;
+        $templateId = $formData->TemplateID;
+        $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
@@ -588,8 +660,7 @@ class PatientController extends Controller
      * @param unknown_type $patientId            
      * @return void Ambigous multitype:string >
      */
-    private function _insertTemplate($template, $adminDay, $adminDate, $cycle, 
-            $patientId)
+    private function _insertTemplate($template, $adminDay, $adminDate, $cycle, $patientId)
     {
         $data = new stdClass();
         $data->Disease = $template['Disease'];
@@ -610,7 +681,7 @@ class PatientController extends Controller
         $lookup = new LookUp();
         $templateId = $lookup->saveTemplate($data, $template['RegimenId']);
         
-        if ($this->checkForErrors("Insert Master Template (in Patient Controller) Failed. (id=$templateid)", $templateid)){
+        if ($this->checkForErrors("Insert Master Template (in Patient Controller) Failed. (id=$templateId)", $templateId)){
             $this->Patient->rollbackTransaction();
             return;
         }
@@ -627,9 +698,9 @@ class PatientController extends Controller
      */
     private function createOEMRecords($formData)
     {
-        $templateId = $formData->TemplateId;
+        $templateId = $formData->TemplateID;
         $lookup = new LookUp();
-        $templates = $lookup->getTopLevelTemplateDataById($templateId);
+        $templates = $lookup->getTopLevelTemplateDataById($templateId, '');
         $template = $templates[0];
         
         $this->Hydrations('pre', $templateId);
@@ -647,7 +718,7 @@ class PatientController extends Controller
         $regimens = $this->get('regimens');
         
         $dateStarted = $formData->DateStarted;
-        $patientId = $formData->PatientId;
+        $patientId = $formData->PatientID;
         
         for ($cycle = 1; $cycle <= $template['CourseNumMax']; $cycle ++) {
             

@@ -3,8 +3,8 @@ Ext.define('COMS.model.PatientTemplates', {
     queryMode: 'local',
 	fields: [
 		'id',		
-                'PatientId',
-                'TemplateId',
+                'PatientID',
+                'TemplateID',
 		'DateApplied',
 		'DateStarted',
                 'DateEnded',

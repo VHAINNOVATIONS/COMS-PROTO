@@ -119,7 +119,8 @@ Ext.define('COMS.view.NewPlan.AskQues2ApplyTemplate', {
             cls: 'custom-form',
             defaults : { labelAlign: 'top', margin: '5'},
             items: [
-                { xtype : "RequiredFieldLabel" }, Reason4EOTSAnswerPanel1, Reason4EOTSAnswerPanel2,
+                { xtype : "RequiredFieldLabel" }, 
+                // Reason4EOTSAnswerPanel1, Reason4EOTSAnswerPanel2,
 
 
             {

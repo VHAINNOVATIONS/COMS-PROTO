@@ -228,6 +228,7 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	],
 	initComponent: function() {
 		wccConsoleLog("End of Treatment Summary View - Initialization");
+        Ext.apply(arguments, { widget : this.widget , itemsInGroup: this.itemsInGroup, ChangeTemplate: this.ChangeTemplate });
 		this.callParent(arguments);
 	}
 });

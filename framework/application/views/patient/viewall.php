@@ -34,7 +34,12 @@
                     echo "\"Disease\":[{\"Type\":\"Colorectal Cancer\",\"Stage\":\"Stage III\"}], ";                        
                 }
                 
-                $detail = $templatedetails[$patient['ID']];
+                if (isset($templatedetails[$patient['ID']])) {
+                    $detail = $templatedetails[$patient['ID']];
+                }
+                else {
+                    $detail = null;
+                }
                
                 if(count($detail)>0){
                     echo    "\"TemplateName\":\"".$detail['TemplateName']."\",\"TemplateDescription\":\"".$detail['TemplateDescription']."\",".
