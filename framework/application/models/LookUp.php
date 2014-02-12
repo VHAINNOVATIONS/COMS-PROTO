@@ -1093,7 +1093,6 @@ class LookUp extends Model {
                 $query .= "WHERE Is_Active = 1";
             }
             $query .= " Order By description";
-echo ("$query<br>");
         return $this->query($query);
     }
 

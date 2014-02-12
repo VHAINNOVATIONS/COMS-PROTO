@@ -27,7 +27,7 @@ Ext.define('COMS.model.DrugRegimen', {
 				// The release version fixed that bug which is why I saw a validation error and the UAT-Test site (which uses the RC library) did not.
 			{ type: 'presence', name: 'Route', message: 'Route must be entered.'},		
             { type: 'fluidVolregimen', name: 'FluidVol', message: 'Fluid Volume must be entered.'},
-            { type: 'adminTimeregimen', name: 'AdminTime', message: 'Administration Time must be entered.'},
+            // { type: 'adminTimeregimen', name: 'AdminTime', message: 'Administration Time must be entered.'},
             { type: 'flowRateregimen', name: 'FlowRate', message: 'Flow Rate must be entered'},
             { type: 'fluidTyperegimen', name: 'FluidType', message: 'Fluid Type must be selected'},
             { type: 'presence', name: 'Day', message: 'Administration Day(s) must be entered.'}

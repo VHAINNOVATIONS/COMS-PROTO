@@ -46,10 +46,12 @@ Ext.define("COMS.view.NewPlan.CTOS.DossageAmt" ,{
 Ext.define("COMS.view.NewPlan.CTOS.AdminTime" ,{
 	extend: "Ext.form.field.Time",
 	alias : "widget.AdminTime",
-	"fieldLabel": "Administration Time <em class=\"required-field\">*</em>",
+	// "fieldLabel": "Administration Time <em class=\"required-field\">*</em>",
+    "fieldLabel": "Administration Time",
 	"width": 290,
-	"labelWidth": 130,
-	"allowBlank": false
+	"labelWidth": 130
+//        ,
+//	"allowBlank": false
 });
 
 

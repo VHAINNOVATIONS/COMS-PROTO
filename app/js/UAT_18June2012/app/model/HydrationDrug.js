@@ -41,7 +41,7 @@ Ext.define('COMS.model.HydrationDrug', {
 //		{ type: 'route2hydration', name: 'Infusion2', message: 'Route 2 must be entered.'},
 		{ type: 'fluidVol1hydration', name: 'FluidVol1', message: 'Fluid Volume must be entered.'},
 //		{ type: 'fluidVol2hydration', name: 'FluidVol2', message: 'Fluid Volume 2 must be entered.'},
-		{ type: 'adminTimehydration', name: 'AdminTime', message: 'Administration Time must be entered.'},
+		// { type: 'adminTimehydration', name: 'AdminTime', message: 'Administration Time must be entered.'},
 		{ type: 'presence', name: 'Day', message: 'Administration Day(s) must be entered.'},
 		{ type: 'flowRate1hydration', name: 'FlowRate1', message: 'Flow Rate must be entered'},
 //		{ type: 'flowRate2hydration', name: 'FlowRate2', message: 'Flow Rate 2 must be entered'},
