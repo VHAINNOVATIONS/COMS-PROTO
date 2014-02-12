@@ -131,7 +131,14 @@ $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 //$message = "<html><body>Update Workflow Status: <a href=".$Link.">Respond</a><br><br>".$Body."</body></html>";
 //$message = "<html><body>Order Notification to Pharmacist (Workflow ID: ".$wid.")<br><br>Link: <a href=".$Link.">Link</a> <br>Patient ID: ".$patientId."<br>Template ID: ".$templateId."<br>dateApplied: ".$dateApplied."<br> dateStarted : ".$dateStarted."<br>dateEnded Id: ".$dateEnded."<br>Goal: ".$goal."<br>clinicalTrial: ".$clinicalTrial."<br>performanceStatus: ".$performanceStatus."</body></html>";
 $message = "<html><body><br>".$Body."<br>Date Applied: " . $dateApplied . "<br>Date Started: " . $dateStarted . "<br>Date Ended: " . $dateEnded . "<br>Goal: " . $goal . "<br>Clinical Trial: " . $clinicalTrial . "</body></html>";
-mail($To, $Subject, $message, $headers);
+
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 //echo "Message: ".$message."";
 
 //Store Message
@@ -246,7 +253,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
+
 }
 elseif ($ReasonNo == 5){
 //Get body for Message and workflow NoSteps
@@ -284,7 +298,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
+
 }
 elseif ($ReasonNo == 6){
 //Get body for Message and workflow NoSteps
@@ -322,7 +343,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 7){
 //Get body for Message and workflow NoSteps
@@ -360,7 +387,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 8){
 //Get body for Message and workflow NoSteps
@@ -398,7 +431,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 9){
 //Get body for Message and workflow NoSteps
@@ -436,7 +475,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 10){
 //Get body for Message and workflow NoSteps
@@ -474,7 +520,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 11){
 //Get body for Message and workflow NoSteps
@@ -512,7 +564,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 12){
 //Get body for Message and workflow NoSteps
@@ -550,7 +608,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 13){
 //Get body for Message and workflow NoSteps
@@ -588,7 +652,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 else{
 echo "No Reason";
@@ -665,7 +735,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store Message
 StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
@@ -691,7 +767,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store Message
 StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
@@ -1128,7 +1210,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 //Send the Message
-mail($To, $Subject, $message, $headers);
+try {
+    mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store the Message
 $mid = StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);

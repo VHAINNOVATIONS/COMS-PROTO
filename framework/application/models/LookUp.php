@@ -855,41 +855,86 @@ class LookUp extends Model {
      */
     public function getTopLevelTemplateDataById($id, $Regimen_ID)
     {
-
-        $query = "
-            SELECT 
-                mt.Template_ID AS id, 
-                mt.Regimen_ID As Regimen_ID,
-                lu.Description AS name,
-                l5.Description AS description,
-                mt.Cycle_Length AS length, 
-                mt.Emotegenic_ID AS emoID, 
-                l2.Name AS emoLevel, 
-                mt.Febrile_Neutropenia_Risk AS fnRisk, 
-                mt.Pre_MH_Instructions preMHInstruct, 
-                mt.Post_MH_Instructions postMHInstruct, 
-                mt.Cycle_Time_Frame_ID AS CycleLengthUnitID, 
-                l1.Name AS CycleLengthUnit, 
-                mt.Cancer_ID AS Disease, 
-                mt.Disease_Stage_ID AS DiseaseStage, 
-                mt.Regimen_ID RegimenId, 
-                mt.Version AS version, 
-                CASE WHEN l3.Name IS NOT NULL THEN l3.Name ELSE '' END AS DiseaseStageName, 
-                CASE WHEN l4.Name IS NOT NULL THEN l4.Name ELSE '' END AS DiseaseName, 
-                mt.Course_Number AS CourseNum, 
-                mt.Total_Courses AS CourseNumMax, 
-                mt.Regimen_Instruction AS regimenInstruction 
-            FROM Master_Template mt
-                JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
-                JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
-                JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
-                JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
-                JOIN LookUp l5 ON l5.Name = '$Regimen_ID'
-                LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
-            WHERE mt.Template_ID = '$id'
-        ";
-
-        return $this->query($query);
+        /* Check to see if the template has a user supplied description */
+        $query = "select Description from LookUp where Name = '$Regimen_ID'";
+        $NoDescription = false;
+        if ($this->query($query) == null) {
+            /* No short description available */
+            $NoDescription = true;
+            $query = "
+                SELECT 
+                    mt.Template_ID AS id, 
+                    mt.Regimen_ID As Regimen_ID,
+                    lu.Description AS name,
+                    mt.Cycle_Length AS length, 
+                    mt.Emotegenic_ID AS emoID, 
+                    l2.Name AS emoLevel, 
+                    mt.Febrile_Neutropenia_Risk AS fnRisk, 
+                    mt.Pre_MH_Instructions preMHInstruct, 
+                    mt.Post_MH_Instructions postMHInstruct, 
+                    mt.Cycle_Time_Frame_ID AS CycleLengthUnitID, 
+                    l1.Name AS CycleLengthUnit, 
+                    mt.Cancer_ID AS Disease, 
+                    mt.Disease_Stage_ID AS DiseaseStage, 
+                    mt.Regimen_ID RegimenId, 
+                    mt.Version AS version, 
+                    CASE WHEN l3.Name IS NOT NULL THEN l3.Name ELSE '' END AS DiseaseStageName, 
+                    CASE WHEN l4.Name IS NOT NULL THEN l4.Name ELSE '' END AS DiseaseName, 
+                    mt.Course_Number AS CourseNum, 
+                    mt.Total_Courses AS CourseNumMax, 
+                    mt.Regimen_Instruction AS regimenInstruction 
+                FROM Master_Template mt
+                    JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
+                    JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
+                    JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                    JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
+                    LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
+                WHERE mt.Template_ID = '$id'
+            ";
+        }
+        else {
+            $query = "
+                SELECT 
+                    mt.Template_ID AS id, 
+                    mt.Regimen_ID As Regimen_ID,
+                    lu.Description AS name,
+                    l5.Description AS description,
+                    mt.Cycle_Length AS length, 
+                    mt.Emotegenic_ID AS emoID, 
+                    l2.Name AS emoLevel, 
+                    mt.Febrile_Neutropenia_Risk AS fnRisk, 
+                    mt.Pre_MH_Instructions preMHInstruct, 
+                    mt.Post_MH_Instructions postMHInstruct, 
+                    mt.Cycle_Time_Frame_ID AS CycleLengthUnitID, 
+                    l1.Name AS CycleLengthUnit, 
+                    mt.Cancer_ID AS Disease, 
+                    mt.Disease_Stage_ID AS DiseaseStage, 
+                    mt.Regimen_ID RegimenId, 
+                    mt.Version AS version, 
+                    CASE WHEN l3.Name IS NOT NULL THEN l3.Name ELSE '' END AS DiseaseStageName, 
+                    CASE WHEN l4.Name IS NOT NULL THEN l4.Name ELSE '' END AS DiseaseName, 
+                    mt.Course_Number AS CourseNum, 
+                    mt.Total_Courses AS CourseNumMax, 
+                    mt.Regimen_Instruction AS regimenInstruction 
+                FROM Master_Template mt
+                    JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
+                    JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
+                    JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                    JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
+                    JOIN LookUp l5 ON l5.Name = '$Regimen_ID'
+                    LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
+                WHERE mt.Template_ID = '$id'
+            ";
+        }
+        $retVal = $this->query($query);
+        if ($NoDescription) {
+            if (isset($retVal[0])) {
+                for($i = 0; $i < count($retVal); $i++) {
+                    $retVal[$i]["description"] = 'N/A';
+                }
+            }
+        }
+        return $retVal;
     }
 
     function selectAll() {
@@ -1048,7 +1093,7 @@ class LookUp extends Model {
                 $query .= "WHERE Is_Active = 1";
             }
             $query .= " Order By description";
-
+echo ("$query<br>");
         return $this->query($query);
     }
 
