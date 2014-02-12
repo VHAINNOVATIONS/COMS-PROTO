@@ -6,7 +6,7 @@ class Orders extends Model {
     const STATUS_INCOORDINATION = 'In-Coordination';
     
     function getPatientsWithActiveTemplates() {
-        $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Date_Ended_Actual != NULL";
+        $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Date_Ended_Actual is NULL";
         return $this->query($query);
     }
 
@@ -20,12 +20,12 @@ class Orders extends Model {
                 "LEFT OUTER JOIN Template_Regimen tr ON tr.Template_ID = pat.Template_ID " .
                 "LEFT OUTER JOIN Medication_Hydration mh ON mh.Template_ID = pat.Template_ID " .
                 "LEFT OUTER JOIN MH_Infusion mhi ON mhi.MH_ID = mh.MH_ID " .
-                "WHERE pat.Date_Ended_Actual != NULL";
+                "WHERE pat.Date_Ended_Actual is not NULL";
         return $this->query($query);
     }
 
     function getDrugs() {
-        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Date_Ended_Actual != NULL";
+        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Date_Ended_Actual is not NULL";
 
         $queryPAT = $this->query($query);
         foreach ($queryPAT as $row) {

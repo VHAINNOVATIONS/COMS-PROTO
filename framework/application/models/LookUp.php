@@ -922,16 +922,25 @@ class LookUp extends Model {
         } else {
             $orderBy = 'Description';
         }
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT id=Lookup_ID, type=Lookup_Type, Name, Description FROM LookUp WHERE Lookup_Type = ( 
-                        SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "') ".
-                     "ORDER BY $orderBy";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type = ( 
-                        SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')";
-        }
 
+        switch (strtoupper($name)) {
+            case "TEMPLOC":
+                $name = 'Temperature Location';
+                break;
+        }
+        $query = "
+            SELECT id=Lookup_ID, 
+                type=Lookup_Type, 
+                Name, 
+                Description 
+                FROM LookUp 
+                WHERE Lookup_Type = ( 
+                    SELECT 
+                        l.Lookup_Type_ID 
+                        FROM LookUp l 
+                        WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
+                ORDER BY $orderBy
+        ";
         return $this->query($query);
     }
 

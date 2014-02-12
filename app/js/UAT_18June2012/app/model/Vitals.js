@@ -13,6 +13,7 @@ Ext.define("COMS.model.Vitals", {
             "BSA_Weight",
             "DateTaken",
             "Temperature",
+            "TemperatureLocation",
             "Pulse",
             "Respiration",
             "Pain",

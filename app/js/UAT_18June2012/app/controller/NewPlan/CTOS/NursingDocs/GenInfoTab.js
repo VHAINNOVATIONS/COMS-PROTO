@@ -70,6 +70,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsTempF\"]"
 		},
 		{
+			ref: "ndVitalsTempLoc",
+			selector: "NursingDocs_VitalSigns [name=\"ndVitalsTempLoc\"]"
+		},
+		{
 			ref: "ndVitalsTempC",
 			selector: "NursingDocs_VitalSigns displayfield[name=\"ndVitalsTempC\"]"
 		},
@@ -287,6 +291,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
 		thisCtl.getNdVitalsTempF().setValue("");
 		thisCtl.getNdVitalsTempC().setValue("");
+		thisCtl.getNdVitalsTempLoc().setValue("");
 		thisCtl.getNdVitalsPulse().setValue("");
 		thisCtl.getNdVitalsSystolic().setValue("");
 		thisCtl.getNdVitalsGender().setValue("");
@@ -400,6 +405,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		// { id, AdminDate, Cycle, Day, PostTherapy, PostTherapyInstr, PreTherapy, PreTherapyInstr, Therapy, TherapyInstr }
 
 		var Temperature = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsTempF\"]")[0];
+        var TemperatureLocation = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsTempLoc\"]")[0];
 		var Pulse = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsPulse\"]")[0];
 		var Systolic = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsSystolic\"]")[0];
 		var Height = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsHeightIN\"]")[0];
@@ -415,6 +421,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		record.patientId = Patient.id;
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
 		record.Temperature = Temperature.getValue();
+        record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();
 		record.Systolic = Systolic.getValue();
 		record.Height = Height.getValue();
@@ -427,6 +434,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		record.BP = Systolic.getValue() + " / " + Diastolic.getValue();
 
 		var flg1 = "" === record.Temperature;
+        var flg1a = "" === record.TemperatureLocation;
 		var flg2 = "" === record.Pulse;
 		var flg3 = "" === record.Systolic;
 		var flg4 = "" === record.Height;
@@ -437,11 +445,12 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		var flg9 = "" === record.SPO2;
 		var flg10 = "" === record.BSA;
 
-		if (flg1 && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
+		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return (false);
 		}
 
 		Temperature.setValue("");
+        TemperatureLocation.setValue("");
 		Pulse.setValue("");
 		Systolic.setValue("");
 		Height.setValue("");
@@ -610,6 +619,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		try {
 			var NDVitalsTempF = thisCtl.getNdVitalsTempF();
 			var NDVitalsTempC = thisCtl.getNdVitalsTempC();
+			var NDVitalsTempLoc = thisCtl.getNdVitalsTempLoc();
 			var NDVitalsPulse = thisCtl.getNdVitalsPulse();
 			var NDVitalsSystolic = thisCtl.getNdVitalsSystolic();
 			var NDVitalsGender = thisCtl.getNdVitalsGender();
@@ -641,6 +651,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 
 			NDVitalsTempF.setValue("");
 			NDVitalsTempC.setValue("");
+            NDVitalsTempLoc.setValue("");
 			NDVitalsPulse.setValue("");
 
 			NDVitalsSystolic.setValue("");

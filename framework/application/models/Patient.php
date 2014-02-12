@@ -349,7 +349,7 @@ class Patient extends Model
             if (null == $dateTaken) {
                 $query = "SELECT ph.Height as Height,ph.Weight as Weight,BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), Weight_Formula as WeightFormula, " .
                          "BSA_Method as BSA_Method, BSA,BSA_Weight,CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken, " .
-                         "Temperature, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.Name as PSID, " .
+                         "Temperature, TemperatureLocation, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.Name as PSID, " .
                          "Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, " .
                          "p.Gender as Gender " . "FROM Patient_History ph " .
                          "INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID " .
@@ -359,36 +359,13 @@ class Patient extends Model
             } else {
                 $query = "SELECT ph.Height as Height,ph.Weight as Weight,BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), Weight_Formula as WeightFormula, " .
                          "BSA_Method as BSA_Method, BSA,BSA_Weight,CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken, " .
-                         "Temperature, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.Name as PSID, " .
+                         "Temperature, TemperatureLocation, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.Name as PSID, " .
                          "Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, " .
                          "p.Gender as Gender " . "FROM Patient_History ph " .
                          "INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID " .
                          "LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID " .
                          "WHERE ph.Patient_ID = '" . $id . "' " .
                          "AND CONVERT(VARCHAR(10), Date_Taken, 105) = '" .
-                         $dateTaken . "' " . "ORDER BY Date_Taken DESC";
-            }
-        } else if (DB_TYPE == 'mysql') {
-            if (null == $dateTaken) {
-                $query = "SELECT ph.Height as Height,ph.Weight as Weight,Systolic,Diastolic,concat_ws('/',Systolic, Diastolic) as BP,Weight_Formula as WeightFormula, " .
-                         "BSA_Method as BSA_Method, BSA,BSA_Weight,date_format(Date_Taken, '%m/%d/%Y') as DateTaken, " .
-                         "Temperature, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.`Name` as PSID, " .
-                         "(YEAR(CURDATE())-YEAR(p.DOB)) - (RIGHT(CURDATE(),5)<RIGHT(p.DOB,5)) as Age, p.Gender as Gender " .
-                         "FROM Patient_History ph " .
-                         "INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID " .
-                         "LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID " .
-                         "WHERE ph.Patient_ID = '" . $id . "' " .
-                         "ORDER BY Date_Taken DESC";
-            } else {
-                $query = "SELECT ph.Height as Height,ph.Weight as Weight,Systolic,Diastolic,concat_ws('/',Systolic, Diastolic) as BP,Weight_Formula as WeightFormula, " .
-                         "BSA_Method as BSA_Method, BSA,BSA_Weight,date_format(Date_Taken, '%m/%d/%Y') as DateTaken, " .
-                         "Temperature, Pulse, Respiration, Pain, OxygenationLevel as SPO2, Cycle, Admin_Day as Day, l4.Description as PS, l4.`Name` as PSID, " .
-                         "(YEAR(CURDATE())-YEAR(p.DOB)) - (RIGHT(CURDATE(),5)<RIGHT(p.DOB,5)) as Age, p.Gender as Gender " .
-                         "FROM Patient_History ph " .
-                         "INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID " .
-                         "LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID " .
-                         "WHERE ph.Patient_ID = '" . $id . "' " .
-                         "AND date_format(Date_Taken, '%d-%m-%Y') = '" .
                          $dateTaken . "' " . "ORDER BY Date_Taken DESC";
             }
         }
@@ -459,6 +436,7 @@ class Patient extends Model
         $weight = $form_data->{'Weight'};
         
         $temp = $form_data->{'Temperature'};
+        $tempLoc = $form_data->{'TemperatureLocation'};
         $pulse = $form_data->{'Pulse'};
         $resp = $form_data->{'Respiration'};
         $pain = $form_data->{'Pain'};
@@ -523,31 +501,31 @@ class Patient extends Model
         
         if (null == $oemRecordId) {
             if (! empty($templateId)) {
-                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,Date_Taken, " .
+                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,TemperatureLocation,Date_Taken, " .
                          "Template_ID, Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','" . $temp . "','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
                          "'" . $templateId . "','" . $pulse . "','" . $resp .
                          "','" . $pain . "','" . $spo2 . "'," . "'" . $bsaMethod .
                          "','" . $weightFormula . "','" . $bsaWeight . "',";
             } else {
-                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,Date_Taken, " .
+                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,TemperatureLocation,Date_Taken, " .
                          "Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','" . $temp . "','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
                          "'" . $pulse . "','" . $resp . "','" . $pain . "','" .
                          $spo2 . "'," . "'" . $bsaMethod . "','" . $weightFormula .
                          "','" . $bsaWeight . "',";
             }
         } else {
             if (! empty($templateId)) {
-                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,Date_Taken, " .
+                $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,TemperatureLocation,Date_Taken, " .
                          "Template_ID, OEM_ID, Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','" . $temp . "','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
                          "'" . $templateId . "','" . $oemRecordId . "','" .
                          $pulse . "','" . $resp . "','" . $pain . "','" . $spo2 .
                          "'," . "'" . $bsaMethod . "','" . $weightFormula . "','" .
@@ -557,7 +535,7 @@ class Patient extends Model
                          "Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','" . $temp . "','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
                          "'" . $pulse . "','" . $resp . "','" . $pain . "','" .
                          $spo2 . "'," . "'" . $bsaMethod . "','" . $weightFormula .
                          "','" . $bsaWeight . "',";
@@ -950,13 +928,23 @@ class Patient extends Model
         }
         
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "select Course_Number as CourseNum, Admin_Day as Day, CONVERT(VARCHAR(10), Admin_Date, 101) as AdminDate, Pre_MH_Instructions as PreTherapyInstr, " .
-                     "Regimen_Instruction as TherapyInstr, Post_MH_Instructions as PostTherapyInstr, Template_ID as TemplateID " .
-                     "from Master_Template " . "where Course_Number != 0 " .
-                     "and Admin_Date >='" . $today . "' and Admin_Date < '" .
-                     $EndDateSearch . "'" . "and Regimen_ID = '" .
-                     $regimenId[0]['RegimenID'] . "' " . "and Patient_ID = '" .
-                     $patientId . "' " . "order by Admin_Date";
+            $query = "
+            select 
+                Course_Number as CourseNum, 
+                Admin_Day as Day, 
+                CONVERT(VARCHAR(10), Admin_Date, 101) as AdminDate, 
+                Pre_MH_Instructions as PreTherapyInstr,
+                Regimen_Instruction as TherapyInstr, 
+                Post_MH_Instructions as PostTherapyInstr, 
+                Template_ID as TemplateID
+                from Master_Template 
+                where Course_Number != 0 and
+                Admin_Date >='" . $today . "' and 
+                Admin_Date < '" . $EndDateSearch . "'" . "and 
+                Regimen_ID = '" . $regimenId[0]['RegimenID'] . "' " . "and 
+                Patient_ID = '" . $patientId . "' " . "
+                order by Admin_Date
+            ";
         } else if (DB_TYPE == 'mysql') {
             $query = "select Course_Number as CourseNum, Admin_Day as Day, date_format(Admin_Date, '%m/%d/%Y') as AdminDate, Pre_MH_Instructions as PreTherapyInstr, " .
                      "Regimen_Instruction as TherapyInstr, Post_MH_Instructions as PostTherapyInstr, Template_ID as TemplateID " .

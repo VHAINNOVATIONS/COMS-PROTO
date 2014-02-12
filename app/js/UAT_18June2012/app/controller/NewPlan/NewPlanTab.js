@@ -507,7 +507,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var PatientInfo = this.application.Patient;
 		var PatientData = "";
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
-		var xx, yy, tmpData, tempBSA, DataEl, OEMData, OEM_Data_Record;
+		var xx, yy, tmpData, tempBSA, DataEl, OEMData, OEM_Data_Record, OEMTmpData, templateTypeModel, i;
 
 		for (DataEl in PatientInfo){
 			if (PatientInfo.hasOwnProperty(DataEl)) {
@@ -1263,6 +1263,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.ComponentQuery.query('NewPlanTab PatientSelection [name=\"from_date\"]')[0].setValue("");
 		Ext.ComponentQuery.query('NewPlanTab PatientSelection [name=\"to_date\"]')[0].setValue("");
 
+// MWB - 2/12/2014 - UseNewQueryMethod is not used anyplace else... So it's a global intended for future use
 		if (UseNewQueryMethod) {
 			this.PatientModelLoadMDWS( query );
 		}
@@ -1529,28 +1530,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 							}
 						}
 						this.application.Patient.Vitals = rawData.records;
-						/********* - MWB - This assumes that the most recent record has what we need.
-						var RecentMeasurements = this.application.Patient.Vitals[0];
-
-						if (RecentMeasurements) {
-							this.application.Patient.BSA_Weight = RecentMeasurements.BSA_Weight;
-							this.application.Patient.WeightFormula = RecentMeasurements.WeightFormula;
-							this.application.Patient.BSA_Method = RecentMeasurements.BSA_Method;
-							this.application.Patient.BSA = RecentMeasurements.BSA;
-							this.application.Patient.Height = RecentMeasurements.Height;
-			                this.application.Patient.Weight = RecentMeasurements.Weight;
-						}
-						************/
-
-
-// MWB - 5/29/2012 - the BSA info in Vitals should not override previously established BSA Info.
-// The only Vitals which should override are the current height/weight (if any)
-//						this.application.Patient.BSA_Weight = "";
-//						this.application.Patient.WeightFormula = "";
-//						this.application.Patient.BSAFormula = "";
-//						this.application.Patient.BSA_Method = "";
-//						this.application.Patient.BSA = "";
-
 						this.application.Patient.Height = "";
 		                this.application.Patient.Weight = "";
 
@@ -1610,15 +1589,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 							var errMsgStr = errMsg.join(", ");
 							// wccConsoleLog("Missing some BSA Vital Data - " + errMsgStr);
 						}
-
-// MWB - 5/29/2012 - the BSA info in Vitals should not override previously established BSA Info.
-//						this.application.Patient.BSA_Weight = vBSA_Weight;
-//						this.application.Patient.WeightFormula = vWeightFormula;
-//						this.application.Patient.BSA_Method = vBSA_Method;
-//						this.application.Patient.BSA = vBSA;
 						this.application.Patient.Height = vHeight;
 		                this.application.Patient.Weight = vWeight;
-
 					}
 				}
 
@@ -1923,7 +1895,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	PatientDataLoadComplete : function(Loaded) {
 		wccConsoleLog("PatientDataLoadComplete");
-        console.log("PatientDataLoadComplete");
+        // console.log("PatientDataLoadComplete");
 		var DataLoadCount = this.application.DataLoadCount;
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
@@ -2003,15 +1975,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			return;
 		}
 
-		if ("Update Templates" === Loaded) {
+//		if ("Update Templates" === Loaded) {
 //			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
 //			patientTemplates.show();
 //			return;
-		}
+//		}
 
 
 		wccConsoleLog("DataLoadCount - " + DataLoadCount + " - " + Loaded);
-        console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
+        // console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
 			var piTable;
@@ -2486,7 +2458,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
                     
-                    console.log("Current Applied Template Loaded");
+                    // console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
 					this.application.DataLoadCount--;

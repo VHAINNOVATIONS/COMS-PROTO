@@ -193,59 +193,119 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 		{ xtype : "container", 
 			layout : { 
 				type : "table", 
-				// tableAttrs: { border : 1 },
+				tableAttrs: { border : 1 },
 				columns : 4
 			},
 			defaults : { labelAlign : "right", labelWidth : 60 }, 
 			items : [
-				// Row 1
+				// Row 1 - Col 1
 				{ 
 					xtype : "container", 
 					layout : "hbox",
 					defaults : { labelAlign : "right" },
-					width : 240,
+					width : 370,
 					margin : "3 0 0 0",
 					items : [
 						{ 
 							xtype : "textfield", maskRe: /[0-9\.]/, 
 							name : "ndVitalsTempF", 
-							fieldLabel : "Temp.", labelWidth : 60, width: 105, labelClsExtra : "NursingDocs-label" 
+//							fieldLabel : "Temp.", labelWidth : 60, width: 105, labelClsExtra : "NursingDocs-label" 
+							fieldLabel : "Temp.", labelWidth : 60, width: 100, labelClsExtra : "NursingDocs-label" 
 						}, 
-						{ xtype : "displayfield", labelSeparator : "", value : "&deg;F", width : 20, margin : "0 0 0 2" },
-						{ xtype : "displayfield", name : "ndVitalsTempC", labelSeparator : "", value : " (  &deg;C)", width : 90 /*, baseBodyCls : "x-form-field x-form-text" */ }
-					]
-				},
-				{ xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsPulse", fieldLabel : "Pulse", labelWidth : 60, width: 100, margin : "0 90 0 0", labelClsExtra : "NursingDocs-label" }, 
+                        { xtype : "container", html : "&deg;F", margin: "4 5 0 4" },
+						{ xtype : "displayfield", name : "ndVitalsTempC", labelSeparator : "", value : " (  &deg;C)", labelWidth : 5, width : 60}, 
 
-				{ xtype : "fieldcontainer", name: "ndVitalsBP", width : 200, margin : "5 0 0 0",
-					fieldLabel : "<abbr title=\"Blood Pressure\">BP</abbr>", labelWidth: 60, 
+                    {   xtype: 'combo',
+                        width : 170,
+                        name : "ndVitalsTempLoc",
+                        fieldLabel : "Taken",
+                        labelWidth: 45,
+                        margin: "0 0 0 5",
+                        labelClsExtra : "NursingDocs-label",
+	store: 
+                        
+                        new Ext.data.SimpleStore({
+		data: [
+			[1, 'Per Rectum'],
+			[2, 'Per Axilla'],
+			[3, 'Tympanic'],
+			[4, 'Oral']
+		],
+		id: 0,
+		fields: ['value', 'name']
+	}),
+    
+	valueField: 'name',
+	displayField: 'name',
+	triggerAction: 'all',
+	editable: false
+}, 
+
+/*********
+                    {
+						'xtype' : 'combo',
+						'fieldLabel' : 'Select Temperature Location',
+						'labelWidth' : 80,
+						'width' : 425,
+						'name' : 'TempLoc',
+						'store' : 'TempLoc',
+						'queryMode' : 'local',
+						'displayField' : 'name',
+						'valueField' : 'name',
+						'allowBlank' : false
+					},
+*********/
+
+
+
+
+                    // { xtype : "selTemperatureLoc" },
+
+                        
+]
+				},
+				// Row 1 - Col 2
+                { xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsPulse", fieldLabel : "Pulse", labelWidth : 50, width: 90, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" }, 
+
+				// Row 1 - Col 3
+				{ xtype : "fieldcontainer", name: "ndVitalsBP", width : 170, margin : "5 0 0 0",
+					fieldLabel : "<abbr title=\"Blood Pressure\">BP</abbr>", labelWidth: 50, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
 						{ xtype : "textfield", maskRe: /[0-9]/, name : "ndVitalsSystolic", width: 30 },
 						{ xtype : "displayfield", value : " / " },
 						{ xtype : "textfield", maskRe: /[0-9]/, name : "ndVitalsDiastolic", width: 30 }
 					]
 				},
-					
-					
-					
-				// { xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsSystolic", fieldLabel : "Systolic", labelWidth : 60, width: 100, margin : "0 90 0 0", labelClsExtra : "NursingDocs-label" }, 
+
+				// Row 1 - Col 4
 				{ xtype : "displayfield", 
-					/* baseBodyCls : "x-form-field x-form-text", */
 					name : "ndVitalsGender", 
 					fieldLabel : "Patient Gender", 
 					labelWidth : 110,
 					labelClsExtra : "NursingDocs-label", 
 					labelAlign: "right",
-					width : 150,
+					width : 160,
 					margin : "0 10 4 0"
 				},
 		//---------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
 				// Row 2
 				{ 
 					xtype : "container", 
 					layout : "hbox",
 					defaults : { labelAlign : "right" },
-					width : 240,
+					// width : 280,
 					margin : "3 0 0 0",
 					items : [
 						{ 
@@ -254,13 +314,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 							fieldLabel : "Height", labelWidth : 60, width: 105, labelClsExtra : "NursingDocs-label" 
 						}, 
 						{ xtype : "displayfield", labelSeparator : "", value : "inches", width : 40, margin : "0 0 0 2" },
-						{ xtype : "displayfield", name : "ndVitalsHeightCM", labelSeparator : "", value : " (  cm)", width : 90
-						// baseBodyCls : "x-form-field x-form-text"
-						}
-						// { xtype : "displayfield", labelSeparator : "", value : " CM)", width : 10, margin : "0 0 0 2" }
+						{ xtype : "displayfield", name : "ndVitalsHeightCM", labelSeparator : "", value : " (  cm)", width : 90 }
 					]
 				},
-				{  xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsResp", fieldLabel : "<abbr title=\"Respiration - in Breaths per minute\">Resp</abbr>", labelWidth : 60, width: 100, margin : "0 90 0 0", labelClsExtra : "NursingDocs-label" }, 
+				{  xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsResp", fieldLabel : "<abbr title=\"Respiration - in Breaths per minute\">Resp</abbr>", labelWidth : 50, width: 90, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" }, 
 				{  
 					xtype : "textfield",  
 					maskRe: /[0-9\.]/, 
@@ -268,11 +325,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 					fieldLabel : "<abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr>", 
 					labelWidth : 60, 
 					width: 100, 
-					margin : "0 90 0 0", 
+					margin : "0 10 0 0", 
 					labelClsExtra : "NursingDocs-label" 
 				}, 
-				// {  xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsDiastolic", fieldLabel : "Diastolic", labelWidth : 60, width: 100, margin : "0 90 0 0", labelClsExtra : "NursingDocs-label" }, 
-				{  xtype : "displayfield", name : "ndVitalsAge", fieldLabel : "Age", labelWidth : 60, width: 100, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" },
+				{  xtype : "displayfield", name : "ndVitalsAge", fieldLabel : "Age", labelWidth : 50, width: 90, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" },
+
 
 
 
@@ -282,7 +339,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 					xtype : "container", 
 					layout : "hbox",
 					defaults : { labelAlign : "right" },
-					// width : 240,
+					// width : 280,
 					margin : "3 0 0 0",
 					items : [
 						{ 
@@ -316,30 +373,18 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 					minValue: 0, 
 					name : "ndVitalsPain", 
 					fieldLabel : "Pain", 
-					labelWidth : 60, 
-					width: 120, 
-					margin : "0 90 0 0", 
-					labelClsExtra : "NursingDocs-label" 
-				}, 
-/******************
-				{  
-					xtype : "textfield",  
-					maskRe: /[0-9\.]/, 
-					name : "ndVitalsO2Level", 
-					fieldLabel : "<abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr>", 
-					labelWidth : 60, 
+					labelWidth : 50, 
 					width: 100, 
-					margin : "0 90 0 0", 
+					margin : "0 50 0 0", 
 					labelClsExtra : "NursingDocs-label" 
 				}, 
-*******************/
 				{
 					xtype : "container", 
 					layout : "hbox",
 					colspan : 2,
 					defaults : { labelAlign : "right" },
 					margin : "3 0 0 0",
-					width: 240,
+					width : 280,
 					items : [
 						{  
 							xtype : "displayfield", 
@@ -355,11 +400,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 							name : "ndVitalsCalcBSA", 
 							html : "Show <button name=\"ShowBSA\" class=\"anchor NDGIVS_BSA_Calculations\">Calculations</button>", 
 							width: 180, 
-							margin : "0 50 0 0" 
+							margin : "0 10 0 0" 
 						}
 					]
 				}
-			]
+            ]
 		}
 	]
 });
