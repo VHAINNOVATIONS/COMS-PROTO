@@ -957,7 +957,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 });
             }
         }
-// debugger;
         if(this.application.Patient.TemplateID){
 			Ext.MessageBox.show({
 				title: 'Information',
@@ -1873,7 +1872,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         var patientTemplates = thisCtl.getPatientTemplates(),
             currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
             historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
-            numRecords = currentTemplates.length + historicalTemplates.length;
+            numRecords = 0;
+        
+        if (currentTemplates) {
+            numRecords += currentTemplates.length;
+        }
+        if (historicalTemplates) {
+            numRecords += historicalTemplates.length;
+        }
 
         TemplateInfo = {};
         TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
