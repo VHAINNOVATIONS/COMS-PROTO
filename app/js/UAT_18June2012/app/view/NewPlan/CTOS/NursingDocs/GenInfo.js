@@ -215,53 +215,20 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
                         { xtype : "container", html : "&deg;F", margin: "4 5 0 4" },
 						{ xtype : "displayfield", name : "ndVitalsTempC", labelSeparator : "", value : " (  &deg;C)", labelWidth : 5, width : 60}, 
 
-                    {   xtype: 'combo',
+                        {
+                        xtype: 'combo',
                         width : 170,
                         name : "ndVitalsTempLoc",
                         fieldLabel : "Taken",
                         labelWidth: 45,
                         margin: "0 0 0 5",
                         labelClsExtra : "NursingDocs-label",
-	store: 
-                        
-                        new Ext.data.SimpleStore({
-		data: [
-			[1, 'Per Rectum'],
-			[2, 'Per Axilla'],
-			[3, 'Tympanic'],
-			[4, 'Oral']
-		],
-		id: 0,
-		fields: ['value', 'name']
-	}),
-    
-	valueField: 'name',
-	displayField: 'name',
-	triggerAction: 'all',
-	editable: false
-}, 
-
-/*********
-                    {
-						'xtype' : 'combo',
-						'fieldLabel' : 'Select Temperature Location',
-						'labelWidth' : 80,
-						'width' : 425,
-						'name' : 'TempLoc',
-						'store' : 'TempLoc',
-						'queryMode' : 'local',
-						'displayField' : 'name',
-						'valueField' : 'name',
-						'allowBlank' : false
-					},
-*********/
-
-
-
-
-                    // { xtype : "selTemperatureLoc" },
-
-                        
+                        store: "TemperatureLocation",
+                        valueField: 'name',
+                        displayField: 'name',
+                        triggerAction: 'all',
+                        editable: false
+                        }
 ]
 				},
 				// Row 1 - Col 2

@@ -11,6 +11,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "Templates"
     , "CTOS"
     , "PerfStatStore"
+    , "TemperatureLocation"
     ],
 
 
