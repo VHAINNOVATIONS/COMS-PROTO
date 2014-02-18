@@ -93,7 +93,7 @@ class LookupController extends Controller {
 
 
     function saveTemplate() {
-
+        error_log("Lookup Controller saveTemplate functin");
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
@@ -358,6 +358,8 @@ class LookupController extends Controller {
         }
     }
 
+    // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
+    // but it would be in the "FIELD" position, not the "ID"
     function Templates($field = NULL, $id = NULL) {
         if ($field == NULL && $id == NULL) {
             $this->set('templates', $this->LookUp->getTemplates(null));

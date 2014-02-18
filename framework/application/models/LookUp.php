@@ -243,6 +243,8 @@ class LookUp extends Model {
     {
         ChromePhp::log("save Template - $regimenId");
         ChromePhp::log("st - Form Data - " . json_encode($formData));
+        error_log("save Template - $regimenId");
+        error_log("st - Form Data - " . json_encode($formData));
 
 
         $cancerId = $formData->Disease;
@@ -381,6 +383,7 @@ class LookUp extends Model {
                     '$patientId'
                 )
             ";
+            error_log("Inserting Patient ID into Master Template Record when Cycle is set ($cycle)");
         } else {
             $query = "
                 INSERT INTO Master_Template (
@@ -443,7 +446,7 @@ class LookUp extends Model {
                     AND Course_Number = 0
             ";
         }
-        
+        error_log("Lookup Model saveTemplate query - <br>$query<hr>");
         return $this->query($query);
     }
 
@@ -1059,9 +1062,10 @@ class LookUp extends Model {
             if (NULL != $id) {
                 $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = 1";
             }else{
-                $query .= " WHERE Is_Active = 1";
+                $query .= " WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By 'description'";
+            error_log ("Lookup Model Get Templates for ID - $id<br>$query<hr><br>");
         return $this->query($query);
     }
 
@@ -1085,14 +1089,15 @@ class LookUp extends Model {
                 INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
                 LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) ";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
-                $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = 1";
+                $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = 1 and mt.Patient_ID is null";
             } else if ($field != NULL && strtoupper($field) == 'PATIENT') {
                 $query .= "INNER JOIN Patient_Assigned_Templates pat ON pat.Template_ID = mt.Template_ID " .
                         "WHERE pat.Patient_ID = '" . $id . "' and pat.Is_Active = 1";
             }else{
-                $query .= "WHERE Is_Active = 1";
+                $query .= "WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By description";
+            error_log ("Get getTemplates By Type for Field - $field; ID - $id<br>$query<hr><br>");
         return $this->query($query);
     }
 

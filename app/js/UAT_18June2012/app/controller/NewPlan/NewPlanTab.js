@@ -532,7 +532,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					}
 					switch (DataEl) {
 					case "Amputations":
-						var i;
 						tmpData += "<ul>";
 						for (i = 0; i < xx.length; i++) {
 							tmpData += "<li style=\"margin-left: 1em;\">" + xx[i].description + "</li>";
@@ -816,7 +815,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
         var template=null;
-        var templateType = this.getSelTemplateType();
+        var templateTypeModel, templateType = this.getSelTemplateType();
 
         if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
             /*
@@ -946,7 +945,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
     ShowAskQues2ApplyTemplate : function(records, operation, success) {
-        var itemsInGroup = [];	// new Array();
+        var i, itemsInGroup = [];	// new Array();
         for (i = 0; i < records.length; i++ ){
             var record = records[i];
             if(record.data.value !== '5' ){
@@ -1500,14 +1499,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	loadVitals : function(RetCode) {
-        var pVitalsModel = this.getModel("Vitals");
-        var pVitalsModelParam = this.application.Patient.id;
+        var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
+
         pVitalsModel.load(pVitalsModelParam, {
             scope : this,
             success : function( patientInfo, response ) {
                 var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData) {
-					var ih, w, t, rec, el;
+					var i, h, w, t, rec, el;
 					if (rawData.total >= 0) {
 						for (i = 0; i < rawData.total; i++) {
 							rec = rawData.records[i];
@@ -1870,7 +1869,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
-        var patientTemplates = thisCtl.getPatientTemplates(),
+        var TemplateInfo, 
+            patientTemplates = thisCtl.getPatientTemplates(),
             currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
             historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
             numRecords = 0;
@@ -1906,8 +1906,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var DataLoadCount = this.application.DataLoadCount;
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
-		var piTableInfo;
-		var dspVSHTemplateData, VSHTemplateDataBtns;
+		var piTableInfo, patientTemplates, dspVSHTemplateData, VSHTemplateDataBtns;
 
         if ("All Templates Applied" === Loaded) {
             var historical = this.application.Patient.AllTemplatesApplied2Patient.get("historical"),
@@ -1932,7 +1931,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 this.application.Patient.TreatmentStart = current.DateStarted;
                 this.application.Patient.TreatmentEnd = current.DateEnded;
             }
-            var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
+            patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
         }
 
 
@@ -2069,13 +2068,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				VSHTemplateDataBtns.on("click", this.HandleVSHCalcDoseButtons, this);
 			}
 
-			var patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
+			patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
 			patientTemplates.show();
 
 			// If BSA_Dose is empty then calculate it for each record and save that record back.
 			// BUT we need to calculate the BSA value and BSA_Weight before we load the records...
 			// Then walk through theData.OEMRecords;
-			var a, b, c, aRec, bRec, bRecUnits, calcDose, updateRecord = false, tmpDose,
+			var a, b, c, aRec, bRec, bRecUnits, calcDose, updateRecord = false, tmpDose, Dose, Units,
 				theRecords, oRecLen,
 				tRecords, oTherapyLen;
 
@@ -2579,7 +2578,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			failure : function( response, opts ) {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
+                debugger;
+				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + "e.message" + "<br />" + resp.msg );
 			}
 		});
 		return (true);

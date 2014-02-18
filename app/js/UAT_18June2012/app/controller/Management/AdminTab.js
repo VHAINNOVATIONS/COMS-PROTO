@@ -334,7 +334,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 var adminCtl = this.getController("Management.AdminTab");
                 Ext.MessageBox.show({
                     title: 'Information',
-                    msg: 'Template was not deleted: ' + op.request.scope.reader.jsonData["frameworkErr"] + '. Would you like to delete it and remove all references?',
+                    msg: 'Template was not deleted: ' + op.request.scope.reader.jsonData.frameworkErr + '. Would you like to delete it and remove all references?',
                     width:300,
                     buttons: Ext.MessageBox.OKCANCEL,
                     fn: function(buttonId){

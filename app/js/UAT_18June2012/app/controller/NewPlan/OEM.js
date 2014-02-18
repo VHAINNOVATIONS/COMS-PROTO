@@ -354,7 +354,7 @@ for (i = 0; i < eLen; i++) {
 		// When rendering the tab, if today is an Admin Day then show today's OEM Records, else show all the OEM Records.
 		var LinkName, Elements, theElement, theID, tmpData = this.IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
 		if (null !== tmpData) {
-			// dspOEMTemplateData
+			var i;
 			LinkName = "Section_Cycle_" + tmpData.Cycle + "_Day_" + tmpData.Day;
 			Elements = Ext.query(".OEMRecord");
 			for (i = 0; i < Elements.length; i++) {
@@ -377,7 +377,7 @@ for (i = 0; i < eLen; i++) {
  ***********************************************************************************/
 	displayOEM_Record_Data : function( PatientInfo ) {
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
-		var OEMLevel1, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;
+		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;
 
 		if (PatientInfo.OEMDataRendered) {
 			return;
@@ -658,7 +658,7 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 		// class = "anchor" <- Not needed
 		// id = the element id, Not needed
 		var btnTitle = aBtn.getAttribute("title");
-		var dose, units, calcDose, doseUnits, Patient = this.application.Patient;
+		var dose, units, calcDose, doseUnits, PatientData, Patient = this.application.Patient;
 
 		if ("Show Dosage Calculation" === btnTitle) {
 			calcDose = aBtn.getAttribute("calcDose");
@@ -696,7 +696,7 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 
 
 	deferredAssignBtnHandler : function() {
-		OEMLevel1 = this.getOEM_Level1();
+		var OEMLevel1 = this.getOEM_Level1();
 		var OEMLevel1Btns = OEMLevel1.el.select("button");		// MWB - 6/26/2012 - Currently only the "Edit Performance Status" button exists in this section
 		OEMLevel1Btns.on("click", this.HandleOEMLevel1Buttons, this);
 	},
@@ -1008,13 +1008,9 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
  *
  ***********************************************************************************/
 handleEditOEM_Record : function (event, element) {
-
-	event.stopEvent(  );
-    if (element.text = "Edit") {
+    event.stopEvent(  );
+    if ("Edit" === element.text) {
         this.handleActualEditOfOEM_Record(event, element);
-    }
-    else {
-//        debugger;
     }
 },
 

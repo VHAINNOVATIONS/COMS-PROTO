@@ -11,7 +11,7 @@ Ext.define('COMS.view.Management.DeleteTemplate' ,{
 			layout: 'hbox',
 			defaults : { margin: '5 5 5 0', labelAlign: 'right'},
 			items: [
-                                    { xtype : 'selDisease' }			
+                                    { xtype : 'selDisease' }        /*, { xtype: 'button', title : 'ReloadTemplateList', text : "Reload Template List" } */
                                ]
 		},
 		{

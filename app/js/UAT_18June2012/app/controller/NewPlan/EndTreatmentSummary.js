@@ -95,10 +95,24 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 
 	],
 
+    Start_EOTS1 : function() {
+        debugger;
+    },
+    Start_EOTS2 : function() {
+        debugger;
+    },
+    Start_EOTS3 : function() {
+        debugger;
+    },
 
     init: function() {  // called at application initialization time
         wccConsoleLog("Initialized End of Treatment Summary Controller!");
         this.control({
+            "EndTreatmentSummary" : {
+                beforeactivate: this.Start_EOTS3,
+                beforerender: this.Start_EOTS2,
+                beforeshow: this.Start_EOTS1
+            },
             "EndTreatmentSummary button[action=\"save\"]": {
                 click: this.SaveEoTS
             },
@@ -328,7 +342,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 
 					if (el.indexOf("<button") >= 0) {
 						if (el.indexOf("Write</button") < 0) {
-							var el2=el.replace(/\<button class="anchor .*data="/,"").replace(/".*$/, "");
+							var el2=el.replace(/<button class="anchor .*data="/,"").replace(/".*$/, "");
 							if (unescape) {
                                 el = unescape(el2);
                             }
@@ -392,7 +406,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 			}
 			EoTS_DataStore.push(tmpEoTS);
 		}
-		b1 = "<tr><th colspan=\"4\" style=\"font-weight:bold; padding-left: 2em; text-align: left;\">" + dName + "</th></tr>" + buf.join("");
+		var b1 = "<tr><th colspan=\"4\" style=\"font-weight:bold; padding-left: 2em; text-align: left;\">" + dName + "</th></tr>" + buf.join("");
 		tDataStore.push(b1);
 	},
 

@@ -1481,6 +1481,9 @@ Ext.application({
 		});
 		wccConsoleLog("Application created");
 
+        // this.showLoadingMask("Test");
+
+
 
 	/******************************
 	 *
@@ -1540,6 +1543,23 @@ Ext.application({
 			}
 		});
 	},
+
+    loadText: "",
+    showLoadingMask: function (loadingMessage) {
+        if (Ext.isEmpty(loadingMessage)) {
+            this.loadText = 'Loading... Please wait';
+        }
+        //Use the mask function on the Ext.getBody() element to mask the body element during Ajax calls
+        Ext.Ajax.on('beforerequest', function(){
+            console.log("Loading"); 
+            Ext.getBody().mask(this.loadText, 'loading') 
+            },
+            Ext.getBody()
+        );
+        Ext.Ajax.on('requestcomplete', Ext.getBody().unmask, Ext.getBody());
+        Ext.Ajax.on('requestexception', Ext.getBody().unmask, Ext.getBody());
+    },
+
 	loadMask: function (msg) {
 		if (!msg) {
 			msg = "One moment please, loading data...";
@@ -1551,4 +1571,36 @@ Ext.application({
 		Ext.getBody().unmask();
 	}
 
+});
+
+
+
+Ext.define('COMS.Ajax', {
+    extend: 'Ext.data.Connection',
+    singleton: true,
+    onComplete : function(request) {
+        var me = this;
+        var options = request.options;
+        var result = (!request.timedout && request.xhr.status) ? me.parseStatus(request.xhr.status) : null;
+        var success = (!request.timedout) ? result.success : null;
+        var response;
+        if (success) {
+            response = me.createResponse(request);
+            me.fireEvent('requestcomplete', me, response, options);
+            Ext.callback(options.success, options.scope, [response, options]);
+        } 
+        else {
+            if (!result || result.isException || request.aborted || request.timedout) {
+                response = me.createException(request);
+            }
+            else {
+                response = me.createResponse(request);
+            }
+            me.fireEvent('requestexception', me, response, options);
+            Ext.callback(options.failure, options.scope, [response, options]);
+        }
+        Ext.callback(options.callback, options.scope, [options, success, response]);
+        delete me.requests[request.id];
+        return response;
+    }
 });
