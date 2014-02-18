@@ -398,8 +398,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
         win.close();
     },
 
-    getSelectedRecord: function (destroy, query) {
-        
+    getSelectedRecord: function (destroy) {
         var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex;
 
         theGrid = this.getDrugRegimenGrid();
@@ -412,23 +411,20 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
             theStore = theView.getStore();
             theIndex = theStore.indexOf(theRecord);
             if (destroy) {
-                
                 for(var i=theStore.count()-1;i>theIndex;i--){
                     var currRecord = theStore.getAt(i);
                     var prvRecord = theStore.getAt(i-1);
                     currRecord.data.Sequence = prvRecord.data.Sequence;
-                    
                     theStore.removeAt(i);
                     theStore.insert(i,currRecord);
-                    
                 }
-                
                 theStore.removeAt(theIndex);
-                return {};
+                return;
             }
         }
         return {
             hasRecord: HasSelection,
+            selModel : theSelModel,
             record: theRecord,
             rowNum: theIndex
         };
@@ -622,6 +618,17 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
     //--------------------------------------------------------------------------------
     //	Drug Regimen Grid Handlers
     //
+    RemoveSelectedDrug: function(btn, text) {
+        if ("yes" === btn) {
+            this.getSelectedRecord(true);   // bool param will either destroy (true) or return (false) the selected record
+        }
+        else {
+            var record = this.getSelectedRecord(false);   // get the record and deselect it
+            if (record.hasRecord) {
+                record.selModel.deselectAll();
+            }
+        }
+    },
     DrugRegimenBtns: function (button) { // Handles the onclick event of all the buttons for the Drug Regimen grid
         var ckRec = this.getSelectedRecord(false);
         var theQuery = "AuthoringTab TemplateDrugRegimen grid";
@@ -676,7 +683,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
         } else if ("Remove Drug" === button.text) {
             wccConsoleLog("Remove Drug Regimen for - " + ckRec.record.get('Drug'));
-            this.getSelectedRecord(true);
+            Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", this.RemoveSelectedDrug, this);
         }
         this.getRemoveDrugRegimen().disable();
         this.getEditDrugRegimen().disable();
@@ -689,16 +696,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
     SaveDrugRegimen: function (button) { // Called when clicking on the "Save" button in the Pop-Up Window
         var win = button.up('window');
-
         wccConsoleLog("Adding new Drug Regimen");
-
-        // var query = "AuthoringTab TemplateDrugRegimen";
         var theGrid = this.getDrugRegimenGrid(); // Ext.ComponentQuery.query(query)[0];
         var theStore = theGrid.getStore();
         var theForm = win.down('form');
         var values = theForm.getValues();
         var numRecords = theStore.count();
         this.insertNewDrugRegimenRecord(win, theStore, numRecords, values);
-
     }
 });

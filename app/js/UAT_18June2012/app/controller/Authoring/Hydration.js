@@ -608,10 +608,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 
 	// Used in both the Hydration and Refernce Grids
-	getSelectedRecord: function (destroy, query) {
+	getSelectedRecord: function (destroy) {
 		var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex;
 
-		theGrid = Ext.ComponentQuery.query(query)[0];
+		theGrid = Ext.ComponentQuery.query(this.theQuery)[0];
 		theView = theGrid.getView();
 		theSelModel = theView.getSelectionModel();
 		HasSelection = theSelModel.hasSelection();
@@ -621,26 +621,23 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			theStore = theView.getStore();
 			theIndex = theStore.indexOf(theRecord);
 			if (destroy) {
-
 				for(var i=theStore.count()-1;i>theIndex;i--){
 					var currRecord = theStore.getAt(i);
 					var prvRecord = theStore.getAt(i-1);
 					currRecord.data.Sequence = prvRecord.data.Sequence;
-
 					theStore.removeAt(i);
 					theStore.insert(i,currRecord);
-
 				}
-
 				theStore.removeAt(theIndex);
 				return {};
 			}
 		}
-		return {
-			hasRecord: HasSelection,
-			record: theRecord,
-			rowNum: theIndex
-		};
+        return {
+            hasRecord: HasSelection,
+            selModel : theSelModel,
+            record: theRecord,
+            rowNum: theIndex
+        };
 	},
 
 
@@ -841,8 +838,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		}
 	},
 
-	addToSequenceStore: function(combo,theQuery,addSequence){
-		var theGrid = Ext.ComponentQuery.query(theQuery)[0];
+	addToSequenceStore: function(combo,addSequence){
+		var theGrid = Ext.ComponentQuery.query(this.theQuery)[0];
 		var theStore = theGrid.getStore();
 		var sequenceCnt = theStore.count();
 		var tmpModel;
@@ -870,9 +867,27 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 	},
 
+    RemoveSelectedHydrationDrug: function (btn, text) {
+        var theQuery = this.theQuery;
+        if ("yes" === btn) {
+            wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
+            this.getSelectedRecord(true);
+        }
+        else {
+            var record = this.getSelectedRecord(false);   // get the record and deselect it
+            if (record.hasRecord) {
+                record.selModel.deselectAll();
+            }
+        }
+        delete this.panelType;
+        delete this.ckRec;
+        delete this.theQuery;
+    },
+
 	HydrationBtns: function (button) { // Handles the onclick event of all the buttons for both the pre and post hydration grids
 		var panel = button.up("panel").up("container");
-		var theQuery = "AuthoringTab TemplateHydration[title=\"" + panel.type + " Therapy\"] grid";
+		this.theQuery = "AuthoringTab TemplateHydration[title=\"" + panel.type + " Therapy\"] grid";
+        
 		if ("Add Drug" === button.text) {
 
 			//KD - 03/09/2012 - This is done to prevent multiple instances (windows) to be created everytime the "Add Drug" button is clicked
@@ -888,29 +903,15 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 			view.type = panel.type;
 			view.setTitle("Add " + panel.type + " Therapy Drug");
-			this.addToSequenceStore(this.getHydrationSequenceCombo(),theQuery,true);
+			this.addToSequenceStore(this.getHydrationSequenceCombo(),true);
 		} else {
-			var ckRec = this.getSelectedRecord(false, theQuery);
+			var ckRec = this.getSelectedRecord(false);
 			if (ckRec.hasRecord) {
 				var record = Ext.create(Ext.COMSModels.Hydration, ckRec.record.data);
 				if ("Remove Drug" === button.text) {
-                    Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", function(btn, text) {
-                        if ("no" === btn) {
-                            var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex;
-                            theGrid = Ext.ComponentQuery.query(theQuery)[0];
-                            theView = theGrid.getView();
-                            theSelModel = theView.getSelectionModel();
-                            HasSelection = theSelModel.hasSelection();
-                            if (HasSelection) {
-                                theSelModel.deselectAll();
-                            }
-                        }
-                        else {
-                            wccConsoleLog("Remove " + panel.type + " Therapy Drug - " + ckRec.record.get('Drug'));
-                            this.getSelectedRecord(true, theQuery);
-                        }
-                    }, this);
-
+                    this.panelType = panel.type;
+                    this.ckRec = ckRec;
+                    Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", this.RemoveSelectedHydrationDrug, this);
 				}
 				else if ("Edit Drug" === button.text) {
 					wccConsoleLog("Edit " + panel.type + " Therapy Drug - " + ckRec.record.get('Drug'));
@@ -918,7 +919,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 					hdPanel.type = panel.type;
 					hdPanel.setTitle("Edit " + panel.type + " Therapy Drug");
 
-					this.addToSequenceStore(this.getHydrationSequenceCombo(),theQuery,false);
+					this.addToSequenceStore(this.getHydrationSequenceCombo(),false);
 
 					hdPanel.recIndex = ckRec.rowNum;	// Used in dup drug check on saving
 
