@@ -1505,6 +1505,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             scope : this,
             success : function( patientInfo, response ) {
                 var rawData = Ext.JSON.decode(response.response.responseText);
+                var aVital, vBSA_Weight = "", vWeightFormula = "", vBSA_Method = "", vBSA = "", vHeight = "", vWeight = "";
+                var HaveAllCount = 6;
 				if (rawData) {
 					var i, h, w, t, rec, el;
 					if (rawData.total >= 0) {
@@ -1530,13 +1532,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 						}
 						this.application.Patient.Vitals = rawData.records;
 						this.application.Patient.Height = "";
-		                this.application.Patient.Weight = "";
+						this.application.Patient.Weight = "";
 
 						// We need to get the most recent vitals needed for BSA into the Patient Object (specifically height/weight) if available.
-						var Vitals = this.application.Patient.Vitals;
-						var vLen = Vitals.length;
-						var i, aVital, vBSA_Weight = "", vWeightFormula = "", vBSA_Method = "", vBSA = "", vHeight = "", vWeight = "";
-						var HaveAllCount = 6;
+						var Vitals = this.application.Patient.Vitals,
+							vLen = Vitals.length;
 
 						for (i = 0; (i < vLen) && (HaveAllCount > 0); i++) {
 							aVital = Vitals[i];
@@ -1586,10 +1586,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								errMsg.push("Patient Weight");
 							}
 							var errMsgStr = errMsg.join(", ");
-							// wccConsoleLog("Missing some BSA Vital Data - " + errMsgStr);
 						}
 						this.application.Patient.Height = vHeight;
-		                this.application.Patient.Weight = vWeight;
+						this.application.Patient.Weight = vWeight;
 					}
 				}
 

@@ -1551,8 +1551,8 @@ Ext.application({
         }
         //Use the mask function on the Ext.getBody() element to mask the body element during Ajax calls
         Ext.Ajax.on('beforerequest', function(){
-            console.log("Loading"); 
-            Ext.getBody().mask(this.loadText, 'loading') 
+//            console.log("Loading"); 
+            Ext.getBody().mask(this.loadText, 'loading') ;
             },
             Ext.getBody()
         );

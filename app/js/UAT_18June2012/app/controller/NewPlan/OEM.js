@@ -747,18 +747,14 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
  *
  *
  ***********************************************************************************/
-	HandleOEMLevel1Buttons : function (event, element) {
-		event.stopEvent( );
-		var BtnName = element.getAttribute("name");
-		var Widget, Query, params;
-
-
-        var itemsInGroup = [];	// new Array();
-        var myStore = this.getStore('PerfStatStore');
-
-        myStore.each( function(record){
-            if(record.data.value == '5' ){
-                return;
+    procPerfStatStoreRecords: function (records, operation, success) {
+        var i, len, record, patientIsDead = '5', itemsInGroup = [];	// new Array();
+        len = records.length;
+        for (i = 0; i < len; i++) {
+            record = records[i];
+            if(patientIsDead === record.data.value){
+                // console.log("procPerfStatStoreRecords - He's Dead Jim");
+                break;
             }
             itemsInGroup.push({
                 boxLabel : record.data.value + ' - ' + record.data.description,
@@ -766,34 +762,47 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
                 inputValue : record.data.id,
                 width : 360
             });
-        });
+        }
 
+        Widget = "OEMPerformanceStatus";
+        Query = "OEMPerformanceStatus button[text=\"Save\"]";
+        params = {"itemsInGroup": itemsInGroup};
+        var Win = Ext.widget(Widget, params);
+        var SaveBtn = Ext.ComponentQuery.query(Query)[0];
+        SaveBtn.on("click", this.SaveOEM_PS, this );
+    }, 
+
+	HandleOEMLevel1Buttons : function (event, element) {
+		event.stopEvent( );
+		var BtnName = element.getAttribute("name");
+		var Win, SaveBtn, Widget, Query, params;
 
 		switch(BtnName) {
 			case "EditPerformanceStatus" : 
-				Widget = "OEMPerformanceStatus";
-				Query = "OEMPerformanceStatus button[text=\"Save\"]";
-				params = {itemsInGroup: itemsInGroup};
-				break;
+                var myStore = this.getStore('PerfStatStore');
+                myStore.load({ scope: this, callback: this.procPerfStatStoreRecords });
+                break;
 
-			case "AddClinicalTrial" :
-				alert("Add Clinical Trial - Not Currently Available - (NewPlan\\OEM)");
-				Widget = "OEMClinicalTrial";
-				Query = "OEMClinicalTrial button[text=\"Save\"]";
-				params = null;
-				break;
-			case "AddGoal" : 
-				alert("Add Goal - Not Currently Available - (NewPlan\\OEM)");
-				Widget = "OEMGoal";
-				Query = "OEMGoal button[text=\"Save\"]";
-				params = null;
-				break;
-		}
-
-		var Win = Ext.widget(Widget, params);
-		var SaveBtn = Ext.ComponentQuery.query(Query)[0];
-		SaveBtn.on("click", this.SaveOEM_PS, this );
-	},
+            case "AddClinicalTrial" :
+                alert("Add Clinical Trial - Not Currently Available - (NewPlan\\OEM)");
+                Widget = "OEMClinicalTrial";
+                Query = "OEMClinicalTrial button[text=\"Save\"]";
+                params = null;
+                Win = Ext.widget(Widget, params);
+                SaveBtn = Ext.ComponentQuery.query(Query)[0];
+                SaveBtn.on("click", this.SaveOEM_PS, this );
+                break;
+            case "AddGoal" : 
+                alert("Add Goal - Not Currently Available - (NewPlan\\OEM)");
+                Widget = "OEMGoal";
+                Query = "OEMGoal button[text=\"Save\"]";
+                params = null;
+                Win = Ext.widget(Widget, params);
+                SaveBtn = Ext.ComponentQuery.query(Query)[0];
+                SaveBtn.on("click", this.SaveOEM_PS, this );
+                break;
+        }
+    },
 
 /***********************************************************************************
  *

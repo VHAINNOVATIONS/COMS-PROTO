@@ -111,7 +111,10 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
             "EndTreatmentSummary" : {
                 beforeactivate: this.Start_EOTS3,
                 beforerender: this.Start_EOTS2,
-                beforeshow: this.Start_EOTS1
+                beforeshow: this.Start_EOTS1,
+				afterrender : this.AfterRenderWindow,
+				close : this.CloseEoTSWin, 
+				resize : this.ResizeTable
             },
             "EndTreatmentSummary button[action=\"save\"]": {
                 click: this.SaveEoTS
@@ -119,13 +122,6 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
             "EndTreatmentSummary button[action=\"cancel\"]": {
                 click: this.CancelEoTS
             },
-
-            "EndTreatmentSummary" : {
-				afterrender : this.AfterRenderWindow,
-				close : this.CloseEoTSWin, 
-				resize : this.ResizeTable
-            },
-
 				// Change Button in one of the 3 Radio Groups
 			"EndTreatmentSummary [name=\"Reason4EOTSAnswer\"]" : {
 				change : this.Reason4Change1
@@ -347,7 +343,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
                                 el = unescape(el2);
                             }
                             else {
-                                el = decodeURI(e12);
+                                el = decodeURI(el2);
                             }
 							el = el.replace(/\n/g, "<br />");
 							if ("" === el2) {
