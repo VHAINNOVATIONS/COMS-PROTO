@@ -135,6 +135,8 @@ Ext.URLs.FlagTemplateInactive = "/LookUp/flagTemplateInactive";
 Ext.URLs.BaseView = "/LookUp/view";
 Ext.URLs.TimeFrameUnit = "/LookUp/view/TimeFrameUnit";
 Ext.URLs.TempLoc = "/LookUp/view/TempLoc";
+Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
+
 
 Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
 Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
@@ -451,6 +453,7 @@ Ext.COMSModels.PatientInfo = "COMS.model.PatientInfo";
 Ext.COMSModels.PatientInfoMDWS = "COMS.model.PatientInfoMDWS";
 Ext.COMSModels.TemplateList = "COMS.model.TemplateList";
 Ext.COMSModels.TemperatureLocation = "COMS.model.TemperatureLocation";
+Ext.COMSModels.DeliveryMechanism = "COMS.model.DeliveryMechanism";
 
 Ext.COMSModels.GlobalsTable = "COMS.model.GlobalsTable";
 Ext.COMSModels.GlobalLookupModel = "COMS.model.GlobalLookupModel";

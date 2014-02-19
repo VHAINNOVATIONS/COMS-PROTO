@@ -975,6 +975,9 @@ class LookUp extends Model {
             case "TEMPLOC":
                 $name = 'Temperature Location';
                 break;
+            case "DELIVMECH":
+                $name = 'Delivery Mechanism';
+                break;
         }
         $query = "
             SELECT id=Lookup_ID, 

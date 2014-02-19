@@ -13,9 +13,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 				{ 
 					title : "<abbr title=\"Intravenous\">IV</abbr> Access",
 					name : "ND_PT_IVAccess",
-					defaults : { labelAlign : "right", labelWidth: 60, labelClsExtra : "NursingDocs-label" },
+					defaults : { labelAlign : "right", labelWidth: 95, labelClsExtra : "NursingDocs-label" },
 					items : [
-						{ xtype : "datefield", labelWidth: 95, fieldLabel : "Date Accessed", width: 200, name: "ND_PT_IVA_Date" },
+						{ xtype : "datefield", fieldLabel : "Date Accessed", width: 200, name: "ND_PT_IVA_Date" },
 
 						// MWB - 28 Feb 2012 - Currently this is static data but will eventually be replaced by a SQL Based Store
 						{ xtype : "combo",
@@ -33,7 +33,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 						{ xtype : "combo",
 							fieldLabel : "Gauge",
 							name : "ND_PT_IVA_Gauge",
-							width : 150,
+							width : 210,
 							store : { fields : [ "name", "value" ], data : [
 							{name : "18g", value : 1},
 							{name : "18g Non-Coring", value : 2},
@@ -63,7 +63,19 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 							{name : "Right Dorsum of hand", value : 10},
 							{name : "Left side of Chest", value : 11},
 							{name : "Right side of Chest", value : 12}
-							] }, displayField : "name", valueField : "value" }
+							] }, displayField : "name", valueField : "value" },
+						{ xtype : "combo",
+							fieldLabel : "Delivery Mechanism",
+							name : "ND_PT_IVA_DeliveryMechanism",
+							width : 310,
+							store : "DeliveryMechanism",
+                        labelClsExtra : "NursingDocs-label",
+                        valueField: 'name',
+                        displayField: 'name',
+                        triggerAction: 'all',
+                        editable: false
+
+                        }
 					]
 				},
 
