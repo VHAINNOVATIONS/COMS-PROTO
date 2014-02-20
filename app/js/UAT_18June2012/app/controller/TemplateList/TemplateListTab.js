@@ -1,8 +1,14 @@
-Ext.define('COMS.controller.Authoring.TemplateListTab', {
+Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 	extend: 'Ext.app.Controller',
 	views: [
-		'Authoring.TemplateListTab'
+		'TemplateList.TemplateListTab'
 	],
+
+
+    refs: [
+		{ ref: "theSelect",    selector: "TemplateListTab selTemplateType"},
+		{ ref: "theGrid",     selector: "TemplateListTab grid"}
+    ],
 
 	init: function () {
 		wccConsoleLog('Initialized TemplateList Tab Panel Navigation Controller!');
@@ -16,7 +22,10 @@ Ext.define('COMS.controller.Authoring.TemplateListTab', {
 
 
     renderPanel: function (panel) {
-        panel.getStore().load();
+        debugger;
+        var theSelect = this.getTheSelect();
+        var theGrid = this.getTheGrid();
+        theGrid.getStore().load();
         return true;
     }
 });

@@ -37,7 +37,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, 'Authoring.AddReference'
 		, 'Authoring.CreateNewTemplate'
 		, 'Authoring.CycleLength'
-		, 'Authoring.TemplateListTab'
 
 		, 'Common.Search4Template'
 		, "Common.selCTOSTemplate"

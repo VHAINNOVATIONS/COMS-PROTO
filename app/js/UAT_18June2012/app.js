@@ -545,7 +545,7 @@ Ext.require([
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.Authoring.AuthoringTab",
-	"COMS.controller.Authoring.TemplateListTab",
+	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.Authoring.DrugRegimen",
 	"COMS.controller.Authoring.Hydration",
 	"COMS.controller.Management.AdminTab",
@@ -1424,7 +1424,7 @@ Ext.application({
 		,"NewPlan.NewPlanTab"
 		,"Orders.OrdersTab"
 		,"Authoring.AuthoringTab"
-		,"Authoring.TemplateListTab"
+		,"TemplateList.TemplateListTab"
 		,"Authoring.DrugRegimen"
 		,"Authoring.Hydration"
 		,"Management.AdminTab"	//KD - 12/20/11 - new URI associated with adding data to the lookup table
