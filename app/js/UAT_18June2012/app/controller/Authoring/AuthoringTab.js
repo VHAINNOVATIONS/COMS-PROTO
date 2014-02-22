@@ -28,7 +28,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, 'DrugUnitsStore'
 		, 'InfusionStore'
 		, 'CTOS'
-        , "TemplateListStore"
 		],
 	views: [
 		'Authoring.References'

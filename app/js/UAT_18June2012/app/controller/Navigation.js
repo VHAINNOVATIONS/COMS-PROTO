@@ -8,7 +8,7 @@ Ext.define('COMS.controller.Navigation', {
 		'NavigationTabs'
 		, 'NewPlan.NewPlanTab'
 		, 'Authoring.AuthoringTab'
-        , 'TemplateList.TemplateListTab'
+		, 'TemplateList.TemplateListTab'
 		, 'ExistingPlan.ExistingPlanTab'
 		, 'KnowledgeBase.KnowledgeBaseTab'
 		, 'Messages.MessagesTab'

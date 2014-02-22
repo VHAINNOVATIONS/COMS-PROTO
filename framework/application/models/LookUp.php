@@ -1073,7 +1073,8 @@ class LookUp extends Model {
     }
 
     function getTemplatesByType($field, $id) {
-            $query = "select 
+            $query = "
+            select 
                 lu.Name as name
                 , mt.Template_ID as id
                 , mt.Regimen_ID as regimenId
@@ -1086,16 +1087,25 @@ class LookUp extends Model {
                 , mt.Version as version
                 , l2.Name as emoLevel
                 , mt.Febrile_Neutropenia_Risk as fnRisk 
+
+                    ,l4.Name as DiseaseName
+                    ,mt.Disease_Stage_ID 
+                    ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
+
                 from Master_Template mt 
                 INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                 INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                 INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+                LEFT  JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                 LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) ";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
-                $query .= "WHERE mt.Cancer_ID = '" . $id . "' and Is_Active = 1 and mt.Patient_ID is null";
+                $query .= "WHERE mt.Cancer_ID = '$id' and Is_Active = 1 and mt.Patient_ID is null";
             } else if ($field != NULL && strtoupper($field) == 'PATIENT') {
                 $query .= "INNER JOIN Patient_Assigned_Templates pat ON pat.Template_ID = mt.Template_ID " .
-                        "WHERE pat.Patient_ID = '" . $id . "' and pat.Is_Active = 1";
+                        "WHERE pat.Patient_ID = '$id' and pat.Is_Active = 1";
+            } else if ($field != NULL && strtoupper($field) == 'LOCATION') {
+                $query .= "WHERE mt.Location_ID = '$id' and mt.Is_Active = 1";
             }else{
                 $query .= "WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
@@ -1258,56 +1268,41 @@ class LookUp extends Model {
     }
 
     function getTemplateDetailByName($name) {
-
         $query = "select Lookup_ID as ID, l.Description as value From LookUp l where l.Lookup_Type = 0 and upper(l.Name) = '" . strtoupper($name) . "'";
-
         return $this->query($query);
     }
 
+/* Select Templates by their Location ID in the Lookup Table (e.g. My/Local/National Templates) */
     function selectByNameDescId($id){
-
         $source = null;
-        
         if(null != $id){
             $query = "SELECT Name FROM LookUp WHERE Lookup_ID = '".$id."'";
             $source = $this->query($query);
-            
             if (null != $source && array_key_exists('error', $source)) {
                 return $source;
             }
-            
             $source = $source[0];
-
         }
         
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            
-            $query = "SELECT lu.Lookup_ID as id, lu.Lookup_Type as type, lu.Name, lu.Description ".
-                     "FROM Template_Availability ta ".
-                     "INNER JOIN Master_Template mt ON mt.Template_ID = ta.TemplateID ".
-                     "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Cancer_ID ";
-                    
-            if (null != $source && 'National Templates' === $source['Name']){
-                $query .= "WHERE ta.NationalLevel = 'Yes'";
-            }else if(null != $source && 'Local Templates' === $source['Name']){
-                $query .= "WHERE ta.NationalLevel = 'No'";
-            }else if(null != $source && 'My Templates' === $source['Name']){
-                $username = get_current_user();
-                //$username = 'kevin.dean';
-                
-                $mdws = new Mymdws();
-                $roles = $mdws->getRoleInfo($username);
-				$rid = $_SESSION['rid'];
-                
-                $query .= "WHERE ta.TemplateOwner = '".$rid."'";
-            }
-
-            
-        } else if (DB_TYPE == 'mysql') {
-            
-            
+        $query = "SELECT lu.Lookup_ID as id, lu.Lookup_Type as type, lu.Name, lu.Description ".
+                 "FROM Template_Availability ta ".
+                 "INNER JOIN Master_Template mt ON mt.Template_ID = ta.TemplateID ".
+                 "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Cancer_ID ";
+        if (null != $source && 'National Templates' === $source['Name']){
+            $query .= "WHERE ta.NationalLevel = 'Yes'";
+        }else if(null != $source && 'Local Templates' === $source['Name']){
+            $query .= "WHERE ta.NationalLevel = 'No'";
+        }else if(null != $source && 'My Templates' === $source['Name']){
+            $username = get_current_user();
+            $mdws = new Mymdws();
+            $roles = $mdws->getRoleInfo($username);
+            $rid = $_SESSION['rid'];
+            $query .= "WHERE ta.TemplateOwner = '".$rid."'";
         }
-        
+        $query .= " ORDER BY lu.Name";
+        ChromePhp::log("selectByNameDescId - Query =");
+        ChromePhp::log("$query");
+
         return $this->query($query);
     }
     

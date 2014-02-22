@@ -130,6 +130,9 @@ Ext.URLs.Templates = "/LookUp/Templates";
 // No Param - Returns list of templates available
 
 Ext.URLs.TemplateList = "/LookUp/Templates";
+
+Ext.URLs.TemplateListByLocation = "/LookUp/Templates/Location";     // Requires LocationID as the last parameter
+
 Ext.URLs.FlagTemplateInactive = "/LookUp/flagTemplateInactive";
 
 Ext.URLs.BaseView = "/LookUp/view";
@@ -542,6 +545,7 @@ Ext.require([
 		// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 	"COMS.controller.Navigation",
+	"COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.Authoring.AuthoringTab",
@@ -1421,6 +1425,7 @@ Ext.application({
 			        // as part of that controller definition
 			        // Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
+		,"Common.selTemplateByStages"
 		,"NewPlan.NewPlanTab"
 		,"Orders.OrdersTab"
 		,"Authoring.AuthoringTab"

@@ -10,7 +10,7 @@ Ext.define('COMS.view.TemplateList.TemplateListTab', {
     autoScroll : true,
 
     items : [
-        { xtype : "selTemplateType" },
+        { xtype : "selTemplateByStages", name: "tltSelTemplateByStages" },
         {
             xtype : "grid", 
             name : "tltGrid",

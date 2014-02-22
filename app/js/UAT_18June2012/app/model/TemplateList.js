@@ -6,14 +6,5 @@ Ext.define('COMS.model.TemplateList', {
 		'regimenId',
 		'description',
 		'DiseaseName'
-	],
-	proxy: {
-		type: 'rest',
-		url: Ext.URLs.TemplateList,
-		reader: {
-			type: 'json',
-			root: 'records'
-		}
-	}
-
+	]
 });
