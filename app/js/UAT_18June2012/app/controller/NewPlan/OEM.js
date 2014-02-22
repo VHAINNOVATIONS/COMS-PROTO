@@ -1018,7 +1018,7 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
  ***********************************************************************************/
 handleEditOEM_Record : function (event, element) {
     event.stopEvent(  );
-    if ("Edit" === element.text) {
+    if ("Edit" === element.textContent) {
         this.handleActualEditOfOEM_Record(event, element);
     }
 },

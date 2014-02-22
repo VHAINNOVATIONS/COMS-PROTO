@@ -604,6 +604,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					// var Cycle = parent[idx-1].Cycle;
 					var AdminDate = parent.AdminDate;
 					var today = new Date();
+                    today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
 						return ("");	// No Edit link if the Admin Date is before today
@@ -628,6 +629,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				CalcEditAdminDate : function( current ) {
 					var AdminDate = current.AdminDate;
 					var today = new Date();
+                    today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
 						return ("");	// No Edit link if the Admin Date is before today
