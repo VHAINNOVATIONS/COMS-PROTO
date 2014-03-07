@@ -1,1 +1,0 @@
-{"success": true, "DiseaseType" : "CML", "DiseaseCat" : "Heme Malignancy", "Chemo" : "none", "Radiation" : "none", "PerfStat" : "1-Restricted in strenuous activity", "TreatIndic" : "Maintenance", "Protocol" : "Gleevec (400mg) PO Daily (F)"}

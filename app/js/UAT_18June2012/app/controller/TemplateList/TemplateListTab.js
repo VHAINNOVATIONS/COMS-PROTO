@@ -14,7 +14,7 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
         {
             ref: "TemplateType",
             selector: "TemplateListTab selTemplateByStages selTemplateType"
-        },
+        }
     ],
 
 	init: function () {

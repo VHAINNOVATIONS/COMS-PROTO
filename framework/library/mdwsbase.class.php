@@ -21,7 +21,7 @@ class MdwsBase {
 
 
             try {
-                    $client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
+                    $client = new SoapClient("http://devmdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
                     if (isset($client->fault)) {
                             $this->MDWsCrashReport($client, "SoapClient", false);
                             return null;
@@ -193,7 +193,7 @@ class MdwsBase {
 
 
             try {
-                    $client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
+                    $client = new SoapClient("http://devmdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
                     if (isset($client->fault)) {
                             $this->MDWsCrashReport($client, "SoapClient", false);
                             return null;

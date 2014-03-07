@@ -4,6 +4,7 @@ GIT_COMMAND_LOG.log
 application\*
 app\SSHDebug\*
 app\config_Constants.php
+app\js_Files2Ignore\*
 aspnet_client\*
 build\* 
 framework\config\* 

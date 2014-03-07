@@ -30,7 +30,22 @@ Ext.define('COMS.view.Management.AdminTab' ,{
 			{ text : 'Save', action : 'save' }, 
 			{ text : 'Canel', scope : this } 
 		]
-		}
+		},
+
+        { xtype : "form", title : "Medication Holds", padding : "10 10 5 10", items : [ 
+            { xtype : "radiogroup", fieldLabel : "Allow Medication Holds", labelWidth: 170, columns : 1, vertical : true, width : 450,
+                items : [
+                    { boxLabel : "Yes", name : "AllowMedHolds", inputValue : true, checked : true },
+                    { boxLabel : "No", name : "AllowMedHolds", inputValue : false }
+                ]
+            }
+        ],
+		buttons : [ // Button access : form[name=\"Medication Holds\"] button[action=\"save\"]
+			// The Hod value get's pushed into the Lookup Table
+			{ text : 'Save', action : 'save' }, 
+			{ text : 'Canel', scope : this } 
+		]}
+
 	],
 
 	initComponent: function() {

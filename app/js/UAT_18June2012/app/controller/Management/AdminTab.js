@@ -98,10 +98,24 @@ Ext.define('COMS.controller.Management.AdminTab', {
             },
             'EditLookup button[action="cancel"]': {
                 click: this.clickCancelLookup
-            }
+            },
+            "form[name=\"Medication Holds\"] button[text=\"Save\"]" : {
+                click: this.clickMedHold
+            },
+            "form[name=\"Medication Holds\"] button[text=\"Cancel\"]" : {
+                click: this.clickMedHoldCancel
+            },
         });
     },
         
+
+    clickMedHold: function() {
+        alert("Save Med Hold");
+    },
+
+    clickMedHoldCancel: function() {
+        alert("Cancel Med Hold");
+    },
     TemplateSelected: function(combo, recs, eOpts){
         wccConsoleLog('Admin Tab, Template Selected');
         var theData = recs[0].data.id;

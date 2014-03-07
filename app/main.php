@@ -5,8 +5,10 @@ $ProjType = "Proof of Concept, 0.1, November 22, 2013";
 $ProjType = "Proof of Concept, 0.2, December 13, 2013";
 $ProjType = "Proof of Concept, 0.3, January 3, 2014";
 $ProjType = "Proof of Concept, 0.4, January 24, 2014";
-*/
 $ProjType = "Proof of Concept, 0.5, February 14, 2014";
+$ProjType = "Proof of Concept, 0.6, March 7, 2014";
+*/
+$ProjType = "Proof of Concept, 0.7-WIP, March 28, 2014";
 ?>
 
 <!doctype html>
@@ -89,6 +91,7 @@ $ProjType = "Proof of Concept, 0.5, February 14, 2014";
                     <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
                     <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                     <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
+                    <li style="display: inline;"><a href="Track/" target='_blank'>User Tracking</a></li>
                 </ul>
             </navigation>
         </form>
