@@ -55,9 +55,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
         ref: 'ShowAllTemplates', 
         selector: 'AdminTab DeleteTemplate button[title=\"AllTemplates"]'
     }
-                
-		
-                
+
     ],
     
     init: function() {
@@ -99,10 +97,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
             'EditLookup button[action="cancel"]': {
                 click: this.clickCancelLookup
             },
-            "form[name=\"Medication Holds\"] button[text=\"Save\"]" : {
+            "form[title=\"Medication Holds\"] button[text=\"Save\"]" : {
                 click: this.clickMedHold
             },
-            "form[name=\"Medication Holds\"] button[text=\"Cancel\"]" : {
+            "form[title=\"Medication Holds\"] button[text=\"Cancel\"]" : {
                 click: this.clickMedHoldCancel
             },
         });

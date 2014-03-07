@@ -65,7 +65,7 @@ Ext.define('COMS.view.Management.AddLookups' ,{
 	],
 	buttons : [ 
 		{ text : 'Save', action : 'save' }, 
-		{ text : 'Canel', scope : this } 
+		{ text : 'Cancel', scope : this } 
 	],
 
 	initComponent : function() {

@@ -28,7 +28,7 @@ Ext.define('COMS.view.Management.AdminTab' ,{
 		buttons : [ 
 			// The Rounding Value get's pushed into the Lookup Table
 			{ text : 'Save', action : 'save' }, 
-			{ text : 'Canel', scope : this } 
+			{ text : 'Cancel', scope : this } 
 		]
 		},
 
@@ -40,11 +40,12 @@ Ext.define('COMS.view.Management.AdminTab' ,{
                 ]
             }
         ],
-		buttons : [ // Button access : form[name=\"Medication Holds\"] button[action=\"save\"]
-			// The Hod value get's pushed into the Lookup Table
-			{ text : 'Save', action : 'save' }, 
-			{ text : 'Canel', scope : this } 
-		]}
+        buttons : [ 
+            // The Hold value get's pushed into the Lookup Table
+            { text : 'Save', action : 'save' }, 
+            { text : 'Cancel', scope : this } 
+        ]
+        }
 
 	],
 
