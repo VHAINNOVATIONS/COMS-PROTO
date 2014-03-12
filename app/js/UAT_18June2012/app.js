@@ -29,6 +29,11 @@ Ext.Loader.setConfig({
 	}
 });
 
+
+Ext.URLs.MedHold = "/LookUp/MedHold";
+Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
+
+
 Ext.URLs.Reasons = "/Workflow/Reasons";
 Ext.URLs.Patients = "/Patient/viewall";
 // No Params,

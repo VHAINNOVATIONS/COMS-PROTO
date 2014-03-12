@@ -93,7 +93,7 @@ class LookupController extends Controller {
 
 
     function saveTemplate() {
-        error_log("Lookup Controller saveTemplate functin");
+        error_log("Lookup Controller saveTemplate function");
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
@@ -487,8 +487,6 @@ class LookupController extends Controller {
     }
 
     function viewall($name = NULL, $description = NULL) {
-
-
         if ($description == NULL && $name == NULL) {
             $this->set('title', 'All Lookup Types');
             $this->set('lookups', $this->LookUp->selectAll());
@@ -504,4 +502,81 @@ class LookupController extends Controller {
         }
     }
 
+
+    /*
+     *  IF called via POST/PUT operation then true/false to hold meds will be in the POST body
+     *  IF called via GET operation, return true/false as part of message body in JSON object
+     *
+     */
+    function MedHold(){
+        $jsonRecord = array();
+        $form_data = json_decode(file_get_contents('php://input'));
+        if ($form_data != null) {
+            $this->LookUp->beginTransaction();
+            $MedHold = $form_data->{'AllowMedHolds'};
+            $retVal = $this->LookUp->setMedHold($MedHold);
+            if($this->checkForErrors('Saving Medication Hold State. ', $retVal)){
+                $this->LookUp->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Error";
+                $jsonRecord['frameworkErr'] = $frameworkErr;
+            }
+            else {
+                $this->LookUp->endTransaction();
+                $this->set('frameworkErr', null);
+                $jsonRecord['success'] = true;
+                $jsonRecord['msg'] = "MedHold state saved";
+            }
+        }
+        else {
+            $retVal = $this->LookUp->getMedHold();
+            if (empty($retVal)){
+                $jsonRecord['MedHold'] = "0";
+            }
+            else {
+                $jsonRecord['MedHold'] = $retVal[0]["Description"];
+            }
+            $jsonRecord['success'] = true;
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    /*
+     *  IF called via POST/PUT operation then true/false to hold meds will be in the POST body
+     *  IF called via GET operation, return true/false as part of message body in JSON object
+     *
+     */
+    function RoundingRule(){
+        $jsonRecord = array();
+        $form_data = json_decode(file_get_contents('php://input'));
+        if ($form_data != null) {
+            $this->LookUp->beginTransaction();
+            $RoundingRule = $form_data->{'RoundingRule'};
+            $retVal = $this->LookUp->setRoundingRule($RoundingRule);
+            if($this->checkForErrors('Saving Rounding Rules State. ', $retVal)){
+                $this->LookUp->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Error";
+                $jsonRecord['frameworkErr'] = $frameworkErr;
+            }
+            else {
+                $this->LookUp->endTransaction();
+                $this->set('frameworkErr', null);
+                $jsonRecord['success'] = true;
+                $jsonRecord['msg'] = "Rounding Rules state saved";
+            }
+        }
+        else {
+            $retVal = $this->LookUp->getRoundingRule();
+            if (empty($retVal)){
+                $jsonRecord['RoundingRule'] = "0";
+            }
+            else {
+                $jsonRecord['RoundingRule'] = $retVal[0]["Description"];
+            }
+
+            $jsonRecord['success'] = true;
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
 }

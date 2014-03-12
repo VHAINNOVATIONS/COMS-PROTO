@@ -54,6 +54,23 @@ Ext.define('COMS.controller.Management.AdminTab', {
     {
         ref: 'ShowAllTemplates', 
         selector: 'AdminTab DeleteTemplate button[title=\"AllTemplates"]'
+    },
+    {
+        ref: 'RoundingRulesForm', 
+        selector: 'form[title=\"Rounding Rules\"]'
+    },
+    {
+        ref: 'RBRoundingRules', 
+        selector: 'form[title=\"Rounding Rules\"] radiogroup'
+    },
+
+    {
+        ref: 'MedHoldForm', 
+        selector: 'form[title=\"Medication Holds\"]'
+    },
+    {
+        ref: 'RBMedHold', 
+        selector: 'form[title=\"Medication Holds\"] radiogroup'
     }
 
     ],
@@ -61,6 +78,12 @@ Ext.define('COMS.controller.Management.AdminTab', {
     init: function() {
         wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
         this.control({
+            'form[title=\"Rounding Rules\"]' : {
+                beforeshow : this.RoundingRulesFormRenderSetValues
+            },
+            'form[title=\"Medication Holds\"]' : {
+                beforeshow : this.MedHoldFormRenderSetValues
+            },
             'AddLookups SelectLookups' : {
                 select : this.LookupSelected
             },
@@ -97,23 +120,113 @@ Ext.define('COMS.controller.Management.AdminTab', {
             'EditLookup button[action="cancel"]': {
                 click: this.clickCancelLookup
             },
+
             "form[title=\"Medication Holds\"] button[text=\"Save\"]" : {
-                click: this.clickMedHold
+                click: this.clickMedHoldSave
             },
             "form[title=\"Medication Holds\"] button[text=\"Cancel\"]" : {
                 click: this.clickMedHoldCancel
             },
+
+            "form[title=\"Rounding Rules\"] button[text=\"Save\"]" : {
+                click: this.clickRoundingRuleSave
+            },
+            "form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
+                click: this.clickRoundingRuleCancel
+            }
         });
     },
         
+    RoundingRulesFormRenderSetValues : function(scope, eOpts) {
+        this.application.loadMask("Please wait; Loading Rounding Rules State");
+        Ext.Ajax.request({
+            url: Ext.URLs.RoundingRule,
+            method: "GET",
+            scope : this,
+            success: function(response, opts) {
+                var data = Ext.JSON.decode(response.responseText);
+                var thisCtl = this.getController('Management.AdminTab');
+                var rbGroup = thisCtl.getRBRoundingRules();
+                rbGroup.setValue({"RoundingRule" : data.RoundingRule});
+                this.application.unMask();
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+                this.application.unMask();
+            }
+        });
+    },
 
-    clickMedHold: function() {
-        alert("Save Med Hold");
+    clickRoundingRuleSave: function() {
+        var thisCtl = this.getController('Management.AdminTab');
+        var rrButtons = thisCtl.getRBRoundingRules().getValue();
+        var allowRounding = rrButtons.RoundingRule;
+        this.application.loadMask("Please wait; Saving Rounding Rules State");
+        Ext.Ajax.request({
+            url: Ext.URLs.RoundingRule,
+            method: "POST",
+            scope : this,
+            jsonData : { "RoundingRule" : allowRounding },
+            success: function(response, opts) {
+                this.application.unMask();
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+                this.application.unMask();
+            }
+        });
+    },
+
+    clickRoundingRuleCancel: function() {
+        alert("Cancel Rounding Rules");
+    },
+
+    MedHoldFormRenderSetValues : function(scope, eOpts) {
+        this.application.loadMask("Please wait; Loading Medication Hold State");
+        Ext.Ajax.request({
+            url: Ext.URLs.MedHold,
+            method: "GET",
+            scope : this,
+            success: function(response, opts) {
+                var data = Ext.JSON.decode(response.responseText);
+                var thisCtl = this.getController('Management.AdminTab');
+                var rbGroup = thisCtl.getRBMedHold();
+                var State = ("1" === data.MedHold);
+                rbGroup.setValue({"AllowMedHolds" : State});
+                this.application.unMask();
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+                this.application.unMask();
+            }
+        });
+    },
+
+    clickMedHoldSave: function() {
+        var thisCtl = this.getController('Management.AdminTab');
+        var mhButtons = thisCtl.getRBMedHold().getValue();
+        var allowMedHold = mhButtons.AllowMedHolds;
+        this.application.loadMask("Please wait; Saving Medication Hold State");
+        Ext.Ajax.request({
+            url: Ext.URLs.MedHold,
+            method: "POST",
+            scope : this,
+            jsonData : { "AllowMedHolds" : allowMedHold },
+            success: function(response, opts) {
+                this.application.unMask();
+            },
+            failure: function(response, opts) {
+                console.log('server-side failure with status code ' + response.status);
+                this.application.unMask();
+            }
+        });
     },
 
     clickMedHoldCancel: function() {
         alert("Cancel Med Hold");
     },
+
+
     TemplateSelected: function(combo, recs, eOpts){
         wccConsoleLog('Admin Tab, Template Selected');
         var theData = recs[0].data.id;

@@ -35,8 +35,8 @@ Ext.define('COMS.view.Management.AdminTab' ,{
         { xtype : "form", title : "Medication Holds", padding : "10 10 5 10", items : [ 
             { xtype : "radiogroup", fieldLabel : "Allow Medication Holds", labelWidth: 170, columns : 1, vertical : true, width : 450,
                 items : [
-                    { boxLabel : "Yes", name : "AllowMedHolds", inputValue : true, checked : true },
-                    { boxLabel : "No", name : "AllowMedHolds", inputValue : false }
+                    { boxLabel : "Yes", name : "AllowMedHolds", inputValue : "1", checked : true },
+                    { boxLabel : "No", name : "AllowMedHolds", inputValue : "0" }
                 ]
             }
         ],

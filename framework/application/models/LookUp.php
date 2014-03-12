@@ -5,6 +5,15 @@
  * PHP Version 5
  *
  */
+
+ /*
+  * Note: In the LookupTable the following Lookup Types ID range is reserved:
+  * 50 - 60
+  * These ID ranges are used for storing "one off" data for site configuration (such as Med Hold, Rounding Rules, etc)
+  *
+  * Lookup_Type = 50 - Med Hold, Description = true/false
+  * Lookup_Type = 51 - Rounding Rules, Description = Rounding %
+  */
 class LookUp extends Model {
 
     const TYPE_TIMEFRAMEUNIT = 18;
@@ -942,7 +951,7 @@ class LookUp extends Model {
 
     function selectAll() {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM " . $this->_table . " WHERE Lookup_Type = 0 order by 'Name'";
+            $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM " . $this->_table . " WHERE Lookup_Type = 0 and Lookup_Type_ID < 50 OR Lookup_Type_ID > 60 order by 'Name'";
         } else if (DB_TYPE == 'mysql') {
             $query = "SELECT Lookup_Type_ID as ID, Name, Lookup_Type as type, Description as description FROM " . $this->_table . " WHERE Lookup_Type = 0";
         }
@@ -1409,4 +1418,51 @@ class LookUp extends Model {
         return $this->query($query);
     }
 
+
+
+    public function getMedHold() {
+        $query = "SELECT * FROM LookUp WHERE Lookup_Type = 50";
+        $resp = $this->query($query); 
+        return $resp;
+    }
+
+    public function setMedHold($medhold) {
+        $gotIt = $this->getMedHold();
+        $hold = 0;
+        if ($medhold) {
+            $hold = 1;
+        }
+        if (empty($gotIt)){
+            $query = "INSERT into LookUp (Lookup_Type, Name, Description) values (" . 50 . ",'MedHold'," . $hold . ")";
+        }
+        else {
+            $key = $gotIt[0]["Lookup_ID"];
+            $query = "UPDATE LookUp SET Description = $hold WHERE Lookup_ID = '$key'";
+        }
+        return $this->query($query); 
+    }
+
+
+
+
+
+
+    public function getRoundingRule() {
+        $query = "SELECT * FROM LookUp WHERE Lookup_Type = 51";
+        $resp = $this->query($query); 
+        return $resp;
+    }
+
+    public function setRoundingRule($roundingrule) {
+        $gotIt = $this->getRoundingRule();
+        if (empty($gotIt)){
+            $query = "INSERT into LookUp (Lookup_Type, Name, Description) values (" . 51 . ",'RoundingRule'," . $roundingrule . ")";
+            echo $query;
+        }
+        else {
+            $key = $gotIt[0]["Lookup_ID"];
+            $query = "UPDATE LookUp SET Description = $roundingrule WHERE Lookup_ID = '$key'";
+        }
+        return $this->query($query); 
+    }
 }
