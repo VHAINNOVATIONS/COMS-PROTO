@@ -10,6 +10,7 @@ class MdwsBase {
             //set variables
             //$sitelist = $roles[0]['sitelist'];
 			$sitelist = $_SESSION['sitelist'];
+            $sitelist = 101;    // MWB Temp Fix till the session parameter works properly. - 3/12/2014
             //$cprsUsename = $roles[0]['cprsUsername'];
 			$cprsUsername = $_SESSION['cprsUsername'];
             //$cprsPass = $roles[0]['cprsPass'];

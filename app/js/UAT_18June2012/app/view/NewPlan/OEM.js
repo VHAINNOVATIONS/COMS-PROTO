@@ -39,7 +39,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 		"	<tr><th align=\"right\">Treatment Start:</th><td colspan=\"3\">{TreatmentStart}</td></tr>",
 		"	<tr><th align=\"right\">Treatment End:</th><td colspan=\"3\">{TreatmentEnd}</td></tr>",
 		"	<tr class=\"MultiLineRow\">",
-		"		<th>Neutropenia&nbsp;Risk:</th>",
+		"		<th>Febrile Neutropenia&nbsp;Risk:</th>",
 		"		<td>{FNRisk}%</td>",
 		"		<th>Recommendation:</th>",
 		//"		<td>{NeutropeniaRecommendation} (Note: Need to add recommendations to Lookup Table for FN)</td>",
@@ -434,10 +434,11 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 			{
 					// XTemplate Configuration
 				disableFormats: true,
-				Patient : "",
+				Patient : {},
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
+                SiteConfig : {},
 
 
 				PostRendering : function(values, parent) {
@@ -557,6 +558,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if (parent.Patient) {
 						this.Patient = parent.Patient;
 					}
+                    if (parent.SiteConfig) {
+                        this.SiteConfig = parent.SiteConfig;
+                    }
 					this.pIndex = xindex;
 					this.curCycle = Cycle;
 					this.curDay = Day;
@@ -624,7 +628,19 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 						"type=\"" + Type + "\" " + 
 						"medidx=\"" + idx + "\" " + 
 						"typeidx=\"" + pIndex + "\"" ;
-					return "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Edit</button>"; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
+                    var buf2 = "med=\"" + current.Med + "\" " + 
+                        "medID=\"" + current.MedID + "\" " + 
+                        "OrderID=\"" + current.Order_ID + "\" " + buf;
+
+                    var btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + ">Edit Medication</button><br />",
+                        btn2 = "",
+                        btn3 = "";
+                    if (this.SiteConfig.MedHold === "1") {
+                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + ">Medication Hold</button><br />";
+                    }
+                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + ">Cancel Medication</button><br />";
+
+					return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
 				},
 				CalcEditAdminDate : function( current ) {
 					var AdminDate = current.AdminDate;

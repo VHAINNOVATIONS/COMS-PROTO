@@ -386,6 +386,9 @@ for (i = 0; i < eLen; i++) {
 		theData.TreatmentStart = PatientInfo.TreatmentStart;
 		theData.TreatmentEnd = PatientInfo.TreatmentEnd;
 
+        if (!theData.SiteConfig) {		// Make sure we only add this once.
+            theData.SiteConfig = this.application.SiteConfig;
+        }
 
 		if (!theData.Patient) {		// Make sure we only add this once.
 			// Some date from within the Patient object (e.g. BSA Info and some vitals) are needed for calculating dosages
@@ -429,9 +432,17 @@ for (i = 0; i < eLen; i++) {
 
 		// MWB - 5/10/2012 - Need to debug this block...
 		var theTab = Ext.ComponentQuery.query("OEM dspOEMTemplateData")[0];
+        var al;
 		if (theTab && theTab.rendered){
-			var a1 = theTab.el.select("button.EditOEM_Record");
+			a1 = theTab.el.select("button.EditOEM_Record");
 			a1.on("click", this.handleEditOEM_Record, this);
+
+            a1 = theTab.el.select("button.OEM_RecordMedHold");
+			a1.on("click", this.handleOEM_RecordMedHold, this);
+
+            a1 = theTab.el.select("button.OEM_RecordMedCancel");
+			a1.on("click", this.handleOEM_RecordMedCancel, this);
+
 
 			// Attach event to the "Add Goal" and "Add Clinical Trial" buttons (styled to look like links)
 			// var Goal_CTrialBtn = theTab.el.select("button.anchor");		<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
@@ -464,112 +475,7 @@ for (i = 0; i < eLen; i++) {
  *
  ***********************************************************************************/
 
-/********************** 		<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
-// Handle the action for the "Add Goal" and "Add Clinical Trial" buttons (styled to look like links) 
-// See "app\view\NewPlan\CTOS\OEMClinicalTrial.js" and "app\view\NewPlan\CTOS\OEMGoal.js"
-handleGoal_CTrial : function (event, element) {
-	event.stopEvent( );
-	var BtnName = element.getAttribute("name");
-	var Widget;
-	var Query;
-	switch(BtnName) {
-		case "AddClinicalTrial" :
-			Widget = "OEMClinicalTrial";
-			Query = "OEMClinicalTrial button[text=\"Save\"]";
-			break;
-		case "AddGoal" : 
-			Widget = "OEMGoal";
-			Query = "OEMGoal button[text=\"Save\"]";
-			break;
-	}
-	var Win = Ext.widget(Widget);
-	var SaveBtn = Ext.ComponentQuery.query(Query)[0];
-	SaveBtn.on("click", this.SaveGoal_CTrial, this );
 
-
-},
-
-SaveGoal_CTrial  : function(button, event, eOpts) {
-		var PatientInfo = this.application.Patient;
-		var win = button.up("window");
-		var form = win.down("form");
-
-
-		form.submit({
-			url : Ext.URLs.Edit_OEMRecord + "/" + PatientInfo.id,
-			success: function(form, action) {
-
-				var theData = action.result.records[0];
-				alert(action.result.msg);
-			},
-			failure: function(form, action) {
-
-				alert(action.result.msg);
-			}
-		});
-
-		win.close();
-	},
-
-*****************************************/
-
-
-/********************************************************************************
-	loadOEM_Record_Data : function( PatientID ) {
-		// alert("Need to make sure basic Patient data is loaded before launching this function... (controller/NewPlan/OEM.js)");
-// debugger;
-		var CTOSModel = this.getModel("OEMRecords");		// MWB 21 Feb 2012 - Loading new model for retrieving the records direct from the DB rather than generating them
-		this.application.loadMask(); // MWB 19 Jan 2012 - Mask the screen
-		try {
-			this.getSelectAdminDay2View().hide();			
-		}
-		catch (e) {
-			// The Select tag may not have been rendered yet so this is a simple fix to prevent an error in that case
-		}
-
-		CTOSModel.load( PatientID, {
-			scope: this,
-			success: function (TemplateData, response) {
-				try {
-					wccConsoleLog("Template Data Loaded - Processing");
-					var theData = TemplateData.data;
-					theData.PatientName = this.application.Patient.name;
-					theData.RegimenName = this.application.Patient.TemplateName;
-					theData.RegimenDescription = this.application.Patient.TemplateDescription;
-					theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
-					theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
-
-
-					// Calculate Dose for any record requireing it.
-					var x1 = theData.OEMRecords;	// Array of the individual records;
-					for (ii = 0; ii < x1.length; ii++) {
-						var x2 = x1[ii].Therapy;	// Array of Therapy records for this Admin Day
-						for (jj = 0; jj < x2.length; jj++) {
-							x2[jj].BSA_Dose = Ext.DoseCalc(this.application.Patient, x2[jj].Dose, x2[jj].DoseUnits);
-						}
-					}
-
-
-
-					this.application.Patient.OEMRecords = theData;
-				}
-				catch (err) {
-					var errMsg1 = "ERROR in parsing data for Template " + this.application.Patient.TemplateName;
-					alert("ERROR in Loading Order Entry Management Record Data for Template : " + this.application.Patient.TemplateName);
-					wccConsoleLog(errMsg1);
-					wccConsoleLog(err.message + " @ Line# " + err.lineNo);
-				}
-
-				this.application.unMask();
-			},
-			failure: function (err) {
-				wccConsoleLog("Template Data failed to load properly");
-				alert("ERROR in Loading Order Entry Management Record Data for Template<br>No information available for Template " + PatientID);
-				this.application.unMask();
-			}
-		});
-	},
-********************************************************************************/
 
 
 
@@ -612,15 +518,6 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 		var tmpName;
 		var theID;
 
-/**********
-		var WhichOne = 1;
-		if (0 === WhichOne) {
-			this.showAllAdminDays();
-		}
-		else {
-			this.hideAllAdminDays();
-		}
-************/
 
 		if ("Cycle_0_Day_0" === LinkName) {
 			this.showAllAdminDays();
@@ -1007,7 +904,44 @@ SaveGoal_CTrial  : function(button, event, eOpts) {
 	},
 
 
+handleOEM_RecordMedCancel : function( event, element) {
+    event.stopEvent(  );
+    Ext.Msg.show({
+        title: 'Cancel Medication - ' + element.getAttribute("med"),
+        msg: 'Cancel medication for today and all future Administration dates',
+        buttons: Ext.Msg.YESNOCANCEL,
+        el : element,
+        fn: function(btnID, txt, opt) {
+            if ("cancel" === btnID || "no" === btnID) {
+                alert("Medication has NOT been cancelled");
+            }
+            else {
+                alert("Medication - " + opt.el.getAttribute("med") + " has been cancelled"); 
+            }
+        }
+    });
+},
 
+handleOEM_RecordMedHold : function( event, element) {
+    event.stopEvent(  );
+    Ext.Msg.show({
+        title: 'Hold Medication - ' + element.getAttribute("med"),
+        msg: 'Hold medication for today only or all future Administration dates',
+        buttonText: {
+            yes: 'Today Only', no: 'All Future', cancel: 'Cancel'
+        },
+        buttons: Ext.Msg.YESNOCANCEL,
+        el : element,
+        fn: function(btnID, txt, opt) {
+            if ("cancel" === btnID) {
+                alert("Medication Hold has been cancelled");
+            }
+            else {
+                alert("Holding Medication - " + opt.el.getAttribute("med") + " for " + opt.buttonText[btnID]); 
+            }
+        }
+    });
+},
 
 /***********************************************************************************
  *

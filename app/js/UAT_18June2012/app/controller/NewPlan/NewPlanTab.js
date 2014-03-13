@@ -165,13 +165,34 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             },
             'AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"]':{
                 change : this.AmputeeSelected
+            },
+
+            "NewPlanTab PatientSelection" : {
+                afterrender: this.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab PatientInfo PatientInfoTable" : {
+                afterrender: this.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab PatientInfo PatientTemplates" : {
+                afterrender: this.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab PatientInfo PatientHistory" : {
+                afterrender: this.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab PatientInfo LabInfo" : {
+                afterrender: this.togglePanelOnTitleBarClick
             }
-        });
+       });
         wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
 
-
+    togglePanelOnTitleBarClick : function(panel) {
+        panel.header.el.on('click', function() {
+          if (panel.collapsed) {panel.expand();}
+          else {panel.collapse();}
+        });
+    },
     onPanelRendered: function() {
         wccConsoleLog("New Plan Tab Panel has been rendered");
 		// Grabs all the buttons within the "PatientSelection" container of the "NewPlanTab" container

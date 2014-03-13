@@ -26,6 +26,29 @@ Ext.define('COMS.controller.Navigation', {
 				beforetabchange: this.tabChanged
 			}
 		});
+        // this.application.loadMask("Loading Site Configuration Parameters...");
+		Ext.Ajax.request({
+			scope : this,
+			url: Ext.URLs.SiteConfig,
+			success: function( response, opts ){
+				// this.application.unMask();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (resp.success) {
+                    this.application.SiteConfig = {};
+                    this.application.SiteConfig.MedHold = resp.MedHold;
+                    this.application.SiteConfig.RoundingRule  = resp.RoundingRule;
+				}
+				else {
+					alert("load Site Configuration - Error");
+				}
+			},
+			failure : function( response, opts ) {
+				// this.application.unMask();
+				alert("load Site Configuration - FAILED");
+			}
+		});
+
 	},
 
 	tabChanged: function (tabPanel, newCard, oldCard, eOpts) {

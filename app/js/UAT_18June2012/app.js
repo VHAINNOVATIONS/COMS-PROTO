@@ -32,6 +32,7 @@ Ext.Loader.setConfig({
 
 Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
+Ext.URLs.SiteConfig = "/LookUp/SiteConfig";
 
 
 Ext.URLs.Reasons = "/Workflow/Reasons";
@@ -1493,9 +1494,6 @@ Ext.application({
 			duration: 1000
 		});
 		wccConsoleLog("Application created");
-
-        // this.showLoadingMask("Test");
-
 
 
 	/******************************

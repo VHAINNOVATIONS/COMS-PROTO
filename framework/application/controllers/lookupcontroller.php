@@ -579,4 +579,31 @@ class LookupController extends Controller {
         }
         $this->set('jsonRecord', $jsonRecord);
     }
+
+
+    /* 
+     * Gets the Site Configuration Parameters in a single call (e.g. RoundingRule & Medication Hold)
+     */
+    function SiteConfig() {
+        error_log("LookupController - SiteConfig()");
+
+        $jsonRecord = array();
+        $retVal = $this->LookUp->getSiteConfig();
+        $jsonRecord['RoundingRule'] = "0";
+        $jsonRecord['MedHold'] = "0";
+        if (empty($retVal)){
+        }
+        else {
+            foreach ($retVal as $record) {
+                $temp = json_encode($record);
+                error_log($temp);
+                $name = $record["Name"];
+                $value = $record["Description"];
+                $jsonRecord[$name] = $value;
+            }
+        }
+
+        $jsonRecord['success'] = true;
+        $this->set('jsonRecord', $jsonRecord);
+    }
 }

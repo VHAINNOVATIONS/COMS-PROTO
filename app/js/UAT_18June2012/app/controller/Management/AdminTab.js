@@ -162,6 +162,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
         var rrButtons = thisCtl.getRBRoundingRules().getValue();
         var allowRounding = rrButtons.RoundingRule;
         this.application.loadMask("Please wait; Saving Rounding Rules State");
+        this.application.SiteConfig.RoundingRule  = allowRounding;
         Ext.Ajax.request({
             url: Ext.URLs.RoundingRule,
             method: "POST",
@@ -207,6 +208,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
         var mhButtons = thisCtl.getRBMedHold().getValue();
         var allowMedHold = mhButtons.AllowMedHolds;
         this.application.loadMask("Please wait; Saving Medication Hold State");
+        this.application.SiteConfig.MedHold = allowMedHold;
         Ext.Ajax.request({
             url: Ext.URLs.MedHold,
             method: "POST",

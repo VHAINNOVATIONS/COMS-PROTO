@@ -1465,4 +1465,10 @@ class LookUp extends Model {
         }
         return $this->query($query); 
     }
+
+    public function getSiteConfig() {
+        $query = "SELECT * FROM LookUp WHERE Lookup_Type = 50 OR Lookup_Type = 51";
+        $resp = $this->query($query); 
+        return $resp;
+    }
 }

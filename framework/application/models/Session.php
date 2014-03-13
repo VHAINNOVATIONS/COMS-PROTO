@@ -3,7 +3,6 @@
 class Session extends Model {
     
     function getSessionVariables() {
-        
 		$username = get_current_user();
 		$chktrack = 0;
 		$_SESSION['chktrack'] = $chktrack;
@@ -36,8 +35,8 @@ class Session extends Model {
 	
 	function checkmdwsconnect($AccessCode,$VerifyCode) {
 		$checkstatus = 'Started';
-		$sitelist = 901;
-		$client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");  
+		$sitelist = 101;
+		$client = new SoapClient("http://devmdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");  
 		$connect = $client->connect(array('sitelist'=>$sitelist));
 		$login = $client->login(array('username'=>$AccessCode,'pwd'=>$VerifyCode,'context'=>''));
 		$chklogin = json_encode($login);
