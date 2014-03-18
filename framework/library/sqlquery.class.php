@@ -137,8 +137,8 @@ class SQLQuery {
         if (DB_TYPE == 'mssql') {
             $this->_result = mssql_query($query, $this->_dbHandle);
         } else if (DB_TYPE == 'sqlsrv') {
-            //$serverName = "DBITDATA\DBIT";
-            //$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_VA_TEST");
+            //$serverName = "SQL\SERVER";
+            //$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"xxxx","Database"=>"COMS_UAT_VA_TEST");
             //$conn =  sqlsrv_connect( $serverName, $connectionOptions);
             //$this->_result = sqlsrv_query($conn, $query);
             $this->_result = sqlsrv_query($this->_dbHandle, $query);

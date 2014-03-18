@@ -135,7 +135,7 @@ function __autoload($className) {
 	}
 }
 
-setReporting();
+//setReporting();
 removeMagicQuotes();
 unregisterGlobals();
 callHook();

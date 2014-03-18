@@ -7,10 +7,12 @@ class Orders extends Model {
     
     function getPatientsWithActiveTemplates() {
         $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Date_Ended_Actual is NULL";
+
         return $this->query($query);
     }
 
     function getOrders() {
+
         $query = "SELECT pat.Template_ID as id, pat.Patient_ID as Patient_ID, pat.Date_Started as Date_Started, tr.Drug_ID as Drug_ID, " .
                 "tr.Regimen_Dose as Regimen_Dose, tr.Regimen_Dose_Unit_ID as Regimen_Dose_Unit_ID, tr.Route_ID as Route_ID, " .
                 "tr.Admin_Day as Admin_Day, tr.Infusion_Time as Infusion_Time, tr.Flow_Rate as Flow_Rate, tr.Instructions as Instructions, mh.MH_ID as MH_ID, " .
@@ -21,12 +23,13 @@ class Orders extends Model {
                 "LEFT OUTER JOIN Medication_Hydration mh ON mh.Template_ID = pat.Template_ID " .
                 "LEFT OUTER JOIN MH_Infusion mhi ON mhi.MH_ID = mh.MH_ID " .
                 "WHERE pat.Date_Ended_Actual is not NULL";
+
         return $this->query($query);
     }
 
     function getDrugs() {
         $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Date_Ended_Actual is not NULL";
-
+//        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Is_Active = 1";
         $queryPAT = $this->query($query);
         foreach ($queryPAT as $row) {
             $Template_ID = $row['Template_ID'];
@@ -190,6 +193,9 @@ class Orders extends Model {
 		$this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF);
 		
 		}
+		elseif ($OrderStatusF === "Hold"){
+		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
+		}
 		//echo $query;
         return $this->query($query);
     }
@@ -243,6 +249,74 @@ class Orders extends Model {
         $this->query($query);
     }
 
+    function updateOrderStatusCancelled($TID,$Drug_Name,$Order_Type,$PID){
+        
+		$Template_IDchk = NULL;
+		$Drug_Namechk = NULL;
+		
+		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
+		"FROM Order_Status " .
+		"WHERE Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."'";
+		
+			
+		$queryq = $this->query($query);
+		foreach($queryq as $row){
+		$Template_IDchk =  $row['Template_ID_CHK'];
+		$Drug_Namechk =  $row['Drug_Name_CHK'];
+		$Order_Statuschk =  $row['Order_Statuschk'];
+
+
+		}
+		if ($Template_IDchk === NULL){
+		//echo "empty sring";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		}
+		else{
+		$query = "Update Order_Status set Order_Status = 'Cancelled' " .
+		"where Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."' ".
+		"AND Patient_ID = '".$PID."'";
+		
+		}
+		
+        $this->query($query);
+    }
+
+function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
+        
+		$Template_IDchk = NULL;
+		$Drug_Namechk = NULL;
+		
+		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
+		"FROM Order_Status " .
+		"WHERE Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."'";
+		
+			
+		$queryq = $this->query($query);
+		foreach($queryq as $row){
+		$Template_IDchk =  $row['Template_ID_CHK'];
+		$Drug_Namechk =  $row['Drug_Name_CHK'];
+		$Order_Statuschk =  $row['Order_Statuschk'];
+
+
+		}
+		if ($Template_IDchk === NULL){
+		//echo "empty sring";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		}
+		else{
+		$query = "Update Order_Status set Order_Status = 'Hold' " .
+		"where Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."' ".
+		"AND Patient_ID = '".$PID."'";
+		
+		}
+		
+        $this->query($query);
+    }	
+	
     function LookupNameIn($LID){
         
         $query = "SELECT Name as LK_Name FROM LookUp WHERE Lookup_ID = '".$LID."'";

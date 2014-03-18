@@ -7,19 +7,24 @@
 class MdwsBase {
     
     function MDWS_Setup($roles) {
+			//include('../app/session.php');
             //set variables
             //$sitelist = $roles[0]['sitelist'];
 			$sitelist = $_SESSION['sitelist'];
-            $sitelist = 101;    // MWB Temp Fix till the session parameter works properly. - 3/12/2014
             //$cprsUsename = $roles[0]['cprsUsername'];
-			$cprsUsername = $_SESSION['cprsUsername'];
+			//$cprsUsername = $_SESSION['AccessCode'];
+			//$cprsUsername = $_SESSION['cprsUsername'];
+			//echo "cprsUsername: ".$cprsUsername."";
+			//echo "Access: ".$_SESSION['AccessCode']."";
             //$cprsPass = $roles[0]['cprsPass'];
-			$cprsPass = $_SESSION['cprsPass'];
+			//$cprsPass = $_SESSION['VerifyCode'];
+			$cprsUsername = '1programmer';
+			$cprsPass = 'programmer1';
             $_SESSION['MDWS_Status'] = '';
             $_SESSION['MDWS_Type'] = '';
             $_SESSION['MDWS_Msg'] = '';
             $_SESSION['MDWS_Suggestion'] = '';
-
+			//echo "<br>MDWS Dump:".var_dump($_SESSION)."<br>";
 
             try {
                     $client = new SoapClient("http://devmdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
@@ -31,11 +36,11 @@ class MdwsBase {
 					//-----------------------------------
 					// Needed for MWB Site only
 					//-----------------------------------
-					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'172.19.100.94','port'=>'9355','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
-                    if (isset($connect->connectResult->fault)) {
-                            $this->MDWsCrashReport($connect->connectResult, "Connect", false);
-                            return null;
-                    }
+					//$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'172.19.100.94','port'=>'9355','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
+                    //if (isset($connect->connectResult->fault)) {
+                    //        $this->MDWsCrashReport($connect->connectResult, "Connect", false);
+                   //         return null;
+                   // }
 					//-----------------------------------
 					// Needed for MWB Site only
 					//-----------------------------------

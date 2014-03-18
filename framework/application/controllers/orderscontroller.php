@@ -205,6 +205,14 @@ class OrdersController extends Controller {
 	   $this->grabOrders();
     }
 
+   function OrdersHold($TID,$Drug_Name, $Order_Type, $PID) {
+	   $this->updateOrderStatusHold($TID,$Drug_Name, $Order_Type, $PID);
+    }	
+	
+   function OrdersCancelled($TID,$Drug_Name, $Order_Type, $PID) {
+	   $this->updateOrderStatusCancelled($TID,$Drug_Name, $Order_Type, $PID);
+    }		
+	
     private function analyzeTherapys($therapyCount, $therapys, $type, $typeOrder, $patient, $oemrecord, $therapyDoseDetailsMap = null) {
 
         $modtmpOemRecord = array();

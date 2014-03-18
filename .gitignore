@@ -1,7 +1,6 @@
 GIT_COMMAND_LOG.log 
 *.bak
 *.db
-application\*
 app\SSHDebug\*
 app\config_Constants.php
 app\js_Files2Ignore\*

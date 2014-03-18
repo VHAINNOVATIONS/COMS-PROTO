@@ -3,7 +3,7 @@
 <?php
 echo "<table = '1' border = '1' align='center' width='800'>";
 echo "<tr><td align='center' colspan='2'>";
-echo "CPM   CPM   CPM   CPM   CPM   CPM  CPM   CPM   CPM  CPM  CPM  CPM  CPM<br> 
+echo "<br>*****<B>TEST SYSTEM</B>******<BR>CPM   CPM   CPM   CPM   CPM   CPM  CPM   CPM   CPM  CPM  CPM  CPM  CPM<br> 
    *************************************************************************<br> 
            You have accessed the CPM  Cache Account and VistaLink is installed in this account<br>
    Access privilege is based on specified need.  As a user on this system,
@@ -14,15 +14,6 @@ echo "CPM   CPM   CPM   CPM   CPM   CPM  CPM   CPM   CPM  CPM  CPM  CPM  CPM<br>
  
    VIEWing this message indicates that YOU agree with the terms of system
    use.<br><br>
- 
-            MISUSE of this system constitutes a Federal Crime.<br><br>
- 
-               ********************************************<br>
- 
-               >>>> CPRS is installed in this account <<<<<<br>
-                 >>   CPRS GUI IS AT VERSION 27.90 (OR*3*296)  <<<br>
-                     Copy Date:  <br>
-               ********************************************<br>
  
             MISUSE of this system constitutes a Federal Crime.<br>
  CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM<br>

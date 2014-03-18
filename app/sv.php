@@ -15,5 +15,16 @@ echo "Domain: ".$_SESSION['domain']."<br>";
 echo "Session Status: ".$_SESSION['sessionStatus']."<br>";
 echo "TemplateAuthoring: ".$_SESSION['TemplateAuthoring']."<br>";
 echo "Role_ID: ".$_SESSION['Role_ID']."<br>";
+echo "AccessCode: ".$_SESSION['AccessCode']."<br>";
+echo "VerifyCode: ".$_SESSION['VerifyCode']."<br>";
+echo "ip_vistor: ".$_SESSION['ip_vistor']."<br>";
+echo "compname: ".$_SESSION['compname']."<br>";
+echo "REMOTE_USER: ".$_SESSION['ruser']."<br>";
+echo "winauth: ".$_SESSION['winauth']."<br>";
+echo "page: ".$_SESSION['page']."<br>";
+echo "NWLoginR: ".$_SESSION['NWLoginR']."<br>";
+echo "COMSLogin: ".$_SESSION['COMSLogin']."<br>";
+
+echo "".var_dump($_SESSION)."";
 
 ?>

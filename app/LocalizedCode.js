@@ -41,7 +41,7 @@ function wccConsoleLog(msg) {
 function extract_boomerang_data(o) {
 	var resultsID = document.getElementById('results');
 	if (resultsID) {
-		var html = "<div>";
+		var html = "<div style='border: thin solid silver; width: 50em;margin:10px auto; color: silver;'>";
 
 		if(o.t_done) { 
 			html += "This page took " + o.t_done + "ms to load<br>"; 
