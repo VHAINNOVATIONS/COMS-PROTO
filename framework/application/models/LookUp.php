@@ -564,7 +564,8 @@ class LookUp extends Model {
                     Infusion_Time, 
                     Fluid_Vol, 
                     Flow_Rate, 
-                    Instructions, 
+                    Instructions,
+                    Status,
                     Sequence_Number, 
                     Admin_Time, 
                     Fluid_Type, 
@@ -580,6 +581,7 @@ class LookUp extends Model {
                     '$fluidVol',
                     '$flowRate',
                     '$instruction',
+                    '',
                     $sequence,
                     '$adminTime',
                     '$fluidType',
@@ -1180,7 +1182,8 @@ class LookUp extends Model {
                 l4.Name AS flunit, 
                 tr.Infusion_Time AS infusion, 
                 tr.Flow_rate AS flowRate, 
-                tr.Instructions AS instructions,  
+                tr.Instructions AS instructions, 
+                tr.Status,
                 tr.Sequence_Number AS sequence, 
                 tr.Admin_Time AS adminTime, 
                 tr.Drug_ID AS drugid, 
@@ -1197,44 +1200,33 @@ class LookUp extends Model {
              WHERE tr.Template_ID = '$id' 
              ORDER BY Sequence_Number
         ";
+            error_log("LookUp Model - getRegimens($id) - ");
+            error_log($query);
 
         return $this->query($query);
     }
 
     function getHydrations($id, $type) {
-
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-
-            $query = "select mh.MH_ID as id, lu.Name as drug, mh.Description as description, mh.Fluid_Vol as fluidVol, " .
-                    "mh.Flow_Rate as flowRate, mh.Admin_Day as adminDay, mh.Infusion_Time as infusionTime, " .
-                    "mh.Sequence_Number as Sequence, mh.Admin_Time as adminTime, mh.Drug_ID as drugid, mh.Pre_Or_Post as type, mh.Order_ID as Order_ID " .
-                    "from Medication_Hydration mh " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID " .
-                    "where mh.Template_ID = '" . $id . "' and upper(Pre_Or_Post) ='" . strtoupper($type) . "'  order by Sequence_Number";
-//            $query = "select mh.MH_ID as id, lu.Name as drug, mh.Description as description, " .
-//                    "mh.Admin_Day as adminDay, " .
-//                    "mh.Sequence_Number as Sequence, mh.Admin_Time as adminTime, mh.Drug_ID as drugid, mh.Pre_Or_Post as type " .
-//                    "from Medication_Hydration mh " .
-//                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID " .
-//                    "where mh.Template_ID = '" . $id . "' and upper(Pre_Or_Post) ='" . strtoupper($type) . "'";
-            
-        } else if (DB_TYPE == 'mysql') {
-
-            $query = "select mh.MH_ID as id, lu.`Name` as drug, mh.Description as description, mh.Fluid_Vol as fluidVol, " .
-                    "mh.Flow_Rate as flowRate, mh.Admin_Day as adminDay, mh.Infusion_Time as infusionTime, " .
-                    "mh.Sequence_Number as Sequence, mh.Admin_Time as adminTime, mh.Drug_ID as drugid, mh.Pre_Or_Post as type, mh.Order_ID as Order_ID " .
-                    "from Medication_Hydration mh " .
-                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID " .
-                    "where mh.Template_ID = '" . $id . "' and upper(Pre_Or_Post) ='" . strtoupper($type) . "' order by Sequence_Number";
-//            $query = "select mh.MH_ID as id, lu.`Name` as drug, mh.Description as description, " .
-//                    "mh.Admin_Day as adminDay, " .
-//                    "mh.Sequence_Number as Sequence, mh.Admin_Time as adminTime, mh.Drug_ID as drugid, mh.Pre_Or_Post as type " .
-//                    "from Medication_Hydration mh " .
-//                    "INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID " .
-//                    "where mh.Template_ID = '" . $id . "' and upper(Pre_Or_Post) ='" . strtoupper($type) . "'";
-            
-        }
-
+            $query = "select 
+            mh.MH_ID as id, 
+            lu.Name as drug, 
+            mh.Description as description, 
+            mh.Fluid_Vol as fluidVol, 
+            mh.Flow_Rate as flowRate, 
+            mh.Admin_Day as adminDay, 
+            mh.Infusion_Time as infusionTime,
+            mh.Sequence_Number as Sequence, 
+            mh.Admin_Time as adminTime, 
+            mh.Drug_ID as drugid, 
+            mh.Pre_Or_Post as type, 
+            mh.Order_ID as Order_ID 
+            from Medication_Hydration mh 
+            INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
+            where mh.Template_ID = '$id' 
+            and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
+            order by Sequence_Number";
+            error_log("LookUp Model - getHydrations($id, $type) - ");
+            error_log($query);
         return $this->query($query);
     }
 
@@ -1262,7 +1254,8 @@ class LookUp extends Model {
                 JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
             WHERE mhi.MH_ID = '$id'
         ";
-
+        error_log("LookUp Model - getMHInfusions($id) - ");
+        error_log($query);
         return $this->query($query);
     }
 

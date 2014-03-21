@@ -555,13 +555,11 @@ class Patient extends Model
     function updateOEMRecord ($form_data)
     {
         $templateid = $form_data->{'TemplateID'};
-        // echo "TID: ".$templateid." ||| ";
         $oemrecordid = $form_data->{'OEMRecordID'};
-        // echo "OEM: ".$oemrecordid." ||| ";
         $therapyid = $form_data->{'TherapyID'};
-        // echo "TherapyID: ".$therapyid." ||| ";
         $therapytype = $form_data->{'TherapyType'};
         $instructions = $form_data->{'Instructions'};
+        $Status = $form_data->{'Status'};
         $admintime = $form_data->{'AdminTime'};
         $medid = $form_data->{'MedID'};
         $med = $form_data->{'Med'};
@@ -573,10 +571,7 @@ class Patient extends Model
         $fluidtype = $form_data->{'FluidType'};
         $fluidvol = $form_data->{'FluidVol'};
         $flowrate = $form_data->{'FlowRate'};
-        // $infusiontime = $form_data->{'InfusionTime1'};
-        $infusiontime = $form_data->{'InfusionTime'}; // MWB - 3/14/2012 -
-                                                      // Changed as we don't use
-                                                      // InfusionTime1
+        $infusiontime = $form_data->{'InfusionTime'}; 
         $dose2 = $form_data->{'Dose2'};
         
         $bsadose2 = $form_data->{'BSA_Dose2'};
@@ -619,21 +614,19 @@ class Patient extends Model
         }
         $lookup = new LookUp();
         
+
         $info = $lookup->getLookupInfoById($medid);
         if (null != $info && array_key_exists('error', $info)) {
             return $info;
         }
         
         if ($med != $info[0]['Name']) {
-            // $medid = $med;
             $record = $lookup->getLookupIdByNameAndType($med, 2);
             $medid = $record[0]['id'];
         }
         
         if ('Therapy' === $therapytype) {
-            
-            $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 
-                    12);
+            $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 12);
             $unitid = $lookup->getLookupIdByNameAndType($units, 11);
             
             if ($infusionTypeid) {
@@ -644,8 +637,7 @@ class Patient extends Model
             
             if (null == $infusionTypeid) {
                 $retVal = array();
-                $retVal['error'] = "Insert int MH_ID for " . $type .
-                         " Therapy failed. The Route could not be determined.";
+                $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The Route could not be determined.";
                 return $retVal;
             }
             
@@ -657,55 +649,48 @@ class Patient extends Model
             
             if (null == $unitid) {
                 $retVal = array();
-                $retVal['error'] = "Insert int MH_ID for " . $type .
-                         " Therapy failed. The unit id could not be determined.";
+                $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The unit id could not be determined.";
                 return $retVal;
             }
             
-            $query = "Update Template_Regimen set Drug_ID = '" . $medid .
-                     "',Admin_Time ='" . $admintime . "', Instructions ='" .
-                     $instructions . "', " . "Route_ID ='" . $infusionTypeid .
-                     "', Regimen_Dose_Unit_ID ='" . $unitid .
-                     "', Regimen_Dose ='" . $dose . "', Flow_Rate ='" . $flowrate .
-                     "', Fluid_Type ='" . $fluidtype . "', " . "Fluid_Vol ='" .
-                     $fluidvol . "', BSA_Dose = '" . $bsadose .
-                     "', Infusion_Time = '" . $infusiontime . "' " .
-                     "where Patient_Regimen_ID = '" . $therapyid . "'";
-            
-            // $drugnameLK = $this->LookupNameIn($medid);
-            // $patientid = $this->LookupPatientID($oemrecordid);
-            // /org
-            // $this->CreateOrderStatus($templateid,$drugnameLK,'Create
-            // Record',$patientid);
-            
-            // $this->updateOrderStatusTable($templateid,$drugnameLK,'order
-            // type',$patientid,'','Updated Record');
-            // $this->updateOrderStatusIn($templateid,$drugnameLK,'TH',$patientId);
-            
+            $query = "Update Template_Regimen 
+            set Drug_ID = '$medid',
+            Admin_Time ='$admintime', 
+            Instructions ='$instructions', 
+            Status = '$Status',
+            Route_ID ='$infusionTypeid', 
+            Regimen_Dose_Unit_ID ='$unitid', 
+            Regimen_Dose ='$dose', 
+            Flow_Rate ='$flowrate', 
+            Fluid_Type ='$fluidtype', 
+            Fluid_Vol ='$fluidvol', 
+            BSA_Dose = '$bsadose', 
+            Infusion_Time = '$infusiontime' 
+            where Patient_Regimen_ID = '$therapyid'";
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
                 return $retVal;
             }
-        } else if ('Pre' === $therapytype || 'Post' === $therapytype) {
-            
-            $query = "select * from MH_Infusion where MH_ID = '" . $therapyid .
-                     "'";
+        } 
+        else if ('Pre' === $therapytype || 'Post' === $therapytype) {
+            $query = "select * from MH_Infusion where MH_ID = '$therapyid'";
             $infusionRecord = $this->query($query);
-            if (null != $infusionRecord &&
-                     array_key_exists('error', $infusionRecord)) {
+            if (null != $infusionRecord && array_key_exists('error', $infusionRecord)) {
                 return $infusionRecord;
             }
             
-            $query = "Update Medication_Hydration set Drug_ID = '" . $medid .
-                     "',Admin_Time ='" . $admintime . "', Description ='" .
-                     $instructions . "' where MH_ID = '" . $therapyid . "'";
+            $query = "Update 
+                Medication_Hydration set Drug_ID = '$medid',
+                Admin_Time ='$admintime', 
+                Description ='$instructions' 
+                where MH_ID = '$therapyid'";
+
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
                 return $retVal;
             }
             
             for ($index = 0; $index < count($infusionRecord); $index ++) {
-                
                 if (1 == $index) {
                     $infusionmethod = $infusionmethod2;
                     $units = $units2;
@@ -716,9 +701,7 @@ class Patient extends Model
                     $fluidvol = $fluidvol2;
                     $infusiontime = $infusiontime2;
                 }
-                
-                $infusionTypeid = $lookup->getLookupIdByNameAndType(
-                        $infusionmethod, 12);
+                $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 12);
                 $unitid = $lookup->getLookupIdByNameAndType($units, 11);
                 
                 if ($infusionTypeid) {
@@ -729,8 +712,7 @@ class Patient extends Model
                 
                 if (null == $infusionTypeid) {
                     $retVal = array();
-                    $retVal['error'] = "Insert int MH_ID for " . $type .
-                             " Therapy failed. The Route could not be determined.";
+                    $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The Route could not be determined.";
                     return $retVal;
                 }
                 
@@ -742,19 +724,20 @@ class Patient extends Model
                 
                 if (null == $unitid) {
                     $retVal = array();
-                    $retVal['error'] = "Insert int MH_ID for " . $type .
-                             " Therapy failed. The unit id could not be determined.";
+                    $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The unit id could not be determined.";
                     return $retVal;
                 }
                 
-                $query = "Update MH_Infusion set Infusion_Amt = '" . $dose .
-                         "',BSA_DOSE ='" . $bsadose . "',Infusion_Unit_ID='" .
-                         $unitid . "',Infusion_Type_ID='" . $infusionTypeid .
-                         "'," . "Fluid_Type='" . $fluidtype . "',Flow_Rate='" .
-                         $flowrate . "',Fluid_Vol='" . $fluidvol .
-                         "',Infusion_Time='" . $infusiontime . "' " .
-                         "where Infusion_ID ='" .
-                         $infusionRecord[$index]['Infusion_ID'] . "'";
+                $query = "Update MH_Infusion 
+                set Infusion_Amt = '$dose',
+                BSA_DOSE ='$bsadose',
+                Infusion_Unit_ID='$unitid',
+                Infusion_Type_ID='$infusionTypeid',
+                Fluid_Type='$fluidtype',
+                Flow_Rate='$flowrate',
+                Fluid_Vol='$fluidvol',
+                Infusion_Time='$infusiontime'
+                where Infusion_ID ='" .$infusionRecord[$index]['Infusion_ID'] . "'";
                 
                 $retVal = $this->query($query);
                 if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -862,16 +845,14 @@ class Patient extends Model
             return $retVal;
         }
         
-        $query = "Select Patient_History_ID as id from Patient_History where Patient_ID = '" .
-                 $patientId . "' and Date_Taken = '" . $dateTaken . "'";
+        $query = "Select Patient_History_ID as id from Patient_History where Patient_ID = '$patientId' and Date_Taken = '$dateTaken'";
         
         return $this->query($query);
     }
 
     function getTopLevelOEMRecords ($patientId, $id)
     {
-        $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '" .
-                 $id . "'";
+        $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '$id'";
         
         $regimenId = $this->query($query);
         
@@ -894,7 +875,9 @@ class Patient extends Model
                      "and Patient_ID = '" . $patientId . "' " .
                      "order by Admin_Date";
         }
-        
+        error_log("Patient Model - getTopLevelOEMRecords()");
+        error_log("$query");
+
         return $this->query($query);
     }
 
@@ -959,40 +942,39 @@ class Patient extends Model
 
     function getTopLevelPatientTemplateDataById ($patientId, $id)
     {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            
-            $query = "select mt.Template_ID as id, lu.Description as name, mt.Cycle_Length as length, mt.Emotegenic_ID as emoID, l2.Name as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk, " .
-                     "mt.Pre_MH_Instructions preMHInstruct, mt.Post_MH_Instructions postMHInstruct, mt.Cycle_Time_Frame_ID as CycleLengthUnitID, l1.Name as CycleLengthUnit, " .
-                     "mt.Cancer_ID as Disease, mt.Disease_Stage_ID as DiseaseStage, mt.Regimen_ID RegimenId, mt.Version as version, " .
-                     "case when l3.Name is not null then l3.Name else '' end as DiseaseStageName, mt.Course_Number as CourseNum, mt.Total_Courses as CourseNumMax, mt.Regimen_Instruction as regimenInstruction, " .
-                     "Goal, case when pt.Clinical_Trial is not null then pt.Clinical_Trial else '' end as ClinicalTrial, Status, l4.Name + '-' + l4.Description as PerfStatus " .
-                     "from Master_Template mt " .
-                     "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                     "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                     "INNER JOIN Patient_Assigned_Templates pt ON pt.Template_ID = mt.Template_ID " .
-                     "LEFT JOIN LookUp l4 ON l4.Lookup_ID = pt.Perf_Status_ID " .
-                     "LEFT OUTER JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID " .
-                     "where mt.Template_ID = '" . $id . "' " .
-                     "and pt.Patient_ID = '" . $patientId . "' " .
-                     "and pt.Is_Active = 1";
-        } else if (DB_TYPE == 'mysql') {
-            
-            $query = "select mt.Template_ID as id, lu.Description as name, mt.Cycle_Length as length, mt.Emotegenic_ID as emoID, l2.`Name` as emoLevel, mt.Febrile_Neutropenia_Risk as fnRisk, " .
-                     "mt.Pre_MH_Instructions preMHInstruct, mt.Post_MH_Instructions postMHInstruct, mt.Cycle_Time_Frame_ID as CycleLengthUnitID, l1.`Name` as CycleLengthUnit, " .
-                     "mt.Cancer_ID as Disease, mt.Disease_Stage_ID as DiseaseStage, mt.Regimen_ID as RegimenId, mt.Version as version, " .
-                     "case when l3.`Name` is not null then l3.`Name` else '' end as DiseaseStageName, mt.Course_Number as CourseNum, mt.Total_Courses as CourseNumMax, mt.Regimen_Instruction as regimenInstruction, " .
-                     "Goal, case when pt.Clinical_Trial is not null then pt.Clinical_Trial else '' end as ClinicalTrial, Status, concat_ws('-',l4.`Name`,  l4.Description) as PerfStatus " .
-                     "from Master_Template mt " .
-                     "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID " .
-                     "INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID " .
-                     "INNER JOIN Patient_Assigned_Templates pt ON pt.Template_ID = mt.Template_ID " .
-                     "LEFT JOIN LookUp l4 ON l4.Lookup_ID = pt.Perf_Status_ID " .
-                     "LEFT OUTER JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID " .
-                     "where mt.Template_ID = '" . $id . "' " .
-                     "and pt.Patient_ID = '" . $patientId . "' " .
-                     "and pt.Is_Active = true";
-        }
-        
+            $query = "select 
+            mt.Template_ID as id, 
+            lu.Description as name, 
+            mt.Cycle_Length as length, 
+            mt.Emotegenic_ID as emoID, 
+            l2.Name as emoLevel, 
+            mt.Febrile_Neutropenia_Risk as fnRisk, 
+            mt.Pre_MH_Instructions preMHInstruct, 
+            mt.Post_MH_Instructions postMHInstruct, 
+            mt.Cycle_Time_Frame_ID as CycleLengthUnitID, 
+            l1.Name as CycleLengthUnit, 
+            mt.Cancer_ID as Disease, 
+            mt.Disease_Stage_ID as DiseaseStage, 
+            mt.Regimen_ID RegimenId, 
+            mt.Version as version, 
+            case when l3.Name is not null then l3.Name else '' end as DiseaseStageName, 
+            mt.Course_Number as CourseNum, 
+            mt.Total_Courses as CourseNumMax, 
+            mt.Regimen_Instruction as regimenInstruction, 
+            Goal, 
+            case when pt.Clinical_Trial is not null then pt.Clinical_Trial else '' end as ClinicalTrial, 
+            Status, 
+            l4.Name + '-' + l4.Description as PerfStatus 
+            from Master_Template mt 
+            INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
+            INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
+            INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+            INNER JOIN Patient_Assigned_Templates pt ON pt.Template_ID = mt.Template_ID 
+            LEFT JOIN LookUp l4 ON l4.Lookup_ID = pt.Perf_Status_ID 
+            LEFT OUTER JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
+            where mt.Template_ID = '$id' and pt.Patient_ID = '$patientId' and pt.Is_Active = 1";
+        error_log("Patient model - getTopLevelPatientTemplateDataById()");
+        error_log($query);
         return $this->query($query);
     }
 

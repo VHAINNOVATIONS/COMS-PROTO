@@ -1,13 +1,22 @@
-<?php	
+<?php
+
+$mwbTemp = "Unknown URI";
+if (isset($_GET[ 'url' ])) {
+    $mwbTemp = $_GET[ 'url' ];
+}
+error_log("-------------------------");
+error_log("Start Process - $mwbTemp");
+
+
 //echo "*** COMS Test Site ***";
 //Include and Set phpseclib path
 set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
 //Include SSH2 file
-include('Net/SSH2.php');
-include "dbitcon.php";
-include "session.php";
-include "NWLogin.php";
-include "track.php";
+require_once "Net/SSH2.php";
+require_once "dbitcon.php";
+require_once "session.php";
+require_once "NWLogin.php";
+require_once "track.php";
 require_once "/ChromePhp.php";
 $winauth = $_SERVER['AUTH_USER'];
 $_SESSION['winauth']= $winauth;
@@ -15,17 +24,30 @@ $ruser = $_SERVER['REMOTE_USER'];
 $_SESSION['ruser']= $ruser;
 $COMSLogin = $_SESSION['COMSLogin'];
 $point = "Pre Check";
-PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
 
+if (isset($_POST['AccessCode'])) {
+    PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
+}
+else {
+    PostTrack($_SESSION['ruser'],"Unk",$point,0,$_SESSION['sessionid']);
+}
 if (empty( $_SESSION[$COMSLogin])){
-$AccessCode = $_POST['AccessCode'];
-$VerifyCode = $_POST['VerifyCode'];
-$_SESSION['AccessCode'] = $_POST['AccessCode'];
-$_SESSION['cprsUsername'] = $_POST['AccessCode'];
-$_SESSION['cprsPass'] = $_POST['VerifyCode'];
-$_SESSION['VerifyCode'] = $_POST['VerifyCode'];
-//echo "".var_dump($_SESSION)."<br>";
-$NWLoginR = NWLogin($AccessCode,$VerifyCode);
+    if (isset($_POST['AccessCode'])) {
+        $AccessCode = $_POST['AccessCode'];
+        $_SESSION['AccessCode'] = $_POST['AccessCode'];
+        $_SESSION['cprsUsername'] = $_POST['AccessCode'];
+    }
+    if (isset($_POST['VerifyCode'])) {
+        $VerifyCode = $_POST['VerifyCode'];
+        $_SESSION['cprsPass'] = $_POST['VerifyCode'];
+        $_SESSION['VerifyCode'] = $_POST['VerifyCode'];
+    }
+    if (isset($VerifyCode) && isset($AccessCode)) {
+        $NWLoginR = NWLogin($AccessCode,$VerifyCode);
+    }
+    else {
+        $NWLoginR = NWLogin("", "");
+    }
 }
 
 $_SESSION['NWLoginR'] = $NWLoginR;

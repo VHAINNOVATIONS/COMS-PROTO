@@ -367,33 +367,6 @@ class PatientController extends Controller
                         return;
                     }
 
-                    
-                    /*********************
-                    error_log("Reporting Patient Details");
-                    $details = $retVal;
-                    if (!empty($details[0])) {
-                        error_log("Reporting Patient Details - !Empty");
-                        $n = 1;
-                        foreach($details as $d) {
-                            error_log($n++ . " - " . json_encode($d));
-                        }
-                        $detail = $this->TreatmentStatus($details[0]);
-                        error_log($n++ . " - " . json_encode($detail));
-                        if ($detail["TreatmentStatus"] == 'Ended') {
-                            error_log("Ended");
-                            $detail = null;
-                        }
-                        $patientDetailMap[$patient['ID']] = $detail;
-                        error_log($detail);
-                    } else {
-                        error_log("Reporting Patient Details - IS Empty");
-                        $patientDetailMap[$patient['ID']] = $details;
-                        foreach($details as $d) {
-                            error_log("1 - " . $d);
-                        }
-                    }
-                    **************************/
-
                     $details = $retVal;
                     foreach($details as $d) {
                         $detail = $this->TreatmentStatus($d);
@@ -596,6 +569,7 @@ class PatientController extends Controller
         $data->FluidVol = $regimen["flvol"];
         $data->FlowRate = $regimen["flowRate"];
         $data->Instructions = $regimen["instructions"];
+        $data->Status = $regimen["Status"];
         $data->Sequence = $regimen["sequence"];
         $data->AdminTime = $regimen["adminTime"];
         $data->FluidType = $regimen["fluidType"];
@@ -771,7 +745,11 @@ class PatientController extends Controller
     }
 
 /**
- * $id = Patient GUID
+ * $id = Patient GUID used in the Patient Assigned Templates Table
+ *
+ *  Get Template currently assigned to this patient
+ *  Get the disease this patient has
+ *  
  **/
 	private function genOEMData($id) {
 		$lookup = new LookUp();
@@ -780,7 +758,6 @@ class PatientController extends Controller
 			$this->set('masterRecord', null);
 			return;
 		}
-
 
 		if (0 == count($templateId)) {
 			$this->set('oemsaved', null);
@@ -795,7 +772,8 @@ class PatientController extends Controller
 			$this->set('masterRecord', null);
 			return;
 		}
-
+        ChromePhp::log($masterRecord);
+        error_log(json_encode($masterRecord));
 
 		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
 		$lookup = new LookUp();
@@ -809,6 +787,8 @@ class PatientController extends Controller
 		$this->set('masterRecord', $masterRecord);
 
 
+
+
 		$oemrecords = $this->Patient->getTopLevelOEMRecords($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
 			$this->set('oemrecords', null);
@@ -816,11 +796,12 @@ class PatientController extends Controller
 		}
 		$this->set('oemrecords', $oemrecords);
 
-
 		$oemMap = array();
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
+            $oemRecordTemplateID = $oemrecord['TemplateID'];
 
+            error_log("GET Pre Hydrations for $oemRecordTemplateID");
 			$retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -829,6 +810,8 @@ class PatientController extends Controller
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
 			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
 
+
+            error_log("GET Post Hydrations for $oemRecordTemplateID");
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -837,7 +820,8 @@ class PatientController extends Controller
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
 			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
 
-			$retVal = $this->Regimens($oemrecord['TemplateID']);
+            error_log("GET Therapy for $oemRecordTemplateID");
+            $retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
 				return;
@@ -860,13 +844,12 @@ class PatientController extends Controller
         }
         else if ($form_data) {
             $this->Patient->beginTransaction();
+            $this->set('oemrecords', null);
+
             $retVal = $this->Patient->updateOEMRecord($form_data);
             // this works
             // $this->Patient->CreateOrderStatus($form_data);
             // $this->Patient->OEMupdateOrderStatus($form_data);
-            
-            $this->set('oemrecords', null);
-            
             if (null != $retVal && array_key_exists('apperror', $retVal)) {
                 $errorMsg = $retVal['apperror'];
                 $this->set('frameworkErr', $errorMsg);
@@ -874,7 +857,6 @@ class PatientController extends Controller
                 $this->Patient->rollbackTransaction();
                 return;
             }
-            
             if ($this->checkForErrors('Update OEM Record Failed. ', $retVal)) {
                 $this->set('oemsaved', null);
                 $this->Patient->rollbackTransaction();
@@ -925,13 +907,20 @@ class PatientController extends Controller
     function Regimens($id = null)
     {
         $lookup = new LookUp();
-        
         $regimens = $lookup->getRegimens($id);
         if (null != $regimens && array_key_exists('error', $regimens)) {
             return $regimens;
         }
         
-        $this->set('regimens', $lookup->getRegimens($id));
+        error_log("--------------------------");
+        error_log("PatientController - Regimens($id)");
+        foreach ($regimens as $regimen) {
+            error_log(json_encode($regimen));
+        }
+        error_log("PatientController - Regimens($id) END");
+        error_log("--------------------------");
+
+        $this->set('regimens', $regimens);
     }
 
     function Vitals($id = null, $dateTaken = null)

@@ -61,7 +61,7 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 			{ 
 				xtype : "container", 
 				name : "PatientQuery", 
-				html : "&nbsp;<button type=\"button\" class=\"anchor\" name=\"QueryCPRS4Patient\">Query CPRS for Patient</button>" 
+				html : "&nbsp;<button type=\"button\" class=\"anchor QueryCPRS4Patient\" name=\"QueryCPRS4Patient\">Query CPRS for Patient</button>" 
 			}
 		]},
         { xtype: 'box', margin: "10 60 10 60", autoEl: { tag: 'div', style: "background: #EFEFEF; padding: 0.5em; border: thin solid navy;", html: '(Note: For testing purposes, there are hundreds of patients available between 0010 and 0603. To search for a patient, use the spelling of the number for a last name and the number. For example: <b>FiveHundredTwenty, Patient</b> would be <b>f0520</b> or <b>OneHundredThirty, Patient</b> would be <b>o0130</b>).' } },

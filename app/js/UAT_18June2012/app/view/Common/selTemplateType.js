@@ -3,6 +3,8 @@ Ext.define('COMS.view.Common.selTemplateType' ,{
 	alias : 'widget.selTemplateType',
 	name : 'Select Template Type',
 	store : 'TemplateSources',
+        // queryMode: 'local',
+
 	emptyText: "",
 	width: 300,
 	size : 60,

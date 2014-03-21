@@ -1,13 +1,21 @@
 <?php
 
+    $drug = "";
+    $dose = "";
+    $Regimen_Dose_Unit = "";
+    $Description = "";
+    $match = "";
 
-if ($argc >= 6) { 
-echo "argv[1] = {$argv[1]}\n";}
-$drug = $argv[1];
-$dose = $argv[2];
-$Regimen_Dose_Unit = $argv[3];
-$Description = $argv[4];
-$match = $argv[5];
+if (isset($argc)) {
+    if ($argc >= 6) { 
+        echo "argv[1] = {$argv[1]}\n";
+    }
+    $drug = $argv[1];
+    $dose = $argv[2];
+    $Regimen_Dose_Unit = $argv[3];
+    $Description = $argv[4];
+    $match = $argv[5];
+}
 
 //valuecheck($drug);
 $patientsearch = $match;

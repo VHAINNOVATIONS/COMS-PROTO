@@ -1,4 +1,6 @@
 <?php
+
+error_log("Include NWLogin");
 //include "session.php";
 $AccessCode = $_SESSION['AccessCode'];
 $VerifyCode = $_SESSION['VerifyCode'];
@@ -11,6 +13,9 @@ $VerifyCode = $_SESSION['VerifyCode'];
 	//include('Net/SSH2.php');
 	
 	function NWLogin($AccessCode,$Verify){
+        global $mwbTemp;
+
+error_log("NWLogin - $AccessCode, $Verify - $mwbTemp");
 	include "dbitcon.php";
 	
 	//Set Variables

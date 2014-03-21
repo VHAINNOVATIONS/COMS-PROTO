@@ -622,7 +622,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					var pIndex = this.pIndex;
 
 					var buf = "href=\"#Cycle_" + Cycle + "_Day_" + Day + "_Med_" + idx + "\" " + 
-						"name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + 
+						// "name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + 
 						"cycle=\"" + Cycle + "\" " + 
 						"day=\"" + Day + "\" " + 
 						"type=\"" + Type + "\" " + 
@@ -632,13 +632,13 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         "medID=\"" + current.MedID + "\" " + 
                         "OrderID=\"" + current.Order_ID + "\" " + buf;
 
-                    var btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + ">Edit Medication</button><br />",
+                    var btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit Medication</button><br />",
                         btn2 = "",
                         btn3 = "";
                     if (this.SiteConfig.MedHold === "1") {
-                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + ">Medication Hold</button><br />";
+                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Medication Hold</button><br />";
                     }
-                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + ">Cancel Medication</button><br />";
+                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel Medication</button><br />";
 
 					return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
 				},
@@ -683,7 +683,14 @@ Ext.define("COMS.view.NewPlan.OEM", {
 			queryMode : "local",
 			displayField : "date",
 			valueField : "LinkName",
-			store : { fields : [ "date", "LinkName" ], data : [{ date : "day1", LinkName : "Cycle_1-Day_1" }, { date : "day2", LinkName : "Cycle_1-Day_2" }, { date : "day3", LinkName : "Cycle_1-Day_3" }] }
+			store : { 
+                fields : [ "date", "LinkName" ], 
+                data : [
+                    { date : "day1", LinkName : "Cycle_1-Day_1" }, 
+                    { date : "day2", LinkName : "Cycle_1-Day_2" }, 
+                    { date : "day3", LinkName : "Cycle_1-Day_3" }
+                ]
+            }
 		},
 		{ xtype : "dspOEMTemplateData"}
 	]

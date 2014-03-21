@@ -8,6 +8,7 @@ Ext.define("COMS.model.OEMRecordsTherapy", {
 		"Instructions",
 		"Med",
 		"AdminTime",
+        "Status",       // MWB - 3/20/2014 - Used for flagging a medication as cancelled or on hold
 
 		"Order_ID",		// MWB - 7/2/2012 - New Data for Orders
 		"Dose",
@@ -31,6 +32,7 @@ Ext.define("COMS.model.OEMRecordsPrePostTherapy", {
 			"Instructions",
 			"Med",
 			"AdminTime",
+            "Status",       // MWB - 3/20/2014 - Used for flagging a medication as cancelled or on hold
 
 			"Order_ID",		// MWB - 7/2/2012 - New Data for Orders
 			"Dose1",

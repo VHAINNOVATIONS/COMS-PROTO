@@ -1,7 +1,9 @@
 Ext.define('COMS.store.Templates', {
     extend : 'Ext.data.Store',
-    autoDestroy: true,
     autoLoad: false,
+    model : Ext.COMSModels.Templates,
+
+    autoDestroy: true,
     listeners: {
         'beforeload' : function(store, options){
             
@@ -15,8 +17,5 @@ Ext.define('COMS.store.Templates', {
             
         }
         
-    },
-    model : Ext.COMSModels.Templates
-
-        
+    }
 });

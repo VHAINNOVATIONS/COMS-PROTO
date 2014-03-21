@@ -116,10 +116,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			"NewPlanTab PatientSelection textfield[name=\"CPRS_QueryString\"]" : {
 				specialkey : this.QSEnter
 			},
-
-            "NewPlanTab PatientSelection": {
-                render: this.onPanelRendered
-            },
             "NewPlanTab SelectPatient combobox" : {
                 select : this.PatientSelected
             },
@@ -168,7 +164,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             },
 
             "NewPlanTab PatientSelection" : {
-                afterrender: this.togglePanelOnTitleBarClick
+                afterrender: this.handlePatientSelectionRender
             },
             "NewPlanTab PatientInfo PatientInfoTable" : {
                 afterrender: this.togglePanelOnTitleBarClick
@@ -187,20 +183,25 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 
+
+    handlePatientSelectionRender : function( panel ) {
+        var Btns = Ext.select("button.anchor.QueryCPRS4Patient");
+        if (Btns) {
+            Btns.on("click", this.handlePatientSelectionClickEvent, this);
+        }
+        this.togglePanelOnTitleBarClick(panel);
+    },
+
     togglePanelOnTitleBarClick : function(panel) {
         panel.header.el.on('click', function() {
-          if (panel.collapsed) {panel.expand();}
-          else {panel.collapse();}
+            if (panel.collapsed) {
+                panel.expand();
+            }
+            else {
+                panel.collapse();
+            }
         });
     },
-    onPanelRendered: function() {
-        wccConsoleLog("New Plan Tab Panel has been rendered");
-		// Grabs all the buttons within the "PatientSelection" container of the "NewPlanTab" container
-		var Btns = Ext.ComponentQuery.query("NewPlanTab [name=\"PatientSelection\"]")[0].el.select("button.anchor");
-		Btns.on("click", this.handlePatientSelectionClickEvent, this);
-    },
-
-
 
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
@@ -1379,6 +1380,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	handlePatientSelectionClickEvent : function( evt, theBtn ) {
+        console.log("handlePatientSelectionClickEvent");
 		wccConsoleLog("handlePatientSelectionClickEvent - PatientInfoTable!");
 
 		//---------------------------------

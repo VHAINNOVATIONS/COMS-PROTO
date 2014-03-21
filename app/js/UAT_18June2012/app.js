@@ -10,8 +10,15 @@
  *
  **/
 
+var MaxTimeoutMinutes = 5;
+var MaxTimeoutSec = MaxTimeoutMinutes * 60;
+var MaxTimeoutMS = MaxTimeoutSec * 1000;
+Ext.override(Ext.data.proxy.Ajax, { timeout:MaxTimeoutMS });
+Ext.override(Ext.data.Connection, { timeout: MaxTimeoutMS });
+Ext.override(Ext.form.action.Action, { timeout: MaxTimeoutSec });
+Ext.Ajax.timeout = MaxTimeoutMS;
 
-Ext.override(Ext.data.proxy.Ajax, { timeout:60000 });
+
 // MWB 21 Jan 2012 - Cleaned up the code, ran through JSLint which caught a couple of missing ";" and http://jsbeautifier.org/
 // All URLs for the application (REST Data Stores) must be included here.
 // This way whenever the base structure/path of all the URLs needs to change it can be done in a single place.
