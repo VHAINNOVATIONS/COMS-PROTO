@@ -11,6 +11,8 @@ Ext.define("COMS.model.OEMRecordsTherapy", {
         "Status",       // MWB - 3/20/2014 - Used for flagging a medication as cancelled or on hold
 
 		"Order_ID",		// MWB - 7/2/2012 - New Data for Orders
+        "Order_Status",
+        "Reason",       // MWB - 3/23/2014 - Reason for changing existing medication order
 		"Dose",
 		"BSA_Dose",
 		"DoseUnits",
@@ -35,6 +37,8 @@ Ext.define("COMS.model.OEMRecordsPrePostTherapy", {
             "Status",       // MWB - 3/20/2014 - Used for flagging a medication as cancelled or on hold
 
 			"Order_ID",		// MWB - 7/2/2012 - New Data for Orders
+			"Order_Status",
+            "Reason",       // MWB - 3/23/2014 - Reason for changing existing medication order
 			"Dose1",
 			"BSA_Dose1",
 			"DoseUnits1",

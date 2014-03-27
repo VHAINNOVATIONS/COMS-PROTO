@@ -189,6 +189,12 @@ class Patient extends Model
     }
 
 
+function convertReason2ID($Reason) {
+    if (0 === intval($Reason)) {
+        $query = "select WorkFlowID as Reason from Workflows where WorkFlowName = '$Reason'";
+    }
+    return $this->query($query);
+}
 
 
 
@@ -572,15 +578,27 @@ class Patient extends Model
         $fluidvol = $form_data->{'FluidVol'};
         $flowrate = $form_data->{'FlowRate'};
         $infusiontime = $form_data->{'InfusionTime'}; 
-        $dose2 = $form_data->{'Dose2'};
-        
-        $bsadose2 = $form_data->{'BSA_Dose2'};
-        $units2 = $form_data->{'Units2'};
-        $infusionmethod2 = $form_data->{'InfusionMethod2'};
-        $fluidtype2 = $form_data->{'FluidType2'};
-        $fluidvol2 = $form_data->{'FluidVol2'};
-        $flowrate2 = $form_data->{'FlowRate2'};
+
+        $dose2 = $form_data->{'Dose'};
+        $bsadose2 = $form_data->{'BSA_Dose'};
+        $units2 = $form_data->{'Units'};
+        $infusionmethod2 = $form_data->{'InfusionMethod'};
+        $fluidtype2 = $form_data->{'FluidType'};
+        $fluidvol2 = $form_data->{'FluidVol'};
+        $flowrate2 = $form_data->{'FlowRate'};
         $infusiontime2 = $form_data->{'InfusionTime2'};
+
+        $Reason = $form_data->{'Reason'};
+        if (0 == intval($Reason)) {
+            if ("" != $Reason) {
+                $retVal = $this->convertReason2ID($Reason);
+                $Reason = 0;
+                if (null != $retVal) {
+                    $Reason = $retVal[0]["Reason"];
+                }
+            }
+        }
+
         
         $retVal = array();
         
@@ -626,6 +644,8 @@ class Patient extends Model
         }
         
         if ('Therapy' === $therapytype) {
+            // Magic # "12" is for the Regimen Route Type
+            // Magic # "11" is for the Medication Unit Measurement
             $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 12);
             $unitid = $lookup->getLookupIdByNameAndType($units, 11);
             
@@ -665,7 +685,8 @@ class Patient extends Model
             Fluid_Type ='$fluidtype', 
             Fluid_Vol ='$fluidvol', 
             BSA_Dose = '$bsadose', 
-            Infusion_Time = '$infusiontime' 
+            Infusion_Time = '$infusiontime',
+            Reason = '$Reason'
             where Patient_Regimen_ID = '$therapyid'";
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -682,14 +703,16 @@ class Patient extends Model
             $query = "Update 
                 Medication_Hydration set Drug_ID = '$medid',
                 Admin_Time ='$admintime', 
-                Description ='$instructions' 
+                Description ='$instructions',
+                Status = '$Status',
+                Reason = '$Reason'
                 where MH_ID = '$therapyid'";
 
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
                 return $retVal;
             }
-            
+
             for ($index = 0; $index < count($infusionRecord); $index ++) {
                 if (1 == $index) {
                     $infusionmethod = $infusionmethod2;
@@ -712,7 +735,7 @@ class Patient extends Model
                 
                 if (null == $infusionTypeid) {
                     $retVal = array();
-                    $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The Route could not be determined.";
+                    $retVal['error'] = "Insert int MH_ID for $therapytype Therapy failed. The Route could not be determined.";
                     return $retVal;
                 }
                 
@@ -721,13 +744,13 @@ class Patient extends Model
                 } else {
                     $unitid = null;
                 }
-                
+
                 if (null == $unitid) {
                     $retVal = array();
-                    $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The unit id could not be determined.";
+                    $retVal['error'] = "Insert int MH_ID for $therapytype Therapy failed. The unit id could not be determined.";
                     return $retVal;
                 }
-                
+
                 $query = "Update MH_Infusion 
                 set Infusion_Amt = '$dose',
                 BSA_DOSE ='$bsadose',
@@ -738,7 +761,6 @@ class Patient extends Model
                 Fluid_Vol='$fluidvol',
                 Infusion_Time='$infusiontime'
                 where Infusion_ID ='" .$infusionRecord[$index]['Infusion_ID'] . "'";
-                
                 $retVal = $this->query($query);
                 if (null != $retVal && array_key_exists('error', $retVal)) {
                     return $retVal;
@@ -875,8 +897,6 @@ class Patient extends Model
                      "and Patient_ID = '" . $patientId . "' " .
                      "order by Admin_Date";
         }
-        error_log("Patient Model - getTopLevelOEMRecords()");
-        error_log("$query");
 
         return $this->query($query);
     }
@@ -973,8 +993,6 @@ class Patient extends Model
             LEFT JOIN LookUp l4 ON l4.Lookup_ID = pt.Perf_Status_ID 
             LEFT OUTER JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
             where mt.Template_ID = '$id' and pt.Patient_ID = '$patientId' and pt.Is_Active = 1";
-        error_log("Patient model - getTopLevelPatientTemplateDataById()");
-        error_log($query);
         return $this->query($query);
     }
 

@@ -1032,6 +1032,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	selTemplateChange: function (combo, recs, eOpts) {
 		wccConsoleLog("Template has been selected");
+        debugger;
 
 		var CTOSModelParam = recs[0].data.id;
 

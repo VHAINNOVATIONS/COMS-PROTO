@@ -5,7 +5,21 @@ if (!is_null($oemrecords) && is_null($oemsaved)) {
     $numtemplates = count($masterRecord);
     
     if ($numeoemrecords) {
-        
+        // Perform REAL calculation of the # of Admin Days in a Given cycle.
+        // Previously incorrect data pulled in the echo below:
+        //    "\"AdminDaysPerCycle\":\"".$masterRecord[0]['length']."\", \"OEMRecords\":[";
+        // the "length" is the # of <units> per cycle (where units is days, weeks, etc)
+        // What's needed is the # of Admin Days per cycle (which can be anything from 1 up to the # of days in a cycle
+        $AdminDaysPerCycle = 0;
+        foreach ($oemrecords as $oemrecord) {
+            if (1 == $oemrecord['CourseNum']) {
+                $AdminDaysPerCycle++;
+            }
+            else {
+                break;
+            }
+        }
+
         echo "{\"success\" : true, \"total\" : $numtemplates , \"records\" :[{" .
              "\"id\":\"".$masterRecord[0]['id']."\", \"FNRisk\":\"".$masterRecord[0]['fnRisk']."\",".
              "\"NeutropeniaRecommendation\":\"XX\", \"ELevelID\":\"".$masterRecord[0]['emoID']."\",".
@@ -13,12 +27,17 @@ if (!is_null($oemrecords) && is_null($oemsaved)) {
              "\"ELevelRecommendationNCCN\":\"XX\", \"numCycles\":\"".$masterRecord[0]['CourseNumMax']."\",".
              "\"Goal\":\"".$masterRecord[0]['Goal']."\", \"ClinicalTrial\":\"".$masterRecord[0]['ClinicalTrial']."\",".
              "\"Status\":\"".$masterRecord[0]['Status']."\", \"PerformanceStatus\":\"".$masterRecord[0]['PerfStatus']."\",".
-             "\"AdminDaysPerCycle\":\"".$masterRecord[0]['length']."\", \"OEMRecords\":[";
+            "\"AdminDaysPerCycle\":\"$AdminDaysPerCycle\", \"OEMRecords\":[";
         
         
         $rowCount = 1;
         //display the results 
+
         foreach ($oemrecords as $oemrecord) {
+            if ($oemrecord['CourseNum'] == 0) {
+                $AdminDaysPerCycle++;
+            }
+
 
             $oemDetails = $oemMap[$oemrecord['TemplateID']];
             echo "{\n\t\"id\" : \"" . $oemrecord['TemplateID'] . "\", \n";
@@ -39,9 +58,21 @@ if (!is_null($oemrecords) && is_null($oemsaved)) {
 
                 //display the results 
                 foreach ($prehydrations as $prehydration) {
-                    echo " {\"id\":\"" . $prehydration["id"] . "\", \"Order_ID\": \"{$prehydration["Order_ID"]}\", \"Instructions\":\"" . $prehydration["description"] .
-                    "\", \"Med\":\"" . $prehydration["drug"] . "\", \"MedID\":\"" .$prehydration['drugid'] .
-                    "\", \"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
+                    $status = $prehydration["Status"] ? $prehydration["Status"] : "";
+                    $reason = ("Test - Communication" !== $prehydration["Reason"]) ? $prehydration["Reason"] : "";
+
+                    echo " {\"id\":\"" . $prehydration["id"] . "\", " .
+                    "\"Order_ID\": \"" . $prehydration["Order_ID"] . "\", " .
+                    "\"Order_Status\": \"" . $prehydration["Order_Status"] . "\", " .
+                    "\"Instructions\":\"" . $prehydration["description"] . "\", " .
+
+                    "\"Status\":\"$status\", " .
+                    "\"Reason\":\"$reason\", " .
+
+
+                    "\"Med\":\"" . $prehydration["drug"] . "\", " .
+                    "\"MedID\":\"" .$prehydration['drugid'] . "\", " .
+                    "\"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
 
                     
                     $preinfusions = $oemDetails['PreTherapyInfusions'];
@@ -98,17 +129,30 @@ if (!is_null($oemrecords) && is_null($oemsaved)) {
             $regimenCount = 1;
             if ($numregimens) {
                 foreach ($regimens as $regimen) {
+                    $status = $regimen["Status"] ? $regimen["Status"] : "";
+                    $reason = ("Test - Communication" !== $regimen["Reason"]) ? $regimen["Reason"] : "";
+
                     // MWB, 3 Jan 2012 - added the $regimen["id"] to be returned as well
-                    echo "\t\t{\"id\" : \"" . $regimen["id"] . "\", \"Order_ID\": \"{$regimen["Order_ID"]}\", \"Med\" : \"" . $regimen["drug"] . "\", \"Dose\" : \"" . $regimen["regdose"] .
-                    "\", \"MedID\":\"" .$regimen['drugid'] .
-                    "\", \"DoseUnits\":\"" . $regimen["regdoseunit"] .
-                    "\", \"AdminMethod\" : \"" . $regimen["route"] . 
-                    "\", \"FluidType\" : \"" . $regimen["fluidType"] . 
-                    "\", \"BSA_Dose\" : \"" . $regimen["bsaDose"] . 
-                    "\", \"FluidVol\" : \"" . $regimen["flvol"] . "\", \"FlowRate\" : \"" . $regimen["flowRate"] .
-                    "\", \"Instructions\":\"" . $regimen["instructions"] . 
-                    "\", \"AdminTime\":\"" .$regimen["adminTime"] . "\",".
-                    "\"InfusionTime\" : \"" . $regimen["infusion"] . "\"}";
+                    echo "\t\t
+                    {
+                        \"id\" : \"" . $regimen["id"] . "\", 
+                        \"Order_ID\": \"" . $regimen["Order_ID"] . "\", 
+                        \"Order_Status\": \"" . $regimen["Order_Status"] . "\", 
+                        \"Med\" : \"" . $regimen["drug"] . "\", 
+                        \"Dose\" : \"" . $regimen["regdose"] . "\", 
+                        \"MedID\":\"" .$regimen['drugid'] . "\", 
+                        \"DoseUnits\":\"" . $regimen["regdoseunit"] . "\", 
+                        \"AdminMethod\" : \"" . $regimen["route"] . "\", 
+                        \"FluidType\" : \"" . $regimen["fluidType"] . "\", 
+                        \"BSA_Dose\" : \"" . $regimen["bsaDose"] . "\", 
+                        \"FluidVol\" : \"" . $regimen["flvol"] . "\", 
+                        \"FlowRate\" : \"" . $regimen["flowRate"] . "\", 
+                        \"Instructions\":\"" . $regimen["instructions"] . "\", 
+                        \"Status\":\"$status\",
+                        \"Reason\":\"$reason\", 
+                        \"AdminTime\":\"" .$regimen["adminTime"] . "\",
+                        \"InfusionTime\" : \"" . $regimen["infusion"] . "\"
+                    }";
 
                     if ($regimenCount < $numregimens) {
                         echo ",\n";
@@ -129,8 +173,22 @@ if (!is_null($oemrecords) && is_null($oemsaved)) {
 
                 //display the results 
                 foreach ($posthydrations as $posthydration) {
-                    echo " {\"id\":\"" . $posthydration["id"] . "\", \"Order_ID\": \"{$posthydration["Order_ID"]}\",\"Instructions\":\"" . $posthydration["description"] .
-                    "\", \"Med\":\"" . $posthydration["drug"] . "\", \"MedID\":\"" .$posthydration['drugid'] .
+                    $status = $posthydration["Status"] ? $posthydration["Status"] : "";
+                    $reason = ("Test - Communication" !== $posthydration["Reason"]) ? $posthydration["Reason"] : "";
+
+                    echo " {
+                        \"id\":\"" . $posthydration["id"] . "\", 
+                        \"Order_ID\": \"" . $posthydration["Order_ID"] . "\",
+                        \"Order_Status\": \"" . $posthydration["Order_Status"] . "\",
+                        \"Instructions\": \"" . $posthydration["description"] . "\", " .
+
+
+                    "\"Status\":\"$status\", " .
+                    "\"Reason\":\"$reason\", " .
+
+
+
+                    "\"Med\":\"" . $posthydration["drug"] . "\", \"MedID\":\"" .$posthydration['drugid'] .
                     "\", \"AdminTime\":\"" .$posthydration["adminTime"] . "\", ";
 
                     $postinfusions = $oemDetails['PostTherapyInfusions'];

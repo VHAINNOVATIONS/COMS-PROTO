@@ -78,6 +78,11 @@ Ext.URLs.Patients = "/Patient/viewall";
 //	}
 // Example Usage - https://devtest.dbitpro.com/Patient/viewall/28225CF5-3937-E111-9B9C-000C2935B86F
 
+
+Ext.URLs.HoldCancel = "/Patient/HoldCancel";
+Ext.URLs.OrderHoldCancel = "/Orders/HoldCancel";
+Ext.URLs.OrderStatus = "/Orders/OrderStatus";
+
 Ext.URLs.DiseaseType = "/LookUp/view/DiseaseType";
 // No Params,
 // Returns list of all Diseases, used in "Select Disease Type" combobox

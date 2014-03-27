@@ -46,12 +46,9 @@ Ext.define("COMS.view.NewPlan.CTOS.DossageAmt" ,{
 Ext.define("COMS.view.NewPlan.CTOS.AdminTime" ,{
 	extend: "Ext.form.field.Time",
 	alias : "widget.AdminTime",
-	// "fieldLabel": "Administration Time <em class=\"required-field\">*</em>",
     "fieldLabel": "Administration Time",
 	"width": 290,
 	"labelWidth": 130
-//        ,
-//	"allowBlank": false
 });
 
 
@@ -62,9 +59,6 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectFluidType" ,{
 	"labelWidth": 115,
 	"width": 200,
 	"store" : "FluidType",
-// 	store : { fields : [ "FluidTypeName", "FluidTypeID" ], data : [{ FluidTypeName : "Normal", FluidTypeID : "Normal Saline" }, { FluidTypeName : "D5W", FluidTypeID : "D5W" }] },
-//	"displayField": "FluidTypeName",
-//	"valueField": "FluidTypeID"
 	"displayField": "name",
 	"valueField": "id"
 });
@@ -91,19 +85,6 @@ Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
 	"store": "DrugUnitsStore",
 	"displayField" : "name",
 	"valueField" : "name"
-	/*************,
-	"validator" : function(value){
-		var addHydrationDrug = Ext.ComponentQuery.query("AddHydrationDrug")[0];
-		var hydrationForm = addHydrationDrug.down("form");
-		var hydrationValues = hydrationForm.getValues();
-
-		if("" !== hydrationValues.Amt1 && "" === value){
-			return "Units must be selected";
-		}else{
-			return true;
-		}
-	}
-	***************/
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
@@ -116,19 +97,6 @@ Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 	"store": "InfusionStore",
 	"displayField": "name",
 	"valueField": "name"
-	/************,
-	"validator": function(value){
-		var addHydrationDrug = Ext.ComponentQuery.query("AddHydrationDrug")[0];
-		var hydrationForm = addHydrationDrug.down("form");
-		var hydrationValues = hydrationForm.getValues();
-
-		if("" !== hydrationValues.Amt2 && "" === value){
-			return "Route must be selected";
-		}else{
-			return true;
-		}
-	}
-	**************/
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectReason" ,{
@@ -222,33 +190,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 								{ xtype: "displayfield", fieldLabel: "Infusion Time", name : "InfusionTime", margin: "2 0 0 0", width: 200 }
 							]
 						},
-
-
-/**
-						// Row 5 - Optional Dosing - "OptionalDosingLabel", "OptionalDosing", "Dose2", "Units2", "InfusionMethod2"
-						{ xtype: "container", colspan : 5, html: "<div style=\"text-align: center; font-weight: bold;\">Fields below are required only if entering an optional Dosage Amount</div>", cellCls : "OptionalDosing", name : "OptionalDosingLabel" },
-
-						{ xtype: "container", width: 30, html: "<span style=\"font-weight: bold;\">&nbsp;OR</span>", cellCls : "OptionalDosing", name : "OptionalDosing" },
-						{ xtype: "DossageAmt", name : "Dose2", margin: "2 2 2 2", cellCls : "OptionalDosing" },
-						{ xtype: "DrugUnits", name : "Units2", margin: "2 2 2 2", cellCls : "OptionalDosing" },
-						{ xtype: "InfusionMethod", name : "InfusionMethod2",  cellCls : "OptionalDosing", colspan : 2, margin: "2 2 2 2" },
-
-						// Row 6 - Optional Fluid Info - "FluidInfo2", "FluidType2", "FluidInfo2Vol", "FluidInfo2Rate", "InfusionTime2"
-						{ xtype: "container", width: 30, html: "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>", cellCls : "OptionalDosing", name : "FluidInfo2Spacer" },
-
-						{ xtype: "SelectFluidType", name : "FluidType2", margin: "2 2 2 2", cellCls : "OptionalDosing" },
-						{ xtype: "container", layout : "hbox", width :270, margin: "2 0 0 0", "defaults": { labelAlign: "right" }, items : [
-							{ xtype: "FluidVol", name : "FluidVol2", margin: "0 0 2 1"},
-							{ xtype: "container", width: 20, html : "ml", margin: "1 0 2 2"}
-						], cellCls : "OptionalDosing", name : "FluidInfo2Vol" },
-						{ xtype: "container", layout : "hbox", width :180, margin: "2 0 0 0", "defaults": { labelAlign: "right" }, items : [
-							{ xtype: "FlowRate", name : "FlowRate2", margin: "0 0 2 1"},
-							{ xtype: "container", html : "ml/hr", margin: "1 0 2 2"}
-						], cellCls : "OptionalDosing", name : "FluidInfo2Rate" },
-						{ xtype: "displayfield", fieldLabel: "Infusion Time", name : "InfusionTime2", width: 200, cellCls : "OptionalDosing" },
-**/
-
-
 						{
 							xtype : "textfield",
 							labelAlign : "right",
@@ -265,6 +206,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 				{ xtype : "button", text : "Save", action : "save", margin : "10 30"  },
 				{ xtype : "button", text: "Cancel", margin : "10 0"  }
 			]
-		}		// End of form
+		}
 	]
 });

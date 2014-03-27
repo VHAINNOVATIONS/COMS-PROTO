@@ -4,7 +4,7 @@ Ext.define('COMS.view.Common.selTemplate' ,{
 	name : 'Select Template',
 
 	store : 'Templates',
-        // queryMode: 'local',
+        queryMode: 'local',
 	width: 600,
 	size : 60,
 	labelWidth: 150,
@@ -20,7 +20,7 @@ Ext.define('COMS.view.Common.selTemplate' ,{
 //                        //delete qe.combo.lastQuery;
 //                    }
 //                }
-//                
+//            
 //        },
 
 	initComponent: function() {

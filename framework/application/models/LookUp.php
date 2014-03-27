@@ -250,12 +250,6 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
-        ChromePhp::log("save Template - $regimenId");
-        ChromePhp::log("st - Form Data - " . json_encode($formData));
-        error_log("save Template - $regimenId");
-        error_log("st - Form Data - " . json_encode($formData));
-
-
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
         $cycleLength = $formData->CycleLength;
@@ -392,7 +386,7 @@ class LookUp extends Model {
                     '$patientId'
                 )
             ";
-            error_log("Inserting Patient ID into Master Template Record when Cycle is set ($cycle)");
+            
         } else {
             $query = "
                 INSERT INTO Master_Template (
@@ -455,7 +449,7 @@ class LookUp extends Model {
                     AND Course_Number = 0
             ";
         }
-        error_log("Lookup Model saveTemplate query - <br>$query<hr>");
+        
         return $this->query($query);
     }
 
@@ -478,10 +472,7 @@ class LookUp extends Model {
      */
     public function saveRegimen($regimens, $templateId, $orderId)
     {
-		ChromePhp::log("saveRegimen - $orderId\n");
         foreach ($regimens as $regimenObject) {
-            ChromePhp::log("saveRegimen - Object");
-
             $regimen = $regimenObject->data;
             
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
@@ -552,6 +543,7 @@ class LookUp extends Model {
             $adminTime = $regimen->AdminTime;
             $fluidType = $regimen->FluidType;
             $instruction = str_replace("'", "''", $regimen->Instructions);
+            $Reason = 0;
             
             $query = "
                 INSERT INTO Template_Regimen (
@@ -569,7 +561,8 @@ class LookUp extends Model {
                     Sequence_Number, 
                     Admin_Time, 
                     Fluid_Type, 
-                    Order_ID
+                    Order_ID,
+                    Reason
                 ) VALUES (
                     '$templateId',
                     '$drugId',
@@ -585,7 +578,8 @@ class LookUp extends Model {
                     $sequence,
                     '$adminTime',
                     '$fluidType',
-                    '$orderId'
+                    '$orderId',
+                    '$Reason'
                 )
             ";
 
@@ -1079,7 +1073,7 @@ class LookUp extends Model {
                 $query .= " WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By 'description'";
-            error_log ("Lookup Model Get Templates for ID - $id<br>$query<hr><br>");
+            
         return $this->query($query);
     }
 
@@ -1121,7 +1115,7 @@ class LookUp extends Model {
                 $query .= "WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By description";
-            error_log ("Get getTemplates By Type for Field - $field; ID - $id<br>$query<hr><br>");
+            
         return $this->query($query);
     }
 
@@ -1190,24 +1184,27 @@ class LookUp extends Model {
                 tr.BSA_Dose AS bsaDose, 
                 tr.Fluid_Type AS fluidType, 
                 tr.T_Type AS type, 
-                tr.Order_ID AS Order_ID  
+                tr.Order_ID AS Order_ID,
+                case when tr.Reason is not null and tr.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
+                os.Order_Status AS Order_Status
              FROM Template_Regimen tr
                  LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
                  LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
                  LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
                  LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
-                 LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID   
+                 LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
+                 INNER JOIN Workflows wf on WF.ReasonNo = case when tr.Reason is not null Then tr.Reason else 1 END
+                 INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
+
              WHERE tr.Template_ID = '$id' 
              ORDER BY Sequence_Number
         ";
-            error_log("LookUp Model - getRegimens($id) - ");
-            error_log($query);
-
-        return $this->query($query);
+        $retVal = $this->query($query);
+        return $retVal;
     }
 
     function getHydrations($id, $type) {
-            $query = "select 
+        $query = "select 
             mh.MH_ID as id, 
             lu.Name as drug, 
             mh.Description as description, 
@@ -1219,16 +1216,24 @@ class LookUp extends Model {
             mh.Admin_Time as adminTime, 
             mh.Drug_ID as drugid, 
             mh.Pre_Or_Post as type, 
-            mh.Order_ID as Order_ID 
+            mh.Order_ID as Order_ID,
+            os.Order_Status AS Order_Status,
+            wf.WorkflowName as Reason,
+            case when mh.Reason is not null and mh.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
+            mh.Status as Status
             from Medication_Hydration mh 
             INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
+            INNER JOIN Workflows wf on WF.ReasonNo = case when mh.Reason is not null Then mh.Reason else 1 END 
+            INNER JOIN Order_Status os on os.Order_ID = mh.Order_ID
             where mh.Template_ID = '$id' 
             and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
             order by Sequence_Number";
-            error_log("LookUp Model - getHydrations($id, $type) - ");
-            error_log($query);
-        return $this->query($query);
+
+
+        $retVal = $this->query($query);
+        return $retVal;
     }
+
 
     /**
      * 
@@ -1248,14 +1253,15 @@ class LookUp extends Model {
                 mhi.Fluid_Vol AS fluidVol, 
                 mhi.Flow_Rate AS flowRate, 
                 mhi.Infusion_Time AS infusionTime, 
-                mhi.Order_ID AS Order_ID 
+                mhi.Order_ID AS Order_ID,
+                os.Order_Status AS Order_Status
             FROM MH_Infusion mhi 
                 JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
                 JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
+                JOIN Order_Status os on os.Order_ID = mhi.Order_ID
             WHERE mhi.MH_ID = '$id'
         ";
-        error_log("LookUp Model - getMHInfusions($id) - ");
-        error_log($query);
+        
         return $this->query($query);
     }
 
@@ -1302,9 +1308,6 @@ class LookUp extends Model {
             $query .= "WHERE ta.TemplateOwner = '".$rid."'";
         }
         $query .= " ORDER BY lu.Name";
-        ChromePhp::log("selectByNameDescId - Query =");
-        ChromePhp::log("$query");
-
         return $this->query($query);
     }
     
@@ -1352,11 +1355,22 @@ class LookUp extends Model {
         return $this->query($query);
     }
 
+
+
+
+
+
+
     function getLookupInfoById($id) {
 
         $query = "select Lookup_ID as id, Lookup_Type as type, Name, Description " .
                 "from LookUp where Lookup_ID = '" . $id . "'";
 
+        return $this->query($query);
+    }
+    
+    function getLookupNameByIdAndType($id, $type) {
+        $query = "select Name from LookUp where Lookup_ID = '" . $id . "' and Lookup_Type = " . $type;
         return $this->query($query);
     }
 
