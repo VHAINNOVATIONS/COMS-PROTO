@@ -130,9 +130,8 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
 							"{Med} ({Dose1} {DoseUnits1})",
-							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",	// xindex = Drug Index for PreTherapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
-							// "<div style=\"text-align: left;\">Status : <span>{Status}</span></div>",
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
 							"</th>",
@@ -250,10 +249,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
 							"{Med} ({Dose} {DoseUnits})",
-							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",	// xindex = Drug Index for Therapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
 
-							// "<div style=\"text-align: left;\">Status : <span>{Status}</span></div>",
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
 
@@ -319,10 +317,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
 							"{Med} ({Dose1} {DoseUnits1})",
-							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",	// xindex = Drug Index for PostTherapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
 
-							// "<div style=\"text-align: left;\">Status : <span>{Status}</span></div>",
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
 
@@ -647,22 +644,31 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         "medID=\"" + current.MedID + "\" " + 
                         "OrderID=\"" + current.Order_ID + "\" " + buf;
 
-                    var btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit Medication</button><br />",
+                    var btn1 = "",
                         btn2 = "",
                         btn3 = "",
                         StatusMsg = "";
+
                     if (this.SiteConfig.MedHold === "1") {
                         if ("Hold" == current.Status) {
-                            StatusMsg = "Release Medication from Hold";
+                            StatusMsg = "Release from Hold";
                         }
                         else {
-                            StatusMsg = "Hold Medication";
+                            StatusMsg = "Hold";
                         }
-                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button><br />";
+                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button>";
                     }
-                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel Medication</button><br />";
+                    btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit</button>";
+                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel</button>";
 
-					return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
+                    var btns = "<table style=\"width:100%; margin: 5px 0; border:none;\"><tr>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn3 + "</th>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn1 + "</th>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn2 + "</th></tr></table>";
+
+					// return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
+                    return btns;
+
 				},
 				CalcEditAdminDate : function( current ) {
 					var AdminDate = current.AdminDate;

@@ -2601,7 +2601,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			failure : function( response, opts ) {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-                debugger;
 				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + "e.message" + "<br />" + resp.msg );
 			}
 		});

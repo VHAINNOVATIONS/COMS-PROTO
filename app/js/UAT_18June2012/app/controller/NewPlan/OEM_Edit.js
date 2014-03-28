@@ -103,7 +103,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var form = win.down("form");
 		var record = form.getRecord();
 		var values = form.getValues();
-		debugger;
 		var thisCtl = this.getController("NewPlan.OEM_Edit");
         var sReason = thisCtl.getSelectReason();
         var strReason = sReason.rawValue;
@@ -177,7 +176,6 @@ MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 
 
 
-// debugger;
 			if ("Pre" == TherapyType) {
 				PatientInfo.OEMRecords.OEMRecords[CalcDayIndex].PreTherapy[MedIdx - 1] = MedRecord1;
 			}else if ("Post" == TherapyType) {

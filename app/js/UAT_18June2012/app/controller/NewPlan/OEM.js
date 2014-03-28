@@ -963,7 +963,7 @@ for (i = 0; i < eLen; i++) {
                 }
 
                 if ("cancel" === btnID) {
-                    Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+                    Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
                 }
                 else {
                     if ("This date Only" === opt.buttonText[btnID]) {
@@ -1023,7 +1023,7 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
                             /* Update on screen display */
                             var btnID, btnStatus, aBtn, PostBtnID = type + "_" + record.Cycle + "_" + record.Day + "_" + medIdx;
                             if ("Hold" === nStatus) {
-                                btnStatus = "Release Medication from Hold";
+                                btnStatus = "Release from Hold";
                                 btnID = "Hold_" + PostBtnID;
                                 aBtn = Ext.select("#" + btnID);
                                 if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
@@ -1049,7 +1049,7 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
                                 }
                             }
                             else {
-                                btnStatus = "Hold Medication";
+                                btnStatus = "Hold";
                                 btnID = "Hold_" + PostBtnID;
                                 aBtn = Ext.select("#" + btnID);
                                 if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
@@ -1083,12 +1083,12 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
 handleOEM_RecordMedHold : function( event, element) {
     event.stopEvent(  );
     var dlgMsg, dlgTitle, newStat;
-    if ("Release Medication from Hold" == element.textContent) {
+    if ("Release from Hold" == element.textContent) {
         dlgTitle = "Release Medication Hold - ";
         dlgMsg = "Release medication hold for this date only or all future Administration dates";
         newStat = "Clear";
     }
-    else if ("Medication Hold" == element.textContent || "Hold Medication" == element.textContent) {
+    else if ("Hold" == element.textContent) {
         dlgTitle = "Hold Medication - ";
         dlgMsg = "Hold medication for this date only or all future Administration dates";
         newStat = "Hold";
@@ -1151,92 +1151,6 @@ handleOEM_RecordMedHold : function( event, element) {
         }
     });
 },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-XXXXXXXXXXXXXXXXXXXhandleOEM_RecordMedHold : function( event, element) {
-    event.stopEvent(  );
-    // debugger;
-    // Set Status based on value of the element ("Hold" Status to "Release Med", "Med on Hold" Status to "Hold")
-    var dlgMsg, dlgTitle, newStat;
-    if ("Release Medication from Hold" == element.textContent) {
-        dlgTitle = "Release Medication Hold - ";
-        dlgMsg = "Release medication hold for this date only or all future Administration dates";
-        newStat = "";
-    }
-    else {
-        dlgTitle = "Hold Medication - ";
-        dlgMsg = "Hold medication for this date only or all future Administration dates";
-        newStat = "Hold";
-    }
-    Ext.Msg.show({
-        title: dlgTitle + element.getAttribute("med"),
-        msg: dlgMsg,
-        buttonText: {
-            yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
-        },
-        scope:this,
-        status: newStat,
-        buttons: Ext.Msg.YESNOCANCEL,
-        el : element,
-        fn: function(btnID, txt, opt) {
-            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
-            var Data = this.application.Patient.OEMRecords;
-            var records = Data.OEMRecords;
-            var TherapyID;
-            var idx = opt.el.getAttribute("typeidx");
-            idx--;
-            record = records[idx];
-
-            var type = opt.el.getAttribute("type");
-            var medIdx = opt.el.getAttribute("medidx");
-            if ("Pre" === type) {
-                DrugSection = record.PreTherapy;
-            }
-            else if ("Pos" === type) {
-                DrugSection = record.PostTherapy;
-            }
-            else {
-                DrugSection = record.Therapy;
-            }
-            if (DrugSection.length > 0) {
-                matchRecord = DrugSection[medIdx-1];
-                matchMedID = matchRecord.MedID;
-                TherapyID = matchRecord.id;
-            }
-
-            if ("cancel" === btnID) {
-                Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
-            }
-            else {
-                if ("This date Only" === opt.buttonText[btnID]) {
-                    ridx = idx;
-                    this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
-                }
-                else if ("All Future" === opt.buttonText[btnID]) {
-                    for (ridx = idx; ridx < records.length; ridx++ ) {
-                        this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
-                    }
-                }
-            }
-        }
-    });
-},
-
 
 /***********************************************************************************
  *
