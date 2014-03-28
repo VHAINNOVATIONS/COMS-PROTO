@@ -963,7 +963,12 @@ for (i = 0; i < eLen; i++) {
                 }
 
                 if ("cancel" === btnID) {
-                    Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+					if("Clear" == opt.status) {
+						Ext.MessageBox.alert("Cancel Medication", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+					}
+					else {
+						Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+					}
                 }
                 else {
                     if ("This date Only" === opt.buttonText[btnID]) {
@@ -1135,7 +1140,12 @@ handleOEM_RecordMedHold : function( event, element) {
             }
 
             if ("cancel" === btnID) {
-                Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+				if("Clear" == opt.status) {
+					Ext.MessageBox.alert("Medication Hold", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+				}
+				else {
+					Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+				}
             }
             else {
                 if ("This date Only" === opt.buttonText[btnID]) {
