@@ -130,9 +130,11 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
 							"{Med} ({Dose1} {DoseUnits1})",
-							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",	// xindex = Drug Index for PreTherapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
-						"</th>",
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",
+							"{[this.showReason(values, parent)]}",
+							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
+							"</th>",
 						"<td>",
 
 							"<table class=\"OEMRecord_Element InformationTable\">",
@@ -176,7 +178,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 										"<td>{[this.CalcInfusionTime(values.FluidVol1, values.FlowRate1)]}</td>",
 									"</tr>",
 								"</tpl>",
-
+/*** OPTIONAL DOSING NO LONGER NEEDED
 								"<tpl if=\"this.hasData(Dose2)\">",
 									"<tr class=\"header\">",
 										"<th colspan=\"4\">OR</th>",
@@ -218,15 +220,13 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 										"</tr>",
 									"</tpl>",	
 								"</tpl>",
+**/
 							"</table>",
 
 						"</td>",
 						"<td style=\"vertical-align: top; padding-left: 1em;\">{AdminTime}</td>",
 					"</tr>",
 
-//					"<tpl if=\"this.hasData(Instructions)\">",
-//						"<tr class=\"Therapy\"><td colspan=\"3\">{Instructions}</td></tr>",
-//					"</tpl>",
 
 				"</tpl>",		// END PreTherapy Loop TPL
 			"</tpl>",		// END IF Has PreTherapy TPL
@@ -249,9 +249,13 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
 							"{Med} ({Dose} {DoseUnits})",
-							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",	// xindex = Drug Index for Therapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
-						"</th>",
+
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",
+							"{[this.showReason(values, parent)]}",
+							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
+
+                        "</th>",
 						"<td class=\"BorderBottom\">",
 							"<table class=\"OEMRecord_Element InformationTable\">",
 								"<colgroup width=40%></colgroup>",
@@ -313,8 +317,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
 							"{Med} ({Dose1} {DoseUnits1})",
-							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",	// xindex = Drug Index for PostTherapy
-							"<div style=\"font-weight: normal; font-style: italic;background:none;\">{Instructions}</div>",
+
+							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
+							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",
+							"{[this.showReason(values, parent)]}",
+							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
+
 						"</th>",
 						"<td>",
 
@@ -359,7 +367,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 										"<td>{[this.CalcInfusionTime(values.FluidVol1, values.FlowRate1)]}</td>",
 									"</tr>",
 								"</tpl>",
-
+/*** OPTIONAL DOSING NO LONGER NEEDED
 								"<tpl if=\"this.hasData(Dose2)\">",
 									"<tr class=\"header\">",
 										"<th colspan=\"4\">OR</th>",
@@ -401,6 +409,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 										"</tr>",
 									"</tpl>",	
 								"</tpl>",
+*********/
 							"</table>",
 
 						"</td>",
@@ -408,15 +417,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"</tr>",
 				"</tpl>",		// END PostTherapy Loop TPL
 			"</tpl>",		// END IF Has PostTherapy TPL
-
-
-
-
-
-
-
-
-
 
 			"<tr><th colspan=\"3\" style=\"padding: 0.5em 0; text-align:left;\" >Digital Signature: Doctor</th></tr>",
 			"<tr><th colspan=\"3\" style=\"padding: 0.5em 0; text-align:left;\" >Digital Signature: Co-Signer (Optional)</th></tr>",
@@ -445,6 +445,13 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 						// Call this function when the entire xTemplate has been completed
 						Ext.PostTemplateProcessing("OEM", values, parent);
 				},
+
+                showReason : function(values, parent) {
+                    if ("" !== values.Reason) {
+                        return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
+                    }
+                    return "";
+                },
 
 				calculatedDose : function ( values ) {
 					var du = values.DoseUnits.toUpperCase();
@@ -613,6 +620,11 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if (aDate < today) {
 						return ("");	// No Edit link if the Admin Date is before today
 					}
+                    if ("Cancelled" == current.Order_Status || 
+                        "Dispensed" == current.Order_Status || 
+                        "Finalized" == current.Order_Status ) {
+                        return("");     // No links if Order has been dispensed or Finalized
+                    }
 
 					var Cycle = this.curCycle;
 					// var Day = parent[idx-1].Day;
@@ -632,15 +644,31 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         "medID=\"" + current.MedID + "\" " + 
                         "OrderID=\"" + current.Order_ID + "\" " + buf;
 
-                    var btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit Medication</button><br />",
+                    var btn1 = "",
                         btn2 = "",
-                        btn3 = "";
-                    if (this.SiteConfig.MedHold === "1") {
-                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Medication Hold</button><br />";
-                    }
-                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel Medication</button><br />";
+                        btn3 = "",
+                        StatusMsg = "";
 
-					return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
+                    if (this.SiteConfig.MedHold === "1") {
+                        if ("Hold" == current.Status) {
+                            StatusMsg = "Release from Hold";
+                        }
+                        else {
+                            StatusMsg = "Hold";
+                        }
+                        btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button>";
+                    }
+                    btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit</button>";
+                    btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel</button>";
+
+                    var btns = "<table style=\"width:100%; margin: 5px 0; border:none;\"><tr>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn3 + "</th>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn1 + "</th>" + 
+                        "<th style=\"text-align:center; border:none;\">" + btn2 + "</th></tr></table>";
+
+					// return "<br />" + btn1 + btn2 + btn3; //  + "<br /><button class=\"anchor EditOEM_Record\" " + buf + ">Remove Medication</button>";
+                    return btns;
+
 				},
 				CalcEditAdminDate : function( current ) {
 					var AdminDate = current.AdminDate;

@@ -34,7 +34,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GoalInfo" ,{
 			xtype : "radiogroup", 
 			columns : 2,
 			name: "rgConsent",
-			fieldLabel : "Consent obtained?", 
+			fieldLabel : "Consent Documentation on File?", 
 			labelClsExtra : "NursingDocs-label", 
 			defaults : {
 				labelAlign: "right",

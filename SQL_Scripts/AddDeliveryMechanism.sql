@@ -1,3 +1,4 @@
+DONE!
 INSERT INTO [XXX].[dbo].[LookUp] ([Lookup_Type] ,[Lookup_Type_ID] ,[Name] ,[Description]) VALUES (0, 43,'Delivery Mechanism','Delivery Mechanism')
 
 /*** Create the new entry in the Lookup Table for the new Delivery Mechanism Data Type ***/

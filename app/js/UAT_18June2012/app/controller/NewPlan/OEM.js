@@ -228,7 +228,9 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	views: [
 		"NewPlan.OEM",
 		"NewPlan.CTOS.OEMGoal",
-		"NewPlan.CTOS.OEMPerformanceStatus"
+		"NewPlan.CTOS.OEMPerformanceStatus",
+
+		"NewPlan.CTOS.OEM_Edit"
 	],
 
 	refs: [
@@ -375,53 +377,55 @@ for (i = 0; i < eLen; i++) {
  *
  *
  ***********************************************************************************/
-	displayOEM_Record_Data : function( PatientInfo ) {
+	displayOEM_Record_Data : function( PatientInfo, fromEdit) {
+        console.log("Displaying OEM Record Data - " + fromEdit);
+
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
 		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;
 
 		if (PatientInfo.OEMDataRendered) {
-			return;
+		    return;
 		}
 			// display the overall data for the template
-		theData.TreatmentStart = PatientInfo.TreatmentStart;
-		theData.TreatmentEnd = PatientInfo.TreatmentEnd;
+        theData.TreatmentStart = PatientInfo.TreatmentStart;
+        theData.TreatmentEnd = PatientInfo.TreatmentEnd;
 
         if (!theData.SiteConfig) {		// Make sure we only add this once.
             theData.SiteConfig = this.application.SiteConfig;
         }
 
-		if (!theData.Patient) {		// Make sure we only add this once.
-			// Some date from within the Patient object (e.g. BSA Info and some vitals) are needed for calculating dosages
-			// but since the applications scope from within an xTemplate is not available this is a simple way to get the data there
-			// we should be able to delete the Patient object from theData object at somepoint after the OEM Data has been rendered.
-			theData.Patient = PatientInfo;		// MWB - 5/30/2012 - Does this permanently add the PatientInfo to theData record?
-		}
+        if (!theData.Patient) {		// Make sure we only add this once.
+            // Some date from within the Patient object (e.g. BSA Info and some vitals) are needed for calculating dosages
+            // but since the applications scope from within an xTemplate is not available this is a simple way to get the data there
+            // we should be able to delete the Patient object from theData object at somepoint after the OEM Data has been rendered.
+            theData.Patient = PatientInfo;		// MWB - 5/30/2012 - Does this permanently add the PatientInfo to theData record?
+        }
 
-		OEMLevel1 = this.getOEM_Level1();
-		OEMLevel1.update(theData);
-		OEMLevel1.show();
+        OEMLevel1 = this.getOEM_Level1();
+        OEMLevel1.update(theData);
+        OEMLevel1.show();
 // console.log("OEM Data Rendered");
 
 
 
-		AdminDay2ViewCombo = this.getSelectAdminDay2View();
-		ComboStore = AdminDay2ViewCombo.getStore();
-		ComboStore.removeAll();
-		Record = { date : "Show All", LinkName : "Cycle_0_Day_0" };
-		ComboStore.insert(ComboStoreIndex++, Record);
+        AdminDay2ViewCombo = this.getSelectAdminDay2View();
+        ComboStore = AdminDay2ViewCombo.getStore();
+        ComboStore.removeAll();
+        Record = { date : "Show All", LinkName : "Cycle_0_Day_0" };
+        ComboStore.insert(ComboStoreIndex++, Record);
 
-		if (!theData.OEMRecords) {
-			// Apparently we get here when attempting to save a specific OEM Record.
-			alert("OEM REcords is missing in OEM Controller...");
-		}
+        if (!theData.OEMRecords) {
+            // Apparently we get here when attempting to save a specific OEM Record.
+            alert("OEM REcords is missing in OEM Controller...");
+        }
 
-		var DataRecords = theData.OEMRecords;
-		var dRecordsLen = DataRecords.length;
-		for (j = 0; j < dRecordsLen; j++) {
-			Record = { date : DataRecords[j].AdminDate, LinkName : ("Cycle_" + DataRecords[j].Cycle + "_Day_" + (DataRecords[j].Day)) };
-			ComboStore.insert(ComboStoreIndex++, Record);
-		}
-		AdminDay2ViewCombo.show();
+        var DataRecords = theData.OEMRecords;
+        var dRecordsLen = DataRecords.length;
+        for (j = 0; j < dRecordsLen; j++) {
+            Record = { date : DataRecords[j].AdminDate, LinkName : ("Cycle_" + DataRecords[j].Cycle + "_Day_" + (DataRecords[j].Day)) };
+            ComboStore.insert(ComboStoreIndex++, Record);
+        }
+        AdminDay2ViewCombo.show();
 
 
 
@@ -506,6 +510,9 @@ for (i = 0; i < eLen; i++) {
 		}
 	},
 	selAdminDayChange : function(combo, recs, eOpts) {
+		var thisCtl = this.getController("NewPlan.OEM");
+		var Elements = Ext.query(".OEMRecord");
+		var ElLen = Elements.length;
 		var theData = recs[0];
 
 		var thisCtl = this.getController("NewPlan.OEM");
@@ -517,7 +524,6 @@ for (i = 0; i < eLen; i++) {
 		var theElement;
 		var tmpName;
 		var theID;
-
 
 		if ("Cycle_0_Day_0" === LinkName) {
 			this.showAllAdminDays();
@@ -885,6 +891,9 @@ for (i = 0; i < eLen; i++) {
  *
  ***********************************************************************************/
 	getAndRenderTemplateData: function(TemplateObj) {
+		if (!this.application.TempMedRecord) {
+			this.application.TempMedRecord = this.getModel(Ext.COMSModels.Edit_OEMRecord);
+		}
 		wccConsoleLog("Template applied to patient has been selected");
 		if (!this.TabActivated) {
 			return;
@@ -903,72 +912,249 @@ for (i = 0; i < eLen; i++) {
 		}
 	},
 
+/**********************************************************************************************
+ *
+ *
+ *
+ *
+ **********************************************************************************************/
+    handleOEM_RecordMedCancel : function( event, element) {
+        event.stopEvent(  );
+        var dlgMsg, dlgTitle, newStat;
+            dlgTitle = "Cancel Medication - ";
+            dlgMsg = "Cancel medication for this date only or all future Administration dates";
+            newStat = "Cancel";
+/*******************************************************************/
+        Ext.Msg.show({
+            title: dlgTitle + element.getAttribute("med"),
+            msg: dlgMsg,
+            buttonText: {
+                yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
+            },
+            scope:this,
+            status: newStat,
+            buttons: Ext.Msg.YESNOCANCEL,
+            el : element,
+            fn: function(btnID, txt, opt) {
+                var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+                var Data = this.application.Patient.OEMRecords;
+                var records = Data.OEMRecords;
+                var TherapyID;
+                var idx = opt.el.getAttribute("typeidx");
+                idx--;
+                record = records[idx];
 
-handleOEM_RecordMedCancel : function( event, element) {
-    event.stopEvent(  );
-    Ext.Msg.show({
-        title: 'Cancel Medication - ' + element.getAttribute("med"),
-        msg: 'Cancel medication for this date and all future Administration dates',
-        buttons: Ext.Msg.YESNOCANCEL,
-        el : element,
-        fn: function(btnID, txt, opt) {
-            if ("cancel" === btnID || "no" === btnID) {
-                alert("Medication has NOT been cancelled");
+                var type = opt.el.getAttribute("type");
+                var medIdx = opt.el.getAttribute("medidx");
+                if ("Pre" === type) {
+                    DrugSection = record.PreTherapy;
+                }
+                else if ("Pos" === type) {
+                    DrugSection = record.PostTherapy;
+                }
+                else {
+                    DrugSection = record.Therapy;
+                }
+                if (DrugSection.length > 0) {
+                    matchRecord = DrugSection[medIdx-1];
+                    // matchMed = matchRecord.Med;
+                    matchMedID = matchRecord.MedID;
+                    TherapyID = matchRecord.id;
+                }
+
+                if ("cancel" === btnID) {
+					if("Clear" == opt.status) {
+						Ext.MessageBox.alert("Cancel Medication", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+					}
+					else {
+						Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+					}
+                }
+                else {
+                    if ("This date Only" === opt.buttonText[btnID]) {
+                        ridx = idx;
+                        this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
+                    }
+                    else if ("All Future" === opt.buttonText[btnID]) {
+                        for (ridx = idx; ridx < records.length; ridx++ ) {
+                            this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
+                        }
+                    }
+                }
             }
-            else {
-                alert("Medication - " + opt.el.getAttribute("med") + " has been cancelled"); 
-            }
-        }
-    });
+        });
+/*******************************************************************/
+    },
+
+/**********************************************************************************************
+ *
+ *
+ *
+ *
+ **********************************************************************************************/
+HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID, TherapyID) {
+    var i, MedList, matchingRecord, tempMedRecord, aRecord, PID, record = records[ridx];
+    this.application.loadMask("Setting Hold/Cancel Status");
+    PID = this.application.Patient.id;
+    var Type = "Therapy";
+    if ("Pre" === type) {
+        Type = "Pre";
+    }
+    else if ("Pos" === type) {
+        Type = "Post";
+    }
+    var URL = Ext.URLs.HoldCancel + "/" + TherapyID + "/" + Type + "/" + nStatus;
+    var URL2 = Ext.URLs.OrderHoldCancel + "/" + PID + "/" + TherapyID + "/" + Type + "/" + nStatus;
+	Ext.Ajax.request({
+		scope : this,
+		url: URL,
+        method: "PUT",
+		success: function( response, opts ){
+			var text = response.responseText;
+			var resp = Ext.JSON.decode( text );
+			if (resp.success) {
+
+
+
+                Ext.Ajax.request({
+                    scope : this,
+                    url: URL2,
+                    method: "PUT",
+                    success: function( response, opts ){
+                        this.application.unMask();
+                        var text = response.responseText;
+                        var resp = Ext.JSON.decode( text );
+                        if (resp.success) {
+                            /* Update on screen display */
+                            var btnID, btnStatus, aBtn, PostBtnID = type + "_" + record.Cycle + "_" + record.Day + "_" + medIdx;
+                            if ("Hold" === nStatus) {
+                                btnStatus = "Release from Hold";
+                                btnID = "Hold_" + PostBtnID;
+                                aBtn = Ext.select("#" + btnID);
+                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+                                }
+                            }
+                            else if ("Cancel" === nStatus) {
+                                btnStatus = "";
+                                btnID = "Edit_" + PostBtnID;
+                                aBtn = Ext.select("#" + btnID);
+                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+                                }
+                                btnID = "Hold_" + PostBtnID;
+                                aBtn = Ext.select("#" + btnID);
+                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+                                }
+                                btnID = "Cancel_" + PostBtnID;
+                                aBtn = Ext.select("#" + btnID);
+                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+                                }
+                            }
+                            else {
+                                btnStatus = "Hold";
+                                btnID = "Hold_" + PostBtnID;
+                                aBtn = Ext.select("#" + btnID);
+                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+                                }
+                            }
+
+                        }
+                        else {
+                            alert("load EoTS - Error");
+                        }
+                    },
+                    failure : function( response, opts ) {
+                        this.application.unMask();
+                        alert("EoTS Data Load Failed...");
+                    }
+                });
+			}
+			else {
+				alert("load EoTS - Error");
+			}
+		},
+		failure : function( response, opts ) {
+			this.application.unMask();
+			alert("EoTS Data Load Failed...");
+		}
+	});
 },
+
 
 handleOEM_RecordMedHold : function( event, element) {
     event.stopEvent(  );
+    var dlgMsg, dlgTitle, newStat;
+    if ("Release from Hold" == element.textContent) {
+        dlgTitle = "Release Medication Hold - ";
+        dlgMsg = "Release medication hold for this date only or all future Administration dates";
+        newStat = "Clear";
+    }
+    else if ("Hold" == element.textContent) {
+        dlgTitle = "Hold Medication - ";
+        dlgMsg = "Hold medication for this date only or all future Administration dates";
+        newStat = "Hold";
+    }
+    else {
+        dlgTitle = "Cancel Medication - ";
+        dlgMsg = "Cancel medication for this date only or all future Administration dates";
+        newStat = "Cancel";
+    }
     Ext.Msg.show({
-        title: 'Hold Medication - ' + element.getAttribute("med"),
-        msg: 'Hold medication for this date only or all future Administration dates',
+        title: dlgTitle + element.getAttribute("med"),
+        msg: dlgMsg,
         buttonText: {
             yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
         },
-            scope:this,
+        scope:this,
+        status: newStat,
         buttons: Ext.Msg.YESNOCANCEL,
         el : element,
         fn: function(btnID, txt, opt) {
-            if ("cancel" === btnID) {
-                alert("Medication Hold has been cancelled");
+            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+            var TherapyID;
+            var Data = this.application.Patient.OEMRecords;
+            var records = Data.OEMRecords;
+            var idx = opt.el.getAttribute("typeidx");
+            idx--;
+            record = records[idx];
+
+            var type = opt.el.getAttribute("type");
+            var medIdx = opt.el.getAttribute("medidx");
+            if ("Pre" === type) {
+                DrugSection = record.PreTherapy;
+            }
+            else if ("Pos" === type) {
+                DrugSection = record.PostTherapy;
             }
             else {
-                var records = opt.scope.application.Patient.OEMRecords.OEMRecords;
-                var idx = opt.el.getAttribute("typeidx") - 1;
+                DrugSection = record.Therapy;
+            }
+            if (DrugSection.length > 0) {
+                matchRecord = DrugSection[medIdx-1];
+                matchMedID = matchRecord.MedID;
+                TherapyID = matchRecord.id;
+            }
 
-                records[idx].status = "Hold";
-                console.log("Hold - " + idx);
-                console.log(records[idx]);
-                opt.el.childNodes[0].nodeValue = "Release Medication Hold";
-                // alert("Holding Medication - " + opt.el.getAttribute("med") + " for " + opt.buttonText[btnID]);
-                var type = opt.el.getAttribute("type");
-                var medIdx = opt.el.getAttribute("medidx");
-                var typIdx = opt.el.getAttribute("typeidx");
-
-                if ("This date Only" !== opt.buttonText[btnID]) {
-                    // var BtnList = Ext.select("section.OEMRecord");
-                    var record, PREbtnID, TbtnID, POSTbtnID, btnID;
-                    for (;idx++ ;idx < records.length ) {
-                        record = records[idx];
-                        btnID = "Hold_" + type + "_" + record.Cycle + "_" + record.Day + "_" + medIdx;
-
-                console.log("Hold Loop - " + idx + " - " + btnID);
-                console.log(record);
-
-                        record.status = "Hold";
-
-                        var aBtn = Ext.select("#" + btnID);
-                        if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                            aBtn.elements[0].childNodes[0].nodeValue = "Release Medication Hold";
-                        }
-                        else {
-                            console.log("No Btn IS = " + btnID);
-                        }
+            if ("cancel" === btnID) {
+				if("Clear" == opt.status) {
+					Ext.MessageBox.alert("Medication Hold", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+				}
+				else {
+					Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+				}
+            }
+            else {
+                if ("This date Only" === opt.buttonText[btnID]) {
+                    ridx = idx;
+                    this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
+                }
+                else if ("All Future" === opt.buttonText[btnID]) {
+                    for (ridx = idx; ridx < records.length; ridx++ ) {
+                        this.HoldSingleMedRecord(records, type, ridx, medIdx, opt.status, matchMedID, TherapyID);
                     }
                 }
             }
@@ -985,13 +1171,6 @@ handleOEM_RecordMedHold : function( event, element) {
  ***********************************************************************************/
 handleEditOEM_Record : function (event, element) {
     event.stopEvent(  );
-    // if ("Edit" === element.textContent) {
-        this.handleActualEditOfOEM_Record(event, element);
-    // }
-},
-
-handleActualEditOfOEM_Record : function( event, element) {
-
 		var anchorName = element.getAttribute("name");
 		var anchorCycle = element.getAttribute("cycle");
 		var anchorDay = element.getAttribute("day");
@@ -1057,14 +1236,6 @@ handleActualEditOfOEM_Record : function( event, element) {
 
 			MedRecord.FluidVol = mr.FluidVol;
 			MedRecord.FlowRate = mr.FlowRate;
-
-//				// MWB Faking out the system because we don't have multiple fluid info (3/5/2012)
-//			if ("IV" === mr.AdminMethod.substr(0, 2)) {
-//				MedRecord.FluidType = "D5W";
-//				MedRecord.FluidVol = mr.FluidVol;
-//				MedRecord.FlowRate = mr.FlowRate;
-//			}
-
 		}
 		else {
 			MedRecord.Dose = mr.Dose1;
@@ -1085,18 +1256,6 @@ handleActualEditOfOEM_Record : function( event, element) {
 			MedRecord.FlowRate2 = mr.FlowRate2;
 			MedRecord.InfusionTime1 = mr.InfusionTime1;
 			MedRecord.InfusionTime2 = mr.InfusionTime2;
-
-				// MWB Faking out the system because we don't have multiple fluid info (3/5/2012)
-//			if ("IV" === mr.AdminMethod2.substr(0, 2)) {
-//				MedRecord.FluidType2 = "D5W";
-//				MedRecord.FluidVol2 = mr.FluidVol1;
-//				MedRecord.FlowRate2 = mr.FlowRate1;
-//			}
-//			if ("IV" !== mr.AdminMethod1.substr(0, 2)) {
-//				MedRecord.FluidType = "";
-//				MedRecord.FluidVol = "";
-//				MedRecord.FlowRate = "";
-//			}
 		}
 
 		var EditRecordWin = Ext.widget("EditOEMRecord");

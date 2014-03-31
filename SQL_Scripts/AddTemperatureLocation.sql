@@ -1,3 +1,4 @@
+DOME!
 alter table [COMS_MWB_TEST].[dbo].[Patient_History] add [TemperatureLocation] varchar(40)
 
 
