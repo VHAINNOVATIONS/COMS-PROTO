@@ -1,8 +1,11 @@
 GIT_COMMAND_LOG.log 
 *.bak
 *.db
+web.config
+
 app\SSHDebug\*
 app\config_Constants.php
+app\dbitcon.php
 app\js_Files2Ignore\*
 aspnet_client\*
 build\* 
