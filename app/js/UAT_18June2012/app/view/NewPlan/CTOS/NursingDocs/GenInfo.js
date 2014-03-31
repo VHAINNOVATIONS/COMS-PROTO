@@ -184,8 +184,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
-    extend: "Ext.form.FieldSet",
-    alias : "widget.NursingDocs_VitalSigns",
+	extend: "Ext.form.FieldSet",
+	alias : "widget.NursingDocs_VitalSigns",
 	name : "NursingDocs.VitalSigns",
 	title : "Vital Signs",
 
@@ -286,14 +286,16 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 				},
 				{  xtype : "textfield",  maskRe: /[0-9]/, name : "ndVitalsResp", fieldLabel : "<abbr title=\"Respiration - in Breaths per minute\">Resp</abbr>", labelWidth : 50, width: 90, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" }, 
 				{  
-					xtype : "textfield",  
-					maskRe: /[0-9\.]/, 
+					xtype : "numberfield",  
 					name : "ndVitalsO2Level", 
 					fieldLabel : "<abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr>", 
 					labelWidth : 60, 
-					width: 100, 
+					width: 100,
+					hideTrigger: true,
 					margin : "0 10 0 0", 
-					labelClsExtra : "NursingDocs-label" 
+					minValue : 0,
+					maxValue : 100,
+					labelClsExtra : "NursingDocs-label"
 				}, 
 				{  xtype : "displayfield", name : "ndVitalsAge", fieldLabel : "Age", labelWidth : 50, width: 90, margin : "0 10 0 0", labelClsExtra : "NursingDocs-label" },
 
@@ -343,6 +345,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 					labelWidth : 50, 
 					width: 100, 
 					margin : "0 50 0 0", 
+					hideTrigger: true,
 					labelClsExtra : "NursingDocs-label" 
 				}, 
 				{
