@@ -27,6 +27,25 @@ class PatientController extends Controller
         return false;
     }
 
+    function MedicationSanityCheck () {
+        // Get all templates from the Master Template
+        $query = "select * from Master_Template";
+        // Template_ID - should exist in all tables
+        // Regimen_ID
+        // Cancer_ID
+        // Location_ID
+        // Cycle_Time_Frame_ID
+        // Emotegenic_ID
+        // Created_By
+        // Patient_ID
+
+
+        // for each template walk through all the therapies and look into the Regimen and Medication_Hydration and MH_Infusion tables for squirly data
+        // When found produce a list
+    }
+
+
+
     function LabInfoResults($patientId = NULL)
     {
         $jsonRecord = array();
@@ -841,7 +860,12 @@ class PatientController extends Controller
         error_log("HoldCancel - $id, $type, $status");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
-        
+        if (!$id) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Record ID for Hold";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
         if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
             if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
                 if (null === $status || "Clear" === $status) {

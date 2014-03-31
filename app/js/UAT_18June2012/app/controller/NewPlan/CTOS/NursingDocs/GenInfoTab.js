@@ -446,8 +446,18 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		var flg10 = "" === record.BSA;
 
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
-			return (false);
+			return false;
 		}
+		if (record.SPO2 <= 0 || record.SPO2 > 100) {
+            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+			return true;
+		}
+
+        
+        
+        if (record.SPO2 > 100 || record.SPO2 < 0) {
+            return (false);
+        }
 
 		Temperature.setValue("");
         TemperatureLocation.setValue("");
