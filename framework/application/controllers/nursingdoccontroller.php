@@ -34,6 +34,72 @@ class NursingDocController extends Controller {
             $this->set('jsonRecord', $jsonRecord);
         }
     }
+
+
+    function Flowsheet ($PatientID) {
+        error_log("Flowsheet - $PatientID");
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if ("GET" !== $_SERVER['REQUEST_METHOD']) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a GET";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        if (!$PatientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $patient = new Patient();
+        $controller = 'PatientController';
+        $patientController = new $controller('Patient', 'patient', null);
+        $patientModel = new Patient();
+        error_log("Flowsheet - Breakpoint 1");
+
+
+        // Get All OEM Records to build individual Date columns
+        $returnVal = $patientController->getOEMData($PatientID);
+        error_log("Flowsheet - Breakpoint 2");
+        if ($this->checkForErrors("Check Orders for Patient - $PatientID", $returnVal)) {
+            if (isset($frameworkErr)) {
+                error_log("Flowsheet - Error $frameworkErr");
+                $this->set('frameworkErr', null);
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Can't get Orders for Patient - $PatientID";
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+        }
+        error_log("Flowsheet - Breakpoint 4");
+
+// oemMap
+
+
+
+if (!isset($returnVal)) {
+    error_log("Flowsheet - No OEM Data");
+			$this->set('frameworkErr', null);
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
+            $this->set('jsonRecord', $jsonRecord);
+			return;
+}
+echo count($returnVal);
+foreach ($returnVal as $aRecord) {
+    $x = json_encode($aRecord);
+    echo "------------------------------------ \n$x-------------------------";
+    echo "";
+}
+
+
+
+
+        $jsonRecord['msg'] = "Breakpoint 1";
+        $this->set('jsonRecord', $jsonRecord);
+    }
     
     public function ActiveDischargeInstructions()
     {

@@ -113,8 +113,8 @@ $_SESSION['NWLoginR'] = $NWLoginR;
                 $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
 				$rid = $_SESSION[ 'rid' ];
                 $role = $_SESSION[ 'role' ];
+                $page2Open = $urlArray[ 0 ];
 				include_once "main.php";
-                //include "main.php";
             }
 		}
 		else {
@@ -123,8 +123,8 @@ $_SESSION['NWLoginR'] = $NWLoginR;
 			$rid = $_SESSION[ 'rid' ];
             $role = $_SESSION[ 'role' ];
 			$TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
+            $page2Open = $urlArray[ 0 ];
             include_once "main.php";
-            //include "main.php";
 		}
 
 }
