@@ -53,7 +53,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					// XTemplate Configuration
 				disableFormats: true,
                 tempCalc: function (data, pData) {
-                    debugger;
+                    // debugger;
                 },
                 BSA_WeightCalc: function (data, pData) {
                     if ("" == data.WeightFormula || "" == data.BSA_Method || "" == data.Weight) {
