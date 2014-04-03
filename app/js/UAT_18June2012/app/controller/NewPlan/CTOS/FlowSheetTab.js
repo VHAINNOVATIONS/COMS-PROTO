@@ -125,7 +125,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	 **********************/
 	PatientSelected: function (combo, recs, eOpts) {
 		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
-        debugger;
+
 		var theGrid = Ext.getCmp("FlowsheetGrid");
 		if (theGrid && theGrid.rendered) {
 			Ext.destroy(theGrid);

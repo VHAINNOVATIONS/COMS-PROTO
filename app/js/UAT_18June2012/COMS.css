@@ -198,11 +198,13 @@ table.OuterSizing {
 	width: 900px;
 }
 
+.VitalSignsEntryForm .x-table-layout,
 table.InformationTable, table.PI_PatientInformationTable {
 	width: 99% !important;
 	margin: 0.25em auto;
 }
 
+.VitalSignsEntryForm .x-table-layout,
 table.InformationTable, table.InformationTable td, table.InformationTable th,
 table.PI_PatientInformationTable, table.PI_PatientInformationTable td, table.PI_PatientInformationTable th 
 {
@@ -216,6 +218,7 @@ table.PI_PatientInformationTable, table.PI_PatientInformationTable td, table.PI_
 table.InformationTable, .PatHistResults, .PI_PatientInformationTable, table.PatHistResults, table.PI_PatientInformationTable { 
 	border-color: #99BCE8; 
 }
+.VitalSignsEntryForm .x-table-layout,
 table.InformationTable th, .LabInfoResults th, .PatHistResults th, .PI_PatientInformationTable th { 
 	font-weight: bold; 
 	text-align: right; 

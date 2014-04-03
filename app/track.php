@@ -9,6 +9,7 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 		//GetID
 		$tsql2 = "SELECT id FROM COMS_Track ORDER BY id";
 		$getid = sqlsrv_query($conn, $tsql2);
+        $newid = "";
 			while( $row = sqlsrv_fetch_array($getid, SQLSRV_FETCH_ASSOC)) {
 				$newid = $row['id'] + 1;
 				}

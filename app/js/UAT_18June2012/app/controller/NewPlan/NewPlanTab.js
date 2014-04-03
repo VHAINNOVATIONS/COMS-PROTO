@@ -177,11 +177,21 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             },
             "NewPlanTab PatientInfo LabInfo" : {
                 afterrender: this.togglePanelOnTitleBarClick
+            },
+            "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
+                click: this.SaveVitals
             }
        });
         wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
+    SaveVitals : function() {
+        debugger;
+        var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+        if (theController) {
+            theController.SaveVitals("PatientHistory");
+        }
+    },
 
 
     handlePatientSelectionRender : function( panel ) {

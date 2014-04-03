@@ -36,6 +36,31 @@ class NursingDocController extends Controller {
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function Flowsheet ($PatientID) {
         error_log("Flowsheet - $PatientID");
         $jsonRecord = array();
@@ -61,8 +86,78 @@ class NursingDocController extends Controller {
 
 
         // Get All OEM Records to build individual Date columns
+        
         $returnVal = $patientController->getOEMData($PatientID);
-        error_log("Flowsheet - Breakpoint 2");
+        if (isset($returnVal)) {
+            if ($returnVal["success"]) {
+                error_log("Success! We have OEM Data");
+                $OEM = $returnVal["records"][0];
+                $records = $OEM["OEMRecords"];
+                error_log(json_encode($OEM));
+                error_log("Data");
+                error_log(json_encode($records));
+
+
+                
+$RowHeadings = array();
+$RowHeadings[0] = "Date";
+$RowHeadings[1] = "Performance Status";
+$RowHeadings[2] = "Weight (lbs/kg)";
+$RowHeadings[3] = "Disease Response";
+$RowHeadings[4] = "Toxicity Side Effects";
+$RowHeadings[5] = "Other";
+
+$allRecords = array();
+                foreach($records as $record) {
+                    $FlowsheetGrid = array();
+                    $Data = array();
+                    $ColHeading = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
+                    $Data[0]["&nbsp;"] = "01 General";
+                    $Data[0]["label"] = "Date";
+                    $Data[0][$ColHeading] = $record["AdminDate"];
+
+                    $Data[1]["&nbsp;"] = "01 General";
+                    $Data[1]["label"] = $RowHeadings[1];
+                    $Data[1][$ColHeading] = "Vitals";
+
+                    $Data[2]["&nbsp;"] = "01 General";
+                    $Data[2]["label"] = $RowHeadings[2];
+                    $Data[2][$ColHeading] = "W Vitals";
+
+                    $Data[3]["&nbsp;"] = "01 General";
+                    $Data[3]["label"] = $RowHeadings[1];
+                    $Data[3][$ColHeading] = "Disease";
+
+                    $Data[4]["&nbsp;"] = "01 General";
+                    $Data[4]["label"] = $RowHeadings[2];
+                    $Data[4][$ColHeading] = "Tox";
+
+                    $Data[5]["&nbsp;"] = "01 General";
+                    $Data[5]["label"] = $RowHeadings[1];
+                    $Data[5][$ColHeading] = "Other";
+                }
+
+                
+                
+                $jsonRecord['records'] = $Data;
+
+/***
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[0]] = $record["AdminDate"];
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[1]] = "Vitals - Perf Status";
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[2]] = "Vitals - Weight";
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[3]] = "Response";
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[4]] = "Tox";
+                    $FlowsheetGrid[$ColHeading][$RowHeadings[5]] = "Other";
+                    $allRecords[] = $FlowsheetGrid;
+                    error_log(json_encode($FlowsheetGrid));
+
+***/
+        }
+/*************
+
+
+
+
         if ($this->checkForErrors("Check Orders for Patient - $PatientID", $returnVal)) {
             if (isset($frameworkErr)) {
                 error_log("Flowsheet - Error $frameworkErr");
@@ -73,33 +168,59 @@ class NursingDocController extends Controller {
                 return;
             }
         }
+******************/
         error_log("Flowsheet - Breakpoint 4");
-
-// oemMap
-
-
-
-if (!isset($returnVal)) {
-    error_log("Flowsheet - No OEM Data");
-			$this->set('frameworkErr', null);
-            $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
-            $this->set('jsonRecord', $jsonRecord);
-			return;
-}
-echo count($returnVal);
-foreach ($returnVal as $aRecord) {
-    $x = json_encode($aRecord);
-    echo "------------------------------------ \n$x-------------------------";
-    echo "";
-}
-
+        }
+        if (!isset($returnVal)) {
+            error_log("Flowsheet - No OEM Data");
+                    $this->set('frameworkErr', null);
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+        }
+/*********
+        echo count($returnVal);
+        foreach ($returnVal as $aRecord) {
+            $x = json_encode($aRecord);
+            echo "------------------------------------ \n$x-------------------------";
+            echo "";
+        }
+********/
 
 
 
         $jsonRecord['msg'] = "Breakpoint 1";
         $this->set('jsonRecord', $jsonRecord);
     }
+/********************** END FLOWSHEET ***********************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     public function ActiveDischargeInstructions()
     {

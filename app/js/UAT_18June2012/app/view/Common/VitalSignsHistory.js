@@ -5,6 +5,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
+        "{[this.tempCalc(values, parent)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
 
 			"<tr>",		// Pulse, BP, Respiration, 
@@ -17,8 +18,8 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<th rowspan=\"2\">Pain</th>",
 				"<th rowspan=\"2\"><abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub></abbr></th>",
 				"<th rowspan=\"2\"><abbr title=\"Performance Status - Using the ECOG (Eastern Cooperative Oncology Group) Scale\">PS</abbr></th>",
-				"<th rowspan=\"2\">Height<br />in Inches</th>",
-				"<th rowspan=\"2\">Weight<br />in lbs.</th>",
+				"<th rowspan=\"2\">Height<br />in Inches/cm</th>",
+				"<th rowspan=\"2\">Weight<br />in lbs/kg</th>",
 				"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
 			"</tr>",
 			"<tr>",		// Pulse, BP, Respiration, 
@@ -33,16 +34,16 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					"<td>{Temperature}</td>",
                     "<td>{TemperatureLocation}</td>",
 					"<td>{Pulse}</td>",
-					"<td>{BP}</td>",
+					"<td>{[this.BPCalc(values, parent)]}</td>",
 					"<td>{Respiration}</td>",
 					"<td>{Pain}</td>",
 					"<td>{SPO2}</td>",
 					"<td><abbr title=\"{PS}\">{PSID}</abbr></td>",
-					"<td>{Height}</td>",
-					"<td>{Weight}</td>",
+					"<td>{[this.HeightCalc(values, parent)]}</td>",
+					"<td>{[this.WeightCalc(values, parent)]}</td>",
 					"<td>{WeightFormula}</td>",
-					"<td>{BSA_Weight}</td>",
-					"<td>{BSA_Method}</td>",
+					"<td>{[this.BSA_WeightCalc(values, parent)]}</td>",
+    				"<td>{BSA_Method}</td>",
 					"<td>{[this.BSACalc(values, parent)]}</td>",
 				"</tr>",
 			"</tpl>",
@@ -51,6 +52,37 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		{
 					// XTemplate Configuration
 				disableFormats: true,
+                tempCalc: function (data, pData) {
+                    debugger;
+                },
+                BSA_WeightCalc: function (data, pData) {
+                    if ("" == data.WeightFormula || "" == data.BSA_Method || "" == data.Weight) {
+                        return "";
+                    }
+                    return data.BSA_Weight;
+                },
+                BPCalc: function (data, pData) {
+                    if ("0/0" == data.BP) {
+                        return "";
+                    }
+                    return data.BP;
+                },
+                HeightCalc: function (data, pData) {
+                    if ("" == data.Height) {
+                        return data.Height;
+                    }
+                    var height = data.Height;
+                    return height + "/" + Ext.In2CM(height);
+
+                },
+                WeightCalc: function (data, pData) {
+                    if ("" == data.Weight) {
+                        return data.Weight;
+                    }
+                    var weight = data.Weight;
+                    return weight + "/" + Ext.Pounds2Kilos(weight);
+                },
+
 				BSACalc: function (data, pData) {
 					data.Amputations = pData.Amputations;
 					var BSA = Ext.BSA_Calc(data);

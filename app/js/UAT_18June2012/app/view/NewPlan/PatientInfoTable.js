@@ -157,11 +157,13 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	collapsed : true,
 
 	items: [
+    { xtype : "button", text : "Add Vital Signs Entry" },
+    { xtype : "button", text : "Edit BSA Info" },
+        { xtype : "NursingDocs_VitalSigns" },
 		{ xtype: "container", name: "PatientInfoTable", cls: "PI_PatientInformationTable", tpl: 
 			new Ext.XTemplate(
 				// "{[this.Debugger(values)]}",
 				"{[this.CalcBSA(values)]}",		// Needed to calculate the BSA Value if none retrieved.
-
 				"<table border=\"1\" class=\"InformationTable\">",
 					"<tr>",
 						"<th>Gender:</th><td>{Gender}</td>",

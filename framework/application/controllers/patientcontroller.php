@@ -818,7 +818,6 @@ class PatientController extends Controller
 		$this->set('oemrecords', $oemrecords);
 
 		$oemMap = array();
-        error_log("Get OEM Records. - " . count($oemrecords));
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
             $oemRecordTemplateID = $oemrecord['TemplateID'];
@@ -852,9 +851,6 @@ class PatientController extends Controller
 			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
 		}
 
-        error_log("Get OEM Records. (Map) - " . count($oemMap));
-
-
 		$this->set('oemMap', $oemMap);
 		$this->set('oemsaved', null);
 		$this->set('frameworkErr', null);
@@ -863,11 +859,12 @@ class PatientController extends Controller
 
     function getOEMData($PatientID) {
         $this->genOEMData($PatientID);
-        $retData = array();
-        $retData["oemMap"] = $this->get('oemMap');
-        $retData["oemrecords"] = $this->get('oemrecords');
-        $retData["masterRecord"] = $this->get('masterRecord');
-        return $retData;
+//        $retData = array();
+//        $retData["oemMap"] = $this->get('oemMap');
+//        $retData["oemrecords"] = $this->get('oemrecords');
+//        $retData["masterRecord"] = $this->get('masterRecord');
+        $this->buildJsonObj4Output();
+        return $this->get('jsonRecord');
     }
 
 /**
@@ -879,7 +876,6 @@ class PatientController extends Controller
  * $status = Status to set - "Hold", "Cancel", "Clear"
  **/
     function HoldCancel($id = null, $type = null, $status = null) {
-        error_log("HoldCancel - $id, $type, $status");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         if (!$id) {
@@ -900,48 +896,16 @@ class PatientController extends Controller
                         $table = "Template_Regimen";
                         $key = "Patient_Regimen_ID";
                     }
-
                     $query = "select * from $table where $key = '$id'";
-error_log($query);
                     $TreatmentData = $this->Patient->query($query);
-error_log("Treatment Data - " . json_encode($TreatmentData[0]));
-
-
-$lookup = new LookUp();
-$Order_Type = $type;
-$TID = $TreatmentData[0]["Template_ID"];
-$Drug_ID = $TreatmentData[0]["Drug_ID"];
-$Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
-
-
-error_log("Status = $status");
-error_log("Order_Type = $Order_Type");
-error_log("TID = $TID");
-error_log("Drug_ID = $Drug_ID");
-error_log("Drug_Name = $Drug_Name");
-error_log("Drug_Name = " . $Drug_Name[0]["Name"]);
-error_log("Session - " . json_encode($_SESSION));
-/***********
-$query = "select Patient_ID from Patient_Assigned_Templates where Template_ID = '$TID'";
-error_log($query);
-$Patient_ID = $this->Patient->query($query);
-error_log("Patient ID = " . json_encode($Patient_ID));
-
-error_log("--------------------------------------");
-
-*************/
-
-
-
-
-
+                    $lookup = new LookUp();
+                    $Order_Type = $type;
+                    $TID = $TreatmentData[0]["Template_ID"];
+                    $Drug_ID = $TreatmentData[0]["Drug_ID"];
+                    $Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
                     if(0 == count($TreatmentData)) {
                             $jsonRecord['success'] = 'false';
                             $jsonRecord['msg'] = "No Record Matches $id";
-error_log("Treatment Data - No Data Found");
-error_log($query);
-error_log("--------------------------------------");
-
                     }
                     else {
                         if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $TreatmentData)) {
@@ -957,29 +921,6 @@ error_log("--------------------------------------");
                                 $jsonRecord['msg'] = $frameworkErr;
                                 $this->set('frameworkErr', null);
                             }
-
-
-/*
-
-
-{"MH_ID":"E7B124AF-D35D-E311-A204-000C2935B86F",
-"Drug_ID":"FC95474E-A99F-E111-903E-000C2935B86F",
-"Template_ID":"2467257F-D35D-E311-A204-000C2935B86F",
-"Pre_Or_Post":"Pre","Description":"","Flow_Rate":null,"Admin_Day":"1,8,15,22,29,36",
-"Infusion_Time":null,"Sequence_Number":1,"Fluid_Vol":null,"Admin_Time":"8:00 AM",
-"Order_ID":"E6B124AF-D35D-E311-A204-000C2935B86F","Status":"Hold","Reason":null}]
-
-
-if ("Hold" === $status) {
-	   $this->Orders->updateOrderStatusHold($TID,$Drug_Name, $Order_Type, $PID);
-}
-else if ("Cancel" === $status) {
-	   $this->Orders->updateOrderStatusCancelled($TID,$Drug_Name, $Order_Type, $PID);
-}
-*/
-
-
-
                         }
                     }
                 }
@@ -1048,7 +989,6 @@ function PrePostTherapy($hydrations, $infusions) {
         $myinfusions = $infusions[$hydration['id']];
         $numInfusions = count($myinfusions);
 
-error_log("numInfusions - $numInfusions");
         if($numInfusions == 0){
             $HydrationRecord["Dose1"] = "";
             $HydrationRecord["DoseUnits1"] = "";
@@ -1099,7 +1039,6 @@ error_log("numInfusions - $numInfusions");
                 $infusionCount++;
             }
         }
-        // error_log(json_encode($HydrationRecord));
         $HydrationArray[] = $HydrationRecord;
     }
     return $HydrationArray;
@@ -1157,8 +1096,6 @@ function buildJsonObj4Output() {
 
             $allRecords = array();
             foreach ($oemrecords as $oemrecord) {
-                error_log("AdminDate - " . $oemrecord["AdminDate"]);
-
                 $oemDetails = $oemMap[$oemrecord['TemplateID']];
                 $OneRecord = array();
                 $OneRecord["id"] = $oemrecord["TemplateID"];
@@ -1191,7 +1128,6 @@ function buildJsonObj4Output() {
     $this->set('jsonRecord', $jsonRecord);
 }
 /********************************************************/
-
 
 
 

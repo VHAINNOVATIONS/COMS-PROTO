@@ -399,22 +399,22 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 
 
 
-	SaveVitals : function() {
+	SaveVitals : function(parent) {
 		var Patient = this.application.Patient;
 		var ThisAdminDay = this.application.Patient.ThisAdminDay;		// This is the OEM Record for a specific Admin Day - 
 		// { id, AdminDate, Cycle, Day, PostTherapy, PostTherapyInstr, PreTherapy, PreTherapyInstr, Therapy, TherapyInstr }
 
-		var Temperature = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsTempF\"]")[0];
-        var TemperatureLocation = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsTempLoc\"]")[0];
-		var Pulse = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsPulse\"]")[0];
-		var Systolic = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsSystolic\"]")[0];
-		var Height = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsHeightIN\"]")[0];
-		var Respiration = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsResp\"]")[0];
-		var Diastolic = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsDiastolic\"]")[0];
-		var Weight = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsWeightP\"]")[0];
-		var Pain = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsPain\"]")[0];
-		var SPO2 = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsO2Level\"]")[0];
-		var BSA = Ext.ComponentQuery.query("NursingDocs_VitalSigns [name=\"ndVitalsBSA\"]")[0];
+		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
+        var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
+		var Pulse = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPulse\"]")[0];
+		var Systolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsSystolic\"]")[0];
+		var Height = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsHeightIN\"]")[0];
+		var Respiration = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsResp\"]")[0];
+		var Diastolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsDiastolic\"]")[0];
+		var Weight = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsWeightP\"]")[0];
+		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
+		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
+		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
 
 		var dt = new Date();
 		var record = {};
@@ -424,9 +424,9 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
         record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();
 		record.Systolic = Systolic.getValue();
+		record.Diastolic = Diastolic.getValue();
 		record.Height = Height.getValue();
 		record.Respiration = Respiration.getValue();
-		record.Diastolic = Diastolic.getValue();
 		record.Weight = Weight.getValue();
 		record.Pain = Pain.getValue();
 		record.SPO2 = SPO2.getValue();
@@ -586,7 +586,7 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		this.SavingGenInfo = false;
 		this.application.loadMask("One moment please, saving General Information...");
 		var SaveGood1 = this.SaveGenInfo();
-		var SaveGood2 = this.SaveVitals();
+		var SaveGood2 = this.SaveVitals("NursingDocs_VitalSigns");
 		this.application.unMask();
 		if (!SaveGood1 && !SaveGood2) {
 			Ext.MessageBox.alert("No Data Saved", "There was no data specified to be saved" );
