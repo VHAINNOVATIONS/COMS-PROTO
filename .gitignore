@@ -7,6 +7,8 @@ web.xml
 app\SSHDebug\*
 app\config_Constants.php
 app\dbitcon.php
+app/config_Constants.php
+app/dbitcon.php
 app\js_Files2Ignore\*
 aspnet_client\*
 build\* 
