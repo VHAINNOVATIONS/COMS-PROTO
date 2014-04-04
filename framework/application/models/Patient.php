@@ -463,30 +463,21 @@ function convertReason2ID($Reason) {
          * values for WeightFormula and BSA Method if the Start Date of the
          * Template is after the Date Taken
          */
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT Perf_Status_ID as id,BSA_Method as bsaMethod,Weight_Formula as weightFormula " .
+        $query = "SELECT Perf_Status_ID as id,BSA_Method as bsaMethod,Weight_Formula as weightFormula " .
                      "FROM Patient_Assigned_Templates where Is_Active = 1 and Patient_ID = '" .
                      $patientId . "' " . "AND Date_Started <= '" . $dateTaken .
                      "'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT Perf_Status_ID as id,BSA_Method as bsaMethod,Weight_Formula as weightFormula " .
-                     "FROM Patient_Assigned_Templates where Is_Active = true and Patient_ID = '" .
-                     $patientId . "' " . "AND Date_Started <= '" . $dateTaken .
-                     "'";
-        }
         
         $record = $this->query($query);
         if (null != $record && array_key_exists('error', $record)) {
             return $record;
         } else if (count($record) > 0) {
-            if (null === $PS_ID) { // MWB - 6/21/2012 - Modified this code
-                                   // to use currently set PS_ID or to
-                                   // retrieve one if it wasn't submitted in
-                                   // the form.
-                $performanceId = $record[0]['id'];
+            if (null === $PS_ID) {
+                // $performanceId = $record[0]['id'];
+                $performanceId = null;
             } else {
                 $performanceId = $PS_ID;
-            } // MWB - 6/21/2012 - End of patch.
+            }
             
             $bsaMethod = $record[0]['bsaMethod'];
             $weightFormula = $record[0]['weightFormula'];
