@@ -792,15 +792,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                         var theForm = btn.up('form').getForm();
                         if (theForm.isValid()) {
                             var theData = theForm.getValues();
-                            var postData = [];
+                            var postData = [], dataEl = [], patientAmputations = [];
 
                             for (var key in theData) {
                                 if (theData.hasOwnProperty(key)) {
+                                    dataEl["description"] = key;
+                                    patientAmputations.push(dataEl);
                                     postData.push(key);
                                 }
                             }
                             var params = {"Amputations" : postData };
-                            this.application.Patient.Amputations = postData;
+                            this.application.Patient.Amputations = patientAmputations;
                             var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
                             postData = postData.join("<br>");
                             AmputationDisplay.setHTML(postData);
