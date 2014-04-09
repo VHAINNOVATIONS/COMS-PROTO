@@ -59,38 +59,61 @@ if (!is_null($templatedata)) {
 
                 //display the results 
                 foreach ($prehydrations as $prehydration) {
-                    echo " {\"id\":\"" . $prehydration["id"] . "\", \"Instructions\":\"" . $prehydration["description"] .
-                    "\", \"Drug\":\"" . $prehydration["drug"] . 
-                    "\", \"Day\":\"" . $prehydration["adminDay"] . "\", \"Sequence\":\"" . $prehydration["Sequence"] . 
-                    "\", \"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
+                    echo " {
+                        \"id\":\"" . $prehydration["id"] . "\", 
+                        \"Instructions\":\"" . $prehydration["description"]  . "\", 
+                        \"Drug\":\"" . $prehydration["drug"] . "\", 
+                        \"Day\":\"" . $prehydration["adminDay"] . "\", 
+                        \"Sequence\":\"" . $prehydration["Sequence"] . "\", 
+                        \"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
+
+
+
 
 
                     $myinfusions = $preinfusions[$prehydration['id']];
                     $numInfusions = count($myinfusions);
 
                     if ($numInfusions == 1) {
-                        echo "\"Amt1\":\"" . $myinfusions[0]['amt'] . "\", \"Units1\":\"" . $myinfusions[0]['unit'] .
-                        "\", \"Infusion1\":\"" . $myinfusions[0]['type'] . "\", \"FluidVol1\":\"" . $myinfusions[0]["fluidVol"] .
-                        "\", \"FlowRate1\":\"" . $myinfusions[0]["flowRate"] . "\", \"InfusionTime1\":\"" . $myinfusions[0]["infusionTime"] .   
-                        "\", \"FluidType1\":\"" . $myinfusions[0]["fluidType"] . "\",".
-                        "\"Amt2\":\"\", \"Units2\":\"\", \"Infusion2\":\"\",\"FluidVol2\":\"\", \"FlowRate2\":\"\", \"InfusionTime2\":\"\", \"FluidType2\":\"\"";
+                        echo "
+                        \"Amt1\":\"" . $myinfusions[0]['amt'] . "\", 
+                        \"Units1\":\"" . $myinfusions[0]['unit'] . "\", 
+                        \"Infusion1\":\"" . $myinfusions[0]['type'] . "\", 
+                        \"FluidVol1\":\"" . $myinfusions[0]["fluidVol"] . "\", 
+                        \"FlowRate1\":\"" . $myinfusions[0]["flowRate"] . "\", 
+                        \"InfusionTime1\":\"" . $myinfusions[0]["infusionTime"] . "\", 
+                        \"FluidType1\":\"" . $myinfusions[0]["fluidType"] . "\",
+                        \"Amt2\":\"\", 
+                        \"Units2\":\"\", 
+                        \"Infusion2\":\"\",
+                        \"FluidVol2\":\"\", 
+                        \"FlowRate2\":\"\", 
+                        \"InfusionTime2\":\"\", 
+                        \"FluidType2\":\"\"
+                        ";
                     } else {
                         $infusionCount = 1;
-
                         foreach ($myinfusions as $infusion) {
-
-                            echo "\"Amt" . $infusionCount . "\":\"" . $infusion['amt'] . "\", \"Units" . $infusionCount . "\":\"" . $infusion['unit'] .
-                            "\", \"Infusion" . $infusionCount . "\":\"" . $infusion['type'] . "\", \"FluidVol" .$infusionCount . "\":\"" .$infusion['fluidVol'].
-                            "\", \"FluidType" . $infusionCount . "\":\"" . $infusion['fluidType'] .
-                            "\", \"FlowRate" . $infusionCount . "\":\"" . $infusion['flowRate'] . "\", \"InfusionTime" . $infusionCount . "\":\"" .$infusion['infusionTime'] . "\"";
-
+                            echo "
+                            \"Amt" . $infusionCount . "\":\"" . $infusion['amt'] . "\", 
+                            \"Units" . $infusionCount . "\":\"" . $infusion['unit'] . "\", 
+                            \"Infusion" . $infusionCount . "\":\"" . $infusion['type'] . "\", 
+                            \"FluidVol" .$infusionCount . "\":\"" .$infusion['fluidVol'] . "\", 
+                            \"FluidType" . $infusionCount . "\":\"" . $infusion['fluidType'] . "\", 
+                            \"FlowRate" . $infusionCount . "\":\"" . $infusion['flowRate'] . "\", 
+                            \"InfusionTime" . $infusionCount . "\":\"" .$infusion['infusionTime'] . "\"
+                            ";
                             if ($infusionCount < $numInfusions) {
                                 echo ",";
                             }
-
                             $infusionCount++;
                         }
                     }
+
+
+
+
+
 
 
                     echo "}";
@@ -104,6 +127,20 @@ if (!is_null($templatedata)) {
                 }
             }
             echo "\t],\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             echo "\t\"RegimenInstruction\" : \"" . $oemrecord['regimenInstruction'] . "\", \n";
 

@@ -1331,6 +1331,16 @@ class LookUp extends Model {
      */
     public function getMHInfusions($id)
     {
+        $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
+        $retVal = $this->query($query);
+        if (count($retVal) > 0) {
+//            error_log("Have Reasons");
+//            error_log(json_encode($retVal[0]));
+//            error_log($retVal[0]["Reason"]);
+
+            if (isset($retVal[0]["Reason"])) {
+//                error_log("Reason is set");
+
         $query = "
             SELECT 
                 mhi.Infusion_ID AS id, 
@@ -1350,7 +1360,9 @@ class LookUp extends Model {
                 JOIN Order_Status os on os.Order_ID = mhi.Order_ID
             WHERE mhi.MH_ID = '$id'
         ";
-        $query1 = "
+            }
+            else {
+        $query = "
             SELECT 
                 mhi.Infusion_ID AS id, 
                 mhi.Infusion_Amt AS amt, 
@@ -1367,10 +1379,39 @@ class LookUp extends Model {
                 JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
             WHERE mhi.MH_ID = '$id'
         ";
-
+            }
         $retVal = $this->query($query);
 // error_log("Lookup Model getMHInfusions - Template Data");
+// error_log("Query - $query");
 // error_log(json_encode($retVal));
+        }
+else {
+// error_log("Do NOT Have Reasons");
+
+        $query = "
+            SELECT 
+                mhi.Infusion_ID AS id, 
+                mhi.Infusion_Amt AS amt, 
+                l1.Name AS unit, 
+                l2.Name AS type, 
+                mhi.BSA_Dose AS bsaDose, 
+                mhi.Fluid_Type AS fluidType,
+                mhi.Fluid_Vol AS fluidVol, 
+                mhi.Flow_Rate AS flowRate, 
+                mhi.Infusion_Time AS infusionTime, 
+                mhi.Order_ID AS Order_ID
+            FROM MH_Infusion mhi 
+                JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
+                JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
+            WHERE mhi.MH_ID = '$id'
+        ";
+        $retVal = $this->query($query);
+//             error_log($query);
+//             error_log(json_encode($retVal));
+
+            
+}
+
         return $retVal;
     }
 

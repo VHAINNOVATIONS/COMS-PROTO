@@ -197,7 +197,11 @@ function convertReason2ID($Reason) {
 }
 
 
-
+A question. Since before your sun burned hot in space and before your race was born, I have awaited a question.
+Guardian of Forever
+Star Trek (Original Series) Episode 19    
+The City on the Edge of Forever
+Original Airdate: Apr 6, 1967
 
 
     function getCurrentAndHistoricalPatientTemplates( $patientID ) {

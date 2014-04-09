@@ -671,21 +671,57 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 buttons: [
                 {
                     text: 'Save',
-                    handler: function() {
-                        if (this.up('form').getForm().isValid()) {
-                            // In a real application, this would submit the form to the configured url
-                            // this.up('form').getForm().submit();
-                            this.up('form').getForm().reset();
-                            this.up('window').hide();
-                            Ext.MessageBox.alert('Thank you!', 'Your inquiry has been sent. We will respond as soon as possible.');
+                    scope : this,
+                    handler: function(btn, event) {
+                        var theForm = btn.up('form').getForm();
+                        if (theForm.isValid()) {
+                            var theData = theForm.getValues();
+                            //var postData = [];
+// debugger;
+//                            for (var key in theData) {
+//                                if (theData.hasOwnProperty(key)) {
+//                                    postData.push(key);
+//                                }
+//                            }
+
+                            var params = {"BSA" : postData };
+//                            this.application.Patient.Amputations = postData;
+//                            var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
+//                            postData = postData.join("<br>");
+//                            AmputationDisplay.setHTML(postData);
+
+                            var patient_id = this.application.Patient.id;
+/***
+                            Ext.Ajax.request({
+                                url: Ext.URLs.Amputations + "/" + patient_id,
+                                method : "POST",
+                                jsonData : params,
+                                success: function( response, opts ){
+                                    var text = response.responseText;
+                                    var resp = Ext.JSON.decode( text );
+                                    if (!resp.success) {
+                                        Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
+                                        this.application.Patient.Amputations = "";
+                                    }
+                                },
+                                failure : function( response, opts ) {
+                                    var text = response.responseText;
+                                    var resp = Ext.JSON.decode( text );
+                                    Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
+                                }
+                            });
+***/
+                            theForm.reset();
+                            btn.up('window').hide();
+                            Ext.MessageBox.alert('Thank you!', 'Patient BSA Determination has been saved');
                         }
                     }
                 },
                 {
                     text: 'Cancel',
-                    handler: function() {
-                        this.up('form').getForm().reset();
-                        this.up('window').hide();
+                    handler: function(btn, event) {
+                        btn.up('form').getForm().reset();
+                        btn.up('window').hide();
                     }
                 }]
             });
@@ -702,6 +738,19 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 items: form
             });
         }
+        var theForm = this.puWinBSASelection.query("form")[0].form;
+        var BSA_Info = {};
+        BSA_Info["BSA_FormulaWeight"] = this.application.Patient.WeightFormula;
+        BSA_Info["BSA_Formula"] = this.application.Patient.BSA_Method;
+
+        // var theAmputations = this.application.Patient.Amputations;
+        // var i, fldAmputations = {};
+        // for (i = 0; i < theAmputations.length; i++) {
+//            var x = theAmputations[i];
+//            var y = x.description;
+//            fldAmputations[y] = "on";
+//        }
+        theForm.setValues(BSA_Info);
         this.puWinBSASelection.show();
     },
 
