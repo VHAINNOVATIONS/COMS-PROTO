@@ -141,7 +141,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	TabRendered : function ( component, eOpts ) {
-        debugger;
 		wccConsoleLog("Flow Sheet Tab has been rendered");
 		this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
 		var ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -150,7 +149,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	BeforeTabActivated : function (component, eOpts ) {
-        debugger;
 		wccConsoleLog("Flow Sheet Tab has been rendered");
 
 		var PatientInfo = this.application.Patient;
@@ -472,7 +470,6 @@ LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
 			failure : function( /* response, opts */ ) {
 				this.application.unMask();
 				alert("Attempt to load latest treatment data failed.");
-				// debugger;
 			}
 		});
 },
@@ -575,10 +572,10 @@ createFlowsheet : function (BuildGrid) {
 				V_PS = "<abbr title=\"" + tmp.PS + "\">" + tmp.PSID + "</abbr>";
 				V_Weight = V.Weight;
 			}
-			FSPSRow[hdr] = V_PS;
+
+            FSPSRow[hdr] = V_PS;
 			FSWeightRow[hdr] = V_Weight;
 			FSDateRow[hdr] = OEM_Record.AdminDate;
-
 			FSDiseaseResponse[hdr] = "";
 			FSToxicity[hdr] = "";
 			FSOther[hdr] = "";

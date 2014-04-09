@@ -403,8 +403,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
             defaults: {
                 labelAlign: "right"
             },
-            margin: "3 0 0 0",
-            width: 280,
             items: [{
                 xtype: "displayfield",
                 name: "ndVitalsBSA",
@@ -413,13 +411,15 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 width: 105,
                 margin: "0 5 0 0",
                 labelClsExtra: "NursingDocs-label"
-            }, {
+            }, 
+            {
                 xtype: "container",
                 name: "ndVitalsCalcBSA",
                 html: "Show <button name=\"ShowBSA\" class=\"anchor NDGIVS_BSA_Calculations\">Calculations</button>",
-                width: 180,
                 margin: "0 10 0 0"
-            }]
+            }
+
+            ]
         }
     ]
 });

@@ -40,7 +40,7 @@ Ext.Loader.setConfig({
 Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
 Ext.URLs.SiteConfig = "/LookUp/SiteConfig";
-
+Ext.URLs.Amputations = "/Patient/Amputations";
 
 Ext.URLs.Reasons = "/Workflow/Reasons";
 Ext.URLs.Patients = "/Patient/viewall";
@@ -1378,10 +1378,10 @@ Ext.generic_BSA_Calc = function(h, w, hMultiplier, hPower, wMultiplier, wPower) 
 
 Ext.BSA_Mosteller = function (h, w) {	// Height in Meters, Weight in Kg
 		if (w <= 0) {	// MWB - 5/15/2012 - Sanity check if the weight is too low. This could be due to user input error or entering a user who's too short when using ideal weight
-			w = 1;
+			w = 0;
 		}
 		if (h <= 0) {
-			h = 1;
+			h = 0;
 		}
 		var BSA = Math.sqrt((h * 100 * w) / 3600);
 		var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2)  + "e-" + 2), "0.00");
@@ -1390,38 +1390,38 @@ Ext.BSA_Mosteller = function (h, w) {	// Height in Meters, Weight in Kg
 
 Ext.BSA_DuBois = function (h, w) {	// Height in Meters, Weight in Kg
 		if (w <= 0) {	// MWB - 5/15/2012 - Sanity check if the weight is too low. This could be due to user input error or entering a user who's too short when using ideal weight
-			w = 1;
+			w = 0;
 		}
 		if (h <= 0) {
-			h = 1;
+			h = 0;
 		}
 		return (this.generic_BSA_Calc(h, w, 0.20247, 0.725, 1, 0.425));
 	};
 
 Ext.BSA_Haycock = function (h, w) {	// Height in Meters, Weight in Kg
 		if (w <= 0) {	// MWB - 5/15/2012 - Sanity check if the weight is too low. This could be due to user input error or entering a user who's too short when using ideal weight
-			w = 1;
+			w = 0;
 		}
 		if (h <= 0) {
-			h = 1;
+			h = 0;
 		}
 		return (this.generic_BSA_Calc(h*100, w, 0.024265, 0.3964, 1, 0.5378));
 	};
 Ext.BSA_Gehan_George = function (h, w) {	// Height in Meters, Weight in Kg
 		if (w <= 0) {	// MWB - 5/15/2012 - Sanity check if the weight is too low. This could be due to user input error or entering a user who's too short when using ideal weight
-			w = 1;
+			w = 0;
 		}
 		if (h <= 0) {
-			h = 1;
+			h = 0;
 		}
 		return (this.generic_BSA_Calc(h*100, w, 0.0235, 0.42246, 1, 0.51456));
 	};
 Ext.BSA_Boyd = function (h, w) {	// Height in Meters, Weight in Kg
 		if (w <= 0) {	// MWB - 5/15/2012 - Sanity check if the weight is too low. This could be due to user input error or entering a user who's too short when using ideal weight
-			w = 1;
+			w = 0;
 		}
 		if (h <= 0) {
-			h = 1;
+			h = 0;
 		}
 		var BSA = 0.0003207 * Math.pow(h*100,0.3) * Math.pow(w*1000,( 0.7285 - 0.0188 * Math.log(w*1000)/Math.LN10));
 		var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2)  + "e-" + 2), "0.00");

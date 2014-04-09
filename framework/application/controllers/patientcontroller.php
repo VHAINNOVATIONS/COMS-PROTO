@@ -774,7 +774,7 @@ class PatientController extends Controller
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
 			$this->set('masterRecord', null);
-            error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
+            // error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
 			return;
 		}
 
@@ -783,15 +783,15 @@ class PatientController extends Controller
 			$this->set('oemrecords', null);
 			$this->set('masterRecord', null);
 			$this->set('frameworkErr', null);
-            error_log("No Records for  - $id");
-            error_log(json_encode($templateId));
+            // error_log("No Records for  - $id");
+            // error_log(json_encode($templateId));
 			return;
 		}
 
 		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
 			$this->set('masterRecord', null);
-            error_log("Get Top Level Template Data Failed. $masterRecord");
+            // error_log("Get Top Level Template Data Failed. $masterRecord");
 			return;
 		}
 
@@ -800,7 +800,7 @@ class PatientController extends Controller
 		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
 		if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
 			$this->set('templatedata', null);
-            error_log("Get Disease Info Failed. $Disease");
+            // error_log("Get Disease Info Failed. $Disease");
 			return;
 		}
 		$masterRecord[0]['DiseaseRecord'] = $Disease;
@@ -812,7 +812,7 @@ class PatientController extends Controller
 		$oemrecords = $this->Patient->getTopLevelOEMRecords($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
 			$this->set('oemrecords', null);
-            error_log("Get Top Level OEM Data Failed. $oemrecords");
+            // error_log("Get Top Level OEM Data Failed. $oemrecords");
 			return;
 		}
 		$this->set('oemrecords', $oemrecords);
@@ -825,7 +825,7 @@ class PatientController extends Controller
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
-                error_log("Get Pre Therapy Failed. - $retVal");
+                // error_log("Get Pre Therapy Failed. - $retVal");
 				return;
 			}
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
@@ -835,7 +835,7 @@ class PatientController extends Controller
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
-                error_log("Get Post Therapy Failed. - $retVal");
+                // error_log("Get Post Therapy Failed. - $retVal");
 				return;
 			}
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
@@ -844,7 +844,7 @@ class PatientController extends Controller
             $retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
-                error_log("Get Therapy Failed. - $retVal");
+                // error_log("Get Therapy Failed. - $retVal");
 				return;
 			}
 			$oemDetails['Therapy'] = $this->get('regimens');
@@ -859,87 +859,11 @@ class PatientController extends Controller
 
     function getOEMData($PatientID) {
         $this->genOEMData($PatientID);
-//        $retData = array();
-//        $retData["oemMap"] = $this->get('oemMap');
-//        $retData["oemrecords"] = $this->get('oemrecords');
-//        $retData["masterRecord"] = $this->get('masterRecord');
         $this->buildJsonObj4Output();
         return $this->get('jsonRecord');
     }
 
-/**
- * $id = Record ID in specific table
- * $type = Determines which table to update ("Pre", "Post", "Therapy")
- *         Pre uses Medication_Hydration Table and ID maps to 'MH_ID'
- *         Post uses Medication_Hydration Table and ID maps to 'MH_ID'
- *         Therapy uses Template_Regimen Table and ID maps to 'Patient_Regimen_ID'
- * $status = Status to set - "Hold", "Cancel", "Clear"
- **/
-    function HoldCancel($id = null, $type = null, $status = null) {
-        $jsonRecord = array();
-        $jsonRecord['success'] = true;
-        if (!$id) {
-            $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Missing Record ID for Hold";
-            $this->set('jsonRecord', $jsonRecord);
-            return;
-        }
-        if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
-            if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
-                if (null === $status || "Clear" === $status) {
-                    $status = "";
-                }
-                if ("PUT" == $_SERVER['REQUEST_METHOD']) {
-                    $table = "Medication_Hydration";
-                    $key = "MH_ID";
-                    if ("Therapy" == $type) {
-                        $table = "Template_Regimen";
-                        $key = "Patient_Regimen_ID";
-                    }
-                    $query = "select * from $table where $key = '$id'";
-                    $TreatmentData = $this->Patient->query($query);
-                    $lookup = new LookUp();
-                    $Order_Type = $type;
-                    $TID = $TreatmentData[0]["Template_ID"];
-                    $Drug_ID = $TreatmentData[0]["Drug_ID"];
-                    $Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
-                    if(0 == count($TreatmentData)) {
-                            $jsonRecord['success'] = 'false';
-                            $jsonRecord['msg'] = "No Record Matches $id";
-                    }
-                    else {
-                        if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $TreatmentData)) {
-                            $jsonRecord['success'] = 'false';
-                            $jsonRecord['msg'] = $frameworkErr;
-                            $this->set('frameworkErr', null);
-                        }
-                        else {
-                            $query = "update $table set Status = '$status' where $key = '$id'";
-                            $retVal = $this->Patient->query($query);
-                            if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $retVal)) {
-                                $jsonRecord['success'] = 'false';
-                                $jsonRecord['msg'] = $frameworkErr;
-                                $this->set('frameworkErr', null);
-                            }
-                        }
-                    }
-                }
-                else {
-                    $jsonRecord['success'] = false;
-                    $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a PUT";
-                }
-            }
-            else {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = "Invalid COMMAND - $status, expected a Hold/Cancel or Clear";
-            }
-        }
-        else {
-            $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Invalid Therapy Type = $type expected Pre/Post/Therapy";
-        }
-        $this->set('jsonRecord', $jsonRecord);
-    }
+
 /*********************************************************/
 function Therapy($regimens) {
     $Therapy = array();
@@ -974,11 +898,15 @@ function PrePostTherapy($hydrations, $infusions) {
     foreach ($hydrations as $hydration) {
         $HydrationRecord = array();
         $status = $hydration["Status"] ? $hydration["Status"] : "";
-        $reason = ("Test - Communication" !== $hydration["Reason"]) ? $hydration["Reason"] : "";
+
+        $reason = "";
+        if (isset($hydration["Reason"])) {
+            $reason = ("Test - Communication" !== $hydration["Reason"]) ? $hydration["Reason"] : "";
+        }
 
         $HydrationRecord["id"] = $hydration["id"];
         $HydrationRecord["Order_ID"] = $hydration["Order_ID"];
-        $HydrationRecord["Order_Status"] = $hydration["Order_Status"];
+        $HydrationRecord["Order_Status"] = isset($hydration["Order_Status"]) ? $hydration["Order_Status"] : "";
         $HydrationRecord["Instructions"] = $hydration["description"];
         $HydrationRecord["Status"] = $status;
         $HydrationRecord["Reason"] = $reason;
@@ -1307,6 +1235,14 @@ function buildJsonObj4Output() {
         }
     }
 
+
+    function getVitals($PatientID = null, $dateTaken = null) {
+        $this->Vitals($PatientID);
+        // error_log("getVitals - ");
+        // error_log(json_encode( $this->get('jsonRecord') ));
+        return $this->get('jsonRecord');
+    }
+
     function Allergies($patientId = null)
     {
         
@@ -1450,5 +1386,128 @@ function buildJsonObj4Output() {
         $this->set('jsonRecord', $jsonRecord);
         
         // $templateIds = $this->Patient->getTemplateIds();
+    }
+
+
+/**
+ * $id = Record ID in specific table
+ * $type = Determines which table to update ("Pre", "Post", "Therapy")
+ *         Pre uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Post uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Therapy uses Template_Regimen Table and ID maps to 'Patient_Regimen_ID'
+ * $status = Status to set - "Hold", "Cancel", "Clear"
+ **/
+    function HoldCancel($id = null, $type = null, $status = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$id) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Record ID for Hold";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
+            if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
+                if (null === $status || "Clear" === $status) {
+                    $status = "";
+                }
+                if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+                    $table = "Medication_Hydration";
+                    $key = "MH_ID";
+                    if ("Therapy" == $type) {
+                        $table = "Template_Regimen";
+                        $key = "Patient_Regimen_ID";
+                    }
+                    $query = "select * from $table where $key = '$id'";
+                    $TreatmentData = $this->Patient->query($query);
+                    $lookup = new LookUp();
+                    $Order_Type = $type;
+                    $TID = $TreatmentData[0]["Template_ID"];
+                    $Drug_ID = $TreatmentData[0]["Drug_ID"];
+                    $Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
+                    if(0 == count($TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = "No Record Matches $id";
+                    }
+                    else {
+                        if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = $frameworkErr;
+                            $this->set('frameworkErr', null);
+                        }
+                        else {
+                            $query = "update $table set Status = '$status' where $key = '$id'";
+                            $retVal = $this->Patient->query($query);
+                            if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $retVal)) {
+                                $jsonRecord['success'] = 'false';
+                                $jsonRecord['msg'] = $frameworkErr;
+                                $this->set('frameworkErr', null);
+                            }
+                        }
+                    }
+                }
+                else {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a PUT";
+                }
+            }
+            else {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Invalid COMMAND - $status, expected a Hold/Cancel or Clear";
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid Therapy Type = $type expected Pre/Post/Therapy";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    function Amputations($patientID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$patientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID for saving Amputations";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $data = file_get_contents('php://input');
+        $form_data = json_decode($data);
+        if (!$form_data) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "No information available to save Amputations";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "delete from LookUp where Lookup_Type = 30 and Name = '$patientID'";
+            $TreatmentData = $this->Patient->query($query);
+            error_log("Deleting old records");
+            error_log($query);
+            error_log(json_encode($TreatmentData));
+
+            $Amputations = $form_data->Amputations;
+            $this->Patient->beginTransaction();
+            foreach ($Amputations As $Amputation) {
+                $query = "insert into LookUp (Lookup_Type, Name, Description) values (30, '$patientID', '$Amputation')";
+                $retVal = $this->Patient->query($query);
+                if ($this->checkForErrors('Saving Amputation Record Failed. ', $retVal)) {
+                    $jsonRecord['success'] = 'false';
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->Patient->endTransaction();
+            $jsonRecord['msg'] = count($Amputations) . " Amputation records saved";
+            $this->set('jsonRecord', $jsonRecord);
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method for saving Amputations (expected a POST got a " . $_SERVER['REQUEST_METHOD'];
+            $this->set('jsonRecord', $jsonRecord);
+        }
     }
 }

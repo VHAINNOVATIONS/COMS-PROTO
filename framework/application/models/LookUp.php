@@ -1159,138 +1159,167 @@ class LookUp extends Model {
      */
     public function getRegimens($id)
     {
-        $query = "
-            SELECT 
-                tr.Patient_Regimen_ID AS id, 
-                tr.Regimen_Number AS regnumber, 
-                l.Name AS drug, 
-                tr.Regimen_Dose AS regdose, 
-                l1.Name AS regdoseunit, 
-                tr.Regimen_Dose_Pct AS regdosepct, 
-                tr.Regimen_Reason AS regreason, 
-                tr.Patient_Dose AS patientdose, 
-                l2.Name AS patientdoseunit, 
-                l3.Name AS route, 
-                tr.Admin_Day AS adminDay, 
-                tr.Fluid_Vol AS flvol,  
-                l4.Name AS flunit, 
-                tr.Infusion_Time AS infusion, 
-                tr.Flow_rate AS flowRate, 
-                tr.Instructions AS instructions, 
-                tr.Status,
-                tr.Sequence_Number AS sequence, 
-                tr.Admin_Time AS adminTime, 
-                tr.Drug_ID AS drugid, 
-                tr.BSA_Dose AS bsaDose, 
-                tr.Fluid_Type AS fluidType, 
-                tr.T_Type AS type, 
-                tr.Order_ID AS Order_ID,
-                case when tr.Reason is not null and tr.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
-                os.Order_Status AS Order_Status
-             FROM Template_Regimen tr
-                 LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
-                 LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
-                 LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
-                 LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
-                 LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-                 INNER JOIN Workflows wf on WF.ReasonNo = case when tr.Reason is not null Then tr.Reason else 1 END
-                 INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
 
-             WHERE tr.Template_ID = '$id' 
-             ORDER BY Sequence_Number
-        ";
-        $query1 = "
-            SELECT 
-                tr.Patient_Regimen_ID AS id, 
-                tr.Regimen_Number AS regnumber, 
-                l.Name AS drug, 
-                tr.Regimen_Dose AS regdose, 
-                l1.Name AS regdoseunit, 
-                tr.Regimen_Dose_Pct AS regdosepct, 
-                tr.Regimen_Reason AS regreason, 
-                tr.Patient_Dose AS patientdose, 
-                l2.Name AS patientdoseunit, 
-                l3.Name AS route, 
-                tr.Admin_Day AS adminDay, 
-                tr.Fluid_Vol AS flvol,  
-                l4.Name AS flunit, 
-                tr.Infusion_Time AS infusion, 
-                tr.Flow_rate AS flowRate, 
-                tr.Instructions AS instructions, 
-                tr.Status,
-                tr.Sequence_Number AS sequence, 
-                tr.Admin_Time AS adminTime, 
-                tr.Drug_ID AS drugid, 
-                tr.BSA_Dose AS bsaDose, 
-                tr.Fluid_Type AS fluidType, 
-                tr.T_Type AS type
-
-             FROM Template_Regimen tr
-                 LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
-                 LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
-                 LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
-                 LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
-                 LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-
-             WHERE tr.Template_ID = '$id' 
-             ORDER BY Sequence_Number
-        ";
-
-error_log("Template Data - $query");        
+        $query = "select Reason from Template_Regimen Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
+        if (count($retVal) > 0) {
+//            error_log("Have Reasons for Regimen");
+//            error_log(json_encode($retVal[0]));
+//            error_log($retVal[0]["Reason"]);
+
+            if (isset($retVal[0]["Reason"])) {
+//                error_log("Reason is set");
+                $query = "
+                    SELECT 
+                        tr.Patient_Regimen_ID AS id, 
+                        tr.Regimen_Number AS regnumber, 
+                        l.Name AS drug, 
+                        tr.Regimen_Dose AS regdose, 
+                        l1.Name AS regdoseunit, 
+                        tr.Regimen_Dose_Pct AS regdosepct, 
+                        tr.Regimen_Reason AS regreason, 
+                        tr.Patient_Dose AS patientdose, 
+                        l2.Name AS patientdoseunit, 
+                        l3.Name AS route, 
+                        tr.Admin_Day AS adminDay, 
+                        tr.Fluid_Vol AS flvol,  
+                        l4.Name AS flunit, 
+                        tr.Infusion_Time AS infusion, 
+                        tr.Flow_rate AS flowRate, 
+                        tr.Instructions AS instructions, 
+                        tr.Status,
+                        tr.Sequence_Number AS sequence, 
+                        tr.Admin_Time AS adminTime, 
+                        tr.Drug_ID AS drugid, 
+                        tr.BSA_Dose AS bsaDose, 
+                        tr.Fluid_Type AS fluidType, 
+                        tr.T_Type AS type, 
+                        tr.Order_ID AS Order_ID,
+                        case when tr.Reason is not null and tr.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
+                        os.Order_Status AS Order_Status
+                     FROM Template_Regimen tr
+                         LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
+                         LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
+                         LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
+                         LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
+                         LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
+                         INNER JOIN Workflows wf on WF.ReasonNo = case when tr.Reason is not null Then tr.Reason else 1 END
+                         INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
+
+                     WHERE tr.Template_ID = '$id' 
+                     ORDER BY Sequence_Number
+                ";
+            }
+            else {
+//                error_log("Reason is NOT set");
+                $query = "
+                    SELECT 
+                        tr.Patient_Regimen_ID AS id, 
+                        tr.Regimen_Number AS regnumber, 
+                        l.Name AS drug, 
+                        tr.Regimen_Dose AS regdose, 
+                        l1.Name AS regdoseunit, 
+                        tr.Regimen_Dose_Pct AS regdosepct, 
+                        tr.Regimen_Reason AS regreason, 
+                        tr.Patient_Dose AS patientdose, 
+                        l2.Name AS patientdoseunit, 
+                        l3.Name AS route, 
+                        tr.Admin_Day AS adminDay, 
+                        tr.Fluid_Vol AS flvol,  
+                        l4.Name AS flunit, 
+                        tr.Infusion_Time AS infusion, 
+                        tr.Flow_rate AS flowRate, 
+                        tr.Instructions AS instructions, 
+                        tr.Status,
+                        tr.Sequence_Number AS sequence, 
+                        tr.Admin_Time AS adminTime, 
+                        tr.Drug_ID AS drugid, 
+                        tr.BSA_Dose AS bsaDose, 
+                        tr.Fluid_Type AS fluidType, 
+                        tr.T_Type AS type, 
+                        tr.Order_ID AS Order_ID
+                     FROM Template_Regimen tr
+                         LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
+                         LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
+                         LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
+                         LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
+                         LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
+                     WHERE tr.Template_ID = '$id' 
+                     ORDER BY Sequence_Number
+                ";
+            }
+            $retVal = $this->query($query);
+        }
+// error_log("Lookup Model getRegimens - Template Data - $query");
+// error_log(json_encode($retVal));
         return $retVal;
+
     }
 
+
     function getHydrations($id, $type) {
-        $query = "select 
-            mh.MH_ID as id, 
-            lu.Name as drug, 
-            mh.Description as description, 
-            mh.Fluid_Vol as fluidVol, 
-            mh.Flow_Rate as flowRate, 
-            mh.Admin_Day as adminDay, 
-            mh.Infusion_Time as infusionTime,
-            mh.Sequence_Number as Sequence, 
-            mh.Admin_Time as adminTime, 
-            mh.Drug_ID as drugid, 
-            mh.Pre_Or_Post as type, 
-            mh.Order_ID as Order_ID,
-            os.Order_Status AS Order_Status,
-            wf.WorkflowName as Reason,
-            case when mh.Reason is not null and mh.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
-            mh.Status as Status
-            from Medication_Hydration mh 
-            INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
-            INNER JOIN Workflows wf on WF.ReasonNo = case when mh.Reason is not null Then mh.Reason else 1 END 
-            INNER JOIN Order_Status os on os.Order_ID = mh.Order_ID
-            where mh.Template_ID = '$id' 
-            and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-            order by Sequence_Number";
-
-        $query1 = "select 
-            mh.MH_ID as id, 
-            lu.Name as drug, 
-            mh.Description as description, 
-            mh.Fluid_Vol as fluidVol, 
-            mh.Flow_Rate as flowRate, 
-            mh.Admin_Day as adminDay, 
-            mh.Infusion_Time as infusionTime,
-            mh.Sequence_Number as Sequence, 
-            mh.Admin_Time as adminTime, 
-            mh.Drug_ID as drugid, 
-            mh.Pre_Or_Post as type, 
-            mh.Order_ID as Order_ID,
-            mh.Status as Status
-            from Medication_Hydration mh 
-            INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
-
-            where mh.Template_ID = '$id' 
-            and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-            order by Sequence_Number";
-
-error_log("Template Data - $query");        
-
+        $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
+        if (count($retVal) > 0) {
+//            error_log("Have Reasons - $type");
+//            error_log(json_encode($retVal[0]));
+//            error_log($retVal[0]["Reason"]);
+
+            if (isset($retVal[0]["Reason"])) {
+//                error_log("Reason is set");
+                $query = "
+                    select 
+                    mh.MH_ID as id, 
+                    lu.Name as drug, 
+                    mh.Description as description, 
+                    mh.Fluid_Vol as fluidVol, 
+                    mh.Flow_Rate as flowRate, 
+                    mh.Admin_Day as adminDay, 
+                    mh.Infusion_Time as infusionTime,
+                    mh.Sequence_Number as Sequence, 
+                    mh.Admin_Time as adminTime, 
+                    mh.Drug_ID as drugid, 
+                    mh.Pre_Or_Post as type, 
+                    mh.Order_ID as Order_ID,
+                    os.Order_Status AS Order_Status,
+                    wf.WorkflowName as Reason,
+                    mh.Status as Status
+                    from Medication_Hydration mh 
+                    INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
+                    INNER JOIN Workflows wf on WF.ReasonNo = case when mh.Reason is not null Then mh.Reason else 1 END 
+                    INNER JOIN Order_Status os on os.Order_ID = mh.Order_ID
+                    where mh.Template_ID = '$id' 
+                    and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
+                    order by Sequence_Number";
+
+            }
+            else {
+                $query = "
+                    select 
+                    mh.MH_ID as id, 
+                    lu.Name as drug, 
+                    mh.Description as description, 
+                    mh.Fluid_Vol as fluidVol, 
+                    mh.Flow_Rate as flowRate, 
+                    mh.Admin_Day as adminDay, 
+                    mh.Infusion_Time as infusionTime,
+                    mh.Sequence_Number as Sequence, 
+                    mh.Admin_Time as adminTime, 
+                    mh.Drug_ID as drugid, 
+                    mh.Pre_Or_Post as type, 
+                    mh.Order_ID as Order_ID,
+                    mh.Status as Status
+                    from Medication_Hydration mh 
+                    INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
+                    where mh.Template_ID = '$id' 
+                    and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
+                    order by Sequence_Number";
+            }
+            $retVal = $this->query($query);
+        }
+// error_log("Lookup Model getHydrations - Template Data - $query");
+// error_log(json_encode($retVal));
+
         return $retVal;
     }
 
@@ -1338,8 +1367,11 @@ error_log("Template Data - $query");
                 JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
             WHERE mhi.MH_ID = '$id'
         ";
-error_log("Template Data - $query");        
-        return $this->query($query);
+
+        $retVal = $this->query($query);
+// error_log("Lookup Model getMHInfusions - Template Data");
+// error_log(json_encode($retVal));
+        return $retVal;
     }
 
     function getTemplateDetailByNameAndField($name, $field) {

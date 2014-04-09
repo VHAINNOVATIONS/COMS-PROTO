@@ -93,7 +93,6 @@ class LookupController extends Controller {
 
 
     function saveTemplate() {
-        error_log("Lookup Controller saveTemplate function");
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
@@ -422,13 +421,27 @@ class LookupController extends Controller {
             
             $retVal = $this->LookUp->getHydrations($id, 'pre');
 
-            if($this->checkForErrors('Get Pre Medication_Hydration Failed. ', $retVal)){
+            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
+// error_log("Get Pre Medication_Hydration Failed. ");
                 $this->set('templatedata', null);
                 return;
             }
 
+            if (count($retVal) <= 0) {
+                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
+                $this->set('templatedata', null);
+                return;
+            }
+            if (!isset($retVal[0]["id"])) {
+                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
+                $this->set('templatedata', null);
+                return;
+            }
+
+
+
+
             $prehydrations = $retVal;
-            
             
             $infusionMap = array();
 
@@ -442,13 +455,22 @@ class LookupController extends Controller {
 
 
             $retVal = $this->LookUp->getHydrations($id, 'post');
+            $posthydrations = $retVal;
 
             if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
-            
-            $posthydrations = $retVal;
+            if (count($retVal) <= 0) {
+                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
+                $this->set('templatedata', null);
+                return;
+            }
+            if (!isset($retVal[0]["id"])) {
+                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
+                $this->set('templatedata', null);
+                return;
+            }
             
             
             $infusionMap = array();
@@ -469,6 +491,18 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
+            if (count($retVal) <= 0) {
+                $this->set('frameworkErr', 'Get Template_Regimen Failed. ');
+                $this->set('templatedata', null);
+                return;
+            }
+            if (!isset($retVal[0]["id"])) {
+                $this->set('frameworkErr', 'Get Template_Regimen Failed. ');
+                $this->set('templatedata', null);
+                return;
+            }
+            
+
             
             $this->set('regimens', $retVal);
         } else {
@@ -585,7 +619,6 @@ class LookupController extends Controller {
      * Gets the Site Configuration Parameters in a single call (e.g. RoundingRule & Medication Hold)
      */
     function SiteConfig() {
-        error_log("LookupController - SiteConfig()");
 
         $jsonRecord = array();
         $retVal = $this->LookUp->getSiteConfig();
@@ -596,7 +629,6 @@ class LookupController extends Controller {
         else {
             foreach ($retVal as $record) {
                 $temp = json_encode($record);
-                error_log($temp);
                 $name = $record["Name"];
                 $value = $record["Description"];
                 $jsonRecord[$name] = $value;

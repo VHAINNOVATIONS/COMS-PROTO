@@ -62,7 +62,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		{
 			ref: "ndVitalSignsForm",
-			selector: "NursingDocs_VitalSigns"
+			// selector: "NursingDocs_VitalSigns"
+            selector: "VitalSignsEntryForm"
 		},
 
 		{
@@ -159,20 +160,38 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				afterrender : this.GenInfoRendered
 			},
 
-			"NursingDocs_VitalSigns textfield[name=\"ndVitalsTempF\"]" : {
+			"VitalSignsEntryForm textfield[name=\"ndVitalsTempF\"]" : {
 				blur : this.ConvertTemp
 			},
 
-			"NursingDocs_VitalSigns textfield[name=\"ndVitalsHeightIN\"]" : {
+			"VitalSignsEntryForm textfield[name=\"ndVitalsHeightIN\"]" : {
 				blur : this.ConvertHeight
 			},
 
+			// "NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
+            "VitalSignsEntryForm textfield[name=\"ndVitalsWeightP\"]" : {
+				blur : this.ConvertWeight
+			},
+
+			"PatientHistory NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
+				blur : this.ConvertWeight
+			},
 			"NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
 				blur : this.ConvertWeight
 			},
+			"NursingDocs_GenInfo NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
+				blur : this.ConvertWeight
+			},
+
+            "VitalSignsEntryForm button[name=\"ShowBSA\]" : {
+                click: this.NDGIVS_BSA_Calculations
+            },
+
             "NursingDocs_GenInfo button[action=\"save\"]": {
                 click: this.btnSaveGenInfo
             },
+
+
 			"NursingDocs_DualDosingVerification button[name=\"DDV_FirstSig\"]" : {
                 click: this.btnFirstSignature
 			},
@@ -239,7 +258,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of first verifier", SigName : SigNameFld1, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
-Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
+		Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
 
 
 
@@ -249,28 +268,35 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of second verifier", SigName : SigNameFld2, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
-Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
+		Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
 	},
 
 	ConvertWeight : function( fld, eOpts ) {
-		var kg = Ext.lbs2kg(fld.getValue());
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-		var NDVitalsWeightKG = thisCtl.getNdVitalsWeightKG();
-		NDVitalsWeightKG.setValue("(" + kg + " kg)");
-		this.ndgiUpdateBSA();
+        var inValue = fld.getValue();
+        if ("" !== inValue) {
+            var kg = Ext.lbs2kg(inValue);
+            var NDVitalsWeightKG = fld.ownerCt.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+            NDVitalsWeightKG.setValue("(" + kg + " kg)");
+            this.ndgiUpdateBSA(fld);
+        }
 	},
 	ConvertHeight : function( fld, eOpts ) {
-		var cm = Ext.in2cm(fld.getValue());
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-		var NDVitalsHeightCM = thisCtl.getNdVitalsHeightCM();
-		NDVitalsHeightCM.setValue("(" + cm + " cm)");
-		this.ndgiUpdateBSA();
+        var inValue = fld.getValue();
+        if ("" !== inValue) {
+            var cm = Ext.in2cm(inValue);
+            var NDVitalsHeightCM = fld.ownerCt.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+
+            NDVitalsHeightCM.setValue("(" + cm + " cm)");
+            this.ndgiUpdateBSA(fld);
+        }
 	},
 	ConvertTemp : function( fld, eOpts ) {
-		var c = Ext.f2C(fld.getValue());
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-		var NDVitalsTempC = thisCtl.getNdVitalsTempC();
-		NDVitalsTempC.setValue("(" + c + " &deg;C)");
+        var inValue = fld.getValue();
+        if ("" !== inValue) {
+            var c = Ext.f2C(fld.getValue());
+            var NDVitalsTempC = fld.ownerCt.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+            NDVitalsTempC.setValue("(" + c + " &deg;C)");
+        }
 	},
 
 
@@ -448,16 +474,10 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return false;
 		}
-		if (record.SPO2 <= 0 || record.SPO2 > 100) {
+        if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
             Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 			return true;
 		}
-
-        
-        
-        if (record.SPO2 > 100 || record.SPO2 < 0) {
-            return (false);
-        }
 
 		Temperature.setValue("");
         TemperatureLocation.setValue("");
@@ -674,15 +694,6 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 
 
 
-// MWB - 6/28/2012 - Show Calculations button for Vital Signs Form
-			var theForm = this.getNdVitalSignsForm();
-			if (theForm && theForm.rendered) {
-				var VSFormBtns = theForm.el.select("button.NDGIVS_BSA_Calculations");
-				VSFormBtns.on("click", this.HandleVSFormShowCalcButtons, this);
-			}
-			else {
-				Ext.MessageBox.alert("Error", "Vital Signs Form not yet rendered");
-			}
 
 
 
@@ -711,18 +722,27 @@ Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).
 		});
 	},
 
-	ndgiUpdateBSA : function() {
-		var Patient = this.application.Patient;
+	ndgiUpdateBSA : function(fld) {
+        var Parent = fld.up(".VitalSignsEntryForm");
+        var HeightEditFieldValue = Parent.query("container [name=\"ndVitalsHeightIN\"]")[0].getValue();
+        var WeightEditFieldValue = Parent.query("container [name=\"ndVitalsWeightP\"]")[0].getValue();
+
+        var Patient = this.application.Patient;
 		var params = {};
 		params = Ext.apply(params, Patient);
-		params.Weight = this.getNdVitalsWeightP().getValue();
-		params.Height = this.getNdVitalsHeightIN().getValue();
-		if ("" !== params.Weight && "" !== params.Height) {
+
+		params.Weight = WeightEditFieldValue;
+		params.Height = HeightEditFieldValue;
+        
+        if ("" !== params.Weight && "" !== params.Height) {
 			Patient.Height = params.Height;
 			Patient.Weight = params.Weight;
 			params.BSA = Ext.BSA_Calc(params);
 			this.getNdVitalsBSA().setValue(params.BSA);
 		}
+        else {
+            this.getNdVitalsBSA().setValue("");
+        }
 	}
 
 });

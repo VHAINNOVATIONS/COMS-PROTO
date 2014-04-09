@@ -62,9 +62,13 @@ class NursingDocController extends Controller {
 
 
     function Flowsheet ($PatientID) {
-        error_log("Flowsheet - $PatientID");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
+
+        $FSFields = array();
+        $FSColumns = array();
+        $FSData = array();
+
         if ("GET" !== $_SERVER['REQUEST_METHOD']) {
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a GET";
@@ -82,117 +86,126 @@ class NursingDocController extends Controller {
         $controller = 'PatientController';
         $patientController = new $controller('Patient', 'patient', null);
         $patientModel = new Patient();
-        error_log("Flowsheet - Breakpoint 1");
+
+        // Get All OEM Records to build individual Date columns
+        $returnVal = $patientController->getVitals($PatientID);
+        $Vitals = null;
+        $assVitals = array();
+        if (isset($returnVal)) {
+            if ("true" == $returnVal["success"]) {
+                $Vitals = $returnVal["records"];
+                foreach($Vitals as $VitalEntry) {
+                    $V = array();
+                    $idx = $VitalEntry["DateTaken"];
+                    $V["PS"] = $VitalEntry["PS"];
+                    $V["PSID"] = $VitalEntry["PSID"];
+                    $V["Weight"] = $VitalEntry["Weight"];
+                    $assVitals[] = $V;
+                }
+            }
+        }
+
+        $FSPSRow = array("label" => "Performance Status", "&nbsp" => "01 General");
+        $FSWeightRow = array("label" => "Weight (lbs/kg)", "&nbsp" => "01 General");
+        $FSDateRow = array("label" => "Date", "&nbsp" => "01 General");
+        $FSDiseaseResponse = array("label" => "Disease Response", "&nbsp" => "01 General");
+        $FSToxicity = array("label" => "Toxicity Side Effects", "&nbsp" => "01 General");
+        $FSOther = array("label" => "Other", "&nbsp" => "01 General");
+        $FSLabs = array("label" => "Unknown...", "&nbsp" => "02 Laboratory Results");
+
+        $FSFields = array("label", "&nbsp");
+        $FSColumns = array();
+        $FSColumns[] = array("header" => "&nbsp;", "dataIndex" => "label", "width" => 140);
+        // $FSColumns[] = array("header" => "&nbsp;", "dataIndex" => "&nbsp", "width" => 140);
+        // $FSColumns = array();
+
+
+
+
+/**********************************************************************************************/
+
+
+
 
 
         // Get All OEM Records to build individual Date columns
-        
         $returnVal = $patientController->getOEMData($PatientID);
         if (isset($returnVal)) {
             if ($returnVal["success"]) {
-                error_log("Success! We have OEM Data");
+                $today = date('m/d/Y');
                 $OEM = $returnVal["records"][0];
                 $records = $OEM["OEMRecords"];
-                error_log(json_encode($OEM));
-                error_log("Data");
-                error_log(json_encode($records));
-
-
-                
-$RowHeadings = array();
-$RowHeadings[0] = "Date";
-$RowHeadings[1] = "Performance Status";
-$RowHeadings[2] = "Weight (lbs/kg)";
-$RowHeadings[3] = "Disease Response";
-$RowHeadings[4] = "Toxicity Side Effects";
-$RowHeadings[5] = "Other";
-
-$allRecords = array();
                 foreach($records as $record) {
                     $FlowsheetGrid = array();
-                    $Data = array();
-                    $ColHeading = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
-                    $Data[0]["&nbsp;"] = "01 General";
-                    $Data[0]["label"] = "Date";
-                    $Data[0][$ColHeading] = $record["AdminDate"];
+                    $hdr = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
+                    $FSFields[] = $hdr;
+                    // $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90, "field" => array( "xtype" => "textfield" ));
+                    $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90);
+                    $idx = $record["AdminDate"];
+                    $V_PS = "";
+                    $V_Weight = "";
 
-                    $Data[1]["&nbsp;"] = "01 General";
-                    $Data[1]["label"] = $RowHeadings[1];
-                    $Data[1][$ColHeading] = "Vitals";
+                    if (isset($assVitals[$idx])) {
+                        $tmp = $assVitals[$idx];
+                        $V_PS = "<abbr title=\"" + $tmp.PS + "\">" + $tmp.PSID + "</abbr>";
+                        $V_Weight = $tmp.Weight;
+                    }
 
-                    $Data[2]["&nbsp;"] = "01 General";
-                    $Data[2]["label"] = $RowHeadings[2];
-                    $Data[2][$ColHeading] = "W Vitals";
+                    $FSPSRow[$hdr] = $V_PS;
+                    $FSWeightRow[$hdr] = $V_Weight;
+                    $FSDateRow[$hdr] = $record["AdminDate"];
+                    $FSDiseaseResponse[$hdr] = "";
+                    $FSToxicity[$hdr] = "";
+                    $FSOther[$hdr] = "";
+                    $FSLabs[$hdr] = "";
 
-                    $Data[3]["&nbsp;"] = "01 General";
-                    $Data[3]["label"] = $RowHeadings[1];
-                    $Data[3][$ColHeading] = "Disease";
-
-                    $Data[4]["&nbsp;"] = "01 General";
-                    $Data[4]["label"] = $RowHeadings[2];
-                    $Data[4][$ColHeading] = "Tox";
-
-                    $Data[5]["&nbsp;"] = "01 General";
-                    $Data[5]["label"] = $RowHeadings[1];
-                    $Data[5][$ColHeading] = "Other";
+                    if ($today === $record["AdminDate"]) {
+                        $FSDiseaseResponse[$hdr] = "<button class=\"anchor DiseaseResponse\" name=\"WriteFSData\" cellType=\"Disease Response\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
+                        $FSToxicity[$hdr] = "<button class=\"anchor Toxicity\" name=\"WriteFSData\" cellType=\"Toxicity Side Effects\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
+                        $FSOther[$hdr] = "<button class=\"anchor Other\" name=\"WriteFSData\" cellType=\"Other\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
+                    }
                 }
-
-                
-                
-                $jsonRecord['records'] = $Data;
-
-/***
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[0]] = $record["AdminDate"];
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[1]] = "Vitals - Perf Status";
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[2]] = "Vitals - Weight";
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[3]] = "Response";
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[4]] = "Tox";
-                    $FlowsheetGrid[$ColHeading][$RowHeadings[5]] = "Other";
-                    $allRecords[] = $FlowsheetGrid;
-                    error_log(json_encode($FlowsheetGrid));
-
-***/
-        }
-/*************
-
-
-
-
-        if ($this->checkForErrors("Check Orders for Patient - $PatientID", $returnVal)) {
-            if (isset($frameworkErr)) {
-                error_log("Flowsheet - Error $frameworkErr");
-                $this->set('frameworkErr', null);
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = "Can't get Orders for Patient - $PatientID";
-                $this->set('jsonRecord', $jsonRecord);
-                return;
             }
         }
-******************/
-        error_log("Flowsheet - Breakpoint 4");
-        }
+
         if (!isset($returnVal)) {
-            error_log("Flowsheet - No OEM Data");
-                    $this->set('frameworkErr', null);
-                    $jsonRecord['success'] = false;
-                    $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
-                    $this->set('jsonRecord', $jsonRecord);
-                    return;
+            $this->set('frameworkErr', null);
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
         }
-/*********
-        echo count($returnVal);
-        foreach ($returnVal as $aRecord) {
-            $x = json_encode($aRecord);
-            echo "------------------------------------ \n$x-------------------------";
-            echo "";
-        }
-********/
 
 
+        $FSData = array( $FSDateRow, $FSPSRow, $FSWeightRow, $FSDiseaseResponse, $FSToxicity, $FSOther, $FSLabs);
 
-        $jsonRecord['msg'] = "Breakpoint 1";
+        $jsonRecord = array( "status" => true, "msg" => "Breakpoint 1", "records" => array("Fields" => $FSFields, "Columns" => $FSColumns, "Data" => $FSData));
         $this->set('jsonRecord', $jsonRecord);
     }
+
+    function FlowsheetFields ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get('jsonRecord');
+        $jsonRecord = array("success" => true, "records" => array("Fields" => $Info["records"]["Fields"], "Columns" => $Info["records"]["Columns"] ));
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    function FlowsheetColumns ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get('jsonRecord');
+        $jsonRecord = array("success" => true, "records" => $Info["records"]["Columns"]);
+        $this->set('jsonRecord', $jsonRecord);
+    }
+    function FlowsheetData ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get('jsonRecord');
+        $jsonRecord = array("success" => true, "records" => $Info["records"]["Data"]);
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+
+
+
 /********************** END FLOWSHEET ***********************/
 
 

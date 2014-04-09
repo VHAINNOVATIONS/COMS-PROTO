@@ -157,9 +157,6 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	collapsed : true,
 
 	items: [
-    { xtype : "button", text : "Add Vital Signs Entry" },
-    { xtype : "button", text : "Edit BSA Info" },
-        { xtype : "NursingDocs_VitalSigns" },
 		{ xtype: "container", name: "PatientInfoTable", cls: "PI_PatientInformationTable", tpl: 
 			new Ext.XTemplate(
 				// "{[this.Debugger(values)]}",
@@ -168,14 +165,16 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Gender:</th><td>{Gender}</td>",
 						"<th>Age:</th><td>{Age}</td>",
-						"<th>Amputee:</th><td>{[this.Amputee(values.Amputations)]}</td>",
+						"<th>{[this.AddEditBtns(\"Amputation\", values, parent)]}Amputee:</th><td id=\"PatientInformationTableAmputations\">{[this.Amputee(values.Amputations)]}</td>",
 					"</tr>",
 
 
 					"<tr>",
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight Method:</th><td>{WeightFormula}</td>",
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method:</th><td>{BSA_Method}</td>",
-						"<th><abbr title=\"Body Surface Area\">BSA</abbr>:</th><td>{BSA} ",
+						"<th>",
+						"{[this.AddEditBtns(\"BSA\", values, parent)]}<abbr title=\"Body Surface Area\">BSA</abbr>:",
+                        "</th><td>{BSA} ",
 						"<button class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Calculate BSA</button> ",
 						"<button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Show Calculations</button></td>",
 					"</tr>",
@@ -227,6 +226,12 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						var x = values.ClinicalTrial || "NOT a clinical trial";
 						return x;
 					},
+                    AddEditBtns : function (btnName, values, parent) {
+                        var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
+                        var Mid = "name=\"AddEdit" + btnName + "\" ";
+                        var Post = ">Add/Edit</button>&nbsp;&nbsp;";
+                        return Pre + Mid + Post;
+                    },
 
 					Debugger : function ( values ) {
 						// debugger;

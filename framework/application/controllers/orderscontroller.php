@@ -223,7 +223,7 @@ class OrdersController extends Controller {
  * $status = Status to set - "Hold", "Cancel", "Clear"
  **/
     function HoldCancel($patient_id = null, $template_id = null, $type = null, $status = null) {
-        error_log("HoldCancel - $template_id, $type, $status");
+        // error_log("HoldCancel - $template_id, $type, $status");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         
@@ -241,9 +241,9 @@ class OrdersController extends Controller {
                     }
 
                     $query = "select * from $table where $key = '$template_id'";
-error_log($query);
+// error_log($query);
                     $TreatmentData = $this->Orders->query($query);
-error_log("Treatment Data - " . json_encode($TreatmentData[0]));
+// error_log("Treatment Data - " . json_encode($TreatmentData[0]));
 
 
 $lookup = new LookUp();
@@ -254,12 +254,12 @@ $Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
 $PID = $patient_id;
 
 
-error_log("Status = $status");
-error_log("Order_Type = $Order_Type");
-error_log("TID = $TID");
-error_log("Drug_ID = $Drug_ID");
-error_log("Drug_Name = $Drug_Name");
-error_log("Drug_Name = " . $Drug_Name[0]["Name"]);
+// error_log("Status = $status");
+// error_log("Order_Type = $Order_Type");
+// error_log("TID = $TID");
+// error_log("Drug_ID = $Drug_ID");
+// error_log("Drug_Name = $Drug_Name");
+// error_log("Drug_Name = " . $Drug_Name[0]["Name"]);
 
 
 
@@ -470,15 +470,15 @@ else if ("Cancel" === $status) {
  * Only responds to GET, other commands return errors
  **/
     function OrderStatus($order_id = null) {
-        error_log("OrderStatus - $order_id");
+        // error_log("OrderStatus - $order_id");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             $table = "Order_Status";
             $query = "select Order_Status from $table where Order_ID = '$order_id'";
             $retVal = $this->Orders->query($query);
-            error_log( $query);
-            error_log( json_encode($retVal));
+            // error_log( $query);
+            // error_log( json_encode($retVal));
             if(0 == count($retVal)) {
                 $jsonRecord['success'] = false;
                 $jsonRecord['msg'] = "No Record Matches $id";
