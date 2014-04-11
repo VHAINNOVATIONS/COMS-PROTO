@@ -59,7 +59,8 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
                     if ("" == data.WeightFormula || "" == data.BSA_Method || "" == data.Weight) {
                         return "";
                     }
-                    return data.BSA_Weight;
+					// return data.BSA_Weight;
+					return Ext.BSAWeight(data);
                 },
                 BPCalc: function (data, pData) {
                     if ("0/0" == data.BP) {
