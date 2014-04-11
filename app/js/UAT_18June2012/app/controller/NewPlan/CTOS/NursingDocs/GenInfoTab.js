@@ -273,30 +273,32 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	ConvertWeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
+        var NDVitalsWeightKG = fld.ownerCt.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+        var kg = "";
         if ("" !== inValue) {
-            var kg = Ext.lbs2kg(inValue);
-            var NDVitalsWeightKG = fld.ownerCt.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
-            NDVitalsWeightKG.setValue("(" + kg + " kg)");
-            this.ndgiUpdateBSA(fld);
+            kg = Ext.lbs2kg(inValue);
         }
+        NDVitalsWeightKG.setValue("(" + kg + " kg)");
+        this.ndgiUpdateBSA(fld);
 	},
 	ConvertHeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
+        var NDVitalsHeightCM = fld.ownerCt.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+        var cm = "";
         if ("" !== inValue) {
-            var cm = Ext.in2cm(inValue);
-            var NDVitalsHeightCM = fld.ownerCt.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
-
-            NDVitalsHeightCM.setValue("(" + cm + " cm)");
-            this.ndgiUpdateBSA(fld);
+            cm = Ext.in2cm(inValue);
         }
+        NDVitalsHeightCM.setValue("(" + cm + " cm)");
+        this.ndgiUpdateBSA(fld);
 	},
 	ConvertTemp : function( fld, eOpts ) {
         var inValue = fld.getValue();
+        var NDVitalsTempC = fld.ownerCt.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+        var c = "";
         if ("" !== inValue) {
-            var c = Ext.f2C(fld.getValue());
-            var NDVitalsTempC = fld.ownerCt.query("displayfield[name=\"ndVitalsTempC\"]")[0];
-            NDVitalsTempC.setValue("(" + c + " &deg;C)");
+            c = Ext.f2C(fld.getValue());
         }
+        NDVitalsTempC.setValue("(" + c + " &deg;C)");
 	},
 
 
@@ -441,6 +443,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
 		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
+        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
 
 		var dt = new Date();
 		var record = {};
@@ -490,6 +495,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		Pain.setValue("");
 		SPO2.setValue("");
 		BSA.setValue("");
+        NDVitalsWeightKG.setValue("");
+        NDVitalsHeightCM.setValue("");
+        NDVitalsTempC.setValue("");
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;
@@ -506,6 +514,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		var params = Ext.encode(record);
 		this.SavingVitals = true;
+		this.application.loadMask("One moment please, saving Patient Vitals...");
 
 		Ext.Ajax.request({
 			scope : this,
@@ -516,9 +525,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.SavingVitals = false;
-				if (!this.SavingVitals && !this.SavingGenInfo) {
+				// if (!this.SavingVitals && !this.SavingGenInfo) {
 					this.application.unMask();
-				}
+				// }
 
 
 				if (resp.success) {
@@ -533,6 +542,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			failure : function( response, opts ) {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
 				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
 			}
 		});

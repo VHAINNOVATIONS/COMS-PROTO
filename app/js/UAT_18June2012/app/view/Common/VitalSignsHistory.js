@@ -10,7 +10,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 
 			"<tr>",		// Pulse, BP, Respiration, 
 				"<th rowspan=\"2\">Date</th>",
-				"<th rowspan=\"2\">Temp</th>",
+				"<th rowspan=\"2\">Temp<br />&deg;F/&deg;C</th>",
                 "<th rowspan=\"2\">Temp Taken</th>",
 				"<th rowspan=\"2\">Pulse</th>",
 				"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
@@ -31,7 +31,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			"<tpl for=\"Vitals\">",
 				"<tr>",
 					"<td>{DateTaken}</td>",
-					"<td>{Temperature}</td>",
+					"<td>{[this.TempCalc(values, parent)]}</td>",
                     "<td>{TemperatureLocation}</td>",
 					"<td>{Pulse}</td>",
 					"<td>{[this.BPCalc(values, parent)]}</td>",
@@ -67,12 +67,22 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
                     }
                     return data.BP;
                 },
+
+                TempCalc: function (data, pData) {
+                    if ("" == data.Temperature) {
+                        return data.Temperature;
+                    }
+                    var tempF = data.Temperature;
+                    var tempC = Ext.TempF2C(tempF);
+                    return tempF + "/" + tempC;
+                },
                 HeightCalc: function (data, pData) {
                     if ("" == data.Height) {
                         return data.Height;
                     }
                     var height = data.Height;
-                    return height + "/" + Ext.In2CM(height);
+                    var mHeight = Ext.In2CM(height);
+                    return height + "/" + mHeight;
 
                 },
                 WeightCalc: function (data, pData) {
@@ -80,13 +90,17 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
                         return data.Weight;
                     }
                     var weight = data.Weight;
-                    return weight + "/" + Ext.Pounds2Kilos(weight);
+                    var mWeight = Ext.Pounds2Kilos(weight);
+                    return weight + "/" + mWeight;
                 },
 
 				BSACalc: function (data, pData) {
 					data.Amputations = pData.Amputations;
+					if ("" === data.WeightFormula || "" === data.BSA_Method) {
+						return "<abbr title=\"Not Available\">N/A</abbr>";
+					}
 					var BSA = Ext.BSA_Calc(data);
-					if ("" !== BSA && 0 !== BSA) {
+					if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
 						return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " + 
 							"weight=\"" + data.Weight + "\" " + 
 							"height=\"" + data.Height + "\" " + 
@@ -95,7 +109,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 							"bsa_Method=\"" + data.BSA_Method + "\" " + 
 						">" + BSA + "</button> m<sup>2</sup>");
 					}
-					return ("");
+					return "<abbr title=\"Not Available\">N/A</abbr>";
 				}
 		}
 	)

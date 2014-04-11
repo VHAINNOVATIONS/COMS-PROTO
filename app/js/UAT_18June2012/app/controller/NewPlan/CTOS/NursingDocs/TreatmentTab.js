@@ -31,11 +31,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		{ ref : "ND_T_Meds", selector : "NursingDocs_Treatment [name=\"ND_T_Meds\"]" },
 		{ ref : "NursingDocs_Treatment_Meds", selector : "NursingDocs_Treatment_Meds" },		// Meds Grid in Treatment
 		{ ref : "NursingDocs_Treatment_MedsView", selector : "NursingDocs_Treatment_Meds > tableview" },		// Meds Grid in Treatment
-		{ ref : "TreatmentCompleteBtn", selector : "NursingDocs_Treatment button[text=\"Treatment Complete\"]"}
+		{ ref : "TreatmentCompleteBtn", selector : "NursingDocs_Treatment button[text=\"Administration Complete\"]"}
 	],
 
 
-	// Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Treatment Complete\"]")[0].el.dom
+	// Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Administration Complete\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Treatment Tab Controller!");
 		this.application.on({ 
@@ -62,7 +62,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			"Authenticate[title=\"Authenticate\"] button[action=\"save\"]": {
 				click: this.AuthenticateUser
 			},
-			"NursingDocs_Treatment button[text=\"Treatment Complete\"]" : { click : this.TreatmentCompleteClicked }
+			"NursingDocs_Treatment button[text=\"Administration Complete\"]" : { click : this.TreatmentCompleteClicked }
 		});
 	},
 
@@ -353,14 +353,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var ThisAdminDay = this.ThisAdminDay;
 		var theMeds, MedsLen, newMeds, i, aMed, Dose, Dose1, Dose2, am1, am2;
 
-		var tcBtns = Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Treatment Complete\"]");
+		var tcBtns = Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Administration Complete\"]");
 		if (ThisAdminDay) {
-			tcBtns[0].show();
-			tcBtns[1].show();
+			for (i = 0; i < tcBtns.length; i++) {
+				tcBtns[i].show();
+			}
 		}
 		else {
-			tcBtns[0].hide();
-			tcBtns[1].hide();
+			for (i = 0; i < tcBtns.length; i++) {
+				tcBtns[i].hide();
+			}
 		}
 
 		var theTreatmentGrid = Ext.ComponentQuery.query("NursingDocs_Treatment [name=\"AdministeredMedsGrid\"]")[0];
@@ -413,7 +415,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 	TreatmentCompleteClicked : function (button) {
 		Ext.Msg.show({
-			title:"Treatment Complete?",
+			title:"Administration Complete?",
 			msg: "Are you finished documenting administration of medications for this patient?",
 			buttons: Ext.Msg.YESNO,
 			icon: Ext.Msg.QUESTION,

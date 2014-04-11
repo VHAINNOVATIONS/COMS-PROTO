@@ -127,7 +127,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
             padding : "10",
             defaultType : "fieldset",
             items : [
-                { xtype : "button", text : "Treatment Complete" },
+                // { xtype : "button", text : "Administration Complete" },
                 {
                     title : "Medication Given",
                     name : "ND_T_Meds",
@@ -136,7 +136,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
                         { xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
                     ]
                 },
-                { xtype : "button", text : "Treatment Complete", hidden : true }
+                { xtype : "button", text : "Administration Complete" }
             ]
         }
     ]

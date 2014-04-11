@@ -313,12 +313,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 width: 105,
                 labelClsExtra: "NursingDocs-label"
             }, {
-                xtype: "displayfield",
-                labelSeparator: "",
-                value: "inches",
-                width: 40,
-                margin: "0 0 0 2"
-            }, {
+                    xtype: "container",
+                    html: "inches",
+                    margin: "4 5 0 4"
+                }, {
                 xtype: "displayfield",
                 name: "ndVitalsHeightCM",
                 labelSeparator: "",
@@ -372,13 +370,13 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 labelWidth: 60,
                 width: 105,
                 labelClsExtra: "NursingDocs-label"
-            }, {
-                xtype: "displayfield",
-                labelSeparator: "",
-                value: "lbs",
-                width: 25,
-                margin: "0 0 0 2"
-            }, {
+            }, 
+                {
+                    xtype: "container",
+                    html: "lbs",
+                    margin: "4 5 0 4"
+                },
+            {
                 xtype: "displayfield",
                 name: "ndVitalsWeightKG",
                 labelSeparator: "",

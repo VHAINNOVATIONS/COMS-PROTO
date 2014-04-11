@@ -647,29 +647,43 @@ Ext.require([
 //		debugger;
 	};
 
-
 	Ext.GeneralRounding2Digits = function(n) {
-		return Ext.util.Format.number(+(Math.round(n + "e+" + 2)  + "e-" + 2), "0.00");
+        ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2)  + "e-" + 2), "0.00");
+        return ret;
 	};
 
 	Ext.In2Meters = function(h) {
-		return Ext.util.Format.number(+(Math.round((0.0254 * h) + "e+" + 2)  + "e-" + 2), "0.00");
+        var h1 = (0.0254 * h);
+		ret = Ext.GeneralRounding2Digits(h1);
+        return ret;
 	};
 
 	Ext.In2CM = function(h) {
-		return Ext.util.Format.number(+(Math.round((2.54 * h) + "e+" + 2)  + "e-" + 2), "0.00");
+        var h1 = (2.54 * h);
+		ret = Ext.GeneralRounding2Digits(h1);
+        return ret;
 	};
 
 	Ext.Pounds2Kilos = function(w) {
-		return Ext.util.Format.number(+(Math.round((0.45359237 * w) + "e+" + 2)  + "e-" + 2), "0.00");
+        var w1 = (0.45359237 * w);
+		ret = Ext.GeneralRounding2Digits(w1);
+        return ret;
 	};
 
+	Ext.TempF2C = function(f) {
+        var t1 = ((5 * (f-32))/9);
+		ret = Ext.GeneralRounding2Digits(t1);
+        return ret;
+    };
+
 	Ext.HeightSquared = function(h) {
-		return Math.pow(h, 2);
+		ret = Math.pow(h, 2);
+        return ret;
 	};
 
 	Ext.WeightSquared = function(w) {
-		return Math.pow(w, 2);
+		ret = Math.pow(w, 2);
+        return ret;
 	};
 
 	Ext.IdealWeight = function(h, g) {	// Height in Inches
@@ -1524,16 +1538,14 @@ Ext.application({
 			},
 
 			in2cm : function( height ) {	// Inches to Centimeters; rounded to 2 decimal places
-				return (Ext.roundNumber((height * 2.54), 2));
+				return (Ext.In2CM(height));
 			},
 
 			lbs2kg : function( weight ) {	// Pounds to Kilograms; rounded to 2 decimal places
-				var n1 = weight / 2.2;
-				var n2 = Ext.roundNumber(n1, 2);
-				return (n2);
+				return (Ext.Pounds2Kilos(weight));
 			},
 			f2C : function( f ) {	// Degrees Farenheight to Celcius; rounded to 1 decimal place
-				return (Ext.roundNumber(((5 * (f-32))/9), 1));
+				return (Ext.TempF2C(f));
 			},
 
 			CalcInfusionTime : function (vol, rate, label) {		// Calculate Infusion time in Hrs/Min given Volume and Rate.

@@ -796,8 +796,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
                             for (var key in theData) {
                                 if (theData.hasOwnProperty(key)) {
-                                    dataEl["description"] = key;
-                                    patientAmputations.push(dataEl);
+									var el = [];
+                                    el["description"] = key;
+                                    patientAmputations.push(el);
                                     postData.push(key);
                                 }
                             }
@@ -808,30 +809,38 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                             AmputationDisplay.setHTML(postData);
 
                             var patient_id = this.application.Patient.id;
-                            Ext.Ajax.request({
-                                url: Ext.URLs.Amputations + "/" + patient_id,
-                                method : "POST",
-                                jsonData : params,
-                                success: function( response, opts ){
-                                    var text = response.responseText;
-                                    var resp = Ext.JSON.decode( text );
-                                    if (!resp.success) {
-                                        Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
-                                        this.application.Patient.Amputations = "";
-                                    }
-                                },
-                                failure : function( response, opts ) {
-                                    var text = response.responseText;
-                                    var resp = Ext.JSON.decode( text );
-                                    Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
-                                }
-                            });
-                            theForm.reset();
-                            btn.up('window').hide();
-                            Ext.MessageBox.alert('Thank you!', 'Patient amputation records have been saved');
-                        }
-                    }
-                },
+							this.application.loadMask("Updating Patient Amputations");
+							Ext.Ajax.request({
+								url: Ext.URLs.Amputations + "/" + patient_id,
+								method : "POST",
+								jsonData : params,
+								scope : this,
+								success: function( response, opts ){
+									this.application.unMask();
+									var text = response.responseText;
+									var resp = Ext.JSON.decode( text );
+									theForm.reset();
+									btn.up('window').hide();
+									if (!resp.success) {
+										Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
+										this.application.Patient.Amputations = "";
+									}
+									else {
+										Ext.MessageBox.alert('Thank you!', 'Patient amputation records have been saved');
+									}
+								},
+								failure : function( response, opts ) {
+									this.application.unMask();
+									var text = response.responseText;
+									var resp = Ext.JSON.decode( text );
+									Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
+									theForm.reset();
+									btn.up('window').hide();
+								}
+							});
+						}
+					}
+				},
                 {
                     text: 'Cancel',
                     handler: function(btn, event) {

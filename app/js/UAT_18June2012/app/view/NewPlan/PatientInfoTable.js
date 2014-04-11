@@ -174,9 +174,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method:</th><td>{BSA_Method}</td>",
 						"<th>",
 						"{[this.AddEditBtns(\"BSA\", values, parent)]}<abbr title=\"Body Surface Area\">BSA</abbr>:",
-                        "</th><td>{BSA} ",
-						"<button class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Calculate BSA</button> ",
-						"<button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Show Calculations</button></td>",
+                        "</th><td>{[this.BSA_Cell(values, parent)]}</td>",
 					"</tr>",
 
 					"<tr>",
@@ -223,9 +221,23 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					disableFormats: true,
 
 					clinicalTrial : function ( values ) {
+						if ("" === values.TemplateID) {
+							return "";
+						}
 						var x = values.ClinicalTrial || "NOT a clinical trial";
 						return x;
 					},
+
+					BSA_Cell : function (values, parent) {
+						if ("" === values.BSA_Method || "" === values.WeightFormula) {
+							return "<abbr title=\"Not Available\">N/A</abbr>";
+						}
+						var buf = values.BSA + 
+						"<button class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Calculate BSA</button> " + 
+						"<button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Show Calculations</button>";
+						return buf;
+					},
+
                     AddEditBtns : function (btnName, values, parent) {
                         var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
                         var Mid = "name=\"AddEdit" + btnName + "\" ";
