@@ -6,7 +6,7 @@ Ext.define('COMS.view.Management.AdminTab' ,{
 	padding : "20 10 5 10",
 	plain : true,
 	items : [
-		{ xtype : "AddLookups", title: "Add LookUps" },
+		{ xtype : "AddLookups", title: "Manage LookUps" },
 		{ xtype : "DeleteTemplate", title: "Delete Template"},
 		{ xtype : "Globals", title: "Global Variables"},
 		{ xtype : "Users", title: "COMS Users"},
