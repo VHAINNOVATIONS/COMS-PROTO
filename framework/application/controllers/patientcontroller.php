@@ -364,20 +364,21 @@ class PatientController extends Controller
             foreach ($patients as $patient) {
                 if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
                     $lookup = new LookUp();
+
+
                     $amputations = $lookup->getLookupDescByNameAndType( $patient['ID'], '30');
                     if ($this->checkForErrors('Get Patient Amputations Failed. ',  $amputations)) {
                         $this->set('templatedata', null);
                         return;
                     }
-                    
                     $tmpAmputations = array();
                     foreach ($amputations as $amputation) {
                         array_push($tmpAmputations, $amputation);
                     }
-                    
                     $patient['amputations'] = $tmpAmputations;
                     array_push($modPatients, $patient);
-                    
+
+
                     $retVal = $this->Patient->getPatientDetailInfo($patient['ID']);
                     
                     if ($this->checkForErrors('Get Patient Details Failed. ', $retVal)) {
@@ -1304,7 +1305,12 @@ function buildJsonObj4Output() {
                 $myinfusion['fluidType'] = $infusions[$i]['fluidType'];
                 $myinfusion['infusionTime'] = $infusions[$i]['infusionTime'];
                 $myinfusion['Order_ID'] = $infusions[$i]['Order_ID'];
-                $myinfusion['Order_Status'] = $infusions[$i]['Order_Status'];
+                if (isset($infusions[$i]['Order_Status'])) {
+                    $myinfusion['Order_Status'] = $infusions[$i]['Order_Status'];
+                }
+                else {
+                    $myinfusion['Order_Status'] = "";
+                }
                 $myinfusions[$i]->{'data'} = $myinfusion;
             }
             

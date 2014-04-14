@@ -24,7 +24,9 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 	cls : "Tab", 
 	tpl : new Ext.XTemplate(
 		"<tpl for=\"Patient\">",
-			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders",
+//			"{[this.debugger( values, parent )]}",
+			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders (opens new window)&nbsp;",
+			"<a href=\"Fsheet/?PID={id}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
 		"</tpl>",
 		"<table border=\"1\" width=\"100%\" class=\"Therapy InformationTable\">",
 			"<colgroup width=12%></colgroup>",
@@ -72,7 +74,9 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 			{
 					// XTemplate Configuration
 				disableFormats: true,
-
+				debugger : function ( current, prev ) {
+					debugger;
+				},
 				goalLink : function ( current ) {
 					return (current.Goal || "No Goal Specified - <button name=\"AddGoal\" class=\"anchor\">Add Goal</button>");
 				},

@@ -378,7 +378,7 @@ for (i = 0; i < eLen; i++) {
  *
  ***********************************************************************************/
 	displayOEM_Record_Data : function( PatientInfo, fromEdit) {
-        console.log("Displaying OEM Record Data - " + fromEdit);
+//        console.log("Displaying OEM Record Data - " + fromEdit);
 
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
 		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;

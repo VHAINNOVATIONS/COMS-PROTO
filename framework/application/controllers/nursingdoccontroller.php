@@ -105,18 +105,23 @@ class NursingDocController extends Controller {
             }
         }
 
-        $FSPSRow = array("label" => "Performance Status", "&nbsp" => "01 General");
-        $FSWeightRow = array("label" => "Weight (lbs/kg)", "&nbsp" => "01 General");
-        $FSDateRow = array("label" => "Date", "&nbsp" => "01 General");
-        $FSDiseaseResponse = array("label" => "Disease Response", "&nbsp" => "01 General");
-        $FSToxicity = array("label" => "Toxicity Side Effects", "&nbsp" => "01 General");
-        $FSOther = array("label" => "Other", "&nbsp" => "01 General");
-        $FSLabs = array("label" => "Unknown...", "&nbsp" => "02 Laboratory Results");
+        $FSPSRow = array("label" => "Performance Status", "-" => "01 General");
+        $FSWeightRow = array("label" => "Weight (lbs/kg)", "-" => "01 General");
+        $FSDateRow = array("label" => "Date", "-" => "01 General");
+        $FSDiseaseResponse = array("label" => "Disease Response", "-" => "01 General");
+        $FSToxicity = array("label" => "Toxicity Side Effects", "-" => "01 General");
+        $FSOther = array("label" => "Other", "-" => "01 General");
+        $FSLabs = array("label" => "Unknown...", "-" => "02 Laboratory Results");
 
-        $FSFields = array("label", "&nbsp");
+        $FSPreMeds = array("label" => "Pre Therapy Med", "-" => "03 Pre Therapy Meds");
+        $FSTherapyMeds = array("label" => "Therapy Med", "-" => "04 Therapy Meds");
+        $FSPostMeds = array("label" => "Post Therapy Med", "-" => "05 Post Therapy Meds");
+
+        $FSFields = array("label", "-");
         $FSColumns = array();
-        $FSColumns[] = array("header" => "&nbsp;", "dataIndex" => "label", "width" => 140);
-        // $FSColumns[] = array("header" => "&nbsp;", "dataIndex" => "&nbsp", "width" => 140);
+        $FSColumns[] = array("header" => " ", "dataIndex" => "label", "width" => 140);
+        $FSColumns[] = array("header" => " ", "dataIndex" => "-", "width" => 140);
+        // $FSColumns[] = array("header" => "-", "dataIndex" => "-", "width" => 140);
         // $FSColumns = array();
 
 
@@ -135,12 +140,33 @@ class NursingDocController extends Controller {
                 $today = date('m/d/Y');
                 $OEM = $returnVal["records"][0];
                 $records = $OEM["OEMRecords"];
+                $colIdx = 0;
+                $LastAdminDate = "";
+                $MoreAdminDates2Check = true;
                 foreach($records as $record) {
+                    $colIdx++;
                     $FlowsheetGrid = array();
                     $hdr = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
                     $FSFields[] = $hdr;
                     // $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90, "field" => array( "xtype" => "textfield" ));
-                    $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90);
+                    if ($MoreAdminDates2Check) {    // Find most recent past admin date
+                        $LastAdminDate = $record["AdminDate"];
+                        $dfltPos = array( "row" => 1, "column" => $colIdx );
+                    }
+
+                    if ($today === $record["AdminDate"]) {
+                        $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 120, "tdCls" => "fSheet-editCell", "editor" => array( "xtype" => "textfield", "allowBlank" => "false" ));
+                        $colIdx--;
+                        $dfltPos = array( "row" => 1, "column" => $colIdx );
+                    }
+                    else {
+                        if(new DateTime() < new DateTime($record["AdminDate"])) {
+                            $MoreAdminDates2Check = false;
+                        }
+                        $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90);
+                    }
+                    $this->set("dfltPos", $dfltPos);
+
                     $idx = $record["AdminDate"];
                     $V_PS = "";
                     $V_Weight = "";
@@ -158,13 +184,11 @@ class NursingDocController extends Controller {
                     $FSToxicity[$hdr] = "";
                     $FSOther[$hdr] = "";
                     $FSLabs[$hdr] = "";
-
-                    if ($today === $record["AdminDate"]) {
-                        $FSDiseaseResponse[$hdr] = "<button class=\"anchor DiseaseResponse\" name=\"WriteFSData\" cellType=\"Disease Response\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
-                        $FSToxicity[$hdr] = "<button class=\"anchor Toxicity\" name=\"WriteFSData\" cellType=\"Toxicity Side Effects\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
-                        $FSOther[$hdr] = "<button class=\"anchor Other\" name=\"WriteFSData\" cellType=\"Other\" recHdr=\"$hdr\" date=\"$today\">Write</button>";
-                    }
+                    $FSPreMeds[$hdr] = "Med 1 - $idx";
+                    $FSTherapyMeds[$hdr] = "Med 2 - $idx";
+                    $FSPostMeds[$hdr] = "Med 3 - $idx";
                 }
+                $FSColumns[$dfltPos["column"]]["tdCls"] = "fSheet-editCell";
             }
         }
 
@@ -177,7 +201,7 @@ class NursingDocController extends Controller {
         }
 
 
-        $FSData = array( $FSDateRow, $FSPSRow, $FSWeightRow, $FSDiseaseResponse, $FSToxicity, $FSOther, $FSLabs);
+        $FSData = array( $FSDateRow, $FSPSRow, $FSWeightRow, $FSDiseaseResponse, $FSToxicity, $FSOther, $FSLabs, $FSPreMeds, $FSTherapyMeds, $FSPostMeds);
 
         $jsonRecord = array( "status" => true, "msg" => "Breakpoint 1", "records" => array("Fields" => $FSFields, "Columns" => $FSColumns, "Data" => $FSData));
         $this->set('jsonRecord', $jsonRecord);
@@ -185,8 +209,13 @@ class NursingDocController extends Controller {
 
     function FlowsheetFields ($PatientID) {
         $this->Flowsheet($PatientID);
-        $Info = $this->get('jsonRecord');
-        $jsonRecord = array("success" => true, "records" => array("Fields" => $Info["records"]["Fields"], "Columns" => $Info["records"]["Columns"] ));
+        $Info = $this->get("jsonRecord");
+        $DfltPos = $this->get("dfltPos");
+        $jsonRecord = array("success" => true, "records" => array(
+            "dfltPos" => $DfltPos,
+            "Fields" => $Info["records"]["Fields"], 
+            "Columns" => $Info["records"]["Columns"] 
+        ));
         $this->set('jsonRecord', $jsonRecord);
     }
 
