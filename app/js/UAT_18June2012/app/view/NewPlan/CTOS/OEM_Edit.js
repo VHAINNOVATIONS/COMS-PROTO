@@ -121,6 +121,7 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 	layout: "fit",
 	autoShow: true,
 	width: 900,
+	modal: true,
 
 	items : [
 		{

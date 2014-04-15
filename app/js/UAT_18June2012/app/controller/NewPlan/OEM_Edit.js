@@ -15,7 +15,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			ref: "theForm",
 			selector : "EditOEMRecord form"
 		},
-
+		{
+			ref: "SelectedMed",
+			selector : "EditOEMRecord SelectDrug"
+		},
 		{
 			ref: "FluidVol",
 			selector : "EditOEMRecord FluidVol[name=\"FluidVol\"]"
@@ -98,83 +101,98 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		InfusionTime.setValue( Ext.CalcInfusionTime(FluidVol.getValue(), FlowRate.getValue(), true) );
 	},
 
-	SaveChanges : function(button, event, eOpts) {
-		var win = button.up("window");
-		var form = win.down("form");
-		var record = form.getRecord();
-		var values = form.getValues();
-		var thisCtl = this.getController("NewPlan.OEM_Edit");
-        var sReason = thisCtl.getSelectReason();
-        var strReason = sReason.rawValue;
-
-
+	SaveMedRecord : function(record, values, multipleRecords) {
 		record.set(values);
-		win.close();
+		var PatientInfo = this.application.Patient;
+		var MedRecord = PatientInfo.MedRecord; 
+		var CycleIdx = MedRecord.CycleIdx;
+		var DayIdx = MedRecord.DayIdx;
+		var MedIdx = MedRecord.MedIdx;
+		var MedID = MedRecord.MedID
+		var TherapyType = MedRecord.TherapyType;
+
+		var AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
+
+		var MaxRecords = PatientInfo.OEMRecords.OEMRecords.length;
+		var i;
+		for (i = 0; i < MaxRecords; i++) {
+			var CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
+			if (CkRecord2Match.Cycle == CycleIdx && CkRecord2Match.Day == DayIdx) {
+				CalcDayIndex = i;
+			}
+		}
+		var Record2Change = PatientInfo.OEMRecords.OEMRecords[CalcDayIndex];
 
 
-			var PatientInfo = this.application.Patient;
-			var CycleIdx = PatientInfo.MedRecord.CycleIdx;
-			var DayIdx = PatientInfo.MedRecord.DayIdx;
-			var MedIdx = PatientInfo.MedRecord.MedIdx;
-			var TherapyType = PatientInfo.MedRecord.TherapyType;
+		// MWB - 3/15/2012 - Need to check if the dose unites is based on Surface Area then calculating BSA Dose then
 
-			var AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
+		MedRecord.BSA_Dose1 = "";
+		MedRecord.BSA_Dose2 = "";
 
+		if (values.Units.indexOf("/m2") > 0 || values.Units.indexOf("/ m2") > 0) {
+			MedRecord.BSA_Dose1 = values.Dose * PatientInfo.BSA;
+		}
+		MedRecord.BSA_Dose1 = Ext.GeneralRounding2Digits(MedRecord.BSA_Dose1);
 
-            /* This calculation should be based on the # of Administration Days Per Cycle. */
+		MedRecord.Dose1 = values.Dose;
+		MedRecord.DoseUnits1 = values.Units;
+		MedRecord.FlowRate1 = values.FlowRate;
+		MedRecord.FluidType1 = values.FluidType;
+		MedRecord.FluidVol1 = values.FluidVol;
+		MedRecord.AdminMethod1 = values.InfusionMethod;
+		MedRecord.Reason = values.Reason;
 
-			var CalcDayIndex = ((CycleIdx-1) * AdminDaysPerCycle) + (DayIdx-1);
-			var Record2Change = PatientInfo.OEMRecords.OEMRecords[CalcDayIndex];
+		var MedRecord1 = {};
 
+		MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
+		MedRecord1.AdminTime = MedRecord.AdminTime;
+		MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
+		MedRecord1.Dose1 = MedRecord.Dose1;
+		MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
+		MedRecord1.FlowRate1 = MedRecord.FlowRate1;
+		MedRecord1.FluidType1 = MedRecord.FluidType1;
+		MedRecord1.FluidVol1 = MedRecord.FluidVol1;
+		MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
+		MedRecord1.Instructions = values.Instructions;
+		MedRecord1.Med = MedRecord.Med;
+		MedRecord1.MedID = MedRecord.MedID;
+		MedRecord1.id = MedRecord.id;
+		MedRecord1.Reason = MedRecord.Reason;
 
-var MedRecord = PatientInfo.MedRecord;
-
-// MWB - 3/15/2012 - Need to check if the dose unites is based on Surface Area then calculating BSA Dose then
-
-MedRecord.BSA_Dose1 = "";
-MedRecord.BSA_Dose2 = "";
-
-if (values.Units.indexOf("/m2") > 0 || values.Units.indexOf("/ m2") > 0) {
-	MedRecord.BSA_Dose1 = values.Dose * PatientInfo.BSA;
-}
-MedRecord.BSA_Dose1 = Ext.GeneralRounding2Digits(MedRecord.BSA_Dose1);
-
-MedRecord.Dose1 = values.Dose;
-MedRecord.DoseUnits1 = values.Units;
-MedRecord.FlowRate1 = values.FlowRate;
-MedRecord.FluidType1 = values.FluidType;
-MedRecord.FluidVol1 = values.FluidVol;
-MedRecord.AdminMethod1 = values.InfusionMethod;
-MedRecord.Reason = strReason
-
-
-var MedRecord1 = {};
-
-
-MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
-MedRecord1.AdminTime = MedRecord.AdminTime;
-MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
-MedRecord1.Dose1 = MedRecord.Dose1;
-MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
-MedRecord1.FlowRate1 = MedRecord.FlowRate1;
-MedRecord1.FluidType1 = MedRecord.FluidType1;
-MedRecord1.FluidVol1 = MedRecord.FluidVol1;
-MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
-MedRecord1.Instructions = values.Instructions;
-MedRecord1.Med = MedRecord.Med;
-MedRecord1.MedID = MedRecord.MedID;
-MedRecord1.id = MedRecord.id;
-MedRecord1.Reason = MedRecord.Reason;
-
-MedRecord1.CycleIdx = PatientInfo.MedRecord.CycleIdx;
-MedRecord1.DayIdx = PatientInfo.MedRecord.DayIdx;
-MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
-MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
-MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
+		MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
+		MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
+		MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 
 
+		if (multipleRecords) {
+			for (i = CalcDayIndex; i < MaxRecords; i++) {
+				var CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
+				var MedRecord2Check;
+				if ("Pre" == TherapyType) {
+					MedRecord2Check = PatientInfo.OEMRecords.OEMRecords[i].PreTherapy[MedIdx - 1];
+				}else if ("Post" == TherapyType) {
+					MedRecord2Check = PatientInfo.OEMRecords.OEMRecords[i].PostTherapy[MedIdx - 1];
+				} else {
+					MedRecord2Check = PatientInfo.OEMRecords.OEMRecords[i].Therapy[MedIdx - 1];
+				}
+				if (MedRecord2Check.MedID === MedID) {
+					if ("Pre" == TherapyType) {
+						PatientInfo.OEMRecords.OEMRecords[i].PreTherapy[MedIdx - 1] = MedRecord1;
+					}else if ("Post" == TherapyType) {
+						PatientInfo.OEMRecords.OEMRecords[i].PostTherapy[MedIdx - 1] = MedRecord1;
+					} else {
+						PatientInfo.OEMRecords.OEMRecords[i].Therapy[MedIdx - 1] = MedRecord1;
+					}
 
-
+					var saveCfg = { scope : this};
+					record.save();
+				}
+			}
+			PatientInfo.OEMDataRendered = false;		// Force the tab contents to be re-calculated
+		}
+		else {
+			// MedRecord1.CycleIdx = PatientInfo.MedRecord.CycleIdx;
+			// MedRecord1.DayIdx = PatientInfo.MedRecord.DayIdx;
 
 			if ("Pre" == TherapyType) {
 				PatientInfo.OEMRecords.OEMRecords[CalcDayIndex].PreTherapy[MedIdx - 1] = MedRecord1;
@@ -184,20 +202,74 @@ MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 				PatientInfo.OEMRecords.OEMRecords[CalcDayIndex].Therapy[MedIdx - 1] = MedRecord1;
 			}
 
-            var PatientInfo = this.application.Patient;
-            PatientInfo.OEMDataRendered = false;
-            this.application.fireEvent("DisplayOEMData", PatientInfo, "fromEdit");
+			var saveCfg = { scope : this, callback : function( records, operation, success ) {
+				var PatientInfo = this.application.Patient;
+				var CycleIdx = PatientInfo.MedRecord.CycleIdx;
+				var DayIdx = PatientInfo.MedRecord.DayIdx;
+				var MedIdx = PatientInfo.MedRecord.MedIdx;
+				PatientInfo.OEMDataRendered = false;		// Force the tab contents to be re-calculated
+			}};
+	//		record.save(saveCfg);
+			record.save();
+		}
+	
+		var PatientInfo = this.application.Patient;
+		PatientInfo.OEMDataRendered = false;
+		this.application.fireEvent("DisplayOEMData", PatientInfo, "fromEdit");
+	},
+	
+	SaveChanges : function(button, event, eOpts) {
+		var win = button.up("window"),
+			form = win.down("form"),
+			record = form.getRecord(),
+			values = form.getValues(),
+			thisCtl = this.getController("NewPlan.OEM_Edit"),
+			sReason = thisCtl.getSelectReason(),
+			strReason = sReason.rawValue,
+			dlgTitle = "Save Medication Edits - ",
+			dlgMsg = "Save medication edits for this date only or all future Administration dates",
+			newStat = "Cancel",
+			theMed = thisCtl.getSelectedMed(),
+			medName = theMed.getValue();
 
-		var OEMCtl = this.getController("NewPlan.OEM");
+		if (!form.form.isValid()) {
+			Ext.MessageBox.alert("Medication Edits", "Please select a reason for the change in medication");
+			return;
+		}
 
-		var saveCfg = { scope : this, callback : function( records, operation, success ) {
-			var PatientInfo = this.application.Patient;
-			var CycleIdx = PatientInfo.MedRecord.CycleIdx;
-			var DayIdx = PatientInfo.MedRecord.DayIdx;
-			var MedIdx = PatientInfo.MedRecord.MedIdx;
-            PatientInfo.OEMDataRendered = false;		// Force the tab contents to be re-calculated
-		}};
-		record.save(saveCfg);
+		values.Reason = strReason;
+
+		Ext.Msg.show({
+			title: dlgTitle + medName,
+			msg: dlgMsg,
+			modal: true,
+			buttonText: {
+				yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
+			},
+			scope:this,
+			status: newStat,
+			buttons: Ext.Msg.YESNOCANCEL,
+			// el : element,
+			fn: function(btnID, txt, opt) {
+				if ("cancel" === btnID) {
+					if("Clear" == opt.status) {
+						Ext.MessageBox.alert("Cancel Medication Edits", "Medication edits of - " + medName + " has been cancelled");
+					}
+					else {
+						Ext.MessageBox.alert("Cancel Medication Edits", opt.status + " Medication - " + medName + " has been cancelled");
+					}
+			    }
+				else {
+					if ("This date Only" === opt.buttonText[btnID]) {
+						this.SaveMedRecord(record, values, false);
+					}
+					else if ("All Future" === opt.buttonText[btnID]) {
+						this.SaveMedRecord(record, values, true);
+					}
+					win.close();
+				}
+			}
+		});
 	},
 
 	CloseWidget : function(button, event, eOpts) {
