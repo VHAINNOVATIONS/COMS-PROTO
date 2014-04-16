@@ -52,7 +52,45 @@ class NursingDocController extends Controller {
 
 
 
+function getAllMeds2Administer($records) {
+    $PreMeds4Sheet = array();
+    $PreMeds = array();
 
+    $therapyMeds = array();
+    $postMeds = array();
+    foreach($records as $record) {
+        $PreTherapy = $record["PreTherapy"];
+        foreach ($PreTherapy as $med) {
+            if (!isset($PreMeds[$med["MedID"]])) {
+                $PreMeds[$med["MedID"]] = $med["Med"];
+                $PreMeds4Sheet[] = array("label" => $med["Med"], "-" => "03 Pre Therapy Meds");
+            }
+        }
+
+
+        $Therapy = $record["Therapy"];
+        foreach ($Therapy as $med) {
+//error_log("Therapy Med - " . $med["MedID"] . " --- " . $med["Med"]);
+            if (!isset($therapyMeds[$med["MedID"]])) {
+                $therapyMeds[$med["MedID"]] = $med["Med"];
+                $PreMeds[] = array("label" => $med["Med"], "-" => "03 Pre Therapy Meds", "medID" => $med["MedID"] );
+
+            }
+        }
+        $PostTherapy = $record["PostTherapy"];
+//error_log("PostTherapy Med - " . $med["MedID"] . " --- " . $med["Med"]);
+        foreach ($PostTherapy as $med) {
+            if (!isset($postMeds[$med["MedID"]])) {
+                $postMeds[$med["MedID"]] = $med["Med"];
+            }
+        }
+    }
+    $medRows = array();
+    $medRows["preMeds"] = $PreMeds4Sheet;
+    $medRows["therapyMeds"] = $therapyMeds;
+    $medRows["postMeds"] = $postMeds;
+    return $medRows;
+}
 
 
 
@@ -138,12 +176,68 @@ class NursingDocController extends Controller {
         if (isset($returnVal)) {
             if ($returnVal["success"]) {
                 $today = date('m/d/Y');
+error_log("GenOEMData - Records");
+error_log(json_encode($returnVal));
+error_log("----------------------------");
                 $OEM = $returnVal["records"][0];
                 $records = $OEM["OEMRecords"];
+error_log(json_encode($records));
+error_log("----------------------------");
+
+
                 $colIdx = 0;
                 $LastAdminDate = "";
                 $MoreAdminDates2Check = true;
+
+$medRows = $this->getAllMeds2Administer($records);
+
+
+
+
+
+
+
+$PreTherapy = $medRows["preMeds"];
+error_log("---------- PRE THERAPY ------------------");
+error_log(json_encode($PreTherapy));
+//error_log("----------------------------");
+//foreach ($PreTherapy as $Med) {
+//error_log(json_encode($Med));
+//    $Med["label"] = "Pre Therapy Med";
+//    $Med["-"] = "03 Pre Therapy Meds";
+//error_log(json_encode($Med));
+//}
+error_log("--------- END PRE THERAPY ---------------");
+
+
+
+
+
+
+
+
+
+$Therapy = $medRows["therapyMeds"];
+foreach ($Therapy as $Med) {
+    $Med = array("label" => "Therapy Med", "-" => "04 Therapy Meds");
+}
+
+$PostTherapy = $medRows["postMeds"];
+foreach ($PostTherapy as $Med) {
+    $Med = array("label" => "Post Therapy Med", "-" => "05 Post Therapy Meds");
+}
+error_log("All PreTherapy Info");
+error_log(json_encode($PreTherapy));
+error_log("----------------------------");
+
+
+
                 foreach($records as $record) {
+//                    $PreTherapy = $record["PreTherapy"];
+//                    $Therapy = $record["Therapy"];
+//                    $PostTherapy = $record["PostTherapy"];
+
+                    
                     $colIdx++;
                     $FlowsheetGrid = array();
                     $hdr = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
@@ -184,9 +278,42 @@ class NursingDocController extends Controller {
                     $FSToxicity[$hdr] = "";
                     $FSOther[$hdr] = "";
                     $FSLabs[$hdr] = "";
+
+$Meds = $record["PreTherapy"];
+foreach ($Meds as $Med) {
+    error_log("Walking Records - " . $Med["Med"] . $Med["Dose1"] . " " . $Med["DoseUnits1"]);
+    $PreTherapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$Meds = $record["Therapy"];
+foreach ($Meds as $Med) {
+    $Therapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+$Meds = $record["PostTherapy"];
+foreach ($Meds as $Med) {
+    $PostTherapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+
+
                     $FSPreMeds[$hdr] = "Med 1 - $idx";
                     $FSTherapyMeds[$hdr] = "Med 2 - $idx";
                     $FSPostMeds[$hdr] = "Med 3 - $idx";
+
+
                 }
                 $FSColumns[$dfltPos["column"]]["tdCls"] = "fSheet-editCell";
             }

@@ -253,10 +253,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			fn: function(btnID, txt, opt) {
 				if ("cancel" === btnID) {
 					if("Clear" == opt.status) {
-						Ext.MessageBox.alert("Cancel Medication Edits", "Medication edits of - " + medName + " has been cancelled");
+						Ext.MessageBox.alert("Medication Edit", "Medication edit - " + medName + " has been cancelled");
 					}
 					else {
-						Ext.MessageBox.alert("Cancel Medication Edits", opt.status + " Medication - " + medName + " has been cancelled");
+						Ext.MessageBox.alert("Medication Edit", opt.status + " Medication - " + medName + " has been cancelled");
 					}
 			    }
 				else {

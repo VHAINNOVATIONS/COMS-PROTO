@@ -13,7 +13,7 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
     items : [
         {
             xtype: "combo",
-            name: "BSA_FormulaWeight",
+            name: "WeightFormula",
             fieldLabel: "Weight to use <em>*</em>",
             labelAlign: "top",
             width: 178,
@@ -33,7 +33,7 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
         },
         {
             xtype: "combo",
-            name: "BSA_Formula",
+            name: "BSAFormula",
             fieldLabel: "BSA Formula <em>*</em>",
             labelAlign: "top",
             width: 178,

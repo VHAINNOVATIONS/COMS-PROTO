@@ -345,6 +345,7 @@ class PatientController extends Controller
 
     function viewall($id = NULL)
     {
+// error_log("viewall Entry Point");
         if($id == NULL){
             $retVal = $this->Patient->selectAll();
         }
@@ -360,7 +361,7 @@ class PatientController extends Controller
         $patientDetailMap = array();
         $measurements = array();
         $modPatients = array();
-            
+// error_log("Patients Count - " . count($patients));
             foreach ($patients as $patient) {
                 if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
                     $lookup = new LookUp();
@@ -385,10 +386,25 @@ class PatientController extends Controller
                         $this->set('templatedata', null);
                         return;
                     }
+                    $patientBSA = $this->_getBSA($patient['ID']);
 
                     $details = $retVal;
+// error_log("Details Count - " . count($details));
+// error_log("Why are there so many detail records for a single patient?");
                     foreach($details as $d) {
                         $detail = $this->TreatmentStatus($d);
+
+//                        error_log("BSA");
+//                        error_log(json_encode($patientBSA));
+                        if (isset($patientBSA) && count($patientBSA) > 0) {
+//                            error_log("Got BSA Data from BSA_Info Table");
+                            $a = $patientBSA[0]["WeightFormula"];
+                            $b = $patientBSA[0]["BSAFormula"];
+                            $detail["WeightFormula"] = $a;
+                            $detail["BSAFormula"] = $b;
+                        }
+
+
                         if ($detail["TreatmentStatus"] != 'Ended') {
                             $patientDetailMap[$patient['ID']] = $detail;
                         }
@@ -1513,6 +1529,121 @@ function buildJsonObj4Output() {
         else {
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method for saving Amputations (expected a POST got a " . $_SERVER['REQUEST_METHOD'];
+            $this->set('jsonRecord', $jsonRecord);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * BSA Information
+ * Can be a GET request passing a PatientID
+ * or a POST request passing a PatientID and a form containing the following:
+ *      { "WeightFormula" : "Something", "BSAFormula": "Method of", "UserName" : "Mike Barlow" }
+ *
+ *  Any existing BSA info for the patentID given will be set to inactive and the date of the change
+ *  This allows us to track who changes the BSA info and when it is changed.
+ *  Note that if doing a post any previously active BSA info is marked as inactive based on PatientID
+ *  Uses "Patient_BSA" table
+ *
+ *  Sample Patient ID = 'FC7C048A-19C2-E111-A7F5-000C2935B86F'
+ **/
+    private function _getBSA($patientID) {
+        $query = "select * from Patient_BSA where Patient_ID = '$patientID' AND Active = 1";
+        return $this->Patient->query($query);
+    }
+
+    function BSA($patientID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$patientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID for getting/saving BSA Info";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $records = $this->_getBSA($patientID);
+        if ($this->checkForErrors("Retrieving Patient BSA Info", $records)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            $jsonRecord['success'] = true;
+            $jsonRecord['total'] = count($records);
+            $jsonRecord['records'] = $records;
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $data = file_get_contents('php://input');
+            $form_data = json_decode($data);
+            if (!$form_data) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "No information available to save BSA Info";
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+
+            $wt = $form_data->WeightFormula;
+            $meth = $form_data->BSAFormula;
+            $usr = $form_data->UserName;
+
+            $this->Patient->beginTransaction();
+            $query = "update Patient_BSA
+                Set 
+                Active = 0,
+                Date_Changed = GETDATE(),
+                UserName = '$usr'
+                where Patient_ID = '$patientID' and Active = 1";
+            $records = $this->Patient->query($query);
+            if ($this->checkForErrors("Update Patient BSA Info", $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $query = "INSERT INTO Patient_BSA
+              (Patient_ID,WeightFormula,BSAFormula,Active,Date_Assigned,Date_Changed,UserName)
+              VALUES ('$patientID', '$wt', '$meth', 1, GETDATE(), GETDATE(), '$usr')";
+            $records = $this->Patient->query($query);
+            if ($this->checkForErrors("Update Patient BSA Info", $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $this->Patient->endTransaction();
+            $this->set('jsonRecord', $jsonRecord);
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method for saving BSA Info (expected a POST got a " . $_SERVER['REQUEST_METHOD'];
             $this->set('jsonRecord', $jsonRecord);
         }
     }

@@ -684,33 +684,32 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 //                                }
 //                            }
 
-                            var params = {"BSA" : postData };
+//                            var params = {"BSA" : theData };
 //                            this.application.Patient.Amputations = postData;
 //                            var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
 //                            postData = postData.join("<br>");
 //                            AmputationDisplay.setHTML(postData);
 
                             var patient_id = this.application.Patient.id;
-/***
+/***/
                             Ext.Ajax.request({
-                                url: Ext.URLs.Amputations + "/" + patient_id,
+                                url: "/Patient/BSA/" + patient_id,
                                 method : "POST",
-                                jsonData : params,
+                                jsonData : theData,
                                 success: function( response, opts ){
                                     var text = response.responseText;
                                     var resp = Ext.JSON.decode( text );
                                     if (!resp.success) {
-                                        Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
-                                        this.application.Patient.Amputations = "";
+                                        Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + resp.msg );
                                     }
                                 },
                                 failure : function( response, opts ) {
                                     var text = response.responseText;
                                     var resp = Ext.JSON.decode( text );
-                                    Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
+                                    Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + "e.message" + "<br />" + resp.msg );
                                 }
                             });
-***/
+/***/
                             theForm.reset();
                             btn.up('window').hide();
                             Ext.MessageBox.alert('Thank you!', 'Patient BSA Determination has been saved');
@@ -740,16 +739,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }
         var theForm = this.puWinBSASelection.query("form")[0].form;
         var BSA_Info = {};
-        BSA_Info["BSA_FormulaWeight"] = this.application.Patient.WeightFormula;
-        BSA_Info["BSA_Formula"] = this.application.Patient.BSA_Method;
+        BSA_Info["WeightFormula"] = this.application.Patient.WeightFormula;
+        BSA_Info["BSAFormula"] = this.application.Patient.BSAFormula;
 
-        // var theAmputations = this.application.Patient.Amputations;
-        // var i, fldAmputations = {};
-        // for (i = 0; i < theAmputations.length; i++) {
-//            var x = theAmputations[i];
-//            var y = x.description;
-//            fldAmputations[y] = "on";
-//        }
         theForm.setValues(BSA_Info);
         this.puWinBSASelection.show();
     },
