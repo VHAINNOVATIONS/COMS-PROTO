@@ -674,24 +674,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                     scope : this,
                     handler: function(btn, event) {
                         var theForm = btn.up('form').getForm();
-                        if (theForm.isValid()) {
+						var thisCtl = this.getController("NewPlan.NewPlanTab");
+						var Patient = this.application.Patient;
+
+						if (theForm.isValid()) {
                             var theData = theForm.getValues();
-                            //var postData = [];
-// debugger;
-//                            for (var key in theData) {
-//                                if (theData.hasOwnProperty(key)) {
-//                                    postData.push(key);
-//                                }
-//                            }
-
-//                            var params = {"BSA" : theData };
-//                            this.application.Patient.Amputations = postData;
-//                            var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
-//                            postData = postData.join("<br>");
-//                            AmputationDisplay.setHTML(postData);
-
                             var patient_id = this.application.Patient.id;
-/***/
+
                             Ext.Ajax.request({
                                 url: "/Patient/BSA/" + patient_id,
                                 method : "POST",
@@ -702,6 +691,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                                     if (!resp.success) {
                                         Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + resp.msg );
                                     }
+									else {
+										Patient.WeightFormula = theData.WeightFormula;
+										Patient.BSAFormula = theData.BSAFormula;
+										Patient.BSA_Method = theData.BSAFormula;
+										var piTableInfo = thisCtl.getPatientInfoTableInformation();
+										piTableInfo.update(Patient);
+									}
                                 },
                                 failure : function( response, opts ) {
                                     var text = response.responseText;
@@ -709,7 +705,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                                     Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + "e.message" + "<br />" + resp.msg );
                                 }
                             });
-/***/
+
                             theForm.reset();
                             btn.up('window').hide();
                             Ext.MessageBox.alert('Thank you!', 'Patient BSA Determination has been saved');
