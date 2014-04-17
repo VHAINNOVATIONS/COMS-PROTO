@@ -41,6 +41,7 @@ Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
 Ext.URLs.SiteConfig = "/LookUp/SiteConfig";
 Ext.URLs.Amputations = "/Patient/Amputations";
+Ext.URLs.LookupIVFluidType4Med = "/LookUp/IVFluidType4Med/";
 
 Ext.URLs.Reasons = "/Workflow/Reasons";
 Ext.URLs.Patients = "/Patient/viewall";
@@ -174,6 +175,7 @@ Ext.URLs.DiseaseStage = "/LookUp/DiseaseStage";
 // Example Usage - https://devtest.dbitpro.com/LookUp/DiseaseStage/C884F3AA-0B21-E111-BF57-000C2935B86F
 
 Ext.URLs.Lookups = "/LookUp/viewall";
+
 Ext.URLs.AddLookup = "/LookUp/save"; //KD - 12/20/11 - new URI associated with adding data to the lookup table
 Ext.URLs.DeleteLookup = "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
 Ext.URLs.References = "/LookUp/view/References"; // MWB - 12/27/2011 - Moved from local to SQL Data Store
@@ -187,6 +189,9 @@ Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/
 Ext.URLs.AddCTOS = "/LookUp/saveTemplate/";
 Ext.URLs.UpdateCTOS = "/LookUp/updateTemplate/";
 Ext.URLs.DeleteTemplate = "/LookUp/deleteTemplate"; //KD 1/26/12 - To delete Templates.
+
+Ext.URLs.IVFluidType = "/LookUp/IVFluidType/";
+
 
 Ext.URLs.FluidType = "/LookUp/view/FluidType"; //KD 3/7/2012 - Retrieve Fluid Types
 
@@ -445,7 +450,7 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
 
-
+Ext.COMSModels.IVFluidType = "COMS.model.IVFluidType";
 Ext.COMSModels.Allergies = "COMS.model.Allergies";
 Ext.COMSModels.ChemoHistory = "COMS.model.ChemoHistory";
 Ext.COMSModels.CTOS = "COMS.model.CTOS";
@@ -511,6 +516,7 @@ Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
 // Controllers must be included here if a store is used in the view managed by the controller
 Ext.require([
 	// Require loading of all models to prevent the occasional "me.model is null" error
+	Ext.COMSModels.IVFluidType,
 	Ext.COMSModels.Allergies,
 	Ext.COMSModels.GenericLookup,
 	Ext.COMSModels.CycleLengthMax,

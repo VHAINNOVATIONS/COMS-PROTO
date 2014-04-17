@@ -13,6 +13,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 	layout: 'fit',
 	autoShow: true,
 	width: 785,
+	modal: true,
 
 	initComponent: function () {
 		this.items = [
@@ -220,115 +221,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 					}
 				]
 			}
-/*****
-			{
-				xtype: "container",
-				colspan: 5,
-				html: "<div style=\"text-align: center; font-weight: bold;\">Fields below are required only if entering an optional Dosage Amount</div>",
-				cls: "OptionalDosing",
-				name: "OptionalDosingLabel"
-			},
-			{
-				xtype: 'container',
-				layout: 'hbox',
-				cls: "OptionalDosing",
-				defaults: {
-					labelAlign: 'right',
-					margin: '5 5 5 0'
-				},
-				items: [
-					{
-						xtype: 'container',
-						width: 195,
-						html: "<span style='margin-left: 150px; font-weight: bold;'>OR</span>"
-					}, {
-						xtype: 'textfield',
-						maskRe: /[0-9\.]/,
-						name: 'Amt2',
-						fieldLabel: 'Dosage	Amount',
-						width: 200
-					}, {
-						xtype: 'combo',
-						fieldLabel: 'Units',
-						width: 155,
-						labelWidth: 45,
-						name: 'Units2',
-						store: 'DrugUnitsStore',
-						displayField: 'name',
-						valueField: 'name'
-					}, {
-						xtype: 'combo',
-						fieldLabel: 'Route',
-						name: 'Infusion2',
-						width: 200,
-						store: 'InfusionStore',
-						displayField: 'name',
-						valueField: 'name'
-					}
-				]
-			},
-			{
-				xtype: 'container',
-				layout: 'hbox',
-				name: 'fluidInfo1',
-				cls: "OptionalDosing",
-				hidden: true,
-				defaults: {
-					labelAlign: 'right',
-					margin: '5 0 5 0'
-				},
-				items: [
-					{
-						xtype: 'textfield',
-						maskRe: /[0-9\.]/,
-						name: 'FluidVol2',
-						fieldLabel: 'Fluid/Volume <em>*</em>',
-						labelWidth: 85,
-						margin: '0 0 5 15',
-						width: 175,
-						allowBlank: false
-					}, {
-						xtype: 'container',
-						html: 'ml',
-						readOnly: true,
-						name: 'fluidVolUnit2',
-						width: 20
-					}, {
-						xtype: 'textfield',
-						name: 'FlowRate2',
-						maskRe: /[0-9\.]/,
-						fieldLabel: 'Flow Rate <em>*</em>',
-						width: 135,
-						labelWidth: 90,
-						allowBlank: false
-					}, {
-						xtype: 'container',
-						html: 'ml/hr',
-						readOnly: true,
-						name: 'flowRateUnit2',
-						width: 30
-					}, {
-						xtype: 'textfield',
-						name: 'InfusionTime2',
-						fieldLabel: 'Infusion Time',
-						width: 185,
-						lableWidth: 100,
-						readOnly: true
-					}, {
-						xtype: 'combo',
-						name: 'FluidType2',
-						fieldLabel: 'Fluid Type <em>*</em>',
-						width: 205,
-						lableWidth: 85,
-						allowBlank: false,
-						queryMode: 'local',
-						displayField: 'value',
-						valueField: 'value',
-						store: 'LookupStore'
-					}
-				]
-			},
-***/
 		];
 		this.buttons = [
 			{

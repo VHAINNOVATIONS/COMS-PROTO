@@ -367,6 +367,12 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			'AddHydrationDrug combo[name="Drug"]' : {
 				collapse: this.collapseCombo,
 				expand : this.loadCombo
+			},
+			"AddHydrationDrug combo[name=\"FluidType1\"]" : {
+				beforequery: function(queryEvent) {
+					delete queryEvent.combo.lastQuery;
+				},
+				expand: this.FluidTypeRouteSelected
 			}
 		});
 	},
@@ -431,6 +437,21 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		}
 
 	},
+
+	FluidTypeRouteSelected: function(combo, recs, eOpts){
+				/* MWB - 4/17/2014 - for new requirement (*IV Fluid Type Choices Issue #80) need to get the drug to determine which fluid types are allowable */
+				var theDrug = combo.up("form").down("combo[name=\"Drug\"]");
+				var theDrug = combo.up("form").down("combo[name=\"Drug\"]").valueModels[0].data;
+				var theDrugID = theDrug.id;
+
+				this.getStore('LookupStore').load({
+						params: {
+						URL : Ext.URLs.LookupIVFluidType4Med,
+						id  : theDrugID
+					}
+				});
+	},
+
 	routeSelected: function(combo, recs, eOpts){
 
 		var route=null;
@@ -448,12 +469,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				}
 				this.getDose1Spacer().hide();
 				this.getHydrationAdminTime().show();
-				this.getStore('LookupStore').load({
-						params: {
-						URL : Ext.URLs.Lookups,
-						id  : '/FluidType'
-					}
-				});
 			}
 			else if("IVP" === route){
 				this.getHydrationAdminTime().show();

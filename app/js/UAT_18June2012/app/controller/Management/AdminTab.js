@@ -1,10 +1,10 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
-    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore"],
+    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType'],
     views : [ 'Management.AdminTab','Management.AddLookups','Management.SelectLookups','Management.EditLookup', 'Management.DeleteTemplate', 
 		'Management.Globals', 'Management.SelectGlobals', 'Management.Users', 'Management.ActiveWorkflows', 'Management.MedsNonRounded'
 	],
-    models : ['LookupTable','LookupTable_Templates'],
+    models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
     {
         ref: 'Lookup', 
@@ -71,7 +71,11 @@ Ext.define('COMS.controller.Management.AdminTab', {
     {
         ref: 'RBMedHold', 
         selector: 'form[title=\"Medication Holds\"] radiogroup'
-    }
+    },
+	{
+		ref : "IVFluidTypesGrid",
+		selector : "form [name=\"IV_FluidTypesList\"]"
+	}
 
     ],
     
@@ -133,10 +137,64 @@ Ext.define('COMS.controller.Management.AdminTab', {
             },
             "form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
                 click: this.clickRoundingRuleCancel
-            }
+            },
+
+			"form[name=\"IV_Fluid_Types\"]" : {
+				beforerender: this.FluidTypeLoadGrid
+			},
+            "form[name=\"IV_Fluid_Types\"] button[text=\"Cancel\"]" : {
+                click: this.clickFluidTypeCancel
+            },
+            "form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
+                click: this.clickFluidTypeSave
+            },
+
         });
     },
+
+	FluidTypeLoadGrid : function (panel) {
+		var theGrid = this.getIVFluidTypesGrid();
+		theGrid.getStore().load();
+		return true;
+	},
+
         
+	clickFluidTypeCancel : function ( theButton, eOpts) {
+		theButton.up('form').getForm().reset();
+	},
+	clickFluidTypeSave : function ( theButton, eOpts) {
+		var theForm = theButton.up('form').getForm();
+		var thisCtl = this.getController("Management.AdminTab");
+
+		if (theForm.isValid()) {
+			var theData = theForm.getValues();
+			Ext.Ajax.request({
+				url: Ext.URLs.IVFluidType + theData.IV_Medication + "/" + theData.IV_FluidType,
+				method : "POST",
+				scope: this,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (!resp.success) {
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Medications IV Fluid Type, Save Error - " + resp.msg );
+					}
+					else {
+						var thisCtl = this.getController("Management.AdminTab");
+						var theGrid = thisCtl.getIVFluidTypesGrid();
+						theGrid.getStore().load();
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Medications IV Fluid Type, Save Error - " + "e.message" + "<br />" + resp.msg );
+				}
+			});
+
+		}
+		theForm.reset();
+
+	},
     RoundingRulesFormRenderSetValues : function(scope, eOpts) {
         this.application.loadMask("Please wait; Loading Rounding Rules State");
         Ext.Ajax.request({

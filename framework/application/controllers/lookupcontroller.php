@@ -640,4 +640,218 @@ class LookupController extends Controller {
         $jsonRecord['success'] = true;
         $this->set('jsonRecord', $jsonRecord);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * IV Fluid Type Information
+ * Can be a GET request passing a Medication ID or NULL to get all Meds
+ * or a POST request passing a Medication ID and a FluidType_ID to create a record
+ * or a DELETE request passing a Medication ID and a FluidType_ID to delete a record
+ *
+ *  Sample URL: http://coms-mwb.dbitpro.com:355/LookUp/IVFluidType/7A95474E-A99F-E111-903E-000C2935B86F/42BC0BB9-87AE-E111-903E-000C2935B86F
+ **/
+    function _getFluidTypes($Med_ID) {
+        $query = "select * from IVFluidTypes where Med_ID = '$Med_ID'";
+        return $this->LookUp->query($query);
+    }
+
+    function _getAllFluidTypeRecords(&$jsonRecord) {
+        $query = "
+            select 
+                IV.Med_ID, 
+                IV.FluidType_ID, 
+                lu1.name as MedName, 
+                lu2.name as FluidType 
+                from IVFluidTypes IV
+                JOIN LookUp lu1 ON lu1.Lookup_ID = IV.Med_ID
+                JOIN LookUp lu2 ON lu2.Lookup_ID = IV.FluidType_ID
+                order by lu1.name, lu2.name
+                ";
+        $retVal = $this->LookUp->query($query);
+        if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            return;
+        }
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($retVal);
+        $jsonRecord['records'] = $retVal;
+        unset($jsonRecord['msg']);
+    }
+
+
+    function _getFluidTypeRecords4Med(&$jsonRecord, $Med_ID) {
+        $query = "select * from IVFluidTypes where Med_ID = '$Med_ID'";
+        $retVal = $this->LookUp->query($query);
+        if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            return;
+        }
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($retVal);
+        $jsonRecord['records'] = $retVal;
+        unset($jsonRecord['msg']);
+    }
+
+    function _InsertFluidTypeRecord(&$jsonRecord, $Med_ID, $FluidType_ID) {
+        if (!$Med_ID || !$FluidType_ID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Medication ID and/or Fluid Type IV";
+        }
+        else {
+            $query = "INSERT INTO IVFluidTypes (Med_ID,FluidType_ID) VALUES ('$Med_ID','$FluidType_ID')";
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                return;
+            }
+            unset($jsonRecord['msg']);
+        }
+    }
+
+    function IVFluidType($Med_ID = null, $FluidType_ID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $jsonRecord['msg'] = "No records to find";
+
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if (!$Med_ID) {
+                $this->_getAllFluidTypeRecords($jsonRecord);
+            }
+            else {
+                $this->_getFluidTypeRecords4Med($jsonRecord, $Med_ID);
+            }
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $this->_InsertFluidTypeRecord($jsonRecord, $Med_ID, $FluidType_ID);
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            if (!$Med_ID || !$FluidType_ID) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Missing Medication ID and/or Fluid Type IV";
+            }
+            else if ($Med_ID && !$FluidType_ID) {
+                $query = "DELETE FROM IVFluidTypes WHERE ('Med_ID' = '$Med_ID')";
+                $this->LookUp->query($query);
+                unset($jsonRecord['msg']);
+            }
+            else {
+                $query = "DELETE FROM IVFluidTypes WHERE (Med_ID = '$Med_ID' AND FluidType_ID = '$FluidType_ID')";
+                $this->LookUp->query($query);
+                unset($jsonRecord['msg']);
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for IV Fluid Type Service (expected a GET/POST/DELETE got a " . $_SERVER['REQUEST_METHOD'];
+        }
+
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }   // End of function
+
+
+
+
+
+
+
+
+
+    function _getAllFluidTypes() {
+        $query = "select * from LookUp where Lookup_Type = 28";
+        return $this->LookUp->query($query);
+    }
+
+/*
+		{ name: 'id', type: 'string'},
+		{ name: 'value', type: 'string'},		// should this sometimes be "name"?
+		{ name: 'description', type: 'string'},
+		{ name: 'lookupid', type:'string'}
+*/
+    function _getAllFluidTypes4MedID(&$jsonRecord, $Med_ID) {
+        $query = "
+            select 
+                IV.FluidType_ID as id, 
+                lu2.name as value,
+                lu2.name as description,
+                IV.FluidType_ID as lookupid
+                from IVFluidTypes IV
+                JOIN LookUp lu2 ON lu2.Lookup_ID = IV.FluidType_ID
+                where IV.Med_ID = '$Med_ID'
+                order by lu2.name
+                ";
+error_log("_getAllFluidTypes4MedID - $query");
+        $retVal = $this->LookUp->query($query);
+        if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            return;
+        }
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($retVal);
+        $jsonRecord['records'] = $retVal;
+        unset($jsonRecord['msg']);
+    }
+
+    function IVFluidType4Med($Med_ID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $jsonRecord['msg'] = "No records to find";
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            error_log("Get - IVFluidType4Med - $Med_ID");
+            if ($Med_ID) {
+                $this->_getAllFluidTypes4MedID($jsonRecord, $Med_ID);
+                if (0 == $jsonRecord['total']) {
+                    $retVal = $this->_getAllFluidTypes();
+                    $jsonRecord['success'] = 'true';
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                    unset($jsonRecord['msg']);
+                }
+            }
+            else {
+                $retVal = $this->_getAllFluidTypes();
+                $jsonRecord['success'] = 'true';
+                $jsonRecord['total'] = count($retVal);
+                $jsonRecord['records'] = $retVal;
+                unset($jsonRecord['msg']);
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for IV Fluid Type for Medication Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+        }
+
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }   // End of function
+
+
 }
