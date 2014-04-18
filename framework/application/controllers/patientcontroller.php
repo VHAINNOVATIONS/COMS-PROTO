@@ -391,6 +391,7 @@ class PatientController extends Controller
                     $details = $retVal;
 // error_log("Details Count - " . count($details));
 // error_log("Why are there so many detail records for a single patient?");
+                    if (count($details) > 0) {
                     foreach($details as $d) {
                         $detail = $this->TreatmentStatus($d);
 
@@ -408,6 +409,30 @@ class PatientController extends Controller
                         if ($detail["TreatmentStatus"] != 'Ended') {
                             $patientDetailMap[$patient['ID']] = $detail;
                         }
+                    }
+                }
+                    else {
+// error_log("No Details, so build one");
+                            $detail = array();
+                            $detail["TemplateName"] = "";
+                            $detail["TemplateDescription"] = "";
+                            $detail["TemplateID"] = "";
+                            $detail["TreatmentStart"] = "";
+                            $detail["TreatmentEnd"] = "";
+                            $detail["TreatmentStatus"] = "";
+                            $detail["Goal"] = "";
+                            $detail["ClinicalTrial"] = "";
+                            $detail["PAT_ID"] = "";
+                            $detail["PerformanceStatus"] = "";
+
+                            if (isset($patientBSA) && count($patientBSA) > 0) {
+                                // error_log("Got BSA Data from BSA_Info Table");
+                                $a = $patientBSA[0]["WeightFormula"];
+                                $b = $patientBSA[0]["BSAFormula"];
+                                $detail["WeightFormula"] = $a;
+                                $detail["BSAFormula"] = $b;
+                            }
+                            $patientDetailMap[$patient['ID']] = $detail;
                     }
                 }
             }
@@ -1506,9 +1531,9 @@ function buildJsonObj4Output() {
         if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $query = "delete from LookUp where Lookup_Type = 30 and Name = '$patientID'";
             $TreatmentData = $this->Patient->query($query);
-            error_log("Deleting old records");
-            error_log($query);
-            error_log(json_encode($TreatmentData));
+            // error_log("Deleting old records");
+            // error_log($query);
+            // error_log(json_encode($TreatmentData));
 
             $Amputations = $form_data->Amputations;
             $this->Patient->beginTransaction();
