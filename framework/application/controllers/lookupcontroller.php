@@ -784,7 +784,7 @@ class LookupController extends Controller {
 
 
     function _getAllFluidTypes() {
-        $query = "select * from LookUp where Lookup_Type = 28";
+        $query = "select Lookup_ID as id,Lookup_ID as lookupid,Name as value,Name as description from LookUp where Lookup_Type = 28";
         return $this->LookUp->query($query);
     }
 
