@@ -73,7 +73,7 @@ $_SESSION['NWLoginR'] = $NWLoginR;
 		// $Deployment = "app-all.js";
 		$Deployment = "app.js";
 		$LibsVersion2 = "/libs/ExtJS_4.1RC1";
-
+		$LibsVersion2 = "/libs/ExtJS_4.1.0";
 		/*
 		 * Temporarily modifying the ExtJS library because
 		 * a new JS was added into /examples/ux/grid/column in order to display 

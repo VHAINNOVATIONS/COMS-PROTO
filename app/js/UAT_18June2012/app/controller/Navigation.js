@@ -12,7 +12,6 @@ Ext.define('COMS.controller.Navigation', {
 		, 'ExistingPlan.ExistingPlanTab'
 		, 'KnowledgeBase.KnowledgeBaseTab'
 		, 'Messages.MessagesTab'
-		, 'Management.ManagementTab'
 		, 'Management.AdminTab' // KD - 12/20/11 - Added new URI to PUT data back to PHP
 		],
 

@@ -1,8 +1,22 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
     stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType'],
-    views : [ 'Management.AdminTab','Management.AddLookups','Management.SelectLookups','Management.EditLookup', 'Management.DeleteTemplate', 
-		'Management.Globals', 'Management.SelectGlobals', 'Management.Users', 'Management.ActiveWorkflows', 'Management.MedsNonRounded'
+    views : [ 
+		'Management.AdminTab',
+		'Management.AddLookups',
+		'Management.SelectLookups',
+		'Management.EditLookup',
+		'Management.DeleteTemplate', 
+		'Management.Globals',
+		'Management.SelectGlobals',
+		'Management.Users',
+		'Management.ActiveWorkflows', 
+		'Management.MedsNonRounded',
+		'Management.RoundingRules',
+		'Management.MedicationHolds',
+		'Management.IV_Fluid_Types', 
+		'Management.CheckCombo',
+		'Management.Meds'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
@@ -75,10 +89,18 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "IVFluidTypesGrid",
 		selector : "form [name=\"IV_FluidTypesList\"]"
+	},
+	{
+		ref : "IV_Medication",
+		selector : "form [name=\"IV_Medication\"]"
+	},
+	{
+		ref : "IV_FluidTypeMulti",
+		selector : "form [name=\"IV_FluidTypeMulti\"]"
 	}
-
     ],
     
+
     init: function() {
         wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
         this.control({
@@ -139,29 +161,54 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 click: this.clickRoundingRuleCancel
             },
 
+
+			"form [name=\"IV_FluidTypesList\"]" : {
+				select: this.selectIVFluidTypeGridRow
+			},
 			"form[name=\"IV_Fluid_Types\"]" : {
 				beforerender: this.FluidTypeLoadGrid
 			},
-            "form[name=\"IV_Fluid_Types\"] button[text=\"Cancel\"]" : {
-                click: this.clickFluidTypeCancel
-            },
-            "form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
-                click: this.clickFluidTypeSave
-            },
-
+			"form[name=\"IV_Fluid_Types\"] button[text=\"Cancel\"]" : {
+				click: this.clickFluidTypeCancel
+			},
+			"form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
+				click: this.clickFluidTypeSave
+			}
         });
     },
 
+
+
+
 	FluidTypeLoadGrid : function (panel) {
+		this.application.loadMask("Please wait; Loading Fluid Types");
 		var theGrid = this.getIVFluidTypesGrid();
 		theGrid.getStore().load();
+
+		var theMedField = this.getIV_Medication();
+		theMedField.getStore().load();
+
+		var theFluidTypeField = this.getIV_FluidTypeMulti();
+		theFluidTypeField.getStore().load();
+		this.application.unMask();
 		return true;
 	},
 
-        
+	selectIVFluidTypeGridRow : function(theRowModel, record, index, eOpts) {
+		var Fluid = record.get("FluidType");
+		var FluidID = record.get("FluidType_ID");
+		var Med = record.get("MedName");
+		var MedID = record.get("Med_ID");
+		var theMedField = this.getIV_Medication();
+		var theFluidTypeField = this.getIV_FluidTypeMulti();
+		theMedField.setValue(MedID);
+		theFluidTypeField.setValue(FluidID);
+	},
+
 	clickFluidTypeCancel : function ( theButton, eOpts) {
 		theButton.up('form').getForm().reset();
 	},
+
 	clickFluidTypeSave : function ( theButton, eOpts) {
 		var theForm = theButton.up('form').getForm();
 		var thisCtl = this.getController("Management.AdminTab");
@@ -169,8 +216,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();
 			Ext.Ajax.request({
-				url: Ext.URLs.IVFluidType + theData.IV_Medication + "/" + theData.IV_FluidType,
+				url: Ext.URLs.IVFluidType + theData.IV_Medication,
 				method : "POST",
+				jsonData : { "IV_FluidTypeMulti" : theData.IV_FluidTypeMulti },
 				scope: this,
 				success: function( response, opts ){
 					var text = response.responseText;
@@ -190,12 +238,28 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Medications IV Fluid Type, Save Error - " + "e.message" + "<br />" + resp.msg );
 				}
 			});
-
 		}
 		theForm.reset();
-
 	},
-    RoundingRulesFormRenderSetValues : function(scope, eOpts) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	RoundingRulesFormRenderSetValues : function(scope, eOpts) {
         this.application.loadMask("Please wait; Loading Rounding Rules State");
         Ext.Ajax.request({
             url: Ext.URLs.RoundingRule,

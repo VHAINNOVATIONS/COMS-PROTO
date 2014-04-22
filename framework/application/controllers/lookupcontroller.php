@@ -708,32 +708,52 @@ class LookupController extends Controller {
         if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = $this->get('frameworkErr');
-            return;
+            return null;
         }
         $jsonRecord['success'] = 'true';
         $jsonRecord['total'] = count($retVal);
         $jsonRecord['records'] = $retVal;
         unset($jsonRecord['msg']);
+        return $retVal;
+    }
+
+    function _FindMedRecord($Med_ID) {
     }
 
     function _InsertFluidTypeRecord(&$jsonRecord, $Med_ID, $FluidType_ID) {
-        if (!$Med_ID || !$FluidType_ID) {
+
+        if (!$Med_ID) {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Missing Medication ID and/or Fluid Type IV";
+            $jsonRecord['msg'] = "Missing Medication ID";
         }
         else {
-            $query = "INSERT INTO IVFluidTypes (Med_ID,FluidType_ID) VALUES ('$Med_ID','$FluidType_ID')";
-            $retVal = $this->LookUp->query($query);
-            if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-                return;
+            $MedRecord = $this->_getFluidTypeRecords4Med($jsonRecord, $Med_ID);
+            if ($MedRecord) {
+                error_log("Found Medication Record for $Med_ID");
+                // Delete all Med ID Records
+                $query = "DELETE FROM IVFluidTypes where Med_ID = '$Med_ID'";
+                $this->LookUp->query($query);
+            }
+            error_log("NO Medication Record for $Med_ID, $FluidType_ID");
+            if ("" !== $FluidType_ID) {
+                $IVTypes = explode(",", $FluidType_ID);
+                foreach ($IVTypes as $IVType) {
+                    $query = "INSERT INTO IVFluidTypes (Med_ID,FluidType_ID) VALUES ('$Med_ID','$IVType')";
+                    error_log("IV FluidType - Query");
+                    error_log($query);
+                    $retVal = $this->LookUp->query($query);
+                    if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
+                        $jsonRecord['success'] = false;
+                        $jsonRecord['msg'] = $this->get('frameworkErr');
+                        return;
+                    }
+                }
             }
             unset($jsonRecord['msg']);
         }
     }
 
-    function IVFluidType($Med_ID = null, $FluidType_ID = null) {
+    function IVFluidType($Med_ID = null) {
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $jsonRecord['msg'] = "No records to find";
@@ -748,20 +768,17 @@ class LookupController extends Controller {
             }
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $this->_InsertFluidTypeRecord($jsonRecord, $Med_ID, $FluidType_ID);
+            $form_data = json_decode(file_get_contents('php://input'));
+            $IV_FluidTypeMulti = $form_data->{'IV_FluidTypeMulti'};
+            $this->_InsertFluidTypeRecord($jsonRecord, $Med_ID, $IV_FluidTypeMulti);
         }
         else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
-            if (!$Med_ID || !$FluidType_ID) {
+            if (!$Med_ID) {
                 $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = "Missing Medication ID and/or Fluid Type IV";
-            }
-            else if ($Med_ID && !$FluidType_ID) {
-                $query = "DELETE FROM IVFluidTypes WHERE ('Med_ID' = '$Med_ID')";
-                $this->LookUp->query($query);
-                unset($jsonRecord['msg']);
+                $jsonRecord['msg'] = "Missing Medication ID";
             }
             else {
-                $query = "DELETE FROM IVFluidTypes WHERE (Med_ID = '$Med_ID' AND FluidType_ID = '$FluidType_ID')";
+                $query = "DELETE FROM IVFluidTypes WHERE ('Med_ID' = '$Med_ID')";
                 $this->LookUp->query($query);
                 unset($jsonRecord['msg']);
             }
