@@ -2,8 +2,9 @@
 
 <?php
 echo "<table = '1' border = '1' align='center' width='800'>";
-echo "<tr><td align='center' colspan='2'>";
-echo "<br>*****<B>TEST SYSTEM</B>******<BR>CPM   CPM   CPM   CPM   CPM   CPM  CPM   CPM   CPM  CPM  CPM  CPM  CPM<br> 
+echo "<tr><td align='center' colspan='2'><img src='images/va_logo_v1.png'></td></tr>";
+echo "<tr><td align='center' width='800'>";
+echo "<br>*****<B>TEST SYSTEM</B>******<BR> 
    *************************************************************************<br> 
            You have accessed the CPM  Cache Account and VistaLink is installed in this account<br>
    Access privilege is based on specified need.  As a user on this system,
@@ -16,15 +17,12 @@ echo "<br>*****<B>TEST SYSTEM</B>******<BR>CPM   CPM   CPM   CPM   CPM   CPM  CP
    use.<br><br>
  
             MISUSE of this system constitutes a Federal Crime.<br>
- CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM   CPM<br>
    *************************************************************************<br>
 ";
-echo "</td></tr>";
-echo "<tr>";
-echo "<td align='center'><img src='app/images/valogo.png'></td>";
+echo "</td>";
 echo "<td align='left'>";
 echo "<table><tr><td align='right'><form name='input' action='index.php' method='post' accept-charset='ISO-8859-1'><br>
-Access Code:</td><td align='left'> <input type='password' name='AccessCode' /></td></tr><tr><td align='right'>Verify Code:</td><td align='left'> <input type='password' name='VerifyCode' /></td></tr><tr><td align='center' colspan=2>
+Access Code:</td><td align='left'> <input type='password' name='AccessCode' /></td></tr><tr><td></td></tr><tr><td align='right'>Verify Code:</td><td align='left'> <input type='password' name='VerifyCode' /></td></tr><tr><td colspan=2></td></tr><tr><td align='center' colspan=2>	
 <input type='submit' value='&nbsp;Submit&nbsp;' />&nbsp;&nbsp;<input type='reset' value='&nbsp;Clear&nbsp;' />
 </form></tr></table>";
 echo "</td></tr>";
