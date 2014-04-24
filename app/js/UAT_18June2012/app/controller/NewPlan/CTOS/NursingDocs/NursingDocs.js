@@ -14,7 +14,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 		"NewPlan.CTOS.NursingDocs.PreTreatment",
 		"NewPlan.CTOS.NursingDocs.Treatment",
 		"NewPlan.CTOS.NursingDocs.React_Assess",
-		"NewPlan.CTOS.NursingDocs.Education"
+		"NewPlan.CTOS.NursingDocs.Education",
+		"NewPlan.CTOS.NursingDocs.DischargeInstructions"
 	],
 
 	refs: [

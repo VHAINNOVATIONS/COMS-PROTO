@@ -25,6 +25,9 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 		<!-- CSS : ExtJS 4.0 Framework      -->
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
+        <style>
+        .Test td { vertical-align: top!important; }
+        </style>
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 		<script src="/libs/modernizr-2.0.6.js"></script>

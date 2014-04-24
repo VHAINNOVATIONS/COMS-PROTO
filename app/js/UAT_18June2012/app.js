@@ -548,6 +548,8 @@ Ext.require([
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 	"COMS.controller.Navigation",
+	"COMS.controller.CkBoxTArea",
+	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.Orders.OrdersTab",
@@ -1413,7 +1415,9 @@ Ext.application({
 		// Each controller must include all the views used by that controller
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
-		"Navigation", "Common.selTemplateByStages", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab" //KD - 12/20/11 - new URI associated with adding data to the lookup table
+		"Navigation"
+		,"CkBoxTArea"
+		,"Common.selTemplateByStages", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab", "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
 		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
 		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record

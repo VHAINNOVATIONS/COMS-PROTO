@@ -15,6 +15,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
         // determine who can see what tabs.
         // The same process can be used to show/hide various other elements such as buttons 
         if ("Administrator" === Sessionrole || "All Roles" === Sessionrole) {
+			this.activeTab = 6;
             this.items = [
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
@@ -22,6 +23,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
                 ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
+				,{ title : 'Testing', items : [ {xtype : 'DischargeInstructions', margin: "10" }]}
             ];
         }
         else if ("1" === SessionTemplateAuthoring) {
