@@ -686,15 +686,15 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			$TID = $row['Template_ID'];
 			$RID = $row['Regimen_ID'];
 			
-			echo "Non Oral - Pre Therapy";
-			echo "PID".$PID." || ";
-			echo "TID".$TID." || ";
-			echo "RID".$RID." || ";
+			//echo "Non Oral - Pre Therapy";
+			//echo "PID".$PID." || ";
+			//echo "TID".$TID." || ";
+			//echo "RID".$RID." || ";
 				$queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
 				foreach($queryPI as $row){
 					$match =  $row['Match'];
-					echo "match: ".$match."";
+					//echo "match: ".$match."";
 					}
 				if ($match != ''){
 				
@@ -726,7 +726,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
 					$this->valuecheck("".$match."End and Done");
@@ -752,10 +752,10 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			$TID = $row['Template_ID'];
 			$RID = $row['Regimen_ID'];
 			
-			echo "NonOral - POST THERPY";
-			echo "PID".$PID." || ";
-			echo "TID".$TID." || ";
-			echo "RID".$RID." || ";
+			//echo "NonOral - POST THERPY";
+			//echo "PID".$PID." || ";
+			//echo "TID".$TID." || ";
+			//echo "RID".$RID." || ";
 				$queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
 				foreach($queryPI as $row){

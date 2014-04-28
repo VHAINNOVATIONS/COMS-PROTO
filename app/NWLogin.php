@@ -1,9 +1,7 @@
 <?php
-
-error_log("Include NWLogin");
 //include "session.php";
-$AccessCode = $_SESSION['AccessCode'];
-$VerifyCode = $_SESSION['VerifyCode'];
+//$AccessCode = $_SESSION['AccessCode'];
+//$VerifyCode = $_SESSION['VerifyCode'];
 
 
 	//Include and Set phpseclib path
@@ -12,16 +10,12 @@ $VerifyCode = $_SESSION['VerifyCode'];
 	//Include SSH2 file
 	//include('Net/SSH2.php');
 	
-	function NWLogin($AccessCode,$Verify){
-        global $mwbTemp;
-
-error_log("NWLogin - $AccessCode, $Verify - $mwbTemp");
+	function NWLogin($AccessCode,$VerifyCode){
 	include "dbitcon.php";
-	
 	//Set Variables
-	//$host = '172.19.100.94';
-	//$username = 'cachemgr355';
-	//$password = 'vhaino355';
+	//$host = '199.179.23.117';
+	//$username = 'sean.cassidy';
+	//$password = 'dbitPASS33';
 	//$csession = 'csession cache355';
 	//$cdUnix = 'D ^%CD';
 	//$instance = 'CPM355';
@@ -70,11 +64,8 @@ error_log("NWLogin - $AccessCode, $Verify - $mwbTemp");
 			PostTrack($_SESSION['ruser'],$AccessCode,$point,1,$_SESSION['sessionid']);
 			$ruser = $_SERVER['REMOTE_USER'];
 			$_SESSION['sessionStatus'] = 0;
-			//$_SESSION['AccessCode']= $AccessCode;
-			//$_SESSION['cprsUsername']= $AccessCode;
-			//$_SESSION['cprsPass']= $VerifyCode;
-			//$_SESSION['VerifyCode']= $VerifyCode;
-			$tsql = "SELECT * FROM Roles WHERE username = '$AccessCode'";
+
+			$tsql = "SELECT role,DisplayName,rid,Email,TemplateAuthoring,Role_ID FROM Roles WHERE username = '$AccessCode'";
 			$getrole = sqlsrv_query($conn, $tsql);
 				while($row = sqlsrv_fetch_array($getrole, SQLSRV_FETCH_ASSOC)) {
 					$_SESSION['role']= $row['role'];
@@ -83,17 +74,21 @@ error_log("NWLogin - $AccessCode, $Verify - $mwbTemp");
 					$_SESSION['Email']= $row['Email'];
 					$_SESSION['TemplateAuthoring']= $row['TemplateAuthoring'];
 					$_SESSION['Role_ID']= $row['Role_ID'];
+					$_SESSION['AC']= $AccessCode;
+					$_SESSION['VC']= $VerifyCode;
 				}
 			$globalsq = "SELECT * FROM Globals";
 			$getglobals = sqlsrv_query($conn, $globalsq);
 				while( $row = sqlsrv_fetch_array($getglobals, SQLSRV_FETCH_ASSOC)) {
 					$_SESSION['sitelist']= $row['sitelist'];
 					$_SESSION['domain'] = $row['domain'];
+					$_SESSION['mdws'] = $row['mdws'];
 				}
 			$point = "signed in";
-			PostTrack($_SESSION['ruser'],$AccessCode,$point,99,$_SESSION['sessionid']);
+			PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,99,$_SESSION['sessionid']);
 			$NWLoginR = 1;
 			$_SESSION['COMSLogin']= 1;
+			//echo "".var_dump($_SESSION)."<br>";
 	//}
 	//writeDebug2($SSHresults);
 	//echo $NWLoginR;

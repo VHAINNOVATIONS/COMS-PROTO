@@ -814,7 +814,7 @@ function convertReason2ID($Reason) {
                  "'" . $lastName . "','" . $firstName . "','" . $sqlDob . "','" .
                  $gender . "','" . $this->getCurrentDate() . "','" . $dfn . "','" .
                  $value . "',";
-        
+
         (empty($middleName)) ? $query .= "null)" : $query .= "'" . $middleName .
                  "')";
         

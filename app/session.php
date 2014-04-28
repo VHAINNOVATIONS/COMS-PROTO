@@ -5,7 +5,7 @@ $_SESSION['chktrack']= 1;
 $_SESSION['sessionid'] = session_id();
 $sessionid = $_SESSION['sessionid'];
 
-function getSV(){
+/*function getSV(){
 
 include "dbitcon.php";
 //$tsql = "SELECT * FROM Roles WHERE username = '$username'";
@@ -26,17 +26,18 @@ $_SESSION['chktrack'] = $chktrack;
 //$_SESSION['Role_ID']= $row['Role_ID'];
 //}
 
-$globalsq = "SELECT * FROM Globals";
+$globalsq = "SELECT sitelist, domain, mdws FROM Globals";
 $getglobals = sqlsrv_query($conn, $globalsq);
 while( $row = sqlsrv_fetch_array($getglobals, SQLSRV_FETCH_ASSOC))
 {
 $_SESSION['sitelist']= $row['sitelist'];
 $_SESSION['domain'] = $row['domain'];
+$_SESSION['mdws'] = $row['mdws'];
 }
 
 
 }
-
+*/
 function checkmdwsconnect($AccessCode,$VerifyCode) {
 $sitelist = 901;
 $client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");  

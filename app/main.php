@@ -65,19 +65,19 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 	echo "		var theJSPath = '$Version/';\n";
     echo "      var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
     echo "      var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
-	echo "		var User = '$user';\n";     /* Domain\User name of user currently logged into the domain */
+	echo "		var User = '" . $_SESSION["winauth"] . "';\n";     /* Domain\User name of user currently logged into the domain */
 	echo "		var CurUser = '" . get_current_user() . "';\n";     /* User name of user currently logged into the domain */
 	echo "		var Sessionrid = '$rid';\n";
 	echo "		var Sessionrole = '$role';\n";
 	echo "		var SessionTemplateAuthoring = '$TemplateAuthoring';\n";
-	echo "		var AuthType = '$authtype';\n";
+	echo "		var AuthType = '" . $_SESSION["winauth"] . "';\n";
     if (isset($FirstParam)) {
     	echo "		var FirstURL = '$FirstParam';\n";
     }
     else {
     	echo "		var FirstURL = '';\n";
     }
-	echo "		var SessionUser = '$sessionUser';\n";   /* CPRS User Name of user currently logged into App via CPRS */
+	echo "		var SessionUser = '" . $_SESSION["AC"] . "';\n";   /* CPRS User Name of user currently logged into App via CPRS */
 ?>
 		</script>
 	</head>

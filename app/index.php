@@ -1,4 +1,4 @@
-<?php
+<?php	
 
 $mwbTemp = "Unknown URI";
 if (isset($_GET[ 'url' ])) {
@@ -7,65 +7,54 @@ if (isset($_GET[ 'url' ])) {
 error_log("-------------------------");
 error_log("Start Process - $mwbTemp");
 
-
-//echo "*** COMS Test Site ***";
 //Include and Set phpseclib path
 set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
 //Include SSH2 file
-require_once "Net/SSH2.php";
+//include('Net/SSH2.php');
 require_once "dbitcon.php";
 require_once "session.php";
+if (isset($_SESSION['pgct'])) {
+$_SESSION['pgct'] = (1+$_SESSION['pgct']);
+}else{
+$_SESSION['pgct'] = 0;
+}
+
 require_once "NWLogin.php";
 require_once "track.php";
 require_once "/ChromePhp.php";
+
 $winauth = $_SERVER['AUTH_USER'];
 $_SESSION['winauth']= $winauth;
 $ruser = $_SERVER['REMOTE_USER'];
 $_SESSION['ruser']= $ruser;
+
+if (isset($_SESSION['COMSLogin'])) {
 $COMSLogin = $_SESSION['COMSLogin'];
-$point = "Pre Check";
-
+}else{
+$COMSLogin = 0;
+}
 if (isset($_POST['AccessCode'])) {
-    PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
-}
-else {
-    PostTrack($_SESSION['ruser'],"Unk",$point,0,$_SESSION['sessionid']);
-}
-if (empty( $_SESSION[$COMSLogin])){
-    if (isset($_POST['AccessCode'])) {
-        $AccessCode = $_POST['AccessCode'];
-        $_SESSION['AccessCode'] = $_POST['AccessCode'];
-        $_SESSION['cprsUsername'] = $_POST['AccessCode'];
-    }
-    if (isset($_POST['VerifyCode'])) {
-        $VerifyCode = $_POST['VerifyCode'];
-        $_SESSION['cprsPass'] = $_POST['VerifyCode'];
-        $_SESSION['VerifyCode'] = $_POST['VerifyCode'];
-    }
-    if (isset($VerifyCode) && isset($AccessCode)) {
-        $NWLoginR = NWLogin($AccessCode,$VerifyCode);
-    }
-    else {
-        $NWLoginR = NWLogin("", "");
-    }
+$_SESSION['AccessCode'] = $_POST['AccessCode'];
+$_SESSION['VerifyCode'] = $_POST['VerifyCode'];
+$point = "Pre Check";
+PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
+$NWLoginR = NWLogin($_SESSION['AccessCode'],$_SESSION['VerifyCode']);
+$_SESSION['NWLoginR'] = $NWLoginR;
+}else{
+$point = "Pre Check";
+$notset = "Not Set";
+PostTrack($_SESSION['ruser'],$notset,$point,0,$_SESSION['sessionid']);
 }
 
-$_SESSION['NWLoginR'] = $NWLoginR;
-		if ($NWLoginR === 1){	
-				}
-		
-		if ( empty( $_SESSION[ 'role' ] ) ) {        
-		
+	if ( empty( $_SESSION[ 'role' ] ) ) {        
 		include "login.php";
 		}
 		else{
 		include_once "workflow.php";
 		include_once "template.php";
 		include_once "NWPatient.php";
-			//include "NWPatient.php";
-				define( 'DS', DIRECTORY_SEPARATOR );
-				define( 'ROOT', dirname( dirname( __FILE__ ) ) );
-
+		define( 'DS', DIRECTORY_SEPARATOR );
+		define( 'ROOT', dirname( dirname( __FILE__ ) ) );
 
 		$Version = "js"; // Demo Server version
 		// $Version = "js/UAT_18June2012";
@@ -89,7 +78,8 @@ $_SESSION['NWLoginR'] = $NWLoginR;
 			$url = $_GET[ 'url' ];
 			$urlArray = explode( "/", $url );
             $FirstParam = $urlArray[ 0 ];
-			PostTrack($_SESSION['ruser'],$_SESSION['AccessCode'],$point,3,$_SESSION['sessionid']);
+			$point = "Logged In";
+			PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,3,$_SESSION['sessionid']);
             // Adjust the if statement below when new classes are added to the framework
             if ( "Patient" === $urlArray[ 0 ] || 
                 "LookUp" === $urlArray[ 0 ] || 
@@ -104,12 +94,14 @@ $_SESSION['NWLoginR'] = $NWLoginR;
                 "Flowsheet" === $urlArray[ 0 ] || 
                 "Git" === $urlArray[ 0 ] || 
                 "Search" === $urlArray[ 0 ] ) {
-				PostTrack($_SESSION['ruser'],$AccessCode,$point,4,$_SESSION['sessionid']);
+				$point = "urlArray Matched";
+				PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,4,$_SESSION['sessionid']);
                     $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
                     require_once $bootstrap_path;
             }		
             else {
-				PostTrack($_SESSION['ruser'],$_SESSION['AccessCode'],$point,5,$_SESSION['sessionid']);
+				$point = "No urlArray Matched";
+				PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,5,$_SESSION['sessionid']);
                 $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
 				$rid = $_SESSION[ 'rid' ];
                 $role = $_SESSION[ 'role' ];
@@ -118,7 +110,8 @@ $_SESSION['NWLoginR'] = $NWLoginR;
             }
 		}
 		else {
-			PostTrack($_SESSION['ruser'],$_SESSION['AccessCode'],$point,6,$_SESSION['sessionid']);
+		$point = "No Url Called";
+			PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,6,$_SESSION['sessionid']);
 			//session_destroy();
 			$rid = $_SESSION[ 'rid' ];
             $role = $_SESSION[ 'role' ];

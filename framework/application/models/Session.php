@@ -28,6 +28,7 @@ class Session extends Model {
 		foreach($result as $row){
 			$_SESSION['sitelist']= $row['sitelist'];
 			$_SESSION['domain'] = $row['domain'];
+			$_SESSION['mdws'] = $row['mdws'];
 		}
 		
 		return $this->query($query);
