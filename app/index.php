@@ -68,7 +68,7 @@ $_SESSION['NWLoginR'] = $NWLoginR;
 
 
 		$Version = "js"; // Demo Server version
-		$Version = "js/UAT_18June2012";
+		// $Version = "js/UAT_18June2012";
 
 		// $Deployment = "app-all.js";
 		$Deployment = "app.js";

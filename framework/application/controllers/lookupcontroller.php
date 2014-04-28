@@ -871,4 +871,197 @@ error_log("_getAllFluidTypes4MedID - $query");
     }   // End of function
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function _getDocs4MedID(&$jsonRecord, $Med_ID) {
+        $query = "
+            select 
+                Documentation as Docs, 
+                lu2.name as value,
+                lu2.name as description,
+                from Med_Docs
+                JOIN LookUp lu2 ON lu2.Lookup_ID = '$Med_ID'
+                where Med_ID = '$Med_ID'
+                order by lu2.name
+                ";
+error_log("_getMedDocs - $query");
+        $retVal = $this->LookUp->query($query);
+        if ($this->checkForErrors("Retrieving Medication Documentation Info", $retVal)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            return;
+        }
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($retVal);
+        $jsonRecord['records'] = $retVal;
+        unset($jsonRecord['msg']);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Med_ID = 7A95474E-A99F-E111-903E-000C2935B86F 
+ * Med Name = 5-FLUOROURACIL  FLUOROURACIL INJ,SOLN
+ * Retrieve info via query = Select * FROM [COMS_MWB_TEST].[dbo].[LookUp] where Lookup_ID = '7A95474E-A99F-E111-903E-000C2935B86F'
+ *
+ * GET Call
+ * Given a Med_ID field, retrieve all the docs via query = 
+ *        Select Docs.ID, lu1.name as MedName, Docs.Documentation
+ *        from [COMS_MWB_TEST].[dbo].[Med_Docs] Docs
+ *        JOIN [COMS_MWB_TEST].[dbo].[LookUp] lu1 on lu1.Lookup_ID = '7A95474E-A99F-E111-903E-000C2935B86F'
+ *        WHERE [Med_ID] = '7A95474E-A99F-E111-903E-000C2935B86F'
+ *
+ * POST Call
+ * Given a Med_ID and Documentation fields, insert into table via query = 
+ *      INSERT INTO [COMS_MWB_TEST].[dbo].[Med_Docs]
+ *          ([Med_ID] ,[Documentation])
+ *          VALUES ('7A95474E-A99F-E111-903E-000C2935B86F' ,'This is a simple test')
+ *
+ * PUT Call
+ * Given a Record_ID for an existing documentation record and Documentation fields, Update table via query = 
+ *        UPDATE [COMS_MWB_TEST].[dbo].[Med_Docs]
+ *        SET [Documentation] = 'This is a simple test'
+ *        WHERE [ID] = 'D2BB35C9-09CE-E311-A4B9-000C2935B86F'
+ *
+ * DELETE Call
+ * Given a Record_ID for an existing documentation record delete that specific record via query = 
+ *        DELETE from [COMS_MWB_TEST].[dbo].[Med_Docs] Docs
+ *        WHERE [ID] = 'D2BB35C9-09CE-E311-A4B9-000C2935B86F'
+ *
+ * DELETE Call (second type)
+ * Given a Med_ID for a specific medication delete ALL documentation for that particular Medication via query = 
+ *        DELETE from [COMS_MWB_TEST].[dbo].[Med_Docs] Docs
+ *        WHERE [Med_ID] = '7A95474E-A99F-E111-903E-000C2935B86F'
+ *
+ * Sample Queries for Simple REST Client Testing:
+ *      GET http://coms-mwb.dbitpro.com:355/LookUp/MedDocs/7A95474E-A99F-E111-903E-000C2935B86F
+ *      PUT http://coms-mwb.dbitpro.com:355/LookUp/MedDocs/D2BB35C9-09CE-E311-A4B9-000C2935B86F
+ *      Data = {"Documentation" : "This is a longer test string..." }
+ **/
+
+    function MedDocs($ID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $form_data = json_decode(file_get_contents('php://input'));
+        $Documentation = $form_data->{'Documentation'};
+        // error_log("Med_Docs - Form Input");
+        // error_log( $form_data );
+        // error_log(file_get_contents('php://input'));
+
+        $ErrMsg = "";
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($ID) {
+                $query = "
+                Select 
+                    Docs.ID, 
+                    Docs.Med_ID, 
+                    lu1.name as MedName, 
+                    Docs.Documentation
+                from Med_Docs Docs
+                JOIN LookUp lu1 on lu1.Lookup_ID = '$ID'
+                WHERE Med_ID = '$ID'";
+            }
+            else {
+                $query = "
+                Select 
+                    Docs.ID, 
+                    Docs.Med_ID, 
+                    lu1.name as MedName, 
+                    Docs.Documentation
+                from Med_Docs Docs
+                JOIN LookUp lu1 on lu1.Lookup_ID = Docs.Med_ID";
+            }
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving Medication Documentation Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT INTO Med_Docs ([Med_ID] ,[Documentation]) VALUES ('$ID' ,'$Documentation')";
+            $jsonRecord['msg'] = "Medication Documentation Record Created";
+            $ErrMsg = "Creating Medication Documentation Record";
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE Med_Docs SET Documentation = '$Documentation' WHERE ID = '$ID'";
+            $jsonRecord['msg'] = "Medication Documentation Record Updated";
+            $ErrMsg = "Updating Medication Documentation Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from Med_Docs where Med_ID = '$ID'";
+            $jsonRecord['msg'] = "Medication Documentation Records Deleted";
+            $ErrMsg = "Deleting Medication Documentation Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for IV Fluid Type for Medication Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+        }
+        if ("" !== $query) {
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }   // End of function
 }

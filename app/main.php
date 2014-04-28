@@ -27,6 +27,13 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
         <style>
         .Test td { vertical-align: top!important; }
+        .RequiredInstr {
+            margin: 10px;
+            font-weight: bold;
+        }
+        .RequiredInstr em {
+            color: red;
+        }
         </style>
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
