@@ -15,7 +15,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
         // determine who can see what tabs.
         // The same process can be used to show/hide various other elements such as buttons 
         if ("Administrator" === Sessionrole || "All Roles" === Sessionrole) {
-			this.activeTab = 6;
+			// this.activeTab = 6;	Opens the "Testing" Tab by default
             this.items = [
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }

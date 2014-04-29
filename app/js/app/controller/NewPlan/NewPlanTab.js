@@ -83,6 +83,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		{ ref: "selTemplateType",				selector: "NewPlanTab PatientInfo CTOS selTemplateType"},
 		{ ref: "DiseaseAndStage",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage"},
+		{ ref: "AllTemplatesShownMsg",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
+
 		{ ref: "Disease",						selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDisease"},
 		{ ref: "DiseaseStage",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDiseaseStage"},
 		{ ref: "Template",						selector: "NewPlanTab PatientInfo CTOS selTemplate[name=\"AllTemplates\"]"},
@@ -100,13 +102,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
 		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
 
-		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
-
-		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
-		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
-        { ref: "AmputeeType",					selector: "AmputationSelection"}
-        
-
+		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"}
     ],
 
 
@@ -114,6 +110,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
         this.control({
+			/***
+			"AskQues2ApplyTemplate button[text=\"Cancel\"]": {
+				click: this.cancelApply
+			},
+			"AskQues2ApplyTemplate radiogroup[name=\"amputeeRadio\"]":{
+				change : this.AmputeeSelected
+			},
+**/
+
+
+
             "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
                 change : this.TemplateTypeSelected
             },
@@ -155,19 +162,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]" : {
                 click: this.resetTemplateFilter
             },
-            'AskQues2ApplyTemplate button[action="save"]': {
-                click: this.ApplyTemplate
-            },
-            'AskQues2ApplyTemplate button[action="cancel"]': {
-                click: this.cancelDate
-            },
-            'AskQues2ApplyTemplate form radiogroup[name=\"clinicalTrialRadio\"]':{
-                change : this.ClinicalTrialTypeSelected
-            },
-            'AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"]':{
-                change : this.AmputeeSelected
-            },
-
             "NewPlanTab PatientSelection" : {
                 afterrender: this.handlePatientSelectionRender
             },
@@ -189,6 +183,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
        });
         wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
+
+
+    cancelApply: function(button){
+		debugger;
+    },
+
+
 
     SaveVitals : function() {
         var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
@@ -280,181 +281,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-    AmputeeSelected: function (rbtn, newValue, oldValue, eOpts ) {
-        wccConsoleLog("User has selected Amputee Type");
 
-        if (true === newValue.Amputee) {
-            this.getAmputeeType().show();
-        }
-        else {
-            this.getAmputeeType().hide();
-        }
-
-    },
-
-    ClinicalTrialTypeSelected: function (rbtn, newValue, oldValue, eOpts ) {
-        wccConsoleLog("User has selected Clinical Trial Type");
-
-        if (true === newValue.ClinicalTrial) {
-            this.getTypeOfTrial().show();
-        }
-        else {
-            this.getTypeOfTrial().hide();
-        }
-
-    },
-
-	// Save button for the AskQues2ApplyTemplate Widget. This widget is for applying a new template to a patient
-    ApplyTemplate: function(button){
-        var win = button.up('window');
-        var form = win.down('form');
-        var values = form.getValues();
-        var amputations = [];
-
-        if('' === values.startdate){
-            Ext.MessageBox.alert('Invalid', 'You must select a start date.');
-            return;
-        }
-
-        if(null == values.BSA_FormulaWeight){
-            Ext.MessageBox.alert('Invalid', 'You must select a Weight Formula.');
-            return;
-        }
-
-        if(null == values.BSA_Formula){
-            Ext.MessageBox.alert('Invalid', 'You must select a BSA Formula.');
-            return;
-        }
-
-        if(null == values.Goal){
-            Ext.MessageBox.alert('Invalid', 'You must select a Goal.');
-            return;
-        }
-
-        if(null == values.PerfStatus){
-            Ext.MessageBox.alert('Invalid', 'You must select a Performance Status.');
-            return;
-        }
-
-        if(null == values.ClinicalTrial){
-            Ext.MessageBox.alert('Invalid', 'Please select either Yes to specify a type of clinical trial or select No.');
-            return;
-        }
-
-        if(true === values.ClincalTrial && '' === values.TypeOfTrial){
-            Ext.MessageBox.alert('Invalid', 'Please enter the type of Clinical Trial.');
-            return;
-        }
-
-        if(true === values.Amputee){
-            var amputationsCB = Ext.ComponentQuery.query('AmputationSelection checkboxgroup[name=\"amputations\"]')[0];
-            var checkedVals = amputationsCB.getChecked();
-			var i;
-
-            if(0 === checkedVals.length){
-                Ext.MessageBox.alert('Invalid', 'You must select an Amputation Type.');
-                return;
-            }
-
-            for(i=0;i<checkedVals.length;i++){
-                amputations.push(checkedVals[i].boxLabel);
-            }
-        }
-
-        var startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        var today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
-		var TemplateInfo = this.application.CurrentTemplate.data;
-		var MaxCycles = TemplateInfo.CourseNumMax;
-		var CycleLength = TemplateInfo.CycleLength; // (need to convert to days... 8 == weeks...
-		var CycleLengthUnit = TemplateInfo.CycleLengthUnit[0].name;
-		switch (CycleLengthUnit) {
-			case "Weeks":
-				CycleLength = CycleLength * 7;
-				break;
-			case "Months" :
-				CycleLength = CycleLength * 30;
-				break;
-			case "Years" :
-				CycleLength = CycleLength * 365;
-				break;
-		}
-		var RegimenDuration = CycleLength * MaxCycles;
-        var future;
-
-        win.close();
-
-        Ext.MessageBox.show({
-            msg: 'Applying template, please wait...',
-            progressText: 'Applying...',
-            width:300,
-            wait:true,
-            waitConfig: {interval:200},
-            icon:'ext-mb-download' //custom class in COMS.css
-        });
-
-        startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
-        future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
-
-        var newCtl = this.getController("NewPlan.NewPlanTab");
-
-        var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
-            PatientID: this.application.Patient.id,
-            TemplateID: this.application.Patient.Template.id,
-            DateApplied : today,
-            DateStarted : startDate,
-            DateEnded : future,
-            Goal : values.Goal,
-            ClinicalTrial: values.TypeOfTrial,
-            PerformanceStatus: values.PerfStatus,
-            WeightFormula: values.BSA_FormulaWeight,
-            BSAFormula: values.BSA_Formula,
-            BSA_Method: values.BSA_Formula,
-            Amputations: amputations
-        });
-
-		patientTemplate.save({
-            scope: this,
-            success: function (data) {
-                wccConsoleLog("Apply Template SUCCESS" );
-					Ext.MessageBox.hide();
-
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var PatientSelection = thisCtl.getPatientSelectionPanel();
-					PatientSelection.collapse();
-					this.resetPanels(thisCtl, "", "", "");
-
-					/**********
-					 *	data.data = {
-					 *	Amputations :  []
-					 *	BSAFormula :  "DuBois"
-					 *	ClinicalTrial :  ""
-					 *	DateApplied :  "2012-05-25"
-					 *	DateEnded :  "2012-11-9"
-					 *	DateStarted :  "2012-05-25"
-					 *	Goal :  "Curative"
-					 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
-					 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
-					 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
-					 *	WeightFormula :  "Actual Weight"
-					 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
-					 *	}
-					 ***********/
-					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
-					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
-            },
-            failure : function(record, op) {
-                wccConsoleLog("Apply Template Failed");
-                Ext.MessageBox.hide();
-                Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
-
-            }
-        });
-
-    },
-    cancelDate: function(button){
-
-    },
 
 	HandleTemplateBtnClicks : function (event, element) {
 		wccConsoleLog("HandleTemplateBtnClicks - PatientInfoTable!");
@@ -541,7 +368,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-	getPatientDataAsString : function() {
+	NO_LONGER_NEEDEDgetPatientDataAsString : function() {
 		var PatientInfo = this.application.Patient;
 		var PatientData = "";
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
@@ -888,9 +715,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var Patient = this.application.Patient;
 
 
-		PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
-		wccConsoleLog(PatientData);
-		PatientData = "";
+		// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
+		// wccConsoleLog(PatientData);
+		// PatientData = "";
 
 		if("DoBSACalcs" === tab2switch2 || "ShowBSACalcs" === tab2switch2) {
 			tempBSA = Patient.BSA;
@@ -910,13 +737,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
-			PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
+			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
+			var htmlData = prettyPrint( Patient, { maxDepth : 4 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
 			    title: 'Patient Info',
-			    height: 200,
-			    width: 400,
+			    height: 800,
+			    width: 950,
 				autoScroll : true,
-			    html : PatientData
+			    html : htmlData
 			}).show();
 
 		} else if("BSA" === tab2switch2) {
@@ -1008,6 +836,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 	resetTemplateFilter : function(button){
+
         if(null != this.application.Patient.Template){
             this.getTemplate().setRawValue(this.application.Patient.Template.description);
         }
@@ -1016,10 +845,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.loadCombo(this.getTemplate());
         this.loadCombo(this.getDisease(),"Refresh");
 
-        this.getDiseaseAndStage().hide();
+		this.getDiseaseAndStage().hide();
         this.getTemplate().show();
+		button.hide();
+		this.getAllTemplatesShownMsg().show();
 
-        Ext.MessageBox.alert('Success', 'Template filters have been removed. <br />All available Templates will be displayed. ');
+//        Ext.MessageBox.alert('Success', 'Template filters have been removed. <br />All available Templates will be displayed. ');
 
     },
 
@@ -1196,7 +1027,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 
-
     ShowAskQues2ApplyTemplate : function(records, operation, success) {
         var i, itemsInGroup = [];	// new Array();
         for (i = 0; i < records.length; i++ ){
@@ -1210,7 +1040,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 });
             }
         }
-        if(this.application.Patient.TemplateID){
+
+		if(this.application.Patient.TemplateID){
 			Ext.MessageBox.show({
 				title: 'Information',
 				msg: 'Template already applied. Would you like to archive existing template and apply current selection?',
@@ -1235,7 +1066,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			});
         }
 		else{
-			Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+			var theWidget = Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
 		}
     },
 
@@ -1251,7 +1082,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
     clearCTOS : function(button){
-
         if(this.getCTOSDataDsp().hidden==false){
             this.getCTOSDataDsp().hide();
             if ("1" === SessionTemplateAuthoring) {

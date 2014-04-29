@@ -553,35 +553,39 @@ Ext.require([
 	Ext.COMSModels.FluidType,
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
+
 	"COMS.controller.Navigation",
 	"COMS.controller.CkBoxTArea",
-	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.Common.selTemplateByStages",
-	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.Authoring.DrugRegimen",
 	"COMS.controller.Authoring.Hydration",
 	"COMS.controller.Management.AdminTab",
+	"COMS.controller.Messages.MessagesTab",
+
+	"COMS.controller.NewPlan.AskQues2ApplyTemplate",
+	"COMS.controller.NewPlan.EndTreatmentSummary",
+	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.NewPlan.OEM",
-	"COMS.controller.NewPlan.PatientInfoTable",
 	"COMS.controller.NewPlan.OEM_Edit",
-	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
+	"COMS.controller.NewPlan.PatientInfoTable",
+	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
+	"COMS.controller.NewPlan.TreatmentDetails",
+
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
+	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
+
+	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
-	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
-	"COMS.controller.Messages.MessagesTab",
-	"COMS.controller.NewPlan.EndTreatmentSummary",
-	//    "COMS.controller.NewPlan.AskQues2ApplyTemplate",
-	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
-	"COMS.controller.NewPlan.TreatmentDetails"
+	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab"
 ]);
 
 /*************************************************************
@@ -1423,7 +1427,7 @@ Ext.application({
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
 		,"CkBoxTArea"
-		,"Common.selTemplateByStages", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab", "NewPlan.CTOS.NursingDocs.DischargeInstructions"
+		,"Common.selTemplateByStages", "NewPlan.AskQues2ApplyTemplate", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab", "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
 		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
 		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record

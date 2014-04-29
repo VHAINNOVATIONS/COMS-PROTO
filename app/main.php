@@ -34,6 +34,11 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
         .RequiredInstr em {
             color: red;
         }
+        .centeredMsg {
+            text-align: left;
+            margin-left: 200px;
+            font-weight: bold;
+        }
         </style>
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
@@ -134,6 +139,7 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
     <script type="text/javascript" <?php echo "src=\"$LibsVersion/ext-all-debug.js\"";?>></script>
     <script type="text/javascript" src="/libs/boomerang.js"></script>
     <script type="text/javascript" src="LocalizedCode.js"> </script>
+    <script type="text/javascript" src="/libs/prettyPrint.js"></script>
 	<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\"";?>></script>
 
 	<script>
