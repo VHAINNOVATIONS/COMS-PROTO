@@ -22,7 +22,8 @@ $_SESSION['pgct'] = 0;
 require_once "NWLogin.php";
 require_once "track.php";
 require_once "/ChromePhp.php";
-
+$point = "start";
+//PostSession($_SESSION['sessionid'],$_POST['AccessCode'],$winauth,$point,0);
 $winauth = $_SERVER['AUTH_USER'];
 $_SESSION['winauth']= $winauth;
 $ruser = $_SERVER['REMOTE_USER'];
@@ -38,6 +39,7 @@ $_SESSION['AccessCode'] = $_POST['AccessCode'];
 $_SESSION['VerifyCode'] = $_POST['VerifyCode'];
 $point = "Pre Check";
 PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
+//PostSession($_SESSION['sessionid'],$_POST['AccessCode'],$winauth,$point,1);
 $NWLoginR = NWLogin($_SESSION['AccessCode'],$_SESSION['VerifyCode']);
 $_SESSION['NWLoginR'] = $NWLoginR;
 }else{

@@ -105,6 +105,7 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
             <navigation id="EndControls" >
                 <ul style="text-align: right; font-size:small;">
                     <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
+                    <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
                     <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
                     <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                     <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
