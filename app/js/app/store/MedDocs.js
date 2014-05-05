@@ -22,5 +22,5 @@ Ext.define("COMS.store.MedDocs", {
 				}
 			}
 		}
-	},
+	}
 });

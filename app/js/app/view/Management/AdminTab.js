@@ -17,6 +17,15 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 		{ xtype : "Globals", title: "Global Variables"},
 		{ xtype : "Users", title: "COMS Users"},
 		{ xtype : "ActiveWorkflows", title: "Active Workflows"},
+		{ xtype : "tabpanel", title: "Discharge Info", 
+			defaults: {
+				padding : "10 10 5 10"
+			},
+			items : [
+				{ xtype : "DischargeInstructionManagement", title: "Discharge Instructions"},
+				{ xtype : "SiteCommonInfo", title: "Site Common Information"}
+			]
+		},
 		{ xtype : "tabpanel", title: "Medications", activeTab: 3,
 			defaults: {
 				padding : "10 10 5 10"

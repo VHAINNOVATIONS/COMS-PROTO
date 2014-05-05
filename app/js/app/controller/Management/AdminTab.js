@@ -1,6 +1,6 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
-    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs'],
+    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'SiteCommonInfo'],
     views : [ 
 		'Management.AdminTab',
 		'Management.AddLookups',
@@ -17,7 +17,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.IV_Fluid_Types', 
 		'Management.CheckCombo',
 		// 'Management.Meds',
-		'Management.MedicationDocumentation'
+		'Management.MedicationDocumentation',
+		'Management.SiteCommonInfo',
+		'Management.DischargeInstructionManagement'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
@@ -92,14 +94,15 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		selector : "form [name=\"IV_FluidTypesList\"]"
 	},
 	{
-		ref : "IV_Medication",
-		selector : "form [name=\"IV_Medication\"]"
-	},
-	{
 		ref : "IV_FluidTypeMulti",
 		selector : "form [name=\"IV_FluidTypeMulti\"]"
 	},
+	{
+		ref : "IV_Medication",
+		selector : "form [name=\"IV_Medication\"]"
+	},
 
+	/* Medication Documentation */
 	{
 		ref : "MedDocsGrid",
 		selector : "MedicationDocumentation grid"
@@ -111,6 +114,34 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "MedDocs_Field",
 		selector : "MedicationDocumentation [name=\"Documentation\"]"
+	},
+
+	/* Discharge Instruction */
+	{
+		ref : "DischargeInstructionGrid",
+		selector : "DischargeInstructionManagement grid"
+	},
+	{
+		ref : "DischargeInstruction_Instruction",
+		selector : "DischargeInstructionManagement [name=\"Label\"]"
+	},
+	{
+		ref : "DischargeInstruction_Documentation",
+		selector : "DischargeInstructionManagement [name=\"Details\"]"
+	},
+
+	/* Site Common Info */
+	{
+		ref : "SiteCommonInfoGrid",
+		selector : "SiteCommonInfo grid"
+	},
+	{
+		ref : "SiteCommonInfo_Label",
+		selector : "SiteCommonInfo [name=\"Label\"]"
+	},
+	{
+		ref : "SiteCommonInfo_Details",
+		selector : "SiteCommonInfo [name=\"Details\"]"
 	}
 
 
@@ -191,7 +222,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				click: this.clickFluidTypeSave
 			},
 
-
+/* Medication Documentation */
 			"MedicationDocumentation " : {
 				beforerender: this.MedicationDocsLoadGrid
 			},
@@ -206,11 +237,258 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			},
 			"MedicationDocumentation [name=\"InPatient_Medication\"]" : {
 				change : this.selectMed
-			}
+			},
 
+
+/* Discharge Instruction */
+			"DischargeInstructionManagement" : {
+				beforerender: this.DischargeInstructionLoadGrid
+			},
+			"DischargeInstructionManagement grid" : {
+					select: this.selectDischargeInstructionGridRow
+			},
+			"DischargeInstructionManagement button[text=\"Cancel\"]" : {
+				click: this.clickDischargeInstructionCancel
+			},
+			"DischargeInstructionManagement button[text=\"Save Documentation\"]" : {
+				click: this.clickDischargeInstructionSave
+			},
+
+/* Site Common Info */
+			"SiteCommonInfo" : {
+				beforerender: this.SiteCommonInfoLoadGrid
+			},
+			"SiteCommonInfo grid" : {
+					select: this.selectSiteCommonInfoGridRow
+			},
+			"SiteCommonInfo button[text=\"Cancel\"]" : {
+				click: this.clickSiteCommonInfoCancel
+			},
+			"SiteCommonInfo button[text=\"Save\"]" : {
+				click: this.clickSiteCommonInfoSave
+			}
 		});
     },
 
+
+
+
+/** 
+ * Site Common Info
+ *
+ * References:
+ *		SiteCommonInfoGrid
+ *		SiteCommonInfo_Label
+ *		SiteCommonInfo_Details
+ *
+ **/
+	SiteCommonInfoLoadGrid : function(panel) {
+		this.application.loadMask("Please wait; Loading Site Common Information");
+		var theGrid = this.getSiteCommonInfoGrid();
+		var theStore = theGrid.getStore();
+		theStore.load();
+		this.application.unMask();
+		return true;
+	},
+
+	selectSiteCommonInfoGridRow : function(theRowModel, record, index, eOpts) {
+		var recID = record.get("ID");
+		var Label = record.get("Label");
+		var Details = record.get("Details");
+
+		this.CurrentSiteCommonInfoRecordID = recID;
+		this.CurrentSiteCommonInfo = Label;
+
+		var theLabelField = this.getSiteCommonInfo_Label();
+		var theDetailsField = this.getSiteCommonInfo_Details();
+		theLabelField.setValue(Label);
+		theDetailsField.setValue(Details);
+	},
+
+	clickSiteCommonInfoCancel : function(theBtn, theEvent, eOpts) {
+	},
+
+	clickSiteCommonInfoSave : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+		var theData = form.getValues(false, false, false, true);
+
+		if (form.isValid()) {
+			var Label = theData.Label;
+			var Details = Ext.util.Format.htmlEncode(theData.Details);
+			var recID = this.CurrentSiteCommonInfoRecordID;
+			var URL = Ext.URLs.SiteCommonInfo;
+			var CMD = "POST";
+			if ("" !== recID && this.CurrentSiteCommonInfo === Label) {
+				URL += "/" + recID;
+				CMD = "PUT";
+			}
+
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				jsonData : {"Label" : Label, "Details" : Details },
+				scope: this,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentSiteCommonInfoRecordID = "";
+					this.CurrentSiteCommonInfo = "";
+					var theLabelField = this.getSiteCommonInfo_Label();
+					var theDetailsField = this.getSiteCommonInfo_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					if (!resp.success) {
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Site Common Info, Save Error - " + resp.msg );
+					}
+					else {
+						var thisCtl = this.getController("Management.AdminTab");
+						var theGrid = thisCtl.getSiteCommonInfoGrid();
+						theGrid.getStore().load();
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentSiteCommonInfoRecordID = "";
+					this.CurrentSiteCommonInfo = "";
+					var theLabelField = this.getSiteCommonInfo_Label();
+					var theDetailsField = this.getSiteCommonInfo_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Site Common Info, Save Error - " + "e.message" + "<br />" + resp.msg );
+				}
+			});
+		}
+		else {
+			var Msg = "";
+			if ("" === theData.Label) {
+				Msg += "<li>Missing Label Selection</li>";
+			}
+			if ("" === theData.Details) {
+				Msg += "<li>Missing Details for Label</li>";
+			}
+			if ("" !== Msg) {
+				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
+			}
+		}
+	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Discharge Instruction */
+	DischargeInstructionLoadGrid : function(panel) {
+		this.application.loadMask("Please wait; Loading Discharge Instructions");
+		var theGrid = this.getDischargeInstructionGrid();
+		var theStore = theGrid.getStore();
+		theStore.load();
+		this.application.unMask();
+		return true;
+	},
+
+	selectDischargeInstructionGridRow : function(theRowModel, record, index, eOpts) {
+		var recID = record.get("ID");
+		var Label = record.get("Label");
+		var Details = record.get("Details");
+
+		this.CurrentDischargeInstructionRecordID = recID;
+		this.CurrentDischargeInstruction = Label;
+
+		var theInstructionField = this.getDischargeInstruction_Instruction();
+		var theDocsField = this.getDischargeInstruction_Documentation();
+		theInstructionField.setValue(Label);
+		theDocsField.setValue(Details);
+	},
+
+	clickDischargeInstructionCancel : function(theBtn, theEvent, eOpts) {
+	},
+
+	clickDischargeInstructionSave : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+		var theData = form.getValues(false, false, false, true);
+
+		if (form.isValid()) {
+			var Label = theData.Label;
+			var Details = Ext.util.Format.htmlEncode(theData.Details);
+			var recID = this.CurrentDischargeInstructionRecordID;
+			var URL = Ext.URLs.DischargeInstruction;
+			var CMD = "POST";
+			if ("" !== recID && this.CurrentDischargeInstruction === Label) {
+				URL += "/" + recID;
+				CMD = "PUT";
+			}
+
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				jsonData : {"Label" : Label, "Details" : Details },
+				scope: this,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentDischargeInstructionRecordID = "";
+					this.CurrentDischargeInstruction = "";
+					var theInstructionField = this.getDischargeInstruction_Instruction();
+					var theDocsField = this.getDischargeInstruction_Documentation();
+					theInstructionField.setValue("");
+					theDocsField.setValue("");
+
+					if (!resp.success) {
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Discharge Instruction, Save Error - " + resp.msg );
+					}
+					else {
+						var thisCtl = this.getController("Management.AdminTab");
+						var theGrid = thisCtl.getDischargeInstructionGrid();
+						theGrid.getStore().load();
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentDischargeInstructionRecordID = "";
+					this.CurrentDischargeInstruction = "";
+					var theInstructionField = this.getDischargeInstruction_Instruction();
+					var theDocsField = this.getDischargeInstruction_Documentation();
+					theInstructionField.setValue("");
+					theDocsField.setValue("");
+
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Discharge Instruction, Save Error - " + "e.message" + "<br />" + resp.msg );
+				}
+			});
+		}
+		else {
+			var Msg = "";
+			var Docs = "";
+			if (!theData.Label) {
+				Msg += "<li>Missing Instruction Selection</li>";
+			}
+			if ("" === theData.Details) {
+				Msg += "<li>Missing Documentation for Discharge Instruction</li>";
+			}
+			if ("" !== Msg) {
+				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
+			}
+		}
+	},
+
+/* Medication Documentation */
 	selectMed : function(theCombo, nValue, oValue, eOpts) {
 		var theRTE = theCombo.up("form").down("htmleditor");
 		theRTE.reset();

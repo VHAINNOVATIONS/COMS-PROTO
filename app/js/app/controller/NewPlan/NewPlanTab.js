@@ -738,7 +738,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
-			var htmlData = prettyPrint( Patient, { maxDepth : 4 } ).innerHTML;
+			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
 			    title: 'Patient Info',
 			    height: 800,

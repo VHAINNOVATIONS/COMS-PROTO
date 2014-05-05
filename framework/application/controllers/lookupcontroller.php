@@ -951,7 +951,7 @@ error_log("_getMedDocs - $query");
 
 
 /**
- * Med_ID = 7A95474E-A99F-E111-903E-000C2935B86F 
+ * Med_ID = 7A95474E-A99F-E111-903E-000C2935B86F <-- NOTE: This is the ID from the InPatient/OutPatient lookup table
  * Med Name = 5-FLUOROURACIL  FLUOROURACIL INJ,SOLN
  * Retrieve info via query = Select * FROM [COMS_MWB_TEST].[dbo].[LookUp] where Lookup_ID = '7A95474E-A99F-E111-903E-000C2935B86F'
  *
@@ -995,7 +995,10 @@ error_log("_getMedDocs - $query");
         $jsonRecord['success'] = true;
         $query = "";
         $form_data = json_decode(file_get_contents('php://input'));
-        $Documentation = $form_data->{'Documentation'};
+        $Documentation = "";
+        if (isset($form_data->{'Documentation'})) {
+            $Documentation = $form_data->{'Documentation'};
+        }
         // error_log("Med_Docs - Form Input");
         // error_log( $form_data );
         // error_log(file_get_contents('php://input'));
@@ -1012,7 +1015,8 @@ error_log("_getMedDocs - $query");
                     Docs.Documentation
                 from Med_Docs Docs
                 JOIN LookUp lu1 on lu1.Lookup_ID = '$ID'
-                WHERE Med_ID = '$ID'";
+                WHERE Med_ID = '$ID'
+                order by MedName";
             }
             else {
                 $query = "
@@ -1022,15 +1026,27 @@ error_log("_getMedDocs - $query");
                     lu1.name as MedName, 
                     Docs.Documentation
                 from Med_Docs Docs
-                JOIN LookUp lu1 on lu1.Lookup_ID = Docs.Med_ID";
+                JOIN LookUp lu1 on lu1.Lookup_ID = Docs.Med_ID
+                order by MedName";
             }
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Medication Documentation Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $query = "INSERT INTO Med_Docs ([Med_ID] ,[Documentation]) VALUES ('$ID' ,'$Documentation')";
-            $jsonRecord['msg'] = "Medication Documentation Record Created";
-            $ErrMsg = "Creating Medication Documentation Record";
+                // Clear out older revisions of this information
+            $query = "delete from Med_Docs WHERE Med_ID = '$ID'";
+            $retVal = $this->LookUp->query($query);
+            // Then insert new info
+            if ("" !== $Documentation) {
+                $query = "INSERT INTO Med_Docs ([Med_ID] ,[Documentation]) VALUES ('$ID' ,'$Documentation')";
+                $jsonRecord['msg'] = "Medication Documentation Record Created";
+                $ErrMsg = "Creating Medication Documentation Record";
+            }
+            else {
+                $query = "";
+                $jsonRecord['msg'] = "Medication Documentation Record Deleted";
+                $ErrMsg = "Deleting Medication Documentation Record";
+            }
         }
         else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
             $query = "UPDATE Med_Docs SET Documentation = '$Documentation' WHERE ID = '$ID'";
@@ -1044,7 +1060,7 @@ error_log("_getMedDocs - $query");
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for IV Fluid Type for Medication Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for Medication Documentation Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
         }
         if ("" !== $query) {
             $retVal = $this->LookUp->query($query);
@@ -1064,4 +1080,359 @@ error_log("_getMedDocs - $query");
         $this->set('jsonRecord', $jsonRecord);
         return;
     }   // End of function
+
+
+
+
+/**
+TemplateData
+Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
+ **/
+    function TemplateMedDocs($TemplateID = null) {
+        $jsonRecord = array();
+        $Drugs = array();
+        $query = "";
+        $arrayLen = 0;
+        $jsonRecord['success'] = true;
+        $jsonRecord['msg'] = "First Stage Testing";
+        
+        if ($TemplateID != NULL) {
+            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($TemplateID);
+            if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+                $this->set('templatedata', null);
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            else {
+                $jsonRecord['total'] = count($retVal);
+                $jsonRecord['records'] = $retVal;
+            }
+
+            $Regimen_ID = $retVal[0]["Regimen_ID"];
+
+
+            
+            $retVal = $this->LookUp->getHydrations($TemplateID, 'pre');
+            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
+                $this->set('templatedata', null);
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            foreach ($retVal as $record) {
+                $Drugs[] = $record['drug'];
+            }
+
+            $retVal = $this->LookUp->getHydrations($TemplateID, 'post');
+            if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
+                $this->set('templatedata', null);
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            foreach ($retVal as $record) {
+                $Drugs[] = $record['drug'];
+            }
+
+            $retVal = $this->LookUp->getRegimens($TemplateID);
+            if($this->checkForErrors('Get Template_Regimen Failed. ', $retVal)){
+                $this->set('templatedata', null);
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+
+            // Get a unique, sorted list of all the medications in the template.
+            foreach ($retVal as $record) {
+                $Drugs[] = $record['drug'];
+            }
+            $Drugs1 = array_unique($Drugs);
+            natcasesort($Drugs1);
+            $Drugs1 = array_values($Drugs1);
+            print_r($Drugs1);
+
+            $MedicationInfo = array();
+            for($i = 0; $i < count($Drugs1); $i++) {
+                $temp = array();
+                $theMedName = $Drugs1[$i];
+                $temp["Medication"] = $theMedName;
+                print_r($temp);
+                echo "<hr>";
+
+                $query = "
+                select LU.Lookup_ID, LU.Name, MD.Documentation
+                from LookUp LU
+                JOIN Med_Docs as MD on LU.Lookup_ID = MD.Med_ID
+                where LU.Name = '$theMedName'
+                ";
+                $MedicationDocsInfo = "";
+                $retVal = $this->LookUp->query($query);
+                $ErrMsg = "Error in looking up medication documentation for $theMedName";
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                }
+                else {
+                    // var_dump($retVal);
+                    if (count($retVal) > 0) {
+                        foreach ($retVal as $Doc) {
+                            $MedicationDocsInfo .= "<br>" . $Doc["Documentation"];
+                        }
+                        echo "------------------- Medication Info --------------------<br>";
+                        print_r($MedicationDocsInfo);
+                    }
+                }
+                $temp["Documentation"] = $MedicationDocsInfo;
+                echo "------------------- Medication Docs --------------------<br>";
+                var_dump ($temp);
+                echo "<br>------------------- END of Medication --------------------<br><br><br>";
+                $MedicationInfo[] = $temp;
+            }
+
+            $jsonRecord['total'] = count($MedicationInfo);
+            $jsonRecord['records'] = $MedicationInfo;        //array_values($Drugs1);
+
+        }
+        else {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Missing Template ID in service call";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET Call
+ * Given a Record_ID field, retrieve a single record from the DischargeInstruction table
+ * Given a Record_ID of null retrieve all the records from the DischargeInstruction table
+ *
+ * POST Call
+ * Given Instruction and Documentation fields, insert a new record into the DischargeInstruction table
+ * Note: If a Record_ID is passed as part of the URL then the record with that ID will be deleted first and a new record created (make shift PUT)
+ *
+ * PUT Call
+ * Given a Record_ID for an existing documentation record and Documentation fields update the specified record in the DischargeInstruction table
+ *
+ * DELETE Call
+ * Given a Record_ID for an existing documentation record delete that specific record from the DischargeInstruction table
+ *
+ * Sample Queries for Simple REST Client Testing:
+ *      GET http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction
+ *      GET http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
+ *
+ *      POST http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/
+ *      Data = { "Instruction" : "Test1", "Documentation" : "This is a modified test record" }
+ *
+ *      PUT http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
+ *      Data = { "Instruction" : "Test1", "Documentation" : "This is a modified test record" }
+ *  NOTE: For PUT operations the Instruction field is ignored and does not need to be passed
+ *
+ *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
+ **/
+    function DischargeInstruction($ID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $form_data = json_decode(file_get_contents('php://input'));
+        $Details = "";
+        $Instruction = "";
+        if (isset($form_data->{'Details'})) {
+            $Details = $form_data->{'Details'};
+        }
+        if (isset($form_data->{'Label'})) {
+            $Label = $form_data->{'Label'};
+        }
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($ID) {
+                $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = 'Instructions' order by Label ";
+            }
+            else {
+                $query = "Select * from SiteCommonInformation where DataType = 'Instructions' order by Label";
+            }
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving Discharge Instructions Documentation Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+                // Clear out older revisions of this information
+            $query = "delete from SiteCommonInformation WHERE ID = '$ID' and DataType = 'Instructions'";
+            $retVal = $this->LookUp->query($query);
+            // Then insert new info
+            if ("" !== $Details) {
+                $query = "INSERT INTO SiteCommonInformation (Label, Details, DataType) VALUES ('$Label' ,'$Details', 'Instructions')";
+                $jsonRecord['msg'] = "Discharge Instructions Documentation Record Created";
+                $ErrMsg = "Creating Discharge Instructions Documentation Record";
+                error_log($query);
+            }
+            else {
+                $query = "";
+                $jsonRecord['msg'] = "Discharge Instructions Documentation Record Deleted";
+                $ErrMsg = "Deleting Discharge Instructions Documentation Record";
+            }
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE SiteCommonInformation SET Details = '$Details', Label = '$Label' WHERE ID = '$ID'";
+            $jsonRecord['msg'] = "Discharge Instruction Record Updated";
+            $ErrMsg = "Updating Discharge Instruction  Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from SiteCommonInformation where ID = '$ID' and DataType = 'Instructions'";
+            $jsonRecord['msg'] = "Discharge Instruction Records Deleted";
+            $ErrMsg = "Deleting Discharge Instruction Documentation Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for Discharge Instruction Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+        }
+        if ("" !== $query) {
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+
+    }
+
+
+
+/**
+ * GET Call
+ * Given a Record_ID field, retrieve a single record from the SiteCommonInfo table
+ * Given a Record_ID of null retrieve all the records from the SiteCommonInfo table
+ *
+ * POST Call
+ * Given Label and Details fields, insert a new record into the SiteCommonInfo table
+ * Note: If a Record_ID is passed as part of the URL then the record with that ID will be deleted first and a new record created (make shift PUT)
+ *
+ * PUT Call
+ * Given a Record_ID for an existing Details record and Details fields update the specified record in the SiteCommonInfo table
+ *
+ * DELETE Call
+ * Given a Record_ID for an existing Details record delete that specific record from the SiteCommonInfo table
+ *
+ * Sample Queries for Simple REST Client Testing:
+ *      GET http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo
+ *      GET http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo/542C549B-05D2-E311-A4B9-000C2935B86F
+ *
+ *      POST http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo/
+ *      Data = { "Label" : "Test1", "Details" : "This is a modified test record" }
+ *
+ *      PUT http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo/542C549B-05D2-E311-A4B9-000C2935B86F
+ *      Data = { "Label" : "Test1", "Details" : "This is a modified test record" }
+ *  NOTE: For PUT operations the Label field is ignored and does not need to be passed
+ *
+ *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo/542C549B-05D2-E311-A4B9-000C2935B86F
+ **/
+    function SiteCommonInfo($ID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $form_data = json_decode(file_get_contents('php://input'));
+        $Details = "";
+        $Label = "";
+        if (isset($form_data->{'Details'})) {
+            $Details = $form_data->{'Details'};
+        }
+        if (isset($form_data->{'Label'})) {
+            $Label = $form_data->{'Label'};
+        }
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($ID) {
+                $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = 'CommonInfo' order by Label";
+            }
+            else {
+                $query = "Select * from SiteCommonInformation where DataType = 'CommonInfo' order by Label";
+            }
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving Site Common Info Details Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+                // Clear out older revisions of this information
+            $query = "delete from SiteCommonInformation WHERE ID = '$ID'";
+            $retVal = $this->LookUp->query($query);
+            // Then insert new info
+            if ("" !== $Details) {
+                $query = "INSERT INTO SiteCommonInformation (Label ,Details, DataType) VALUES ('$Label' ,'$Details', 'CommonInfo')";
+                $jsonRecord['msg'] = "Site Common Info Details Record Created";
+                $ErrMsg = "Creating Site Common Info Details Record";
+                error_log($query);
+            }
+            else {
+                $query = "";
+                $jsonRecord['msg'] = "Site Common Info Details Record Deleted";
+                $ErrMsg = "Deleting Site Common Info Details Record";
+            }
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE SiteCommonInformation SET Details = '$Details', Label = '$Label' WHERE ID = '$ID'";
+            $jsonRecord['msg'] = "Discharge Label Record Updated";
+            $ErrMsg = "Updating Discharge Label  Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from SiteCommonInformation where ID = '$ID' and DataType = 'CommonInfo'";
+            $jsonRecord['msg'] = "Discharge Label Records Deleted";
+            $ErrMsg = "Deleting Discharge Label  Details Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for Discharge Label Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+        }
+        if ("" !== $query) {
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }
+
 }

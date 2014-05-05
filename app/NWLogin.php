@@ -84,6 +84,10 @@
 					$_SESSION['domain'] = $row['domain'];
 					$_SESSION['mdws'] = $row['mdws'];
 				}
+				
+			$usql = "Update Roles set Last_SessionID = '".$_SESSION['sessionid']."' where username = '$AccessCode'";
+			$updateRole = sqlsrv_query($conn, $usql);
+				
 			$point = "signed in";
 			PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,99,$_SESSION['sessionid']);
 			$NWLoginR = 1;

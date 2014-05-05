@@ -25,22 +25,23 @@ Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 		},
 		{ "xtype" : "htmleditor", "name" : "Documentation", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
 
+		{ "xtype" : "container", "layout": "hbox", "items" : [
+			{ "xtype" : "button", "text" : "Save Documentation", "scope" : this }, 
+			{ "xtype" : "button", "text" : "Cancel", "scope" : this } 
+		]},
+
 		{  
 			"xtype" : "grid",  "name" : "DocumentedInPatientMedsList", "title" : "Documented Medications", 
 			"store" : "MedDocs",
 			"forceFit" : true,
 			"overflowY" : "scroll",
-			"resizable" : true,
 			"minHeight" : 500,
+			"margin" : "10 0 0 0",
 
 			"columns" : [ 
 				{ "text" : "Medication", "dataIndex" : "MedName", "flex" : 1}, 
 				{ "text" : "Documentation", "dataIndex" : "Documentation", "flex" : 3 }
 			]
 		}
-	],
-	"buttons" : [ 
-		{ "text" : "Save Documentation", "scope" : this }, 
-		{ "text" : "Cancel", "scope" : this } 
 	]
 });

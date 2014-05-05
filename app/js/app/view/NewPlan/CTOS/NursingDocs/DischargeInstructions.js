@@ -1,7 +1,6 @@
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.DischargeInstructions",
-	//	"url" : "XXX/DischargeInstructions",
 	"margin": "10 10 10 10",
 	"items": [
 		{"xtype": "RequiredInstr"},
