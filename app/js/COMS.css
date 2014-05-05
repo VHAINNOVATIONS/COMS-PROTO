@@ -629,3 +629,13 @@ table.OEMRecord_Element tr {
 .NoWrapHeader th {
 	white-space: nowrap;
 }
+
+ul.SelectedSiteCommonInstructions {
+	border-bottom: thin solid navy;
+	margin-bottom: 1em;
+	margin-left: 210px;
+}
+.SelectedSiteCommonInstructions li {
+	border-top: thin solid navy;
+	margin-top: 1em;
+}

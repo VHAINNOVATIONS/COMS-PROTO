@@ -41,7 +41,8 @@ Ext.Loader.setConfig({
 	}
 });
 
-
+Ext.URLs.SiteCommonInfo = "/LookUp/SiteCommonInfo";
+Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
 Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
@@ -430,6 +431,8 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
 
+Ext.COMSModels.DischargeInstruction = "COMS.model.DischargeInstruction";
+Ext.COMSModels.SiteCommonInfo = "COMS.model.SiteCommonInfo";
 Ext.COMSModels.IVFluidType = "COMS.model.IVFluidType";
 Ext.COMSModels.Allergies = "COMS.model.Allergies";
 Ext.COMSModels.ChemoHistory = "COMS.model.ChemoHistory";
@@ -501,6 +504,8 @@ Ext.require([
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
+	Ext.COMSModels.SiteCommonInfo,
+	Ext.COMSModels.DischargeInstruction,
 	Ext.COMSModels.IVFluidType,
 	Ext.COMSModels.Allergies,
 	Ext.COMSModels.GenericLookup,

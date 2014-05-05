@@ -1,9 +1,9 @@
-Ext.define("COMS.store.MedDocs", {
-	extend : "Ext.data.Store",
-	model : Ext.COMSModels.MedDocs,
+Ext.define('COMS.store.SiteCommonInfo', {
+	extend : 'Ext.data.Store',
+	model : Ext.COMSModels.SiteCommonInfo,
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs.MedDoc,
+		url : Ext.URLs.SiteCommonInfo,
 		reader: {
 			type: 'json',
 			root : 'records'
@@ -12,13 +12,12 @@ Ext.define("COMS.store.MedDocs", {
 	listeners: {
 		"load" : function(store, records, success) {
 			if(success){
-				// debugger;
 				var i, aRecord, rLen = records.length;
 				for (i = 0; i < rLen; i++) {
 					aRecord = store.getAt(i);
-					var raw = aRecord.get("Documentation");
+					var raw = aRecord.get("Details");
 					var dec = Ext.util.Format.htmlDecode(raw);
-					aRecord.set("Documentation", dec);
+					aRecord.set("Details", dec);
 				}
 			}
 		}

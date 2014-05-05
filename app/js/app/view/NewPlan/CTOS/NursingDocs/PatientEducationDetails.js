@@ -1,3 +1,42 @@
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SiteCommonInfoDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.SiteCommonInfoDisplay",
+	name : "NursingDocs.SiteCommonInfoDisplay",
+	autoScroll : true,
+
+	tpl : new Ext.XTemplate(
+		"<section>",
+		"<ul class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<li><h2>{Label}</h2>",
+			"{Details}",
+			"</li>",
+		"</tpl>",
+		"</ul>",
+		"</section>"
+	)
+});
+
+
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.SpclInstrDisplay",
+	name : "NursingDocs.SpclInstrDisplay",
+	autoScroll : true,
+
+	tpl : new Ext.XTemplate(
+		"<section>",
+		"<ul class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<li><h2>{Label}</h2>",
+			"{Details}",
+			"</li>",
+		"</tpl>",
+		"</ul>",
+		"</section>"
+	)
+});
+
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 	"extend": "Ext.container.Container",
 	"alias": "widget.PatientEducationDetails",
@@ -214,36 +253,40 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"name": "Teaching_Other",
 							"fieldLabel": "Other"
 						},
+
 						{
 							"xtype": "CheckCombo",
-							"fieldLabel": "Select Instructions",
+							"fieldLabel": "Select Site Common Information",
+							"name": "ND_E_SelectSiteCommonInfo",
+							"width": 450,
+							"store" : "SiteCommonInfo",
+							"displayField": "Label",
+							"valueField": "ID"
+						}, 
+						{
+							"xtype": "SiteCommonInfoDisplay"
+						},
+				
+						
+						
+						
+						{
+							"xtype": "CheckCombo",
+							"fieldLabel": "Select Special Instructions",
 							"name": "ND_E_SelectDischargeInstr",
 							"width": 450,
-							"store": {
-								"fields": ["name", "value"],
-								"data": [{
-									"name": "Neutropenic Precautions",
-									"value": 1
-								}, {
-									"name": "Diarrhea Management",
-									"value": 2
-								}, {
-									"name": "EGFR Rash",
-									"value": 3
-								}, {
-									"name": "Cold Sensitivity",
-									"value": 4
-								}]
-							},
-							"displayField": "name",
-							"valueField": "value"
+							"store" : "DischargeInstruction",
+							"displayField": "Label",
+							"valueField": "ID"
 						}, {
-							"xtype": "container",
-							"hidden": false,
-							"name": "ND_E_DischargeInstr",
-							"width": 800,
-							"html": "<h2>No Instructions available at this time</h2>"
+							"xtype": "SpclInstrDisplay"
 						},
+						{
+							"xtype": "container",
+							"name": "ND_E_SpclInstrDisplay"
+						}, 
+
+
 						{
 							"xtype": "textarea",
 							"grow": true,
