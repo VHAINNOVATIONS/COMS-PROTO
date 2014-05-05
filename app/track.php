@@ -28,4 +28,5 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 		$tsql1 = "INSERT INTO COMS_Track (id,ip,compname,ref,username,winauth,point,pointno,time,date2,sessionid,page) VALUES ($newid,'$ip_vistor','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$sessionid','$page')";
 		$posttrack = sqlsrv_query($conn, $tsql1);
 	}
+	
 ?>
