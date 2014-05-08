@@ -92,4 +92,5 @@ function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
 		//echo $tsql2;
 		$postsession = sqlsrv_query($conn, $tsql2);
 	}
+	
 ?>
