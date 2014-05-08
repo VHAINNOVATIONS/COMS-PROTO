@@ -1,7 +1,7 @@
-Ext.define("COMS.view.Management.SiteCommonInfo" ,{
+Ext.define("COMS.view.Management.ClinicInfo" ,{
 	"extend" : "Ext.form.Panel",
-	"alias" : "widget.SiteCommonInfo",
-	"name" : "SiteCommonInfo",
+	"alias" : "widget.ClinicInfo",
+	"name" : "ClinicInfo",
 	"autoEl" : { tag : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
@@ -13,8 +13,8 @@ Ext.define("COMS.view.Management.SiteCommonInfo" ,{
 		]},
 
 		{  
-			"xtype" : "grid",  "name" : "SiteCommonInfoList", "title" : "Site Common Information", 
-			"store" : "SiteCommonInfo",
+			"xtype" : "grid",  "name" : "ClinicInfoList", "title" : "Clinic Information", 
+			"store" : "ClinicInfo",
 			"forceFit" : true,
 			"overflowY" : "scroll",
 			"minHeight" : 500,

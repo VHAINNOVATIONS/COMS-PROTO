@@ -25,12 +25,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		},
 
 		{
-			ref : "SiteCommonInfoDetails",
-			selector : "PatientEducationDetails [name=\"ND_E_SiteCommonInfoDetails\"]"
+			ref : "ClinicInfoDetails",
+			selector : "PatientEducationDetails [name=\"ND_E_ClinicInfoDetails\"]"
 		},
 		{
-			ref : "SiteCommonInfoDetailsDisplay",
-			selector : "SiteCommonInfoDisplay"
+			ref : "ClinicInfoDetailsDisplay",
+			selector : "ClinicInfoDisplay"
 		},
 		{
 			ref : "DischargeInstrDetailsDisplay",
@@ -53,8 +53,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	// Ext.ComponentQuery.query("DischargeInstructions [name=\"PatientEducation\"] [name=\"PatientEduDetails\"]")[0].getStore()
 	init: function () {
 		this.control({
-			"PatientEducationDetails [name=\"ND_E_SelectSiteCommonInfo\"]" : {
-				"change" : this.SiteCommonInfoSelected
+			"PatientEducationDetails [name=\"ND_E_SelectClinicInfo\"]" : {
+				"change" : this.ClinicInfoSelected
 			},
 			"PatientEducationDetails [name=\"ND_E_SelectDischargeInstr\"]" : {
 				"change" : this.SpclInstrSelected
@@ -205,24 +205,24 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	},
 
 	/**
-	 * Site Common Information
+	 * Clinic Information
 	 **/
 	sciStore : [],
 	sciGetSelected : function(key) {
 			Ext.Ajax.request({
-				url: Ext.URLs.SiteCommonInfo + "/" + key,
+				url: Ext.URLs.ClinicInfo + "/" + key,
 				method : "GET",
 				scope: this,
 				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (!resp.success) {
-						Ext.MessageBox.alert("Error", "Site Configuration - Site Common Info, Retrieve Error - " + resp.msg );
+						Ext.MessageBox.alert("Error", "Site Configuration - Clinic Info, Retrieve Error - " + resp.msg );
 					}
 					else {
 						Ext.Array.include(this.sciStore, resp.records[0]);
 						var theStore = this.sciStore;
-						var thePanel = this.getSiteCommonInfoDetailsDisplay();
+						var thePanel = this.getClinicInfoDetailsDisplay();
 						this.commonRenderTable(thePanel, theStore);
 
 						// this.renderSCITable();
@@ -233,13 +233,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 
-					Ext.MessageBox.alert("Error", "Error", "Site Configuration - Site Common Info, Retrieve Error - " + "e.message" + "<br />" + resp.msg );
+					Ext.MessageBox.alert("Error", "Error", "Site Configuration - Clinic Info, Retrieve Error - " + "e.message" + "<br />" + resp.msg );
 				}
 			});
 	},
-	SiteCommonInfoSelected : function(theCkBox, nValue, oValue, eOpts) {
+	ClinicInfoSelected : function(theCkBox, nValue, oValue, eOpts) {
 		var newKeys, oldKeys, newRecords, records2Remove;
-		console.log("SiteCommonInfoSelected - ");
+		console.log("ClinicInfoSelected - ");
 		console.log(nValue);
 
 		if (nValue && "" !== nValue ) {
@@ -278,7 +278,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 					console.log("Removing Record for " + rec.Label + " - " + rec.ID);
 					Ext.Array.remove(this.sciStore, rec);
 						var theStore = this.sciStore;
-						var thePanel = this.getSiteCommonInfoDetailsDisplay();
+						var thePanel = this.getClinicInfoDetailsDisplay();
 						this.commonRenderTable(thePanel, theStore);
 
 					// this.renderSCITable();

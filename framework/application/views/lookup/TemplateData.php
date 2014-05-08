@@ -24,8 +24,10 @@ if (!is_null($templatedata)) {
 
             echo "\t\"CycleLengthUnit\" : [{\"id\":\"" . $oemrecord['CycleLengthUnitID'] . "\", \"name\":\"" . $oemrecord['CycleLengthUnit'] . "\"}], \n";
 
-            echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\"}], \n";
+            echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\", \"details\":\"" . $oemrecord['emodetails'] . "\"}], \n";
             echo "\t\"FNRisk\" : \"" . $oemrecord['fnRisk'] . "\", \n";
+            echo "\t\"FNRiskDetails\" : \"" . $oemrecord['fnrDetails'] . "\", \n";
+
 
             // References
             $numreferences = count($references);

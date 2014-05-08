@@ -639,3 +639,12 @@ ul.SelectedSiteCommonInstructions {
 	border-top: thin solid navy;
 	margin-top: 1em;
 }
+
+.ndctWarning {
+	text-align: center;
+	font-weight: bold;
+}
+
+.ndctWarning span {
+	color: red;
+}

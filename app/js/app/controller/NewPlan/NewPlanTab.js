@@ -166,16 +166,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 afterrender: this.handlePatientSelectionRender
             },
             "NewPlanTab PatientInfo PatientInfoTable" : {
-                afterrender: this.togglePanelOnTitleBarClick
+                afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo PatientTemplates" : {
-                afterrender: this.togglePanelOnTitleBarClick
+                afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo PatientHistory" : {
-                afterrender: this.togglePanelOnTitleBarClick
+                afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo LabInfo" : {
-                afterrender: this.togglePanelOnTitleBarClick
+                afterrender: Ext.togglePanelOnTitleBarClick
             },
             "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
                 click: this.SaveVitals
@@ -204,8 +204,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         if (Btns) {
             Btns.on("click", this.handlePatientSelectionClickEvent, this);
         }
-        this.togglePanelOnTitleBarClick(panel);
+        Ext.togglePanelOnTitleBarClick(panel);
     },
+
 
     togglePanelOnTitleBarClick : function(panel) {
         panel.header.el.on('click', function() {
@@ -217,7 +218,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }
         });
     },
-
+/**/
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
 		PatientInformationPanel.collapse();
@@ -1777,6 +1778,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
 					theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
 					theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
+					debugger;
+					// theData.ELevelRecommendation = TemplateData
 
 					this.application.Patient.OEMRecords = theData;
 
@@ -2436,7 +2439,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var CTOSData = thisCtl.getCTOSDataDsp();
 
 // MEB - 6/7/2012 - Need to add Template Timing info to the data object
-
+					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					CTOSData.update(CTOSTemplateData.data);
 					this.getDisease().setValue(CTOSTemplateData.data.Disease);
 					this.loadCombo(this.getDiseaseStage(),CTOSTemplateData.data.Disease);
@@ -2486,6 +2489,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 wccConsoleLog("CTOS Loaded - Processing");
                 var thisCtl = this.getController("NewPlan.NewPlanTab");
                 var CTOSData = thisCtl.getCTOSDataDsp();
+
+
+				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
                 CTOSData.update( CTOSTemplateData.data );
 
                 this.getDisease().setValue(CTOSTemplateData.data.Disease);
@@ -2540,6 +2546,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                     
                     // console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
+					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
 					this.application.DataLoadCount--;
 					this.PatientDataLoadComplete("Current Applied Template Loaded");

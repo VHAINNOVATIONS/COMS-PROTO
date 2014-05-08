@@ -41,8 +41,10 @@ Ext.Loader.setConfig({
 	}
 });
 
-Ext.URLs.SiteCommonInfo = "/LookUp/SiteCommonInfo";
+Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
+Ext.URLs.MedRisks = "/LookUp/MedRisks";
+
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
 Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
@@ -430,9 +432,9 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Returns list of all Messages for the specified Role ID, used in "MessagesTab" Grid Control
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
-
+Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
 Ext.COMSModels.DischargeInstruction = "COMS.model.DischargeInstruction";
-Ext.COMSModels.SiteCommonInfo = "COMS.model.SiteCommonInfo";
+Ext.COMSModels.ClinicInfo = "COMS.model.ClinicInfo";
 Ext.COMSModels.IVFluidType = "COMS.model.IVFluidType";
 Ext.COMSModels.Allergies = "COMS.model.Allergies";
 Ext.COMSModels.ChemoHistory = "COMS.model.ChemoHistory";
@@ -504,7 +506,8 @@ Ext.require([
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
-	Ext.COMSModels.SiteCommonInfo,
+	Ext.COMSModels.MedRisks,
+	Ext.COMSModels.ClinicInfo,
 	Ext.COMSModels.DischargeInstruction,
 	Ext.COMSModels.IVFluidType,
 	Ext.COMSModels.Allergies,
@@ -665,6 +668,28 @@ Ext.Amputations["Left Foot"] = {
 };
 Ext.Amputations["Right Foot"] = {
 	BSA: 3
+};
+
+
+
+
+Ext.togglePanelOnTitleBarClick = function(panel) {
+	try {
+		var x = panel.header.el;
+		if (x) {
+			x.on('click', function() {
+				if (panel.collapsed) {
+					panel.expand();
+				}
+				else {
+					panel.collapse();
+				}
+			});
+		}
+	}
+	catch (e) {
+		debugger;
+	}
 };
 
 

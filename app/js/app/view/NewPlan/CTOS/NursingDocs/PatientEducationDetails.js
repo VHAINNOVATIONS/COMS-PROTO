@@ -1,7 +1,7 @@
-Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SiteCommonInfoDisplay" ,{
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	extend : "Ext.container.Container",
-    alias : "widget.SiteCommonInfoDisplay",
-	name : "NursingDocs.SiteCommonInfoDisplay",
+    alias : "widget.ClinicInfoDisplay",
+	name : "NursingDocs.ClinicInfoDisplay",
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
@@ -256,23 +256,23 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 
 						{
 							"xtype": "CheckCombo",
-							"fieldLabel": "Select Site Common Information",
-							"name": "ND_E_SelectSiteCommonInfo",
+							"fieldLabel": "Select Clinic Information",
+							"name": "ND_E_SelectClinicInfo",
 							"width": 450,
-							"store" : "SiteCommonInfo",
+							"store" : "ClinicInfo",
 							"displayField": "Label",
 							"valueField": "ID"
 						}, 
 						{
-							"xtype": "SiteCommonInfoDisplay"
+							"xtype": "ClinicInfoDisplay"
 						},
+
 				
-						
 						
 						
 						{
 							"xtype": "CheckCombo",
-							"fieldLabel": "Select Special Instructions",
+							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",
 							"width": 450,
 							"store" : "DischargeInstruction",
@@ -281,6 +281,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 						}, {
 							"xtype": "SpclInstrDisplay"
 						},
+
+					{ xtype : "box", html : "Medication Specific Information" },
+
 						{
 							"xtype": "container",
 							"name": "ND_E_SpclInstrDisplay"

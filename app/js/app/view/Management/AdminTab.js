@@ -23,7 +23,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 			},
 			items : [
 				{ xtype : "DischargeInstructionManagement", title: "Discharge Instructions"},
-				{ xtype : "SiteCommonInfo", title: "Site Common Information"}
+				{ xtype : "ClinicInfo", title: "Clinic Information"}
+				,{ xtype : "MedRisks", title: "Neutropenia / Emesis Risks"}
 			]
 		},
 		{ xtype : "tabpanel", title: "Medications", activeTab: 3,

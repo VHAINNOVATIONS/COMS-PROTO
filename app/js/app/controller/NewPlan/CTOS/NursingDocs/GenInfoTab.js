@@ -137,12 +137,44 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		{
 			ref : "ND_PT_TabLabInfo",
 			selector : "NursingDocs_GenInfo [name=\"ND_PT_LabInfo\"]"
-		}
+		},
 
+		
+		{
+			"ref" : "ndctWarning",
+			"selector" : "NursingDocs_Chemotherapy [name=\"ndctWarning\"]"
+		},
+		{
+			"ref" : "CycleInfo",
+			"selector" : "NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]"
+		},
+		{
+			"ref" : "ndctRegimen",
+			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]"
+		},
+		{
+			"ref" : "ndctCycle",
+			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]"
+		},
+		{
+			"ref" : "ndctDay",
+			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]"
+		},
+		{
+			"ref" : "ndctDate",
+			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]"
+		},
+		{
+			"ref" : "FNLPanel",
+			"selector" : "NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]"
+		},
+		{
+			"ref" : "EmoPanel",
+			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
+		}
 	],
 
 
-	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Nursing Docs General Info Tab Controller!");
 
@@ -190,8 +222,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
             "NursingDocs_GenInfo button[action=\"save\"]": {
                 click: this.btnSaveGenInfo
             },
-
-
 			"NursingDocs_DualDosingVerification button[name=\"DDV_FirstSig\"]" : {
                 click: this.btnFirstSignature
 			},
@@ -203,13 +233,21 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
             },
             "Authenticate[title=\"Signature of second verifier\"] button[action=\"save\"]": {
                 click: this.AuthenticateUser
-            }
-
-
-
+            },
+			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
+					afterrender : Ext.togglePanelOnTitleBarClick
+			},
+			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
+					afterrender : Ext.togglePanelOnTitleBarClick
+			}
 		});
 
 	},
+
+	ndctRender : function( panel ) {
+		Ext.togglePanelOnTitleBarClick(panel);
+	},
+
 	AuthenticateUser : function (button) {
 		var win = button.up('window');
 		var SigNameField = win.SigName;
@@ -364,9 +402,112 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         return msg;
     },
 
+	setNDCTWarning : function(msg, show, ThisAdminDay) {
+		var ndctWarning = this.getNdctWarning(), 
+			CycleInfo = this.getCycleInfo(),
+			ndctCycle = this.getNdctCycle(),
+			ndctDay = this.getNdctDay(),
+			ndctDate = this.getNdctDate();
+
+		el = ndctWarning.getEl();
+		if (el) {
+			if (show) {
+				el.setHTML(msg);
+				ndctWarning.show();
+			}
+			else {
+				el.setHTML("");
+				ndctWarning.hide();
+			}
+		}
+		if (ThisAdminDay) {
+			CycleInfo.show();
+			ndctCycle = ThisAdminDay.Cycle;
+			ndctDay = ThisAdminDay.Day;
+			ndctDate = ThisAdminDay.Date;
+		}
+		else {
+			CycleInfo.hide();
+			ndctCycle = "";
+			ndctDay = "";
+			ndctDate = "";
+		}
+	},
+
+	getFNRiskInfo : function(FNRisk) {
+		var FNLPanel = this.getFNLPanel();
+		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
+		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
+
+		var PanelID = FNLPanel.getId();
+		var URL = Ext.URLs.MedRisks + "/Type/" + (FNRisk < 10 ? "Neutropenia-1" : FNRisk <= 20 ? "Neutropenia-2" : "Neutropenia-3");
+		Ext.Ajax.request({
+			scope : this,
+			url: URL,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				this.getFNLPanel().update(resp, false);
+				this.getFNLPanel().doLayout();
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
+			}
+		});
+	},
+
+
+	getEmoLevelInfo : function(ELevel) {
+		var EmoPanel = this.getEmoPanel();
+		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
+		var eLevel1 = ELevel.split(" ")[0];
+		var x = "";
+		switch (eLevel1) {
+			case "Low":
+				x = "Emesis-1";
+				break;
+			case "Medium":
+				x = "Emesis-2";
+				break;
+
+			case "Moderate":
+				x = "Emesis-3";
+				break;
+			case "High":
+				x = "Emesis-4";
+				break;
+			case "Very":
+				x = "Emesis-5";
+				break;
+		}
+
+		var URL = Ext.URLs.MedRisks + "/Type/" + x;
+		Ext.Ajax.request({
+			scope : this,
+			url: URL,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				this.getEmoPanel().update(resp, false);
+				this.getEmoPanel().doLayout();
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Emetogenic Level - " + e.message + "<br />" + resp );
+			}
+		});
+	},
+
 	ChemoBioSectionHandler : function ( Clear, ThisAdminDay ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
 		// if Clear is true then clear out the fields
-		var ndctWarning = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"ndctWarning\"]");
+		
 		var ndctRegimen = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]");
 		var ndctCycle = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]");
 		var ndctDay = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]");
@@ -378,47 +519,32 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			TempDesc = Patient.TemplateName;
 		}
 
-		ndctRegimen[0].setValue(TempDesc);
-		ndctRegimen[1].setValue(TempDesc);
+
+		this.getEmoLevelInfo(Patient.AppliedTemplate.ELevel[0].name);
+		this.getFNRiskInfo(Patient.AppliedTemplate.FNRisk);
+
+		this.getNdctRegimen().setValue(TempDesc);
 
 		if (Clear) {
-			ndctWarning[0].setValue("");
-			ndctWarning[1].setValue("");
-			
-			ndctWarning[0].hide();
-			ndctWarning[1].hide();
+			this.getNdctWarning().setValue("");
+			this.getNdctWarning().hide();
 
-			ndctCycle[0].setValue("");
-			ndctCycle[1].setValue("");
-			ndctDay[0].setValue("");
-			ndctDay[1].setValue("");
-			ndctDate[0].setValue("");
-			ndctDate[1].setValue("");
+			this.getCycleInfo().setValue("");
+			this.getCycleInfo().hide();
+
+			this.getNdctRegimen().setValue("");
+
+			this.getNdctCycle().setValue("");
+			this.getNdctDay().setValue("");
+			this.getNdctDate().setValue("");
 		}
 		else {
 			if (ThisAdminDay) {
-				ndctWarning[0].hide();
-				ndctWarning[1].hide();
-				ndctCycle[0].setValue(ThisAdminDay.Cycle);
-				ndctCycle[1].setValue(ThisAdminDay.Cycle);
-				ndctDay[0].setValue(ThisAdminDay.Day);
-				ndctDay[1].setValue(ThisAdminDay.Day);
-				ndctDate[0].setValue(ThisAdminDay.AdminDate);
-				ndctDate[1].setValue(ThisAdminDay.AdminDate);
+				this.setNDCTWarning("", false, ThisAdminDay);
 			}
 			else {
-                var msg = this.getNextAdminDate();
-				ndctWarning[0].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);
-				ndctWarning[1].setValue("Warning - This is not a scheduled Administration Day for this Regimen" + msg);
-				ndctWarning[0].show();
-				ndctWarning[1].show();
-
-				ndctCycle[0].setValue("");
-				ndctCycle[1].setValue("");
-				ndctDay[0].setValue("");
-				ndctDay[1].setValue("");
-				ndctDate[0].setValue("");
-				ndctDate[1].setValue("");
+				var msg = this.getNextAdminDate();
+				this.setNDCTWarning("<div class=\"ndctWarning\"><span>Note:</span> - This is not a scheduled Administration Day for this Regimen</div>" + msg, true, ThisAdminDay);
 			}
 		}
 	},
@@ -638,16 +764,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	GenInfoRendered : function ( component, eOpts ) {
         var tempScratch, tempScratch1, Patient, thisCtl;
-		try {
+		// try {
 			Patient = this.application.Patient;
 			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
 			if (!thisCtl.getNdct_GenInfoTab().rendered) {
 				return;		// Traps possible call from the PopulateNDTabs event
 			}
-		}
-		catch (e) {
-			Ext.MessageBox.alert("Loading Error", "ND - GenInfoRendered() - Error - " + e.message );
-		}
+		//}
+		//catch (e) {
+		//	Ext.MessageBox.alert("Loading Error", "ND - GenInfoRendered() - Error - " + e.message );
+		//}
 
 		
 		
@@ -656,7 +782,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		this.application.Patient.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
 
-		try {
+//		try {
 			var NDVitalsTempF = thisCtl.getNdVitalsTempF();
 			var NDVitalsTempC = thisCtl.getNdVitalsTempC();
 			var NDVitalsTempLoc = thisCtl.getNdVitalsTempLoc();
@@ -714,10 +840,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
 			}
 
-		}
-		catch (e1) {
-			Ext.MessageBox.alert("Rendering Error", "ND - GenInfoRendered() - Error - " + e1.message );
-		}
+//		}
+//		catch (e1) {
+//			debugger;
+//			//Ext.MessageBox.alert("Rendering Error", "ND - GenInfoRendered() - Error - " + e1.message );
+//		}
 
 	},
 

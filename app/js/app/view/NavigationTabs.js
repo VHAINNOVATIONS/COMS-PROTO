@@ -23,7 +23,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
                 ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
-				,{ title : 'Testing', items : [ {xtype : 'DischargeInstructions', margin: "10" }]}
+				// ,{ title : 'Testing', items : [ {xtype : 'DischargeInstructions', margin: "10" }]}
             ];
         }
         else if ("1" === SessionTemplateAuthoring) {

@@ -5,21 +5,25 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
 	title : "Chemotherapy / Biotherapy",
 
 	items : [ 
-		{ "xtype" : "displayfield", "name" : "ndctRegimen", "fieldLabel" : "Regimen", "labelClsExtra" : "NursingDocs-label" },
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "NeutropeniaInfo", "title" : ""}, 
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "EmesisInfo", "title" : ""}, 
-		{ "xtype" : "box", "name" : "ndctWarning"}, 
+		{ xtype : "displayfield", name : "ndctRegimen", fieldLabel : "Regimen", labelClsExtra : "NursingDocs-label" }
+/*****	,
+		{ "xtype" : "box", "html" : "Neutropenia Risk Panel goes here" },
+		{ "xtype" : "box", "html" : "Emetogenic Level Panel goes here" },
+
+		{ xtype : "displayfield", name : "ndctWarning"}, 
 		{ 
-			xtype : "container", 
-			name : "ndctCycleInfo",
-			layout : "hbox",
-			defaults : {
-				labelAlign: "right",
-				xtype : "displayfield",
-				labelClsExtra : "NursingDocs-label"
-			},
-			items : [ { name : "ndctCycle", fieldLabel : "Cycle" }, { name : "ndctDay", fieldLabel : "Day"}, { name : "ndctDate", fieldLabel : "Date" } ]
+		xtype : "box",
+		layout: "hbox",
+		defaults : {
+		    labelAlign: "right"
+		},
+		items : [
+			{ xtype : "displayfield", name : "ndctCycle", fieldLabel : "Cycle", labelClsExtra : "NursingDocs-label" },
+			{ xtype : "displayfield", name : "ndctDay", fieldLabel : "Day", labelClsExtra : "NursingDocs-label" },
+			{ xtype : "displayfield", name : "ndctDate", fieldLabel : "Date", labelClsExtra : "NursingDocs-label" }
+		]
 		}
+***********/
 	]
 });
 

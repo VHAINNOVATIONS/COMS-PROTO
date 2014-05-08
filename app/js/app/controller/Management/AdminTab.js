@@ -1,6 +1,6 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
-    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'SiteCommonInfo'],
+    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks'],
     views : [ 
 		'Management.AdminTab',
 		'Management.AddLookups',
@@ -18,8 +18,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.CheckCombo',
 		// 'Management.Meds',
 		'Management.MedicationDocumentation',
-		'Management.SiteCommonInfo',
-		'Management.DischargeInstructionManagement'
+		'Management.ClinicInfo',
+		'Management.DischargeInstructionManagement',
+		'Management.MedRisks'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
@@ -130,19 +131,35 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		selector : "DischargeInstructionManagement [name=\"Details\"]"
 	},
 
-	/* Site Common Info */
+	/* Clinic Info */
 	{
-		ref : "SiteCommonInfoGrid",
-		selector : "SiteCommonInfo grid"
+		ref : "ClinicInfoGrid",
+		selector : "ClinicInfo grid"
 	},
 	{
-		ref : "SiteCommonInfo_Label",
-		selector : "SiteCommonInfo [name=\"Label\"]"
+		ref : "ClinicInfo_Label",
+		selector : "ClinicInfo [name=\"Label\"]"
 	},
 	{
-		ref : "SiteCommonInfo_Details",
-		selector : "SiteCommonInfo [name=\"Details\"]"
+		ref : "ClinicInfo_Details",
+		selector : "ClinicInfo [name=\"Details\"]"
+	},
+
+
+	/* Med Risks Info */
+	{
+		ref : "MedRisksGrid",
+		selector : "MedRisks grid"
+	},
+	{
+		ref : "MedRisks_Label",
+		selector : "MedRisks [name=\"Label\"]"
+	},
+	{
+		ref : "MedRisks_Details",
+		selector : "MedRisks [name=\"Details\"]"
 	}
+
 
 
     ],
@@ -254,18 +271,32 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				click: this.clickDischargeInstructionSave
 			},
 
-/* Site Common Info */
-			"SiteCommonInfo" : {
-				beforerender: this.SiteCommonInfoLoadGrid
+/* Clinic Info */
+			"ClinicInfo" : {
+				beforerender: this.ClinicInfoLoadGrid
 			},
-			"SiteCommonInfo grid" : {
-					select: this.selectSiteCommonInfoGridRow
+			"ClinicInfo grid" : {
+					select: this.selectClinicInfoGridRow
 			},
-			"SiteCommonInfo button[text=\"Cancel\"]" : {
-				click: this.clickSiteCommonInfoCancel
+			"ClinicInfo button[text=\"Cancel\"]" : {
+				click: this.clickClinicInfoCancel
 			},
-			"SiteCommonInfo button[text=\"Save\"]" : {
-				click: this.clickSiteCommonInfoSave
+			"ClinicInfo button[text=\"Save\"]" : {
+				click: this.clickClinicInfoSave
+			},
+
+/* Med Risks */
+			"MedRisks" : {
+				beforerender: this.MedRisksLoadGrid
+			},
+			"MedRisks grid" : {
+					select: this.selectMedRisksGridRow
+			},
+			"MedRisks button[text=\"Cancel\"]" : {
+				click: this.clickMedRisksCancel
+			},
+			"MedRisks button[text=\"Save\"]" : {
+				click: this.clickMedRisksSave
 			}
 		});
     },
@@ -273,52 +304,43 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 
-/** 
- * Site Common Info
- *
- * References:
- *		SiteCommonInfoGrid
- *		SiteCommonInfo_Label
- *		SiteCommonInfo_Details
- *
- **/
-	SiteCommonInfoLoadGrid : function(panel) {
-		this.application.loadMask("Please wait; Loading Site Common Information");
-		var theGrid = this.getSiteCommonInfoGrid();
+	MedRisksLoadGrid : function(panel) {
+		this.application.loadMask("Please wait; Loading Clinic Information");
+		var theGrid = this.getMedRisksGrid();
 		var theStore = theGrid.getStore();
 		theStore.load();
 		this.application.unMask();
 		return true;
 	},
 
-	selectSiteCommonInfoGridRow : function(theRowModel, record, index, eOpts) {
+	selectMedRisksGridRow : function(theRowModel, record, index, eOpts) {
 		var recID = record.get("ID");
 		var Label = record.get("Label");
 		var Details = record.get("Details");
 
-		this.CurrentSiteCommonInfoRecordID = recID;
-		this.CurrentSiteCommonInfo = Label;
+		this.CurrentMedRisksRecordID = recID;
+		this.CurrentMedRisks = Label;
 
-		var theLabelField = this.getSiteCommonInfo_Label();
-		var theDetailsField = this.getSiteCommonInfo_Details();
+		var theLabelField = this.getMedRisks_Label();
+		var theDetailsField = this.getMedRisks_Details();
 		theLabelField.setValue(Label);
 		theDetailsField.setValue(Details);
 	},
 
-	clickSiteCommonInfoCancel : function(theBtn, theEvent, eOpts) {
+	clickMedRisksCancel : function(theBtn, theEvent, eOpts) {
 	},
 
-	clickSiteCommonInfoSave : function(theBtn, theEvent, eOpts) {
+	clickMedRisksSave : function(theBtn, theEvent, eOpts) {
 		var form = theBtn.up('form').getForm();
 		var theData = form.getValues(false, false, false, true);
 
 		if (form.isValid()) {
 			var Label = theData.Label;
 			var Details = Ext.util.Format.htmlEncode(theData.Details);
-			var recID = this.CurrentSiteCommonInfoRecordID;
-			var URL = Ext.URLs.SiteCommonInfo;
+			var recID = this.CurrentMedRisksRecordID;
+			var URL = Ext.URLs.MedRisks;
 			var CMD = "POST";
-			if ("" !== recID && this.CurrentSiteCommonInfo === Label) {
+			if ("" !== recID && this.CurrentMedRisks === Label) {
 				URL += "/" + recID;
 				CMD = "PUT";
 			}
@@ -331,33 +353,138 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					this.CurrentSiteCommonInfoRecordID = "";
-					this.CurrentSiteCommonInfo = "";
-					var theLabelField = this.getSiteCommonInfo_Label();
-					var theDetailsField = this.getSiteCommonInfo_Details();
+					this.CurrentMedRisksRecordID = "";
+					this.CurrentMedRisks = "";
+					var theLabelField = this.getMedRisks_Label();
+					var theDetailsField = this.getMedRisks_Details();
 					theLabelField.setValue("");
 					theDetailsField.setValue("");
 
 					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "Site Configuration - Site Common Info, Save Error - " + resp.msg );
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Clinic Info, Save Error - " + resp.msg );
 					}
 					else {
 						var thisCtl = this.getController("Management.AdminTab");
-						var theGrid = thisCtl.getSiteCommonInfoGrid();
+						var theGrid = thisCtl.getMedRisksGrid();
 						theGrid.getStore().load();
 					}
 				},
 				failure : function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					this.CurrentSiteCommonInfoRecordID = "";
-					this.CurrentSiteCommonInfo = "";
-					var theLabelField = this.getSiteCommonInfo_Label();
-					var theDetailsField = this.getSiteCommonInfo_Details();
+					this.CurrentMedRisksRecordID = "";
+					this.CurrentMedRisks = "";
+					var theLabelField = this.getMedRisks_Label();
+					var theDetailsField = this.getMedRisks_Details();
 					theLabelField.setValue("");
 					theDetailsField.setValue("");
 
-					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Site Common Info, Save Error - " + "e.message" + "<br />" + resp.msg );
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - " + "e.message" + "<br />" + resp.msg );
+				}
+			});
+		}
+		else {
+			var Msg = "";
+			if ("" === theData.Label) {
+				Msg += "<li>Missing Label Selection</li>";
+			}
+			if ("" === theData.Details) {
+				Msg += "<li>Missing Details for Label</li>";
+			}
+			if ("" !== Msg) {
+				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
+			}
+		}
+	},
+
+
+/************************************************************************************************************/
+
+/** 
+ * Clinic Info
+ *
+ * References:
+ *		ClinicInfoGrid
+ *		ClinicInfo_Label
+ *		ClinicInfo_Details
+ *
+ **/
+	ClinicInfoLoadGrid : function(panel) {
+		this.application.loadMask("Please wait; Loading Clinic Information");
+		var theGrid = this.getClinicInfoGrid();
+		var theStore = theGrid.getStore();
+		theStore.load();
+		this.application.unMask();
+		return true;
+	},
+
+	selectClinicInfoGridRow : function(theRowModel, record, index, eOpts) {
+		var recID = record.get("ID");
+		var Label = record.get("Label");
+		var Details = record.get("Details");
+
+		this.CurrentClinicInfoRecordID = recID;
+		this.CurrentClinicInfo = Label;
+
+		var theLabelField = this.getClinicInfo_Label();
+		var theDetailsField = this.getClinicInfo_Details();
+		theLabelField.setValue(Label);
+		theDetailsField.setValue(Details);
+	},
+
+	clickClinicInfoCancel : function(theBtn, theEvent, eOpts) {
+	},
+
+	clickClinicInfoSave : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+		var theData = form.getValues(false, false, false, true);
+
+		if (form.isValid()) {
+			var Label = theData.Label;
+			var Details = Ext.util.Format.htmlEncode(theData.Details);
+			var recID = this.CurrentClinicInfoRecordID;
+			var URL = Ext.URLs.ClinicInfo;
+			var CMD = "POST";
+			if ("" !== recID && this.CurrentClinicInfo === Label) {
+				URL += "/" + recID;
+				CMD = "PUT";
+			}
+
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				jsonData : {"Label" : Label, "Details" : Details },
+				scope: this,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentClinicInfoRecordID = "";
+					this.CurrentClinicInfo = "";
+					var theLabelField = this.getClinicInfo_Label();
+					var theDetailsField = this.getClinicInfo_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					if (!resp.success) {
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Clinic Info, Save Error - " + resp.msg );
+					}
+					else {
+						var thisCtl = this.getController("Management.AdminTab");
+						var theGrid = thisCtl.getClinicInfoGrid();
+						theGrid.getStore().load();
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentClinicInfoRecordID = "";
+					this.CurrentClinicInfo = "";
+					var theLabelField = this.getClinicInfo_Label();
+					var theDetailsField = this.getClinicInfo_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - " + "e.message" + "<br />" + resp.msg );
 				}
 			});
 		}

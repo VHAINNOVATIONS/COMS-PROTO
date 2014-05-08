@@ -1,14 +1,13 @@
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.DischargeInstructions",
-	"margin": "10 10 10 10",
 	"items": [
 		{"xtype": "RequiredInstr"},
 		{
 			"xtype": "fieldset",
 			"title": "Patient Education",
 			"name": "PatientEducation",
-			"margin": "10 10 10 15",
+			"margin": "10",
 			"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
 			"items": [{
 				"xtype": "radiogroup",
@@ -34,14 +33,14 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 				"xtype": "PatientEducationDetails",
 				"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
 			}]
-		}, 
-			
+		},
+/***/
 			
 		{
 			"xtype": "fieldset",
 			"title": "Follow up",
 			"name": "Followup",
-			"margin": "10 10 10 15",
+			"margin": "10",
 			"defaults": {
 				"labelAlign": "right",
 				"labelWidth": 200,
@@ -71,5 +70,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 				"xtype": "FollowupDetails"
 			}]
 		}
+		/***/
 	]
 });

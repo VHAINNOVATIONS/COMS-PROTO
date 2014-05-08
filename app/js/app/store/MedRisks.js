@@ -1,9 +1,9 @@
-Ext.define('COMS.store.SiteCommonInfo', {
+Ext.define('COMS.store.MedRisks', {
 	extend : 'Ext.data.Store',
-	model : Ext.COMSModels.SiteCommonInfo,
+	model : Ext.COMSModels.MedRisks,
 	proxy: {
 		type: 'rest',
-		url : Ext.URLs.SiteCommonInfo,
+		url : Ext.URLs.MedRisks,
 		reader: {
 			type: 'json',
 			root : 'records'

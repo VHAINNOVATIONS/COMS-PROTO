@@ -407,9 +407,63 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
-            
+
+
+/********
+					{ "type" : "Neutropenia-1", "name" : "Febrile Neutropenia Risk Low (< 10%)" },
+					{ "type" : "Neutropenia-2", "name" : "Febrile Neutropenia Risk Intermediate (10 - 20%)" },
+					{ "type" : "Neutropenia-3", "name" : "Febrile Neutropenia Risk High (> 20%)" },
+					{ "type" : "Emesis-1", "name" : "Emetogenic Level 1 (Frequency of emesis < 10%)"},
+					{ "type" : "Emesis-2", "name" : "Emetogenic Level 2 (Frequency of emesis 10 - 30%)"},
+					{ "type" : "Emesis-3", "name" : "Emetogenic Level 3 (Frequency of emesis 30 - 60%)"},
+					{ "type" : "Emesis-4", "name" : "Emetogenic Level 4 (Frequency of emesis 60 - 90%)"},
+					{ "type" : "Emesis-5", "name" : "Emetogenic Level 5 (Frequency of emesis > 90%)"}
+********/
+            $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
+            switch($EmoLevel[0]) {
+                case "Low":
+                    $Label = "Emesis-1";
+                    break;
+                case "Medium":
+                    $Label = "Emesis-2";
+                    break;
+                case "Moderate":
+                    $Label = "Emesis-3";
+                    break;
+                case "High":
+                    $Label = "Emesis-4";
+                    break;
+                case "Very High":
+                    $Label = "Emesis-5";
+                    break;
+            }
+            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
+            $EmesisVal = $this->LookUp->query($query);
+error_log($EmoLevel[0] . " --- $query");
+error_log(json_encode($EmesisVal));
+$retVal[0]["emodetails"] = $EmesisVal[0]["Details"];
+
+            $FNRisk = $retVal[0]["fnRisk"];
+            if ($FNRisk < 10) {
+                $Label = "Neutropenia-1";
+            }
+            else if ($FNRisk <= 20) {
+                $Label = "Neutropenia-2";
+            }
+            else {
+                $Label = "Neutropenia-3";
+            }
+            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
+            $FNRVal = $this->LookUp->query($query);
+error_log($query);
+error_log(json_encode($FNRVal));
+
+
+$retVal[0]["fnrDetails"] = $FNRVal[0]["Details"];
+
             $this->set('templatedata', $retVal);
-            
+error_log("Template Data");
+error_log(json_encode($retVal));
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
@@ -1146,15 +1200,12 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             $Drugs1 = array_unique($Drugs);
             natcasesort($Drugs1);
             $Drugs1 = array_values($Drugs1);
-            print_r($Drugs1);
 
             $MedicationInfo = array();
             for($i = 0; $i < count($Drugs1); $i++) {
                 $temp = array();
                 $theMedName = $Drugs1[$i];
                 $temp["Medication"] = $theMedName;
-                print_r($temp);
-                echo "<hr>";
 
                 $query = "
                 select LU.Lookup_ID, LU.Name, MD.Documentation
@@ -1175,14 +1226,9 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
                         foreach ($retVal as $Doc) {
                             $MedicationDocsInfo .= "<br>" . $Doc["Documentation"];
                         }
-                        echo "------------------- Medication Info --------------------<br>";
-                        print_r($MedicationDocsInfo);
                     }
                 }
                 $temp["Documentation"] = $MedicationDocsInfo;
-                echo "------------------- Medication Docs --------------------<br>";
-                var_dump ($temp);
-                echo "<br>------------------- END of Medication --------------------<br><br><br>";
                 $MedicationInfo[] = $temp;
             }
 
@@ -1254,13 +1300,13 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *
  *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
  **/
-    function DischargeInstruction($ID = null) {
+    function _CommonServiceCallMethod($ID, $DataType, $Msg) {
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $query = "";
         $form_data = json_decode(file_get_contents('php://input'));
         $Details = "";
-        $Instruction = "";
+        $Label = "";
         if (isset($form_data->{'Details'})) {
             $Details = $form_data->{'Details'};
         }
@@ -1271,44 +1317,44 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             if ($ID) {
-                $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = 'Instructions' order by Label ";
+                $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = '$DataType' order by Label ";
             }
             else {
-                $query = "Select * from SiteCommonInformation where DataType = 'Instructions' order by Label";
+                $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label";
             }
             $jsonRecord['msg'] = "No records to find";
-            $ErrMsg = "Retrieving Discharge Instructions Documentation Records";
+            $ErrMsg = "Retrieving $Msg Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
                 // Clear out older revisions of this information
-            $query = "delete from SiteCommonInformation WHERE ID = '$ID' and DataType = 'Instructions'";
+            $query = "delete from SiteCommonInformation WHERE ID = '$ID' and DataType = '$DataType'";
             $retVal = $this->LookUp->query($query);
             // Then insert new info
             if ("" !== $Details) {
-                $query = "INSERT INTO SiteCommonInformation (Label, Details, DataType) VALUES ('$Label' ,'$Details', 'Instructions')";
-                $jsonRecord['msg'] = "Discharge Instructions Documentation Record Created";
-                $ErrMsg = "Creating Discharge Instructions Documentation Record";
+                $query = "INSERT INTO SiteCommonInformation (Label, Details, DataType) VALUES ('$Label' ,'$Details', '$DataType')";
+                $jsonRecord['msg'] = "$Msg Record Created";
+                $ErrMsg = "Creating $Msg Record";
                 error_log($query);
             }
             else {
                 $query = "";
-                $jsonRecord['msg'] = "Discharge Instructions Documentation Record Deleted";
-                $ErrMsg = "Deleting Discharge Instructions Documentation Record";
+                $jsonRecord['msg'] = "$Msg Record Deleted";
+                $ErrMsg = "Deleting $Msg Record";
             }
         }
         else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
             $query = "UPDATE SiteCommonInformation SET Details = '$Details', Label = '$Label' WHERE ID = '$ID'";
-            $jsonRecord['msg'] = "Discharge Instruction Record Updated";
-            $ErrMsg = "Updating Discharge Instruction  Record";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
         }
         else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
-            $query = "DELETE from SiteCommonInformation where ID = '$ID' and DataType = 'Instructions'";
-            $jsonRecord['msg'] = "Discharge Instruction Records Deleted";
-            $ErrMsg = "Deleting Discharge Instruction Documentation Records";
+            $query = "DELETE from SiteCommonInformation where ID = '$ID' and DataType = '$DataType'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for Discharge Instruction Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
         }
         if ("" !== $query) {
             $retVal = $this->LookUp->query($query);
@@ -1327,7 +1373,48 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
         }
         $this->set('jsonRecord', $jsonRecord);
         return;
+    }
 
+    function _CommonServiceCallMethodByLabel($Label, $DataType, $Msg) {
+        $jsonRecord = "";
+        $query = "";
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            $query = "";
+            $jsonRecord = "No records to find";
+            if ($Label) {
+                $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = '$DataType' order by Label ";
+            }
+        }
+        if ("" !== $query) {
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord = $this->get('frameworkErr');
+            }
+            else {
+                if (count($retVal) > 0) {
+                    $buf = "";
+                    foreach ($retVal as $Detail) {
+                        if ("" !== $buf) {
+                            $buf .= "<br>";
+                        }
+                        $buf .= $Detail["Details"];
+                    }
+                    $jsonRecord = $buf;
+                }
+            }
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }
+
+
+    function DischargeInstruction($ID = null) {
+        $DataType = 'Instructions';
+        $Msg = 'Discharge Instructions Documentation';
+
+        return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
     }
 
 
@@ -1360,79 +1447,22 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *
  *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/SiteCommonInfo/542C549B-05D2-E311-A4B9-000C2935B86F
  **/
-    function SiteCommonInfo($ID = null) {
-        $jsonRecord = array();
-        $jsonRecord['success'] = true;
-        $query = "";
-        $form_data = json_decode(file_get_contents('php://input'));
-        $Details = "";
-        $Label = "";
-        if (isset($form_data->{'Details'})) {
-            $Details = $form_data->{'Details'};
-        }
-        if (isset($form_data->{'Label'})) {
-            $Label = $form_data->{'Label'};
-        }
+    function ClinicInfo($ID = null) {
+        $DataType = 'CommonInfo';
+        $Msg = 'Clinic Info Details';
 
-        $ErrMsg = "";
-        if ("GET" == $_SERVER['REQUEST_METHOD']) {
-            if ($ID) {
-                $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = 'CommonInfo' order by Label";
-            }
-            else {
-                $query = "Select * from SiteCommonInformation where DataType = 'CommonInfo' order by Label";
-            }
-            $jsonRecord['msg'] = "No records to find";
-            $ErrMsg = "Retrieving Site Common Info Details Records";
+        return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
+    }
+
+
+
+    function MedRisks($ID = null, $Type = null) {
+        $DataType = 'Risks';
+        $Msg = 'Emesis/Neutropenia Risks';
+        if ("Type" == $ID) {
+            return $this->_CommonServiceCallMethodByLabel($Type, $DataType, $Msg);
         }
-        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-                // Clear out older revisions of this information
-            $query = "delete from SiteCommonInformation WHERE ID = '$ID'";
-            $retVal = $this->LookUp->query($query);
-            // Then insert new info
-            if ("" !== $Details) {
-                $query = "INSERT INTO SiteCommonInformation (Label ,Details, DataType) VALUES ('$Label' ,'$Details', 'CommonInfo')";
-                $jsonRecord['msg'] = "Site Common Info Details Record Created";
-                $ErrMsg = "Creating Site Common Info Details Record";
-                error_log($query);
-            }
-            else {
-                $query = "";
-                $jsonRecord['msg'] = "Site Common Info Details Record Deleted";
-                $ErrMsg = "Deleting Site Common Info Details Record";
-            }
-        }
-        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
-            $query = "UPDATE SiteCommonInformation SET Details = '$Details', Label = '$Label' WHERE ID = '$ID'";
-            $jsonRecord['msg'] = "Discharge Label Record Updated";
-            $ErrMsg = "Updating Discharge Label  Record";
-        }
-        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
-            $query = "DELETE from SiteCommonInformation where ID = '$ID' and DataType = 'CommonInfo'";
-            $jsonRecord['msg'] = "Discharge Label Records Deleted";
-            $ErrMsg = "Deleting Discharge Label  Details Records";
-        }
-        else {
-            $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for Discharge Label Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
-        }
-        if ("" !== $query) {
-            $retVal = $this->LookUp->query($query);
-            if ($this->checkForErrors($ErrMsg, $retVal)) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-            }
-            else {
-                $jsonRecord['success'] = 'true';
-                if (count($retVal) > 0) {
-                    unset($jsonRecord['msg']);
-                    $jsonRecord['total'] = count($retVal);
-                    $jsonRecord['records'] = $retVal;
-                }
-            }
-        }
-        $this->set('jsonRecord', $jsonRecord);
-        return;
+        return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
     }
 
 }

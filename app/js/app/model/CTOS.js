@@ -14,8 +14,9 @@ Ext.define('COMS.model.CTOS', {
             'CourseNumMax',
             'CycleLength',			// raw data
             'CycleLengthUnit',
-            'ELevel',				// via lookup into Lookup Table for ELevel Data Type
+            'ELevel',				// via lookup into Lookup Table for ELevel Data Type (this is a 1 element array containing the following elements: id, name, details)
             'FNRisk',				// raw data
+			'FNRiskDetails',
             'KeepAlive',            // Flag used to indicate that this regimen is active or not
 			'References',			// Array of References data, uses the 'hasMany' object below; Added - MWB 2 Jan 2012
 //		'Ref',					// raw data	Removed - MWB 2 Jan 2012
