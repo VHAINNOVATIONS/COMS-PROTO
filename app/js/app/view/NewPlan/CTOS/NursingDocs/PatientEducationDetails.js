@@ -278,7 +278,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"store" : "DischargeInstruction",
 							"displayField": "Label",
 							"valueField": "ID"
-						}, {
+						}, 
+						{
 							"xtype": "SpclInstrDisplay"
 						},
 

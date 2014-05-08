@@ -24,11 +24,7 @@ Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 			})
 		},
 		{ "xtype" : "htmleditor", "name" : "Documentation", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
-
-		{ "xtype" : "container", "layout": "hbox", "items" : [
-			{ "xtype" : "button", "text" : "Save Documentation", "scope" : this }, 
-			{ "xtype" : "button", "text" : "Cancel", "scope" : this } 
-		]},
+		{ "xtype" : "ManagementBtns"},
 
 		{  
 			"xtype" : "grid",  "name" : "DocumentedInPatientMedsList", "title" : "Documented Medications", 

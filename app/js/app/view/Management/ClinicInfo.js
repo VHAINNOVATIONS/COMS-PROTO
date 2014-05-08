@@ -7,10 +7,7 @@ Ext.define("COMS.view.Management.ClinicInfo" ,{
 	"items" : [ 
 		{ "xtype" : "textfield", "name" : "Label", "fieldLabel" : "Reference Label", "labelWidth" : 140, "width" : 940},
 		{ "xtype" : "htmleditor", "name" : "Details", "fieldLabel" : "Details", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
-		{ "xtype" : "container", "layout": "hbox", "items" : [
-			{ "xtype" : "button", "text" : "Save", "scope" : this }, 
-			{ "xtype" : "button", "text" : "Cancel", "scope" : this } 
-		]},
+		{ "xtype" : "ManagementBtns"},
 
 		{  
 			"xtype" : "grid",  "name" : "ClinicInfoList", "title" : "Clinic Information", 

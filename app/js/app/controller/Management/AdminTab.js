@@ -17,6 +17,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.IV_Fluid_Types', 
 		'Management.CheckCombo',
 		// 'Management.Meds',
+		'Management.Buttons',
 		'Management.MedicationDocumentation',
 		'Management.ClinicInfo',
 		'Management.DischargeInstructionManagement',
@@ -246,14 +247,19 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"MedicationDocumentation [name=\"DocumentedInPatientMedsList\"]" : {
 					select: this.selectMedDocsGridRow
 			},
+
+			"MedicationDocumentation [name=\"InPatient_Medication\"]" : {
+				change : this.selectMed
+			},
+
 			"MedicationDocumentation button[text=\"Cancel\"]" : {
 				click: this.clickMedDocCancel
 			},
-			"MedicationDocumentation button[text=\"Save Documentation\"]" : {
+			"MedicationDocumentation button[text=\"Save\"]" : {
 				click: this.clickMedDocSave
 			},
-			"MedicationDocumentation [name=\"InPatient_Medication\"]" : {
-				change : this.selectMed
+			"MedicationDocumentation button[text=\"Refresh\"]" : {
+				click: this.MedicationDocsLoadGrid
 			},
 
 
@@ -267,8 +273,11 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"DischargeInstructionManagement button[text=\"Cancel\"]" : {
 				click: this.clickDischargeInstructionCancel
 			},
-			"DischargeInstructionManagement button[text=\"Save Documentation\"]" : {
+			"DischargeInstructionManagement button[text=\"Save\"]" : {
 				click: this.clickDischargeInstructionSave
+			},
+			"DischargeInstructionManagement button[text=\"Refresh\"]" : {
+				click: this.DischargeInstructionLoadGrid
 			},
 
 /* Clinic Info */
@@ -284,6 +293,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"ClinicInfo button[text=\"Save\"]" : {
 				click: this.clickClinicInfoSave
 			},
+			"ClinicInfo button[text=\"Refresh\"]" : {
+				click: this.ClinicInfoLoadGrid
+			},
 
 /* Med Risks */
 			"MedRisks" : {
@@ -297,6 +309,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			},
 			"MedRisks button[text=\"Save\"]" : {
 				click: this.clickMedRisksSave
+			},
+			"MedRisks button[text=\"Refresh\"]" : {
+				click: this.MedRisksLoadGrid
 			}
 		});
     },
