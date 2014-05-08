@@ -7,7 +7,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 			"xtype": "fieldset",
 			"title": "Patient Education",
 			"name": "PatientEducation",
-			"margin": "10",
+			"margin": "10 20 10 10",
 			"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
 			"items": [
 				{
@@ -37,7 +37,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 			"xtype": "fieldset",
 			"title": "Follow up",
 			"name": "Followup",
-			"margin": "10",
+			"margin": "10 20 10 10",
 			"defaults": {
 				"labelAlign": "right",
 				"labelWidth": 200,

@@ -1778,7 +1778,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
 					theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
 					theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
-					debugger;
+					// debugger;
 					// theData.ELevelRecommendation = TemplateData
 
 					this.application.Patient.OEMRecords = theData;

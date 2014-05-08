@@ -630,14 +630,18 @@ table.OEMRecord_Element tr {
 	white-space: nowrap;
 }
 
-ul.SelectedSiteCommonInstructions {
+.SelectedSiteCommonInstructions {
+	border-top: thin solid navy;
 	border-bottom: thin solid navy;
 	margin-bottom: 1em;
-	margin-left: 210px;
 }
-.SelectedSiteCommonInstructions li {
+.SelectedSiteCommonInstructions p {
 	border-top: thin solid navy;
 	margin-top: 1em;
+}
+.SelectedSiteCommonInstructions p p {
+	border: none;
+	margin: 0;
 }
 
 .ndctWarning {

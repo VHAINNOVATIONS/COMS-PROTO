@@ -5,19 +5,16 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
-		"<section>",
-		"<ul class=\"SelectedSiteCommonInstructions\">",
+		"<h2>Clinic Information:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"<li><h2>{Label}</h2>",
+			"<p><h3>{Label}</h3>",
 			"{Details}",
-			"</li>",
+			"</p>",
 		"</tpl>",
-		"</ul>",
-		"</section>"
+		"</div></section>"
 	)
 });
-
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
 	extend : "Ext.container.Container",
     alias : "widget.SpclInstrDisplay",
@@ -25,17 +22,41 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
-		"<section>",
-		"<ul class=\"SelectedSiteCommonInstructions\">",
+		"<h2>Discharge Instructions:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"<li><h2>{Label}</h2>",
+			"<p><h3>{Label}</h3>",
 			"{Details}",
-			"</li>",
+			"</p>",
 		"</tpl>",
-		"</ul>",
-		"</section>"
+		"</div></section>"
 	)
 });
+
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.MedSpecificInfoDisplay",
+	name : "NursingDocs.MedSpecificInfoDisplay",
+	autoScroll : true,
+	html : "<hr>None Available<hr>",
+
+	tpl : new Ext.XTemplate(
+		"<h2>Medication Information:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<p><h3>{Label}</h3>",
+			"{Details}",
+			"</p>",
+		"</tpl>",
+		"</div></section>"
+	)
+});
+
+
+
+
+
+
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 	"extend": "Ext.container.Container",
@@ -216,11 +237,15 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 					"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
 					"items" : [
 						{
-							"xtype": "textarea",
-							"grow": true,
-							"fieldLabel": "Materials",
-							"name": "DischargeInstructions_Materials",
-							"width": 890
+							"xtype" : "container",
+							"layout" : "fit",
+							"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
+							"items" : [{
+								"xtype": "textarea",
+								"grow": true,
+								"fieldLabel": "Materials",
+								"name": "DischargeInstructions_Materials"
+							}]
 						},
 						{
 							"fieldLabel": "Krames on Demand",
@@ -259,6 +284,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"fieldLabel": "Select Clinic Information",
 							"name": "ND_E_SelectClinicInfo",
 							"width": 450,
+							"margin" : "5 0 10 0",
 							"store" : "ClinicInfo",
 							"displayField": "Label",
 							"valueField": "ID"
@@ -266,15 +292,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 						{
 							"xtype": "ClinicInfoDisplay"
 						},
-
-				
-						
-						
 						{
 							"xtype": "CheckCombo",
 							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",
 							"width": 450,
+							"margin" : "5 0 10 0",
 							"store" : "DischargeInstruction",
 							"displayField": "Label",
 							"valueField": "ID"
@@ -283,20 +306,18 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"xtype": "SpclInstrDisplay"
 						},
 
-					{ xtype : "box", html : "Medication Specific Information" },
-
+						{ "xtype" : "box", "html" : "Medication Specific Information:", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
+						{ "xtype" : "MedSpecificInfoDisplay" },
 						{
-							"xtype": "container",
-							"name": "ND_E_SpclInstrDisplay"
-						}, 
-
-
-						{
-							"xtype": "textarea",
-							"grow": true,
-							"fieldLabel": "Comments",
-							"name": "DischargeInstructions_Comments",
-							"width": 890
+							"xtype" : "container",
+							"layout" : "fit",
+							"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
+							"items" : [{
+								"xtype": "textarea",
+								"grow": true,
+								"fieldLabel": "Comments",
+								"name": "DischargeInstructions_Comments"
+							}]
 						}
 					]
 				}
@@ -347,14 +368,15 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 				}
 			}]
 		}, {
-			"xtype": "textarea",
-			"grow": true,
-			"labelWidth": 150,
-			"labelAlign": "right",
-			"labelClsExtra": "NursingDocs-label",
-			"fieldLabel": "Additional Comments",
-			"name": "PE_AdditionalComments",
-			"width": 915
+			"xtype" : "container",
+			"layout" : "fit",
+			"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
+			"items" : [{
+				"xtype": "textarea",
+				"grow": true,
+				"fieldLabel": "Additional Comments",
+				"name": "PE_AdditionalComments"
+			}]
 		}
 	]
 });
