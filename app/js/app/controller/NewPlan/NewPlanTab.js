@@ -1762,7 +1762,70 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
+	getFNRiskInfo : function(FNRisk) {
+		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
+		var URL = Ext.URLs.MedRisks + "/Type/" + (FNRisk < 10 ? "Neutropenia-1" : FNRisk <= 20 ? "Neutropenia-2" : "Neutropenia-3");
+		Ext.Ajax.request({
+			scope : this,
+			url: URL,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				resp = Ext.util.Format.htmlDecode(resp);
+				this.application.Patient.OEMRecords.NeutropeniaRecommendation = resp;
+				this.application.unMask();
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
+			}
+		});
+	},
 
+
+	getEmoLevelInfo : function(ELevel) {
+		var eLevel1 = ELevel.split(" ")[0];
+		var x = "";
+		switch (eLevel1) {
+			case "Low":
+				x = "Emesis-1";
+				break;
+			case "Medium":
+				x = "Emesis-2";
+				break;
+
+			case "Moderate":
+				x = "Emesis-3";
+				break;
+			case "High":
+				x = "Emesis-4";
+				break;
+			case "Very":
+				x = "Emesis-5";
+				break;
+		}
+
+		var URL = Ext.URLs.MedRisks + "/Type/" + x;
+		Ext.Ajax.request({
+			scope : this,
+			url: URL,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				resp = Ext.util.Format.htmlDecode(resp);
+				this.application.unMask();
+				this.application.Patient.OEMRecords.ELevelRecommendation = resp;
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Emetogenic Level - " + e.message + "<br />" + resp );
+			}
+		});
+	},
 	loadOrderRecords : function( ) {
 		var PatientID = this.application.Patient.id;
 		var CTOSModel = this.getModel("OEMRecords");		// MWB 21 Feb 2012 - Loading new model for retrieving the records direct from the DB rather than generating them
@@ -1776,12 +1839,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.PatientName = this.application.Patient.name;
 					theData.RegimenName = this.application.Patient.TemplateName;
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
+
 					theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
 					theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
-					// debugger;
-					// theData.ELevelRecommendation = TemplateData
 
 					this.application.Patient.OEMRecords = theData;
+					this.getEmoLevelInfo(theData.ELevelName);
+					this.getFNRiskInfo(theData.FNRisk);
 
 
 

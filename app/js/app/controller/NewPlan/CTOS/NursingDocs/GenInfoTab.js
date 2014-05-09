@@ -422,54 +422,26 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 		if (ThisAdminDay) {
 			CycleInfo.show();
-			ndctCycle = ThisAdminDay.Cycle;
-			ndctDay = ThisAdminDay.Day;
-			ndctDate = ThisAdminDay.Date;
+			ndctCycle.setValue(ThisAdminDay.Cycle);
+			ndctDay.setValue(ThisAdminDay.Day);
+			ndctDate.setValue(ThisAdminDay.AdminDate);
 		}
 		else {
 			CycleInfo.hide();
-			ndctCycle = "";
-			ndctDay = "";
-			ndctDate = "";
+			ndctCycle.setValue("");
+			ndctDay.setValue("");
+			ndctDate.setValue("");
 		}
 	},
 
+
 	getFNRiskInfo : function(FNRisk) {
 		var FNLPanel = this.getFNLPanel();
-		if (FNRisk) {
-			var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
-			FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
-			var PanelID = FNLPanel.getId();
-			var URL = Ext.URLs.MedRisks + "/Type/" + (FNRisk < 10 ? "Neutropenia-1" : FNRisk <= 20 ? "Neutropenia-2" : "Neutropenia-3");
-			Ext.Ajax.request({
-				scope : this,
-				url: URL,
-				success: function( response, opts ){
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
+		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
+		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
 
-					for (i = 0; i < resp.length; i++) {
-						var raw = resp[i].Details;
-						var dec = Ext.util.Format.htmlDecode(raw);
-						resp[i].Details = dec;
-					}
-
-
-					this.application.unMask();
-					this.getFNLPanel().update(resp, false);
-					this.getFNLPanel().doLayout();
-				},
-				failure : function( response, opts ) {
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					this.application.unMask();
-					Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
-				}
-			});
-		}
-		else {
-			FNLPanel.setTitle("Febrile Neutropenia Level = Not Specified");
-		}
+		FNLPanel.update(this.application.Patient.OEMRecords.NeutropeniaRecommendation, false);
+		FNLPanel.doLayout();
 	},
 
 
@@ -480,50 +452,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			return;
 		}
 		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
-		var eLevel1 = ELevel.split(" ")[0];
-		var x = "";
-		switch (eLevel1) {
-			case "Low":
-				x = "Emesis-1";
-				break;
-			case "Medium":
-				x = "Emesis-2";
-				break;
 
-			case "Moderate":
-				x = "Emesis-3";
-				break;
-			case "High":
-				x = "Emesis-4";
-				break;
-			case "Very":
-				x = "Emesis-5";
-				break;
-		}
-
-		var URL = Ext.URLs.MedRisks + "/Type/" + x;
-		Ext.Ajax.request({
-			scope : this,
-			url: URL,
-			success: function( response, opts ){
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				for (i = 0; i < resp.length; i++) {
-					var raw = resp[i].Details;
-					var dec = Ext.util.Format.htmlDecode(raw);
-					resp[i].Details = dec;
-				}
-				this.getEmoPanel().update(resp, false);
-				this.getEmoPanel().doLayout();
-			},
-			failure : function( response, opts ) {
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Emetogenic Level - " + e.message + "<br />" + resp );
-			}
-		});
+		EmoPanel.update(this.application.Patient.OEMRecords.ELevelRecommendation, false);
+		EmoPanel.doLayout();
 	},
 
 	ChemoBioSectionHandler : function ( Clear, ThisAdminDay ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
@@ -540,20 +471,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			TempDesc = Patient.TemplateName;
 		}
 
-
-		// this.getEmoLevelInfo(Patient.AppliedTemplate.ELevel[0].name);
-
-
-		var EmoLevel = "";
-		try {
-			EmoLevel = Patient.AppliedTemplate.ELevel[0].name;
-			this.getEmoLevelInfo(EmoLevel);
-		}
-		catch (e) {
-			this.getEmoLevelInfo(null);
-		}
-
-		this.getFNRiskInfo(Patient.AppliedTemplate.FNRisk);
+		var EmoLevel = "", FNRisk = "";
+		var Data = Patient.OEMRecords;
+		EmoLevel = Data.ELevelName;
+		FNRisk = Data.FNRisk;
+		this.getEmoLevelInfo(EmoLevel);
+		this.getFNRiskInfo(FNRisk);
 
 		this.getNdctRegimen().setValue(TempDesc);
 
