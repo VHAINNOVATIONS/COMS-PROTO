@@ -738,6 +738,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
+			debugger;
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
 			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
@@ -1773,6 +1774,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var resp = Ext.JSON.decode( text );
 				resp = Ext.util.Format.htmlDecode(resp);
 				this.application.Patient.OEMRecords.NeutropeniaRecommendation = resp;
+				this.application.Patient.OEMRecords.FNRiskDetails = resp;
 				this.application.unMask();
 			},
 			failure : function( response, opts ) {
