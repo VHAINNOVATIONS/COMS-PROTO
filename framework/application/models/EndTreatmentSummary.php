@@ -162,6 +162,8 @@ class EndTreatmentSummary extends Model
 
     public function saveEoTS($form_data)
     {
+        ChromePhp::log("saveEoTS() Start");
+
         $this->_lastId = trim(com_create_guid(), '{}');
         $Name = $form_data->Name;
         $Patient_ID = $form_data->PatientID;
@@ -179,7 +181,7 @@ class EndTreatmentSummary extends Model
         $FollowUpAppointments = $form_data->FollowUpAppointments;
         $patId = (!empty($form_data->PAT_ID)) ? $form_data->PAT_ID : null;
         $ClinicalTrial = $form_data->ClinicalTrial;
-        
+
         $query = 
             "INSERT INTO EoTS (
                 EoTS_ID,
@@ -218,20 +220,25 @@ class EndTreatmentSummary extends Model
                 '$patId',
                 '$ClinicalTrial'
             ) ";
-            
+        // error_log($query);
+        // echo ($query);
+        // ChromePhp::log($query);
+
         $result = $this->query($query);
         
         if (!empty($result['error'])) {
             return $result;
         }
         
+        // Probably do NOT need Is_Active to be set any longer
+        // Is_Active is now only used to indicate that the template is not "archived" version of a newer/modified version of a template
         $query = "
             UPDATE Patient_Assigned_Templates SET
                 Date_Ended_Actual = '$TreatmentEnd',
-                Is_Active = 0
+                Is_Active = 1
             WHERE PAT_ID = '$patId'
         ";
-        
+        ChromePhp::log("Update Assigned Templates - $query");
         $this->query($query);
         
         if (is_array($form_data->Meds)) {

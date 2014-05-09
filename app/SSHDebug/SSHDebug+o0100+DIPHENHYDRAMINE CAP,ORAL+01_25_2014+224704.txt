@@ -1,0 +1,210 @@
+Last login: Sat Jan 25 22:30:07 2014 from vaphs355sql.innovations.va.gov
+
+csession cache355 
+[cachemgr355@vaphsdb04 ~]$ 
+[cachemgr355@vaphsdb04 ~]$ csession cache355 
+
+Node: vaphsdb04.innovations.va.gov, Instance: CACHE355
+
+USER>D ^%CD 
+
+Namespace: CPM355
+You're in namespace CPM355
+Default directory is /srv/vista/355/dat/
+CPM355>S DUZ=1
+
+CPM355>D ^XUP
+
+Setting up programmer environment
+This is a TEST account.
+
+Terminal Type set to: C-VT320
+
+You have 98 new messages.
+Select OPTION NAME: Order
+     1   ORDERS MENU       CPRS Menu
+     2   ORDER ACKNOWLEDGEMENT INQUIRY   ORRC ORD ACK INQ BY ORDER     ORDER ACK
+NOWLEDGEMENT INQUIRY BY ORDER
+     3   ORDER ACKNOWLEDGEMENT INQUIRY   ORRC ORD ACK INQ BY PROV     ORDER ACKN
+OWLEDGEMENT INQUIRY BY PROVIDER
+     4   ORDER ACTION ON PATIENT TRANSF  PSJ OAOPT     Order Action on Patient T
+ransfer
+     5   ORDER CHECK EXPERT SYSTEM MAIN  OCX MAIN     Order Check Expert System 
+Main Menu
+Press <RETURN> to see more, '^' to exit this list, OR
+CHOOSE 1-5: 1  ORDERS MENU     CPRS Menu
+CPRS Menu[?25l[H[J[2J[H[4m[1m[1;1HPatient Selection[22m[4m             [1;31HJan 25, 2014@22:31:03          Page:    1 of    1 [24m[1;1H
+Current patient: ** No patient selected **
+[3;1H
+[4m     Patient Name                   ID        DOB            Room-Bed           [24m
+[4;1H
+     No patients found                                                          
+
+
+
+
+
+
+
+
+
+
+
+
+
+[19;1H
+[7m          Enter the number of the patient chart to be opened                 >>>[27m
+[21;1H[J7[21;24r8[4m7[1;31HJan 25, 2014@22:31:038[24m[20;1H[19;1H
+
++   Next Screen           CV  Change View ...       FD  Find Patient
+-   Previous Screen       SV  (Save as Default List)Q   Close
+                                 [J[?25h
+Select Patient: Change View// FD    Find Patient  7[1;24r8
+Select PATIENT NAME: o0100  ONEHUNDRED,PATIENT        4-7-35    666000100     YE
+S     SC VETERAN               
+ Enrollment Priority:            Category: IN PROCESS    End Date: 
+7[1;24r8[m[m[H[J[2J[H
+Searching the patient's chart ...7[1;24r8[?25l[H[J[2J[H[4m[1m[1;1HCover Sheet[22m[4m                   [1;31HJan 25, 2014@22:31:05          Page:    1 of    2 [24m[1;1H
+ONEHUNDRED,PATIENT             666-00-0100                            4/7/35(78)
+PrimCare: UNKNOWN                         PCTeam: 
+                                                                            <AD>[4;1H
+[4m     Item                                      Entered                          [24m
+[5;1H
+     [4m[6;6HAllergies/Adverse Reactions[24m[6;33H             | [m[6;48H                                 [m[6;81H
+[1m[7;1H1    [22m[7;6HPENICILLIN (itching,watering eyes)      | [m[7;48H03/20/05                         [m[7;81H
+[1m[8;1H2    [22m[8;6HCHOCOLATE (diarrhea)                    | [m[8;48H12/17/07                         [m[8;81H
+                                             |                                  
+     [4m[10;6HPatient Postings[24m[10;22H                        | [m[10;48H                                 [m[10;81H
+[1m[11;1H3    [22m[11;6HADVANCE DIRECTIVE COMPLETED             | [m[11;48H05/17/07 09:33                   [m[11;81H
+[1m[12;1H4    [22m[12;6HADVANCE DIRECTIVE                       | [m[12;48H03/27/01 16:44                   [m[12;81H
+                                             |                                  
+     [4m[14;6HRecent Vitals[24m[14;19H                           | [m[14;48H                                 [m[14;81H
+     Temp:  98.5 F (36.9 C)                  | 03/05/10 09:00                   
+     Pulse: 74                               | 03/05/10 09:00                   
+     Resp:  18                               | 08/24/09 14:00                   
+     B/P:   134/81                           | 03/05/10 09:00                   [18;1H
+[7m+         Enter the numbers of the items you wish to act on.                    [27m
+[20;1H[J7[20;24r8[4m7[1;31HJan 25, 2014@22:31:058[24m[19;1H[18;1H
+
+NW  Enter New Allergy/ADR CV  (Change View ...)     SP  Select New Patient
+AD  Add New Orders        CC  Chart Contents ...    Q   Close Patient Chart
+                                                           [J[?25h
+Select: Next Screen//    NEXT SCREEN  [?25l7[6;18r8[18;1H
+     Ht:    71 in (180.3 cm)                 | 08/24/09 14:00                   
+     Wt:    178 lb (80.7 kg)                 | 03/05/10 09:00                   
+     Pain:  1                                | 03/05/10 09:00                   
+     POX:   98                               | 12/01/09 08:53                   
+     BMI:   24.88                            | 03/05/10 09:00                   
+                                             |                                  
+     [4m[18;6HRecent Immunizations[24m[18;26H                    | [m[18;48H                                 [m[18;81H
+                                             |                                  
+     [4m[18;6HEligibility[24m[18;17H                             | [m[18;48H                                 [m[18;81H
+     Service Connected %                     |                                  
+                                             |                                  
+
+[4m7[5;1H+8[24m[7m7[19;1H 8[27m7[20;24r8[4m7[1;31HJan 25, 2014@22:31:058[24m[4m7[1;68H   28[24m[?25h[?25l7[19;11H[7mEnter the numbers of the items you wish to act on.[27m87[20;24r8[4m7[1;31HJan 25, 2014@22:31:058[24m[19;1H[18;1H
+
+NW  Enter New Allergy/ADR CV  (Change View ...)     SP  Select New Patient
+AD  Add New Orders        CC  Chart Contents ...    Q   Close Patient Chart
+                                                           [J[?25h
+Select: Chart Contents//    Chart Contents ...  
+  Cover Sheet         Orders              Imaging             Reports
+  Problems            Meds                Consults
+  Notes               Labs                D/C Summaries
+Select chart component: Orders    Orders  
+Searching the patient's chart ...7[1;24r8[?25l[H[J[2J[H[4m[1m[1;1HActive Orders[22m[4m                 [1;31HJan 25, 2014@22:31:05          Page:    1 of    2 [24m[1;1H
+ONEHUNDRED,PATIENT             666-00-0100                            4/7/35(78)
+PrimCare: UNKNOWN                         PCTeam: 
+                                                                            <AD>[4;1H
+[4m     Item Ordered                              Provider    Start      Stop  Sts [24m
+[5;1H
+[1m[6;1H1    [22m[6;6HCHEST 2 VIEWS PA&LAT                    | [m[6;48HPROVIDER,O  09/13/06         actv[m[6;81H
+[1m[7;1H2    [22m[7;6HPOTASSIUM BLOOD   SERUM WC LB #15007    | [m[7;48HLABTECH,S   03/23/10         pend[m[7;81H
+                                             |             10:59                
+[1m[9;1H3    [22m[9;6HPOTASSIUM BLOOD   SERUM WC LB #14906    | [m[9;48HLABTECH,S   03/23/10         pend[m[9;81H
+                                             |             10:59                
+[1m[11;1H4    [22m[11;6HPOTASSIUM BLOOD   SERUM WC LB #14805    | [m[11;48HLABTECH,S   03/23/10         pend[m[11;81H
+                                             |             10:58                
+[1m[13;1H5    [22m[13;6HPOTASSIUM BLOOD   SERUM WC LB #14704    | [m[13;48HLABTECH,S   03/23/10         pend[m[13;81H
+                                             |             10:57                
+[1m[15;1H6    [22m[15;6HPOTASSIUM BLOOD   SERUM WC LB #14603    | [m[15;48HLABTECH,S   03/23/10         pend[m[15;81H
+                                             |             10:57                
+[1m[17;1H7    [22m[17;6HHEMOGLOBIN A1C BLOOD   WC LB #12481     | [m[17;48HLABTECH,S   03/05/10         pend[m[17;81H
+                                             |             12:25                [18;1H
+[7m+         Enter the numbers of the items you wish to act on.                 >>>[27m
+[20;1H[J7[20;24r8[4m7[1;31HJan 25, 2014@22:31:058[24m[19;1H[18;1H
+
+NW  Add New Orders        CV  Change View ...       SP  Select New Patient
+RV  Review New Orders     CC  Chart Contents ...    Q   Close Patient Chart
+TD  Delayed Orders                                         [J[?25h
+Select: Next Screen// NW    Add New Orders  7[1;24r8
+
+<Orders for ONEHUNDRED,PATIENT>
+Patient Location: GEN MED    
+Requesting CLINICIAN: v107  VEHU,ONEHUNDREDSEVEN            V107          Schola
+r Extraordinaire
+
+Requesting Clinician: VEHU,ONEHUNDREDSEVEN  Are you sure? Yes// y  (Yes)[?25l[H[J[2J[H[4m[1m[1;1HAdd Write Orders Menu Main[22m[4m    [1;31HJan 25, 2014@22:31:10          Page:    1 of    2 [24m[1;1H
+ONEHUNDRED,PATIENT           666-00-0100           GENMED             4/7/35(78)[2;1H
+[4m                                                                                [24m
+[3;1H
+[1m[4;1H10 [22m[4;4HDiet Order                                                                   [m[4;81H
+[1m[5;1H11 [22m[5;4HVital Signs                                                                  [m[5;81H
+                                                                                
+[1m[7;1H15 [22m[7;4HInpatient Medications                                                        [m[7;81H
+[1m[8;1H20 [22m[8;4HOutpatient Medications                                                       [m[8;81H
+[1m[9;1H25 [22m[9;4HInfusion                                                                     [m[9;81H
+   Non VA Meds                                                                  
+[1m[11;1H[D [22m[11;4HMetaprololTartrate 50MG                                                      [m[11;81H
+   Aspirin 81 MG Non VA                                                         
+[1m[13;1H35 [22m[13;4HLaboratory                                                                   [m[13;81H
+[1m[14;1H36 [22m[14;4HInpt Labs Routine Menu...                                                    [m[14;81H
+                                                                                
+[1m[16;1H40 [22m[16;4HImaging                                                                      [m[16;81H
+                                                                                
+[1m[18;1H45 [22m[18;4HConsult                                                                      [m[18;81H
+[1m[19;1H46 [22m[19;4HDiabetic Nutrition Consult                                                   [m[19;81H
+                                                                                [20;1H
+[7m+         Enter the number of each item you wish to order.                   >>>[27m
+[22;1H[J7[22;24r8[4m7[1;31HJan 25, 2014@22:31:108[24m[21;1H[20;1H
+
++   Next Screen           -   Previous Screen       Q   Done
+                                 [J[?25h
+Select Item(s): Next Screen// 20   20  7[4;24r8
+
+                         -- Outpatient Medications --
+Patient >65. Renal Results: <Results Not Found>
+Medication: DIPHENHYDRAMINE CAP,ORAL     
+Complex dose? NO// n  NO
+Choose from (or enter another):
+     1   25MG     $0.0085
+     2   50MG     $0.0104
+     3   100MG     $0.0208
+Dose: 50 
+Enter the amount of this drug that the patient is to receive as a dose,
+NOT as the number of units per dose.
+Dose: 1   25MG     $0.0085
+Route: ORAL (BY MOUTH)// QDAY ??
+Enter the route of administration for this drug.
+
+Route: ORAL (BY MOUTH)// 1   ORAL (BY MOUTH)
+Schedule: 
+
+A response is required!  Enter '^' to quit.
+
+Schedule: 
+
+A response is required!  Enter '^' to quit.
+
+Schedule: 0
+Days Supply: 30// C
+Enter the number of days for which the patient needs this medication.
+
+Days Supply: 30// ROUTINE
+Enter the number of days for which the patient needs this medication.
+
+Days Supply: 30// 
+Quantity (CAP): P
+Enter the amount (number of tablets, e.g.) to be dispensed.
+
+Quantity (CAP): 

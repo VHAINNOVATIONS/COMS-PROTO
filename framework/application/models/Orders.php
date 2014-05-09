@@ -6,8 +6,7 @@ class Orders extends Model {
     const STATUS_INCOORDINATION = 'In-Coordination';
     
     function getPatientsWithActiveTemplates() {
-
-        $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Is_Active = 1";
+        $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Date_Ended_Actual is NULL";
 
         return $this->query($query);
     }
@@ -23,14 +22,14 @@ class Orders extends Model {
                 "LEFT OUTER JOIN Template_Regimen tr ON tr.Template_ID = pat.Template_ID " .
                 "LEFT OUTER JOIN Medication_Hydration mh ON mh.Template_ID = pat.Template_ID " .
                 "LEFT OUTER JOIN MH_Infusion mhi ON mhi.MH_ID = mh.MH_ID " .
-                "WHERE pat.IS_Active = 1";
+                "WHERE pat.Date_Ended_Actual is not NULL";
 
         return $this->query($query);
     }
 
     function getDrugs() {
-
-        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Is_Active = 1";
+        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Date_Ended_Actual is not NULL";
+//        $query = "select Patient_ID as Patient_ID,Template_ID as Template_ID,Date_Started as Date_Started,Goal as Goal from Patient_Assigned_Templates WHERE Is_Active = 1";
         $queryPAT = $this->query($query);
         foreach ($queryPAT as $row) {
             $Template_ID = $row['Template_ID'];
@@ -167,17 +166,8 @@ class Orders extends Model {
 		$typeF = $form_data->{'type'};
 		$routeF = $form_data->{'route'};
 
-		//echo "Type: ".$typeF."";
-		//echo "Route: ".$routeF."";
-        //echo $Template_IDF;
-		//echo $OrderStatusF;
-		//echo $Drug_NameF;
-		//echo $PIDF;
-
         $query = "SELECT Template_ID as Template_ID_CHK, Order_Status as Order_StatusCHK " .
                 "FROM Order_Status " .
-                //"WHERE Template_ID = '" . $Template_IDF . "' " .
-				//"AND Drug_Name = '" .$Drug_NameF."'"
 				"WHERE Order_ID = '" . $OrderIDF . "' ";
 				
         
@@ -203,6 +193,9 @@ class Orders extends Model {
 		$this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF);
 		
 		}
+		elseif ($OrderStatusF === "Hold"){
+		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
+		}
 		//echo $query;
         return $this->query($query);
     }
@@ -222,10 +215,6 @@ class Orders extends Model {
         
     }	
 
-////////////////
-//////sic's Code
-////////////////
-
     function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID){
         
 		$Template_IDchk = NULL;
@@ -236,15 +225,13 @@ class Orders extends Model {
 		"WHERE Template_ID = '".$TID."' " .
 		"AND Drug_Name = '".$Drug_Name."'";
 		
-		//echo $query;
-		
+			
 		$queryq = $this->query($query);
 		foreach($queryq as $row){
 		$Template_IDchk =  $row['Template_ID_CHK'];
 		$Drug_Namechk =  $row['Drug_Name_CHK'];
 		$Order_Statuschk =  $row['Order_Statuschk'];
-		//echo "Template_IDchk: ".$Template_IDchk."<br>";
-		//echo "Drug_Namechk: ".$Drug_Namechk."<br>";
+
 
 		}
 		if ($Template_IDchk === NULL){
@@ -256,29 +243,80 @@ class Orders extends Model {
 		"where Template_ID = '".$TID."' " .
 		"AND Drug_Name = '".$Drug_Name."' ".
 		"AND Patient_ID = '".$PID."'";
-		//"AND Order_Type = '".$Order_Type."'";
 		
 		}
-		//echo "TID TEST: ".$Template_IDchk."";
-		//if ($TID === $Template_IDchk and $Drug_Name === $Drug_Namechk){
-        
-		//$query = "Update Order_Status set Order_Status = '".$OrderStatus."' " .
-		//$query = "Update Order_Status set Order_Status = 'Order Updated' " .
-		//"where Template_ID = '".$TID."' " .
-		//"AND Drug_Name = '".$Drug_Name."' ".
-		//"AND Order_Type = '".$Order_Type."'";
-		
-		//}else{
-		
-		//$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type) VALUES ('$TID','Order Placed','$Drug_Name','$Order_Type')";
-		//$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type) VALUES ('$TID','NotHere','$Drug_Name','$Order_Type')";
-		
-		//}
-		
 		
         $this->query($query);
     }
 
+    function updateOrderStatusCancelled($TID,$Drug_Name,$Order_Type,$PID){
+        
+		$Template_IDchk = NULL;
+		$Drug_Namechk = NULL;
+		
+		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
+		"FROM Order_Status " .
+		"WHERE Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."'";
+		
+			
+		$queryq = $this->query($query);
+		foreach($queryq as $row){
+		$Template_IDchk =  $row['Template_ID_CHK'];
+		$Drug_Namechk =  $row['Drug_Name_CHK'];
+		$Order_Statuschk =  $row['Order_Statuschk'];
+
+
+		}
+		if ($Template_IDchk === NULL){
+		//echo "empty sring";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		}
+		else{
+		$query = "Update Order_Status set Order_Status = 'Cancelled' " .
+		"where Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."' ".
+		"AND Patient_ID = '".$PID."'";
+		
+		}
+		
+        $this->query($query);
+    }
+
+function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
+        
+		$Template_IDchk = NULL;
+		$Drug_Namechk = NULL;
+		
+		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
+		"FROM Order_Status " .
+		"WHERE Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."'";
+		
+			
+		$queryq = $this->query($query);
+		foreach($queryq as $row){
+		$Template_IDchk =  $row['Template_ID_CHK'];
+		$Drug_Namechk =  $row['Drug_Name_CHK'];
+		$Order_Statuschk =  $row['Order_Statuschk'];
+
+
+		}
+		if ($Template_IDchk === NULL){
+		//echo "empty sring";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		}
+		else{
+		$query = "Update Order_Status set Order_Status = 'Hold' " .
+		"where Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."' ".
+		"AND Patient_ID = '".$PID."'";
+		
+		}
+		
+        $this->query($query);
+    }	
+	
     function LookupNameIn($LID){
         
         $query = "SELECT Name as LK_Name FROM LookUp WHERE Lookup_ID = '".$LID."'";
@@ -327,31 +365,11 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$match =  $row['Match'];
 					}
 
-//echo "Route: ".$routeF."";
 
-	//check order status
-	//$queryCHKOSq = "select Template_ID as Template_ID, Order_Status as Order_Status from Order_Status WHERE Template_ID = '$TID'";
-	//$queryCHKOS = $this->query($queryCHKOSq);
-	//foreach($queryCHKOS as $row){
-	//	$Order_Status = $row['Order_Status'];
-	//	}
-	//echo "Order_Status: ".$Order_Status."<br>";
-	//if ($Order_Status = 'Ordered'){
-	//echo "Order Already Placed.<br>";
-	//}else{
-	
-	//echo $typeF;
 	if ($routeF === 'Oral'){
 	
 	if ($typeF === 'Therapy'){
 		
-	//echo "Oral - Therapy";	
-	
-	//$queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
-	//			$queryPI = $this->query($queryPIq);
-	//			foreach($queryPI as $row){
-	//				$match =  $row['Match'];
-	//				}
 	
 	$queryMTTRq = "select mt.Template_ID as TR_Template_ID, tr.Drug_ID as TR_Drug_ID, tr.Regimen_Dose as TR_Regimen_Dose, " .
 	"tr.Regimen_Dose_Unit_ID as TR_Regimen_Dose_Unit_ID, tr.Route_ID as TR_Route_ID, mt.Regimen_ID as MT_Regimen_ID, mt.Cancer_ID as MT_Cancer_ID, " .
@@ -366,8 +384,6 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 
 	$queryMTTR = $this->query($queryMTTRq);
 	
-	//var_dump($queryMTTR);
-	//echo $queryMTTRq;
 	$recct = 0;
 	$DDrecct = 0;
 
@@ -558,20 +574,6 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 		
 	echo "Non-Oral Therapy";	
 		
-	/*
-	$queryNonOral = "select mt.Template_ID as TR_Template_ID, tr.Drug_ID as TR_Drug_ID, tr.Regimen_Dose as TR_Regimen_Dose, " .
-	"tr.Regimen_Dose_Unit_ID as TR_Regimen_Dose_Unit_ID, tr.Route_ID as TR_Route_ID, mt.Regimen_ID as MT_Regimen_ID, mt.Cancer_ID as MT_Cancer_ID, " .
-	"mt.Disease_Stage_ID as MT_Disease_Stage_ID, mt.Course_Number as MT_Course_Number, mt.Cycle_Length as MT_Cycle_Length, " .
-	"mt.Cycle_Time_Frame_ID as MT_Cycle_Time_Framer_ID, mt.Total_Courses as MT_Total_Courses, mt.Admin_Day as TR_Admin_Day, " .
-	"mt.Admin_Date as MT_Admin_Date, tr.Infusion_Time as TR_Infusion_Time, tr.Fl_Vol_Unit_ID as TR_Fl_Vol_Unit_ID, tr.Fl_Vol_Description as TR_Fl_Vol_Description, " .
-	"tr.Flow_Rate as TR_Flow_Rate, tr.Instructions as TR_Instructions, tr.Fluid_Vol as TR_Fluid_Vol, tr.Admin_Time as TR_Admin_Time, " .
-	"tr.BSA_Dose as TR_BSA_Dose, tr.Fluid_Type as TR_Fluid_Type " .
-	"FROM Master_Template as mt " .
-	"INNER JOIN Template_Regimen tr ON tr.Template_ID = mt.Template_ID " .
-	"WHERE Patient_ID = '$PID' " .
-	"AND tr.Route_ID != '33AB155F-3232-E111-B457-000C2935B86F' ";
-	var_dump($queryNonOral);
-	*/
 	
 	$queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
 	$queryTIDs = $this->query($queryTIDsq);
@@ -584,8 +586,6 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$match =  $row['Match'];
 					}
 				if ($match != ''){
-				//Template Regimen Table
-				//$queryTRq = "select Drug_ID as Drug_ID, Regimen_Dose as Regimen_Dose, Regimen_Dose_Unit_ID as Regimen_Dose_Unit_ID from Template_Regimen WHERE Template_ID ='$TID'";
 				$queryTRq = "select Patient_Regimen_ID as TR_Patient_Regimen_ID, Template_ID as TR_Template_ID, Drug_ID as TR_Drug_ID, Regimen_Number as TR_Regimen_Number, " .
 				"Regimen_Dose as TR_Regimen_Dose, Regimen_Dose_Unit_ID as TR_Regimen_Dose_Unit_ID, Regimen_Dose_Pct as TR_Regimen_Dose_Pct, Regimen_Reason as TR_Regimen_Reason, " .
 				"Patient_Dose as TR_Patient_Dose, Patient_Dose_Unit_ID as TR_Patient_Dose_Unit_ID, Route_ID as TR_Route_ID, Admin_Day as TR_Admin_Day, Infusion_Time as TR_Infusion_Time, " .
@@ -686,15 +686,15 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			$TID = $row['Template_ID'];
 			$RID = $row['Regimen_ID'];
 			
-			echo "Non Oral - Pre Therapy";
-			echo "PID".$PID." || ";
-			echo "TID".$TID." || ";
-			echo "RID".$RID." || ";
+			//echo "Non Oral - Pre Therapy";
+			//echo "PID".$PID." || ";
+			//echo "TID".$TID." || ";
+			//echo "RID".$RID." || ";
 				$queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
 				foreach($queryPI as $row){
 					$match =  $row['Match'];
-					echo "match: ".$match."";
+					//echo "match: ".$match."";
 					}
 				if ($match != ''){
 				
@@ -726,7 +726,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
 					$this->valuecheck("".$match."End and Done");
@@ -752,10 +752,10 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			$TID = $row['Template_ID'];
 			$RID = $row['Regimen_ID'];
 			
-			echo "NonOral - POST THERPY";
-			echo "PID".$PID." || ";
-			echo "TID".$TID." || ";
-			echo "RID".$RID." || ";
+			//echo "NonOral - POST THERPY";
+			//echo "PID".$PID." || ";
+			//echo "TID".$TID." || ";
+			//echo "RID".$RID." || ";
 				$queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
 				foreach($queryPI as $row){

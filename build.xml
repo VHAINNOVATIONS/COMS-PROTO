@@ -216,13 +216,13 @@ Execute 'ant Build-Dev' Builds the development environment from the Jenkins CI S
 			<arg value="${basedir}\build\logs\pmd-cpd.xml" />
 		</exec>
 	</target>
-
+ 
 	<target name="Code-Sniffer" depends="prepare" description="Run Code Sniffer Syntax Checking Tools" >
 		<exec dir="${basedir}"
-			executable="phpcs.bat"
+			executable="phpcs"
 			output="${basedir}\build\logs\checkstyle.xml"
 			failonerror="true">
-			<arg line="-n -p -s -v -s --tab-width=4 --standard=ruleset.xml app\NWPatient.php "/>
+			<arg line="-n -p -s -v -s --tab-width=4 --standard=ruleset.xml ."/>
 
 			<!-- -p Show progress of run  -->
 			<!-- -v Verbose output  -->

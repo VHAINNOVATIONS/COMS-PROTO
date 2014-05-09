@@ -1271,7 +1271,3 @@ BOOMR.plugins.BW = {
 
 }(window));
 // End of BW plugin
-
-
-
-/*jslint white: false, devel: true, onevar: true, browser: true, undef: true, nomen: true, regexp: false, continue: true, plusplus: false, bitwise: false, newcap: true, maxerr: 50, indent: 4 */

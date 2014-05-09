@@ -1,0 +1,13 @@
+Last login: Thu Jan 23 14:39:23 2014 from vaphs355sql.innovations.va.gov
+
+csession cache355 
+D ^%CD 
+CPM355
+D ^XUP
+1programmer
+[cachemgr355@vaphsdb04 ~]$ 
+[cachemgr355@vaphsdb04 ~]$ csession cache355 
+
+Node: vaphsdb04.innovations.va.gov, Instance: CACHE355
+
+USER>

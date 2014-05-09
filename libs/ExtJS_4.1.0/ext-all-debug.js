@@ -5,10 +5,13 @@ Copyright (c) 2011-2012 Sencha Inc
 
 Contact:  http://www.sencha.com/contact
 
-Commercial Usage
-Licensees holding valid commercial licenses may use this file in accordance with the Commercial
-Software License Agreement provided with the Software or, alternatively, in accordance with the
-terms contained in a written agreement between you and Sencha.
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
+
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 
 If you are unsure which license is appropriate for your use, please contact the sales department
 at http://www.sencha.com/contact.
@@ -41700,26 +41703,10 @@ Ext.define('Ext.layout.Layout', {
         var itemDom = item.el ? item.el.dom : Ext.getDom(item),
             targetDom = (target && target.dom) || target;
 
-        if (itemDom.parentNode) {
-			if (itemDom.parentNode.className) {
-				var mwb_scratch = Ext.baseCSSPrefix + 'resizable-wrap';
-				if (-1 !== itemDom.parentNode.className.indexOf(mwb_scratch)) {
-		            itemDom = itemDom.parentNode;
-				}
-			}
+        
+        if (itemDom.parentNode && itemDom.parentNode.className.indexOf(Ext.baseCSSPrefix + 'resizable-wrap') !== -1) {
+            itemDom = itemDom.parentNode;
         }
-		// MWB - 7/18/2012 Crashes in MS-IE when itemDom doesn't contain parentNode
-//		var MWB_pn = "", MWB_cn = "";
-//		try {
-//			MWB_pn = itemDom.parentNode;
-//			MWB_cn = itemDom.parentNode.className;
-//          if (itemDom.parentNode && itemDom.parentNode.className.indexOf(Ext.baseCSSPrefix + 'resizable-wrap') !== -1) {
-//            itemDom = itemDom.parentNode;
-//          }
-//		}
-//		catch (e) {
-//			alert( "Node = " + MWB_pn + "\nClassName = " + MWB_cn);
-//		}
 
         
         if (itemDom && targetDom) {

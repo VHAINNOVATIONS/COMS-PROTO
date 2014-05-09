@@ -10,7 +10,7 @@
 <tr><td colspan="2" align="center"><font size="20">db<font color="#000099">IT</font>pro</font></td></tr>
 <tr><td colspan="2" align="center"> Update Feedback</td></tr>
 <?php
-$serverName = "DBITDATA\DBIT";
+$serverName = "SQL\SERVER";
 $connectionOptions = array("Database"=>"COMS_Demo");
 $conn =  sqlsrv_connect($serverName, $connectionOptions);
 $fid = $_GET[fid];

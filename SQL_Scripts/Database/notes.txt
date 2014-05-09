@@ -1,0 +1,5 @@
+1) Check **_ID fields default value is (newsequentialis()), if missing run script 03_Database_GUID.sql
+
+2) Del/Add coms_db_user account with read/write access
+
+3) Run additional Scripts for changes

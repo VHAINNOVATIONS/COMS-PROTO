@@ -4,7 +4,7 @@ class Admin extends Model {
     
     function getGlobals() {
         
-        $query = "SELECT domain as domain,sitelist as sitelist FROM Globals";
+        $query = "SELECT domain as domain,sitelist as sitelist,mdws as mdws FROM Globals";
         
         return $this->query($query);
         
@@ -14,8 +14,9 @@ class Admin extends Model {
 	
 		$domain = $form_data->{'domain'};
         $sitelist = $form_data->{'sitelist'};
+        $mdws = $form_data->{'mdws'};
 		
-		$query = "Update Globals set domain = '".$domain."',sitelist ='".$sitelist."'";
+		$query = "Update Globals set domain = '".$domain."',mdws = '".$mdws."',sitelist ='".$sitelist."'";
         
 		$retVal = $this->query($query);
 		

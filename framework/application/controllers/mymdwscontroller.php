@@ -310,7 +310,6 @@ class MymdwsController extends Controller
     function MdwsSetup($isSSN,$value){
         $username = get_current_user();
         $jsonRecord = array();
-        //$username = 'kevin.dean';
         $roles = $this->Mymdws->getRoleInfo($username);
 
         if($this->checkForErrors('Get Role Info Failed. ', $roles)){
@@ -334,10 +333,10 @@ class MymdwsController extends Controller
         if(true === $isSSN){
             $mdwspatients = $this->MDWSMatchPatient($client, $value);
         
-// var_dump($value);
-// echo "<br>Count = " . $mdwspatients->count . "<br>";
-// var_dump($mdwspatients);
-// echo "<br>";
+ //var_dump($value);
+ //echo "<br>Count = " . $mdwspatients->count . "<br>";
+ //var_dump($mdwspatients);
+ //echo "<br>";
 
             if(null != $mdwspatients && 1 < $mdwspatients->count){
                 $jsonRecord['success'] = false;
@@ -360,7 +359,7 @@ class MymdwsController extends Controller
         
         if(null === $mdwspatient){
             $jsonRecord['success'] = false;
-            $jsonRecord['message'] = 'No Patients found with DFN matching '.$value;
+            $jsonRecord['message'] = 'No Patients found with SSN matching '.$value;
             return $jsonRecord;
         }
         
@@ -766,7 +765,7 @@ class MymdwsController extends Controller
 		if (null === $result) {
 			return (null);
 		}
-			
+		//echo "result:".var_dump(array('target'=>$result))."<br>";	
 		return ($result->arrays->TaggedPatientArray);
         
     }

@@ -7,45 +7,35 @@
 class MdwsBase {
     
     function MDWS_Setup($roles) {
-            //set variables
-            //$sitelist = $roles[0]['sitelist'];
 			$sitelist = $_SESSION['sitelist'];
-            //$cprsUsename = $roles[0]['cprsUsername'];
-			$cprsUsername = $_SESSION['cprsUsername'];
-            //$cprsPass = $roles[0]['cprsPass'];
-			$cprsPass = $_SESSION['cprsPass'];
+			$AC = $_SESSION['AC'];
+			$VC = $_SESSION['VC'];
             $_SESSION['MDWS_Status'] = '';
             $_SESSION['MDWS_Type'] = '';
             $_SESSION['MDWS_Msg'] = '';
             $_SESSION['MDWS_Suggestion'] = '';
-
+			//echo "<br>MDWS Dump:".var_dump($_SESSION)."<br>";
 
             try {
-                    $client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
+                    $client = new SoapClient("http://".$_SESSION['mdws']."/EmrSvc.asmx?WSDL");
                     if (isset($client->fault)) {
                             $this->MDWsCrashReport($client, "SoapClient", false);
                             return null;
                     }
 
-					//-----------------------------------
-					// Needed for MWB Site only
-					//-----------------------------------
-					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'172.19.100.94','port'=>'9355','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
+					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'54.243.40.32','port'=>'9210','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;
                     }
-					//-----------------------------------
-					// Needed for MWB Site only
-					//-----------------------------------
-					
+
                     $connect = $client->connect(array('sitelist'=>$sitelist));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;
                     }
 
-                    $login = $client->login(array('username'=>$cprsUsername,'pwd'=>$cprsPass,'context'=>''));
+                    $login = $client->login(array('username'=>$AC,'pwd'=>$VC,'context'=>''));
                     if (isset($login->loginResult->fault)) {
                             $this->MDWsCrashReport($login->loginResult, "Login", false);
                             return null;
@@ -129,6 +119,7 @@ class MdwsBase {
                     $_SESSION['MDWS_Msg'] = $fault->message;
                     $_SESSION['MDWS_Suggestion'] = $fault->suggestion;
 		            $_SESSION['MDWS_Type'] = $type;
+		            //$_SESSION['cprsUsername'] = $cprsUsername;
                     $this->MDWSCrashed($displayReport);
                     return (null);
             }
@@ -184,8 +175,8 @@ class MdwsBase {
     function MDWS_Login_Check($AccessCode,$VerifyCode) {
             //set variables
 			$sitelist = $_SESSION['sitelist'];
-			//$cprsUsername = $_SESSION['cprsUsername'];
-			//$cprsPass = $_SESSION['cprsPass'];
+			$AC = $_SESSION['AC'];
+			$VC = $_SESSION['VC'];
             $_SESSION['MDWS_Status'] = '';
             $_SESSION['MDWS_Type'] = '';
             $_SESSION['MDWS_Msg'] = '';
@@ -193,19 +184,25 @@ class MdwsBase {
 
 
             try {
-                    $client = new SoapClient("http://mdws.vacloud.us/mdws2/EmrSvc.asmx?WSDL");
+                    $client = new SoapClient("http://".$_SESSION['mdws']."/EmrSvc.asmx?WSDL");
                     if (isset($client->fault)) {
                             $this->MDWsCrashReport($client, "SoapClient", false);
                             return null;
                     }
 
+					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'54.243.40.32','port'=>'9210','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
+									
+                    if (isset($connect->connectResult->fault)) {
+                            $this->MDWsCrashReport($connect->connectResult, "Connect", false);
+                            return null;
+                    }
                     $connect = $client->connect(array('sitelist'=>$sitelist));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;
                     }
-
-                    $login = $client->login(array('username'=>$AccessCode,'pwd'=>$VerifyCode,'context'=>''));
+					
+                    $login = $client->login(array('username'=>$AC,'pwd'=>$VC,'context'=>''));
                     if (isset($login->loginResult->fault)) {
                             $this->MDWsCrashReport($login->loginResult, "Login", false);
                             return null;

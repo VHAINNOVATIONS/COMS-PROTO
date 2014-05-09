@@ -137,28 +137,18 @@ class SQLQuery {
         if (DB_TYPE == 'mssql') {
             $this->_result = mssql_query($query, $this->_dbHandle);
         } else if (DB_TYPE == 'sqlsrv') {
-            //$serverName = "DBITDATA\DBIT";
-            //$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_VA_TEST");
-            //$conn =  sqlsrv_connect( $serverName, $connectionOptions);
-            //$this->_result = sqlsrv_query($conn, $query);
             $this->_result = sqlsrv_query($this->_dbHandle, $query);
         } else if (DB_TYPE == 'mysql') {
             $this->_result = mysql_query($query, $this->_dbHandle);
         }
-        
         if(!$this->_result){
             return array("error" => $this->getError());
         }
-        //var_dump($query . $this->getError());
         if (preg_match("/select/i", $query)) {
-            
             $result = array();
             $field = array();
-
             $numOfFields = $this->setResultFieldsArray($field);
-
             $result = $this->getResultSet($numOfFields, $field, $singleResult);
-			
             return($result);
         }
     }

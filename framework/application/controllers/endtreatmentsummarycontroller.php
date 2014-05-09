@@ -34,7 +34,7 @@ class EndTreatmentSummaryController extends Controller
 
             $returnVal = $this->EndTreatmentSummary->saveEoTS($form_data);
             
-            if ($this->checkForErrors('Update Order Status Values Failed. ', $returnVal)) {
+            if ($this->checkForErrors('End of Treatment Summary Save Failed. ', $returnVal)) {
                 $this->EndTreatmentSummary->rollbackTransaction();
                 $jsonRecord['success'] = 'false';
                 $jsonRecord['msg'] = $this->get('frameworkErr');

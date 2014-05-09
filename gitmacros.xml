@@ -357,7 +357,6 @@
 		<echo file=".gitignore" append="yes">${basedir}\build\* &#xa;</echo>
 		<echo file=".gitignore" append="yes">${ignore.pattern} &#xa;</echo>
 		<echo file=".gitignore" append="yes">${basedir}\temp\* &#xa;</echo>
-		<echo file=".gitignore" append="yes">${basedir}\app\SSHDebug\* &#xa;</echo>
 	</target>
 
 	<target name="[Git] post-receive">

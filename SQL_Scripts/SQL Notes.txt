@@ -1,0 +1,84 @@
+/** Get Location Data **/
+SELECT *
+  FROM [COMS_UAT_VA].[dbo].[LookUp]
+  where Lookup_Type = 22
+  Order By Lookup_Type_ID
+
+SELECT Name 
+FROM [COMS_UAT_VA].[dbo].[LookUp]
+WHERE Lookup_ID = '15FD3A93-8526-E111-8AAA-000C2935B86F'
+
+
+SELECT *
+  FROM [COMS_UAT_VA].[dbo].[Template_Availability]
+
+
+
+/** Get Cross Reference from MT to RLU Data **/
+SELECT *
+  FROM [COMS_UAT_VA].[dbo].[LookUp]
+  where Lookup_Type = 21
+  Order By Lookup_Type_ID
+
+/** Get User ID Info Data **/  
+SELECT *
+  FROM [COMS_UAT_VA].[dbo].[LookUp]
+  where Lookup_Type = 24 and Lookup_ID = '63C5D238-9AB6-E111-A560-000C2935B86F'
+  Order By Lookup_Type_ID  
+  
+  Get Active Templates By Location
+SELECT * FROM [COMS_MWB_TEST].[dbo].[Master_Template]
+where Is_Active = 1 and Location_ID = '16FD3A93-8526-E111-8AAA-000C2935B86F'
+
+/***
+if Location_ID = '16FD3A93-8526-E111-8AAA-000C2935B86F' then also compare Created_By to current user's ID
+
+15FD3A93-8526-E111-8AAA-000C2935B86F
+
+Created_By = '63C5D238-9AB6-E111-A560-000C2935B86F' (aka Programmer as identified by Lookup_Type=24)
+***/
+
+
+/* Get getTemplates By Type for Field - Cancer; ID - 2F85F3AA-0B21-E111-BF57-000C2935B86F ( aka 'Lung Cancer, Non-Small Cell' from Lookup Table */
+select 
+	lu.Name as name
+	, mt.Template_ID as id
+	, mt.Regimen_ID as regimenId
+	, mt.Location_ID as Location
+	, lu.Lookup_Type as type
+	, luCancer.Name as CancerName
+	, case when l3.Name is not null then l3.Description else lu.Description end as description
+	, mt.Version as version
+	from [COMS_UAT_VA].[dbo].[Master_Template] mt 
+	INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] lu ON lu.Lookup_ID = mt.Regimen_ID 
+	INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] luCancer ON luCancer.Lookup_ID = '2F85F3AA-0B21-E111-BF57-000C2935B86F'
+	LEFT OUTER JOIN [COMS_UAT_VA].[dbo].[LookUp] l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) 
+	WHERE mt.Cancer_ID = '2F85F3AA-0B21-E111-BF57-000C2935B86F' 
+	and Is_Active = 1 and mt.Patient_ID is null Order By description
+	
+	
+SELECT Name 
+FROM [COMS_UAT_VA].[dbo].[LookUp]
+WHERE Lookup_ID = '2F85F3AA-0B21-E111-BF57-000C2935B86F'
+	
+	
+	
+select 
+                lu.Name as name
+                , mt.Template_ID as id
+                , mt.Regimen_ID as regimenId
+                , lu.Lookup_Type as type
+                , case when l3.Name is not null then l3.Description else lu.Description end as description
+                , mt.Cycle_Length as length
+                , l1.Name as unit
+                , mt.Total_Courses as totnum
+                , mt.Course_Number as coursenum
+                , mt.Version as version
+                , l2.Name as emoLevel
+                , mt.Febrile_Neutropenia_Risk as fnRisk 
+                from [COMS_UAT_VA].[dbo].[Master_Template] mt 
+                INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] lu ON lu.Lookup_ID = mt.Regimen_ID 
+                INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
+                INNER JOIN [COMS_UAT_VA].[dbo].[LookUp] l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
+                LEFT OUTER JOIN [COMS_UAT_VA].[dbo].[LookUp] l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) 
+                WHERE mt.Location_ID = '16FD3A93-8526-E111-8AAA-000C2935B86F' and mt.Is_Active = 1 Order By description	

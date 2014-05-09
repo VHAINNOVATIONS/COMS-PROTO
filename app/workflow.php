@@ -7,10 +7,6 @@ set_time_limit(0);
 /////////////////////////
 function GetLastWFID(){
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
 include "dbitcon.php";
 
 //Get Last Workflow ID
@@ -26,8 +22,6 @@ $updateWorkflowID = sqlsrv_query($conn, $uwfid);
 
 return $nwid;
 
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 
 /////////////////////////
@@ -39,10 +33,7 @@ return $nwid;
 /////////////////////////
 function GetCurrentStepWFID($wid){
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Get Current Step for WID
@@ -59,8 +50,7 @@ $CurrentStep = $row['CurrentStep'];
 
 return $CurrentStep;
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 
 /////////////////////////
@@ -74,10 +64,7 @@ function OrdersNotify($patientId,$templateId,$dateApplied,$dateStarted,$dateEnde
 //echo "<br>Begin Orders Notify<br>";
 $ReasonNo = 3;
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 $wid = GetLastWFID();
@@ -131,7 +118,14 @@ $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 //$message = "<html><body>Update Workflow Status: <a href=".$Link.">Respond</a><br><br>".$Body."</body></html>";
 //$message = "<html><body>Order Notification to Pharmacist (Workflow ID: ".$wid.")<br><br>Link: <a href=".$Link.">Link</a> <br>Patient ID: ".$patientId."<br>Template ID: ".$templateId."<br>dateApplied: ".$dateApplied."<br> dateStarted : ".$dateStarted."<br>dateEnded Id: ".$dateEnded."<br>Goal: ".$goal."<br>clinicalTrial: ".$clinicalTrial."<br>performanceStatus: ".$performanceStatus."</body></html>";
 $message = "<html><body><br>".$Body."<br>Date Applied: " . $dateApplied . "<br>Date Started: " . $dateStarted . "<br>Date Ended: " . $dateEnded . "<br>Goal: " . $goal . "<br>Clinical Trial: " . $clinicalTrial . "</body></html>";
-mail($To, $Subject, $message, $headers);
+
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 //echo "Message: ".$message."";
 
 //Store Message
@@ -143,8 +137,7 @@ $Response = "Sent";
 WFHistory($wid,$ReasonNo,$WFStatus,$Response);
 //echo "<br>End Orders Notify<br>";
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 
 /////////////////////////
@@ -158,10 +151,7 @@ function OEMeditWorkflow($templateid,$oemrecordid,$therapyid,$therapytype,$instr
 
 $Template_ID = $templateid;
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Get Patient ID
@@ -246,7 +236,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
+
 }
 elseif ($ReasonNo == 5){
 //Get body for Message and workflow NoSteps
@@ -284,7 +281,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
+
 }
 elseif ($ReasonNo == 6){
 //Get body for Message and workflow NoSteps
@@ -322,7 +326,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 7){
 //Get body for Message and workflow NoSteps
@@ -360,7 +370,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 8){
 //Get body for Message and workflow NoSteps
@@ -398,7 +414,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 9){
 //Get body for Message and workflow NoSteps
@@ -436,7 +458,14 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 10){
 //Get body for Message and workflow NoSteps
@@ -474,7 +503,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 11){
 //Get body for Message and workflow NoSteps
@@ -512,7 +547,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 12){
 //Get body for Message and workflow NoSteps
@@ -550,7 +591,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 elseif ($ReasonNo == 13){
 //Get body for Message and workflow NoSteps
@@ -588,7 +635,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 }
 else{
 echo "No Reason";
@@ -617,8 +670,8 @@ WFHistory($wid,$ReasonNo,$WFStatus,$Response);
 function OEMeditUpdateWorkflow($WFStatus,$Response,$wid,$oemrecordid,$ReasonNo,$srid){
 
 //Connect to database
-$serverName = "DBITDATA\DBIT";
-$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_VA_TEST");
+$serverName = "SQL\SERVER";
+$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"xxxx","Database"=>"COMS_UAT_VA_TEST");
 $conn =  sqlsrv_connect( $serverName, $connectionOptions);
 
 //Get Patient ID
@@ -665,7 +718,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store Message
 StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
@@ -691,7 +750,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store Message
 StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
@@ -714,10 +779,7 @@ WFHistory($wid,$ReasonNo,$WFStatus,$Response);
 /////////////////////////
 function StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid){
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 $midq = "SELECT mid FROM Messages ORDER BY mid";
@@ -760,8 +822,7 @@ $InsertMessageHistory = sqlsrv_query($conn, $messageq);
 
 return $mid;
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 
 /////////////////////////
@@ -772,17 +833,10 @@ return $mid;
 /////Begin - WFHistory Function
 /////////////////////////
 function WFHistory($wid,$ReasonNo,$WFStatus,$Response){
-//echo "<br>Begin WFHistory<br>";
-
-//echo "wid: ".$wid."<br>";
-//echo "ReasonNo: ".$ReasonNo."<br>";
 
 $rid = $_SESSION['rid'];
 
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 $CurrentStep = 0;
@@ -799,8 +853,6 @@ if ($CurrentStep == 0){
 $CurrentStep = 1;
 }
 
-//echo "Current Step WFHistory: ".$CurrentStep."<br>";
-
 //Get Number of Steps for Workflow, Get Last Workflow ID
 $wfinfo = "SELECT * FROM Workflows WHERE ReasonNo = '$ReasonNo'";
 $nosteps = sqlsrv_query($conn, $wfinfo);
@@ -816,13 +868,7 @@ if ($CurrentStep <= $NoSteps){
  //Update Last Issued
  $tsql = "Update Workflows set LastIssued = $wid where ID = '" .$id."'";
  $updateWorkflow = sqlsrv_query($conn, $tsql);
- //Update Workflow History
-// echo "ID: ".$id."<br>";
-// echo "WID: ".$wid."<br>";
-// echo "NoSteps: ".$NoSteps."<br>";
-// echo "Current Step: ".$CurrentStep."<br>";
  $NextStep = $CurrentStep + 1;
-// echo "Next Step: ".$NextStep."<br>";
 
  if ($NoSteps == $CurrentStep){
  $Status = "Complete";
@@ -831,11 +877,7 @@ if ($CurrentStep <= $NoSteps){
  $Status = "Not Complete";
  }
 
-//echo "Status: ".$Status."<br>";
- 
 }
-//echo "Current Step: ".$CurrentStep."<br>";
-//echo "Next Step: ".$NextStep."<br>";
 
 if ($WFStatus == "Update") {
  if ($NoSteps == $NextStep){
@@ -844,27 +886,22 @@ if ($WFStatus == "Update") {
  else {
  $Status = "Not Complete";
  }
-//if ($NextStep < $NoSteps){
+
 if ($CurrentStatus == "Complete"){
-//Do Nothing
+
 }
 else{
 $tsql3 = "INSERT INTO WorkflowHistory (wid,CurrentStep,NumOfSteps,Status,Response,rid,ReasonNo) VALUES ($wid,$NextStep,$NoSteps,'$Status','$Response',$rid,$ReasonNo)";
 $updateWorkflowHistory = sqlsrv_query($conn, $tsql3);
 }
 }
-//elseif ($CurrentStep == 1){
 elseif ($WFStatus == "Start"){
 //Insert into WorkflowHistory
 $tsql3 = "INSERT INTO WorkflowHistory (wid,CurrentStep,NumOfSteps,Status,Response,rid,ReasonNo) VALUES ($wid,$CurrentStep,$NoSteps,'$Status','$Response',$rid,$ReasonNo)";
 $updateWorkflowHistory = sqlsrv_query($conn, $tsql3);
 }
 
-//echo "check end";
-//echo "<br>End WFHistory<br>";
 
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 /////////////////////////
 /////End - WFHistory Function
@@ -874,10 +911,7 @@ $updateWorkflowHistory = sqlsrv_query($conn, $tsql3);
 /////Begin - Decode HTML Message in Database Function
 /////////////////////////
 function DecodeMessage($mid){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Select Message to Decode
@@ -911,8 +945,7 @@ echo "<tr><td align='center' colspan='2'><a href='https://".$_SESSION['domain'].
 echo "</table>";
 //echo "<br>Open Link:<br> ".$OpenLink."";
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 /////////////////////////
 /////End - Decode HTML Message in Database Function
@@ -922,10 +955,7 @@ echo "</table>";
 /////Begin - Set Workflow Steps
 /////////////////////////
 function UpdateWorkflowSteps($ReasonNo,$NoSteps){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Update Workflow
@@ -934,8 +964,7 @@ $updateWorkflowq = sqlsrv_query($conn, $wfu);
 
 echo "Updated";
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 /////////////////////////
 /////End - Set Workflow Steps
@@ -945,20 +974,13 @@ echo "Updated";
 /////Begin - Set Message Status
 /////////////////////////
 function UpdateMessageStatus($mid){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Update Workflow
 $msgu = "UPDATE Messages SET MStatus = 'Read' WHERE mid = " .$mid."";
 $updateMessageq = sqlsrv_query($conn, $msgu);
 
-//echo "Updated";
-
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 /////////////////////////
 /////End - Set Message Status
@@ -968,10 +990,7 @@ $updateMessageq = sqlsrv_query($conn, $msgu);
 /////Begin - Delete Message
 /////////////////////////
 function deleteMessage($mid){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 $mid = $_GET['mid'];
@@ -986,9 +1005,6 @@ echo "<tr><td>&nbsp;</td></tr>";
 echo "<tr><td>Message marked for Deletion.</td></tr>";
 echo "</table>";
 
-
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 /////////////////////////
 /////End - Delete Message
@@ -998,10 +1014,7 @@ echo "</table>";
 /////Begin - Reply to Message
 /////////////////////////
 function ReplyMessage($mid){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Select Message to Reply to
@@ -1038,8 +1051,7 @@ echo "<tr><td align='center'><a href='https://".$_SESSION['domain']."/reply.php'
 echo "</table>";
 echo "</form>";
 
-// Close the connection.
-//sqlsrv_close( $conn );
+
 }
 /////////////////////////
 /////End - Reply to Message
@@ -1049,10 +1061,7 @@ echo "</form>";
 /////Begin - Forward Message
 /////////////////////////
 function ForwardMessage($mid){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Select Message to Forward to
@@ -1092,8 +1101,6 @@ echo "<tr><td align='center'><a href='https://".$_SESSION['domain']."/reply.php'
 echo "</table>";
 echo "</form>";
 
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 /////////////////////////
 /////End - Forward Message
@@ -1103,10 +1110,7 @@ echo "</form>";
 /////Begin - Send Message
 /////////////////////////
 function sendMessage(){
-//Connect to database
-//$serverName = "DBITDATA\DBIT";
-//$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_TESTDB_June_19_2143");
-//$conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 include "dbitcon.php";
 
 //Grab data from the form
@@ -1119,7 +1123,6 @@ $To = $_POST['MTo'];
 $CC = $_SESSION['Email'];
 $senderEmail = $_SESSION['Email'];
 $MFrom = $senderEmail;
-//$Subject = "RE: ".$MsgSubject."";
 $Subject = "".$MsgSubject."";
 $message = "".$msgreply."";
 
@@ -1128,7 +1131,13 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 //Send the Message
-mail($To, $Subject, $message, $headers);
+try {
+    // mail($To, $Subject, $message, $headers);
+}
+catch (Exception $e) {
+    error_log("Can't send mail");
+}
+
 
 //Store the Message
 $mid = StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
@@ -1137,10 +1146,6 @@ $mid = StoreMessage($To,$CC,$Subject,$message,$MFrom,$wid);
 $msgs = "UPDATE Messages SET MStatus = 'Sent' WHERE mid = " .$mid."";
 $updateMessageq = sqlsrv_query($conn, $msgs);
 
-//echo "message sent";
-//header( "Location: ".$_SESSION['domain']."" );
-// Close the connection.
-//sqlsrv_close( $conn );
 }
 /////////////////////////
 /////End - Send Message

@@ -22,7 +22,8 @@ class OrdersController extends Controller {
         return false;
     }
 
-   function Orders() {
+
+   function grabOrders() {
 
         $form_data = json_decode(file_get_contents('php://input'));
         $jsonRecord = array();
@@ -79,12 +80,11 @@ class OrdersController extends Controller {
             $patientModel = new Patient();
             $modOemRecords = array();
 
-            foreach ($patientTemplates as $patient) {
 
+            foreach ($patientTemplates as $patient) {
                 //$oemrecords = $patientModel->getTopLevelOEMRecords($patient['patientID'],$patient['templateID']);
                 $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays($patient['patientID'], $patient['templateID']);
 				
-				//var_dump($oemrecords);
 
                 if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
                     $jsonRecord['success'] = 'false';
@@ -146,7 +146,6 @@ class OrdersController extends Controller {
 					$typeOrder = 3;
 
                     $tmpOemRecord = $this->analyzeTherapys($postTherapyCount, $postTherapys, $type, $typeOrder, $patient, $oemrecord, $postTherapyDoseDetailsMap);
-
                     $modOemRecords = array_merge($modOemRecords, $tmpOemRecord);
 
                     $retVal = $patientController->Regimens($oemrecord['TemplateID']);
@@ -178,10 +177,8 @@ class OrdersController extends Controller {
 						
 						//var_dump($orderRecord);
 
-                        //$orderStatus = $this->Orders->getOrderStatus($templateId,$drug,$PID,$Order_ID);
                         $orderStatus = $this->Orders->getOrderStatus($Order_ID);
 						//var_dump($orderStatus);
-						//$orderid = $this->Orders->getOrderStatus($templateId,$drug,$PID,$Order_ID);
 						$orderid = $this->Orders->getOrderStatus($Order_ID);
                         if(!empty($orderStatus) && count($orderStatus) > 0){
                             $orderRecord['orderstatus'] = $orderStatus[0]['orderStatus'];
@@ -194,20 +191,140 @@ class OrdersController extends Controller {
                         array_push($finalOrders, $orderRecord);
 
                     }
-
-                    
-                    //$PostOemRecord = $this->Orders->setOrders($modOemRecords);
                 }
             }
 
             $jsonRecord['success'] = true;
             $jsonRecord['total'] = count($finalOrders);
             $jsonRecord['records'] = $finalOrders;
-
             $this->set('jsonRecord', $jsonRecord);
         }
+   }
+   
+   function Orders() {
+	   $this->grabOrders();
     }
 
+   function OrdersHold($TID,$Drug_Name, $Order_Type, $PID) {
+	   $this->updateOrderStatusHold($TID,$Drug_Name, $Order_Type, $PID);
+    }	
+	
+   function OrdersCancelled($TID,$Drug_Name, $Order_Type, $PID) {
+	   $this->updateOrderStatusCancelled($TID,$Drug_Name, $Order_Type, $PID);
+    }
+
+
+/**
+ * $id = Record ID in specific table
+ * $type = Determines which table to update ("Pre", "Post", "Therapy")
+ *         Pre uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Post uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Therapy uses Template_Regimen Table and ID maps to 'Patient_Regimen_ID'
+ * $status = Status to set - "Hold", "Cancel", "Clear"
+ **/
+    function HoldCancel($patient_id = null, $template_id = null, $type = null, $status = null) {
+        // error_log("HoldCancel - $template_id, $type, $status");
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        
+        if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
+            if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
+                if (null === $status || "Clear" === $status) {
+                    $status = "";
+                }
+                if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+                    $table = "Medication_Hydration";
+                    $key = "MH_ID";
+                    if ("Therapy" == $type) {
+                        $table = "Template_Regimen";
+                        $key = "Patient_Regimen_ID";
+                    }
+
+                    $query = "select * from $table where $key = '$template_id'";
+// error_log($query);
+                    $TreatmentData = $this->Orders->query($query);
+// error_log("Treatment Data - " . json_encode($TreatmentData[0]));
+
+
+$lookup = new LookUp();
+$Order_Type = $type;
+$TID = $TreatmentData[0]["Template_ID"];
+$Drug_ID = $TreatmentData[0]["Drug_ID"];
+$Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
+$PID = $patient_id;
+
+
+// error_log("Status = $status");
+// error_log("Order_Type = $Order_Type");
+// error_log("TID = $TID");
+// error_log("Drug_ID = $Drug_ID");
+// error_log("Drug_Name = $Drug_Name");
+// error_log("Drug_Name = " . $Drug_Name[0]["Name"]);
+
+
+
+
+                    if(0 == count($TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = "No Record Matches $id";
+                    }
+                    else {
+                        if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = $frameworkErr;
+                            $this->set('frameworkErr', null);
+                        }
+                        else {
+
+if ("Hold" === $status) {
+	   $this->Orders->updateOrderStatusHold($TID,$Drug_Name, $Order_Type, $PID);
+}
+else if ("Cancel" === $status) {
+	   $this->Orders->updateOrderStatusCancelled($TID,$Drug_Name, $Order_Type, $PID);
+}
+
+                        }
+                    }
+                }
+                else {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a PUT";
+                }
+            }
+            else {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Invalid COMMAND - $status, expected a Hold/Cancel or Clear";
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid Therapy Type = $type expected Pre/Post/Therapy";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
     private function analyzeTherapys($therapyCount, $therapys, $type, $typeOrder, $patient, $oemrecord, $therapyDoseDetailsMap = null) {
 
         $modtmpOemRecord = array();
@@ -344,6 +461,46 @@ class OrdersController extends Controller {
         $this->set('jsonRecord', $jsonRecord);
     }
 
+
+
+/**
+ * Return the Order Status for a specified Order_ID
+ * Use Simple Rest Client to test/demo
+ * - https://mwb.dbitpro.com/Orders/OrderStatus/2567257F-D35D-E311-A204-000C2935B86F
+ * Only responds to GET, other commands return errors
+ **/
+    function OrderStatus($order_id = null) {
+        // error_log("OrderStatus - $order_id");
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            $table = "Order_Status";
+            $query = "select Order_Status from $table where Order_ID = '$order_id'";
+            $retVal = $this->Orders->query($query);
+            // error_log( $query);
+            // error_log( json_encode($retVal));
+            if(0 == count($retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "No Record Matches $id";
+            }
+            else {
+                if ($this->checkForErrors('Get Order Status FAILED ', $retVal)) {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $frameworkErr;
+                    $this->set('frameworkErr', null);
+                }
+                else {
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a GET";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
 }
 
 ?>

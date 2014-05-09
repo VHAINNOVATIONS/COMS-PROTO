@@ -34,6 +34,362 @@ class NursingDocController extends Controller {
             $this->set('jsonRecord', $jsonRecord);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function getAllMeds2Administer($records) {
+    $PreMeds4Sheet = array();
+    $PreMeds = array();
+
+    $therapyMeds = array();
+    $postMeds = array();
+    foreach($records as $record) {
+        $PreTherapy = $record["PreTherapy"];
+        foreach ($PreTherapy as $med) {
+            if (!isset($PreMeds[$med["MedID"]])) {
+                $PreMeds[$med["MedID"]] = $med["Med"];
+                $PreMeds4Sheet[] = array("label" => $med["Med"], "-" => "03 Pre Therapy Meds");
+            }
+        }
+
+
+        $Therapy = $record["Therapy"];
+        foreach ($Therapy as $med) {
+//error_log("Therapy Med - " . $med["MedID"] . " --- " . $med["Med"]);
+            if (!isset($therapyMeds[$med["MedID"]])) {
+                $therapyMeds[$med["MedID"]] = $med["Med"];
+                $PreMeds[] = array("label" => $med["Med"], "-" => "03 Pre Therapy Meds", "medID" => $med["MedID"] );
+
+            }
+        }
+        $PostTherapy = $record["PostTherapy"];
+//error_log("PostTherapy Med - " . $med["MedID"] . " --- " . $med["Med"]);
+        foreach ($PostTherapy as $med) {
+            if (!isset($postMeds[$med["MedID"]])) {
+                $postMeds[$med["MedID"]] = $med["Med"];
+            }
+        }
+    }
+    $medRows = array();
+    $medRows["preMeds"] = $PreMeds4Sheet;
+    $medRows["therapyMeds"] = $therapyMeds;
+    $medRows["postMeds"] = $postMeds;
+    return $medRows;
+}
+
+
+
+
+
+
+
+
+    function Flowsheet ($PatientID) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $FSFields = array();
+        $FSColumns = array();
+        $FSData = array();
+
+        if ("GET" !== $_SERVER['REQUEST_METHOD']) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a GET";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        if (!$PatientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $patient = new Patient();
+        $controller = 'PatientController';
+        $patientController = new $controller('Patient', 'patient', null);
+        $patientModel = new Patient();
+
+        // Get All OEM Records to build individual Date columns
+        $returnVal = $patientController->getVitals($PatientID);
+        $Vitals = null;
+        $assVitals = array();
+        if (isset($returnVal)) {
+            if ("true" == $returnVal["success"]) {
+                $Vitals = $returnVal["records"];
+                foreach($Vitals as $VitalEntry) {
+                    $V = array();
+                    $idx = $VitalEntry["DateTaken"];
+                    $V["PS"] = $VitalEntry["PS"];
+                    $V["PSID"] = $VitalEntry["PSID"];
+                    $V["Weight"] = $VitalEntry["Weight"];
+                    $assVitals[] = $V;
+                }
+            }
+        }
+
+        $FSPSRow = array("label" => "Performance Status", "-" => "01 General");
+        $FSWeightRow = array("label" => "Weight (lbs/kg)", "-" => "01 General");
+        $FSDateRow = array("label" => "Date", "-" => "01 General");
+        $FSDiseaseResponse = array("label" => "Disease Response", "-" => "01 General");
+        $FSToxicity = array("label" => "Toxicity Side Effects", "-" => "01 General");
+        $FSOther = array("label" => "Other", "-" => "01 General");
+        $FSLabs = array("label" => "Unknown...", "-" => "02 Laboratory Results");
+
+        $FSPreMeds = array("label" => "Pre Therapy Med", "-" => "03 Pre Therapy Meds");
+        $FSTherapyMeds = array("label" => "Therapy Med", "-" => "04 Therapy Meds");
+        $FSPostMeds = array("label" => "Post Therapy Med", "-" => "05 Post Therapy Meds");
+
+        $FSFields = array("label", "-");
+        $FSColumns = array();
+        $FSColumns[] = array("header" => " ", "dataIndex" => "label", "width" => 140);
+        $FSColumns[] = array("header" => " ", "dataIndex" => "-", "width" => 140);
+        // $FSColumns[] = array("header" => "-", "dataIndex" => "-", "width" => 140);
+        // $FSColumns = array();
+
+
+
+
+/**********************************************************************************************/
+
+
+
+
+
+        // Get All OEM Records to build individual Date columns
+        $returnVal = $patientController->getOEMData($PatientID);
+        if (isset($returnVal)) {
+            if ($returnVal["success"]) {
+                $today = date('m/d/Y');
+error_log("GenOEMData - Records");
+error_log(json_encode($returnVal));
+error_log("----------------------------");
+                $OEM = $returnVal["records"][0];
+                $records = $OEM["OEMRecords"];
+error_log(json_encode($records));
+error_log("----------------------------");
+
+
+                $colIdx = 0;
+                $LastAdminDate = "";
+                $MoreAdminDates2Check = true;
+
+$medRows = $this->getAllMeds2Administer($records);
+
+
+
+
+
+
+
+$PreTherapy = $medRows["preMeds"];
+error_log("---------- PRE THERAPY ------------------");
+error_log(json_encode($PreTherapy));
+//error_log("----------------------------");
+//foreach ($PreTherapy as $Med) {
+//error_log(json_encode($Med));
+//    $Med["label"] = "Pre Therapy Med";
+//    $Med["-"] = "03 Pre Therapy Meds";
+//error_log(json_encode($Med));
+//}
+error_log("--------- END PRE THERAPY ---------------");
+
+
+
+
+
+
+
+
+
+$Therapy = $medRows["therapyMeds"];
+foreach ($Therapy as $Med) {
+    $Med = array("label" => "Therapy Med", "-" => "04 Therapy Meds");
+}
+
+$PostTherapy = $medRows["postMeds"];
+foreach ($PostTherapy as $Med) {
+    $Med = array("label" => "Post Therapy Med", "-" => "05 Post Therapy Meds");
+}
+error_log("All PreTherapy Info");
+error_log(json_encode($PreTherapy));
+error_log("----------------------------");
+
+
+
+                foreach($records as $record) {
+//                    $PreTherapy = $record["PreTherapy"];
+//                    $Therapy = $record["Therapy"];
+//                    $PostTherapy = $record["PostTherapy"];
+
+                    
+                    $colIdx++;
+                    $FlowsheetGrid = array();
+                    $hdr = "Cycle " . $record["Cycle"] . ", Day " . $record["Day"];
+                    $FSFields[] = $hdr;
+                    // $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90, "field" => array( "xtype" => "textfield" ));
+                    if ($MoreAdminDates2Check) {    // Find most recent past admin date
+                        $LastAdminDate = $record["AdminDate"];
+                        $dfltPos = array( "row" => 1, "column" => $colIdx );
+                    }
+
+                    if ($today === $record["AdminDate"]) {
+                        $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 120, "tdCls" => "fSheet-editCell", "editor" => array( "xtype" => "textfield", "allowBlank" => "false" ));
+                        $colIdx--;
+                        $dfltPos = array( "row" => 1, "column" => $colIdx );
+                    }
+                    else {
+                        if(new DateTime() < new DateTime($record["AdminDate"])) {
+                            $MoreAdminDates2Check = false;
+                        }
+                        $FSColumns[] = array( "header" => $hdr, "dataIndex" => $hdr, "width" => 90);
+                    }
+                    $this->set("dfltPos", $dfltPos);
+
+                    $idx = $record["AdminDate"];
+                    $V_PS = "";
+                    $V_Weight = "";
+
+                    if (isset($assVitals[$idx])) {
+                        $tmp = $assVitals[$idx];
+                        $V_PS = "<abbr title=\"" + $tmp.PS + "\">" + $tmp.PSID + "</abbr>";
+                        $V_Weight = $tmp.Weight;
+                    }
+
+                    $FSPSRow[$hdr] = $V_PS;
+                    $FSWeightRow[$hdr] = $V_Weight;
+                    $FSDateRow[$hdr] = $record["AdminDate"];
+                    $FSDiseaseResponse[$hdr] = "";
+                    $FSToxicity[$hdr] = "";
+                    $FSOther[$hdr] = "";
+                    $FSLabs[$hdr] = "";
+
+$Meds = $record["PreTherapy"];
+foreach ($Meds as $Med) {
+    error_log("Walking Records - " . $Med["Med"] . $Med["Dose1"] . " " . $Med["DoseUnits1"]);
+    $PreTherapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$Meds = $record["Therapy"];
+foreach ($Meds as $Med) {
+    $Therapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+$Meds = $record["PostTherapy"];
+foreach ($Meds as $Med) {
+    $PostTherapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
+}
+
+
+                    $FSPreMeds[$hdr] = "Med 1 - $idx";
+                    $FSTherapyMeds[$hdr] = "Med 2 - $idx";
+                    $FSPostMeds[$hdr] = "Med 3 - $idx";
+
+
+                }
+                $FSColumns[$dfltPos["column"]]["tdCls"] = "fSheet-editCell";
+            }
+        }
+
+        if (!isset($returnVal)) {
+            $this->set('frameworkErr', null);
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "No OEM Data Available - $PatientID";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+
+        $FSData = array( $FSDateRow, $FSPSRow, $FSWeightRow, $FSDiseaseResponse, $FSToxicity, $FSOther, $FSLabs, $FSPreMeds, $FSTherapyMeds, $FSPostMeds);
+
+        $jsonRecord = array( "status" => true, "msg" => "Breakpoint 1", "records" => array("Fields" => $FSFields, "Columns" => $FSColumns, "Data" => $FSData));
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    function FlowsheetFields ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get("jsonRecord");
+        $DfltPos = $this->get("dfltPos");
+        $jsonRecord = array("success" => true, "records" => array(
+            "dfltPos" => $DfltPos,
+            "Fields" => $Info["records"]["Fields"], 
+            "Columns" => $Info["records"]["Columns"] 
+        ));
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    function FlowsheetColumns ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get('jsonRecord');
+        $jsonRecord = array("success" => true, "records" => $Info["records"]["Columns"]);
+        $this->set('jsonRecord', $jsonRecord);
+    }
+    function FlowsheetData ($PatientID) {
+        $this->Flowsheet($PatientID);
+        $Info = $this->get('jsonRecord');
+        $jsonRecord = array("success" => true, "records" => $Info["records"]["Data"]);
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+
+
+
+/********************** END FLOWSHEET ***********************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     public function ActiveDischargeInstructions()
     {

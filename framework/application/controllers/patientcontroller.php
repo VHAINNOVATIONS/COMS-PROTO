@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @property Patient $Patient
  *
@@ -28,6 +27,26 @@ class PatientController extends Controller
         return false;
     }
 
+
+    function MedicationSanityCheck () {
+        // Get all templates from the Master Template
+        $query = "select * from Master_Template";
+        // Template_ID - should exist in all tables
+        // Regimen_ID
+        // Cancer_ID
+        // Location_ID
+        // Cycle_Time_Frame_ID
+        // Emotegenic_ID
+        // Created_By
+        // Patient_ID
+
+
+        // for each template walk through all the therapies and look into the Regimen and Medication_Hydration and MH_Infusion tables for squirly data
+        // When found produce a list
+    }
+
+
+
     function LabInfoResults($patientId = NULL)
     {
         $jsonRecord = array();
@@ -51,13 +70,17 @@ class PatientController extends Controller
             foreach ($records as $record) {
                 
                 $results = $this->Patient->getLabInfoResults($record['ID']);
-                $modResults = array();
+                // $modResults = array();
                 
                 // MWB - 5/14/2012 - There's only ever one element in the
                 // results array returned from MDWS (why make it an array
                 // then???)
-                $result = $results[0];
-                
+                if( isset($results[0]) ) {
+                    $result = $results[0];
+                }
+                else {
+                    $result = $results;
+                }
                 if ('0' == $result['outOfRange']) {
                     $result['outOfRange'] = false;
                 } else {
@@ -109,7 +132,7 @@ class PatientController extends Controller
                     'Removed several columns from Patient History so the query has been removed.');
         } else {
             $this->set('history', null);
-            $this->set('frameworkErr', 'No Patient ID provided.');
+            $this->set('frameworkErr', 'No Patient ID provided. - 123');
         }
     }
 
@@ -118,8 +141,7 @@ class PatientController extends Controller
         if ($id != NULL) {
             $patientTemplate = $this->Patient->getPriorPatientTemplates($id);
             
-            if ($this->checkForErrors('Get Patient Template Failed. ', 
-                    $patientTemplate)) {
+            if ($this->checkForErrors('Get Patient Template Failed. ', $patientTemplate)) {
                 return;
             }
             
@@ -129,6 +151,120 @@ class PatientController extends Controller
             $this->set('frameworkErr', 'No Patient ID provided.');
         }
     }
+
+    /* Get all templates assigned to a patient (past and current) */
+    function Templates($Patient_ID = NULL)
+    {
+        $jsonRecord = array();
+
+        if (NULL === $Patient_ID) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = 'No Patient ID provided.';
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $details = $this->Patient->getCurrentAndHistoricalPatientTemplates($Patient_ID);
+        if ($this->checkForErrors('Get Patient Details Failed. ', $details )) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = 'Get Patient Details Failed.';
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $currentTemplate = array();
+        $historicalTemplates = array();
+        foreach ($details as $detail) {
+            $current = strtotime($detail["DateEnded"]) > strtotime(date("m/d/Y"));
+            if ("" === $detail["DateEndedActual"] && $current) {
+                $currentTemplate[] = $detail;
+            }
+            else {
+                $historicalTemplates[] = $detail;
+            }
+        }
+        $records = array();
+        $records['current'] = $currentTemplate;
+        $records['historical'] = $historicalTemplates;
+      
+
+        $jsonRecord['success'] = 'true';
+        $jsonRecord['total'] = count($details);
+        $jsonRecord['records'] = $records;
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+
+
+
+
+
+	function PrintOrders($patientID) {
+		$hasErrors = false;
+
+		if ($patientID != NULL) {
+			// Call the "selectByPatientId" function of the Patient model to retrieve all the basic Patient Info
+			$patientData = $this->Patient->selectByPatientId($patientID);
+			if ($this->checkForErrors('Get Patient Details Failed. ', $patientData)) {
+				$this->set('templatedata', null);
+				$hasErrors = true;
+				return;
+			}
+			$this->set('PatientInfo', $patientData[0]);
+
+			$patientAllergies = $this->Allergies($patientID);
+			if ($this->checkForErrors('Get Patient Allergies Failed. ', $patientAllergies)) {
+				return;
+			}
+
+			$this->set('patientAllergies', $patientAllergies);
+			$this->set('frameworkErr', null);
+
+
+			$patientTemplate = $this->Patient->getPriorPatientTemplates($patientID);
+			if ($this->checkForErrors('Get Patient Template Failed. ', $patientTemplate)) {
+				return;
+			}
+
+			$this->set('patientTemplate', $patientTemplate);
+			$this->set('frameworkErr', null);
+
+			// Function is also used by the OEM controller function to retrieve all the current OEM Data
+			$this->genOEMData($patientID);
+			$PatientDetails = $this->Patient->getPatientDetailInfo($patientID);
+			if ($this->checkForErrors('Get Patient Details Failed. ', $PatientDetails)) {
+				$this->set('templatedata', null);
+				$hasErrors = true;
+				return;
+			}
+
+			if (!empty($PatientDetails[0])) {
+				$detail = $this->TreatmentStatus($PatientDetails[0]);
+				if ($detail["TreatmentStatus"] == 'Ended') {
+					$detail = null;
+				}
+				$patientDetailMap[$patientID] = $detail;
+			} 
+			else {
+				$patientDetailMap[$patientID] = $PatientDetails;
+			}
+			$this->set('PatientDetailMap', $patientDetailMap);
+
+/**
+			$lookup = new LookUp();
+			$Disease = $lookup->selectByNameAndDesc('DiseaseType', $this->masterRecord[0]['Disease']);
+			if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
+				$this->set('templatedata', null);
+				return;
+			}
+			$this->masterRecord[0]['DiseaseRecord'] = $Disease;
+**/
+
+		}
+		else {
+			$this->set('frameworkErr', 'No Patient ID provided.');
+		}
+	}
+
+
 
     /**
      * savePatientTemplate action
@@ -140,7 +276,7 @@ class PatientController extends Controller
         $this->Patient->beginTransaction();
         
         $returnVal = $this->Patient->savePatientTemplate($formData);
-        
+
         if ($this->checkForErrors('Apply Patient Template Failed. ', $returnVal)) {
             $this->set('patientTemplateId', null);
             $this->Patient->rollbackTransaction();
@@ -204,67 +340,105 @@ class PatientController extends Controller
         $this->Patient->endTransaction();
     }
 
+
+
+
     function viewall($id = NULL)
     {
-        // if($id == NULL){
-        $retVal = $this->Patient->selectAll();
+// error_log("viewall Entry Point");
+        if($id == NULL){
+            $retVal = $this->Patient->selectAll();
+        }
+        else {
+            $retVal = $this->Patient->selectAll($id);
+        }
         if ($this->checkForErrors('Get Patients Failed. ', $retVal)) {
             $this->set('templatedata', null);
             return;
         }
-        
+
         $patients = $retVal;
         $patientDetailMap = array();
         $measurements = array();
         $modPatients = array();
-        
-        foreach ($patients as $patient) {
-            if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
-                $lookup = new LookUp();
-                $amputations = $lookup->getLookupDescByNameAndType(
-                        $patient['ID'], '30');
-                if ($this->checkForErrors('Get Patient Amputations Failed. ', 
-                        $amputations)) {
-                    $this->set('templatedata', null);
-                    return;
-                }
-                
-                $tmpAmputations = array();
-                foreach ($amputations as $amputation) {
-                    array_push($tmpAmputations, $amputation);
-                }
-                
-                $patient['amputations'] = $tmpAmputations;
-                array_push($modPatients, $patient);
-                
-                $retVal = $this->Patient->getPatientDetailInfo($patient['ID']);
-                
-                if ($this->checkForErrors('Get Patient Details Failed. ', 
-                        $retVal)) {
-                    $this->set('templatedata', null);
-                    return;
-                }
-                
-                $details = $retVal;
-                if (!empty($details[0])) {
-                    $detail = $this->TreatmentStatus($details[0]);
-                    if ($detail["TreatmentStatus"] == 'Ended') {
-                        $detail = null;
+// error_log("Patients Count - " . count($patients));
+            foreach ($patients as $patient) {
+                if ((NULL === $id) || (NULL !== $id && $patient['ID'] == $id)) {
+                    $lookup = new LookUp();
+
+
+                    $amputations = $lookup->getLookupDescByNameAndType( $patient['ID'], '30');
+                    if ($this->checkForErrors('Get Patient Amputations Failed. ',  $amputations)) {
+                        $this->set('templatedata', null);
+                        return;
                     }
-                    $patientDetailMap[$patient['ID']] = $detail;
-                } else {
-                    $patientDetailMap[$patient['ID']] = $details;
+                    $tmpAmputations = array();
+                    foreach ($amputations as $amputation) {
+                        array_push($tmpAmputations, $amputation);
+                    }
+                    $patient['amputations'] = $tmpAmputations;
+                    array_push($modPatients, $patient);
+
+
+                    $retVal = $this->Patient->getPatientDetailInfo($patient['ID']);
+                    
+                    if ($this->checkForErrors('Get Patient Details Failed. ', $retVal)) {
+                        $this->set('templatedata', null);
+                        return;
+                    }
+                    $patientBSA = $this->_getBSA($patient['ID']);
+
+                    $details = $retVal;
+// error_log("Details Count - " . count($details));
+// error_log("Why are there so many detail records for a single patient?");
+                    if (count($details) > 0) {
+                    foreach($details as $d) {
+                        $detail = $this->TreatmentStatus($d);
+
+//                        error_log("BSA");
+//                        error_log(json_encode($patientBSA));
+                        if (isset($patientBSA) && count($patientBSA) > 0) {
+//                            error_log("Got BSA Data from BSA_Info Table");
+                            $a = $patientBSA[0]["WeightFormula"];
+                            $b = $patientBSA[0]["BSAFormula"];
+                            $detail["WeightFormula"] = $a;
+                            $detail["BSAFormula"] = $b;
+                        }
+
+
+                        if ($detail["TreatmentStatus"] != 'Ended') {
+                            $patientDetailMap[$patient['ID']] = $detail;
+                        }
+                    }
+                }
+                    else {
+// error_log("No Details, so build one");
+                            $detail = array();
+                            $detail["TemplateName"] = "";
+                            $detail["TemplateDescription"] = "";
+                            $detail["TemplateID"] = "";
+                            $detail["TreatmentStart"] = "";
+                            $detail["TreatmentEnd"] = "";
+                            $detail["TreatmentStatus"] = "";
+                            $detail["Goal"] = "";
+                            $detail["ClinicalTrial"] = "";
+                            $detail["PAT_ID"] = "";
+                            $detail["PerformanceStatus"] = "";
+
+                            if (isset($patientBSA) && count($patientBSA) > 0) {
+                                // error_log("Got BSA Data from BSA_Info Table");
+                                $a = $patientBSA[0]["WeightFormula"];
+                                $b = $patientBSA[0]["BSAFormula"];
+                                $detail["WeightFormula"] = $a;
+                                $detail["BSAFormula"] = $b;
+                            }
+                            $patientDetailMap[$patient['ID']] = $detail;
+                    }
                 }
             }
-        }
         
         $this->set('patients', $modPatients);
         $this->set('templatedetails', $patientDetailMap);
-        
-        // }else {
-        // $this->set('patients',null);
-        // $this->set('frameworkErr', 'Unrecognized Parameter passed.');
-        // }
     }
 
     /**
@@ -277,8 +451,8 @@ class PatientController extends Controller
      */
     private function _insertOrderStatus($formData, $preHydrationRecord)
     {
-        $templateId = $formData->TemplateId;
-        $patientid = $formData->PatientId;
+        $templateId = $formData->TemplateID;
+        $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
@@ -455,6 +629,7 @@ class PatientController extends Controller
         $data->FluidVol = $regimen["flvol"];
         $data->FlowRate = $regimen["flowRate"];
         $data->Instructions = $regimen["instructions"];
+        $data->Status = $regimen["Status"];
         $data->Sequence = $regimen["sequence"];
         $data->AdminTime = $regimen["adminTime"];
         $data->FluidType = $regimen["fluidType"];
@@ -519,8 +694,7 @@ class PatientController extends Controller
      * @param unknown_type $patientId            
      * @return void Ambigous multitype:string >
      */
-    private function _insertTemplate($template, $adminDay, $adminDate, $cycle, 
-            $patientId)
+    private function _insertTemplate($template, $adminDay, $adminDate, $cycle, $patientId)
     {
         $data = new stdClass();
         $data->Disease = $template['Disease'];
@@ -541,8 +715,7 @@ class PatientController extends Controller
         $lookup = new LookUp();
         $templateId = $lookup->saveTemplate($data, $template['RegimenId']);
         
-        if ($this->checkForErrors('Insert Master Template Failed. ', 
-                $templateId)) {
+        if ($this->checkForErrors("Insert Master Template (in Patient Controller) Failed. (id=$templateId)", $templateId)){
             $this->Patient->rollbackTransaction();
             return;
         }
@@ -559,9 +732,9 @@ class PatientController extends Controller
      */
     private function createOEMRecords($formData)
     {
-        $templateId = $formData->TemplateId;
+        $templateId = $formData->TemplateID;
         $lookup = new LookUp();
-        $templates = $lookup->getTopLevelTemplateDataById($templateId);
+        $templates = $lookup->getTopLevelTemplateDataById($templateId, '');
         $template = $templates[0];
         
         $this->Hydrations('pre', $templateId);
@@ -579,7 +752,7 @@ class PatientController extends Controller
         $regimens = $this->get('regimens');
         
         $dateStarted = $formData->DateStarted;
-        $patientId = $formData->PatientId;
+        $patientId = $formData->PatientID;
         
         for ($cycle = 1; $cycle <= $template['CourseNumMax']; $cycle ++) {
             
@@ -631,154 +804,393 @@ class PatientController extends Controller
         return $startDate->format('Y-m-d');
     }
 
-    function OEM($id = null)
-    {
+/**
+ * $id = Patient GUID used in the Patient Assigned Templates Table
+ *
+ *  Get Template currently assigned to this patient
+ *  Get the disease this patient has
+ *  
+ **/
+	private function genOEMData($id) {
+		$lookup = new LookUp();
+		$templateId = $this->Patient->getTemplateIdByPatientID($id);
+		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
+			$this->set('masterRecord', null);
+            // error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
+			return;
+		}
+
+		if (0 == count($templateId)) {
+			$this->set('oemsaved', null);
+			$this->set('oemrecords', null);
+			$this->set('masterRecord', null);
+			$this->set('frameworkErr', null);
+            // error_log("No Records for  - $id");
+            // error_log(json_encode($templateId));
+			return;
+		}
+
+		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
+		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
+			$this->set('masterRecord', null);
+            // error_log("Get Top Level Template Data Failed. $masterRecord");
+			return;
+		}
+
+		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
+		$lookup = new LookUp();
+		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
+		if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
+			$this->set('templatedata', null);
+            // error_log("Get Disease Info Failed. $Disease");
+			return;
+		}
+		$masterRecord[0]['DiseaseRecord'] = $Disease;
+		$this->set('masterRecord', $masterRecord);
+
+
+
+
+		$oemrecords = $this->Patient->getTopLevelOEMRecords($id, $templateId[0]['id']);
+		if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
+			$this->set('oemrecords', null);
+            // error_log("Get Top Level OEM Data Failed. $oemrecords");
+			return;
+		}
+		$this->set('oemrecords', $oemrecords);
+
+		$oemMap = array();
+		foreach ($oemrecords as $oemrecord) {
+			$oemDetails = array();
+            $oemRecordTemplateID = $oemrecord['TemplateID'];
+
+            $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
+				$this->set('oemrecords', null);
+                // error_log("Get Pre Therapy Failed. - $retVal");
+				return;
+			}
+			$oemDetails['PreTherapy'] = $this->get('prehydrations');
+			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
+
+
+			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
+				$this->set('oemrecords', null);
+                // error_log("Get Post Therapy Failed. - $retVal");
+				return;
+			}
+			$oemDetails['PostTherapy'] = $this->get('posthydrations');
+			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
+
+            $retVal = $this->Regimens($oemrecord['TemplateID']);
+			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
+				$this->set('oemrecords', null);
+                // error_log("Get Therapy Failed. - $retVal");
+				return;
+			}
+			$oemDetails['Therapy'] = $this->get('regimens');
+			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
+		}
+
+		$this->set('oemMap', $oemMap);
+		$this->set('oemsaved', null);
+		$this->set('frameworkErr', null);
+	}
+
+
+    function getOEMData($PatientID) {
+        $this->genOEMData($PatientID);
+        $this->buildJsonObj4Output();
+        return $this->get('jsonRecord');
+    }
+
+
+/*********************************************************/
+function Therapy($regimens) {
+    $Therapy = array();
+    foreach ($regimens as $regimen) {
+        $TherapyRecord = array();
+        $status = $regimen["Status"] ? $regimen["Status"] : "";
+        $reason = ("Test - Communication" !== $regimen["Reason"]) ? $regimen["Reason"] : "";
+        $TherapyRecord["id"] = $regimen["id"];
+        $TherapyRecord["Order_ID"] = $regimen["Order_ID"];
+        $TherapyRecord["Order_Status"] = $regimen["Order_Status"];
+        $TherapyRecord["Med"] = $regimen["drug"];
+        $TherapyRecord["Dose"] = $regimen["regdose"];
+        $TherapyRecord["MedID"] = $regimen["drugid"];
+        $TherapyRecord["DoseUnits"] = $regimen["regdoseunit"];
+        $TherapyRecord["AdminMethod"] = $regimen["route"];
+        $TherapyRecord["FluidType"] = $regimen["fluidType"];
+        $TherapyRecord["BSA_Dose"] = $regimen["bsaDose"];
+        $TherapyRecord["FluidVol"] = $regimen["flvol"];
+        $TherapyRecord["FlowRate"] = $regimen["flowRate"];
+        $TherapyRecord["Instructions"] = $regimen["instructions"];
+        $TherapyRecord["Status"] = $status;
+        $TherapyRecord["Reason"] = $reason;
+        $TherapyRecord["AdminTime"] = $regimen["adminTime"];
+        $TherapyRecord["InfusionTime"] = $regimen["infusion"];
+        $Therapy[] = $TherapyRecord;
+    }
+    return $Therapy;
+}
+
+function PrePostTherapy($hydrations, $infusions) {
+    $HydrationArray = array();
+    foreach ($hydrations as $hydration) {
+        $HydrationRecord = array();
+        $status = $hydration["Status"] ? $hydration["Status"] : "";
+
+        $reason = "";
+        if (isset($hydration["Reason"])) {
+            $reason = ("Test - Communication" !== $hydration["Reason"]) ? $hydration["Reason"] : "";
+        }
+
+        $HydrationRecord["id"] = $hydration["id"];
+        $HydrationRecord["Order_ID"] = $hydration["Order_ID"];
+        $HydrationRecord["Order_Status"] = isset($hydration["Order_Status"]) ? $hydration["Order_Status"] : "";
+        $HydrationRecord["Instructions"] = $hydration["description"];
+        $HydrationRecord["Status"] = $status;
+        $HydrationRecord["Reason"] = $reason;
+        $HydrationRecord["Med"] = $hydration["drug"];
+        $HydrationRecord["MedID"] = $hydration["drugid"];
+        $HydrationRecord["AdminTime"] = $hydration["adminTime"];
+
+        $myinfusions = $infusions[$hydration['id']];
+        $numInfusions = count($myinfusions);
+
+        if($numInfusions == 0){
+            $HydrationRecord["Dose1"] = "";
+            $HydrationRecord["DoseUnits1"] = "";
+            $HydrationRecord["AdminMethod1"] = "";
+            $HydrationRecord["BSA_Dose1"] = "";
+            $HydrationRecord["FluidType1"] = "";
+            $HydrationRecord["FluidVol1"] = "";
+            $HydrationRecord["FlowRate1"] = "";
+            $HydrationRecord["InfusionTime1"] = "";
+            $HydrationRecord["Dose2"] = "";
+            $HydrationRecord["DoseUnits2"] = "";
+            $HydrationRecord["AdminMethod2"] = "";
+            $HydrationRecord["BSA_Dose2"] = "";
+            $HydrationRecord["FluidType2"] = "";
+            $HydrationRecord["FluidVol2"] = "";
+            $HydrationRecord["FlowRate2"] = "";
+            $HydrationRecord["InfusionTime2"] = "";
+        } else if ($numInfusions == 1) {
+            $bsa_dose = null == $myinfusions[0]["bsaDose"] ? "" : $myinfusions[0]["bsaDose"];
+            $HydrationRecord["Dose1"] = $myinfusions[0]["amt"];
+            $HydrationRecord["DoseUnits1"] = $myinfusions[0]["unit"];
+            $HydrationRecord["AdminMethod1"] = $myinfusions[0]["type"];
+            $HydrationRecord["BSA_Dose1"] = $bsa_dose;
+            $HydrationRecord["FluidType1"] = $myinfusions[0]["fluidType"];
+            $HydrationRecord["FluidVol1"] = $myinfusions[0]["fluidVol"];
+            $HydrationRecord["FlowRate1"] = $myinfusions[0]["flowRate"];
+            $HydrationRecord["InfusionTime1"] = $myinfusions[0]["infusionTime"];
+            $HydrationRecord["Dose2"] = "";
+            $HydrationRecord["DoseUnits2"] = "";
+            $HydrationRecord["AdminMethod2"] = "";
+            $HydrationRecord["BSA_Dose2"] = "";
+            $HydrationRecord["FluidType2"] = "";
+            $HydrationRecord["FluidVol2"] = "";
+            $HydrationRecord["FlowRate2"] = "";
+            $HydrationRecord["InfusionTime2"] = "";
+        } else {
+            $infusionCount = 1;
+            foreach ($myinfusions as $infusion) {
+                $bsa_dose = null == $infusion["bsaDose"] ? "" : $infusion["bsaDose"];
+                $HydrationRecord["Dose$infusionCount"] = $infusion["amt"];
+                $HydrationRecord["DoseUnits$infusionCount"] = $infusion["unit"];
+                $HydrationRecord["AdminMethod$infusionCount"] = $infusion["type"];
+                $HydrationRecord["BSA_Dose$infusionCount"] = $bsa_dose;
+                $HydrationRecord["FluidType$infusionCount"] = $infusion["fluidType"];
+                $HydrationRecord["FluidVol$infusionCount"] = $infusion["fluidVol"];
+                $HydrationRecord["FlowRate$infusionCount"] = $infusion["flowRate"];
+                $HydrationRecord["InfusionTime$infusionCount"] = $infusion["infusionTime"];
+                $infusionCount++;
+            }
+        }
+        $HydrationArray[] = $HydrationRecord;
+    }
+    return $HydrationArray;
+}
+
+
+function CountAdminDaysPerCycle ($oemRecords) {
+    // Perform REAL calculation of the # of Admin Days in a Given cycle.
+    // Previously incorrect data pulled in the echo below:
+    //    "\"AdminDaysPerCycle\":\"".$masterRecord[0]['length']."\", \"OEMRecords\":[";
+    // the "length" is the # of <units> per cycle (where units is days, weeks, etc)
+    // What's needed is the # of Admin Days per cycle (which can be anything from 1 up to the # of days in a cycle
+    $AdminDaysPerCycle = 0;
+    foreach ($oemRecords as $oemrecord) {
+        if (1 == $oemrecord["CourseNum"]) {
+            $AdminDaysPerCycle++;
+        }
+        else {
+            break;
+        }
+    }
+    return $AdminDaysPerCycle;
+}
+
+function buildJsonObj4Output() {
+    $oemrecords = $this->get('oemrecords');
+    $oemsaved = $this->get('oemsaved');
+    $masterRecord = $this->get('masterRecord');
+    $oemMap = $this->get('oemMap');
+
+    $jsonRecord = array();
+    if (!is_null($oemrecords) && is_null($oemsaved)) {
+        $numeoemrecords = count($oemrecords);
+        $numtemplates = count($masterRecord);
+        
+        if ($numeoemrecords) {
+            $AdminDaysPerCycle = $this->CountAdminDaysPerCycle($oemrecords);
+            $jsonRecord["success"] = true;
+            $jsonRecord["total"] = $numtemplates;
+
+            $preRecord = array();
+            $preRecord["id"] = $masterRecord[0]["id"];
+            $preRecord["FNRisk"] = $masterRecord[0]["fnRisk"];
+            $preRecord["NeutropeniaRecommendation"] = "XX";
+            $preRecord["ELevelID"] = $masterRecord[0]["emoID"];
+            $preRecord["ELevelName"] = $masterRecord[0]["emoLevel"];
+            $preRecord["ELevelRecommendationASCO"] = "XX";
+            $preRecord["ELevelRecommendationNCCN"] = "XX";
+            $preRecord["numCycles"] = $masterRecord[0]["CourseNumMax"];
+            $preRecord["Goal"] = $masterRecord[0]["Goal"];
+            $preRecord["ClinicalTrial"] = $masterRecord[0]["ClinicalTrial"];
+            $preRecord["Status"] = $masterRecord[0]["Status"];
+            $preRecord["PerformanceStatus"] = $masterRecord[0]["PerfStatus"];
+            $preRecord["AdminDaysPerCycle"] = $AdminDaysPerCycle;
+
+            $allRecords = array();
+            foreach ($oemrecords as $oemrecord) {
+                $oemDetails = $oemMap[$oemrecord['TemplateID']];
+                $OneRecord = array();
+                $OneRecord["id"] = $oemrecord["TemplateID"];
+                $OneRecord["Cycle"] = $oemrecord["CourseNum"];
+                $OneRecord["Day"] = $oemrecord["Day"];
+                $OneRecord["AdminDate"] = $oemrecord["AdminDate"];
+                $OneRecord["PreTherapyInstr"] = $oemrecord["PreTherapyInstr"];
+                $OneRecord["TherapyInstr"] = $oemrecord["TherapyInstr"];
+                $OneRecord["PostTherapyInstr"] = $oemrecord["PostTherapyInstr"];
+                $OneRecord["PreTherapy"] = $this->PrePostTherapy($oemDetails["PreTherapy"], $oemDetails["PreTherapyInfusions"]);
+                $OneRecord["Therapy"] = $this->Therapy($oemDetails["Therapy"]);
+                $OneRecord["PostTherapy"] = $this->PrePostTherapy($oemDetails["PostTherapy"], $oemDetails["PostTherapyInfusions"]);
+                $allRecords[] = $OneRecord;
+            }
+            $preRecord["OEMRecords"] = $allRecords;
+            $jsonRecord["records"] = array($preRecord);
+        } else {
+            $jsonRecord["success"] = false;
+            $jsonRecord["msg"] = "No records found.";
+        }
+    } else if(!is_null($oemsaved)){
+            $jsonRecord["success"] = true;
+            $jsonRecord["msg"] = "OEM Record updated.";
+            $jsonRecord["records"] = array();
+    } else {
+            $jsonRecord["success"] = false;
+            $jsonRecord["msg"] = "No records found.";
+            $jsonRecord["frameworkErr"] = $frameworkErr;
+    }
+    $this->set('jsonRecord', $jsonRecord);
+}
+/********************************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function OEM($id = null) {
         $form_data = json_decode(file_get_contents('php://input'));
         
-        if ($id != NULL) {
-            
-            $lookup = new LookUp();
-            
-            $templateId = $this->Patient->getTemplateIdByPatientID($id);
-            
-            if ($this->checkForErrors(
-                    'Template ID not available in Patient_Assigned_Templates. ', 
-                    $templateId)) {
-                $this->set('masterRecord', null);
-                return;
+        if ($id != NULL) {  // This assumes command is a GET, ignores PUT/DELETE
+            if ("GET" == $_SERVER['REQUEST_METHOD']) {
+                $this->genOEMData($id);
             }
-            
-            if (0 == count($templateId)) {
-                $this->set('oemsaved', null);
-                $this->set('oemrecords', null);
-                $this->set('masterRecord', null);
-                $this->set('frameworkErr', null);
-                return;
-            }
-            
-            $masterRecord = $this->Patient->getTopLevelPatientTemplateDataById(
-                    $id, $templateId[0]['id']);
-            
-            if ($this->checkForErrors('Get Top Level Template Data Failed. ', 
-                    $masterRecord)) {
-                $this->set('masterRecord', null);
-                return;
-            }
-            
-            $this->set('masterRecord', $masterRecord);
-            
-            $oemrecords = $this->Patient->getTopLevelOEMRecords($id, 
-                    $templateId[0]['id']);
-            
-            if ($this->checkForErrors('Get Top Level OEM Data Failed. ', 
-                    $oemrecords)) {
-                $this->set('oemrecords', null);
-                return;
-            }
-            
-            $this->set('oemrecords', $oemrecords);
-            
-            $oemMap = array();
-            
-            foreach ($oemrecords as $oemrecord) {
-                
-                $oemDetails = array();
-                
-                $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['PreTherapy'] = $this->get('prehydrations');
-                $oemDetails['PreTherapyInfusions'] = $this->get(
-                        'preorigInfusions');
-                
-                $retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['PostTherapy'] = $this->get('posthydrations');
-                $oemDetails['PostTherapyInfusions'] = $this->get(
-                        'postorigInfusions');
-                
-                $retVal = $this->Regimens($oemrecord['TemplateID']);
-                
-                if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
-                    $this->set('oemrecords', null);
-                    return;
-                }
-                
-                $oemDetails['Therapy'] = $this->get('regimens');
-                $oemMap[$oemrecord['TemplateID']] = $oemDetails;
-            }
-            
-            $this->set('oemMap', $oemMap);
-            $this->set('oemsaved', null);
-            $this->set('frameworkErr', null);
-        } else if ($form_data) {
-            
+        }
+        else if ($form_data) {
             $this->Patient->beginTransaction();
-            
-            $retVal = $this->Patient->updateOEMRecord($form_data);
-            // this works
-            // $this->Patient->CreateOrderStatus($form_data);
-            // $this->Patient->OEMupdateOrderStatus($form_data);
-            
             $this->set('oemrecords', null);
-            
+
+            $retVal = $this->Patient->updateOEMRecord($form_data);
             if (null != $retVal && array_key_exists('apperror', $retVal)) {
                 $errorMsg = $retVal['apperror'];
                 $this->set('frameworkErr', $errorMsg);
                 $this->set('oemsaved', null);
                 $this->Patient->rollbackTransaction();
+                $jsonRecord = array();
+                $jsonRecord["success"] = false;
+                $jsonRecord["msg"] = "No records found.";
+                $jsonRecord["frameworkErr"] = $frameworkErr;
                 return;
             }
-            
             if ($this->checkForErrors('Update OEM Record Failed. ', $retVal)) {
                 $this->set('oemsaved', null);
                 $this->Patient->rollbackTransaction();
+                $jsonRecord = array();
+                $jsonRecord["success"] = false;
+                $jsonRecord["msg"] = "No records found.";
+                $jsonRecord["frameworkErr"] = $frameworkErr;
                 return;
             }
             
             if (! empty($form_data->Reason) && ! empty($form_data->Order_ID)) {
-                
                 if ($form_data->Reason == Workflow::REASON_CANCELLED) {
-                    $this->Patient->updateOrderStatus($form_data->Order_ID, 
-                            Orders::STATUS_CANCELLED);
+                    $this->Patient->updateOrderStatus($form_data->Order_ID, Orders::STATUS_CANCELLED);
                 } else {
-                    
                     $workflow = new Workflow();
                     $workflow->OEMeditWorkflow($form_data);
-                    
+
                     // Update order status of this order if number of steps for
                     // the given reason is greater than 1
-                    $workflows = $workflow->getWorkflowsByReasonNo(
-                            $form_data->Reason);
-                    if (! empty($workflows[0]['NoSteps']) &&
-                             $workflows[0]['NoSteps'] > 1) {
-                        $this->Patient->updateOrderStatus($form_data->Order_ID, 
-                                Orders::STATUS_INCOORDINATION);
+                    $workflows = $workflow->getWorkflowsByReasonNo($form_data->Reason);
+                    if (! empty($workflows[0]['NoSteps']) && $workflows[0]['NoSteps'] > 1) {
+                        $this->Patient->updateOrderStatus($form_data->Order_ID, Orders::STATUS_INCOORDINATION);
                     }
-                    
+
                     // Update order status for all instances of this drug for
                     // this patient if route is 'Oral'
-                    $patientIds = $this->Patient->getPatientIdByOrderId(
-                            $form_data->Order_ID);
-                    if (! empty($form_data->InfusionMethod) &&
-                             ! empty($patientIds[0]['Patient_ID']) &&
-                             $form_data->InfusionMethod == 'Oral') {
-                        $this->Patient->updateOrderStatusByPatientIdAndDrugName(
-                                $patientIds[0]['Patient_ID'], $form_data->Med, 
-                                Orders::STATUS_INCOORDINATION);
+                    $patientIds = $this->Patient->getPatientIdByOrderId($form_data->Order_ID);
+                    if (! empty($form_data->InfusionMethod) && !empty($patientIds[0]['Patient_ID']) && $form_data->InfusionMethod == 'Oral') {
+                        $this->Patient->updateOrderStatusByPatientIdAndDrugName($patientIds[0]['Patient_ID'], $form_data->Med, Orders::STATUS_INCOORDINATION);
                     }
                 }
             }
-            
+
             $this->Patient->endTransaction();
             
             $this->set('oemsaved', '');
@@ -786,18 +1198,19 @@ class PatientController extends Controller
         } else {
             $this->set('frameworkErr', 'No Template ID provided.');
         }
+
+        $this->buildJsonObj4Output();
     }
 
     function Regimens($id = null)
     {
         $lookup = new LookUp();
-        
         $regimens = $lookup->getRegimens($id);
         if (null != $regimens && array_key_exists('error', $regimens)) {
             return $regimens;
         }
-        
-        $this->set('regimens', $lookup->getRegimens($id));
+
+        $this->set('regimens', $regimens);
     }
 
     function Vitals($id = null, $dateTaken = null)
@@ -864,6 +1277,14 @@ class PatientController extends Controller
         }
     }
 
+
+    function getVitals($PatientID = null, $dateTaken = null) {
+        $this->Vitals($PatientID);
+        // error_log("getVitals - ");
+        // error_log(json_encode( $this->get('jsonRecord') ));
+        return $this->get('jsonRecord');
+    }
+
     function Allergies($patientId = null)
     {
         
@@ -896,7 +1317,7 @@ class PatientController extends Controller
         $lookup = new LookUp();
         
         $hydrations = $lookup->getHydrations($id, $type);
-        
+       
         if (null != $hydrations && array_key_exists('error', $hydrations)) {
             return $hydrations;
         }
@@ -925,6 +1346,12 @@ class PatientController extends Controller
                 $myinfusion['fluidType'] = $infusions[$i]['fluidType'];
                 $myinfusion['infusionTime'] = $infusions[$i]['infusionTime'];
                 $myinfusion['Order_ID'] = $infusions[$i]['Order_ID'];
+                if (isset($infusions[$i]['Order_Status'])) {
+                    $myinfusion['Order_Status'] = $infusions[$i]['Order_Status'];
+                }
+                else {
+                    $myinfusion['Order_Status'] = "";
+                }
                 $myinfusions[$i]->{'data'} = $myinfusion;
             }
             
@@ -1006,5 +1433,243 @@ class PatientController extends Controller
         $this->set('jsonRecord', $jsonRecord);
         
         // $templateIds = $this->Patient->getTemplateIds();
+    }
+
+
+/**
+ * $id = Record ID in specific table
+ * $type = Determines which table to update ("Pre", "Post", "Therapy")
+ *         Pre uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Post uses Medication_Hydration Table and ID maps to 'MH_ID'
+ *         Therapy uses Template_Regimen Table and ID maps to 'Patient_Regimen_ID'
+ * $status = Status to set - "Hold", "Cancel", "Clear"
+ **/
+    function HoldCancel($id = null, $type = null, $status = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$id) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Record ID for Hold";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
+            if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
+                if (null === $status || "Clear" === $status) {
+                    $status = "";
+                }
+                if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+                    $table = "Medication_Hydration";
+                    $key = "MH_ID";
+                    if ("Therapy" == $type) {
+                        $table = "Template_Regimen";
+                        $key = "Patient_Regimen_ID";
+                    }
+                    $query = "select * from $table where $key = '$id'";
+                    $TreatmentData = $this->Patient->query($query);
+                    $lookup = new LookUp();
+                    $Order_Type = $type;
+                    $TID = $TreatmentData[0]["Template_ID"];
+                    $Drug_ID = $TreatmentData[0]["Drug_ID"];
+                    $Drug_Name = $lookup->getLookupNameByIdAndType($Drug_ID, 2);
+                    if(0 == count($TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = "No Record Matches $id";
+                    }
+                    else {
+                        if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $TreatmentData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = $frameworkErr;
+                            $this->set('frameworkErr', null);
+                        }
+                        else {
+                            $query = "update $table set Status = '$status' where $key = '$id'";
+                            $retVal = $this->Patient->query($query);
+                            if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $retVal)) {
+                                $jsonRecord['success'] = 'false';
+                                $jsonRecord['msg'] = $frameworkErr;
+                                $this->set('frameworkErr', null);
+                            }
+                        }
+                    }
+                }
+                else {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = "Invalid COMMAND - " . $_SERVER['REQUEST_METHOD'] . " expected a PUT";
+                }
+            }
+            else {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "Invalid COMMAND - $status, expected a Hold/Cancel or Clear";
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Invalid Therapy Type = $type expected Pre/Post/Therapy";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+    function Amputations($patientID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$patientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID for saving Amputations";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+        $data = file_get_contents('php://input');
+        $form_data = json_decode($data);
+        if (!$form_data) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "No information available to save Amputations";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "delete from LookUp where Lookup_Type = 30 and Name = '$patientID'";
+            $TreatmentData = $this->Patient->query($query);
+            // error_log("Deleting old records");
+            // error_log($query);
+            // error_log(json_encode($TreatmentData));
+
+            $Amputations = $form_data->Amputations;
+            $this->Patient->beginTransaction();
+            foreach ($Amputations As $Amputation) {
+                $query = "insert into LookUp (Lookup_Type, Name, Description) values (30, '$patientID', '$Amputation')";
+                $retVal = $this->Patient->query($query);
+                if ($this->checkForErrors('Saving Amputation Record Failed. ', $retVal)) {
+                    $jsonRecord['success'] = 'false';
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->Patient->endTransaction();
+            $jsonRecord['msg'] = count($Amputations) . " Amputation records saved";
+            $this->set('jsonRecord', $jsonRecord);
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method for saving Amputations (expected a POST got a " . $_SERVER['REQUEST_METHOD'];
+            $this->set('jsonRecord', $jsonRecord);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * BSA Information
+ * Can be a GET request passing a PatientID
+ * or a POST request passing a PatientID and a form containing the following:
+ *      { "WeightFormula" : "Something", "BSAFormula": "Method of", "UserName" : "Mike Barlow" }
+ *
+ *  Any existing BSA info for the patentID given will be set to inactive and the date of the change
+ *  This allows us to track who changes the BSA info and when it is changed.
+ *  Note that if doing a post any previously active BSA info is marked as inactive based on PatientID
+ *  Uses "Patient_BSA" table
+ *
+ *  Sample Patient ID = 'FC7C048A-19C2-E111-A7F5-000C2935B86F'
+ **/
+    private function _getBSA($patientID) {
+        $query = "select * from Patient_BSA where Patient_ID = '$patientID' AND Active = 1";
+        return $this->Patient->query($query);
+    }
+
+    function BSA($patientID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        if (!$patientID) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Missing Patient ID for getting/saving BSA Info";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $records = $this->_getBSA($patientID);
+        if ($this->checkForErrors("Retrieving Patient BSA Info", $records)) {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            $jsonRecord['success'] = true;
+            $jsonRecord['total'] = count($records);
+            $jsonRecord['records'] = $records;
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $data = file_get_contents('php://input');
+            $form_data = json_decode($data);
+            if (!$form_data) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "No information available to save BSA Info";
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+
+            $wt = $form_data->WeightFormula;
+            $meth = $form_data->BSAFormula;
+            $usr = $form_data->UserName;
+
+            $this->Patient->beginTransaction();
+            $query = "update Patient_BSA
+                Set 
+                Active = 0,
+                Date_Changed = GETDATE(),
+                UserName = '$usr'
+                where Patient_ID = '$patientID' and Active = 1";
+            $records = $this->Patient->query($query);
+            if ($this->checkForErrors("Update Patient BSA Info", $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $query = "INSERT INTO Patient_BSA
+              (Patient_ID,WeightFormula,BSAFormula,Active,Date_Assigned,Date_Changed,UserName)
+              VALUES ('$patientID', '$wt', '$meth', 1, GETDATE(), GETDATE(), '$usr')";
+            $records = $this->Patient->query($query);
+            if ($this->checkForErrors("Update Patient BSA Info", $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $this->Patient->endTransaction();
+            $this->set('jsonRecord', $jsonRecord);
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method for saving BSA Info (expected a POST got a " . $_SERVER['REQUEST_METHOD'];
+            $this->set('jsonRecord', $jsonRecord);
+        }
     }
 }

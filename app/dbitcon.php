@@ -1,7 +1,6 @@
 <?php
-
-	$serverName = "DBITDATA\DBIT";
-	$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_UAT_VA_TEST");
+require_once "config_Constants.php";
+	$serverName = DB_HOST;
+	$connectionOptions = array("UID"=>DB_USER,"PWD"=>DB_PASSWORD,"Database"=>DB_NAME);
 	$conn =  sqlsrv_connect( $serverName, $connectionOptions);
-	
 ?>
