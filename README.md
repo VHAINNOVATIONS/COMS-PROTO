@@ -1,4 +1,4 @@
 COMS
 ====
 
-COMS Pilot Program Code
+Chemotherapy Ordering Management System
