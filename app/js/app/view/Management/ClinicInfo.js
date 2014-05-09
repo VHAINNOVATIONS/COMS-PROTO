@@ -5,8 +5,9 @@ Ext.define("COMS.view.Management.ClinicInfo" ,{
 	"autoEl" : { tag : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
-		{ "xtype" : "textfield", "name" : "Label", "fieldLabel" : "Reference Label", "labelWidth" : 140, "width" : 940},
+		{ "xtype" : "textfield", "name" : "Label", "fieldLabel" : "Clinic Information Label", "labelWidth" : 200, "width" : 900},
 		{ "xtype" : "htmleditor", "name" : "Details", "fieldLabel" : "Details", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
+
 		{ "xtype" : "ManagementBtns"},
 
 		{  

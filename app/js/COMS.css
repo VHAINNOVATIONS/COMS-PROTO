@@ -644,11 +644,11 @@ table.OEMRecord_Element tr {
 	margin: 0;
 }
 
-.ndctWarning {
+.ndctWarning, .scEditInstructions {
 	text-align: center;
 	font-weight: bold;
 }
 
-.ndctWarning span {
+.ndctWarning span, .scEditInstructions span {
 	color: red;
 }
