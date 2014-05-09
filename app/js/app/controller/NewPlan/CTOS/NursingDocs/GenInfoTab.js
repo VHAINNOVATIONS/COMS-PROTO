@@ -436,33 +436,49 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	getFNRiskInfo : function(FNRisk) {
 		var FNLPanel = this.getFNLPanel();
-		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
-		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
+		if (FNRisk) {
+			var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
+			FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
+			var PanelID = FNLPanel.getId();
+			var URL = Ext.URLs.MedRisks + "/Type/" + (FNRisk < 10 ? "Neutropenia-1" : FNRisk <= 20 ? "Neutropenia-2" : "Neutropenia-3");
+			Ext.Ajax.request({
+				scope : this,
+				url: URL,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
 
-		var PanelID = FNLPanel.getId();
-		var URL = Ext.URLs.MedRisks + "/Type/" + (FNRisk < 10 ? "Neutropenia-1" : FNRisk <= 20 ? "Neutropenia-2" : "Neutropenia-3");
-		Ext.Ajax.request({
-			scope : this,
-			url: URL,
-			success: function( response, opts ){
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				this.getFNLPanel().update(resp, false);
-				this.getFNLPanel().doLayout();
-			},
-			failure : function( response, opts ) {
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
-			}
-		});
+					for (i = 0; i < resp.length; i++) {
+						var raw = resp[i].Details;
+						var dec = Ext.util.Format.htmlDecode(raw);
+						resp[i].Details = dec;
+					}
+
+
+					this.application.unMask();
+					this.getFNLPanel().update(resp, false);
+					this.getFNLPanel().doLayout();
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.application.unMask();
+					Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
+				}
+			});
+		}
+		else {
+			FNLPanel.setTitle("Febrile Neutropenia Level = Not Specified");
+		}
 	},
 
 
 	getEmoLevelInfo : function(ELevel) {
 		var EmoPanel = this.getEmoPanel();
+		if (!ELevel) {
+			EmoPanel.setTitle("Emetogenic Level = Not Specified");
+			return;
+		}
 		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
 		var eLevel1 = ELevel.split(" ")[0];
 		var x = "";
@@ -493,6 +509,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
+				for (i = 0; i < resp.length; i++) {
+					var raw = resp[i].Details;
+					var dec = Ext.util.Format.htmlDecode(raw);
+					resp[i].Details = dec;
+				}
 				this.getEmoPanel().update(resp, false);
 				this.getEmoPanel().doLayout();
 			},
@@ -520,7 +541,18 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 
 
-		this.getEmoLevelInfo(Patient.AppliedTemplate.ELevel[0].name);
+		// this.getEmoLevelInfo(Patient.AppliedTemplate.ELevel[0].name);
+
+
+		var EmoLevel = "";
+		try {
+			EmoLevel = Patient.AppliedTemplate.ELevel[0].name;
+			this.getEmoLevelInfo(EmoLevel);
+		}
+		catch (e) {
+			this.getEmoLevelInfo(null);
+		}
+
 		this.getFNRiskInfo(Patient.AppliedTemplate.FNRisk);
 
 		this.getNdctRegimen().setValue(TempDesc);

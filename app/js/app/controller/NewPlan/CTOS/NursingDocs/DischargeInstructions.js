@@ -124,6 +124,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				var resp = Ext.JSON.decode( text );
 				var MedRecords = resp.records;
 				var thePanel = this.getMedSpecificInfoDisplay();
+				for (i = 0; i < MedRecords.length; i++) {
+					var raw = MedRecords[i].Documentation;
+					var dec = Ext.util.Format.htmlDecode(raw);
+					MedRecords[i].Documentation = dec;
+				}
 				thePanel.update(MedRecords);
 			},
 			failure : function( response, opts ) {
