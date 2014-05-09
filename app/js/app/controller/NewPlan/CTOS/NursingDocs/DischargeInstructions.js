@@ -37,13 +37,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			selector : "SpclInstrDisplay"
 		},
 		{
-			ref : "DischargeInstrDetailsDisplay",
-			selector : "SpclInstrDisplay"
+			ref : "SpclInstrDetailsDisplay",
+			selector : "PatientEducationDetails [name=\"ND_E_SpclInstrDisplay\"]"
 		},
 
 		{
-			ref : "SpclInstrDetailsDisplay",
-			selector : "PatientEducationDetails [name=\"ND_E_SpclInstrDisplay\"]"
+			ref : "MedSpecificInfoDisplay",
+			selector : "PatientEducationDetails MedSpecificInfoDisplay"
 		}
 
 
@@ -93,10 +93,131 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 						theSectionByID.hide();
 					}
 				}
+			},
+			"DischargeInstructions button[text=\"Save\"]" : {
+				"click" : this.SaveDischargeInstructions
+			},
+			"DischargeInstructions button[text=\"Cancel\"]" : {
+				"click" : this.CancelDischargeInstructions
+			},
+			"PatientEducationDetails [name=\"MedSpecificInfoHeader\"]" : {
+				"click" : this.DisplayMedInfo
+			},
+			"PatientEducationDetails" : {
+				"afterrender" : this.LoadMedInfo,
+			},
+			"PatientEducationDetails [name=\"ND_E_DischargeInstr\"]" : {
+				"show" : this.LoadMedInfo,
 			}
+			
 		});
 	},
 
+	LoadMedInfo : function() {
+		var theMeds = this.application.Patient.AppliedTemplate.Meds;
+		Ext.Ajax.request({
+			url: Ext.URLs.TemplateMedDocs + "/" + this.application.Patient.AppliedTemplate.id,
+			scope: this,
+			theMeds : theMeds,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				var MedRecords = resp.records;
+				var thePanel = this.getMedSpecificInfoDisplay();
+				thePanel.update(MedRecords);
+			},
+			failure : function( response, opts ) {
+				debugger;
+			}
+		});
+
+		/* MedSpecificInfoDisplay */
+	},
+	DisplayMedInfo : function() {
+		var htmlData = prettyPrint( COMS.Patient.AppliedTemplate, { maxDepth : 5 } ).innerHTML;
+		Ext.create('Ext.window.Window', {
+			title: 'Patient Template',
+			height: 800,
+			width: 950,
+			autoScroll : true,
+			html : htmlData
+		}).show();
+	},
+
+	CancelDischargeInstructions : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+	},
+
+	SaveDischargeInstructions : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+		var theData = form.getValues(false, false, false, true);
+		Ext.MessageBox.alert("Discharge Instructions Saved", "Discharge Instructions Saved..." );
+
+
+/**
+		if (form.isValid()) {
+			var Label = theData.Label;
+			var Details = Ext.util.Format.htmlEncode(theData.Details);
+			var recID = this.CurrentMedRisksRecordID;
+			var URL = Ext.URLs.MedRisks;
+			var CMD = "POST";
+			if ("" !== recID && this.CurrentMedRisks === Label) {
+				URL += "/" + recID;
+				CMD = "PUT";
+			}
+
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				jsonData : {"Label" : Label, "Details" : Details },
+				scope: this,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentMedRisksRecordID = "";
+					this.CurrentMedRisks = "";
+					var theLabelField = this.getMedRisks_Label();
+					var theDetailsField = this.getMedRisks_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					if (!resp.success) {
+						Ext.MessageBox.alert("Saving Error", "Site Configuration - Clinic Info, Save Error - " + resp.msg );
+					}
+					else {
+						var thisCtl = this.getController("Management.AdminTab");
+						var theGrid = thisCtl.getMedRisksGrid();
+						theGrid.getStore().load();
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					this.CurrentMedRisksRecordID = "";
+					this.CurrentMedRisks = "";
+					var theLabelField = this.getMedRisks_Label();
+					var theDetailsField = this.getMedRisks_Details();
+					theLabelField.setValue("");
+					theDetailsField.setValue("");
+
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - " + "e.message" + "<br />" + resp.msg );
+				}
+			});
+		}
+		else {
+			var Msg = "";
+			if ("" === theData.Label) {
+				Msg += "<li>Missing Label Selection</li>";
+			}
+			if ("" === theData.Details) {
+				Msg += "<li>Missing Details for Label</li>";
+			}
+			if ("" !== Msg) {
+				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
+			}
+		}
+**/
+	},
 
 	commonRenderTable : function(thePanel, theStore) {
 		var Records = theStore,

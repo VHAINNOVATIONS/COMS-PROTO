@@ -2018,6 +2018,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 this.application.Patient.TreatmentEnd = current.DateEnded;
             }
             patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
+			COMS.Patient = this.application.Patient;
         }
 
 
@@ -2064,6 +2065,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				VSHTemplateDataBtns = dspVSHTemplateData.el.select("button.dspVSHDoseCalcs");
 				VSHTemplateDataBtns.on("click", this.HandleVSHCalcDoseButtons, this);
 			}
+
+			COMS.Patient = this.application.Patient;
 			return;
 		}
 

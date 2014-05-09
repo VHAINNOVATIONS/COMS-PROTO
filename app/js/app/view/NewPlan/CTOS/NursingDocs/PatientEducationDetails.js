@@ -1,3 +1,43 @@
+
+
+
+
+
+
+
+
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.MedsInfoDisplay",
+	name : "NursingDocs.MedsInfoDisplay",
+	autoScroll : true,
+
+	tpl : new Ext.XTemplate(
+		"<section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"{[this.tempCalc(values)]}",
+			"<p><h3>{Medication}</h3>",
+			"{Documentation}",
+			"</p>",
+		"</tpl>",
+		"</div></section>",
+		{
+				// XTemplate Configuration
+			disableFormats: true,
+			tempCalc: function (data) {
+				debugger;
+			}
+		}
+	)
+});
+
+
+
+
+
+
+
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	extend : "Ext.container.Container",
     alias : "widget.ClinicInfoDisplay",
@@ -44,8 +84,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
 		"<h2>Medication Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"<p><h3>{Label}</h3>",
-			"{Details}",
+			"<p><h3>{Medication}</h3>",
+			"{Documentation}",
 			"</p>",
 		"</tpl>",
 		"</div></section>"
@@ -281,6 +321,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 
 						{
 							"xtype": "CheckCombo",
+							"noDataText" : "",
 							"fieldLabel": "Select Clinic Information",
 							"name": "ND_E_SelectClinicInfo",
 							"width": 450,
@@ -294,6 +335,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 						},
 						{
 							"xtype": "CheckCombo",
+							"noDataText" : "",
 							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",
 							"width": 450,
@@ -306,7 +348,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"xtype": "SpclInstrDisplay"
 						},
 
-						{ "xtype" : "box", "html" : "Medication Specific Information:", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
+						{ "xtype" : "box", "name" : "MedSpecificInfoHeader", "html" : "Medication Specific Information:", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
 						{ "xtype" : "MedSpecificInfoDisplay" },
 						{
 							"xtype" : "container",

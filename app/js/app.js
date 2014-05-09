@@ -46,6 +46,7 @@ Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
 
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
+Ext.URLs.TemplateMedDocs = "/LookUp/TemplateMedDocs";
 Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
 Ext.URLs.SiteConfig = "/LookUp/SiteConfig";

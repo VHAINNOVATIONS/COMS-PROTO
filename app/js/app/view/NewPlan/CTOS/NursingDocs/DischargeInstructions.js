@@ -70,6 +70,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 				}
 			]
 		}
-		/***/
-	]
+	],
+	"buttons" : [
+		{ xtype: "button", "text" : "Save", "scope" : this }, 
+		{ xtype: "button", "text" : "Cancel", handler: function() {
+				this.up('form').getForm().reset();
+			} 
+		}
+	],
 });
