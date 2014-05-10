@@ -154,6 +154,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 		{
 			"xtype": "fieldset",
 			"title": "Barriers to Learning",
+			"name" : "Barriers",
 			"defaultType": "checkbox",
 			"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
 			"items": [{

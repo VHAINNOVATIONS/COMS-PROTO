@@ -108,9 +108,37 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			},
 			"PatientEducationDetails [name=\"ND_E_DischargeInstr\"]" : {
 				"show" : this.LoadMedInfo,
+			},
+			"fieldset[name=\"Barriers\"] checkbox" : {
+				"change" : function(btn, nValu, oValu, opts) {
+					this.MExclusiveCkBoxs(btn, nValu);
+				}
 			}
-			
 		});
+	},
+
+
+	MExclusiveCkBoxs : function(btn, nValu) {
+		var label = btn.getFieldLabel();
+		var ckboxs = Ext.ComponentQuery.query("fieldset[name=\"Barriers\"] checkbox");
+		var tAreas = Ext.ComponentQuery.query("fieldset[name=\"Barriers\"] textarea");
+		if ("None" === label) {
+			if (nValu) {
+				var i, cBox, tArea, cl = ckboxs.length, tl = tAreas.length;
+				for (i = 1; i < cl; i++) {
+					cBox = ckboxs[i];
+					cBox.setValue("");
+				}
+				for (i = 0; i < tl; i++) {
+					tArea = tAreas[i];
+					tArea.setValue("");
+					tArea.hide();
+				}
+			}
+		}
+		else if (nValu) {
+			ckboxs[0].setValue("");
+		}
 	},
 
 	LoadMedInfo : function() {
@@ -124,9 +152,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				var resp = Ext.JSON.decode( text );
 				var MedRecords = resp.records;
 				var thePanel = this.getMedSpecificInfoDisplay();
+
 				for (i = 0; i < MedRecords.length; i++) {
-					var raw = MedRecords[i].Documentation;
-					var dec = Ext.util.Format.htmlDecode(raw);
+					var dec, raw = MedRecords[i].Documentation;
+					if ("" === raw) {
+						dec = "No additional information provided for this medication";
+					}
+					else {
+						dec = Ext.util.Format.htmlDecode(raw);
+					}
 					MedRecords[i].Documentation = dec;
 				}
 				thePanel.update(MedRecords);
