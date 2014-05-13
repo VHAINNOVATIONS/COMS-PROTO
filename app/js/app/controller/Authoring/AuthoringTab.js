@@ -744,7 +744,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
 		var newTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[1];
 
-		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab container[name=\"lblRequiredFields\"]")[0];
+		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
 
 		if (this.getExistingCourseInfo().hidden == false) {
 			this.getExistingCourseInfo().hide();
@@ -871,7 +871,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var ExistingTemplateObj = this.getExistingTemplate();
 		var selDiseaseAndStageObj = this.getNewTemplateDiseaseAndStage();
 
-		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab container[name=\"lblRequiredFields\"]")[0];
+		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
 
 		lblReqFields.show();
 		var What2Do = rbtn.inputValue;
