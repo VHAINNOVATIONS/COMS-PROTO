@@ -115,10 +115,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 				"name": "taught_Patient",
 				"fieldLabel": "Patient"
 			}, {
-				"name": "taught_Patient",
+				"name": "taught_Spouse",
 				"fieldLabel": "Spouse"
 			}, {
-				"name": "taught_Patient",
+				"name": "taught_SignificantOther",
 				"fieldLabel": "Significant Other"
 			}, {
 				"xtype": "CkBoxTArea",
@@ -158,17 +158,22 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 			"defaultType": "checkbox",
 			"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
 			"items": [{
-				"fieldLabel": "None"
+				"fieldLabel": "None",
+				"name" : "Barrier_None",
 			}, {
-				"fieldLabel": "Desire/motivation"
+				"fieldLabel": "Desire/motivation",
+				"name" : "Barrier_Desire",
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Barrier_Physical",
 				"fieldLabel": "Physical"
 			}, {
-				"fieldLabel": "Hearing"
+				"fieldLabel": "Hearing",
+				"name": "Barrier_Hearing"
+
 			}, {
-				"fieldLabel": "Vision"
+				"fieldLabel": "Vision",
+				"name": "Barrier_Vision"
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Barrier_Cognition",
@@ -204,13 +209,17 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 			"defaultType": "checkbox",
 			"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
 			"items": [{
-				"fieldLabel": "Verbal"
+				"fieldLabel": "Verbal",
+				"name": "LearningPreference_Verbal"
 			}, {
-				"fieldLabel": "Written"
+				"fieldLabel": "Written",
+				"name": "LearningPreference_Written"
 			}, {
-				"fieldLabel": "Demonstration"
+				"fieldLabel": "Demonstration",
+				"name": "LearningPreference_Demo"
 			}, {
-				"fieldLabel": "Audio-Visual"
+				"fieldLabel": "Audio-Visual",
+				"name": "LearningPreference_AudioVisual"
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "LearningPreference_Other",

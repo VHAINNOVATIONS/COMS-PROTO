@@ -2611,8 +2611,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
-
-                    // console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;

@@ -3,6 +3,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 	"alias": "widget.DischargeInstructions",
 	"items": [
 		{"xtype": "RequiredInstr"},
+		{ "xtype" : "selDischargeInstructions"},
 		{
 			"xtype": "fieldset",
 			"title": "Patient Education",
@@ -77,5 +78,5 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 				this.up('form').getForm().reset();
 			} 
 		}
-	],
+	]
 });
