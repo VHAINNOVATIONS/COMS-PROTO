@@ -24,9 +24,9 @@ if (!is_null($templatedata)) {
 
             echo "\t\"CycleLengthUnit\" : [{\"id\":\"" . $oemrecord['CycleLengthUnitID'] . "\", \"name\":\"" . $oemrecord['CycleLengthUnit'] . "\"}], \n";
 
-            echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\", \"details\":\"" . $oemrecord['emodetails'] . "\"}], \n";
+            echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\", \"details\":" . json_encode( $oemrecord['emodetails']) . "}], \n";
             echo "\t\"FNRisk\" : \"" . $oemrecord['fnRisk'] . "\", \n";
-            echo "\t\"FNRiskDetails\" : \"" . $oemrecord['fnrDetails'] . "\", \n";
+            echo "\t\"FNRiskDetails\" : " . json_encode($oemrecord['fnrDetails']) . ", \n";
 
 
             // References

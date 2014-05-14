@@ -738,7 +738,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
-			debugger;
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
 			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
@@ -2066,7 +2065,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             this.application.Patient.CurrentTemplatesApplied2Patient = current;
             this.application.Patient.HistoricalTemplatesApplied2Patient = historical;
             // this.application.Patient.History = historical; "History" is really LabResults
-            if (current && current[0]) {
+			if (current && current[0]) {
                 current = current[0];
                 // Needed for the 
                 if (!this.application.Patient.AppliedTemplate) {
@@ -2612,7 +2611,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
-                    
+
                     // console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
@@ -2624,6 +2623,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	            failure : function (err, response) {
 					this.application.DataLoadCount--;
 					this.PatientDataLoadComplete("Current Applied Template - Failed to load - " + response.error);
+					Ext.MessageBox.alert("Loading Template Error", "NewPlanTab - Current Applied Template - Failed to load - " + response.error);
 				}
 	        });
 	},
