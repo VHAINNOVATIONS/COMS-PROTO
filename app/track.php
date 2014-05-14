@@ -7,6 +7,7 @@ function curPageName() {
 function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 	include "dbitcon.php";
 		//GetID
+		$chkTrack = "";
 		$tsql2 = "SELECT id FROM COMS_Track ORDER BY id";
 		$getid = sqlsrv_query($conn, $tsql2);
         $newid = "";
@@ -34,11 +35,17 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 		$rid = $_SESSION['rid'];
 		$sitelist = $_SESSION['sitelist'];
 		$Email = $_SESSION['Email'];
-		$Domain = $_SESSION['Domain'];
+        $Domain = "";
+        if (isset($_SESSION['Domain'])) {
+		    $Domain = $_SESSION['Domain'];
+        }
 		$sessionStatus = $_SESSION['sessionStatus'];
 		$TemplateAuthoring = $_SESSION['TemplateAuthoring'];
 		$Role_ID = $_SESSION['Role_ID'];
-		$ip = $_SESSION['ip'];
+        $ip = "";
+        if (isset($_SESSION['ip'])) {
+            $ip = $_SESSION['ip'];
+        }
 		$ruser = $_SESSION['ruser'];
 		$NWLoginR = $_SESSION['NWLoginR'];
 		$COMSLogin = $_SESSION['COMSLogin'];
@@ -57,6 +64,8 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
 	include "dbitcon.php";
 		//Set Variables
+		$chkTrack = "";
+
 		$ip_vistor=$_SERVER['REMOTE_ADDR'];
 		$_SESSION['ip_vistor']= $ip_vistor;
 		$compname = gethostbyaddr($_SERVER['REMOTE_ADDR']);

@@ -1672,4 +1672,231 @@ function buildJsonObj4Output() {
             $this->set('jsonRecord', $jsonRecord);
         }
     }
+
+
+
+/**
+ * DischargeInstructions - This service call manages the Patient Discharge Instruction records
+ * Each time a set of Discharge Instructions are generated for a particular patient a record is maintained consisting of the following:
+ *  A Lookup Table (DischargeInfoLookup) containing
+ *      Patient ID
+ *      Template ID
+ *      Date Discharge Instructions were generated.
+ *      A Unique ID for this record which is used as a link into the DischargeInformation table which contains a separate record for each instruction saved in a single Discharge Instruction Form
+ *
+ * It makes use of the Patient Discharge Instructions Lookup to retrieve the Record ID, 
+ * GET Call
+ *
+ * POST Call
+ *
+ * PUT Call
+ *
+ * DELETE Call
+ *
+ * Table Definition
+ *
+ *    
+ *    USE [COMS_TEST_2]
+ *    GO
+ *    CREATE TABLE [dbo].[DischargeInstructionsLink](
+ *        [DischargeID] [uniqueidentifier] NOT NULL,
+ *        [PatientID] [uniqueidentifier] NOT NULL,
+ *        [date] [date]  NOT NULL,
+ *    ) ON [PRIMARY]
+ *    GO
+ *
+ *
+ *    USE [COMS_TEST_2]
+ *    GO
+ *    CREATE TABLE [dbo].[DischargeInstructions](
+ *        [DischargeID] [uniqueidentifier] NOT NULL,
+ *        [fieldName] [varchar](255) NOT NULL,
+ *        [value] [varchar](255)
+ *    ) ON [PRIMARY]
+ *    GO
+ *
+ **/
+ 
+    function DischargeInstructions($PatientID = null, $dischargeRecordID=null ) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $DischargeLinkTable = "DischargeInstructionsLink";
+        $DischargeInfoTable = "DischargeInstructions";
+        $GUID = "";
+        $this->Patient->beginTransaction();
+        $Date2 = date("F j, Y");
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($PatientID) {
+                if ($dischargeRecordID) {
+                    $query = "select * from $DischargeInfoTable where DischargeID = '$dischargeRecordID'";
+                }
+                else {
+                    $query = "select * from $DischargeLinkTable where PatientID = '$PatientID'";
+                }
+            }
+            error_log("DischargeInstructions Query - $query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "SELECT NEWID()";
+            $GUID = $this->Patient->query($query);
+            $GUID = $GUID[0][""];
+
+            $query = "
+            INSERT INTO $DischargeLinkTable (
+                DischargeID,
+                PatientID, 
+                Date
+            ) VALUES (
+                '$GUID',
+                '$PatientID',
+                '$Date2'
+            )";
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            else {
+                foreach($_POST as $key => $value) {
+                    if ("" !== $value) {
+                        $value = $this->escapeString($value);
+error_log("Field = '$key'; Value = '$value'");
+                        $query = "INSERT INTO $DischargeInfoTable (
+                            DischargeID,
+                            fieldName,
+                            value
+                        ) VALUES (
+                            '$GUID',
+                            '$key',
+                            '$value'
+                        )";
+                        $retVal = $this->Patient->query($query);
+                        if ($this->checkForErrors($ErrMsg, $retVal)) {
+                            $this->Patient->rollbackTransaction();
+                            $jsonRecord['success'] = false;
+                            $jsonRecord['msg'] = $this->get('frameworkErr');
+                            $this->set('jsonRecord', $jsonRecord);
+                            return;
+                        }
+                    }
+                }
+            }
+            $query = "";    /* Reset query so we don't run it again in the final step */
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $GUID = $dischargeRecordID;
+            $query = "delete from $DischargeLinkTable WHERE DischargeID = '$dischargeRecordID'";
+            $retVal = $this->Patient->query($query);
+            $query = "
+            INSERT INTO $DischargeLinkTable (
+                DischargeID,
+                PatientID, 
+                Date
+            ) VALUES (
+                '$dischargeRecordID',
+                '$PatientID',
+                '$Date2'
+            )";
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            else {
+                $query = "delete from $DischargeInfoTable where DischargeID = '$dischargeRecordID'";
+                $retVal = $this->Patient->query($query);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->Patient->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+                else {
+                    parse_str(file_get_contents("php://input"),$post_vars);
+                    foreach($post_vars as $key => $value) {
+                        if ("" !== $value) {
+                            $value = $this->escapeString($value);
+                            $query = "INSERT INTO $DischargeInfoTable (
+                                DischargeID,
+                                fieldName,
+                                value
+                            ) VALUES (
+                                '$GUID',
+                                '$key',
+                                '$value'
+                            )";
+                            $retVal = $this->Patient->query($query);
+                            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                                $this->Patient->rollbackTransaction();
+                                $jsonRecord['success'] = false;
+                                $jsonRecord['msg'] = $this->get('frameworkErr');
+                                $this->set('jsonRecord', $jsonRecord);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            $query = "";    /* Reset query so we don't run it again in the final step */
+            /* For the current DischargeInfoID delete all records in the DischargeInfoTable with that ID then add anew... */
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "";    /* Reset query so we don't run it again in the final step */
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for DischargeInstructions Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $this->Patient->rollbackTransaction();
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("" !== $query) {
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->Patient->rollbackTransaction();
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+
+        $this->Patient->endTransaction();
+        if ("" !== $GUID) {
+            $jsonRecord['dischargeInfoID'] = "$GUID";
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }
+
+
+    public function escapeString($string)
+    {
+        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
+            return str_replace("'", "''", $string);
+    	} else if (DB_TYPE == 'mysql') {
+            return mysql_real_escape_string($string);  	
+    	}
+        
+        return $string;
+    }
 }

@@ -13,7 +13,17 @@ require_once "/ChromePhp.php";
  * function 
  */
 class LookupController extends Controller {
-    
+    public function escapeString($string)
+    {
+        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
+            return str_replace("'", "''", $string);
+    	} else if (DB_TYPE == 'mysql') {
+            return mysql_real_escape_string($string);  	
+    	}
+        
+        return $string;
+    }
+
     function checkForErrors($errorMsg,$retVal){
         
         if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -409,16 +419,7 @@ class LookupController extends Controller {
             }
 
 
-/********
-					{ "type" : "Neutropenia-1", "name" : "Febrile Neutropenia Risk Low (< 10%)" },
-					{ "type" : "Neutropenia-2", "name" : "Febrile Neutropenia Risk Intermediate (10 - 20%)" },
-					{ "type" : "Neutropenia-3", "name" : "Febrile Neutropenia Risk High (> 20%)" },
-					{ "type" : "Emesis-1", "name" : "Emetogenic Level 1 (Frequency of emesis < 10%)"},
-					{ "type" : "Emesis-2", "name" : "Emetogenic Level 2 (Frequency of emesis 10 - 30%)"},
-					{ "type" : "Emesis-3", "name" : "Emetogenic Level 3 (Frequency of emesis 30 - 60%)"},
-					{ "type" : "Emesis-4", "name" : "Emetogenic Level 4 (Frequency of emesis 60 - 90%)"},
-					{ "type" : "Emesis-5", "name" : "Emetogenic Level 5 (Frequency of emesis > 90%)"}
-********/
+
             $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
             switch($EmoLevel[0]) {
                 case "Low":
@@ -439,9 +440,7 @@ class LookupController extends Controller {
             }
             $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
             $EmesisVal = $this->LookUp->query($query);
-error_log($EmoLevel[0] . " --- $query");
-error_log(json_encode($EmesisVal));
-$retVal[0]["emodetails"] = $EmesisVal[0]["Details"];
+            $retVal[0]["emodetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
 
             $FNRisk = $retVal[0]["fnRisk"];
             if ($FNRisk < 10) {
@@ -455,15 +454,10 @@ $retVal[0]["emodetails"] = $EmesisVal[0]["Details"];
             }
             $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
             $FNRVal = $this->LookUp->query($query);
-error_log($query);
-error_log(json_encode($FNRVal));
 
-
-$retVal[0]["fnrDetails"] = $FNRVal[0]["Details"];
+            $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
 
             $this->set('templatedata', $retVal);
-error_log("Template Data");
-error_log(json_encode($retVal));
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
@@ -1092,6 +1086,7 @@ error_log("_getMedDocs - $query");
             $retVal = $this->LookUp->query($query);
             // Then insert new info
             if ("" !== $Documentation) {
+                $Documentation = $this->escapeString($Documentation);
                 $query = "INSERT INTO Med_Docs ([Med_ID] ,[Documentation]) VALUES ('$ID' ,'$Documentation')";
                 $jsonRecord['msg'] = "Medication Documentation Record Created";
                 $ErrMsg = "Creating Medication Documentation Record";
@@ -1333,6 +1328,8 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             $retVal = $this->LookUp->query($query);
             // Then insert new info
             if ("" !== $Details) {
+                $Label = $this->escapeString($Label);
+                $Details = $this->escapeString($Details);
                 $query = "INSERT INTO SiteCommonInformation (Label, Details, DataType) VALUES ('$Label' ,'$Details', '$DataType')";
                 $jsonRecord['msg'] = "$Msg Record Created";
                 $ErrMsg = "Creating $Msg Record";
@@ -1345,6 +1342,9 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             }
         }
         else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $Details = $this->escapeString($Details);
+            $Label = $this->escapeString($Label);
+
             $query = "UPDATE SiteCommonInformation SET Details = '$Details', Label = '$Label' WHERE ID = '$ID'";
             $jsonRecord['msg'] = "$Msg Record Updated";
             $ErrMsg = "Updating $Msg  Record";
@@ -1367,6 +1367,13 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             else {
                 $jsonRecord['success'] = 'true';
                 if (count($retVal) > 0) {
+foreach($retVal as $r) {
+    $r["Details"] = htmlspecialchars($r["Details"]);
+    error_log($r["Details"]);
+}
+error_log(json_encode($retVal));
+
+
                     unset($jsonRecord['msg']);
                     $jsonRecord['total'] = count($retVal);
                     $jsonRecord['records'] = $retVal;
@@ -1401,7 +1408,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
                         if ("" !== $buf) {
                             $buf .= "<br>";
                         }
-                        $buf .= $Detail["Details"];
+                        $buf .= htmlspecialchars($Detail["Details"]);
                     }
                     $jsonRecord = $buf;
                 }
@@ -1466,5 +1473,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
         }
         return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
     }
+
+
 
 }

@@ -41,6 +41,8 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
+
 Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
