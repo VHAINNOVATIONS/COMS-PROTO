@@ -82,20 +82,21 @@ function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
 		$rid = $_SESSION['rid'];
 		$sitelist = $_SESSION['sitelist'];
 		$Email = $_SESSION['Email'];
-		$Domain = $_SESSION['Domain'];
+		$domain = $_SESSION['domain'];
 		$sessionStatus = $_SESSION['sessionStatus'];
 		$TemplateAuthoring = $_SESSION['TemplateAuthoring'];
 		$Role_ID = $_SESSION['Role_ID'];
-		$ip = $_SESSION['ip'];
+		$ip = $_SERVER['REMOTE_ADDR'];
 		$ruser = $_SESSION['ruser'];
 		$NWLoginR = $_SESSION['NWLoginR'];
 		$COMSLogin = $_SESSION['COMSLogin'];
 		$mdws = $_SESSION['mdws'];
 		$AC = $_SESSION['AC'];
 		$VC = $_SESSION['VC'];
+		$chkTrack = $_SESSION['chkTrack'];
 		//Insert into SQL
-		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,Domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws,AC,VC) VALUES
-           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$Domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws','$AC','$VC')";
+		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws,AC,VC) VALUES
+           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws','$AC','$VC')";
 		   
 		//$tsql2 = "INSERT INTO COMS_Sessions (sessionid,ip,compname,ref,username,winauth,point,pointno,time,date2,page) VALUES ('$sessionid','$ip_vistor','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page')";
 		//echo $tsql2;

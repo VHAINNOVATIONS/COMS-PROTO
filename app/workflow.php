@@ -11,6 +11,7 @@ include "dbitcon.php";
 
 //Get Last Workflow ID
 $wfid = "SELECT LastIssuedWorkflowID FROM WorkflowIDsLastIssued";
+echo $wfid;
 $wfidl = sqlsrv_query($conn, $wfid);
 while( $row = sqlsrv_fetch_array($wfidl, SQLSRV_FETCH_ASSOC))
 {
