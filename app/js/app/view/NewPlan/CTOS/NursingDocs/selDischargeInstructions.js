@@ -6,7 +6,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.selDischargeInstructions" ,{
 	"width" : 450,
 	"labelClsExtra" : "NursingDocs-label", 
 	"margin" : "0 10 5 10",
-//	"queryMode" : "local",
 	"emptyText" : "Select Date",
 	"displayField" : "date",
 	"valueField" : "DischargeID",
@@ -20,26 +19,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.selDischargeInstructions" ,{
 				"type" : 'json',
 				"root" : 'records'
 			}
-		},
-		listeners: {
-			"load" : function(store, records, success) {
-				if(success){
-					var i, aRecord, rLen = records.length;
-					for (i = 0; i < rLen; i++) {
-						aRecord = store.getAt(i);
-						var sDate = aRecord.get("date");
-						sDate = Ext.util.Format.date(sDate.date.split(" ")[0]);
-						aRecord.set("date", sDate);
-					}
-				}
-			}
 		}
-	}),
-	listeners: {
-		"select" : function(theCombo, records, eOpts) {
-			var theData = records[0].getData();
-			debugger;
-		}
-	}
+	})
 });
 

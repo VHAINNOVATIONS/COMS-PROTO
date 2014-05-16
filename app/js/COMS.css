@@ -582,7 +582,7 @@ abbr {
 /* We use buttons which look like anchors, in place of anchor tags, to perform actions (like opening a window) */
 /* Using an anchor to perform an action is not compliant w/ HTML Specs and requires extra effort to prevent scrolling to the top of the page */
 /* A button is the proper way to perform actions but sometimes we want buttons to look like links */
-button.anchor {
+button.anchor, .anchor button {
 	background : none;
 	border : 0 none;
 	color: blue;
@@ -592,6 +592,9 @@ button.anchor {
 	cursor : pointer;
 }
 
+.anchor button {
+	font-size: 90%;
+}
 
 .OEMRecord_Section { 
 	display: none; 

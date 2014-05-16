@@ -1450,6 +1450,67 @@ Ext.BSA_Boyd = function (h, w) { // Height in Meters, Weight in Kg
  *
  *************************************************************/
 
+
+Ext.GetListOfChangedFields = function(theForm) {
+	if (theForm.isDirty()) {
+		var changedData = Array();
+		var itemsList = theForm.getFields().items;
+		var iLen = itemsList.length;
+		var f;
+		for (var i = 0; i < iLen; i++){
+			f = itemsList[i];
+			if(f.isDirty()){
+				var data = {
+					"fieldName" : f.getName(),
+					"originalValue" : f.originalValue,
+					"newValue" : f.getValue()
+				};
+				if (data.originalValue) {
+					changedData.push(data);
+				}
+			}
+		}
+		return changedData;
+	}
+	return false;
+};
+
+/* Clear dirty flags for all fields on the form */
+/* Call upon successful form submit */
+Ext.ClearDirtyFlags = function(theForm) {
+	if (theForm.isDirty()) {
+		var i, f, itemsList = theForm.getFields().items;
+		var iLen = itemsList.length;
+		for (i = 0; i < iLen; i++){
+			f = itemsList[i];
+			if(f.isDirty()){
+				f.originalValue = f.getValue();
+			}
+		}
+	}
+};
+
+Ext.ClearForm = function(theForm) {
+	var i, f, itemsList = theForm.getFields().items;
+	var iLen = itemsList.length;
+	for (i = 0; i < iLen; i++){
+		f = itemsList[i];
+		if ("radiofield" == f.xtype) {
+			f.setValue(false);
+		}
+		else if ("checkboxfield" == f.xtype) {
+			f.setValue("off");
+		}
+		else {
+			f.setValue("");
+		}
+		f.originalValue = f.setValue();
+		
+	}
+};
+
+
+
 Ext.application({
 	name: "COMS",
 

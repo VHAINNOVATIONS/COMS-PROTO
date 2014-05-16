@@ -331,7 +331,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 
 						{
 							"xtype": "CheckCombo",
-							"noDataText" : "",
+							// "noDataText" : "",
+							"value" : "",		/* If a CheckCombo is not initialized with a value of "" the form shows up as Dirty */
 							"fieldLabel": "Select Clinic Information",
 							"name": "ND_E_SelectClinicInfo",
 							"width": 450,
@@ -345,7 +346,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 						},
 						{
 							"xtype": "CheckCombo",
-							"noDataText" : "",
+							// "noDataText" : "",
+							"value" : "",
 							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",
 							"width": 450,

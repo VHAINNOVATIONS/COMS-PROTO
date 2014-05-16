@@ -27,6 +27,14 @@ class PatientController extends Controller
         return false;
     }
 
+    public function escapeString($string) {
+        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
+            return str_replace("'", "''", $string);
+        } else if (DB_TYPE == 'mysql') {
+            return mysql_real_escape_string($string);  	
+        }
+        return $string;
+    }
 
     function MedicationSanityCheck () {
         // Get all templates from the Master Template
@@ -1734,12 +1742,16 @@ function buildJsonObj4Output() {
                     $query = "select * from $DischargeInfoTable where DischargeID = '$dischargeRecordID'";
                 }
                 else {
-                    $query = "select * from $DischargeLinkTable where PatientID = '$PatientID'";
+                    $query = "
+                        SELECT DischargeID, PatientID, 
+                        CONVERT(varchar,date,101) as date
+                        FROM $DischargeLinkTable where PatientID = '$PatientID'";
+                    // $query = "select * from $DischargeLinkTable where PatientID = '$PatientID'";
                 }
             }
             error_log("DischargeInstructions Query - $query");
             $jsonRecord['msg'] = "No records to find";
-            $ErrMsg = "Retrieving $Msg Records";
+            $ErrMsg = "Retrieving Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $query = "SELECT NEWID()";
@@ -1872,10 +1884,28 @@ error_log("Field = '$key'; Value = '$value'");
             }
             else {
                 $jsonRecord['success'] = 'true';
-                if (count($retVal) > 0) {
-                    unset($jsonRecord['msg']);
-                    $jsonRecord['total'] = count($retVal);
-                    $jsonRecord['records'] = $retVal;
+
+                if ("GET" == $_SERVER['REQUEST_METHOD'] && $dischargeRecordID) {
+                    if (count($retVal) > 0) {
+                        $allData = array();
+                        foreach($retVal as $record) {
+                            $data[$record["fieldName"]] = $record["value"];
+                        }
+                         $jsonRecord["data"] = $data;
+                         unset($jsonRecord['msg']);
+                         $GUID = "";
+                    }
+                    else {
+                        $jsonRecord['success'] = 'false';
+                        $jsonRecord['errorMessage'] = 'No Records found';
+                    }
+                }
+                else {
+                    if (count($retVal) > 0) {
+                        unset($jsonRecord['msg']);
+                        $jsonRecord['total'] = count($retVal);
+                        $jsonRecord['records'] = $retVal;
+                    }
                 }
             }
         }
@@ -1889,14 +1919,4 @@ error_log("Field = '$key'; Value = '$value'");
     }
 
 
-    public function escapeString($string)
-    {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            return str_replace("'", "''", $string);
-    	} else if (DB_TYPE == 'mysql') {
-            return mysql_real_escape_string($string);  	
-    	}
-        
-        return $string;
-    }
 }

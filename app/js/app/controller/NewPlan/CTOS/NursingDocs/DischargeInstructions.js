@@ -4,7 +4,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		"CkBoxTArea",
 		"NewPlan.CTOS.NursingDocs.DischargeInstructions", 
 		"NewPlan.CTOS.NursingDocs.PatientEducationDetails",
-		"NewPlan.CTOS.NursingDocs.FollowupDetails"
+		"NewPlan.CTOS.NursingDocs.FollowupDetails",
+		"NewPlan.CTOS.NursingDocs.selDischargeInstructions"
 	],
 	refs: [
 		{
@@ -44,15 +45,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		{
 			ref : "MedSpecificInfoDisplay",
 			selector : "PatientEducationDetails MedSpecificInfoDisplay"
+		},
+
+		{
+			ref : "selDischargeInstruction2See",
+			selector : "selDischargeInstructions"
+		},
+		{
+			ref : "DischargeInstrForm",
+			selector : "DischargeInstructions form"
 		}
-
-
-
 	],
 
 	// Ext.ComponentQuery.query("DischargeInstructions [name=\"PatientEducation\"] [name=\"PatientEduDetails\"]")[0].getStore()
 	init: function () {
+		this.application.on( { DischargeInstructionSelected : this.DischargeInstrSelected, scope : this } );
 		this.control({
+			"DischargeInstructions [id=\"PrintDischargeInstructions\"]" : {
+				"click" : function() {
+console.log("PrintDischargeInstructions");
+				}
+			},
 			"PatientEducationDetails [name=\"ND_E_SelectClinicInfo\"]" : {
 				"change" : this.ClinicInfoSelected
 			},
@@ -103,18 +116,96 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			"PatientEducationDetails [name=\"MedSpecificInfoHeader\"]" : {
 				"click" : this.DisplayMedInfo
 			},
-			"PatientEducationDetails" : {
-				"afterrender" : this.LoadMedInfo,
-			},
-			"PatientEducationDetails [name=\"ND_E_DischargeInstr\"]" : {
-				"show" : this.LoadMedInfo,
-			},
 			"fieldset[name=\"Barriers\"] checkbox" : {
 				"change" : function(btn, nValu, oValu, opts) {
 					this.MExclusiveCkBoxs(btn, nValu);
 				}
+			},
+
+			"DischargeInstructions" : {
+				"afterrender" : this.DischargeInstrPanelLoadProc
+			},
+
+			"selDischargeInstructions" : {
+				"select" : this.selDischargeInstructions
 			}
 		});
+	},
+
+
+
+
+	selDischargeInstructions : function(theCombo, records, eOpts) {
+		var theData = records[0].getData();
+		var theForm = theCombo.up("panel").down("form").getForm();
+		var args = { "form" : theForm, "DischargeID" : theData.DischargeID, "PatientID" : theData.PatientID, "date" : theData.date };
+		if (theForm.isDirty()) {
+			Ext.MessageBox.show({
+				title:"Save Changes?",
+				msg: "You have made changes to this Discharge Instructions Form, do you want to save those changes before opening a new set of Discharge Instructions?",
+				buttons: Ext.Msg.YESNOCANCEL,
+				icon: Ext.Msg.QUESTION,
+				scope : this,
+				fn: function(btn){
+					if ("no" === btn){
+						args.SaveCurrent = false;
+						this.application.fireEvent("DischargeInstructionSelected", args);
+					}
+					else if ("yes" === btn) {
+						args.SaveCurrent = true;
+						this.application.fireEvent("DischargeInstructionSelected", args);
+					}
+				}
+			});
+		}
+		else {
+			args.SaveCurrent = false;
+			this.application.fireEvent("DischargeInstructionSelected", args);
+		}
+	},
+
+	DischargeInstrSelected : function( args ) {
+		var theForm = args.form;
+		var Pat_ID = this.application.Patient.PAT_ID;
+		var PreviousDischargeID = this.application.Patient.DischargeInfoID;
+		args.Pat_ID = Pat_ID;
+		args.PreviousDischargeID = PreviousDischargeID;
+
+		if (args.SaveCurrent) {
+			this.doFormSubmit(theForm, Pat_ID, PreviousDischargeID, args, this.LoadForm);
+		}
+		else {
+			this.LoadForm(args);
+		}
+	},
+
+	DischargeInstrPanelLoadProc : function(thePanel, eOpts) {
+		var theForm = this.getDischargeInstrForm();
+		var combo = this.getSelDischargeInstruction2See();
+		var store = combo.getStore();
+		var Pat_ID = this.application.Patient.PAT_ID;
+		store.proxy.url = Ext.URLs.PatientDischarge + "/" + Pat_ID;	// Patient/DischargeInstructions/F8B904DF-D4CF-E311-A4B9-000C2935B86F
+		store.load({
+			"scope" : this,
+			"form" : theForm,
+			"Pat_ID" : Pat_ID,
+			"callback" : function(records, operation, success) {
+				var DischargeID;
+				if(success){
+					Ext.each(records, function(r) {
+						var dateCk = Ext.util.Format.date(new Date());
+						if (dateCk == r.get('date')) {
+							DischargeID = r.get("DischargeID");
+							return false;	/* Exit from the each loop */
+						}
+					});
+				}
+				if (DischargeID) {
+					this.LoadForm({"form" : operation.form, "Pat_ID" : operation.Pat_ID, "DischargeID" : DischargeID});
+				}
+			}
+		});
+		this.LoadMedInfo();
 	},
 
 
@@ -184,78 +275,107 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	},
 
 	CancelDischargeInstructions : function(theBtn, theEvent, eOpts) {
-		var form = theBtn.up('form').getForm();
+		Ext.MessageBox.show({
+			title:"Clear Form?",
+			msg: "You have made changes to this Discharge Instructions Form, are you sure you want to CANCEL this form? All changes will be lost",
+			buttons: Ext.Msg.YESNO,
+			icon: Ext.Msg.QUESTION,
+			fn: function(btn){
+				if ("yes" === btn) {
+					var form = theBtn.up('form').getForm();
+					form.reset();
+					Ext.getCmp("PatientEducationDetails").hide();
+					Ext.getCmp("FollowupDetails").hide();
+					Ext.getCmp("DischargeInstructionsDetails").hide();
+				}
+			}
+		});
+	},
+
+
+	LoadForm : function( args ) {
+		this.application.loadMask("Loading Discharge Instructions");
+
+		var form = args.form;
+		if (form.getForm) {
+			form = form.getForm();
+		}
+		var Pat_ID = args.Pat_ID;
+		var DischargeInstructionsID = args.DischargeID;
+
+		var URL = Ext.URLs.PatientDischarge + "/" + Pat_ID + "/" + DischargeInstructionsID;
+
+		Ext.ClearForm(form);
+		Ext.getCmp("PatientEducationDetails").hide();
+		Ext.getCmp("DischargeInstructionsDetails").hide();
+		Ext.getCmp("FollowupDetails").hide();
+		form.load({
+			url: URL,
+			method: "GET",
+			success: function(form, action) {
+				// process input to show sections of the form
+				var theData = action.result.data;
+				if ("1" == theData.PE_Taught) {
+					Ext.getCmp("PatientEducationDetails").show();
+				}
+				if ("1" == theData.DischargeInstructions_Given) {
+					Ext.getCmp("DischargeInstructionsDetails").show();
+				}
+				if ("1" == theData.FollowUp_Type) {
+					Ext.getCmp("FollowupDetails").show();
+				}
+				Ext.ClearDirtyFlags(form);
+				this.application.unMask();
+			},
+		    failure: function(form, action) {
+				Ext.Msg.alert("Load failed", action.result.errorMessage);
+				this.application.unMask();
+			}
+		});
+	},
+
+	doFormSubmit : function(form, Pat_ID, PreviousDischargeID, fncArgs, fnc) {
+
+		var CMD = "POST";
+		var URL = Ext.URLs.PatientDischarge + "/" + Pat_ID;
+		if (PreviousDischargeID) {
+			CMD = "PUT";
+			URL += "/" + PreviousDischargeID;
+		}
+
+		form.submit({
+			scope : this,
+			clientValidation: true,
+			url: URL,
+			method : CMD,
+			success: function(form, action) {
+				Ext.ClearDirtyFlags(form);	/* Undocumented function in app.js */
+				this.application.Patient.DischargeInfoID = action.result.dischargeInfoID;
+				Ext.MessageBox.alert("Discharge Instructions Saved", "Discharge Instructions Saved..." );
+				if (fnc) {
+					fnc(fncArgs);
+				}
+			},
+			failure: function(form, action) {
+				switch (action.failureType) {
+					case Ext.form.action.Action.CLIENT_INVALID:
+						Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+						break;
+					case Ext.form.action.Action.CONNECT_FAILURE:
+						Ext.Msg.alert('Failure', 'Ajax communication failed');
+						break;
+					case Ext.form.action.Action.SERVER_INVALID:
+						Ext.Msg.alert('Failure', action.result.msg);
+				}
+			}
+		});
 	},
 
 	SaveDischargeInstructions : function(theBtn, theEvent, eOpts) {
 		var form = theBtn.up('form').getForm();
-		var theData = form.getValues(false, false, false, true);
-		Ext.MessageBox.alert("Discharge Instructions Saved", "Discharge Instructions Saved..." );
-
-
-/**
-		if (form.isValid()) {
-			var Label = theData.Label;
-			var Details = Ext.util.Format.htmlEncode(theData.Details);
-			var recID = this.CurrentMedRisksRecordID;
-			var URL = Ext.URLs.MedRisks;
-			var CMD = "POST";
-			if ("" !== recID && this.CurrentMedRisks === Label) {
-				URL += "/" + recID;
-				CMD = "PUT";
-			}
-
-			Ext.Ajax.request({
-				url: URL,
-				method : CMD,
-				jsonData : {"Label" : Label, "Details" : Details },
-				scope: this,
-				success: function( response, opts ){
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					this.CurrentMedRisksRecordID = "";
-					this.CurrentMedRisks = "";
-					var theLabelField = this.getMedRisks_Label();
-					var theDetailsField = this.getMedRisks_Details();
-					theLabelField.setValue("");
-					theDetailsField.setValue("");
-
-					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "Site Configuration - Clinic Info, Save Error - " + resp.msg );
-					}
-					else {
-						var thisCtl = this.getController("Management.AdminTab");
-						var theGrid = thisCtl.getMedRisksGrid();
-						theGrid.getStore().load();
-					}
-				},
-				failure : function( response, opts ) {
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					this.CurrentMedRisksRecordID = "";
-					this.CurrentMedRisks = "";
-					var theLabelField = this.getMedRisks_Label();
-					var theDetailsField = this.getMedRisks_Details();
-					theLabelField.setValue("");
-					theDetailsField.setValue("");
-
-					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - " + "e.message" + "<br />" + resp.msg );
-				}
-			});
-		}
-		else {
-			var Msg = "";
-			if ("" === theData.Label) {
-				Msg += "<li>Missing Label Selection</li>";
-			}
-			if ("" === theData.Details) {
-				Msg += "<li>Missing Details for Label</li>";
-			}
-			if ("" !== Msg) {
-				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
-			}
-		}
-**/
+		var Pat_ID = this.application.Patient.PAT_ID;
+		var PreviousDischargeID = this.application.Patient.DischargeInfoID;
+		this.doFormSubmit(form, Pat_ID, PreviousDischargeID, null, null);
 	},
 
 	commonRenderTable : function(thePanel, theStore) {
@@ -296,8 +416,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 						var theStore = this.spclInstrStore;
 						var thePanel = this.getDischargeInstrDetailsDisplay();
 						this.commonRenderTable(thePanel, theStore);
-						// this.renderSpclInstrTable();
-						console.log("Adding Record for " + resp.records[0].Label + " - " + resp.records[0].ID);
 					}
 				},
 				failure : function( response, opts ) {
@@ -311,8 +429,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 
 	SpclInstrSelected : function(theCkBox, nValue, oValue, eOpts) {
 		var newKeys, oldKeys, newRecords, records2Remove;
-		console.log("SpclInstrSelected - ");
-		console.log(nValue);
 
 		if (nValue && "" !== nValue ) {
 			newKeys = nValue.split(",");
@@ -339,8 +455,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			newRecords = null;
 			records2Remove = oldKeys;
 		}
-		console.log("Add New Records = " + newRecords);
-		console.log("Remove old Records = " + records2Remove);
 		if (newRecords || newRecords == "") {
 			this.SpclInstrGetSelected(newRecords);
 		}
@@ -349,7 +463,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			for (i = 0; i < len; i++) {
 				var rec = this.spclInstrStore[i];
 				if (rec.ID === records2Remove[0]) {
-					console.log("Removing Record for " + rec.Label + " - " + rec.ID);
 					Ext.Array.remove(this.spclInstrStore, rec);
 
 						var theStore = this.spclInstrStore;
@@ -384,9 +497,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 						var theStore = this.sciStore;
 						var thePanel = this.getClinicInfoDetailsDisplay();
 						this.commonRenderTable(thePanel, theStore);
-
-						// this.renderSCITable();
-						console.log("Adding Record for " + resp.records[0].Label + " - " + resp.records[0].ID);
 					}
 				},
 				failure : function( response, opts ) {
@@ -399,9 +509,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	},
 	ClinicInfoSelected : function(theCkBox, nValue, oValue, eOpts) {
 		var newKeys, oldKeys, newRecords, records2Remove;
-		console.log("ClinicInfoSelected - ");
-		console.log(nValue);
-
 		if (nValue && "" !== nValue ) {
 			newKeys = nValue.split(",");
 		}
@@ -425,8 +532,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			newRecords = null;
 			records2Remove = oldKeys;
 		}
-		console.log("Add New Records = " + newRecords);
-		console.log("Remove old Records = " + records2Remove);
 		if (newRecords || newRecords == "") {
 			this.sciGetSelected(newRecords);
 		}
@@ -435,13 +540,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			for (i = 0; i < len; i++) {
 				var rec = this.sciStore[i];
 				if (rec.ID === records2Remove[0]) {
-					console.log("Removing Record for " + rec.Label + " - " + rec.ID);
 					Ext.Array.remove(this.sciStore, rec);
 						var theStore = this.sciStore;
 						var thePanel = this.getClinicInfoDetailsDisplay();
 						this.commonRenderTable(thePanel, theStore);
-
-					// this.renderSCITable();
 					break;
 				}
 			}
