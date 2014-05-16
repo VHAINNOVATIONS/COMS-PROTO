@@ -1,7 +1,7 @@
 <?php
 session_start();
 $username = get_current_user();
-$_SESSION['chktrack']= 1;
+$_SESSION['chkTrack']= 1;
 $_SESSION['sessionid'] = session_id();
 $sessionid = $_SESSION['sessionid'];
 

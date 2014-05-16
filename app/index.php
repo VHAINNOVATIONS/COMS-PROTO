@@ -39,6 +39,7 @@ $_SESSION['AccessCode'] = $_POST['AccessCode'];
 $_SESSION['VerifyCode'] = $_POST['VerifyCode'];
 $point = "Pre Check";
 PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
+
 //PostSession($_SESSION['sessionid'],$_POST['AccessCode'],$winauth,$point,1);
 $NWLoginR = NWLogin($_SESSION['AccessCode'],$_SESSION['VerifyCode']);
 $_SESSION['NWLoginR'] = $NWLoginR;

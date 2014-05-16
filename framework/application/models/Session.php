@@ -4,8 +4,8 @@ class Session extends Model {
     
     function getSessionVariables() {
 		$username = get_current_user();
-		$chktrack = 0;
-		$_SESSION['chktrack'] = $chktrack;
+		$chkTrack = 0;
+		$_SESSION['chkTrack'] = $chkTrack;
 		
         $query = "SELECT role as role,DisplayName as DisplayName,rid as rid,cprsUsername as cprsUsername,cprsPass as cprsPass,Email as Email FROM Roles WHERE username = 'sean.cassidy'";
         $result = $this->query($query);

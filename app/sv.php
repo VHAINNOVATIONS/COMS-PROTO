@@ -2,7 +2,7 @@
 include "session.php";
 $_SESSION['sessionid'] = session_id();
 echo "SessionID: ".session_id()."<br>";
-echo "chkTrack: ".$_SESSION['chktrack']."<br>";
+echo "chkTrack: ".$_SESSION['chkTrack']."<br>";
 echo "Display Name: ".$_SESSION['dname']."<br>";
 echo "Role: ".$_SESSION['role']."<br>";
 echo "Role ID: ".$_SESSION['rid']."<br>";
