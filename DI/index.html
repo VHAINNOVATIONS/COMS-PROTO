@@ -1,0 +1,478 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+		<title>Discharge Instructions for Chemotherapy Order Management System (COMS)</title>
+
+		<!-- CSS : ExtJS 4.0 Framework      -->
+		<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1RC1/resources/css/ext-all.css">
+
+		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+		<script src="/libs/modernizr-2.0.6.js"></script>
+		<style>
+			div#heading { margin: 1em; display:none; font-size: 110%; }
+			#heading ul { margin: 1em; }
+			#heading li { margin-left: 3em; list-style-type: disc; }
+			.fSheet-editCell { background-color: yellow!important; font-weight: bold!important; }
+		</style>
+
+	</head>
+<body>
+<div id="heading">
+</div>
+
+<div id="Panel" style="width:98%; margin: 10px auto;"></div>
+<script type="text/javascript" src="/libs/ExtJS_4.1.0/ext-all-debug.js"></script>
+
+<script>
+Ext.URLs = [];
+Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
+
+
+var commonDefaults = {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label", "readOnly" : true};
+
+Ext.define("CkBoxTArea", {
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.CkBoxTArea",
+	"layout" : { "type" : "hbox" },
+	"cls" : "Test", 
+	"margin" : "5 0 5 0",
+	"defaults": commonDefaults,
+	"items" : [
+		{ "xtype" : "checkbox", flex: 0 }, 
+		{ "xtype" : "textarea", "rows" : 5, flex : 1, "grow" : true, "fieldLabel" : "Please Explain <em>*</em>", "labelAlign" : "top", "margin" : "2 0 5 5"}
+	]
+	,
+	listeners : {
+		"afterrender" : function(cbta, options) {
+			var theCkBox = cbta.down("checkbox");
+			var theTArea = cbta.down("textarea");
+			theCkBox.setFieldLabel(cbta.fieldLabel);
+			theCkBox.name = cbta.name + "_Ck";
+			theTArea.name = cbta.name + "_Comment";
+		}
+	}
+});
+
+
+Ext.define("ClinicInfoDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.ClinicInfoDisplay",
+	name : "NursingDocs.ClinicInfoDisplay",
+	autoScroll : true,
+	html : "<hr>None Available<hr>",
+
+	tpl : new Ext.XTemplate(
+		"<h2>Clinic Information:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<p><h3>{Label}</h3>",
+			"{Details}",
+			"</p>",
+		"</tpl>",
+		"</div></section>"
+	)
+});
+
+Ext.define("SpclInstrDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.SpclInstrDisplay",
+	name : "NursingDocs.SpclInstrDisplay",
+	autoScroll : true,
+	html : "<hr>None Available<hr>",
+
+	tpl : new Ext.XTemplate(
+		"<h2>Discharge Instructions:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<p><h3>{Label}</h3>",
+			"{Details}",
+			"</p>",
+		"</tpl>",
+		"</div></section>"
+	)
+});
+
+
+Ext.define("MedSpecificInfoDisplay" ,{
+	extend : "Ext.container.Container",
+    alias : "widget.MedSpecificInfoDisplay",
+	name : "NursingDocs.MedSpecificInfoDisplay",
+	autoScroll : true,
+	html : "<hr>None Available<hr>",
+
+	tpl : new Ext.XTemplate(
+		"<h2>Medication Information:</h2><section>",
+		"<div class=\"SelectedSiteCommonInstructions\">",
+		"<tpl for=\".\">",
+			"<p><h3>{Medication}</h3>",
+			"{Documentation}",
+			"</p>",
+		"</tpl>",
+		"</div></section>"
+	)
+});
+
+
+
+var WhoWasTaughtCfg = {
+	"xtype": "fieldset",
+	"title": "Who Was Taught",
+	"defaultType": "checkbox",
+	"defaults": commonDefaults,
+	"items": [
+		{ "name": "taught_Patient", "fieldLabel": "Patient", "checked" : true }, 
+		{ "name": "taught_Spouse", "fieldLabel": "Spouse" }, 
+		{ "name": "taught_SignificantOther", "fieldLabel": "Significant Other" },
+		{ "xtype" : "CkBoxTArea", "name": "taught_Other", "fieldLabel" : "Other (Please designate)" }
+	]
+};
+
+var PreEducationNeeds = {
+	"xtype": "fieldset",
+	"title": "Pre Education Needs",
+	"items": [{
+		"xtype": "radiogroup",
+		"columns": 1,
+		"vertical": true,
+		"defaultType": "radio",
+		"defaults": commonDefaults,
+		"items": [{
+			"name": "Pre_Edu",
+			"inputValue": "1",
+			"fieldLabel": "Already knows well"
+		}, {
+			"name": "Pre_Edu",
+			"inputValue": "2",
+			"fieldLabel": "Needs review"
+		}, {
+			"name": "Pre_Edu",
+			"inputValue": "3",
+			"fieldLabel": "New material"
+		}]
+	}]
+};
+
+var Barriers2Learning = {
+	"xtype": "fieldset",
+	"title": "Barriers to Learning",
+	"name" : "Barriers",
+	"defaultType": "checkbox",
+	"defaults": commonDefaults,
+	"items": [{
+		"fieldLabel": "None",
+		"name" : "Barrier_None",
+	}, {
+		"fieldLabel": "Desire/motivation",
+		"name" : "Barrier_Desire",
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Physical",
+		"fieldLabel": "Physical"
+	}, {
+		"fieldLabel": "Hearing",
+		"name": "Barrier_Hearing"
+
+	}, {
+		"fieldLabel": "Vision",
+		"name": "Barrier_Vision"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Cognition",
+		"fieldLabel": "Cognition"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Religious_Cultural",
+		"fieldLabel": "Religious/Cultural"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Emotional",
+		"fieldLabel": "Emotional"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Language",
+		"fieldLabel": "Language Barriers"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Communication",
+		"fieldLabel": "Communication"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Financial",
+		"fieldLabel": "Financial"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Barrier_Other",
+		"fieldLabel": "Other"
+	}]
+};
+
+
+var LearningPreference =  {
+	"xtype": "fieldset",
+	"title": "Patient's Learning Style Preference",
+	"defaultType": "checkbox",
+	"defaults": commonDefaults,
+	"items": [{
+		"fieldLabel": "Verbal",
+		"name": "LearningPreference_Verbal"
+	}, {
+		"fieldLabel": "Written",
+		"name": "LearningPreference_Written"
+	}, {
+		"fieldLabel": "Demonstration",
+		"name": "LearningPreference_Demo"
+	}, {
+		"fieldLabel": "Audio-Visual",
+		"name": "LearningPreference_AudioVisual"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "LearningPreference_Other",
+		"fieldLabel": "Other"
+	}]
+};
+
+var TeachingMethods = {
+	"xtype": "fieldset",
+	"title": "Teaching Methods",
+	"defaultType": "checkbox",
+	"defaults": commonDefaults,
+	"items": [{
+		"fieldLabel": "Verbal",
+		"name": "Teaching_Verbal"
+	}, {
+		"fieldLabel": "One to One",
+		"name": "Teaching_1_to_1"
+	}, {
+		"fieldLabel": "Group",
+		"name": "Teaching_Group"
+	}, {
+		"fieldLabel": "Telephone",
+		"name": "Teaching_Phone"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "Teaching_Demo",
+		"fieldLabel": "Demonstration/<br>Return Demonstration"
+	}]
+};
+
+
+
+var DischargeMtls = {
+	"xtype": "fieldset",
+	"title": "Chemotherapy Discharge Instructions/Materials",
+	"defaultType": "checkbox",
+	"name" : "DischargeInstructionsMaterials",
+	"defaults": commonDefaults,
+	"items": [
+		{ 
+			"xtype" : "container",
+			"name" : "DischargeInstructionsDetails",
+			"id" : "DischargeInstructionsDetails",
+			"defaultType": "checkbox",
+			"defaults": commonDefaults,
+			"items" : [
+				{
+					"xtype" : "container",
+					"layout" : "fit",
+					"defaults": commonDefaults,
+					"items" : [{
+						"xtype": "textarea",
+						"grow": true,
+						"fieldLabel": "Materials",
+						"name": "DischargeInstructions_Materials"
+					}]
+				},
+				{
+					"fieldLabel": "Krames on Demand",
+					"name": "Teaching_Krames"
+				}, {
+					"fieldLabel": "HealtheVet ",
+					"name": "Teaching_HealtheVet"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_InfoSheets",
+					"fieldLabel": "Drug info sheet/<br>Food-drug/<br>Drug-drug interaction"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_VABrochure",
+					"fieldLabel": "VA Brochure/<br>Handout"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_OtherWritten",
+					"fieldLabel": "Other written material given"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_Mailed",
+					"fieldLabel": "Mailed"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_Video",
+					"fieldLabel": "Videotape"
+				}, {
+					"xtype": "CkBoxTArea",
+					"name": "Teaching_Other",
+					"fieldLabel": "Other"
+				},
+
+				{ "xtype" : "box", "name" : "ClinicInfoHeader", "html" : "<h2>Clinic Information:</h2>", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
+				{ "xtype": "ClinicInfoDisplay" },
+
+				{ "xtype" : "box", "name" : "SpclInstrHeader", "html" : "<h2>Discharge Instructions:</h2>", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
+				{ "xtype": "SpclInstrDisplay" },
+
+				{ "xtype" : "box", "name" : "MedSpecificInfoHeader", "html" : "<h2>Medication Information:</h2>", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
+				{ "xtype" : "MedSpecificInfoDisplay" },
+
+				{
+					"xtype" : "container",
+					"layout" : "fit",
+					"defaults": commonDefaults,
+					"items" : [{
+						"xtype": "textarea",
+						"grow": true,
+						"fieldLabel": "Comments",
+						"name": "DischargeInstructions_Comments"
+					}]
+				}
+			]
+		}
+	]
+};
+
+var pcResponse =  {
+	"xtype": "fieldset",
+	"title": "Patient/Caregiver Response",
+	"defaultType": "checkbox",
+	"defaults": commonDefaults,
+	"items": [{
+		"fieldLabel": "Verbalizes understanding"
+	}, {
+		"fieldLabel": "Demonstrates accurately"
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "PResponse_NeedsMoreInstrution",
+		"fieldLabel": "Needs additional instruction/practice",
+		"labelWidth": 200,
+		"defaults": {
+			"labelWidth": 200,
+			"labelClsExtra": "NursingDocs-label"
+		}
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "PResponse_NeedsAssistance",
+		"fieldLabel": "Needs assistance",
+		"defaults": {
+			"labelWidth": 200,
+			"labelClsExtra": "NursingDocs-label"
+		}
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "PResponse_Unable2Learn",
+		"fieldLabel": "Unable to learn",
+		"defaults": {
+			"labelWidth": 200,
+			"labelClsExtra": "NursingDocs-label"
+		}
+	}, {
+		"xtype": "CkBoxTArea",
+		"name": "PResponse_NoParticipate",
+		"fieldLabel": "Does not participate",
+		"defaults": {
+			"labelWidth": 200,
+			"labelClsExtra": "NursingDocs-label"
+		}
+	}]
+};
+
+var AdtlComments = {
+	"xtype" : "container",
+	"layout" : "fit",
+	"defaults": commonDefaults,
+	"items" : [{
+		"xtype": "textarea",
+		"grow": true,
+		"fieldLabel": "Additional Comments",
+		"name": "PE_AdditionalComments"
+	}]
+};
+
+
+Ext.define("PatientEducationDetails", {
+	"extend": "Ext.container.Container",
+	"alias": "widget.PatientEducationDetails",
+	"id": "PatientEducationDetails",
+	"name": "PatientEduDetails",
+	"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
+	"margin" : "10",
+	"items": [ 
+	{ xtype : "text", fieldLabel : "Patient Name", name : "PatientName" },
+	
+	WhoWasTaughtCfg, PreEducationNeeds, Barriers2Learning, LearningPreference, TeachingMethods, DischargeMtls, pcResponse ]
+});
+
+
+
+Ext.onReady(function(){
+	var thePanel = Ext.create('Ext.form.Panel', {
+		"title" : "Discharge Instructions",
+		"renderTo" : Ext.getBody(),
+
+		"url" : Ext.URLs.PatientDischarge,
+		"margin" : "0 10 0 10", 
+		"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
+		"items" : [
+			{ "xtype": "PatientEducationDetails" }
+			// , { "xtype": "FollowupDetails" }
+		]
+	});
+
+
+	var form = thePanel.getForm();
+	var qs = window.location.search.substring(1);
+	var DocInstr_ID = "";
+	var URL = "";
+
+	if ("" !== qs) {
+		var qsParams = Ext.Object.fromQueryString(qs);
+		var URL = Ext.URLs.PatientDischarge;
+		if (qsParams.pat_id) {
+			URL += "/" + qsParams.pat_id;
+		}
+		if (qsParams.di_id) {
+			URL += "/" + qsParams.di_id;
+		}
+		form.load({
+			url: URL,
+			method: "GET",
+			scope : this,
+			success: function(form, action) {
+				// process input to show sections of the form
+				var theData = action.result.data;
+				if ("1" == theData.PE_Taught) {
+					Ext.getCmp("PatientEducationDetails").show();
+				}
+				if ("1" == theData.DischargeInstructions_Given) {
+					Ext.getCmp("DischargeInstructionsDetails").show();
+				}
+				if ("1" == theData.FollowUp_Type) {
+					Ext.getCmp("FollowupDetails").show();
+				}
+			},
+		    failure: function(form, action) {
+				Ext.Msg.alert("Load failed", action.result.errorMessage);
+			}
+		});
+	}
+
+
+
+});
+
+</script>
+</body>
+</html>

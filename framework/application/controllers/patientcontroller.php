@@ -1886,18 +1886,39 @@ error_log("Field = '$key'; Value = '$value'");
                 $jsonRecord['success'] = 'true';
 
                 if ("GET" == $_SERVER['REQUEST_METHOD'] && $dischargeRecordID) {
-                    if (count($retVal) > 0) {
-                        $allData = array();
-                        foreach($retVal as $record) {
-                            $data[$record["fieldName"]] = $record["value"];
-                        }
-                         $jsonRecord["data"] = $data;
-                         unset($jsonRecord['msg']);
-                         $GUID = "";
+                    /* Get Patient Name for display on PrintOut */
+                    $patInfoQuery = "SELECT 
+                        PAT.PAT_ID, 
+                        PAT.Patient_ID, 
+                        lu1.Last_Name, 
+                        lu1.First_Name
+                        FROM Patient_Assigned_Templates PAT
+                        JOIN Patient lu1 ON lu1.Patient_ID = PAT.Patient_ID
+                        WHERE PAT.PAT_ID = '$PatientID'";
+
+                    $patInfo = $this->Patient->query($patInfoQuery);
+                    if ($this->checkForErrors($ErrMsg, $patInfo)) {
+                        $jsonRecord['success'] = false;
+                        $jsonRecord['msg'] = "Patient Information Unavailable - " . $this->get('frameworkErr');
                     }
                     else {
-                        $jsonRecord['success'] = 'false';
-                        $jsonRecord['errorMessage'] = 'No Records found';
+                        error_log("$patInfoQuery");
+                        error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
+                        /* Parse data into Proper Form Input structure */
+                        if (count($retVal) > 0) {
+                            $data = array();
+                            $data["PatientName"] = $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"];
+                            foreach($retVal as $record) {
+                                $data[$record["fieldName"]] = $record["value"];
+                            }
+                             $jsonRecord["data"] = $data;
+                             unset($jsonRecord['msg']);
+                             $GUID = "";
+                        }
+                        else {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['errorMessage'] = 'No Records found';
+                        }
                     }
                 }
                 else {

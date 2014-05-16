@@ -312,6 +312,7 @@ console.log("PrintDischargeInstructions");
 		form.load({
 			url: URL,
 			method: "GET",
+			scope : this,
 			success: function(form, action) {
 				// process input to show sections of the form
 				var theData = action.result.data;
