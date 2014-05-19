@@ -212,7 +212,7 @@ var theMainItemsList = function(itemsInGroup) {
 				IIG_Panel
 			]
 		}
-	]
+	];
 };
 var theButtons = [
 		{ text: "Apply Template" },

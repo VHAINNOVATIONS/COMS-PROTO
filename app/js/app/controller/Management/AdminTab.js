@@ -808,7 +808,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+				
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
@@ -829,7 +830,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
@@ -854,7 +855,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
@@ -875,7 +876,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });

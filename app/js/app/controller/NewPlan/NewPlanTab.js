@@ -186,7 +186,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
     cancelApply: function(button){
-		debugger;
+		wccConsoleLog("CancelApplication of Template");
     },
 
 

@@ -5,9 +5,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 		{"xtype": "RequiredInstr"},
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : "0 0 5 10" }, "items" : [
 			{ "xtype" : "selDischargeInstructions"},
-			{ "xtype" : "button", "baseCls" : "anchor", "id" : "PrintDischargeInstructions", "text" : "Print Discharge Instructions" }
+			{ "xtype" : "button", "baseCls" : "anchor", "id" : "PrintDischargeInstructions", "text" : "Print Discharge Instructions" },
+			{ "xtype" : "button", "baseCls" : "anchor", "id" : "PrintFollowupApt", "text" : "Print Followup Appointment" }
 		]},
-		{ "xtype" : "form", "submitEmptyText" : false, "trackResetOnLoad" : true, "margin" : "0 10 0 10", "items" : [
+		{ "xtype" : "form", "id" : "DischargeInstructionsForm", "submitEmptyText" : false, "trackResetOnLoad" : true, "margin" : "0 10 0 10", "items" : [
+			{ "xtype" : "textfield", "name" : "Applied_Template" },
+			{ "xtype" : "textfield", "name" : "MedList" },
 			{
 				"xtype": "fieldset",
 				"title": "Patient Education",
@@ -28,7 +31,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 						},
 						"items": [
 							{ "name": "PE_Taught", "inputValue": "1", "fieldLabel": "Yes" }, 
-							{ "name": "PE_Taught", "inputValue": "0", "fieldLabel": "No" }
+							{ "name": "PE_Taught", "inputValue": "0", "fieldLabel": "No" }, 
 						]
 					}, 
 					{

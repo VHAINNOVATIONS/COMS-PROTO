@@ -440,7 +440,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 	FluidTypeRouteSelected: function(combo, recs, eOpts){
 				/* MWB - 4/17/2014 - for new requirement (*IV Fluid Type Choices Issue #80) need to get the drug to determine which fluid types are allowable */
-				var theDrug = combo.up("form").down("combo[name=\"Drug\"]");
+				// var theDrug = combo.up("form").down("combo[name=\"Drug\"]");
 				var theDrug = combo.up("form").down("combo[name=\"Drug\"]").valueModels[0].data;
 				var theDrugID = theDrug.id;
 

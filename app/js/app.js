@@ -691,7 +691,8 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 		}
 	}
 	catch (e) {
-		debugger;
+		alert("Error togglePanelOnTitleBarClick");
+
 	}
 };
 
@@ -1509,6 +1510,23 @@ Ext.ClearForm = function(theForm) {
 	}
 };
 
+Ext.SetForm2ReadOnly = function(formID, readOnly) {
+	var allFields = Ext.query("#" + formID + " input");
+	var allText = Ext.query("#" + formID + "  textarea");
+	var i, f, itemsList = allFields.concat(allText);
+	var iLen = itemsList.length;
+	for (i = 0; i < iLen; i++){
+		f = itemsList[i];
+		f.readOnly = readOnly;
+		f.readonly = readOnly;
+		if (readOnly) {
+			f.setAttribute("disabled", true);
+		}
+		else {
+			f.removeAttribute("disabled");
+		}
+	}
+};
 
 
 Ext.application({

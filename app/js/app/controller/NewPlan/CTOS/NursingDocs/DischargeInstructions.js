@@ -54,7 +54,22 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		{
 			ref : "DischargeInstrForm",
 			selector : "DischargeInstructions form"
+		},
+		{
+			ref : "DischargeInstrSaveBtn",
+			selector : "DischargeInstructions button[text=\"Save\"]"
+		},
+		{
+			ref : "Applied_Template",
+			selector : "DischargeInstructions [name=\"Applied_Template\"]"
+		},
+		{
+			ref : "MedList",
+			selector : "DischargeInstructions [name=\"MedList\"]"
 		}
+
+
+
 	],
 
 	// Ext.ComponentQuery.query("DischargeInstructions [name=\"PatientEducation\"] [name=\"PatientEduDetails\"]")[0].getStore()
@@ -63,9 +78,19 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		this.control({
 			"DischargeInstructions [id=\"PrintDischargeInstructions\"]" : {
 				"click" : function() {
-console.log("PrintDischargeInstructions");
+					var PAT_ID = this.application.Patient.PAT_ID;
+					var DI_ID = this.application.Patient.DischargeInfoID;
+					window.open("/DI?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
 				}
 			},
+			"DischargeInstructions [id=\"PrintFollowupApt\"]" : {
+				"click" : function() {
+					var PAT_ID = this.application.Patient.PAT_ID;
+					var DI_ID = this.application.Patient.DischargeInfoID;
+					window.open("/DIF?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
+				}
+			},
+
 			"PatientEducationDetails [name=\"ND_E_SelectClinicInfo\"]" : {
 				"change" : this.ClinicInfoSelected
 			},
@@ -165,9 +190,11 @@ console.log("PrintDischargeInstructions");
 	},
 
 	DischargeInstrSelected : function( args ) {
-		var theForm = args.form;
-		var Pat_ID = this.application.Patient.PAT_ID;
 		var PreviousDischargeID = this.application.Patient.DischargeInfoID;
+		var theForm = args.form;
+		var curDischargeID = args.DischargeID;		// ID for currently loaded Discharge Instructions
+		this.application.Patient.DischargeInfoID = curDischargeID;
+		var Pat_ID = this.application.Patient.PAT_ID;
 		args.Pat_ID = Pat_ID;
 		args.PreviousDischargeID = PreviousDischargeID;
 
@@ -181,6 +208,28 @@ console.log("PrintDischargeInstructions");
 
 	DischargeInstrPanelLoadProc : function(thePanel, eOpts) {
 		var theForm = this.getDischargeInstrForm();
+
+		var appTemplateField = this.getApplied_Template();
+		appTemplateField.setValue(this.application.Patient.AppliedTemplate.id);
+
+
+
+	var theTemplate = this.application.Patient.AppliedTemplate;
+	var PreMeds = theTemplate.PreMHMeds;
+	var TheMeds = theTemplate.Meds;
+	var PostMeds = theTemplate.PostMHMeds;
+	var MedsList = { "PreMeds" : PreMeds, "Meds" : TheMeds, "PostMeds" : PostMeds };
+
+		var appTemplateField = this.getApplied_Template();
+		appTemplateField.setValue(this.application.Patient.AppliedTemplate.id);
+
+		var MedListField = this.getMedList();
+		MedListField.setValue(Ext.JSON.encode(MedsList));
+
+
+
+
+
 		var combo = this.getSelDischargeInstruction2See();
 		var store = combo.getStore();
 		var Pat_ID = this.application.Patient.PAT_ID;
@@ -201,6 +250,7 @@ console.log("PrintDischargeInstructions");
 					});
 				}
 				if (DischargeID) {
+					this.application.Patient.DischargeInfoID = DischargeID;
 					this.LoadForm({"form" : operation.form, "Pat_ID" : operation.Pat_ID, "DischargeID" : DischargeID});
 				}
 			}
@@ -257,7 +307,7 @@ console.log("PrintDischargeInstructions");
 				thePanel.update(MedRecords);
 			},
 			failure : function( response, opts ) {
-				debugger;
+				alert("Failure to load Medicstion Info");
 			}
 		});
 
@@ -274,22 +324,42 @@ console.log("PrintDischargeInstructions");
 		}).show();
 	},
 
+	SaveDischargeInstructions : function(theBtn, theEvent, eOpts) {
+		var form = theBtn.up('form').getForm();
+		var Pat_ID = this.application.Patient.PAT_ID;
+		var PreviousDischargeID = this.application.Patient.DischargeInfoID;
+		this.doFormSubmit(form, Pat_ID, PreviousDischargeID, null, null);
+	},
+
+
 	CancelDischargeInstructions : function(theBtn, theEvent, eOpts) {
-		Ext.MessageBox.show({
-			title:"Clear Form?",
-			msg: "You have made changes to this Discharge Instructions Form, are you sure you want to CANCEL this form? All changes will be lost",
-			buttons: Ext.Msg.YESNO,
-			icon: Ext.Msg.QUESTION,
-			fn: function(btn){
-				if ("yes" === btn) {
-					var form = theBtn.up('form').getForm();
-					form.reset();
-					Ext.getCmp("PatientEducationDetails").hide();
-					Ext.getCmp("FollowupDetails").hide();
-					Ext.getCmp("DischargeInstructionsDetails").hide();
+		var form = theBtn.up('form').getForm();
+		if (form.isDirty()) {
+			Ext.MessageBox.show({
+				title:"Clear Form?",
+				msg: "You have made changes to this Discharge Instructions Form, are you sure you want to CANCEL this form? All changes will be lost",
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				fn: function(btn){
+					if ("yes" === btn) {
+						var form = theBtn.up('form').getForm();
+						form.reset();
+						Ext.getCmp("PatientEducationDetails").hide();
+						Ext.getCmp("FollowupDetails").hide();
+						Ext.getCmp("DischargeInstructionsDetails").hide();
+					}
 				}
-			}
-		});
+			});
+		}
+		else {
+			Ext.SetForm2ReadOnly("DischargeInstructionsForm", false);
+			this.getDischargeInstrSaveBtn().show();
+			form.reset();
+			Ext.getCmp("PatientEducationDetails").hide();
+			Ext.getCmp("FollowupDetails").hide();
+			Ext.getCmp("DischargeInstructionsDetails").hide();
+		}
+
 	},
 
 
@@ -314,6 +384,8 @@ console.log("PrintDischargeInstructions");
 			method: "GET",
 			scope : this,
 			success: function(form, action) {
+				// If Date of data loaded is today, form can be written to
+				// else form is readonly
 				// process input to show sections of the form
 				var theData = action.result.data;
 				if ("1" == theData.PE_Taught) {
@@ -326,7 +398,17 @@ console.log("PrintDischargeInstructions");
 					Ext.getCmp("FollowupDetails").show();
 				}
 				Ext.ClearDirtyFlags(form);
+				var dateCk = Ext.util.Format.date(new Date());
+				if (dateCk !== theData.date) {
+					Ext.SetForm2ReadOnly("DischargeInstructionsForm", true);
+					this.getDischargeInstrSaveBtn().hide();
+				}
+				else {
+					Ext.SetForm2ReadOnly("DischargeInstructionsForm", false);
+					this.getDischargeInstrSaveBtn().show();
+				}
 				this.application.unMask();
+
 			},
 		    failure: function(form, action) {
 				Ext.Msg.alert("Load failed", action.result.errorMessage);
@@ -356,6 +438,13 @@ console.log("PrintDischargeInstructions");
 				if (fnc) {
 					fnc(fncArgs);
 				}
+
+				// Force combo to reload it's store
+				var theCombo = this.getSelDischargeInstruction2See();
+				delete theCombo.getStore().lastQuery;
+
+				// delete qeb.getStore().lastQuery;
+
 			},
 			failure: function(form, action) {
 				switch (action.failureType) {
@@ -372,12 +461,8 @@ console.log("PrintDischargeInstructions");
 		});
 	},
 
-	SaveDischargeInstructions : function(theBtn, theEvent, eOpts) {
-		var form = theBtn.up('form').getForm();
-		var Pat_ID = this.application.Patient.PAT_ID;
-		var PreviousDischargeID = this.application.Patient.DischargeInfoID;
-		this.doFormSubmit(form, Pat_ID, PreviousDischargeID, null, null);
-	},
+
+
 
 	commonRenderTable : function(thePanel, theStore) {
 		var Records = theStore,

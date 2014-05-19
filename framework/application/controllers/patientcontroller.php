@@ -1739,14 +1739,19 @@ function buildJsonObj4Output() {
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             if ($PatientID) {
                 if ($dischargeRecordID) {
-                    $query = "select * from $DischargeInfoTable where DischargeID = '$dischargeRecordID'";
+                    $query = "select 
+                        di.fieldName as fieldName,
+                        di.value as value,
+                        CONVERT(varchar,dil.date,101) as date
+                        from $DischargeInfoTable di
+                        join $DischargeLinkTable dil on dil.DischargeID = di.DischargeID
+                        where di.dischargeID = '$dischargeRecordID'";
                 }
                 else {
                     $query = "
                         SELECT DischargeID, PatientID, 
                         CONVERT(varchar,date,101) as date
-                        FROM $DischargeLinkTable where PatientID = '$PatientID'";
-                    // $query = "select * from $DischargeLinkTable where PatientID = '$PatientID'";
+                        FROM $DischargeLinkTable where PatientID = '$PatientID' order by date";
                 }
             }
             error_log("DischargeInstructions Query - $query");
@@ -1780,7 +1785,6 @@ function buildJsonObj4Output() {
                 foreach($_POST as $key => $value) {
                     if ("" !== $value) {
                         $value = $this->escapeString($value);
-error_log("Field = '$key'; Value = '$value'");
                         $query = "INSERT INTO $DischargeInfoTable (
                             DischargeID,
                             fieldName,
@@ -1908,7 +1912,11 @@ error_log("Field = '$key'; Value = '$value'");
                         if (count($retVal) > 0) {
                             $data = array();
                             $data["PatientName"] = $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"];
+                            $data["date"] = "";
                             foreach($retVal as $record) {
+                                if ("" === $data["date"]) {
+                                    $data["date"] = $record["date"];
+                                }
                                 $data[$record["fieldName"]] = $record["value"];
                             }
                              $jsonRecord["data"] = $data;

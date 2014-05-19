@@ -96,13 +96,13 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	],
 
     Start_EOTS1 : function() {
-        debugger;
+        wccConsoleLog("Start_EOTS1");
     },
     Start_EOTS2 : function() {
-        debugger;
+        wccConsoleLog("Start_EOTS2");
     },
     Start_EOTS3 : function() {
-        debugger;
+        wccConsoleLog("Start_EOTS3");
     },
 
     init: function() {  // called at application initialization time
