@@ -84,6 +84,7 @@ class OrdersController extends Controller {
             foreach ($patientTemplates as $patient) {
                 //$oemrecords = $patientModel->getTopLevelOEMRecords($patient['patientID'],$patient['templateID']);
                 $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays($patient['patientID'], $patient['templateID']);
+				//var_dump($oemrecords);
 				
 
                 if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
@@ -125,6 +126,7 @@ class OrdersController extends Controller {
                     $preTherapyCount = count($preTherapys);
                     $type = 'Pre Therapy';
 					$typeOrder = 1;
+					//var_dump($preTherapys);
 
                     $tmpOemRecord = $this->analyzeTherapys($preTherapyCount, $preTherapys, $type, $typeOrder, $patient, $oemrecord, $preTherapyDoseDetailsMap);
 
@@ -166,9 +168,12 @@ class OrdersController extends Controller {
 
                     $modOemRecords = array_merge($modOemRecords, $tmpOemRecord);
 
-                    
+                    //var_dump($modOemRecords);
+					
                     $finalOrders = array(); // This should not be redefined here - it is throwing out the work of the previous iteration
                     
+					//var_dump($finalOrders);
+					
                     foreach ($modOemRecords as $orderRecord) {
                         $templateId = $orderRecord['templateID'];
                         $drug =  $orderRecord['drug'];
@@ -176,6 +181,7 @@ class OrdersController extends Controller {
 						$Order_ID = $orderRecord['Order_ID'];
 						
 						//var_dump($orderRecord);
+						//var_dump($modOemRecords);
 
                         $orderStatus = $this->Orders->getOrderStatus($Order_ID);
 						//var_dump($orderStatus);
