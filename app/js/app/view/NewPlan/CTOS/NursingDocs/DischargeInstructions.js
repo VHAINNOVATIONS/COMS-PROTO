@@ -9,8 +9,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 			{ "xtype" : "button", "baseCls" : "anchor", "id" : "PrintFollowupApt", "text" : "Print Followup Appointment" }
 		]},
 		{ "xtype" : "form", "id" : "DischargeInstructionsForm", "submitEmptyText" : false, "trackResetOnLoad" : true, "margin" : "0 10 0 10", "items" : [
-			{ "xtype" : "textfield", "name" : "Applied_Template" },
-			{ "xtype" : "textfield", "name" : "MedList" },
+			{ "xtype" : "hidden", "name" : "Applied_Template" },
+			{ "xtype" : "hidden", "name" : "MedList" },
 			{
 				"xtype": "fieldset",
 				"title": "Patient Education",

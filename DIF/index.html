@@ -528,7 +528,7 @@ Ext.define("PatientEducationDetails", {
 		"fieldLabel": "Discharge Date",
 		"name": "date"
 	},
-	{ "xtype" : "displayfield", "name" : "Applied_Template", "hidden" : true }
+	{ "xtype" : "hidden", "name" : "Applied_Template", "hidden" : true }
 	]},
 
 	{ "xtype" : "box", "name" : "ClinicInfoHeader", "html" : "<h2>Clinic Information:</h2>", "style": {"textAlign" : "right"}, "width": 200, "componentCls": "NursingDocs-label" },
@@ -667,7 +667,7 @@ function LoadMedInfo(TemplateID) {
 
 Ext.onReady(function(){
 	var thePanel = Ext.create('Ext.form.Panel', {
-		"title" : "Discharge Instructions",
+		// "title" : "Discharge Instructions",
 		"renderTo" : Ext.getBody(),
 
 		"url" : Ext.URLs.PatientDischarge,

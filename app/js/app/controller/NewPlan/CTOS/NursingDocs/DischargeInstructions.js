@@ -62,11 +62,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		{
 			ref : "Applied_Template",
 			selector : "DischargeInstructions [name=\"Applied_Template\"]"
-		},
+		}
+/***
+		,
 		{
 			ref : "MedList",
 			selector : "DischargeInstructions [name=\"MedList\"]"
 		}
+***/
 
 
 
@@ -223,8 +226,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		var appTemplateField = this.getApplied_Template();
 		appTemplateField.setValue(this.application.Patient.AppliedTemplate.id);
 
-		var MedListField = this.getMedList();
-		MedListField.setValue(Ext.JSON.encode(MedsList));
+		// var MedListField = this.getMedList();
+		// MedListField.setValue(Ext.JSON.encode(MedsList));
 
 
 
