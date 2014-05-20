@@ -181,9 +181,10 @@ class Orders extends Model {
                     "where Order_ID = '" . $OrderIDF . "' ";
 					
         } else {
+		$Notes = "Line 184, Order.php";
 
-            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Order_Type, Drug_Name, Patient_ID)" .
-			"VALUES ('".$Template_IDF."','".$OrderStatusF."','Inserted Order','".$Drug_NameF."','".$PIDF."')";
+            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Order_Type, Drug_Name, Patient_ID,Notes)" .
+			"VALUES ('".$Template_IDF."','".$OrderStatusF."','Inserted Order','".$Drug_NameF."','".$PIDF."','".$Notes."')";
            
         }
 		
@@ -208,7 +209,7 @@ class Orders extends Model {
 		$query = "SELECT Order_Status as orderStatus, Order_ID as orderid " .
 		"FROM Order_Status " .
 		"WHERE Order_ID = '".$Order_ID."' ";		
-        
+        //echo $query;
         return $this->query($query);
         
 
@@ -236,13 +237,16 @@ class Orders extends Model {
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		$Notes = "Line 240, order.php";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
 		}
 		else{
+		$notes = 'Line 242';
 		$query = "Update Order_Status set Order_Status = 'Dispensed' " .
 		"where Template_ID = '".$TID."' " .
 		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Patient_ID = '".$PID."'";
+		"AND Notes = '".$Notes."' ".
+		"AND Patient_ID = '".$PID."'";	
 		
 		}
 		
@@ -270,7 +274,8 @@ class Orders extends Model {
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		$Notes = "Line 277, Orders.php"; 
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
 		}
 		else{
 		$query = "Update Order_Status set Order_Status = 'Cancelled' " .
@@ -304,7 +309,8 @@ function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID')";
+		$Notes = "Line 312, orders.php";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
 		}
 		else{
 		$query = "Update Order_Status set Order_Status = 'Hold' " .

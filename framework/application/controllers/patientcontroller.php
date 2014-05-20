@@ -464,6 +464,7 @@ class PatientController extends Controller
         $drugName = $preHydrationRecord['drug'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
+		$Notes = "Line 467, PatientController";
         
         $query = "
             INSERT INTO Order_Status (
@@ -471,13 +472,15 @@ class PatientController extends Controller
                 Order_Status, 
                 Drug_Name, 
                 Order_Type, 
-                Patient_ID
+                Patient_ID,
+				Notes
             ) VALUES (
                 '$templateId',
                 '$orderStatus',
                 '$drugName',
                 '$orderType',
-                '$patientid'
+                '$patientid',
+                '$Notes'
             )
         ";
         $this->Patient->query($query);
@@ -944,7 +947,7 @@ function Therapy($regimens) {
 }
 
 function PrePostTherapy($hydrations, $infusions) {
-    $HydrationArray = array();
+	$HydrationArray = array();
     foreach ($hydrations as $hydration) {
         $HydrationRecord = array();
         $status = $hydration["Status"] ? $hydration["Status"] : "";

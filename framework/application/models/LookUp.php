@@ -1291,7 +1291,6 @@ class LookUp extends Model {
                     where mh.Template_ID = '$id' 
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
                     order by Sequence_Number";
-
             }
             else {
                 $query = "
@@ -1315,7 +1314,8 @@ class LookUp extends Model {
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
                     order by Sequence_Number";
             }
-            $retVal = $this->query($query);
+			//echo $query;
+			$retVal = $this->query($query);
         }
 // error_log("Lookup Model getHydrations - Template Data - $query");
 // error_log(json_encode($retVal));
@@ -1360,6 +1360,7 @@ class LookUp extends Model {
                 JOIN Order_Status os on os.Order_ID = mhi.Order_ID
             WHERE mhi.MH_ID = '$id'
         ";
+
             }
             else {
         $query = "
@@ -1380,6 +1381,7 @@ class LookUp extends Model {
             WHERE mhi.MH_ID = '$id'
         ";
             }
+		//echo $query;
         $retVal = $this->query($query);
 // error_log("Lookup Model getMHInfusions - Template Data");
 // error_log("Query - $query");
@@ -1614,7 +1616,7 @@ else {
         $gotIt = $this->getRoundingRule();
         if (empty($gotIt)){
             $query = "INSERT into LookUp (Lookup_Type, Name, Description) values (" . 51 . ",'RoundingRule'," . $roundingrule . ")";
-            echo $query;
+            //echo $query;
         }
         else {
             $key = $gotIt[0]["Lookup_ID"];
