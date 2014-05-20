@@ -10,7 +10,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 		]},
 		{ "xtype" : "form", "id" : "DischargeInstructionsForm", "submitEmptyText" : false, "trackResetOnLoad" : true, "margin" : "0 10 0 10", "items" : [
 			{ "xtype" : "hidden", "name" : "Applied_Template" },
-			{ "xtype" : "hidden", "name" : "MedList" },
+			// { "xtype" : "hidden", "name" : "MedList" },
 			{
 				"xtype": "fieldset",
 				"title": "Patient Education",
