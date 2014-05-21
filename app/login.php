@@ -14,7 +14,7 @@ echo "<br>*****<B>TEST SYSTEM</B>******<BR>
 	</td></tr><tr><td width='50%' align='center'>
 	<table cellpadding='6' cellspacing='6' align='right' border=1>
 	<tr><td>Programmer</td><td>Provider</td><td>Nurse</td><td>Pharmacist</td></tr>
-	<tr><td>COMS1234</td><td>VA2014</td><td>VA2014</td><td>COMS2014</td></tr>
+	<tr><td>COMS1234</td><td>VA2014</td><td>VA1234</td><td>COMS2014</td></tr>
 	<tr><td>COMS4321!</td><td>VA2014!!</td><td>COMS22!!</td><td>VA2014!!</td></tr>
 
 </table>
