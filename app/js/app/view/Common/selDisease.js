@@ -4,10 +4,9 @@ Ext.define('COMS.view.Common.selDisease' ,{
 	name : 'Select Disease Control',
 
 	store : 'DiseaseType',
-        allowBlank: false,
+    allowBlank: false,
 	width: 500,
 	size : 50,
-//        queryMode: 'local',
 	labelWidth: 150,
 	fieldLabel: 'Select a type of cancer <em>*</em>',
 	labelAlign: 'right',

@@ -17,37 +17,36 @@ class LookupController extends Controller {
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
             return str_replace("'", "''", $string);
-    	} else if (DB_TYPE == 'mysql') {
-            return mysql_real_escape_string($string);  	
-    	}
-        
+        }
         return $string;
     }
 
     function checkForErrors($errorMsg,$retVal){
-        
         if (null != $retVal && array_key_exists('error', $retVal)) {
-
-            if(DB_TYPE == 'sqlsrv'){
-				if (is_string($retVal['error'])) {
-                    $errorMsg .= $retVal['error'];
-				}
-				else {
-	                foreach ($retVal['error'] as $error) {
-		                $errorMsg .= "SQLSTATE: " . $error['SQLSTATE'] . " code: " . $error['code'] . " message: " . $error['message'];
-			        }
-				}
-            }else if(DB_TYPE == 'mysql'){
-                    $errorMsg .= $retVal['error'];
+            $ErrorCode = "";
+            if (is_string($retVal['error'])) {
+                $errorMsg .= " " . $retVal['error'];
             }
-
+            else {
+                foreach ($retVal['error'] as $error) {
+                    if (2627 == $error['code']) {
+                        $ErrorCode = "Unique";
+                    }
+                    else {
+                        error_log("Lookup - $errorMsg");
+                        error_log(json_encode($error));
+                        $finalMsg = explode("]", $error['message']);
+                        $finalMsg = $finalMsg[count($finalMsg)-1];
+                        $errorMsg .= "<hr>";
+                        $errorMsg .=  $finalMsg;
+                    }
+                }
+            }
             $this->set('frameworkErr', $errorMsg);
-
+            $this->set('frameworkErrCodes', $ErrorCode);
             return true;
         }
-        
         return false;
-        
     }
     
 
@@ -1367,13 +1366,11 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             else {
                 $jsonRecord['success'] = 'true';
                 if (count($retVal) > 0) {
-foreach($retVal as $r) {
-    $r["Details"] = htmlspecialchars($r["Details"]);
-    error_log($r["Details"]);
-}
-error_log(json_encode($retVal));
-
-
+                    foreach($retVal as $r) {
+                        $r["Details"] = htmlspecialchars($r["Details"]);
+                        error_log($r["Details"]);
+                    }
+                    error_log(json_encode($retVal));
                     unset($jsonRecord['msg']);
                     $jsonRecord['total'] = count($retVal);
                     $jsonRecord['records'] = $retVal;
@@ -1476,4 +1473,98 @@ error_log(json_encode($retVal));
 
 
 
+/****************************************************
+ *
+ *  GET List of stages for all diseases
+ *  GET List of stages for specific disease
+ *
+ ****************************************************/
+    function DiseaseStaging($ID = null) {
+        $Msg = "Disease Stages";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $Disease = "";
+        $Stage = "";
+
+        if (isset($_POST["Disease"])) {
+            $Disease = $_POST["Disease"];
+        }
+        if (isset($_POST["Stage"])) {
+            $Stage = $_POST["Stage"];
+        }
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($ID) {
+                $query = "Select * from DiseaseStaging WHERE ID = '$ID' order by Stage ";
+            }
+            else {
+                $query = "
+                    select 
+                        DS.ID as ID,
+                        DS.DiseaseID as DiseaseID,
+                        DS.Stage as Stage,
+                        LU.Name As Disease
+                        from DiseaseStaging DS
+                        join LookUp LU on LU.Lookup_ID = DS.DiseaseID
+                        Order By DS.DiseaseID, Stage";
+            }
+
+            error_log("$query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT INTO DiseaseStaging (DiseaseID, Stage) VALUES ('$Disease' ,'$Stage')";
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            parse_str(file_get_contents("php://input"),$post_vars);
+
+            $Disease = $post_vars["Disease"];
+            $DiseaseID = $post_vars["DiseaseID"];
+            $Stage = $post_vars["Stage"];
+
+            $query = "UPDATE DiseaseStaging SET DiseaseID = '$DiseaseID', Stage = '$Stage' WHERE ID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from DiseaseStaging where ID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
+        }
+
+        if ("" !== $query) {
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                if("Unique" == $this->get('ErrorCode')) {
+                    $jsonRecord['msg'] = "Can not have duplicate records ($Disease / $Stage already exists";
+                }
+                else {
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                }
+                $jsonRecord['success'] = false;
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                $this->set('frameworkErr', null);
+                $this->set('frameworkErrCodes', null);
+
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }
 }

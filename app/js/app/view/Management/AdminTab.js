@@ -9,6 +9,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 	"defaults": { padding : "10 10 5 10", plain : true, "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	items : [
 		{ xtype : "AddLookups", title: "Manage LookUps" },
+		{ xtype : "DiseaseStaging", title: "Disease Staging" },
 		{ xtype : "DeleteTemplate", title: "Delete Template"},
 		{ xtype : "Globals", title: "Global Variables"},
 		{ xtype : "Users", title: "COMS Users"},
