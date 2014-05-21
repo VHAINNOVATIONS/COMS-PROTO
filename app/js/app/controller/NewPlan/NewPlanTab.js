@@ -2534,6 +2534,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
 					var CTOSData = thisCtl.getCTOSDataDsp();
 					CTOSData.update("<h2 class='errMsg'>No information available for Template " + this.application.Patient.Template.name + "</h2>");
+					Ext.MessageBox.alert("Template Load Error", "Unknown Error in loading Template " + this.application.Patient.Template.name + " - CTOS_DataLoad2" );
 
 					this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 				}

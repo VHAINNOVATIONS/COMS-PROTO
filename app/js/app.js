@@ -42,6 +42,7 @@ Ext.Loader.setConfig({
 });
 
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
+Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 
 Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
@@ -174,7 +175,7 @@ Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
 Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
-Ext.URLs.EmotegenicLevel = "/LookUp/Erisk";
+Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
 
 
 
@@ -435,6 +436,8 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Returns list of all Messages for the specified Role ID, used in "MessagesTab" Grid Control
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
+
+Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
 Ext.COMSModels.DischargeInstruction = "COMS.model.DischargeInstruction";
 Ext.COMSModels.ClinicInfo = "COMS.model.ClinicInfo";

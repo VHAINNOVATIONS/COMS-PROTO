@@ -15,7 +15,7 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			defaults : {displayField: 'value', valueField: 'id' },
 			items: [
 				{ xtype: 'combo', name: 'EmotegenicLevel', fieldLabel: 'Emotegenic Level <em>*</em>', labelAlign: 'right', 
-					width: 300, labelWidth: 120, allowBlank: false,
+					width: 400, labelWidth: 120, allowBlank: false,
 					store: 'EmotegenicLevel', displayField : 'name', valueField : 'id'
 				},
 				{ xtype : 'textfield', maskRe: /[0-9\.]/, maxValue: 100, minValue: 0, name: 'FebrileNeutropeniaRisk', fieldLabel: 'Febrile Neutropenia Risk', labelAlign: 'right', width : 210, labelWidth: 150 },
