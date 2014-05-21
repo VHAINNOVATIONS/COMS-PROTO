@@ -424,7 +424,7 @@ class LookUp extends Model {
                 )
             ";
         }
-		
+
 		
         $retVal = $this->query($query);
 

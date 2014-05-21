@@ -102,5 +102,13 @@ function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
 		//echo $tsql2;
 		$postsession = sqlsrv_query($conn, $tsql2);
 	}
+
+function PostSQLQuery($query){
+	include "dbitcon.php";
+		//Insert into SQL
+		$tsql1 = "INSERT INTO COMS_Queries (query) VALUES ($query)";
+		$postsqlq = sqlsrv_query($conn, $tsql1);
+		
+	}
 	
 ?>
