@@ -259,6 +259,13 @@ class LookUp extends Model {
         $courseNumMax = $formData->CourseNumMax;
         $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
         
+
+            $query = "SELECT NEWID()";
+            $Template_ID = $this->query($query);
+            $Template_ID = $Template_ID[0][""];
+
+
+
         $preMHInstructions = str_replace("'", "''", $formData->PreMHInstructions);
         $postMHInstructions = str_replace("'", "''", $formData->PostMHInstructions);
         $regimenInstruction = str_replace("'", "''", $formData->RegimenInstruction);
@@ -267,21 +274,17 @@ class LookUp extends Model {
         $adminDay = (empty($formData->AdminDay)) ? null : $formData->AdminDay;
         $adminDate = (empty($formData->AdminDate)) ? null : $formData->AdminDate;
         $patientId = (empty($formData->PatientID)) ? null : $formData->PatientID;
-        
+
         $locationIdResult = $this->getLookupIdByNameAndType('My Templates', 22);
         if (!empty($locationIdResult)) {
             $locationId = $locationIdResult[0]["id"];
         } else {
             $locationId = "###";
         }
-        
-		$userId = $_SESSION['Role_ID'];
-		
-    	if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
-    	} else if (DB_TYPE == 'mysql') {
-            $query = "SELECT NOW() AS currdate";
-    	}
+
+        $userId = $_SESSION['Role_ID'];
+
+        $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
         $currDateResult = $this->query($query);
         $currDate = $currDateResult[0]['currdate'];
         
@@ -295,9 +298,7 @@ class LookUp extends Model {
                     AND Admin_Date = '$adminDate'
                     AND Patient_ID = '$patientId'
             ";
-            
             $retVal = $this->query($query);
-            
             if($retVal){
                 return $retVal;
             }
@@ -306,6 +307,7 @@ class LookUp extends Model {
         if($diseaseStage){
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Disease_Stage_ID, 
@@ -323,6 +325,7 @@ class LookUp extends Model {
                     Regimen_Instruction,
                     Date_Created
                 ) VALUES (
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$diseaseStage',
@@ -345,6 +348,7 @@ class LookUp extends Model {
         } else if($cycle) {
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Location_ID, 
@@ -365,6 +369,7 @@ class LookUp extends Model {
                     Date_Created,
                     Patient_ID
                 ) VALUES (
+                    'Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$locationId',
@@ -390,6 +395,7 @@ class LookUp extends Model {
         } else {
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Location_ID, 
@@ -406,6 +412,7 @@ class LookUp extends Model {
                     Regimen_Instruction,
                     Date_Created
                 ) VALUES (
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$locationId',
@@ -424,33 +431,15 @@ class LookUp extends Model {
                 )
             ";
         }
-		
-		
         $retVal = $this->query($query);
-
         if (!empty($retVal['error'])) {
             return $retVal;
         }
 
-        if($cycle){
-            $query = "
-                SELECT Template_ID AS lookupid 
-                FROM Master_Template 
-                WHERE Regimen_ID = '$regimenId' 
-                    AND Date_Created = '$currDate'
-            ";
-        }else{
-            $query = "
-                SELECT Template_ID AS lookupid 
-                FROM Master_Template 
-                WHERE Regimen_ID = '$regimenId' 
-                    AND Date_Created = '$currDate'
-                    AND Version = 1 
-                    AND Course_Number = 0
-            ";
-        }
-        
-        return $this->query($query);
+        $Ret = array();
+        $Ret[0] = array("lookupid" =>$Template_ID);
+
+        return $Ret;
     }
 
     function saveTemplateReferences($references, $templateid) {
