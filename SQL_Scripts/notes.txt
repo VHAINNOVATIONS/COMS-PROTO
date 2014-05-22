@@ -1,0 +1,7 @@
+1) Run Script 01 to create the database, ignore the HONOR_BROKER_PRIORITY
+
+2) Run one of the 02 scripts. One has template data and one does not.
+
+3) Add coms_db_user account with read/write access
+
+4) Run additional Scripts (if any) for additional changes
