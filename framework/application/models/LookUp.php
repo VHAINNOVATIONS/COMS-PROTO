@@ -386,7 +386,6 @@ class LookUp extends Model {
                     '$patientId'
                 )
             ";
-            
         } else {
             $query = "
                 INSERT INTO Master_Template (
@@ -424,7 +423,6 @@ class LookUp extends Model {
                 )
             ";
         }
-
 		
         $retVal = $this->query($query);
 
