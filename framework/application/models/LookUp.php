@@ -430,10 +430,7 @@ class LookUp extends Model {
                 )
             ";
         }
-<<<<<<< HEAD
-		
-=======
->>>>>>> a4ab69c7a938f96eba026b1f579f9734f27af4c4
+
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
             return $retVal;
