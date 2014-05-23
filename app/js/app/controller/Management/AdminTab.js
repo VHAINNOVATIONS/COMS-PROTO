@@ -21,8 +21,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.MedicationDocumentation',
 		'Management.ClinicInfo',
 		'Management.DischargeInstructionManagement',
-		'Management.MedRisks',
-		'Management.DiseaseStaging'
+		'Management.MedRisks'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
@@ -160,32 +159,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "MedRisks_Details",
 		selector : "MedRisks [name=\"Details\"]"
-	},
-
-	/* Disease Staging Info */
-	{
-		ref : "DiseaseStagingGrid",
-		selector : "DiseaseStaging grid"
-	},
-	{
-		ref : "DiseaseStaging_Disease",
-		selector : "DiseaseStaging [name=\"Disease\"]"
-	},
-	{
-		ref : "DiseaseStaging_DiseaseID",
-		selector : "DiseaseStaging [name=\"DiseaseID\"]"
-	},
-	{
-		ref : "DiseaseStaging_Stage",
-		selector : "DiseaseStaging [name=\"Stage\"]"
-	},
-	{
-		ref : "DiseaseStaging_Delete",
-		selector : "DiseaseStaging button[text=\"Delete\"]"
 	}
-
-
-
     ],
     
 
@@ -335,184 +309,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			},
 			"MedRisks button[text=\"Refresh\"]" : {
 				click: this.MedRisksLoadGrid
-			},
-
-/* DiseaseStaging */
-			"DiseaseStaging" : {
-				beforerender: this.DiseaseStagingLoadPanelRequirements
-			},
-			"DiseaseStaging grid" : {
-					select: this.selectDiseaseStagingGridRow,
-					deselect: this.deSelectDiseaseStagingGridRow
-			},
-			"DiseaseStaging button[text=\"Cancel\"]" : {
-				click: this.clickDiseaseStagingCancel
-			},
-			"DiseaseStaging button[text=\"Save\"]" : {
-				click: this.clickDiseaseStagingsSave
-			},
-			"DiseaseStaging button[text=\"Refresh\"]" : {
-				click: this.DiseaseStagingLoadPanelRequirements
-			},
-			"DiseaseStaging button[text=\"Delete\"]" : {
-				click: this.DiseaseStagingDeleteRecords
 			}
 		});
-    },
-
-	deleteSelectedRecords : function(theRecords) {
-		var record = theRecords.pop();
-		if (record) {
-			var rID = record.get("ID");
-			var CMD = "DELETE";
-			var URL = Ext.URLs.DiseaseStaging + "/" + rID;
-				Ext.Ajax.request({
-					url: URL,
-					method : CMD,
-					scope: this,
-					records : theRecords,
-					success: function( response, opts ){
-						this.deleteSelectedRecords(opts.records);
-					},
-					failure : function( response, opts ) {
-						var text = response.responseText;
-						var resp = Ext.JSON.decode( text );
-						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - <br />" + resp.msg );
-					}
-				});
-		}
-		else {
-			this.application.unMask();
-			this.DiseaseStagingLoadPanelRequirements();
-		}
 	},
-
-	DiseaseStagingDeleteRecords : function(theBtn) {
-		var theGrid = theBtn.up("form").down("grid");
-		var theRecords = theGrid.getSelectionModel().getSelection();
-		var len = theRecords.length, i, record;
-		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Disease Staging records?", function(btn) {
-			if ("yes" === btn) {
-				this.application.loadMask("Please wait; Deleting Selected Records");
-				this.deleteSelectedRecords(theRecords);
-			}
-		}, this);
-	},
-
-	DiseaseStagingLoadPanelRequirements : function() {
-		this.application.loadMask("Please wait; Loading Disease Staging Information");
-
-		var theGrid = this.getDiseaseStagingGrid();
-		var theStore = theGrid.getStore();
-		theStore.load();
-		theGrid.getSelectionModel().deselectAll();
-
-		var delBtn = this.getDiseaseStaging_Delete();
-		delBtn.setDisabled(true);
-		delBtn.show();
-
-		this.application.unMask();
-		return true;
-	},
-
-	deSelectDiseaseStagingGridRow : function(theRowModel, record, index, eOpts) {
-		var records = theRowModel.getSelection();
-		var delBtn = this.getDiseaseStaging_Delete();
-		if (records.length <= 0) {
-			delBtn.setDisabled(true);
-		}
-		else {
-			delBtn.setDisabled(false);
-		}
-	},
-	
-	selectDiseaseStagingGridRow : function(theRowModel, record, index, eOpts) {
-		var records = theRowModel.getSelection();
-		var delBtn = this.getDiseaseStaging_Delete();
-		if (records.length <= 0) {
-			delBtn.setDisabled(true);
-		}
-		else {
-			delBtn.setDisabled(false);
-		}
-
-		var recID = record.get("ID");
-		var Disease = record.get("Disease");
-		var DiseaseID = record.get("DiseaseID");
-		var Stage = record.get("Stage");
-
-		var theDiseaseField = this.getDiseaseStaging_Disease();
-		var theDiseaseIDField = this.getDiseaseStaging_DiseaseID();
-		var theStageField = this.getDiseaseStaging_Stage();
-		theDiseaseField.setValue(Disease);
-		theDiseaseIDField.setValue(DiseaseID);
-		theDiseaseField.recID = recID;
-		theStageField.setValue(Stage);
-	},
-
-	clickDiseaseStagingCancel : function(theBtn, theEvent, eOpts) {
-		theBtn.up('form').getForm().reset();
-		var grid = theBtn.up("form").down("grid");
-		grid.getSelectionModel().deselectAll();
-	},
- 
-	clickDiseaseStagingsSave : function(theBtn, theEvent, eOpts) {
-		var CMD = "POST";
-		var URL = Ext.URLs.DiseaseStaging;
-
-		var form = theBtn.up('form').getForm();
-		var grid = theBtn.up("form").down("grid");
-		var theStore = grid.getStore();
-		var theData = form.getValues();
-		theStore.clearFilter(true);
-		var theDiseaseField = this.getDiseaseStaging_Disease();
-		if (theDiseaseField.recID) {
-
-			CMD = "PUT";
-			URL += "/" + theDiseaseField.recID;
-			delete theDiseaseField.recID;
-		}
-		else {
-			var xx = theStore.filter([ {property: "Disease", value: theData.Disease},{property: "Stage", value: theData.Stage}]);
-			if (theStore.getCount() >= 1) {
-				// This is a duplicate Record. It's now a PUT.
-				var Disease = theStore.getRange()[0].get("DiseaseID");
-				var ID = theStore.getRange()[0].get("ID");
-				var Stage = theStore.getRange()[0].get("Stage");
-				CMD = "PUT";
-				URL += "/" + ID;
-			}
-			theStore.clearFilter(true);
-		}
-
-		form.submit({
-			scope : this,
-			clientValidation: true,
-			url: URL,
-			method : CMD,
-			success: function(form, action) {
-				this.DiseaseStagingLoadPanelRequirements();
-				form.reset();
-			},
-			failure: function(form, action) {
-				var SaveTitle = "Saving Disease Stage FAILED";
-				this.DiseaseStagingLoadPanelRequirements();
-				form.reset();
-				switch (action.failureType) {
-					case Ext.form.action.Action.CLIENT_INVALID:
-						Ext.Msg.alert(SaveTitle, 'Form fields may not be submitted with invalid values');
-						break;
-					case Ext.form.action.Action.CONNECT_FAILURE:
-						Ext.Msg.alert(SaveTitle, 'Ajax communication failed');
-						break;
-					case Ext.form.action.Action.SERVER_INVALID:
-						Ext.Msg.alert(SaveTitle, action.result.msg);
-				}
-			}
-		});
-
-	},
-
 
 	MedRisksLoadGrid : function(panel) {
 		this.application.loadMask("Please wait; Loading Clinic Information");

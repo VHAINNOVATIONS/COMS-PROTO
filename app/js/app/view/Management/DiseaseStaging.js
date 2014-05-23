@@ -5,9 +5,9 @@ Ext.define("COMS.view.Management.DiseaseStaging" ,{
 	"autoEl" : { "tag" : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
-		{ "xtype" : "selDisease", "name" : "Disease", "fieldLabel" : "Disease", "labelWidth" : 140, "hiddenName" : "DiseaseID", "submitValue" : true },
-		{ "xtype" : "hidden", "name" : "DiseaseID" },
-		{ "xtype" : "textfield", "name" : "Stage", "fieldLabel" : "Stage", "labelWidth" : 140},
+		{ "xtype" : "selDisease" },
+//		{ "xtype" : "hidden", "name" : "DiseaseID" },
+		{ "xtype" : "textfield", "name" : "Stage", "fieldLabel" : "Stage", "labelWidth" : 160},
 		{ "xtype" : "ManagementBtns"},
 		{  
 			"xtype" : "grid",  "name" : "DiseaseStagingList", "title" : "Disease Stages", 

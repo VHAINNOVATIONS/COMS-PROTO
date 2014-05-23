@@ -570,13 +570,18 @@ Ext.require([
 
 	"COMS.controller.Navigation",
 	"COMS.controller.CkBoxTArea",
-	"COMS.controller.Common.selTemplateByStages",
+	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Orders.OrdersTab",
-	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.TemplateList.TemplateListTab",
+
+	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.Authoring.DrugRegimen",
 	"COMS.controller.Authoring.Hydration",
+
 	"COMS.controller.Management.AdminTab",
+	"COMS.controller.Management.DiseaseStaging",
+	"COMS.controller.Management.IntelligentDataElements",
+
 	"COMS.controller.Messages.MessagesTab",
 
 	"COMS.controller.NewPlan.AskQues2ApplyTemplate",
@@ -1542,7 +1547,18 @@ Ext.application({
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
 		,"CkBoxTArea"
-		,"Common.selTemplateByStages", "NewPlan.AskQues2ApplyTemplate", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab", "NewPlan.CTOS.NursingDocs.DischargeInstructions"
+		// ,"Common.selTemplateByStages"
+		, "NewPlan.AskQues2ApplyTemplate"
+		, "NewPlan.NewPlanTab"
+		, "Orders.OrdersTab"
+		, "Authoring.AuthoringTab"
+		, "TemplateList.TemplateListTab"
+		, "Authoring.DrugRegimen"
+		, "Authoring.Hydration"
+		, "Management.AdminTab"
+		, "Management.DiseaseStaging"
+		, "Management.IntelligentDataElements"
+		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
 		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
 		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record

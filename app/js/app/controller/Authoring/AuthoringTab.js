@@ -277,7 +277,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			"AuthoringTab selDiseaseStage": {
 				select: this.onDiseaseStageChange,
 				collapse: this.collapseCombo,
-				expand: this.loadCombo
+				expand: this.loadCombo,
+				beforequery : function(qe) {
+					delete qe.combo.lastQuery;
+					qe.combo.store.removeAll();
+				}
 
 			},
 			"AuthoringTab selTemplate": {
@@ -293,7 +297,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo    
 	loadCombo: function (picker, eOpts) {
-
 		var originalHiddenVal = null;
 		picker.hiddenValue = picker.getRawValue();
 		picker.clearValue();
@@ -313,7 +316,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		} else if (picker.name == "Select Disease Stage Control") {
 			URI = Ext.URLs.DiseaseStage + "/";
 			id = this.application.Cancer.id;
-		} else if (picker.name == "Select Disease Control"){
+		} else if (picker.name == "selDisease"){
                     if(null != this.application.TemplateType && null != this.application.TemplateType.id){
 			URI = Ext.URLs.DiseaseType + "/Source/";
 			id = this.application.TemplateType.id;
@@ -447,6 +450,14 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                         }
                     }, this);
                 }
+
+
+
+				else {
+                            this.application.loadMask("Please wait; Saving Template");
+                            Template = this.PrepareTemplate2Save(true);
+                            this.SaveTemplate2DB(Template, button);
+				}
 
             },
             failure: function(response, opts) {
@@ -934,8 +945,15 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		wccConsoleLog('Disease Type has been selected');
 		if (this.application.Cancer != recs[0].data) {
 			this.application.ResetClicked = false;
+
+
+// var selDiseaseStage = this.getDiseaseStage();
+// delete selDiseaseStage.combo.lastQuery;
+
+
 		}
 		this.application.Cancer = recs[0].data;
+
 		this.getTemplate().show();
 	},
 
@@ -996,7 +1014,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
         /* Load Form with existing data */
         afterFindDisease: function (template){
-            // debugger;
+            // 
             // var UserDefinedAlias = template.data.Description;
             this.getTemplateAlias().setValue(template.data.Description);
             this.getExistingDisease().setValue(template.data.Disease);

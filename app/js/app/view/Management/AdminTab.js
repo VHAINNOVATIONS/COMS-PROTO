@@ -5,7 +5,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 	autoEl : { tag : "nav" },
 	padding : "10 10 5 10",
 	plain : true,
-	activeTab: 5,
+	activeTab: 6,
 	"defaults": { padding : "10 10 5 10", plain : true, "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	items : [
 		{ xtype : "AddLookups", title: "Manage LookUps" },
@@ -14,6 +14,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 		{ xtype : "Globals", title: "Global Variables"},
 		{ xtype : "Users", title: "COMS Users"},
 		{ xtype : "ActiveWorkflows", title: "Active Workflows"},
+		{ xtype : "IntelligentDataElements", title: "IDE"},
 		{ xtype : "tabpanel", title: "Discharge Info", 
 			defaults: {
 				padding : "10 10 5 10"

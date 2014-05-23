@@ -1,5 +1,5 @@
 <?php 
-
+/*************
     if(!is_null($diseasestages)){
         $numRows = count($diseasestages);
 
@@ -34,6 +34,7 @@
     }else {
         echo "{\"success\": false, \"msg\": \"No records found.\", \"frameworkErr\": \"". $frameworkErr . "\"}";
     }
+****************/
 
-
+    echo json_encode($jsonRecord);
 ?>

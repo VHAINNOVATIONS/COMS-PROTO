@@ -563,7 +563,31 @@ class LookupController extends Controller {
 
     function DiseaseStage($id = null) {
         if ($id != null) {
-            $this->set('diseasestages', $this->LookUp->getDiseaseStages($id));
+            $Msg = "Disease Stages";
+            $jsonRecord = array();
+            $jsonRecord['success'] = true;
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+
+            $query = "Select * from DiseaseStaging WHERE DiseaseID = '$id' order by Stage";
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $jsonRecord['success'] = false;
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                $this->set('frameworkErr', null);
+                $this->set('frameworkErrCodes', null);
+
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+            $this->set('jsonRecord', $jsonRecord);
+            return;
         } else {
             $this->set('diseasestages', null);
             $this->set('frameworkErr', 'No Disease ID provided.');
@@ -1488,8 +1512,8 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
         $Disease = "";
         $Stage = "";
 
-        if (isset($_POST["Disease"])) {
-            $Disease = $_POST["Disease"];
+        if (isset($_POST["selDisease"])) {
+            $Disease = $_POST["selDisease"];
         }
         if (isset($_POST["Stage"])) {
             $Stage = $_POST["Stage"];
@@ -1518,14 +1542,15 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $query = "INSERT INTO DiseaseStaging (DiseaseID, Stage) VALUES ('$Disease' ,'$Stage')";
+            error_log("POST - $query");
             $jsonRecord['msg'] = "$Msg Record Created";
             $ErrMsg = "Creating $Msg Record";
         }
         else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
             parse_str(file_get_contents("php://input"),$post_vars);
 
-            $Disease = $post_vars["Disease"];
-            $DiseaseID = $post_vars["DiseaseID"];
+            // $Disease = $post_vars["Disease"];
+            $DiseaseID = $post_vars["selDisease"];
             $Stage = $post_vars["Stage"];
 
             $query = "UPDATE DiseaseStaging SET DiseaseID = '$DiseaseID', Stage = '$Stage' WHERE ID = '$ID'";

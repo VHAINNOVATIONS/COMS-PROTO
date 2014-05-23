@@ -4,12 +4,12 @@ Ext.define('COMS.view.Common.selDiseaseStage' ,{
 	name : 'Select Disease Stage Control',
 
 	store : 'DiseaseStage',
-	displayField: 'name',
-	valueField: 'id',
-        queryMode: 'local',
+	displayField: 'Stage',
+	valueField: 'ID',
+	queryMode: 'local',
 	fieldLabel: 'Disease Stage',
 	labelAlign: 'right',
-	width: 190,
+	width: 250,
 	size : 10,
 	labelWidth: 90
 });

@@ -803,7 +803,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }else{
                 id = this.application.Patient.Disease.id;
             }
-        } else if (picker.name == "Select Disease Control"){
+        } else if (picker.name == "selDisease"){
             if(eOpts.length && "Refresh" === eOpts){
                 URI = Ext.URLs.DiseaseType;
                 id = '';
