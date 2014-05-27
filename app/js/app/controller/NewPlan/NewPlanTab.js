@@ -15,11 +15,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "PerfStatStore"
     , "TemperatureLocation"
     , "DeliveryMechanism"
+	, "IDEntry"
     ],
 
 
 
-	models : ["LabInfo", "AllTemplatesApplied2Patient"],
+	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry"],
 
     views : [
     "NewPlan.NewPlanTab"
@@ -83,7 +84,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		{ ref: "selTemplateType",				selector: "NewPlanTab PatientInfo CTOS selTemplateType"},
 		{ ref: "DiseaseAndStage",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage"},
-		{ ref: "AllTemplatesShownMsg",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
+		{ ref: "AllTemplatesShownMsg",			selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
 
 		{ ref: "Disease",						selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDisease"},
 		{ ref: "DiseaseStage",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDiseaseStage"},
@@ -181,9 +182,25 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 click: this.SaveVitals
             }
        });
-        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
+	   this.InitIntelligentDataElementStore();
+       wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
+
+	InitIntelligentDataElementStore : function() {
+		var theStore = this.getStore("IDEntry");
+		theStore.load({
+			scope: this,
+			callback: function(records, operation, success) {
+				var IDE = [], i, len = records.length, rec;
+				for (i = 0; i < len; i++) {
+					rec = records[i].getData();
+					IDE.push(rec);
+				}
+				this.application.IntelligentDataElements = IDE;
+			}
+		});
+	},
 
     cancelApply: function(button){
 		wccConsoleLog("CancelApplication of Template");

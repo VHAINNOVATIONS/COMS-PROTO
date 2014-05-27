@@ -74,7 +74,7 @@ Ext.define('COMS.controller.Management.DiseaseStaging', {
 					failure : function( response, opts ) {
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
-						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - <br />" + resp.msg );
+						Ext.MessageBox.alert("DELETE Error", "DELETE Error", "Site Configuration - Disease Staging, DELETE Error - <br />" + resp.msg );
 					}
 				});
 		}

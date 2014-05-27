@@ -102,6 +102,10 @@ Ext.URLs.DiseaseType = "/LookUp/view/DiseaseType";
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
 
+
+Ext.URLs.IntelligentDataEntry = "/LookUp/IDEntry";
+// Ext.URLs.IDEntry = "/LookUp/IDEntry";
+
 Ext.URLs.TemplateAlias = "/LookUp/view/TemplateAlias";
 // No Params,
 // Returns list of all Template Aliases (e.g. User Defined Template Name)
@@ -502,6 +506,7 @@ Ext.COMSModels.ND_CTCAE_Data = "COMS.model.ND_CTCAE_Data"; // MWB - 27 Feb 2012
 Ext.COMSModels.EoTS = "COMS.model.EndTreatmentSummary";
 Ext.COMSModels.ND_Treatment = "COMS.model.ND_Treatment";
 Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
+Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -565,6 +570,8 @@ Ext.require([
 	Ext.COMSModels.OrdersTable,
 	Ext.COMSModels.Flowsheet,
 	Ext.COMSModels.FluidType,
+	Ext.COMSModels.IDEntry,
+
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 

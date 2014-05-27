@@ -13,6 +13,39 @@ require_once "/ChromePhp.php";
  * function 
  */
 class LookupController extends Controller {
+
+    function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
+        if ("" !== $query) {
+            error_log("Got Query");
+            $retVal = $this->LookUp->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                error_log("Error");
+                if("Unique" == $this->get('frameworkErrCodes')) {
+                    $jsonRecord['msg'] = "Can not have duplicate records $UniqueMsg";
+                }
+                else {
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                }
+                $jsonRecord['success'] = false;
+            }
+            else {
+                error_log("No Error");
+                $jsonRecord['success'] = 'true';
+                $this->set('frameworkErr', null);
+                $this->set('frameworkErrCodes', null);
+
+                error_log("Result - " . $this->varDumpToString($retVal));
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+       $this->set('jsonRecord', $jsonRecord);
+       error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
+    }
+
     public function escapeString($string)
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
@@ -21,15 +54,26 @@ class LookupController extends Controller {
         return $string;
     }
 
+    function varDumpToString ($var) {
+        ob_start();
+        var_dump($var);
+        $result = ob_get_clean();
+        return $result;
+    }
+
     function checkForErrors($errorMsg,$retVal){
+        $ErrorCode = "";
+        $this->set('frameworkErrCodes', $ErrorCode);
         if (null != $retVal && array_key_exists('error', $retVal)) {
-            $ErrorCode = "";
             if (is_string($retVal['error'])) {
                 $errorMsg .= " " . $retVal['error'];
             }
             else {
                 foreach ($retVal['error'] as $error) {
                     if (2627 == $error['code']) {
+                        $ErrorCode = "Unique";
+                    }
+                    else if (3621 == $error['code']) {
                         $ErrorCode = "Unique";
                     }
                     else {
@@ -1567,30 +1611,123 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
         }
 
-        if ("" !== $query) {
-            $retVal = $this->LookUp->query($query);
-            if ($this->checkForErrors($ErrMsg, $retVal)) {
-                if("Unique" == $this->get('ErrorCode')) {
-                    $jsonRecord['msg'] = "Can not have duplicate records ($Disease / $Stage already exists";
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " ($Disease / $Stage already exists)");
+    }
+
+
+
+
+/*
+ * URL = http://coms-mwb.dbitpro.com:355/Lookup/IDEntry
+ * POST DATA:
+ * Vital2Check=Temperature&MinMax=on&MinValue=90&MaxValue=103&MinMaxMsg=Temp%20Min%20Max&PctVarFromValue=on&PctVarFromValuePct=5&PctVarFromValueValue=98.6
+ &PctVarFromValueMsg=Temp%20%25%20variance&PctVarFromLast=on&PctVarFromLastPct=5&PctVarFromLastMsg=Temp%20Last%20Entry%20Variance%20exceeded
+ *
+ * Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+ *
+ * Data comes in as a 'php://input' stream rather than $_POST variables
+ *
+ *
+ 
+USE [COMS_TEST_2]
+CREATE TABLE [dbo].[IDEntry](
+	[Vital2Check] [varchar](50) NOT NULL,
+	[MinMax] [varchar](10) NULL,
+	[MinValue] [varchar](10) NULL,
+	[MaxValue] [varchar](10) NULL,
+	[MinMaxMsg][nvarchar](max) NULL,
+	[PctVarFromValue] [varchar](10) NULL,
+	[PctVarFromValuePct] [varchar](10) NULL,
+	[PctVarFromValueValue] [varchar](10) NULL,
+	[PctVarFromValueMsg][nvarchar](max) NULL,
+	[PctVarFromLast] [varchar](10) NULL,
+	[PctVarFromLastPct] [varchar](10) NULL,
+	[PctVarFromLastMsg][nvarchar](max) NULL
+
+	CONSTRAINT uc_IDEntry UNIQUE (Vital2Check)
+) ON [PRIMARY]
+ */
+
+    function IDEntry($Vital = null) {
+error_log("IDEntry");
+        $Msg = "Intelligent Data Entry";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $TableName = "IDEntry";
+        $ValidFieldList = array("Vital2Check", "MinMax", "MinValue", "MaxValue", "MinMaxMsg", "PctVarFromValue", "PctVarFromValuePct", "PctVarFromValueValue", "PctVarFromValueMsg", "PctVarFromLast", "PctVarFromLastPct", "PctVarFromLastMsg");
+        $sqlFieldList = array();
+        $sqlDataList = array();
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($Vital) {       /* Get Specific Vital Info */
+                $query = "Select * from $TableName WHERE Vital2Check = '$Vital'";
+            }
+            else {       /* Get ALL Vital Info */
+                $query = "select * from $TableName";
+            }
+
+            error_log("$query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            parse_str(file_get_contents('php://input'), $requestData);  
+            foreach ($ValidFieldList as $Field) {
+                $Temp = "''";
+                if (isset($requestData[$Field])) {
+                    $Temp = "'" . $this->escapeString($requestData[$Field]) . "'";
+                }
+                array_push($sqlFieldList, $Field);
+                array_push($sqlDataList, $Temp);
+            }
+            $query = "INSERT INTO $TableName(" . implode(", ", $sqlFieldList) . ") VALUES (" . implode(", ", $sqlDataList) . ")";
+            error_log("IDEntry POST - $query");
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            parse_str(file_get_contents('php://input'), $requestData);  
+            $query = "";
+            $haveFields = false;
+            foreach ($ValidFieldList as $Field) {
+                $Temp = "''";
+                if (isset($requestData[$Field])) {
+                    $haveFields = true;
+                    $Temp = "'" . $this->escapeString($requestData[$Field]) . "'";
+                }
+                if ("" === $query) {
+                    $query = "UPDATE $TableName SET ";
                 }
                 else {
-                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $query .= ", ";
                 }
-                $jsonRecord['success'] = false;
+                $query .= $Field . " = '" . $Temp . "'";
             }
-            else {
-                $jsonRecord['success'] = 'true';
-                $this->set('frameworkErr', null);
-                $this->set('frameworkErrCodes', null);
+            if ($haveFields) {
+                $query .= " where X = '$Vital'";
+            }
+            error_log("IDEntry PUT - $query");
 
-                if (count($retVal) > 0) {
-                    unset($jsonRecord['msg']);
-                    $jsonRecord['total'] = count($retVal);
-                    $jsonRecord['records'] = $retVal;
-                }
-            }
+
+
+
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
         }
-        $this->set('jsonRecord', $jsonRecord);
-        return;
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from $TableName where Vital2Check = '$Vital'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
+        }
+        $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, $UniqMsg);
     }
+
+
 }

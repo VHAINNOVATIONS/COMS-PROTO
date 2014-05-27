@@ -1,28 +1,20 @@
 Ext.define('COMS.controller.Management.IntelligentDataElements', {
     extend : 'Ext.app.Controller',
-    stores : ["DiseaseStaging"],
+    stores : ["IDEntry"],
     views : [ 
 		'Management.IntelligentDataElements'
 	],
 	refs : [
 		{
-			ref : "IntelligentDataElements",
+			ref : "ThePanel",
+			selector : "IntelligentDataElements"
+		},
+		{
+			ref : "TheGrid",
 			selector : "IntelligentDataElements grid"
 		},
 		{
-			ref : "IDE_Disease",
-			selector : "IntelligentDataElements [name=\"Disease\"]"
-		},
-		{
-			ref : "IDE_DiseaseID",
-			selector : "IntelligentDataElements [name=\"DiseaseID\"]"
-		},
-		{
-			ref : "IDE_Stage",
-			selector : "IntelligentDataElements [name=\"Stage\"]"
-		},
-		{
-			ref : "IDE_Delete",
+			ref : "DeleteBtn",
 			selector : "IntelligentDataElements button[text=\"Delete\"]"
 		}
     ],
@@ -30,155 +22,36 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 
     init: function() {
         wccConsoleLog('Initialized Intelligent Data Elements Panel Navigation Controller!');
-/********
+
         this.control({
 			"IntelligentDataElements" : {
-				beforerender: this.IDE_LoadPanelRequirements
+				beforerender: this.RefreshPanel
 			},
 			"IntelligentDataElements grid" : {
-					select: this.selectIDE_GridRow,
-					deselect: this.deSelectIDE_GridRow
+					select: this.selectGridRow,
+					deselect: this.deSelectGridRow
 			},
 			"IntelligentDataElements button[text=\"Cancel\"]" : {
-				click: this.clickIDE_Cancel
+				click: this.CancelForm
 			},
 			"IntelligentDataElements button[text=\"Save\"]" : {
-				click: this.clickIDE_sSave
+				click: this.SaveForm
 			},
 			"IntelligentDataElements button[text=\"Refresh\"]" : {
-				click: this.IDE_LoadPanelRequirements
+				click: this.RefreshPanel
 			},
 			"IntelligentDataElements button[text=\"Delete\"]" : {
-				click: this.IDE_DeleteRecords
+				click: this.DeleteSelectedRecords
 			}
 		});
-**********/
+
     },
 
-	deleteSelectedRecords : function(theRecords) {
-		var record = theRecords.pop();
-		if (record) {
-			var rID = record.get("ID");
-			var CMD = "DELETE";
-			var URL = Ext.URLs.IDE_ + "/" + rID;
-				Ext.Ajax.request({
-					url: URL,
-					method : CMD,
-					scope: this,
-					records : theRecords,
-					success: function( response, opts ){
-						this.deleteSelectedRecords(opts.records);
-					},
-					failure : function( response, opts ) {
-						var text = response.responseText;
-						var resp = Ext.JSON.decode( text );
-						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - <br />" + resp.msg );
-					}
-				});
-		}
-		else {
-			this.application.unMask();
-			this.IDE_LoadPanelRequirements();
-		}
-	},
 
-	IDE_DeleteRecords : function(theBtn) {
-		var theGrid = theBtn.up("form").down("grid");
-		var theRecords = theGrid.getSelectionModel().getSelection();
-		var len = theRecords.length, i, record;
-		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Disease Staging records?", function(btn) {
-			if ("yes" === btn) {
-				this.application.loadMask("Please wait; Deleting Selected Records");
-				this.deleteSelectedRecords(theRecords);
-			}
-		}, this);
-	},
-
-	IDE_LoadPanelRequirements : function() {
-		this.application.loadMask("Please wait; Loading Disease Staging Information");
-
-		var theGrid = this.getIDE_Grid();
-		var theStore = theGrid.getStore();
-		theStore.load();
-		theGrid.getSelectionModel().deselectAll();
-
-		var delBtn = this.getIDE__Delete();
-		delBtn.setDisabled(true);
-		delBtn.show();
-
-		this.application.unMask();
-		return true;
-	},
-
-	deSelectIDE_GridRow : function(theRowModel, record, index, eOpts) {
-		var records = theRowModel.getSelection();
-		var delBtn = this.getIDE__Delete();
-		if (records.length <= 0) {
-			delBtn.setDisabled(true);
-		}
-		else {
-			delBtn.setDisabled(false);
-		}
-	},
-	
-	selectIDE_GridRow : function(theRowModel, record, index, eOpts) {
-		var records = theRowModel.getSelection();
-		var delBtn = this.getIDE__Delete();
-		if (records.length <= 0) {
-			delBtn.setDisabled(true);
-		}
-		else {
-			delBtn.setDisabled(false);
-		}
-
-		var recID = record.get("ID");
-		var Disease = record.get("Disease");
-		var DiseaseID = record.get("DiseaseID");
-		var Stage = record.get("Stage");
-
-		var theDiseaseField = this.getIDE__Disease();
-		var theDiseaseIDField = this.getIDE__DiseaseID();
-		var theStageField = this.getIDE__Stage();
-		theDiseaseField.setValue(Disease);
-		theDiseaseIDField.setValue(DiseaseID);
-		theDiseaseField.recID = recID;
-		theStageField.setValue(Stage);
-	},
-
-	clickIDE_Cancel : function(theBtn, theEvent, eOpts) {
-		theBtn.up('form').getForm().reset();
-		var grid = theBtn.up("form").down("grid");
-		grid.getSelectionModel().deselectAll();
-	},
- 
-	clickIDE_Save : function(theBtn, theEvent, eOpts) {
+	SaveForm : function(theBtn, theEvent, eOpts) {
+		var form = this.getThePanel().getForm();
+		var URL = Ext.URLs.IntelligentDataEntry;
 		var CMD = "POST";
-		var URL = Ext.URLs.IDE_;
-
-		var form = theBtn.up('form').getForm();
-		var grid = theBtn.up("form").down("grid");
-		var theStore = grid.getStore();
-		var theData = form.getValues();
-		theStore.clearFilter(true);
-		var theDiseaseField = this.getIDE__Disease();
-		if (theDiseaseField.recID) {
-
-			CMD = "PUT";
-			URL += "/" + theDiseaseField.recID;
-			delete theDiseaseField.recID;
-		}
-		else {
-			var xx = theStore.filter([ {property: "Disease", value: theData.Disease},{property: "Stage", value: theData.Stage}]);
-			if (theStore.getCount() >= 1) {
-				// This is a duplicate Record. It's now a PUT.
-				var Disease = theStore.getRange()[0].get("DiseaseID");
-				var ID = theStore.getRange()[0].get("ID");
-				var Stage = theStore.getRange()[0].get("Stage");
-				CMD = "PUT";
-				URL += "/" + ID;
-			}
-			theStore.clearFilter(true);
-		}
 
 		form.submit({
 			scope : this,
@@ -186,13 +59,13 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 			url: URL,
 			method : CMD,
 			success: function(form, action) {
-				this.IDE_LoadPanelRequirements();
-				form.reset();
+				this.RefreshPanel();
+				this.CancelForm();
 			},
 			failure: function(form, action) {
-				var SaveTitle = "Saving Disease Stage FAILED";
-				this.IDE_LoadPanelRequirements();
-				form.reset();
+				var SaveTitle = "Saving Intelligent Data Entry Configuration FAILED";
+				this.RefreshPanel();
+				this.CancelForm();
 				switch (action.failureType) {
 					case Ext.form.action.Action.CLIENT_INVALID:
 						Ext.Msg.alert(SaveTitle, 'Form fields may not be submitted with invalid values');
@@ -205,6 +78,86 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 				}
 			}
 		});
+	},
+
+	CancelForm : function() {
+		this.getThePanel().getForm().reset();
+		this.getTheGrid().getSelectionModel().deselectAll();
+	},
+
+
+	deleteRecord : function(theRecords) {
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.get("Vital2Check");
+			var CMD = "DELETE";
+			var URL = Ext.URLs.IntelligentDataEntry + "/" + rID;
+				Ext.Ajax.request({
+					url: URL,
+					method : CMD,
+					scope: this,
+					records : theRecords,
+					success: function( response, opts ){
+						this.deleteRecord(opts.records);
+					},
+					failure : function( response, opts ) {
+						var text = response.responseText;
+						var resp = Ext.JSON.decode( text );
+						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Delete IDE Record, Save Error - <br />" + resp.msg );
+					}
+				});
+		}
+		else {
+			this.application.unMask();
+			this.RefreshPanel();
+			this.CancelForm();
+		}
+	},
+
+	DeleteSelectedRecords : function() {
+		var theGrid = this.getTheGrid();
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Intelligent Data Entry records?", function(btn) {
+			if ("yes" === btn) {
+				this.application.loadMask("Please wait; Deleting Selected Records");
+				this.deleteRecord(theRecords);
+			}
+		}, this);
+	},
+
+	RefreshPanel : function() {
+		this.application.loadMask("Please wait; Loading Panel Information");
+		var theGrid = this.getTheGrid();
+		var theStore = theGrid.getStore();
+		theStore.load();
+		theGrid.getSelectionModel().deselectAll();
+
+		/* This store is required for Vital Signs Validation and must be updated in the application variable pool */
+		var rootCtrlr = this.getController("NewPlan.NewPlanTab");
+		rootCtrlr.InitIntelligentDataElementStore();
+
+		var delBtn = this.getDeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
+		this.application.unMask();
+	},
+
+	deSelectGridRow : function(theRowModel, record, index, eOpts) {
+	},
+	
+	selectGridRow : function(theRowModel, record, index, eOpts) {
+		var records = theRowModel.getSelection();
+		var delBtn = this.getDeleteBtn();
+		if (records.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
+		var theForm = this.getThePanel();
+		theForm.loadRecord(record);
 	}
+ 
 });
 

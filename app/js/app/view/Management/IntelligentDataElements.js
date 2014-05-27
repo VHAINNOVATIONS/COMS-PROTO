@@ -4,9 +4,11 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 	"name" : "IntelligentDataElements",
 	"defaults": { "labelAlign": "right", "labelWidth" : 220, "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
+	{ "xtype" : "box", "autoEl" : "h1", "html" : "Intelligent Data Elements Configuration" },
+
 	{ 
 		"xtype" : "combo", 
-		"name" : "selDataElement",
+		"name" : "Vital2Check",
 		"fieldLabel" : "Select Data Element to configure <em>*</em>",
 		"width" : 400, 
 		"allowBlank" : false,
@@ -16,39 +18,42 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 		"store" : Ext.create('Ext.data.Store', {
 			fields: ["id", "value"],
 			data : [
-				{ "id" : 1, "value" : "Temperature"},
-				{ "id" : 2, "value" : "Height"},
-				{ "id" : 3, "value" : "Weight"},
-				{ "id" : 4, "value" : "BP Diastolic"},
-				{ "id" : 5, "value" : "BP Systolic"},
-				{ "id" : 6, "value" : "Pulse"},
-				{ "id" : 7, "value" : "Respiration"},
-				{ "id" : 8, "value" : "Pain"},
-				{ "id" : 9, "value" : "SP O<sub>2</sub>"}
+				{ "id" : "Temperature", "value" : "Temperature"},
+				{ "id" : "Height", "value" : "Height"},
+				{ "id" : "Weight", "value" : "Weight"},
+				{ "id" : "BP_Systolic", "value" : "BP Systolic"},
+				{ "id" : "BP_Diastolic", "value" : "BP Diastolic"},
+				{ "id" : "Pulse", "value" : "Pulse"},
+				{ "id" : "Respiration", "value" : "Respiration"},
+				{ "id" : "Pain", "value" : "Pain"},
+				{ "id" : "SP_O2", "value" : "SP O<sub>2</sub>"}
 			]
 		})
 	},
 	{ "xtype" : "container", "layout" : "hbox", "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "0 10 10 0" }, "items" : [
-		{ "xtype" : "checkbox", "labelWidth" : 220, "fieldLabel" : "Min/Max Value" },
+		{ "xtype" : "checkbox",  "name" : "MinMax", "labelWidth" : 220, "fieldLabel" : "Min/Max Value" },
 		{ "xtype" : "textfield", "name" : "MinValue", "labelWidth" : 80, "width" : 130, "fieldLabel" : "Min" },
 		{ "xtype" : "textfield", "name" : "MaxValue", "labelWidth" : 50, "width" : 100, "fieldLabel" : "Max" },
-		{ "xtype" : "textfield", "name" : "VarianceMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding Min/Max" },
+		{ "xtype" : "textfield", "name" : "MinMaxMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding Min/Max" },
 
 	]},
 	{ "xtype" : "container", "layout" : "hbox", "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "0 10 10 0" }, "items" : [
-		{ "xtype" : "checkbox", "labelWidth" : 220, "fieldLabel" : "% Variance from Value" },
-		{ "xtype" : "textfield", "name" : "MinValue", "labelWidth" : 80, "width" : 130, "fieldLabel" : "% Variance" },
-		{ "xtype" : "textfield", "name" : "MaxValue", "labelWidth" : 50, "width" : 100, "fieldLabel" : "Value" },
-		{ "xtype" : "textfield", "name" : "VarianceMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding % Variance" }
+		{ "xtype" : "checkbox",  "name" : "PctVarFromValue", "labelWidth" : 220, "fieldLabel" : "% Variance from Value" },
+		{ "xtype" : "textfield", "name" : "PctVarFromValuePct", "labelWidth" : 80, "width" : 130, "fieldLabel" : "% Variance" },
+		{ "xtype" : "textfield", "name" : "PctVarFromValueValue", "labelWidth" : 50, "width" : 100, "fieldLabel" : "Value" },
+		{ "xtype" : "textfield", "name" : "PctVarFromValueMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding % Variance" }
 
 	]},
 
 	{ "xtype" : "container", "layout" : "hbox", "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "0 10 10 0" }, "items" : [
-		{ "xtype" : "checkbox", "labelWidth" : 220, "fieldLabel" : "% Variance from last entry" },
-		{ "xtype" : "textfield", "name" : "MinValue", "labelWidth" : 80, "width" : 130, "fieldLabel" : "% Variance" },
-		{ "xtype" : "textfield", "name" : "VarianceMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding % Variance" }
+		{ "xtype" : "checkbox",  "name" : "PctVarFromLast", "labelWidth" : 220, "fieldLabel" : "% Variance from last entry" },
+		{ "xtype" : "textfield", "name" : "PctVarFromLastPct", "labelWidth" : 80, "width" : 130, "fieldLabel" : "% Variance" },
+		{ "xtype" : "textfield", "name" : "PctVarFromLastMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding % Variance" }
 		
-	]}
+	]},
+
+
+		{ "xtype" : "ManagementBtns"},
 
 
 /**
@@ -56,19 +61,30 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 		{ "xtype" : "hidden", "name" : "DiseaseID" },
 		{ "xtype" : "textfield", "name" : "Stage", "fieldLabel" : "Stage", "labelWidth" : 140},
 		{ "xtype" : "ManagementBtns"},
+***/
 		{  
-			"xtype" : "grid",  "name" : "DiseaseStagingList", "title" : "Disease Stages", 
-			"store" : "DiseaseStaging",
+			"xtype" : "grid",  "name" : "IDEntryList", "title" : "Intelligent Data Entry", 
+			"store" : "IDEntry",
 			"forceFit" : true,
 			"overflowY" : "scroll",
 			"minHeight" : 500,
 			"margin" : "10",
 			"multiSelect" : true,
-			"features" : [ Ext.create("Ext.grid.feature.Grouping")],
 			"columns" : [ 
-				{ "text" : "Staging Designation", "dataIndex" : "Stage", "flex" : 3 }
+				{"text" : "Vital ", "dataIndex" : "Vital2Check" }, 
+				// {"text" : "Min/Max", "dataIndex" : "MinMax" }, 
+				{"text" : "Min", "dataIndex" : "MinValue", "width" : 30},
+				{"text" : "Max", "dataIndex" : "MaxValue", "width" : 30},
+				{"text" : "Msg", "dataIndex" : "MinMaxMsg"},
+				// {"text" : "% Variance", "dataIndex" : "PctVarFromValue" }, 
+				{"text" : "%", "dataIndex" : "PctVarFromValuePct", "width" : 30},
+				{"text" : "Value", "dataIndex" : "PctVarFromValueValue", "width" : 12},
+				{"text" : "Msg", "dataIndex" : "PctVarFromValueMsg" }, 
+				// {"text" : "% From Last", "dataIndex" : "PctVarFromLast" }, 
+				{"text" : "%", "dataIndex" : "PctVarFromLastPct", "width" : 12},
+				{"text" : "Msg", "dataIndex" : "PctVarFromLastMsg" }
 			]
 		}
-**/
+
 	]
 });
