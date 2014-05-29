@@ -191,7 +191,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<th>Regimen End Date:</th><td>{TreatmentEnd}</td>",
 					"</tr>",
 					"<tr>",
-						"<th>Type(s) of Cancer: </th>",
+						"<th>{[this.AddEditBtns(\"Cancer\", values, parent)]}Type(s) of Cancer: </th>",
 						"<td colspan=3>",
 							"<tpl for=\"Disease\">",
 								"<div>{Type}&nbsp;-&nbsp;{Stage}</div>",

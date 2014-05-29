@@ -634,7 +634,72 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
+	_saveVitals2DB : function(record, parent) {
+		var params = Ext.encode(record);
+		this.SavingVitals = true;
+		this.application.loadMask("One moment please, saving Patient Vitals...");
 
+		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
+		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
+		var Pulse = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPulse\"]")[0];
+		var Systolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsSystolic\"]")[0];
+		var Diastolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsDiastolic\"]")[0];
+		var Height = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsHeightIN\"]")[0];
+		var Respiration = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsResp\"]")[0];
+		var Weight = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsWeightP\"]")[0];
+		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
+		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
+		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
+        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+
+		Temperature.setValue("");
+		TemperatureLocation.setValue("");
+		Pulse.setValue("");
+		Systolic.setValue("");
+		Diastolic.setValue("");
+		Height.setValue("");
+		Respiration.setValue("");
+		Weight.setValue("");
+		Pain.setValue("");
+		SPO2.setValue("");
+		BSA.setValue("");
+        NDVitalsWeightKG.setValue("");
+        NDVitalsHeightCM.setValue("");
+        NDVitalsTempC.setValue("");
+
+		Ext.Ajax.request({
+			scope : this,
+			url: Ext.URLs.AddVitals,
+			method : "POST",
+			jsonData : params,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.SavingVitals = false;
+				// if (!this.SavingVitals && !this.SavingGenInfo) {
+					this.application.unMask();
+				// }
+
+
+				if (resp.success) {
+			        var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
+					newPlanTabCtl.loadVitals("Update Vitals");
+					Ext.MessageBox.alert("Vital Signs", "Vitals Information Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+				}
+				else {
+					Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
+				}
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
+			}
+		});
+	},
 
 	SaveVitals : function(parent) {
 		var Patient = this.application.Patient;
@@ -668,12 +733,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
 		var tValid9 = this.VitalsFieldValidation(SPO2);
 
-		if (!(tValid1 && tValid2 && tValid3 && tValid4 && tValid5 && tValid6 && tValid7 && tValid8 && tValid9)) {
-			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. Check Fields for Input Errors" );
-			return true;
-		}
-		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
 
+		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
         var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
         var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
@@ -711,25 +772,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return false;
 		}
-        if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
-            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-			return true;
-		}
-
-		Temperature.setValue("");
-        TemperatureLocation.setValue("");
-		Pulse.setValue("");
-		Systolic.setValue("");
-		Height.setValue("");
-		Respiration.setValue("");
-		Diastolic.setValue("");
-		Weight.setValue("");
-		Pain.setValue("");
-		SPO2.setValue("");
-		BSA.setValue("");
-        NDVitalsWeightKG.setValue("");
-        NDVitalsHeightCM.setValue("");
-        NDVitalsTempC.setValue("");
+//
+//		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
+//            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+//			return true;
+//		}
+//
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;
@@ -744,41 +792,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		record.BSA_Method = Patient.BSA_Method;
 		record.BSA_Weight = Patient.BSA_Weight;
 
-		var params = Ext.encode(record);
-		this.SavingVitals = true;
-		this.application.loadMask("One moment please, saving Patient Vitals...");
+		if (!(tValid1 && tValid2 && tValid3 && tValid4 && tValid5 && tValid6 && tValid7 && tValid8 && tValid9)) {
+			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. Check Fields for Input Errors" );
 
-		Ext.Ajax.request({
-			scope : this,
-			url: Ext.URLs.AddVitals,
-			method : "POST",
-			jsonData : params,
-			success: function( response, opts ){
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.SavingVitals = false;
-				// if (!this.SavingVitals && !this.SavingGenInfo) {
-					this.application.unMask();
-				// }
-
-
-				if (resp.success) {
-			        var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
-					newPlanTabCtl.loadVitals("Update Vitals");
-					Ext.MessageBox.alert("Vital Signs", "Vitals Information Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+			var quesAnswer = Ext.Msg.show({
+				"title" : "Vital Signs Exceed Parameters", 
+				"msg" : "One or more Vital Signs exceeds the recommended parameters. Please check indicated Vital Sign Fields for possible Input Errors. If you still wish to save these Vitals, click \"Yes\". To cancel and review, please click \"No\". Do you still want to save the current Vitals?", 
+				"buttons" : Ext.Msg.YESNO, 
+				"icon" : Ext.Msg.QUESTION,
+				"scope" : this,
+				"fn" : function( btnID, txt, opt) {
+					if ("yes" === btnID) {
+						this._saveVitals2DB(record, parent);
+					}
 				}
-				else {
-					Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
-				}
-			},
-			failure : function( response, opts ) {
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
-			}
-		});
-		return (true);
+			});
+		}
+		else {
+			this._saveVitals2DB(record, parent);
+		}
+
+		return true;
 	},
 	
 	SaveGenInfo : function() {

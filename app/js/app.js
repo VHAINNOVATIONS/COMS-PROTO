@@ -578,6 +578,7 @@ Ext.require([
 	"COMS.controller.Navigation",
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
+	"COMS.controller.Common.puWinSelCancer",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 
@@ -1579,6 +1580,7 @@ Ext.application({
 		, "Messages.MessagesTab", "NewPlan.EndTreatmentSummary"
 		//		,"NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.ViewEndTreatmentSummary", "NewPlan.TreatmentDetails"
+		, "Common.puWinSelCancer"
 
 
 		// Controllers are not needed to be declared here unless they do something special???

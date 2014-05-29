@@ -54,6 +54,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"Common.selDiseaseStage"
     ,"Common.selTemplate"
 	,"Common.VitalSignsHistory"
+	,"Common.puWinSelCancer"
     ,"NewPlan.dspTemplateData"
     ,"NewPlan.AskQues2ApplyTemplate"
     ,"NewPlan.AmputationSelection"
@@ -111,17 +112,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
         this.control({
-			/***
-			"AskQues2ApplyTemplate button[text=\"Cancel\"]": {
-				click: this.cancelApply
-			},
-			"AskQues2ApplyTemplate radiogroup[name=\"amputeeRadio\"]":{
-				change : this.AmputeeSelected
-			},
-**/
-
-
-
             "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
                 change : this.TemplateTypeSelected
             },
@@ -385,113 +375,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-
-	NO_LONGER_NEEDEDgetPatientDataAsString : function() {
-		var PatientInfo = this.application.Patient;
-		var PatientData = "";
-		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
-		var xx, yy, tmpData, tempBSA, DataEl, OEMData, OEM_Data_Record, OEMTmpData, templateTypeModel, i;
-
-		for (DataEl in PatientInfo){
-			if (PatientInfo.hasOwnProperty(DataEl)) {
-				tmpData = "";
-				xx = PatientInfo[DataEl];
-				if ("string" === (typeof xx)){
-					tmpData = xx;
-				}
-				else if ("number" === (typeof xx)){
-					tmpData = xx;
-				}
-				else if ("boolean" === (typeof xx)){
-					tmpData = xx;
-				}
-				else {
-					if (null !== xx) {
-						tmpData = " - " + xx.length + " Record";
-						if (1 !== xx.length) {
-							tmpData += "s";
-						}
-					}
-					switch (DataEl) {
-					case "Amputations":
-						tmpData += "<ul>";
-						for (i = 0; i < xx.length; i++) {
-							tmpData += "<li style=\"margin-left: 1em;\">" + xx[i].description + "</li>";
-						}
-						tmpData += "</ul>";
-						break;
-
-					case "Vitals":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "Allergies":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "History":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "OEMRecords":
-						tmpData = "<ul>";
-						yy = xx;
-						for (OEMData in yy) {
-							if (yy.hasOwnProperty(OEMData)) {
-								OEM_Data_Record = yy[OEMData];
-								OEMTmpData = "";
-								if ("string" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else if ("number" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else if ("boolean" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else {
-									switch (OEMData) {
-										case "OEMRecords":
-											OEMTmpData = " - " + OEM_Data_Record.length + " Records";
-											break;
-
-										default:
-											OEMTmpData = "NYA - " + (typeof OEM_Data_Record);
-											break;
-									}
-								}
-								tmpData += "<li style=\"margin-left: 1em;\"><b>" + OEMData + "</b> - " + OEMTmpData + "</li>";
-							}
-						}
-						tmpData += "</ul>";
-						break;
-
-					case "TemplateHistory":
-						tmpData += "<ul>";
-						tmpData += "Array of Template History Data goes here";
-						tmpData += "</ul>";
-						break;
-
-					case "Disease":
-						tmpData += "<ul>";
-						tmpData += "Array of Disease Data goes here";
-						tmpData += "</ul>";
-						break;
-
-					default:
-						tmpData = "NYA - " + (typeof xx);
-						break;
-					}
-				}
-				PatientData += "<li><b>" + DataEl + "</b> - " + tmpData + "</li>";
-			}
-		}
-		return (PatientData);
-	},
-
     doBSASelection : function() {
         if (!this.puWinBSASelection) {
             var form = Ext.widget('form', {
@@ -587,7 +470,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.puWinBSASelection.show();
     },
 
-
+	doCancerSelection : function() {
+		this.puWinCancer = Ext.widget("puWinSelCancer");
+		this.puWinCancer.show();
+	},
 /**
  * Amputation information is stored in the Lookup table in the following manner:
  *  Lookup_Type = 30
@@ -782,6 +668,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             this.doAmputationSelection();
 		} else if ("AddEditBSA" === tab2switch2) {
 			this.doBSASelection();
+		} else if ("AddEditCancer" === tab2switch2) {
+            this.doCancerSelection();
 		} else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
 		} else {
@@ -2463,6 +2351,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     //
     //
     DiseaseSelected : function(combo, recs, eOpts) {
+		debugger;
         wccConsoleLog("Disease Type has been selected");
 
         if(this.application.Patient.Disease != recs[0].data){

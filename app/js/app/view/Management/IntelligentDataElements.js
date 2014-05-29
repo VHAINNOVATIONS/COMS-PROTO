@@ -26,7 +26,7 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 				{ "id" : "Pulse", "value" : "Pulse"},
 				{ "id" : "Respiration", "value" : "Respiration"},
 				{ "id" : "Pain", "value" : "Pain"},
-				{ "id" : "SP_O2", "value" : "SP O<sub>2</sub>"}
+				{ "id" : "SP_O2", "value" : "SP O2"}
 			]
 		})
 	},

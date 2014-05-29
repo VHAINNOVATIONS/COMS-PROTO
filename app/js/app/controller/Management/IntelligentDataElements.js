@@ -48,36 +48,63 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
     },
 
 
+
+	_formSubmit : function(form, URL, CMD) {
+			form.submit({
+				scope : this,
+				clientValidation: true,
+				url: URL,
+				method : CMD,
+				success: function(form, action) {
+					this.RefreshPanel();
+					this.CancelForm();
+				},
+				failure: function(form, action) {
+					var SaveTitle = "Saving Intelligent Data Entry Configuration FAILED";
+					this.RefreshPanel();
+					this.CancelForm();
+					switch (action.failureType) {
+						case Ext.form.action.Action.CLIENT_INVALID:
+							Ext.Msg.alert(SaveTitle, 'Form fields may not be submitted with invalid values');
+							break;
+						case Ext.form.action.Action.CONNECT_FAILURE:
+							Ext.Msg.alert(SaveTitle, 'Ajax communication failed');
+							break;
+						case Ext.form.action.Action.SERVER_INVALID:
+							Ext.Msg.alert(SaveTitle, action.result.msg);
+					}
+				}
+			});
+	},
 	SaveForm : function(theBtn, theEvent, eOpts) {
 		var form = this.getThePanel().getForm();
 		var URL = Ext.URLs.IntelligentDataEntry;
 		var CMD = "POST";
-
-		form.submit({
-			scope : this,
-			clientValidation: true,
-			url: URL,
-			method : CMD,
-			success: function(form, action) {
-				this.RefreshPanel();
-				this.CancelForm();
-			},
-			failure: function(form, action) {
-				var SaveTitle = "Saving Intelligent Data Entry Configuration FAILED";
-				this.RefreshPanel();
-				this.CancelForm();
-				switch (action.failureType) {
-					case Ext.form.action.Action.CLIENT_INVALID:
-						Ext.Msg.alert(SaveTitle, 'Form fields may not be submitted with invalid values');
-						break;
-					case Ext.form.action.Action.CONNECT_FAILURE:
-						Ext.Msg.alert(SaveTitle, 'Ajax communication failed');
-						break;
-					case Ext.form.action.Action.SERVER_INVALID:
-						Ext.Msg.alert(SaveTitle, action.result.msg);
+		var theStore = this.getTheGrid().store;
+		var theKey = form.getValues().Vital2Check;
+		var theRecord;
+		if ("" !== theKey) {
+			theRecord = theStore.findRecord("Vital2Check", theKey);
+		}
+		if (theRecord) {
+			var quesAnswer = Ext.Msg.show({
+				"title" : "Duplicate Record", 
+				"msg" : "A " + theKey + " record already exsists, do you wish to overwrite the existing " + theKey + " record?", 
+				"buttons" : Ext.Msg.YESNO, 
+				"icon" : Ext.Msg.QUESTION,
+				"scope" : this,
+				"fn" : function( btnID, txt, opt) {
+					if ("yes" === btnID) {
+						CMD = "PUT";
+						URL += "/" + theKey;
+						this._formSubmit(form, URL, CMD);
+					}
 				}
-			}
-		});
+			});
+		}
+		else {
+			this._formSubmit(form, URL, CMD);
+		}
 	},
 
 	CancelForm : function() {

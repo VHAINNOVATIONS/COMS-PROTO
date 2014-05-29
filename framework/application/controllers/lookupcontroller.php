@@ -1692,10 +1692,10 @@ error_log("IDEntry");
             $query = "";
             $haveFields = false;
             foreach ($ValidFieldList as $Field) {
-                $Temp = "''";
+                $Temp = "";
                 if (isset($requestData[$Field])) {
                     $haveFields = true;
-                    $Temp = "'" . $this->escapeString($requestData[$Field]) . "'";
+                    $Temp = $this->escapeString($requestData[$Field]);
                 }
                 if ("" === $query) {
                     $query = "UPDATE $TableName SET ";
@@ -1706,7 +1706,7 @@ error_log("IDEntry");
                 $query .= $Field . " = '" . $Temp . "'";
             }
             if ($haveFields) {
-                $query .= " where X = '$Vital'";
+                $query .= " where Vital2Check = '$Vital'";
             }
             error_log("IDEntry PUT - $query");
 

@@ -54,24 +54,25 @@ Ext.define("CkBoxTArea", {
 	"cls": "Test",
 	"margin": "5 0 5 0",
 	"defaults": commonDefaults,
-	"items": [{
-		"xtype": "checkbox",
-		flex: 0
-	}, {
+	"items": [
+//	{
+//		"xtype": "checkbox",
+//		flex: 0
+//	}, 
+	{
 		"xtype": "textarea",
 		"rows": 5,
 		flex: 1,
 		"grow": true,
-		"fieldLabel": "Please Explain <em>*</em>",
 		"labelAlign": "top",
 		"margin": "2 0 5 5"
 	}],
 	listeners: {
 		"afterrender": function (cbta, options) {
-			var theCkBox = cbta.down("checkbox");
+//			var theCkBox = cbta.down("checkbox");
 			var theTArea = cbta.down("textarea");
-			theCkBox.setFieldLabel(cbta.fieldLabel);
-			theCkBox.name = cbta.name + "_Ck";
+			theTArea.setFieldLabel(cbta.fieldLabel);
+//			theCkBox.name = cbta.name + "_Ck";
 			theTArea.name = cbta.name + "_Comment";
 		}
 	}
@@ -287,10 +288,21 @@ var TeachingMethods = {
 	}, {
 		"xtype": "CkBoxTArea",
 		"name": "Teaching_Demo",
-		"fieldLabel": "Demonstration/<br>Return Demonstration"
+		"fieldLabel": "Demonstration/Return Demonstration"
 	}]
 };
 
+
+var ClinicInfo = {
+	"xtype": "box",
+	"name": "ClinicInfoHeader",
+	"html": "<h2>Clinic Information:</h2>",
+	"style": {
+		"textAlign": "right"
+	},
+	"width": 200,
+	"componentCls": "NursingDocs-label"
+};
 
 
 var DischargeMtls = {
@@ -310,43 +322,51 @@ var DischargeMtls = {
 				"layout": "fit",
 				"defaults": commonDefaults,
 				"items": [{
-					"xtype": "textarea",
-					"grow": true,
+					"xtype": "CkBoxTArea",
+					"name": "DischargeInstructions_Materials",
 					"fieldLabel": "Materials",
-					"name": "DischargeInstructions_Materials"
+				"hidden" : true
 				}]
 			}, {
 				"fieldLabel": "Krames on Demand",
-				"name": "Teaching_Krames"
+				"name": "Teaching_Krames",
+				"hidden" : true
 			}, {
 				"fieldLabel": "HealtheVet ",
-				"name": "Teaching_HealtheVet"
+				"name": "Teaching_HealtheVet",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_InfoSheets",
-				"fieldLabel": "Drug info sheet/<br>Food-drug/<br>Drug-drug interaction"
+				"fieldLabel": "Drug info sheet/Food-drug/Drug-drug interaction",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_VABrochure",
-				"fieldLabel": "VA Brochure/<br>Handout"
+				"fieldLabel": "VA Brochure/Handout",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_OtherWritten",
-				"fieldLabel": "Other written material given"
+				"fieldLabel": "Other written material given",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_Mailed",
-				"fieldLabel": "Mailed"
+				"fieldLabel": "Mailed",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_Video",
-				"fieldLabel": "Videotape"
+				"fieldLabel": "Videotape",
+				"hidden" : true
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Teaching_Other",
-				"fieldLabel": "Other"
+				"fieldLabel": "Other",
+				"hidden" : true
 			},
-
+/****************
 			{
 				"xtype": "box",
 				"name": "ClinicInfoHeader",
@@ -359,7 +379,8 @@ var DischargeMtls = {
 			}, {
 				"xtype": "ClinicInfoDisplay"
 			},
-
+**************/
+/****************
 			{
 				"xtype": "box",
 				"name": "SpclInstrHeader",
@@ -369,10 +390,12 @@ var DischargeMtls = {
 				},
 				"width": 200,
 				"componentCls": "NursingDocs-label"
-			}, {
+			}, 
+**************/
+			{
 				"xtype": "SpclInstrDisplay"
 			},
-
+/****************
 			{
 				"xtype": "box",
 				"name": "MedSpecificInfoHeader",
@@ -382,7 +405,9 @@ var DischargeMtls = {
 				},
 				"width": 200,
 				"componentCls": "NursingDocs-label"
-			}, {
+			}, 
+**************/
+			{
 				"xtype": "MedSpecificInfoDisplay"
 			},
 
@@ -391,10 +416,10 @@ var DischargeMtls = {
 				"layout": "fit",
 				"defaults": commonDefaults,
 				"items": [{
-					"xtype": "textarea",
-					"grow": true,
+					"xtype": "CkBoxTArea",
 					"fieldLabel": "Comments",
-					"name": "DischargeInstructions_Comments"
+					"name": "DischargeInstructions_Comments",
+					"hidden" : true
 				}]
 			}
 		]
@@ -577,7 +602,18 @@ Ext.define("PatientEducationDetails", {
 			}]
 		},
 
-		FollowUp, WhoWasTaughtCfg, PreEducationNeeds, Barriers2Learning, LearningPreference, TeachingMethods, DischargeMtls, pcResponse
+		FollowUp,
+		// ClinicInfo,
+		{ "xtype": "ClinicInfoDisplay" },
+
+		DischargeMtls
+		// WhoWasTaughtCfg
+		// PreEducationNeeds, 
+		// Barriers2Learning, 
+		// LearningPreference, 
+		// TeachingMethods, 
+		// DischargeMtls
+		// pcResponse
 	]
 });
 
@@ -604,7 +640,9 @@ function commonRenderTable(thePanel, theStore) {
 			});
 		}
 	}
-	thePanel.update(Data);
+	if (thePanel) {
+		thePanel.update(Data);
+	}
 }
 
 
@@ -687,7 +725,10 @@ function LoadMedInfo(TemplateID) {
 				}
 				MedRecords[i].Documentation = dec;
 			}
-			MedRecordsDsp.update(MedRecords);
+			if (MedRecordsDsp) {
+				MedRecordsDsp.update(MedRecords);
+			}
+			
 		},
 		failure: function (response, opts) {
 			debugger;
@@ -714,7 +755,6 @@ Ext.onReady(function () {
 		]
 	});
 
-
 	var form = thePanel.getForm();
 	var qs = window.location.search.substring(1);
 	var DocInstr_ID = "";
@@ -736,17 +776,113 @@ Ext.onReady(function () {
 			success: function (form, action) {
 				// process input to show sections of the form
 				var theData = action.result.data;
+				var theSection;
+				if ("on" == theData.Teaching_Krames) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Krames\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+				if ("on" == theData.Teaching_HealtheVet) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_HealtheVet\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("" !== theData.DischargeInstructions_Materials) {
+					theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Materials\"]");
+					if (theSection) {
+						theSection[0].show();
+						theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Materials_Comment\"]");
+						theSection[0].setValue(theData.DischargeInstructions_Materials);
+					}
+				}
+
+
+				if ("on" == theData.Teaching_InfoSheets_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_InfoSheets\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("on" == theData.Teaching_VABrochure_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_VABrochure\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("on" == theData.Teaching_OtherWritten_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_OtherWritten\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("on" == theData.Teaching_Mailed_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Mailed\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("on" == theData.Teaching_Video_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Video\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("on" == theData.Teaching_Other_Ck) {
+					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Other\"]");
+					if (theSection) {
+						theSection[0].show();
+					}
+				}
+
+				if ("" !== theData.DischargeInstructions_Comments) {
+					theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Comments\"]");
+					if (theSection) {
+						theSection[0].show();
+						theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Comments_Comment\"]");
+						theSection[0].setValue(theData.DischargeInstructions_Comments);
+
+					}
+				}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				if ("1" == theData.PE_Taught) {
-					Ext.getCmp("PatientEducationDetails")
-						.show();
+					theSection = Ext.getCmp("PatientEducationDetails");
+					if (theSection) {
+						theSection.show();
+					}
 				}
 				if ("1" == theData.DischargeInstructions_Given) {
-					Ext.getCmp("DischargeInstructionsDetails")
-						.show();
+					theSection = Ext.getCmp("DischargeInstructionsDetails");
+					if (theSection) {
+						theSection.show();
+					}
 				}
 				if ("1" == theData.FollowUp_Type) {
-					Ext.getCmp("FollowupDetails")
-						.show();
+					theSection = Ext.getCmp("FollowupDetails");
+					if (theSection) {
+						theSection.show();
+					}
 				}
 
 				/* GetClinic Info */
