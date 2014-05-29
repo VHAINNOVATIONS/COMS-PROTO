@@ -20,6 +20,9 @@ echo "page: ".$_SESSION['page']."<br>";
 echo "NWLoginR: ".$_SESSION['NWLoginR']."<br>";
 echo "COMSLogin: ".$_SESSION['COMSLogin']."<br>";
 echo "mdws: ".$_SESSION['mdws']."<br>";
+echo "vista: ".$_SESSION['vista']."<br>";
+echo "sshusr: ".$_SESSION['sshusr']."<br>";
+echo "sshpwd: ".$_SESSION['sshpwd']."<br>";
 echo "AC: ".$_SESSION['AC']."<br>";
 echo "VC: ".$_SESSION['VC']."<br>";
 

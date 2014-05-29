@@ -131,10 +131,23 @@ class SQLQuery {
             mysql_query("COMMIT",  $this->_dbHandle);
         }
     }
+	/** Track SQL Query **/
+function PostSQLQuery($query){
+	include "dbitcon.php";
+		//Insert into SQL
+		$qv = strval($query);
+		$qv1 = str_replace("'", "//", $qv);
+		$sessionid = $_SESSION['sessionid'];
+		$username = $_SESSION['winauth'];
+		$tsql1 = "INSERT INTO COMS_Queries (query,sessionid, username) VALUES ('$qv1','$sessionid','$username')";
+		$postsqlq = sqlsrv_query($conn, $tsql1);
+		//echo $tsql1;
+	}
+	
     /** Custom SQL Query * */
     function query($query, $singleResult = 0) {
-
-        if (DB_TYPE == 'mssql') {
+	$this->PostSQLQuery($query);
+		if (DB_TYPE == 'mssql') {
             $this->_result = mssql_query($query, $this->_dbHandle);
         } else if (DB_TYPE == 'sqlsrv') {
             $this->_result = sqlsrv_query($this->_dbHandle, $query);

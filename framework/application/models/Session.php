@@ -29,6 +29,9 @@ class Session extends Model {
 			$_SESSION['sitelist']= $row['sitelist'];
 			$_SESSION['domain'] = $row['domain'];
 			$_SESSION['mdws'] = $row['mdws'];
+			$_SESSION['vista'] = $row['vista'];
+			$_SESSION['sshusr'] = $row['sshusr'];
+			$_SESSION['sshpwd'] = $row['sshpwd'];
 		}
 		
 		return $this->query($query);

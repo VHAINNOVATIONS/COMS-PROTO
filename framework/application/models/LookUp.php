@@ -1192,7 +1192,7 @@ class LookUp extends Model {
                          LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
                          LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
                          LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-                         INNER JOIN Workflows wf on WF.ReasonNo = case when tr.Reason is not null Then tr.Reason else 1 END
+                         INNER JOIN Workflows wf on wf.ReasonNo = case when tr.Reason is not null and tr.Reason > 1 Then tr.Reason else 1 end
                          INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
 
                      WHERE tr.Template_ID = '$id' 
@@ -1279,7 +1279,7 @@ class LookUp extends Model {
                     INNER JOIN Order_Status os on os.Order_ID = mh.Order_ID
                     where mh.Template_ID = '$id' 
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-                    order by Sequence_Number";
+                    order by Sequence_Number ";
             }
             else {
                 $query = "
@@ -1301,7 +1301,7 @@ class LookUp extends Model {
                     INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
                     where mh.Template_ID = '$id' 
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-                    order by Sequence_Number";
+                    order by Sequence_Number ";
             }
 			//echo $query;
 			$retVal = $this->query($query);
