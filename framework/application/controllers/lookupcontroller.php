@@ -450,7 +450,7 @@ class LookupController extends Controller {
     function TemplateData($id = NULL) {
         if ($id != NULL) {
 
-            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
+		$retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -482,7 +482,7 @@ class LookupController extends Controller {
                     $Label = "Emesis-5";
                     break;
             }
-            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
+            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
             $EmesisVal = $this->LookUp->query($query);
             $retVal[0]["emodetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
 
@@ -496,7 +496,7 @@ class LookupController extends Controller {
             else {
                 $Label = "Neutropenia-3";
             }
-            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label";
+            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
             $FNRVal = $this->LookUp->query($query);
 
             $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
@@ -533,7 +533,7 @@ class LookupController extends Controller {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
                 $this->set('templatedata', null);
 //error_log("Get Pre Medication_Hydration Failed. 3");
-                return;
+               return;
             }
             $prehydrations = $retVal;
             $infusionMap = array();
@@ -582,17 +582,17 @@ class LookupController extends Controller {
             
             $retVal = $this->LookUp->getRegimens($id);
 
-            if($this->checkForErrors('Get Template_Regimen Failed. ', $retVal)){
+            if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
             if (count($retVal) <= 0) {
-                $this->set('frameworkErr', 'Get Template_Regimen Failed. ');
+                $this->set('frameworkErr', 'Get Template_Regimen Failed. 2');
                 $this->set('templatedata', null);
                 return;
             }
             if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Template_Regimen Failed. ');
+                $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');
                 $this->set('templatedata', null);
                 return;
             }
@@ -1384,7 +1384,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
                 $query = "Select * from SiteCommonInformation WHERE ID = '$ID' and DataType = '$DataType' order by Label ";
             }
             else {
-                $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label";
+                $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label ";
             }
             error_log("SiteCommonInfo Query - $query");
             $jsonRecord['msg'] = "No records to find";
