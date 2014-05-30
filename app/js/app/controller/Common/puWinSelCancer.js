@@ -33,27 +33,25 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		var stageStore = stage.getStore();
 		stageStore.removeAll();
 
-					var stage = this.getDiseaseStage();
-					var theStore = stage.getStore();
-					var theInputField = this.getDiseaseStageInput();
-					stage.setRawValue("");
-					stage.setValue("");
-					stage.clearValue();
-					stage.reset();
-					stage.resetOriginalValue();
-					stage.lastSelection = [];
+		var stage = this.getDiseaseStage();
+		var theStore = stage.getStore();
+		var theInputField = this.getDiseaseStageInput();
+		stage.setRawValue("");
+		stage.setValue("");
+		stage.clearValue();
+		stage.reset();
+		stage.resetOriginalValue();
+		stage.lastSelection = [];
 
-stage.clearValue();
-stage.applyEmptyText();
-stage.getPicker().getSelectionModel().doMultiSelect([], false);
-var inputEl = stage.inputEl;
-var orig = stage.originalValue;
-var qu = stage.lastQuery;
-var inputTagID = stage.getInputId();
-var submitValue = stage.getSubmitValue()
-var theValue = stage.getValue();
-
-
+		stage.clearValue();
+		stage.applyEmptyText();
+		stage.getPicker().getSelectionModel().doMultiSelect([], false);
+		var inputEl = stage.inputEl;
+		var orig = stage.originalValue;
+		var qu = stage.lastQuery;
+		var inputTagID = stage.getInputId();
+		var submitValue = stage.getSubmitValue()
+		var theValue = stage.getValue();
 
 		stageStore.load({
 			scope : this,
@@ -62,8 +60,8 @@ var theValue = stage.getValue();
 				ID  : this.application.Cancer.id
 			},
 			callback : function(records, operation, success) {
-				debugger;
 				if(success){
+					/***
 					var stage = this.getDiseaseStage();
 					var theStore = stage.getStore();
 					var theInputField = this.getDiseaseStageInput();
@@ -73,24 +71,16 @@ var theValue = stage.getValue();
 					stage.reset();
 					stage.resetOriginalValue();
 					stage.lastSelection = [];
-
-stage.clearValue();
-stage.applyEmptyText();
-stage.getPicker().getSelectionModel().doMultiSelect([], false);
-// stage.bindStore(null);
-
-var inputEl = stage.inputEl;
-var orig = stage.originalValue;
-var qu = stage.lastQuery;
-var inputTagID = stage.getInputId();
-var submitValue = stage.getSubmitValue()
-var theValue = stage.getValue();
-
-
-
-
-
-debugger;
+					stage.clearValue();
+					stage.applyEmptyText();
+					stage.getPicker().getSelectionModel().doMultiSelect([], false);
+					var inputEl = stage.inputEl;
+					var orig = stage.originalValue;
+					var qu = stage.lastQuery;
+					var inputTagID = stage.getInputId();
+					var submitValue = stage.getSubmitValue()
+					var theValue = stage.getValue();
+					****/
 				}
 			}
 		});

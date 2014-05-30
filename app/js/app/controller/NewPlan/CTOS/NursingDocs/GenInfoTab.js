@@ -270,7 +270,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			max = parseFloat(IDESpec.MaxValue);
 			Msg = IDESpec.MinMaxMsg;
 			if (fldValue < min || fldValue > max) {
-				errMsg += Msg + "; ";
+				errMsg += Msg + ". ";
 				Valid = false;
 			}
 		}
@@ -311,7 +311,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			max = LastVital + pctLast;
 			Msg = IDESpec.PctVarFromLastMsg;
 			if (fldValue < min || fldValue > max) {
-				errMsg += Msg + "; ";
+				errMsg += Msg + ". ";
 				Valid = false;
 			}
 		}
@@ -323,7 +323,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			max = valu + pctLast;
 			Msg = IDESpec.PctVarFromValueMsg;
 			if (fldValue < min || fldValue > max) {
-				errMsg += Msg + "; ";
+				errMsg += Msg + ". ";
 				Valid = false;
 			}
 		}
@@ -568,7 +568,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
 		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
 
-		FNLPanel.update(this.application.Patient.OEMRecords.NeutropeniaRecommendation, false);
+		var theFNLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.NeutropeniaRecommendation);
+		FNLPanel.update(theFNLevelData, false);
 		FNLPanel.doLayout();
 	},
 
@@ -581,7 +582,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
 
-		EmoPanel.update(this.application.Patient.OEMRecords.ELevelRecommendation, false);
+		var theEmoLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendation);
+		EmoPanel.update(theEmoLevelData, false);
 		EmoPanel.doLayout();
 	},
 
