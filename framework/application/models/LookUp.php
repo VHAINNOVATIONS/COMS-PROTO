@@ -369,7 +369,7 @@ class LookUp extends Model {
                     Date_Created,
                     Patient_ID
                 ) VALUES (
-                    'Template_ID',
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$locationId',
