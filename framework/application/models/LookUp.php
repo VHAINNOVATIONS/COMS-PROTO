@@ -1152,12 +1152,7 @@ class LookUp extends Model {
         $query = "select Reason from Template_Regimen Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
         if (count($retVal) > 0) {
-//            error_log("Have Reasons for Regimen");
-//            error_log(json_encode($retVal[0]));
-//            error_log($retVal[0]["Reason"]);
-
             if (isset($retVal[0]["Reason"])) {
-//                error_log("Reason is set");
                 $query = "
                     SELECT 
                         tr.Patient_Regimen_ID AS id, 
@@ -1200,7 +1195,6 @@ class LookUp extends Model {
                 ";
             }
             else {
-//                error_log("Reason is NOT set");
                 $query = "
                     SELECT 
                         tr.Patient_Regimen_ID AS id, 
@@ -1239,8 +1233,6 @@ class LookUp extends Model {
             }
             $retVal = $this->query($query);
         }
-// error_log("Lookup Model getRegimens - Template Data - $query");
-// error_log(json_encode($retVal));
         return $retVal;
 
     }

@@ -518,7 +518,6 @@ class LookupController extends Controller {
             $retVal = $this->LookUp->getHydrations($id, 'pre');
 
             if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
-//error_log("Get Pre Medication_Hydration Failed. 1");
                 $this->set('templatedata', null);
                 return;
             }
@@ -526,23 +525,19 @@ class LookupController extends Controller {
             if (count($retVal) <= 0) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
                 $this->set('templatedata', null);
-//error_log("Get Pre Medication_Hydration Failed.2 ");
                 return;
             }
             if (!isset($retVal[0]["id"])) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
                 $this->set('templatedata', null);
-//error_log("Get Pre Medication_Hydration Failed. 3");
                return;
             }
             $prehydrations = $retVal;
             $infusionMap = array();
-//error_log("Pre Medication_Hydration Count. " . count($prehydrations));
 
             foreach ($prehydrations as $prehydration) {
                 $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
                 $infusionMap[$prehydration['id']] = $infusions;
-//error_log(json_encode($infusions));
             }
 
             $this->set('prehydrations', $prehydrations);
