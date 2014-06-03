@@ -1295,7 +1295,6 @@ class LookUp extends Model {
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
                     order by Sequence_Number ";
             }
-			//echo $query;
 			$retVal = $this->query($query);
         }
 // error_log("Lookup Model getHydrations - Template Data - $query");

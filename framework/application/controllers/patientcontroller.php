@@ -457,11 +457,12 @@ class PatientController extends Controller
      *
      * @todo Move this into a model
      */
-    private function _insertOrderStatus($formData, $preHydrationRecord)
+    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID)
     {
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
+        $DrugID = $preHydrationRecord['id'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
 		$Notes = "Line 467, PatientController";
@@ -469,15 +470,19 @@ class PatientController extends Controller
         $query = "
             INSERT INTO Order_Status (
                 Template_ID, 
-                Order_Status, 
-                Drug_Name, 
+                Order_Status,
+				Order_ID,				
+                Drug_Name,
+				Drug_ID,
                 Order_Type, 
                 Patient_ID,
 				Notes
             ) VALUES (
                 '$templateId',
                 '$orderStatus',
+                '$GUID',
                 '$drugName',
+                '$DrugID',
                 '$orderType',
                 '$patientid',
                 '$Notes'
@@ -492,14 +497,16 @@ class PatientController extends Controller
         } else if (DB_TYPE == 'mysql') {
             $mysqlLimit = 'LIMIT 1';
         }
-        $queryOrderId = "SELECT $mssqlLimit Order_ID, Date_Modified FROM Order_Status ORDER BY Date_Modified DESC $mysqlLimit";
+        /*removed for Order ID Bug
+		$queryOrderId = "SELECT $mssqlLimit Order_ID, Date_Modified FROM Order_Status ORDER BY Date_Modified DESC $mysqlLimit";
         $result = $this->Patient->query($queryOrderId);
-        
         if (! empty($result[0]['Order_ID'])) {
             return $result[0]['Order_ID'];
+			
         } else {
             return null;
-        }
+        }*/
+		return $GUID;
     }
 
     /**
@@ -517,6 +524,7 @@ class PatientController extends Controller
     private function _insertTherapyOrders($therapies, $infusionMap, $dateStarted, 
             $template, $cycle, $patientId, $formData)
     {
+	
         foreach ($therapies as $therapy) {
             
             $adminDays = $therapy["adminDay"];
@@ -605,8 +613,10 @@ class PatientController extends Controller
                     if (empty($templateId)) {
                         return;
                     }
-                    
-                    $orderId = $this->_insertOrderStatus($formData, $therapy);
+                    $query = "SELECT NEWID()";
+					$GUID = $this->Patient->query($query);
+					$GUID = $GUID[0][""];
+                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID);
                     
                     if (! empty($infusionMap)) {
                         $this->_insertHydrations($therapy, $infusionMap, 

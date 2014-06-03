@@ -133,9 +133,6 @@ class LookupController extends Controller {
 
 	}
 
-
-
-
     /*
      *
      * Note: Magic Numbers used...
@@ -172,7 +169,6 @@ class LookupController extends Controller {
 		while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
-			echo $templateName;
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
         }
 
@@ -516,7 +512,7 @@ class LookupController extends Controller {
 
 
             $retVal = $this->LookUp->getHydrations($id, 'pre');
-
+/* Removed the checks for records because sometimes we do not have all the meds.
             if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -531,7 +527,7 @@ class LookupController extends Controller {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
                 $this->set('templatedata', null);
                return;
-            }
+            }*/
             $prehydrations = $retVal;
             $infusionMap = array();
 
@@ -547,7 +543,8 @@ class LookupController extends Controller {
             $retVal = $this->LookUp->getHydrations($id, 'post');
             $posthydrations = $retVal;
 
-            if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
+            /*removed checks, sometimes null is ok
+			if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
@@ -561,7 +558,7 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
-            
+            */
             
             $infusionMap = array();
 
