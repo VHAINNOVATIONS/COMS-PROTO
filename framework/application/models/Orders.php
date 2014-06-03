@@ -578,7 +578,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 	/////////////////////
 	if ($typeF === 'Therapy'){
 		
-	echo "Non-Oral Therapy";	
+	//echo "Non-Oral Therapy";	
 		
 	
 	$queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
