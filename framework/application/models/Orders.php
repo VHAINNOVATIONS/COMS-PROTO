@@ -187,7 +187,7 @@ class Orders extends Model {
 			"VALUES ('".$Template_IDF."','".$OrderStatusF."','Inserted Order','".$Drug_NameF."','".$PIDF."','".$Notes."')";
            
         }
-		
+		//var_dump($OrderStatusF);
 		if ($OrderStatusF === "Finalized"){
 		//echo $Template_IDF;
 
@@ -196,6 +196,9 @@ class Orders extends Model {
 		}
 		elseif ($OrderStatusF === "Hold"){
 		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
+		}
+		elseif ($OrderStatusF === "Dispensed"){
+		echo "Dispensed!";
 		}
 		//echo $query;
         return $this->query($query);
@@ -217,9 +220,10 @@ class Orders extends Model {
     }	
 
     function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID){
-        
+        	
 		$Template_IDchk = NULL;
 		$Drug_Namechk = NULL;
+		$Notes = NULL;
 		
 		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
 		"FROM Order_Status " .
@@ -237,19 +241,25 @@ class Orders extends Model {
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-		$Notes = "Line 240, order.php";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
+		$Notes = "Line 244, order.php";
+		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes') ";
 		}
-		else{
-		$notes = 'Line 242';
-		$query = "Update Order_Status set Order_Status = 'Dispensed' " .
+		elseif ($Order_Statuschk = 'Finalized'){
+		//update Order to Dispensed until VistA Order Reading is in place.
+		$Notes = 'Line 249';
+		$query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " .
 		"where Template_ID = '".$TID."' " .
 		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Notes = '".$Notes."' ".
+		"AND Patient_ID = '".$PID."'";	
+		}
+		else{
+		$Notes = 'Line 256';
+		$query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " .
+		"where Template_ID = '".$TID."' " .
+		"AND Drug_Name = '".$Drug_Name."' ".
 		"AND Patient_ID = '".$PID."'";	
 		
 		}
-		
         $this->query($query);
     }
 
@@ -454,7 +464,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$NumberofDoses = $NumberofDoses + 1;
 					}
 				echo "NumberofDoses: ".$NumberofDoses."  |||| ";
-				NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
+					NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
    
 					}
 			echo "DDrecct: ".$DDrecct."";
@@ -683,8 +693,6 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			//therapy if
 			}
 			elseif ($typeF === 'Pre Therapy'){
-			
-
 			
 			$queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
 			$queryTIDs = $this->query($queryTIDsq);
