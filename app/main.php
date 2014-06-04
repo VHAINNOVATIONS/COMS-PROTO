@@ -26,7 +26,11 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 		<title>Chemotherapy Order Management System (COMS)</title>
 
 		<!-- CSS : ExtJS 4.0 Framework      -->
+        <!-- Theme Loader - WORK IN PROGRESS
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
+        -->
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
         <style>
         .Test td { vertical-align: top!important; }
@@ -86,6 +90,9 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
     	echo "		var FirstURL = '';\n";
     }
 	echo "		var SessionUser = '" . $_SESSION["AC"] . "';\n";   /* CPRS User Name of user currently logged into App via CPRS */
+    echo "ScriptRoot = \"$LibsVersion/\";";
+    echo "ThemeRoot = \"$LibsVersion/resources/css/\";";
+
 ?>
 		</script>
 	</head>

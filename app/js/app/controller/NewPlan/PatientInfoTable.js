@@ -96,18 +96,20 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	// Ext.ComponentQuery.query("NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] [name=\"BSA_CalcFormula\"]")[0].el.dom
 	init: function() {
 		wccConsoleLog("Initialized PatientInformationTable Controller!");
-
 		this.application.on({ CalculateBSA : this.CalculateBSA, scope : this });
 		this.application.on({ PatientSelected : this.PatientSelected, scope : this });
 		this.control({
-            "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container combo[name=\"BSA_Formula\"]" : {
-                select : this.BSA_Selected
-            },
-            "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container combo[name=\"BSA_FormulaWeight\"]" : {
-                select : this.BSA_WeightSelected
-            },
+			"NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container combo[name=\"BSA_Formula\"]" : {
+				select : this.BSA_Selected
+			},
+			"NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container combo[name=\"BSA_FormulaWeight\"]" : {
+				select : this.BSA_WeightSelected
+			},
 			"NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container [name=\"BSA_CappedValue\"]" : {
 				blur : this.BSA_Capped_Blur
+			},
+			"button[name=\"AddVitals_PatientInfoPanel\"]" : {
+					click : this.ShowBSACalculations
 			}
 		});
 	},
@@ -120,7 +122,12 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	 *	BSA Calculations Modules
 	 *
 	 *************************************************************/
-	
+
+	ShowBSACalculations : function(evt, btn) {
+		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+		thisCtl.HandleVSFormShowCalcButtons(evt, btn);
+	},
+
 
 	/********
 	 *

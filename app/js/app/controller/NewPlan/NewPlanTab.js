@@ -627,12 +627,47 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			tempBSA = Patient.BSA;
 			this.application.Patient.BSA_Reduction = 0;
 			PatientData = Ext.ShowBSACalcs(Patient, true, null, null);
+			this.puBSACalculation = Ext.widget('window', {
+				title: "Body Surface Area Calculations",
+					closeAction: 'hide',
+					width: 430,
+					height: 370,
+					minHeight: 270,
+					layout: 'fit',
+					resizable: true,
+					modal: true,
+					items: [ { xtype : "box", "html" : PatientData }],
+					buttons : Ext.MessageBox.OK,
+					listeners : { 
+					"afterrender" : function(theWin, eOpts) {
+						var btn = theWin.el.select("button.changeBSAWeight");
+						btn.on("click", function(a, b, c) {
+							debugger;
+						}, this);
+						btn = theWin.el.select("button.changeBSAHeight");
+						btn.on("click", function(a, b, c) {
+							debugger;
+						}, this);
+					}
+				}
+			});
+
+this.puBSACalculation.show();
+/**
+
 
 			Ext.MessageBox.show({
 				title : "Body Surface Area Calculations",
 				msg : PatientData,
-				buttons : Ext.MessageBox.OK
+				buttons : Ext.MessageBox.OK,
+				listeners : {
+					'afterrender': function(panel) {
+						debugger;
+					}
+				}
 			});
+
+*/
 
 			this.PatientDataLoadComplete("Update BSA");	// Use this call to update the BSA in the PatientInfoTable.
 			if ("DoBSACalcs" === tab2switch2 && tempBSA !== Patient.BSA) {

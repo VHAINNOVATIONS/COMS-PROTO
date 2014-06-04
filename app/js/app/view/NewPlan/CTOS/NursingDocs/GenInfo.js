@@ -409,13 +409,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 margin: "0 5 0 0",
                 labelClsExtra: "NursingDocs-label"
             }, 
-            {
-                xtype: "container",
-                name: "ndVitalsCalcBSA",
-                html: "Show <button name=\"ShowBSA\" class=\"anchor NDGIVS_BSA_Calculations\">Calculations</button>",
-                margin: "0 10 0 0"
-            }
-
+			{ "xtype" : "button", "baseCls" : "anchor", "name" : "AddVitals_PatientInfoPanel", "text" : "Calculations" }
             ]
         }
     ]

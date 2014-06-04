@@ -991,8 +991,8 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",
-		"<tr><th>Height:</th><td>{Height} in{[this.HeightInCM(values)]}</td></tr>",
-		"<tr><th>Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]}</td></tr>",
+		"<tr><th>Height:</th><td>{Height} in{[this.HeightInCM(values)]} {[this.changeHeight(values)]} </td></tr>",
+		"<tr><th>Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]} {[this.changeWeight(values)]} </td></tr>",
 		"<tr><th>Gender</th><td>{Gender}</td></tr>",
 		"<tr><th>Amputations</th><td>",
 
@@ -1187,6 +1187,13 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 			finalBSA: function (v) {
 				return ("= " + Ext.BSA_Calc(v) + " m<sup>2</sup>");
+			},
+
+			changeHeight : function () {
+				return "<button class=\"anchor changeBSAHeight\" title=\"Change Height used in BSA Calculations\">Change Height</button>";
+			},
+			changeWeight : function () {
+				return "<button class=\"anchor changeBSAWeight\" title=\"Change Weight used in BSA Calculations\">Change Weight</button>";
 			}
 		}
 	);
@@ -1199,6 +1206,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	}
 
 	return newFormula;
+
 };
 
 
@@ -1591,6 +1599,39 @@ Ext.application({
 
 	launch: function () {
 		wccConsoleLog("Launching Application Base");
+
+/**
+ * Theme Loader - WORK IN PROGRESS
+ **
+    var COMS_theme = 'default';
+    if (document.cookie) {
+
+        index = document.cookie.indexOf('theme');
+        if (index !== -1) {
+            var f = (document.cookie.indexOf("=", index) + 1);
+            var t = document.cookie.indexOf(";", index);
+            if (t === -1) {
+                t = document.cookie.length;
+            }
+            COMS_theme = (document.cookie.substring(f, t));
+            Ext.util.Cookies.set('theme', "default");
+        }
+    }
+
+    if ((COMS_theme === 'default') || (COMS_theme !== 'gray' && COMS_theme !== 'access' && COMS_theme !== 'neptune')) {
+        document.write('<link rel="stylesheet" type="text/css" href="' + ThemeRoot + 'ext-all-debug.css" />');
+    }
+    else {
+        document.write('<link rel="stylesheet" type="text/css" href="' + ThemeRoot + 'ext-all-' + COMS_theme + '-debug.css" />');
+    }
+
+
+    if (COMS_theme === 'neptune') {
+        document.write('<script type="text/javascript" src="' + ScriptRoot + 'ext-theme-neptune.js"></scr'+'ipt>');
+    }
+**
+ * END Theme Loader
+ **/
 
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {

@@ -566,7 +566,8 @@ th.drug {
 	background-color: silver;
 }
 
-.NursingDocs-label { font-weight : bold; }
+.NursingDocs-label { font-weight : bold!important; }
+.NursingDocs-right { text-align : right!important; }
 .NursingDocs-boxLabel { font-weight : bold; padding-left: 1em; }
 
 a:visited, a {
@@ -654,4 +655,38 @@ table.OEMRecord_Element tr {
 
 .ndctWarning span, .scEditInstructions span {
 	color: red;
+}
+
+.BSACalcTable table {
+	width: 100%;
+}
+
+/*
+.BSACalcTable .x-form-item-Label, 
+.BSACalcTable .x-field-label-cell {
+	border: thin solid #99BCE8;
+	font-weight: bold;
+	background-color: white;
+	font-size: smaller;
+}
+
+.BSACalcTable .x-form-item-Field,
+.BSACalcTable .x-form-item-body {
+	border: thin solid #99BCE8;
+	font-weight: normal;
+	background-color: transparent;
+	font-size: smaller;
+}
+*/
+
+.BSACalcTable tr, .BSACalcTable td {
+	border: thin solid #99BCE8;
+}
+
+
+.BSACalcTable td table { margin-bottom: 0; }
+
+.BSACalcTable label {
+	font-weight: bold!important;
+	margin-right: 0.5em;
 }

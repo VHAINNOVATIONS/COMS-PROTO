@@ -7,7 +7,38 @@ Ext.define('COMS.view.NavigationTabs' ,{
 // resizable: true,
 // autoScroll : true,
     plain : true,
+	
+/************** WORK IN PROGRESS...
+	tabBar : {
+		items : [{ xtype : "checkbox", margins: "0 0 0 100", labelWidth : 200, labelAlign: "right", fieldLabel : "Use Accessibility Theme",
+			listeners : { 
+			**
+				beforerender : { fn : function(ckBox, eOpts) {
+					var temp = COMS_theme;
+					if( "access" === temp) {
+						ckBox.setValue(true);
+					}
+					else {
+						ckBox.setValue(false);
+					}
+				}},
+			 **
 
+				change : { fn : function(ckBox, nValue, oValue, eOpts) {
+					var temp = COMS_theme;
+					if (nValue) {
+						Ext.util.Cookies.set('theme', "access");
+						location = location; // Refresh of page cannot be avoided as its an Ext-JS limitation
+					}
+					else {
+						Ext.util.Cookies.set('theme', "default");
+						location = location; // Refresh of page cannot be avoided as its an Ext-JS limitation
+					}
+				}}
+			}
+		}]
+	},
+************/
     initComponent: function() {
         wccConsoleLog("Navigation Tabs View - Initialization");
 

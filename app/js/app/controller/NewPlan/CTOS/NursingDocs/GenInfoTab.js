@@ -41,7 +41,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	views: [
-		"Common.VitalSignsHistory"
+		"Common.VitalSignsHistory",
+		"Common.BSACalcWindow"
 	],
 
 	refs: [
@@ -170,6 +171,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		{
 			"ref" : "EmoPanel",
 			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
+		},
+		{
+			"ref" : "BSACalcFormPUWindow",
+			"selector" : "BSACalcWindow"
 		}
 	],
 
@@ -190,8 +195,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"NursingDocs_GenInfo" : {
 				afterrender : this.GenInfoRendered
 			},
-            "VitalSignsEntryForm button[name=\"ShowBSA\]" : {
+			"button[id=\"AddVitals_PatientInfoPanel3\"]" : {
+					click : this.HandleVSFormShowCalcButtons
+			},
+            "button[name=\"ShowBSA\]" : {
                 click: this.NDGIVS_BSA_Calculations
+					// this.HandleVSFormShowCalcButtons		// 
             },
 
             "NursingDocs_GenInfo button[action=\"save\"]": {
@@ -992,6 +1001,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	},
 
 	HandleVSFormShowCalcButtons : function (evt, btn) {
+		console.log("Patient Vitals in Patient Info Panel");
 		var Patient = this.application.Patient;
 		PatientData = Ext.ShowBSACalcs(Patient, false, null, null);
 

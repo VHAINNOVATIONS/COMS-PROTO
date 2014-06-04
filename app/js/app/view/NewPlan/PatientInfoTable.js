@@ -235,8 +235,8 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							return "<abbr title=\"Not Available\">N/A</abbr>";
 						}
 						var buf = values.BSA + 
-						"<button class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Calculate BSA</button> " + 
-						"<button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Show Calculations</button>";
+						"<button style=\"margin-left: 1em;\" class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+						"<span style=\"margin-left: 1em; font-weight: bold;\">Show</span> <button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						return buf;
 					},
 
