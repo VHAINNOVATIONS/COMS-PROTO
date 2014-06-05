@@ -504,26 +504,21 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 		var newRecord = this.validateRecord(hydrationValues,HydrationType);
 
-		if(null === newRecord){
+		if (null === newRecord){
+			/* Record did not pass validation and an error message has been displayed */
 			return;
 		}
 
-		if(0 === values.ApplySequence){
-
+		if ("0" === values.ApplySequence){
 			hydrationValues.Sequence = numRecords + 1;
 			newRecord.data.Sequence = hydrationValues.Sequence;
 			//this.insertNewHydrationRecord(addHydrationDrug, theStore, HydrationType, numRecords, hydrationValues);
 			this.addRecord(addHydrationDrug,newRecord,hydrationValues,theStore);
-
-
-			win.close();
-			addHydrationDrug.close();
-
-		}else if(1 === values.ApplySequence){
-
-			var records = [];
-			var index = hydrationValues.Sequence - 1;
-			var replacedRecord = theStore.getAt(index);
+		} else if ("1" === values.ApplySequence){
+			var i,  
+				records = [], 
+				index = hydrationValues.Sequence - 1, 
+				replacedRecord = theStore.getAt(index);
 
 			replacedRecord.data.Sequence++;
 			records.push(replacedRecord);
@@ -531,27 +526,18 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			theStore.removeAt(index);
 			theStore.insert(index++, newRecord);
 
-			for(var i=index;i<=numRecords;i++){
-
+			for(i = index; i <= numRecords; i++){
 				var tmpModel = theStore.getAt(i);
-
 				theStore.removeAt(i);
 				theStore.insert(i,records.pop());
-
-				if(null !== tmpModel){
+				if(tmpModel){
 					tmpModel.data.Sequence++;
 					records.push(tmpModel);
 				}
-
-
 			}
-
-			win.close();
-			addHydrationDrug.close();
-
 		}
-
-
+		win.close();
+		addHydrationDrug.close();
 
 	},
 
@@ -738,7 +724,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				dupSequence = theStore.find("Sequence", data.Sequence, 0, true, false, true);
 				if (-1 !== dupSequence && dupSequence !== existingRecord && title.substring(0,"Edit".length) !== "Edit") {
 					Ext.widget('HydrationSequence', {title: HydrationType +' Therapy Sequence', name: 'Hydration Sequence'});
-					win.close();		// MWB - 11/1/2013 - Must close the window before returning
+					// win.close();		// MWB - 11/1/2013 - Must close the window before returning
 					return;
 				}
 				// else if(dupSequence === dupSequence){ // MWB - 11/4/2013 Why have a useless comparison???
@@ -762,29 +748,16 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			Amt1: data.Amt1,
 			Units1: data.Units1,
 			Infusion1: data.Infusion1,
-
-// No longer need optional dosing info
-//			Amt2: data.Amt2,
-//			Units2: data.Units2,
-//			Infusion2: data.Infusion2,
-
 			Instructions: data.Instructions,
 			FluidVol1: data.FluidVol1,
 			FlowRate1: data.FlowRate1,
 			InfusionTime1: data.InfusionTime1,
 			FluidType1: data.FluidType1,
-
-// No longer need optional dosing info
-//			FluidVol2: data.FluidVol2,
-//			FlowRate2: data.FlowRate2,
-//			InfusionTime2: data.InfusionTime2,
-//			FluidType2: data.FluidType2,
 			Day: data.Day,
 			AdminTime: data.AdminTime
 		});
 
 		var errors = newRecord.validate();
-
 		if(errors.length > 0){
 			var msg='';
 			errors.each(function(error){
@@ -794,10 +767,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 			Ext.MessageBox.alert('Invalid', 'Validation Errors:<br/>' + msg);
 			return null;
-		}else{
-			return newRecord;
 		}
-
+		return newRecord;
 	},
 	addRecord: function(existingRecord,newRecord,data,theStore){
 
@@ -945,12 +916,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 					this.getHydrationInfusion1().setValue(record.data.Infusion1);
 
 					this.routeSelected(this.getHydrationInfusion1(),null,null);
-/***
-					this.getHydrationAmt2().setValue(record.data.Amt2);
-					this.getHydrationUnits2().setValue(record.data.Units2);
-					this.getHydrationInfusion2().setValue(record.data.Infusion2);
-					this.routeSelected(this.getHydrationInfusion2(),null,null);
-**/
 
 					this.getHydrationInstructions().setValue(record.data.Instructions);
 					this.getHydrationFluidVol1().setValue(record.data.FluidVol1);
@@ -958,12 +923,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 					this.getHydrationInfusionTime1().setValue(record.data.InfusionTime1);
 					this.getHydrationFluidType1().setValue(record.data.FluidType1);
 
-/**
-					this.getHydrationFluidVol2().setValue(record.data.FluidVol2);
-					this.getHydrationFlowRate2().setValue(record.data.FlowRate2);
-					this.getHydrationInfusionTime2().setValue(record.data.InfusionTime2);
-					this.getHydrationFluidType2().setValue(record.data.FluidType2);
-**/
 					this.getHydrationDay().setValue(record.data.Day);
 					this.getHydrationAdminTime().setValue(record.data.AdminTime);
 
