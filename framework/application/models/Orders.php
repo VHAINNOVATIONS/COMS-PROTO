@@ -219,11 +219,11 @@ class Orders extends Model {
         
     }	
 
-    function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID){
+    function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID,$Notes){
         	
 		$Template_IDchk = NULL;
 		$Drug_Namechk = NULL;
-		$Notes = NULL;
+		//$Notes = NULL;
 		
 		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
 		"FROM Order_Status " .
@@ -430,8 +430,9 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							//echo " || ".$TR_Drug_ID_Name." || ";
 							//echo "TR_Drug_ID: || ".$TR_Drug_ID." || ";
 							//echo " || ".$TR_Route_ID_Name." || ";
-							NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
-							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TH CprsOrdered',$PID);
+							//yes, this one
+							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
+							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TH CprsOrdered',$PID,'Line 435');
 							/////trytihs							
 							//$this->updateOrderStatus($TID,$TR_Drug_ID_Name,'TR',$PID);
 							$this->valuecheck("".$match."End and Done");
@@ -464,7 +465,8 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$NumberofDoses = $NumberofDoses + 1;
 					}
 				echo "NumberofDoses: ".$NumberofDoses."  |||| ";
-					NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
+				//yes, this one
+					//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
    
 					}
 			echo "DDrecct: ".$DDrecct."";
@@ -531,9 +533,10 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					//yes, this one
+							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 539');
 					$this->valuecheck("".$match."End and Done");
 				
 					
@@ -564,7 +567,8 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$NumberofDoses = $NumberofDoses + 1;
 					}
 				echo "NumberofDoses: ".$NumberofDoses."  |||| ";
-				NewOrderPatient($MH_Drug_ID_Name,$MHI_Infusion_Amt,$MHI_Infusion_Unit_ID_Name,$MH_Description,$match,$NumberofDoses);
+				//yes, this one
+							//NewOrderPatient($MH_Drug_ID_Name,$MHI_Infusion_Amt,$MHI_Infusion_Unit_ID_Name,$MH_Description,$match,$NumberofDoses);
    
 					}
 			echo "DDrecct: ".$DDrecct."";
@@ -643,8 +647,9 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 						$TR_Description = $this->LookupDescriptionIn($TR_Drug_ID);
 							$Regimen_Dose_Unit = $this->LookupNameIn($TR_Regimen_Dose_Unit_ID);
 							$TR_Route_ID_Name = $this->LookupNameIn($TR_Route_ID);
-							NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
-							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID);
+							//yes, this one
+							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
+							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652');
 							$this->valuecheck("".$match."End and Done");
 
 					}
@@ -675,9 +680,10 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					//yes, this one
+							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 686');
 				
 					
 			}
@@ -742,7 +748,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 751');
 					$this->valuecheck("".$match."End and Done");
 				
 					
@@ -806,9 +812,10 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					//yes, this one
+							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID);
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 818');
 					$this->valuecheck("".$match."End and Done");
 				
 					
