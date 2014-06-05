@@ -41,8 +41,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	views: [
-		"Common.VitalSignsHistory",
-		"Common.BSACalcWindow"
+		"Common.VitalSignsHistory"
 	],
 
 	refs: [
@@ -171,10 +170,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		{
 			"ref" : "EmoPanel",
 			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
-		},
-		{
-			"ref" : "BSACalcFormPUWindow",
-			"selector" : "BSACalcWindow"
 		}
 	],
 

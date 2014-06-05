@@ -619,14 +619,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var Patient = this.application.Patient;
 
 
-		// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
-		// wccConsoleLog(PatientData);
-		// PatientData = "";
-
 		if("DoBSACalcs" === tab2switch2 || "ShowBSACalcs" === tab2switch2) {
 			tempBSA = Patient.BSA;
 			this.application.Patient.BSA_Reduction = 0;
 			PatientData = Ext.ShowBSACalcs(Patient, true, null, null);
+
+			/* MWB - 6/4/2014 Added new code to allow user to select Height/Weight for BSA Calculations */
 			this.puBSACalculation = Ext.widget('window', {
 				title: "Body Surface Area Calculations",
 					closeAction: 'hide',
@@ -637,7 +635,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					resizable: true,
 					modal: true,
 					items: [ { xtype : "box", "html" : PatientData }],
-					buttons : Ext.MessageBox.OK,
+					buttons : [ { "text" : "Ok" } ],
 					listeners : { 
 					"afterrender" : function(theWin, eOpts) {
 						var btn = theWin.el.select("button.changeBSAWeight");
@@ -651,23 +649,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					}
 				}
 			});
+			this.puBSACalculation.show();
 
-this.puBSACalculation.show();
-/**
-
-
-			Ext.MessageBox.show({
-				title : "Body Surface Area Calculations",
-				msg : PatientData,
-				buttons : Ext.MessageBox.OK,
-				listeners : {
-					'afterrender': function(panel) {
-						debugger;
-					}
-				}
-			});
-
-*/
 
 			this.PatientDataLoadComplete("Update BSA");	// Use this call to update the BSA in the PatientInfoTable.
 			if ("DoBSACalcs" === tab2switch2 && tempBSA !== Patient.BSA) {
