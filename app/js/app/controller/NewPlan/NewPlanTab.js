@@ -1817,6 +1817,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
+				/* For some reason the text is double encoded (e.g. &lt; == &amp;lt;) */
+				resp = Ext.util.Format.htmlDecode(resp);
 				resp = Ext.util.Format.htmlDecode(resp);
 				this.application.Patient.OEMRecords.NeutropeniaRecommendation = resp;
 				this.application.Patient.OEMRecords.FNRiskDetails = resp;
@@ -1861,6 +1863,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
+				resp = Ext.util.Format.htmlDecode(resp);
 				resp = Ext.util.Format.htmlDecode(resp);
 				this.application.unMask();
 				this.application.Patient.OEMRecords.ELevelRecommendation = resp;
