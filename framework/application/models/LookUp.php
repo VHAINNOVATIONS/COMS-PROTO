@@ -530,7 +530,8 @@ class LookUp extends Model {
             $flowRate = $regimen->FlowRate;
             $sequence = $regimen->Sequence;
             $adminTime = $regimen->AdminTime;
-            $fluidType = $regimen->FluidType;
+            //$fluidType = $regimen->FluidType;
+			$fluidType = str_replace("'", "''",$regimen->FluidType);
             $instruction = str_replace("'", "''", $regimen->Instructions);
             $Reason = 0;
             
@@ -785,7 +786,7 @@ class LookUp extends Model {
                             '$orderId'
                         )
                     ";
-
+error_log($query);
                     $retVal = $this->query($query);
 
                     if (!empty($retVal['error'])) {
