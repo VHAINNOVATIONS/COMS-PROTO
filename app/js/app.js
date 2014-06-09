@@ -1092,7 +1092,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 					break;
 				case "Adjusted Weight":
 					x1 = Ext.AdjustedWeight(x.Weight, x.Height, x.Gender);
-					tmp1 = ("((" + x.Weight + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
+					tmp1 = ("((" + WeightInKilos + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
 					tmp1 += " = " + x1 + " kg";
 					//console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
