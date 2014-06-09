@@ -1305,7 +1305,7 @@ function convertReason2ID($Reason) {
         $this->query($query);
     }
 
-    function updateOrderStatusIn ($TID, $Drug_Name, $Order_Type, $PID)
+    function updateOrderStatusIn ($TID, $Drug_Name, $Order_Type, $PID, $Notes)
     {
         $Template_IDchk = NULL;
         $Drug_Namechk = NULL;
@@ -1322,7 +1322,7 @@ function convertReason2ID($Reason) {
         }
         if ($Template_IDchk === NULL) {
             // echo "empty sring";
-            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Finalized','$Drug_Name','$Order_Type','$PID')";
+            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Finalized','$Drug_Name','$Order_Type','$PID','Line 1325')";
         } else {
             $query = "Update Order_Status set Order_Status = 'Finalized' " .
                      "where Template_ID = '" . $TID . "' " . "AND Drug_Name = '" .

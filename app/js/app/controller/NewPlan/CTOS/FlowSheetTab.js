@@ -596,7 +596,7 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSPreMedsList[i] = {};
 			FSPreMedsList[i].label = PreTherapyMeds[i].Drug;
-			FSPreMedsList[i]["&nbsp;"] = "03 Pre Therapy";
+			FSPreMedsList[i]["&nbsp;"] = "02 Pre Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
@@ -611,7 +611,7 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < MedsListLen; i++) {
 			FSMedsList[i] = {};
 			FSMedsList[i].label = TherapyMeds[i].Drug;
-			FSMedsList[i]["&nbsp;"] = "04 Therapy";
+			FSMedsList[i]["&nbsp;"] = "03 Therapy";
 
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
@@ -627,7 +627,7 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < PostMedsListLen; i++) {
 			FSPostMedsList[i] = {};
 			FSPostMedsList[i].label = PostTherapyMeds[i].Drug;
-			FSPostMedsList[i]["&nbsp;"] = "05 Post Therapy";
+			FSPostMedsList[i]["&nbsp;"] = "04 Post Therapy";
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
 				hdr = "Cycle " + OEM_Record.Cycle + ", Day " + OEM_Record.Day;
@@ -643,7 +643,7 @@ createFlowsheet : function (BuildGrid) {
 		FSData.push(FSDiseaseResponse);
 		FSData.push(FSToxicity);
 		FSData.push(FSOther);
-		FSData.push(FSLabs);
+		// FSData.push(FSLabs);
 
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSData.push(FSPreMedsList[i]);

@@ -991,8 +991,12 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",
-		"<tr><th>Height:</th><td>{Height} in{[this.HeightInCM(values)]} {[this.changeHeight(values)]} </td></tr>",
-		"<tr><th>Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]} {[this.changeWeight(values)]} </td></tr>",
+		"<tr><th>Height:</th><td>{Height} in {[this.HeightInCM(values)]}</td></tr>",
+		"<tr><th>Weight</th><td>{Weight} lbs </td></tr>",
+		"<tr><td colspan=\"2\" style=\"text-align: center;\">",
+		"<button class=\"anchor changeBSAHeightWeight\" title=\"Select Height/Weight used in BSA Calculations from list of Vitals\">Select</button> different Height/Weight from Vitals",
+	// {[this.changeHeightWeight(values)]}
+		"</td></tr>",
 		"<tr><th>Gender</th><td>{Gender}</td></tr>",
 		"<tr><th>Amputations</th><td>",
 
@@ -1088,7 +1092,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 					break;
 				case "Adjusted Weight":
 					x1 = Ext.AdjustedWeight(x.Weight, x.Height, x.Gender);
-					tmp1 = ("((" + x.Weight + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
+					tmp1 = ("((" + WeightInKilos + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
 					tmp1 += " = " + x1 + " kg";
 					//console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
@@ -1189,11 +1193,8 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				return ("= " + Ext.BSA_Calc(v) + " m<sup>2</sup>");
 			},
 
-			changeHeight : function () {
-				return "<button class=\"anchor changeBSAHeight\" title=\"Change Height used in BSA Calculations\">Change Height</button>";
-			},
-			changeWeight : function () {
-				return "<button class=\"anchor changeBSAWeight\" title=\"Change Weight used in BSA Calculations\">Change Weight</button>";
+			changeHeightWeight : function () {
+				return "<button class=\"anchor changeBSAHeightWeight\" title=\"Change Height/Weight used in BSA Calculations\">Change Height/Weight</button>";
 			}
 		}
 	);
