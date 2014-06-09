@@ -111,6 +111,24 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     init: function() {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
+		this.application.on({ UpdateBSAWeightHeight : function(opts, tab2Switch2) {
+			var weight = opts.weight;
+			var height = opts.height;
+			var Patient = this.application.Patient;
+			var newBSA = "";
+			if ("" !== height) {
+				Patient.Height = height.substring(0, height.indexOf(" "));
+			}
+			if ("" !== weight) {
+				Patient.Weight = weight.substring(0, weight.indexOf(" "));
+			}
+			if("" !== height || "" !== weight) {
+				newBSA = Ext.BSA_Calc(Patient);
+			}
+			opts.BSA = newBSA;
+ 			this.ShowBSACalcsPUWin(opts, tab2Switch2);
+		}, scope : this });
+
         this.control({
             "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
                 change : this.TemplateTypeSelected
@@ -593,6 +611,147 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.puWinAmputations.show();
     },
 
+
+	ShowBSACalcsPUWin : function(opts, tab2switch2) {
+		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
+		var xx, yy, tmpData, tempBSA, DataEl, OEMData, OEM_Data_Record;
+		var PatientInfo;
+		var PatientData;
+
+		var Patient = this.application.Patient;
+
+			tempBSA = Patient.BSA;
+			this.application.Patient.BSA_Reduction = 0;
+			PatientData = Ext.ShowBSACalcs(Patient, true, null, null);
+
+			/* MWB - 6/4/2014 Added new code to allow user to select Height/Weight for BSA Calculations */
+			Ext.widget('window', {
+				title: "Body Surface Area Calculations",
+				closeAction: "destroy",
+				width: 430,
+				height: 370,
+				minHeight: 270,
+				// layout: "fit",
+				resizable: true,
+				modal: true,
+				scope : this,
+				items: [ { xtype : "box", "html" : PatientData }],
+				buttons : [ 
+					{ "text" : "Ok", "handler" : function(btn) {
+							btn.up('window').close();
+						}
+					}
+				],
+				listeners : {
+					"afterrender" : function(theWin, eOpts) {
+						var btn = theWin.el.select("button.changeBSAHeightWeight");
+						btn.on("click", function(theBtn, evt, eOpts) {
+							var theVitals = this.application.Patient.Vitals;
+							var htList = [];
+							var wtList = [];
+							var VitalsLen = theVitals.length;
+							var i, htObj, wtObj, temp1, temp2;
+							for (i = 0; i < VitalsLen; i++) {
+								temp1 = theVitals[i].Height;
+								if ("" !== temp1) {
+									temp2 = Ext.In2CM(temp1);
+									htObj = { "dsp" : temp1 + " / " + temp2 + " (in/cm) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									htList.push(htObj);
+								}
+
+								temp1 = theVitals[i].Weight;
+								if ("" !== temp1) {
+									temp2 = Ext.Pounds2Kilos(temp1);
+									wtObj = { "dsp" : temp1 + " / " + temp2 + " (lbs/kg) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									wtList.push(wtObj);
+								}
+							}
+
+							var htStore = Ext.create('Ext.data.Store', {
+								"fields" : ["dsp", "value"],
+								"data" : htList
+							});
+
+							var wtStore = Ext.create('Ext.data.Store', {
+								"fields" : ["dsp", "value"],
+								"data" : wtList
+							});
+
+							var htCombo = {
+								"xtype" : "combo", 
+								"margin" : "10 0 10 0", 
+								"width" : 350,
+								"name" : "SelectBSAHeight", 
+								"id" : "SelectBSAHeight",
+								"fieldLabel" : "Height", 
+								"labelAlign" : "right", 
+								"emptyText" : "Select Height",
+								"store" : htStore,
+								"queryMode" : "local",
+								"displayField" : "dsp",
+								"valueField" : "value"
+							};
+
+							var wtCombo = {
+								"xtype" : "combo", 
+								"width" : 350,
+								"name" : "SelectBSAWeight", 
+								"id" : "SelectBSAWeight",
+								"fieldLabel" : "Weight", 
+								"labelAlign" : "right", 
+								"emptyText" : "Select Weight",
+								"store" : wtStore,
+								"queryMode" : "local",
+								"displayField" : "dsp",
+								"valueField" : "value"
+							};
+
+
+							Ext.widget('window', {
+								title: "Change Height / Weight for BSA Calculations",
+								closeAction: 'destroy',
+								width: 400,
+								height: 150,
+								resizable: true,
+								modal: true,
+								scope : this,
+								"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
+								items: [ htCombo, wtCombo ],
+								buttons : [ 
+									{ "text" : "Save", scope : this, pWin : theWin, "handler" : function(btn) {
+											var height1 = Ext.getCmp("SelectBSAHeight");
+											var height = height1.getRawValue();
+											var weight1 = Ext.getCmp("SelectBSAWeight");
+											var weight = weight1.getRawValue();
+
+											this.application.fireEvent("UpdateBSAWeightHeight", {height : height, weight : weight}, "DoBSACalcs");
+
+											btn.up('window').close();
+											btn.pWin.close();
+										}
+									},
+									{ "text" : "Cancel", "handler" : function(btn) {
+											btn.up('window').close();
+										}
+									}
+								]
+							}, this).show();
+						}, theWin.scope);
+					}
+				}
+			}).show();
+
+
+			this.PatientDataLoadComplete("Update BSA");	// Use this call to update the BSA in the PatientInfoTable.
+			if (opts.BSA) {
+				Patient.BSA = opts.BSA;
+			}
+			if ("DoBSACalcs" === tab2switch2 && tempBSA !== Patient.BSA) {
+				this.SaveBSAInfo();		// POSTs the BSA Calculations and formula as a Patient Vitals Record.
+				var spanTag = Ext.get("PatientInfoTableBSA_Display");
+				spanTag.setHTML(Patient.BSA);
+			}
+	},
 	//-------------------------------------------------------------------------
 	// MWB 25 Jan 2012 - Event handler for the anchor onclick events in the PatientTemplate Table.
 	// When the user clicks on one of the anchors in the list of templates applied to a patient
@@ -620,43 +779,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 		if("DoBSACalcs" === tab2switch2 || "ShowBSACalcs" === tab2switch2) {
-			tempBSA = Patient.BSA;
-			this.application.Patient.BSA_Reduction = 0;
-			PatientData = Ext.ShowBSACalcs(Patient, true, null, null);
-
-			/* MWB - 6/4/2014 Added new code to allow user to select Height/Weight for BSA Calculations */
-			this.puBSACalculation = Ext.widget('window', {
-				title: "Body Surface Area Calculations",
-					closeAction: 'hide',
-					width: 430,
-					height: 370,
-					minHeight: 270,
-					layout: 'fit',
-					resizable: true,
-					modal: true,
-					items: [ { xtype : "box", "html" : PatientData }],
-					buttons : [ { "text" : "Ok" } ],
-					listeners : { 
-					"afterrender" : function(theWin, eOpts) {
-						var btn = theWin.el.select("button.changeBSAWeight");
-						btn.on("click", function(a, b, c) {
-							debugger;
-						}, this);
-						btn = theWin.el.select("button.changeBSAHeight");
-						btn.on("click", function(a, b, c) {
-							debugger;
-						}, this);
-					}
-				}
-			});
-			this.puBSACalculation.show();
-
-
-			this.PatientDataLoadComplete("Update BSA");	// Use this call to update the BSA in the PatientInfoTable.
-			if ("DoBSACalcs" === tab2switch2 && tempBSA !== Patient.BSA) {
-				// wccConsoleLog("Saving Updated BSA Info - " + tempBSA + " - " + Patient.BSA);
-				this.SaveBSAInfo();		// POSTs the BSA Calculations and formula as a Patient Vitals Record.
-			}
+			this.ShowBSACalcsPUWin({}, tab2switch2);
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
@@ -2369,7 +2492,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     //
     //
     DiseaseSelected : function(combo, recs, eOpts) {
-		debugger;
         wccConsoleLog("Disease Type has been selected");
 
         if(this.application.Patient.Disease != recs[0].data){
