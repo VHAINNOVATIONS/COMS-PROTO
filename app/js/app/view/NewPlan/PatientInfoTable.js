@@ -234,7 +234,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						if ("" === values.BSA_Method || "" === values.WeightFormula) {
 							return "<abbr title=\"Not Available\">N/A</abbr>";
 						}
-						var buf = values.BSA + 
+						var buf = "<span id=\"PatientInfoTableBSA_Display\">" + values.BSA +  "</span>" + 
 						"<button style=\"margin-left: 1em;\" class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
 						"<span style=\"margin-left: 1em; font-weight: bold;\">Show</span> <button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						return buf;

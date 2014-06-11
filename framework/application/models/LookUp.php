@@ -785,7 +785,6 @@ class LookUp extends Model {
                             '$orderId'
                         )
                     ";
-
                     $retVal = $this->query($query);
 
                     if (!empty($retVal['error'])) {
