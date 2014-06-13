@@ -41,7 +41,7 @@ var combo = new Ext.form.ComboBox({
 Ext.define("COMS.view.Orders.OrdersTab", {
 	extend: "Ext.grid.Panel",
 	alias: "widget.OrdersTab", // Any references to this view should be for an xtype : "OrdersTab"
-	requires: ["Ext.ux.grid.column.ActionButtonColumn"],
+	// requires: ["Ext.ux.grid.column.ActionButtonColumn"],
 	name: "Orders Tab",
 	margin: "0 10 10 10",
 	autoScroll: "y",
@@ -69,7 +69,8 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	columns: [{
 		header: "Name",
 		dataIndex: "Last_Name",
-		width: 180,
+		// width: 180,
+		flex: 1,
 		sortable: true,
 		align: "center"
 	}, {
@@ -111,13 +112,15 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	}, {
 		header: "Type",
 		dataIndex: "type",
-		width: 75,
+		// width: 75,
+			flex: 3,
 		sortable: false,
 		align: "center"
 	}, {
 		header: "Drug",
 		dataIndex: "drug",
-		width: 100,
+		// width: 100,
+		flex: 2,
 		sortable: true,
 		align: "center"
 	}, {
@@ -165,7 +168,10 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		editor: combo,
 		//renderer: Ext.util.Format.comboRenderer(combo) 
 
-	}, {
+	}
+	
+	/**
+	, {
 		xtype: "actionbuttoncolumn",
 		width: 70,
 		header: "Set Status",
@@ -206,7 +212,9 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 			}
 
 		}]
-	}],
+	}
+	**/
+	],
 	buttons: [{
 		text: "Refresh"
 	}, {

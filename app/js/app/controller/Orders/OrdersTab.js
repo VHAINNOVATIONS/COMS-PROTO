@@ -15,7 +15,12 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 		wccConsoleLog("Initialized Orders Tab Panel Navigation Controller!");
 		this.control({
 			"OrdersTab": {
-				collapse: this.collapseCombo
+				collapse: this.collapseCombo,
+				activate : this.PanelReady,
+				beforeactivate : this.PanelReady,
+				enable : this.PanelReady,
+				focus : this.PanelReady,
+				afterrender : this.PanelReady,
 			},
 			"OrdersTab button[text=\"Refresh\"]": {
 				click: this.HandleRefresh
@@ -60,10 +65,26 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 		});
 	},
 
+	PanelReady : function (thePanel, eOpts) {
+		debugger;
+	},
+
 	"HandleRefresh" : function (button, evt, eOpts) {
-		var theStore = Ext.getStore("OrdersStore");
-		theStore.removeAll(true);
-		theStore.groupField = "Patient_ID";
-		theStore.load();
+		this.LoadOrdersStore();
+	},
+
+	"LoadOrdersStore" : function () {
+		try {
+			var theStore = Ext.getStore("OrdersStore");
+			if (theStore) {
+				// theStore.removeAll(true);		By default is to remove the Store's existing records first.
+				// theStore.groupField = "Patient_ID";
+				theStore.load();
+			}
+		}
+		catch (e) {
+			alert("Store Load Error in Navigation.js");
+		}
+
 	}
 });

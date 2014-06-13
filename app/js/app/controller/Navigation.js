@@ -48,7 +48,6 @@ Ext.define('COMS.controller.Navigation', {
 				alert("load Site Configuration - FAILED");
 			}
 		});
-
 	},
 
 	tabChanged: function (tabPanel, newCard, oldCard, eOpts) {
@@ -61,6 +60,9 @@ Ext.define('COMS.controller.Navigation', {
 		var template = null;
 
 		if ("Orders" === newCard.title) {
+			var Orders = this.getController("Orders.OrdersTab");
+			Orders.LoadOrdersStore();
+/**
 			try {
 				var theStore = Ext.getStore("OrdersStore");
 				if (theStore) {
@@ -71,6 +73,7 @@ Ext.define('COMS.controller.Navigation', {
 			catch (e) {
 				alert("Store Load Error in Navigation.js");
 			}
+**/
 		}
 
 		if (!editTemplate && "Template Authoring" == newCard.title && "Start New Plan" == oldCard.title) {
