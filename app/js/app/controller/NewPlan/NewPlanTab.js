@@ -658,11 +658,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 							var wtList = [];
 							var VitalsLen = theVitals.length;
 							var i, htObj, wtObj, temp1, temp2;
+							var defaultValues = {"height" : "", "weight" : ""};
 							for (i = 0; i < VitalsLen; i++) {
 								temp1 = theVitals[i].Height;
 								if ("" !== temp1) {
 									temp2 = Ext.In2CM(temp1);
 									htObj = { "dsp" : temp1 + " / " + temp2 + " (in/cm) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									if ("" == defaultValues.height) {
+										defaultValues.height = htObj;
+									}
 									htList.push(htObj);
 								}
 
@@ -670,6 +674,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								if ("" !== temp1) {
 									temp2 = Ext.Pounds2Kilos(temp1);
 									wtObj = { "dsp" : temp1 + " / " + temp2 + " (lbs/kg) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									if ("" == defaultValues.height) {
+										defaultValues.weight = wtObj;
+									}
 									wtList.push(wtObj);
 								}
 							}
@@ -693,6 +700,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								"fieldLabel" : "Height", 
 								"labelAlign" : "right", 
 								"emptyText" : "Select Height",
+								"value" : htList[0].value,
 								"store" : htStore,
 								"queryMode" : "local",
 								"displayField" : "dsp",
@@ -707,6 +715,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								"fieldLabel" : "Weight", 
 								"labelAlign" : "right", 
 								"emptyText" : "Select Weight",
+								"value" : wtList[0].value,
 								"store" : wtStore,
 								"queryMode" : "local",
 								"displayField" : "dsp",
