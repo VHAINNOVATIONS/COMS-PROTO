@@ -27,15 +27,6 @@ class PatientController extends Controller
         return false;
     }
 
-    public function escapeString($string) {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            return str_replace("'", "''", $string);
-        } else if (DB_TYPE == 'mysql') {
-            return mysql_real_escape_string($string);  	
-        }
-        return $string;
-    }
-
     function MedicationSanityCheck () {
         // Get all templates from the Master Template
         $query = "select * from Master_Template";

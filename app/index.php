@@ -66,6 +66,7 @@ PostTrack($_SESSION['ruser'],$notset,$point,0,$_SESSION['sessionid']);
 		$Deployment = "app.js";
 		$LibsVersion2 = "/libs/ExtJS_4.1RC1";
 		$LibsVersion2 = "/libs/ExtJS_4.1.0";
+		$LibsVersion2 = "/libs/ExtJS_4.1.0";
 		/*
 		 * Temporarily modifying the ExtJS library because
 		 * a new JS was added into /examples/ux/grid/column in order to display 

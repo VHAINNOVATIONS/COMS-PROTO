@@ -37,7 +37,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     // "NewPlan.DiagImage",
     // "NewPlan.Pharmacy",
     ,"NewPlan.OEM"	// MWB - 16-Jan-2012 - Added new view
-
+    ,"NewPlan.AdverseEventsHistory"
 
 	,"NewPlan.CTOS"
     ,"NewPlan.CTOS.PatientSummary"	// MWB 27-Jan-2012 - Added new view
@@ -186,6 +186,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab PatientInfo LabInfo" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
+            "NewPlanTab PatientInfo AdverseEventsHistory" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab Toxicity_SideEffects" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
             "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
                 click: this.SaveVitals
             }
@@ -232,7 +238,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         Ext.togglePanelOnTitleBarClick(panel);
     },
 
-
+/***
     togglePanelOnTitleBarClick : function(panel) {
         panel.header.el.on('click', function() {
             if (panel.collapsed) {
@@ -243,6 +249,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }
         });
     },
+***/
 /**/
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
@@ -651,11 +658,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 							var wtList = [];
 							var VitalsLen = theVitals.length;
 							var i, htObj, wtObj, temp1, temp2;
+							var defaultValues = {"height" : "", "weight" : ""};
 							for (i = 0; i < VitalsLen; i++) {
 								temp1 = theVitals[i].Height;
 								if ("" !== temp1) {
 									temp2 = Ext.In2CM(temp1);
 									htObj = { "dsp" : temp1 + " / " + temp2 + " (in/cm) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									if ("" == defaultValues.height) {
+										defaultValues.height = htObj;
+									}
 									htList.push(htObj);
 								}
 
@@ -663,6 +674,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								if ("" !== temp1) {
 									temp2 = Ext.Pounds2Kilos(temp1);
 									wtObj = { "dsp" : temp1 + " / " + temp2 + " (lbs/kg) - " + theVitals[i].DateTaken, "value" : temp1 + "-" + theVitals[i].DateTaken };
+									if ("" == defaultValues.height) {
+										defaultValues.weight = wtObj;
+									}
 									wtList.push(wtObj);
 								}
 							}
@@ -686,6 +700,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								"fieldLabel" : "Height", 
 								"labelAlign" : "right", 
 								"emptyText" : "Select Height",
+								"value" : htList[0].value,
 								"store" : htStore,
 								"queryMode" : "local",
 								"displayField" : "dsp",
@@ -700,6 +715,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								"fieldLabel" : "Weight", 
 								"labelAlign" : "right", 
 								"emptyText" : "Select Weight",
+								"value" : wtList[0].value,
 								"store" : wtStore,
 								"queryMode" : "local",
 								"displayField" : "dsp",

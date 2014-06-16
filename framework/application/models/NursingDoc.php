@@ -226,30 +226,14 @@ class NursingDoc extends Model {
     }
 
     function getTopLevelAssessment($patiendId){
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "select Asmnt_ID as id, CONVERT(VARCHAR(10), Date_Assessment, 101) as date, Author as author from ND_Assessment where Patient_ID = '" .$patiendId."'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select Asmnt_ID as id, Date_Assessment as date, Author as author from ND_Assessment where Patient_ID = '" .$patiendId."'";
-        }
-
-
+        $query = "select Asmnt_ID as id, CONVERT(VARCHAR(10), Date_Assessment, 101) as date, Author as author from ND_Assessment where Patient_ID = '" .$patiendId."'";
         return $this->query($query);
-        
-        
     }
     
     function getAssessmentDetail($asmntId){
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "select Sequence as sequence, Field_Label as fieldLabel, Comments as comments, Level_Chosen as levelChosen, ".
+        $query = "select Sequence as sequence, Field_Label as fieldLabel, Comments as comments, Level_Chosen as levelChosen, ".
                     "case when (Choice = 1) then 'true' else 'false' end as choice " .
                     "from ND_Assessment_Details where Asmnt_ID = '".$asmntId."'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select Sequence as sequence, Field_Label as fieldLabel, (SELECT IF(Choice, 'true', 'false')) as choice, Comments as comments, Level_Chosen as levelChosen ".
-                    "from ND_Assessment_Details where Asmnt_ID = '".$asmntId."'";            
-        }
-        
         return $this->query($query);
     }
     

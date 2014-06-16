@@ -44,7 +44,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.RATextarea" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_React_Assess",
 	name : "Nursing Documentation Reaction/Assess Tab",
 	title: "Infusion Reactions",
@@ -373,6 +373,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 			]
 		},
 
+
+
+		{ xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-boxLabel", inputValue : true, name : "ND_InfusReact_None", boxLabel : "No Adverse Reaction since Last Treatment" },
 		{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
 	]
 });
