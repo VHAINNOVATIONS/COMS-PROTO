@@ -221,7 +221,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			},
 
 
-
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.VitalsFieldValidation,
 			},

@@ -5,7 +5,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	],
 
 	views: [
-	    "NewPlan.CTOS.FlowSheet"
+		"NewPlan.CTOS.FlowSheet",
+		"NewPlan.CTOS.Toxicity_SideEffects"
 	],
 
 	refs: [

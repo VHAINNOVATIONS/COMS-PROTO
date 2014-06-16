@@ -343,6 +343,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Assessment" ,{
 			padding : "10",
 			items : [
 				{ xtype : "NursingDocs_PretreatmentAssesment"},
+				{ xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-boxLabel", inputValue : true, name : "ND_Ass_None", boxLabel : "No Adverse Reaction since Last Treatment" },
 				{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
 			]
 		}

@@ -46,21 +46,6 @@ class LookupController extends Controller {
        error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
     }
 
-    public function escapeString($string)
-    {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            return str_replace("'", "''", $string);
-        }
-        return $string;
-    }
-
-    function varDumpToString ($var) {
-        ob_start();
-        var_dump($var);
-        $result = ob_get_clean();
-        return $result;
-    }
-
     function checkForErrors($errorMsg,$retVal){
         $ErrorCode = "";
         $this->set('frameworkErrCodes', $ErrorCode);

@@ -25,11 +25,29 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 		<title>Chemotherapy Order Management System (COMS)</title>
 
+        <!-- <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>> -->
+        <!-- <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?> media="screen and (-ms-high-contrast: active) "> -->
+        <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+        <style>
+        @media only screen and (-ms-high-contrast: active) {
+            .MediaTest {
+                color: red;
+            }
+        }
+        @media only screen and (-ms-high-contrast: none) {
+            .MediaTest {
+                color: yellow;
+            }
+        }
+        </style>
+
 		<!-- CSS : ExtJS 4.0 Framework      -->
         <!-- Theme Loader - WORK IN PROGRESS
+
+        
         <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
         -->
-		<link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+		
 
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
         <style>
@@ -97,7 +115,6 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 		</script>
 	</head>
 <body>
-
     <div id="Loader" style="position: absolute; left: 20%; margin: 20%; font-size: 24px; font-family: tahoma,arial,verdana,sans-serif">Loading Application</div>
 
     <div id="application" class="container initialHide">
@@ -116,7 +133,7 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
                 <ul style="text-align: right; font-size:small;">
                     <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
                     <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
-					<li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
+                    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
                     <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                     <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                     <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>

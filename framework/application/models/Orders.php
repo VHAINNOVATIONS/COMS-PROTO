@@ -172,7 +172,7 @@ class Orders extends Model {
 				
         
         $queryq = $this->query($query);
-		
+		error_log("orders model 1 - $queryq");
 
         if (count($queryq) > 0) {
 
@@ -188,6 +188,8 @@ class Orders extends Model {
            
         }
 		//var_dump($OrderStatusF);
+
+
 		if ($OrderStatusF === "Finalized"){
 		//echo $Template_IDF;
 
@@ -201,6 +203,7 @@ class Orders extends Model {
 		echo "Dispensed!";
 		}
 		//echo $query;
+        error_log("orders model 2 - $query");
         return $this->query($query);
     }
     

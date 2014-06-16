@@ -4,8 +4,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	stores: [
 	],
 	views: [
+		"Common.SelectAdverseReactionAlerts"
 	],
 	refs: [
+		{ ref: "NoAdverseReactions", selector: "NursingDocs_Assessment [name=\"ND_Ass_None\"]"},
+		{ ref: "AdverseReactionsCheckBoxes", selector: "NursingDocs_PretreatmentAssesment checkbox"}
+
 	],
 
 	// Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment [name=\"ND_PA_CTCAE_TERM_001\"]")[0].getStore()
@@ -18,6 +22,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		});
 	
 		this.control({
+			"NursingDocs_Assessment [name=\"ND_Ass_None\"]" : {
+				change : this.ClickNoneCheckbox
+			},
 			"NursingDocs_PretreatmentAssesment checkbox" : {
 				change : this.ClickCheckbox
 			},
@@ -28,13 +35,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		});
 	},
 
-
+	/* Note: This function gets called twice when a patient is selcted */
 	PatientSelected : function() {
+		// debugger;
 	},
 
+	ClickNoneCheckbox : function(btn, newValue, oldValue, eOpts) {
+		var i, len, AdverseReactionChecks = Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment checkbox");
+		if (newValue) {
+			Ext.MessageBox.alert("Previous Adverse Reactions Alert", "Warning this patient has had previous adverse reactions, please check and confirm that you want to keep this checked." );
+			len = AdverseReactionChecks.length;
+			for (i = 0; i < len; i++) {
+				AdverseReactionChecks[i].setValue(false);
+			}
+		}
+	},
 
 	ClickCheckbox : function(btn, newValue, oldValue, eOpts) {
 		var selectName, commentName, selectTag, comments;
+		var NoneCkBox = this.getNoAdverseReactions();
+		var NoAdverseState = NoneCkBox.getValue();
+
 		switch (btn.name) {
 			case "ND_Ass_Fatigue":
 				selectName = "ND_Ass_FatigueOptions";
@@ -88,6 +109,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		comments = Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment [name=\"" + commentName + "\"]")[0];
 
 		if (btn.value) {
+			NoneCkBox.setValue(false);
 			comments.show();
 			if ("" !== selectName ) {
 				selectTag.show();
@@ -101,8 +123,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		else {
 			if ("" !== selectName ) {
 				selectTag.hide();
+				selectTag.setValue("");
 			}
 			comments.hide();
+			comments.setValue("");
 		}
 	},
 
@@ -123,10 +147,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 				haveChecks = true;
 				assFormOption = Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment [name=\"" + assFormCheck.name + "Options\"]");
 				assFormComments = Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment [name=\"" + assFormCheck.name + "Comments\"]");
-
 				assFormValue = 0;
 				assFormCommentsValue = "";
-
 				if (assFormOption && assFormOption.length > 0) {
 					assFormValue = assFormOption[0].getValue();
 					if (null === assFormValue) {
@@ -136,32 +158,50 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 				if (assFormComments) {
 					assFormCommentsValue = assFormComments[0].getValue();
 				}
-
 				record.assessmentDetails[assessmentsCount++] = { "sequence" : i, "fieldLabel" : assFormCheck.boxLabel, "choice" : true, "comments" : assFormCommentsValue, "levelChosen" : assFormValue};
 			}
 		}
-		if (haveChecks)	{
-			var params = Ext.encode(record);
-			Ext.Ajax.request({
-				url: Ext.URLs.AddND_Assessment,
-				method : "POST",
-				jsonData : params,
-				success: function( response, opts ){
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + resp.msg );
-					}
-					else {
-						Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-					}
-				},
-				failure : function( response, opts ) {
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - <br />" + resp.msg );
+		var NoneCkBox = this.getNoAdverseReactions();
+		var NoAdverseState = NoneCkBox.getValue();
+		if (NoAdverseState) {
+		}
+		else {
+			if (haveChecks) {
+				debugger;
+				var PAT_ID = this.application.Patient.PAT_ID;	/* PAT_ID is used rather than just the Patient ID, because it defines a patient/treatment Regimen */
+				var params = Ext.encode(record);
+				var CMD = "POST";
+				var URL = Ext.URLs.AddND_Assessment + "/" + PAT_ID;
+				if (this.application.Patient.AssessmentRecordID) {
+					CMD = "PUT";
+					URL += "/" + this.application.Patient.AssessmentRecordID;
 				}
-			});
+				Ext.Ajax.request({
+					url: URL,
+					method : CMD,
+					jsonData : params,
+					scope: this,
+					success: function( response, opts ){
+						var text = response.responseText;
+						var resp = Ext.JSON.decode( text );
+						if (!resp.success) {
+							Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + resp.msg );
+						}
+						else {
+							Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+							this.application.Patient.AssessmentRecordID = resp.AssessmentID;
+						}
+					},
+					failure : function( response, opts ) {
+						var text = response.responseText;
+						var resp = Ext.JSON.decode( text );
+						Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - <br />" + resp.msg );
+					}
+				});
+			}
+			else {
+				Ext.MessageBox.alert("Saving Error", "If there are no Adverse Events then you must check the \"No Adverse Reaction since Last Treatment\" checkbox" );
+			}
 		}
 	}
 });

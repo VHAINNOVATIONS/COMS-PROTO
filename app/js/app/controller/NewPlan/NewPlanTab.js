@@ -37,7 +37,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     // "NewPlan.DiagImage",
     // "NewPlan.Pharmacy",
     ,"NewPlan.OEM"	// MWB - 16-Jan-2012 - Added new view
-
+    ,"NewPlan.AdverseEventsHistory"
 
 	,"NewPlan.CTOS"
     ,"NewPlan.CTOS.PatientSummary"	// MWB 27-Jan-2012 - Added new view
@@ -186,6 +186,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab PatientInfo LabInfo" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
+            "NewPlanTab PatientInfo AdverseEventsHistory" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab Toxicity_SideEffects" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
             "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
                 click: this.SaveVitals
             }
@@ -232,7 +238,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         Ext.togglePanelOnTitleBarClick(panel);
     },
 
-
+/***
     togglePanelOnTitleBarClick : function(panel) {
         panel.header.el.on('click', function() {
             if (panel.collapsed) {
@@ -243,6 +249,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }
         });
     },
+***/
 /**/
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
