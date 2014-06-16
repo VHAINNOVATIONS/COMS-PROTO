@@ -26,6 +26,13 @@ class Model extends SQLQuery {
 
         $this->commit();
     }
+
+    function newGUID() {
+        $query = "SELECT NEWID()";
+        $GUID = $this->query($query);
+        $GUID = $GUID[0][""];
+        return $GUID;
+    }
         
 }
 
