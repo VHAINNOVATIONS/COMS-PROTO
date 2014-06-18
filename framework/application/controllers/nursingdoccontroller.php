@@ -546,7 +546,203 @@ foreach ($Meds as $Med) {
         
     }
 
-    function Assessment($id = null){
+
+
+/*******************************************************************************************/
+    function _getAssessmentLink($PAT_ID, $assessmentRecordID) {
+            $query = "select 
+                Asmnt_ID as id, 
+                CONVERT(VARCHAR(10), Date_Assessment, 101) as date, 
+                Author as author 
+                from ND_Assessment 
+                where Patient_ID = '$PAT_ID'";
+
+            if ($assessmentRecordID) {
+                $query .= " AND Assmnt_ID = '$assessmentRecordID'";
+            }
+            error_log("_getAssessmentLink Query - $query");
+            return $this->NursingDoc->query($query);
+    }
+    function _getAssessmentDetails($assessmentRecordID) {
+        $query = "select
+            Sequence as sequence, 
+            Field_Label as fieldLabel, 
+            Comments as comments, 
+            Level_Chosen as levelChosen, 
+            case when (Choice = 1) then CAST(1 AS BIT) else CAST(0 AS BIT) end as choice
+            from ND_Assessment_Details where Asmnt_ID = '$assessmentRecordID'";
+            error_log("_getAssessmentDetails Query - $query");
+            $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+
+    function _InsertAssessmentLink($GUID, $PAT_ID) {
+            $currDate = $this->NursingDoc->getCurrentDate();
+            $author = get_current_user();
+            $query = "
+            INSERT INTO ND_Assessment (
+                Asmnt_ID,
+                Patient_ID,
+                Date_Assessment,
+                Author
+            ) VALUES (
+                '$GUID',
+                '$PAT_ID',
+                '$currDate',
+                'author'
+            )";
+            error_log("_InsertAssessmentLink Query - $query");
+            $retVal = $this->NursingDoc->query($query);
+            return $retVal;
+    }
+
+    function _InsertAssessmentDetail($asmntId, $detail) {
+        $sequence = $detail->{'sequence'};
+        $fieldLabel = $detail->{'fieldLabel'};
+        $choice = $detail->{'choice'};
+        $levelChosen = $detail->{'levelChosen'};
+        $comments = $this->escapeString($detail->{'comments'});
+        $query = "INSERT INTO ND_Assessment_Details 
+            (
+                Asmnt_ID,
+                Sequence,
+                Field_Label,
+                Choice,
+                Comments,
+                Level_Chosen
+            ) values(
+                '$asmntId', 
+                $sequence,
+                '$fieldLabel',
+                $choice,
+                '$comments',
+                $levelChosen
+            )";
+        error_log("_InsertAssessmentDetail Query - $query");
+        $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+    function _DeleteAssessmentDetail($asmntId) {
+        $query = "delete from ND_Assessment_Details where Asmnt_ID = '$asmntId'";
+        $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+/*******
+http://coms-mwb.dbitpro.com:355/NursingDoc/Assessment/B9C0E369-0BCF-E311-A4B9-000C2935B86F
+Content-Type:application/json
+{"patientId":"B9C0E369-0BCF-E311-A4B9-000C2935B86F","assessmentDetails":[{"sequence":0,"fieldLabel":"Fatigue","choice":true,"comments":"","levelChosen":"1"},{"sequence":1,"fieldLabel":"Anorexia","choice":true,"comments":"","levelChosen":"1"},{"sequence":7,"fieldLabel":"Diarrhea","choice":true,"comments":"","levelChosen":"4"},{"sequence":10,"fieldLabel":"Other","choice":true,"comments":"Life is totally messed up!","levelChosen":0}]}
+ *******/
+    function Assessment($PAT_ID = null, $assessmentRecordID=null ) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+
+
+        $form_data = json_decode(file_get_contents('php://input'));
+        $jsonRecord = array();
+        $AssessmentRecords = array();
+        $jsonRecord['success'] = 'true';
+        $ErrMsg = "Retrieving Assessment Records";
+
+        $GUID = $this->NursingDoc->newGUID();
+        $PAT_ID = $this->NursingDoc->newGUID();
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            error_log("Get New GUID - $GUID");
+            if ($PAT_ID) {
+                $assessmentID = $this->_getAssessmentLink($PAT_ID, $assessmentRecordID);
+                if($this->checkForErrors('Get ND_Assessment Link Records Failed. ', $assessmentID)){
+                    $this->set('jsonRecord', null);
+                    return;
+                }
+                foreach ($assessmentID as $assesmentLink) {
+                    $assessmentDetails = $this->_getAssessmentDetails($assesmentLink['id']);
+                    if($this->checkForErrors('Get ND_Assessment Details Records Failed. ', $assesmentLink)){
+                        $this->set('jsonRecord', null);
+                        return;
+                    }
+                    $assesment['assesmentLink'] = $assesmentLink;
+                    $assesment['assesmentLink']['Details'] = $assessmentDetails;
+                    array_push($AssessmentRecords, $assesment);
+                }
+                $jsonRecord['records'] = $AssessmentRecords;
+                $this->set('jsonRecord', $jsonRecord);
+                $this->set('frameworkErr', null);
+                return;
+            }
+            $jsonRecord['msg'] = "No Assessment records to find";
+            $this->set('jsonRecord', $jsonRecord);
+            $this->set('frameworkErr', null);
+            return;
+        }
+
+
+
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $assementDetails = $form_data->{'assessmentDetails'};
+            error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
+
+            $this->NursingDoc->beginTransaction();
+            $retVal = $this->_InsertAssessmentLink($GUID, $PAT_ID);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->NursingDoc->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+
+            foreach ($assementDetails as $detail) {
+                $retVal = $this->_InsertAssessmentDetail($GUID, $detail);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->NursingDoc->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->NursingDoc->endTransaction();
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            // Delete all Detail records for the current ID then save the new data.
+            $this->_DeleteAssessmentDetail($assessmentRecordID);
+            $assementDetails = $form_data->{'assessmentDetails'};
+error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
+/**
+            $this->NursingDoc->beginTransaction();
+            foreach ($assementDetails as $detail) {
+                $retVal = $this->_InsertAssessmentDetail($GUID, $detail);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->NursingDoc->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->NursingDoc->endTransaction();
+**/
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $this->Patient->rollbackTransaction();
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $jsonRecord['msg'] = "Assessment records Process successful!";
+        $jsonRecord['AssessmentID'] = $GUID;
+        $this->set('jsonRecord', $jsonRecord);
+        $this->set('frameworkErr', null);
+        return;
+    }
+
+    function _OLDAssessment($id = null){
         
         $form_data = json_decode(file_get_contents('php://input'));         
         
@@ -697,7 +893,233 @@ foreach ($Meds as $Med) {
         
     }
     
-    function ReactAssess($id = null){
+
+
+/**
+
+USE [COMS_TEST_2]
+CREATE TABLE [dbo].[ND_InfuseReactions](
+	[IReact_ID] [uniqueidentifier] DEFAULT (newsequentialid()),
+	[Patient_ID] [uniqueidentifier] NOT NULL,
+	[Date_Assessment] [datetime] NULL,
+	[Author] [varchar](30) NULL
+) ON [PRIMARY]
+
+
+
+CREATE TABLE [dbo].[ND_InfuseReactions_Details](
+	[IReact_Detail_ID] [uniqueidentifier] DEFAULT (newsequentialid()),
+	[IReact_ID] [uniqueidentifier] NOT NULL,
+	[Sequence] [int] NULL,
+	[Field_Label] [varchar](30) NULL,
+	[Choice] [bit] NULL,
+	[Comments] [nvarchar](max) NULL,
+	[Level_Chosen] [int] NULL,
+	[sectionTitle] [varchar](30) NULL
+) ON [PRIMARY]+
+
+ **/
+/*******************************************************************************************/
+    function _getInfuseReactLink($PAT_ID, $InfuseReactRecordID) {
+            $query = "select 
+                IReact_ID as id, 
+                CONVERT(VARCHAR(10), Date_Assessment, 101) as date, 
+                Author as author 
+                from ND_InfuseReactions 
+                where Patient_ID = '$PAT_ID'";
+
+            if ($InfuseReactRecordID) {
+                $query .= " AND IReact_ID = '$InfuseReactRecordID'";
+            }
+            error_log("_getInfuseReactLink Query - $query");
+            return $this->NursingDoc->query($query);
+    }
+    function _getInfuseReactDetails($InfuseReactRecordID) {
+        $query = "select
+            Sequence as sequence, 
+            Field_Label as fieldLabel, 
+            Comments as comments, 
+            Level_Chosen as levelChosen, 
+            case when (Choice = 1) then CAST(1 AS BIT) else CAST(0 AS BIT) end as choice
+            from ND_InfuseReactions_Details where IReact_ID = '$InfuseReactRecordID'";
+
+            error_log("_getInfuseReactDetails Query - $query");
+            $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+
+    function _InsertInfuseReactLink($GUID, $PAT_ID) {
+            $currDate = $this->NursingDoc->getCurrentDate();
+            $author = get_current_user();
+            $query = "
+            INSERT INTO ND_InfuseReactions (
+                IReact_ID,
+                Patient_ID,
+                Date_Assessment,
+                Author
+            ) VALUES (
+                '$GUID',
+                '$PAT_ID',
+                '$currDate',
+                'author'
+            )";
+            error_log("_InsertInfuseReactLink Query - $query");
+            $retVal = $this->NursingDoc->query($query);
+            return $retVal;
+    }
+
+    function _InsertInfuseReactDetail($InfuseReactRecordID, $detail) {
+        $sequence = $detail->{'sequence'};
+        $fieldLabel = $detail->{'fieldLabel'};
+        $choice = $detail->{'choice'};
+        $levelChosen = $detail->{'levelChosen'};
+        $comments = $this->escapeString($detail->{'comments'});
+
+        {"sequence":23,"fieldLabel":" Hypotension","choice":true,"comments":"","levelChosen":0,"sectionTitle":"Hypersensitivity or Anaphylaxis"},
+        $query = "INSERT INTO ND_InfuseReactions_Details 
+            (
+                IReact_ID,
+                Sequence,
+                Field_Label,
+                Choice,
+                Comments,
+                Level_Chosen,
+                sectionTitle
+            ) values(
+                '$InfuseReactRecordID', 
+                $sequence,
+                '$fieldLabel',
+                $choice,
+                '$comments',
+                $levelChosen,
+                '$sectionTitle'
+            )";
+        error_log("_InsertInfuseReactDetail Query - $query");
+        $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+    function _DeleteInfuseReactDetail($InfuseReactRecordID) {
+        $query = "delete from ND_InfuseReactions_Details where IReact_ID = '$InfuseReactRecordID'";
+        $retVal = $this->NursingDoc->query($query);
+        return $retVal;
+    }
+
+
+    function ReactAssess($PAT_ID = null, $InfuseReactRecordID=null ) {
+        error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
+        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+
+
+        $form_data = json_decode(file_get_contents('php://input'));
+        $jsonRecord = array();
+        $AssessmentRecords = array();
+        $jsonRecord['success'] = 'true';
+        $ErrMsg = "Infusion Reaction Records";
+
+        $GUID = $this->NursingDoc->newGUID();
+        $PAT_ID = $this->NursingDoc->newGUID();
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            error_log("Get New GUID - $GUID");
+/**
+            if ($PAT_ID) {
+                $assessmentID = $this->_getAssessmentLink($PAT_ID, $assessmentRecordID);
+                if($this->checkForErrors('Get ND_Assessment Link Records Failed. ', $assessmentID)){
+                    $this->set('jsonRecord', null);
+                    return;
+                }
+                foreach ($assessmentID as $assesmentLink) {
+                    $assessmentDetails = $this->_getAssessmentDetails($assesmentLink['id']);
+                    if($this->checkForErrors('Get ND_Assessment Details Records Failed. ', $assesmentLink)){
+                        $this->set('jsonRecord', null);
+                        return;
+                    }
+                    $assesment['assesmentLink'] = $assesmentLink;
+                    $assesment['assesmentLink']['Details'] = $assessmentDetails;
+                    array_push($AssessmentRecords, $assesment);
+                }
+                $jsonRecord['records'] = $AssessmentRecords;
+                $this->set('jsonRecord', $jsonRecord);
+                $this->set('frameworkErr', null);
+                return;
+            }
+**/
+            $jsonRecord['msg'] = "No Assessment records to find";
+            $this->set('jsonRecord', $jsonRecord);
+            $this->set('frameworkErr', null);
+            return;
+        }
+
+
+
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $Details = $form_data->{'Details'};
+            error_log("Inserting Details - " . $this->varDumpToString($Details));
+            $this->NursingDoc->beginTransaction();
+            $retVal = $this->_InsertInfuseReactLink($GUID, $PAT_ID);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->NursingDoc->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            foreach ($Details as $detail) {
+                $retVal = $this->_InsertInfuseReactDetail($GUID, $detail);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->NursingDoc->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->NursingDoc->endTransaction();
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            // Delete all Detail records for the current ID then save the new data.
+/**
+            $this->_DeleteAssessmentDetail($assessmentRecordID);
+            $assementDetails = $form_data->{'assessmentDetails'};
+error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
+**/
+/**
+            $this->NursingDoc->beginTransaction();
+            foreach ($assementDetails as $detail) {
+                $retVal = $this->_InsertAssessmentDetail($GUID, $detail);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->NursingDoc->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
+            }
+            $this->NursingDoc->endTransaction();
+**/
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $jsonRecord['msg'] = "Infusion Reactions records Process successful!";
+        $jsonRecord['InfuseReactionsID'] = $GUID;
+        $this->set('jsonRecord', $jsonRecord);
+        $this->set('frameworkErr', null);
+        return;
+    }
+
+
+    function _OLD_ReactAssess($id = null){
         
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
@@ -763,6 +1185,7 @@ foreach ($Meds as $Med) {
     }
 
     function ReactAssessXtrav($id = null){
+        error_log("ReactAssessXtrav - Service Call Entry Point - ID = $id");
         
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
@@ -828,7 +1251,8 @@ foreach ($Meds as $Med) {
     }
 
     function ReactAssessCRS($id = null){
-        
+        error_log("ReactAssessCRS - Service Call Entry Point - ID = $id");
+
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
         
@@ -893,7 +1317,8 @@ foreach ($Meds as $Med) {
     }
 
     function ReactAssessHorA($id = null){
-        
+        error_log("ReactAssessHorA - Service Call Entry Point - ID = $id");
+
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
         
@@ -1026,5 +1451,4 @@ foreach ($Meds as $Med) {
         return false;
         
     }
-
 }

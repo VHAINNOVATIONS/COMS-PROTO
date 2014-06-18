@@ -10,11 +10,15 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 		{ xtype : "container", name : "flowsheet grid", margin : "0 0 10 0" },		// Grid is built on the fly in the 
 																// app\controller\NewPlan\CTOS\FlowSheetTab.js createFlowsheet() 
 																// (Search for: theGrid = Ext.create)
+		{ xtype : "Toxicity_SideEffects" },
 		{ xtype : "LabInfo" }
-	],
+	]
+/*		
+	,
 
 	initComponent: function() {
 		wccConsoleLog("Flow Sheet Tab View - Initialization");
 		this.callParent(arguments);
 	}
+*/
 });

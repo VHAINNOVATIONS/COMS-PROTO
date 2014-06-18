@@ -377,12 +377,7 @@ Ext.URLs.AddND_IVSite = "/NursingDoc/IVSite/";
 
 
 
-Ext.URLs.ND_React_Assess = "/NursingDoc/React_Assess/";
-// Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
-// Returns $$$$$$$$$$$$$$$ for specified patient
-// Example Usage - https://devtest.dbitpro.com/NursingDoc/React_Assess/28225CF5-3937-E111-9B9C-000C2935B86F
-
-Ext.URLs.AddND_React_Assess = "/NursingDoc/React_Assess/";
+Ext.URLs.AddND_React_Assess = "/NursingDoc/ReactAssess/";
 
 
 Ext.URLs.ND_Assessment = "/NursingDoc/Assessment/"; // MWB - 22 Feb 2012
@@ -579,6 +574,7 @@ Ext.require([
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
+	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 
@@ -992,7 +988,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",
 		"<tr><th>Height:</th><td>{Height} in {[this.HeightInCM(values)]}</td></tr>",
-		"<tr><th>Weight</th><td>{Weight} lbs </td></tr>",
+		"<tr><th>Weight</th><td>{Weight} lbs {[this.WeightInKG(values)]}</td></tr>",
 		"<tr><td colspan=\"2\" style=\"text-align: center;\">",
 		"<button class=\"anchor changeBSAHeightWeight\" title=\"Select Height/Weight used in BSA Calculations from list of Vitals\">Select</button> different Height/Weight from Vitals",
 	// {[this.changeHeightWeight(values)]}
@@ -1565,6 +1561,7 @@ Ext.application({
 		"Navigation"
 		,"CkBoxTArea"
 		// ,"Common.selTemplateByStages"
+		, "Common.SelectAdverseReactionAlerts"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
 		, "Orders.OrdersTab"
@@ -1633,7 +1630,6 @@ Ext.application({
 **
  * END Theme Loader
  **/
-
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {
 			id: "AppContainer",

@@ -35,6 +35,7 @@ class OrdersController extends Controller {
             $returnVal = $this->Orders->updateOrderStatus($form_data);
 
             if ($this->checkForErrors('Update Order Status Values Failed. ', $returnVal)) {
+                error_log("orders 1 - " . $this->varDumpToString($returnVal));
                 $this->Orders->rollbackTransaction();
                 $jsonRecord['success'] = 'false';
                 $jsonRecord['msg'] = $this->get('frameworkErr');
