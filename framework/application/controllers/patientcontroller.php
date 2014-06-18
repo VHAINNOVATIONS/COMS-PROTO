@@ -457,8 +457,18 @@ class PatientController extends Controller
      *
      * @todo Move this into a model
      */
-    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID)
+    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
     {
+	//evar_dump($preHydrationRecord);
+	//$amt = $infusionMap->amt;
+	$amt = $infusionMap['amt'];
+	if (empty($infusionMap['type'])){
+	$route = $preHydrationRecord['route'];
+	}
+	else{
+	$route = $infusionMap['type'];
+	}
+	
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
@@ -476,7 +486,9 @@ class PatientController extends Controller
 				Drug_ID,
                 Order_Type, 
                 Patient_ID,
-				Notes
+				Notes,
+				Amt,
+				Route
             ) VALUES (
                 '$templateId',
                 '$orderStatus',
@@ -485,11 +497,13 @@ class PatientController extends Controller
                 '$DrugID',
                 '$orderType',
                 '$patientid',
-                '$Notes'
+                '$Notes',
+                '$amt',
+                '$route'
             )
         ";
         $this->Patient->query($query);
-        
+        /*removed for Order ID Bug
         $mssqlLimit = null;
         $mysqlLimit = null;
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
@@ -497,7 +511,7 @@ class PatientController extends Controller
         } else if (DB_TYPE == 'mysql') {
             $mysqlLimit = 'LIMIT 1';
         }
-        /*removed for Order ID Bug
+        
 		$queryOrderId = "SELECT $mssqlLimit Order_ID, Date_Modified FROM Order_Status ORDER BY Date_Modified DESC $mysqlLimit";
         $result = $this->Patient->query($queryOrderId);
         if (! empty($result[0]['Order_ID'])) {
@@ -524,7 +538,12 @@ class PatientController extends Controller
     private function _insertTherapyOrders($therapies, $infusionMap, $dateStarted, 
             $template, $cycle, $patientId, $formData)
     {
-	
+	//var_dump($therapies);
+	//echo "|||Therapies||";
+	//var_dump($infusionMap);
+	//echo "|||Infusion Map||";
+	//var_dump($formData);
+	//echo "|||FormData||";
         foreach ($therapies as $therapy) {
             
             $adminDays = $therapy["adminDay"];
@@ -616,7 +635,7 @@ class PatientController extends Controller
                     $query = "SELECT NEWID()";
 					$GUID = $this->Patient->query($query);
 					$GUID = $GUID[0][""];
-                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID);
+                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID, $infusionMap);
                     
                     if (! empty($infusionMap)) {
                         $this->_insertHydrations($therapy, $infusionMap, 
