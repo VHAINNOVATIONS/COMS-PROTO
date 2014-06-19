@@ -976,7 +976,6 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
         $levelChosen = $detail->{'levelChosen'};
         $comments = $this->escapeString($detail->{'comments'});
 
-        {"sequence":23,"fieldLabel":" Hypotension","choice":true,"comments":"","levelChosen":0,"sectionTitle":"Hypersensitivity or Anaphylaxis"},
         $query = "INSERT INTO ND_InfuseReactions_Details 
             (
                 IReact_ID,
