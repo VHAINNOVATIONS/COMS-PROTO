@@ -1261,10 +1261,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
 				this.loadOrderRecords();				// module 6
                 if (this.application.Patient.TemplateID) {
-                    this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+                    this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
                 }
                 else {
-					this.application.DataLoadCount--;
+					this.DataLoadCountDecrement("pModelLoad - PASS");
 					this.PatientDataLoadComplete("No Current Template Applied to patient to load");
                 }
 
@@ -1557,7 +1557,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
 					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].hide();
 					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
-					this.application.DataLoadCount--;
+					this.DataLoadCountDecrement("loadMDWSData Pass");
 					this.PatientDataLoadComplete("MDWS Mega Call");
 				}
 				else {
@@ -1565,7 +1565,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 			},
 			failure : function( response, opts ) {
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadMDWSData FAIL");
 				this.PatientDataLoadComplete("MDWS Mega Call");
 				alert("MDWS Data Load Failed...");
 			}
@@ -1595,13 +1595,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.Patient.Allergies = rawData.records;
 
 					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadAllergyInfo PASS");
 				this.PatientDataLoadComplete("Allergy Info");
 
             },
             failure : function (err, response) {
-                wccConsoleLog("Allergy Info failed to load properly");
-				this.application.DataLoadCount--;
+                this.DataLoadCountDecrement("loadAllergyInfo FAIL");
 				this.PatientDataLoadComplete("Allergy Info - FAILED Loading");
             }
         });
@@ -1632,12 +1631,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 						// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-					this.application.DataLoadCount--;
+					this.DataLoadCountDecrement("loadLabInfo PASS");
 					this.PatientDataLoadComplete("Lab Info");
 				}
 				else {
-	                wccConsoleLog("Laboratory Info failed to load properly");
-					this.application.DataLoadCount--;
+	                this.DataLoadCountDecrement("loadLabInfo FAIL");
 					this.PatientDataLoadComplete("Lab Info - FAILED Loading");
 				}
 		    }
@@ -1740,13 +1738,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 
 					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);
 
             },
 			failure : function (err, response) {
-                wccConsoleLog("Patient Vitals can not be accessed.");
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadVitals FAIL");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
             }
         });
@@ -1766,23 +1763,22 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             scope : this,
             success : function( AllTemplatesApplied2Patient, response ) {
                 this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
-                this.application.DataLoadCount--;
+                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
                 this.PatientDataLoadComplete("All Templates Applied");
                 var current = AllTemplatesApplied2Patient.get("current");
                 if (current && current[0]) {
                     current = current[0];
                     if (current.TemplateID) {
-                        this.LoadSpecifiedTemplate(current.TemplateID);
+                        this.LoadSpecifiedTemplate(current.TemplateID, "loadAllTemplatesApplied2Patient");
                     }
                     else {
-                        this.application.DataLoadCount--;
+                        this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 2 - PASS");
                         this.PatientDataLoadComplete("No Current Template Applied to patient to load");
                     }
                 }
             },
             failure : function (err, response) {
-                // console.log("loadAllTemplatesApplied2Patient - FAILURE");
-                this.application.DataLoadCount--;
+                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - FAIL");
                 this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
             }
         });
@@ -1806,7 +1802,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadTemplates PASS");
+
 				this.PatientDataLoadComplete("Templates");
 
 
@@ -1814,7 +1811,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             failure : function (err, response) {
 // wccConsoleLog("PatientTemplates Model - Load FAILED - " + response.error);
                 wccConsoleLog("PatientHistory store failed to load properly - " + response.error);
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadTemplates FAIL");
+
 				this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
             }
         });
@@ -1924,7 +1922,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 
 					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadOrderRecords PASS");
 				this.PatientDataLoadComplete("OEM Records");
 
 
@@ -1932,7 +1930,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			failure: function (err) {
 				wccConsoleLog("Template Data failed to load properly");
 				// alert("Warning - No Order Information available for Patient " + this.application.Patient.name);
-				this.application.DataLoadCount--;
+				this.DataLoadCountDecrement("loadOrderRecords FAIL");
 				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
@@ -2004,7 +2002,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.application.PatientSelectedOpts = eOpts;
 
 		this.application.loadMask("Loading Patient Records... For selected patient");
-		this.application.DataLoadCount = 8;		// Count of # of modules to load
+		this.application.DataLoadCount = 9;		// Count of # of modules to load
+		/* Modules to load - Update this count when a new module is added
+		 *	MDWS Mega Call Loaded - loadMDWSData
+		 *	Lab Info Loaded - loadLabInfo
+		 *	Allergy Info Loaded - loadAllergyInfo
+		 *	Vitals Loaded - loadVitals
+		 *	Templates Loaded - loadTemplates
+		 *	All Templates Applied Loaded - loadAllTemplatesApplied2Patient
+		 *	OEM Records Loaded - loadOrderRecords
+		 *	Current Applied Template Loaded - LoadSpecifiedTemplate
+		 *	Current Applied Template Loaded --- Yes this module is called twice for some reason, need to find out why.
+		 */
 
 // wccConsoleLog("Loading Patient Records");
 		this.loadMDWSData();					// module 1
@@ -2015,10 +2024,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.loadAllTemplatesApplied2Patient("PatientSelected");
 		this.loadOrderRecords();				// module 6
         if (this.application.Patient.TemplateID) {
-            this.LoadSpecifiedTemplate(this.application.Patient.TemplateID);
+            this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
         }
         else {
-            this.application.DataLoadCount--;
+            this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
             this.PatientDataLoadComplete("No Current Template Applied to patient to load");
         }
     },
@@ -2032,6 +2041,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	UpdateOEMRecords : function(aRec, bRec) {
+		console.log("UpdateOEMRecords");
 		try {
 			var oemEditRec = {
 				"TemplateID" : this.application.Patient.OEMRecords.id,
@@ -2116,9 +2126,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         return patientTemplates;
 	},
 
+	DataLoadCountDecrement : function(module) {
+		this.application.DataLoadCount--;
+		wccConsoleLog("DataLoadCountDecrement - (" + this.application.DataLoadCount + ") " + module);
+		console.log("DataLoadCountDecrement - (" + this.application.DataLoadCount + ") " + module);
+	},
+
 	PatientDataLoadComplete : function(Loaded) {
-		wccConsoleLog("PatientDataLoadComplete");
-        // console.log("PatientDataLoadComplete");
+		wccConsoleLog("PatientDataLoadComplete - " + Loaded);
 		var DataLoadCount = this.application.DataLoadCount;
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
@@ -2208,7 +2223,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 		wccConsoleLog("DataLoadCount - " + DataLoadCount + " - " + Loaded);
-        // console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
+        console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
+
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
 			var piTable;
@@ -2374,7 +2390,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 								}
 							}
 							if (updateRecord) {
-							this.UpdateOEMRecords(aRec, bRec);
+								// this.UpdateOEMRecords(aRec, bRec);
 							}
 						}
 					}
@@ -2670,7 +2686,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-	LoadSpecifiedTemplate : function(TemplateID) {
+	LoadSpecifiedTemplate : function(TemplateID, module) {
 			var CTOSModel = this.getModel("CTOS");
 			var CTOSModelParam = TemplateID;
 			this.clearCTOS();
@@ -2680,12 +2696,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
-					this.application.DataLoadCount--;
+					this.DataLoadCountDecrement("LoadSpecifiedTemplate (from " + module + ") - PASS");
 					this.PatientDataLoadComplete("Current Applied Template Loaded");
 
 				},
 	            failure : function (err, response) {
-					this.application.DataLoadCount--;
+					this.DataLoadCountDecrement("LoadSpecifiedTemplate (from " + module + ") - FAIL");
 					this.PatientDataLoadComplete("Current Applied Template - Failed to load - " + response.error);
 					Ext.MessageBox.alert("Loading Template Error", "NewPlanTab - Current Applied Template - Failed to load - " + response.error);
 				}

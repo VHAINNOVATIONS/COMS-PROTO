@@ -408,6 +408,8 @@ Ext.URLs.CTCAE_SOC = "/NursingDoc/CTCAE_SOC";
 // Ext.URLs.CTCAE_Data = "/js/MWB_OEM1/app/data1/NursingDocs/CTCAE_Data";
 Ext.URLs.CTCAE_Data = "/NursingDoc/CTCAE_Data";
 
+Ext.URLs.AdverseEventsHistory = "/NursingDoc/AdverseEventsHistory";
+
 
 
 Ext.URLs.EoTS = "/EndTreatmentSummary/EoTS";
@@ -589,6 +591,7 @@ Ext.require([
 	"COMS.controller.Messages.MessagesTab",
 
 	"COMS.controller.NewPlan.AskQues2ApplyTemplate",
+	"COMS.controller.NewPlan.AdverseEventsHistory",
 	"COMS.controller.NewPlan.EndTreatmentSummary",
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.NewPlan.OEM",
@@ -1562,6 +1565,7 @@ Ext.application({
 		,"CkBoxTArea"
 		// ,"Common.selTemplateByStages"
 		, "Common.SelectAdverseReactionAlerts"
+		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
 		, "Orders.OrdersTab"

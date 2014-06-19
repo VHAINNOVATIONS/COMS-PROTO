@@ -62,7 +62,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 					// XTemplate Configuration
 				disableFormats: true,
 				debugger : function ( current, prev ) {
-					debugger;
+					// debugger;
 				},
 				goalLink : function ( current ) {
 					return (current.Goal || "No Goal Specified - <button name=\"AddGoal\" class=\"anchor\">Add Goal</button>");
