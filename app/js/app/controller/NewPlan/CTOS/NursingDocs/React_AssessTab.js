@@ -51,7 +51,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 	ClickNoneCheckbox : function(btn, newValue, oldValue, eOpts) {
 		var i, len, btn_i, AdverseReactionChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
-		if (newValue) {
+		var hasPrev = this.application.Patient.Reactions.length;
+		if (newValue && (hasPrev > 0)) {
 			Ext.MessageBox.alert("Previous Adverse Reactions Alert", "Warning this patient has had previous adverse reactions, please check and confirm that you want to keep this checked." );
 			len = AdverseReactionChecks.length;
 			for (i = 0; i < len; i++) {
@@ -219,6 +220,42 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 
+	InfuseReactPost : function(records, Patient, theApp) {
+		var params = Ext.encode(records);
+		var CMD = "POST";
+		var URL = Ext.URLs.AddND_React_Assess + "/" + Patient.PAT_ID;
+		if (Patient.InfuseReactionRecordID) {
+			CMD = "PUT";
+			URL += "/" + Patient.InfuseReactionRecordID;
+		}
+		theApp.loadMask("Saving Infusion Reactions Information...");
+		Ext.Ajax.request({
+			url: URL,
+			method : CMD,
+			jsonData : params,
+			scope: this,
+			success: function( response, opts ){
+				theApp.unMask();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (!resp.success) {
+					Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - " + resp.msg );
+				}
+				else {
+					theApp.fireEvent("loadAdverseEventsHistory");
+					Ext.MessageBox.alert("Pretreatment Infusion Reactions", "Pretreatment Infusion Reactions Section, Save complete" );
+					Patient.InfuseReactionRecordID = resp.InfuseReactionRecordID;
+				}
+			},
+			failure : function( response, opts ) {
+				theApp.unMask();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - <br />" + resp.msg );
+			}
+		});
+	},
+
 
 
 	SaveReact_Assess : function(btn) {
@@ -257,39 +294,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			}
 		}
 		if (haveChecks)	{
-			var params = Ext.encode(records);
-			console.log(params);
-			var view = Ext.widget("SelectAdverseReactionAlerts", { "records" : records });
-
 			var PAT_ID = this.application.Patient.PAT_ID;	/* PAT_ID is used rather than just the Patient ID, because it defines a patient/treatment Regimen */
-			var CMD = "POST";
-			var URL = Ext.URLs.AddND_React_Assess + "/" + PAT_ID;
-			if (this.application.Patient.InfuseReactionRecordID) {
-				CMD = "PUT";
-				URL += "/" + this.application.Patient.InfuseReactionRecordID;
-			}
-			Ext.Ajax.request({
-				url: URL,
-				method : CMD,
-				jsonData : params,
-				scope: this,
-				success: function( response, opts ){
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - " + resp.msg );
-					}
-					else {
-						Ext.MessageBox.alert("Pretreatment Infusion Reactions", "Pretreatment Infusion Reactions Section, Save complete" );
-						this.application.Patient.InfuseReactionRecordID = resp.InfuseReactionRecordID;
-					}
-				},
-				failure : function( response, opts ) {
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - <br />" + resp.msg );
-				}
-			});
+			var view = Ext.widget("SelectAdverseReactionAlerts", { "PAT_ID" : PAT_ID, "type" : "Infusion Reactions", "records" : records, "scope" : this, "fnc" : this.InfuseReactPost });
 		}
 	}
 

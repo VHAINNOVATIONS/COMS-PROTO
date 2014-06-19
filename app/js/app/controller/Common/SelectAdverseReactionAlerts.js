@@ -5,7 +5,7 @@ Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 	"views" : [ "Common.SelectAdverseReactionAlerts" ],
 
 	"refs" : [
-		{ ref: "Disease",		selector: "selDisease"},
+		{ ref: "hiddenfield",		selector: "hiddenfield"},
 		{ ref: "DiseaseStage",	selector: "selDiseaseStage"},
 		{ ref: "DiseaseStageInput",	selector : "[name=\"Select Disease Stage Control\"]" }
 	],
@@ -26,17 +26,39 @@ Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 	},
 
 	"SaveAlerts" : function(btn) {
+		var theWin = btn.up("window");
 		var theForm = btn.up("form").getForm();
-		theForm.url = 'save-form.php';
-		theForm.submit({
-			success: function(theForm, action) {
-				Ext.Msg.alert('Success', action.result.msg);
-			},
-			failure: function(theForm, action) {
-				Ext.Msg.alert('Failed', action.result.msg);
+		var PAT_ID = theWin.PAT_ID;
+		var records = theWin.records;
+		var theValues = theForm.getValues().AdverseReactions4Alert;
+		theValues = theValues.split(",");
+		var i, j, k, alertEvent, rec, rec1, len1 = theValues.length, len2 = records.Details.length, len3;
+		for (i = 0; i < len1; i++) {
+			alertEvent = theValues[i];
+			for (j = 0; j < len2; j++) {
+				rec = records.Details[j];
+				rec.alertEvent = false;
+				if (rec.sectionTitle) {
+					if (alertEvent == rec.sectionTitle + " - " + rec.fieldLabel) {
+						rec.alertEvent = true;
+						break;
+					}
+				}
+				else {
+					if (alertEvent == rec.fieldLabel) {
+						rec.alertEvent = true;
+						break;
+					}
+				}
 			}
-		});
-		btn.up("window").close();
+		}
+
+
+
+
+		theWin.fnc(records, this.application.Patient, this.application);
+
+		theWin.close();
 	},
 
 	"CancelProc" : function(btn) {
@@ -44,12 +66,17 @@ Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 	},
 
 	"WidgetRenderred" : function(theWindow, eOpts) {
-		var theCombo = theWindow.down("checkcombo");
 		var theDetails = theWindow.initialConfig.records.Details;
+		var theType = theWindow.initialConfig.type;
+		theWindow.down("hiddenfield").setValue(theType);
+		var theCombo = theWindow.down("checkcombo");
 		var i, tmp, len = theDetails.length, dStore = [];
 		for (i = 0; i < len; i++) {
-			tmp = theDetails[i];
-			tmp = theDetails[i].sectionTitle + " - " + theDetails[i].fieldLabel;
+			tmp = "";
+			if (theDetails[i].sectionTitle) {
+				tmp = theDetails[i].sectionTitle + " - ";
+			}
+			tmp += theDetails[i].fieldLabel;
 			tmp = { "fieldLabel" : tmp };
 			dStore.push( tmp );
 		}

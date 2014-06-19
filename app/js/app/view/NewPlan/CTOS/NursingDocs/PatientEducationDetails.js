@@ -26,7 +26,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 				// XTemplate Configuration
 			disableFormats: true,
 			tempCalc: function (data) {
-				debugger;
+				// debugger;
 			}
 		}
 	)

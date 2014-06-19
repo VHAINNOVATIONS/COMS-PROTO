@@ -66,7 +66,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 	},
 
 	PanelReady : function (thePanel, eOpts) {
-		debugger;
+		// debugger;
 	},
 
 	"HandleRefresh" : function (button, evt, eOpts) {
