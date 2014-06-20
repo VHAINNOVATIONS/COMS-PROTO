@@ -9,13 +9,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 
 	views: [
 		"NewPlan.CTOS.NursingDocs",
-		"NewPlan.CTOS.NursingDocs.GenInfo",
-		"NewPlan.CTOS.NursingDocs.Assessment",
-		"NewPlan.CTOS.NursingDocs.PreTreatment",
-		"NewPlan.CTOS.NursingDocs.Treatment",
-		"NewPlan.CTOS.NursingDocs.React_Assess",
-		"NewPlan.CTOS.NursingDocs.Education",
-		"NewPlan.CTOS.NursingDocs.DischargeInstructions"
+		"NewPlan.CTOS.NursingDocs.GenInfo",				/* New Name = "General Information" */
+		"NewPlan.CTOS.NursingDocs.Assessment",			/* New Name = "Assessment" */
+		"NewPlan.CTOS.NursingDocs.PreTreatment",		/* New Name = "IV Site" */
+		"NewPlan.CTOS.NursingDocs.Treatment",			/* New Name = "Administration" */
+		"NewPlan.CTOS.NursingDocs.React_Assess",		/* New Name = "Infusion Reactions" */
+		"NewPlan.CTOS.NursingDocs.Education",			/* Now container for "Discharge Instructions" Tab */
+		"NewPlan.CTOS.NursingDocs.DischargeInstructions"	/* Contained within Education Tab */
 	],
 
 	refs: [

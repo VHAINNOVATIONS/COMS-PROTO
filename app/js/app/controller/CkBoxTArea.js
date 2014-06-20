@@ -10,7 +10,7 @@ Ext.define("COMS.controller.CkBoxTArea", {
 				"change" : this.ClickCheckbox
 			},
 			"CkBoxTArea" : {
-				"afterrender" : this.setLabel,
+				"afterrender" : this.setLabel
 			}
 		});
 	},

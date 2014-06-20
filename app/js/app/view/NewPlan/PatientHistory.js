@@ -10,7 +10,7 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 	collapsed : true,
 
 	items : [
-        { xtype : "button", text : "Add Vitals", name : "Show_Hide_Add_Vitals", margin: "5 0 0 20", 
+        { xtype : "button", text : "&nbsp;&nbsp;&nbsp;&nbsp;Add Vitals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", name : "Show_Hide_Add_Vitals", margin: "5 0 0 20", 
             listeners: {
                 click : {
                     element : 'el', 
@@ -23,7 +23,7 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
                             theButton.setText("Hide Add Vitals");
                         } else {
                             thePanel.hide();
-                            theButton.setText("Add Vitals");
+                            theButton.setText("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add Vitals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                         }
                     },
                     scope: this

@@ -83,11 +83,14 @@
 					$_SESSION['sitelist']= $row['sitelist'];
 					$_SESSION['domain'] = $row['domain'];
 					$_SESSION['mdws'] = $row['mdws'];
+					$_SESSION['vista'] = $row['vista'];
+					$_SESSION['sshusr'] = $row['sshusr'];
+					$_SESSION['sshpwd'] = $row['sshpwd'];
 				}
 				
 			$usql = "Update Roles set Last_SessionID = '".$_SESSION['sessionid']."' where username = '$AccessCode'";
 			$updateRole = sqlsrv_query($conn, $usql);
-				
+			//PostSQLQuery($usql);
 			$point = "signed in";
 			PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,99,$_SESSION['sessionid']);
 			$NWLoginR = 1;

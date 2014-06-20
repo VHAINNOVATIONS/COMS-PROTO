@@ -8,7 +8,7 @@ error_log("-------------------------");
 error_log("Start Process - $mwbTemp");
 
 //Include and Set phpseclib path
-set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
+//set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
 //Include SSH2 file
 //include('Net/SSH2.php');
 require_once "dbitcon.php";
@@ -39,6 +39,7 @@ $_SESSION['AccessCode'] = $_POST['AccessCode'];
 $_SESSION['VerifyCode'] = $_POST['VerifyCode'];
 $point = "Pre Check";
 PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
+
 //PostSession($_SESSION['sessionid'],$_POST['AccessCode'],$winauth,$point,1);
 $NWLoginR = NWLogin($_SESSION['AccessCode'],$_SESSION['VerifyCode']);
 $_SESSION['NWLoginR'] = $NWLoginR;

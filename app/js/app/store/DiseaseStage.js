@@ -4,7 +4,6 @@ Ext.define('COMS.store.DiseaseStage', {
         autoLoad: false,
         listeners: {
             'beforeload' : function(store, options){
-
                 if(options.params.ID!=null){
                     store.proxy.url = options.params.URL + options.params.ID;
                 }else{

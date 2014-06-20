@@ -4,8 +4,8 @@ class Session extends Model {
     
     function getSessionVariables() {
 		$username = get_current_user();
-		$chktrack = 0;
-		$_SESSION['chktrack'] = $chktrack;
+		$chkTrack = 0;
+		$_SESSION['chkTrack'] = $chkTrack;
 		
         $query = "SELECT role as role,DisplayName as DisplayName,rid as rid,cprsUsername as cprsUsername,cprsPass as cprsPass,Email as Email FROM Roles WHERE username = 'sean.cassidy'";
         $result = $this->query($query);
@@ -29,6 +29,9 @@ class Session extends Model {
 			$_SESSION['sitelist']= $row['sitelist'];
 			$_SESSION['domain'] = $row['domain'];
 			$_SESSION['mdws'] = $row['mdws'];
+			$_SESSION['vista'] = $row['vista'];
+			$_SESSION['sshusr'] = $row['sshusr'];
+			$_SESSION['sshpwd'] = $row['sshpwd'];
 		}
 		
 		return $this->query($query);

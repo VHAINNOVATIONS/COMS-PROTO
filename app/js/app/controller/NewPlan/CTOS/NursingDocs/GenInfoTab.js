@@ -62,17 +62,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		{
 			ref: "ndVitalSignsForm",
-			// selector: "NursingDocs_VitalSigns"
-            selector: "VitalSignsEntryForm"
+			selector: "VitalSignsEntryForm"
 		},
 
 		{
 			ref: "ndVitalsTempF",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsTempF\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsTempF\"]"
 		},
 		{
 			ref: "ndVitalsTempLoc",
-			selector: "NursingDocs_VitalSigns [name=\"ndVitalsTempLoc\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsTempLoc\"]"
 		},
 		{
 			ref: "ndVitalsTempC",
@@ -80,11 +79,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "ndVitalsPulse",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsPulse\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsPulse\"]"
 		},
 		{
 			ref: "ndVitalsSystolic",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsSystolic\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsSystolic\"]"
 		},
 		{
 			ref: "ndVitalsGender",
@@ -92,7 +91,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "ndVitalsHeightIN",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsHeightIN\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]"
 		},
 		{
 			ref: "ndVitalsHeightCM",
@@ -100,11 +99,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "ndVitalsResp",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsResp\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsResp\"]"
 		},
 		{
 			ref: "ndVitalsDiastolic",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsDiastolic\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]"
 		},
 		{
 			ref: "ndVitalsAge",
@@ -112,7 +111,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "ndVitalsWeightP",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsWeightP\"]"
 		},
 		{
 			ref: "ndVitalsWeightKG",
@@ -120,11 +119,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "ndVitalsPain",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsPain\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsPain\"]"
 		},
 		{
 			ref: "ndVitalsO2Level",
-			selector: "NursingDocs_VitalSigns textfield[name=\"ndVitalsO2Level\"]"
+			selector: "VitalSignsEntryForm [name=\"ndVitalsO2Level\"]"
 		},
 		{
 			ref: "ndVitalsBSA",
@@ -191,30 +190,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"NursingDocs_GenInfo" : {
 				afterrender : this.GenInfoRendered
 			},
-
-			"VitalSignsEntryForm textfield[name=\"ndVitalsTempF\"]" : {
-				blur : this.ConvertTemp
-			},
-
-			"VitalSignsEntryForm textfield[name=\"ndVitalsHeightIN\"]" : {
-				blur : this.ConvertHeight
-			},
-
-			// "NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
-            "VitalSignsEntryForm textfield[name=\"ndVitalsWeightP\"]" : {
-				blur : this.ConvertWeight
-			},
-
-			"PatientHistory NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
-				blur : this.ConvertWeight
-			},
-			"NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
-				blur : this.ConvertWeight
-			},
-			"NursingDocs_GenInfo NursingDocs_VitalSigns textfield[name=\"ndVitalsWeightP\"]" : {
-				blur : this.ConvertWeight
-			},
-
             "VitalSignsEntryForm button[name=\"ShowBSA\]" : {
                 click: this.NDGIVS_BSA_Calculations
             },
@@ -239,10 +214,163 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			},
 			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
 					afterrender : Ext.togglePanelOnTitleBarClick
+			},
+
+
+
+			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
+				"blur" : this.VitalsFieldValidation,
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPulse\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsSystolic\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsResp\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsO2Level\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsWeightP\"]" : {
+				"blur" : this.VitalsFieldValidation
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
+				"blur" : this.VitalsFieldValidation
 			}
 		});
-
 	},
+	procIDE : function(fld, IDESpec) {
+		var fldName = fld.name, 
+			fldValue = parseFloat(fld.getValue()), 
+			errMsg = "", 
+			LastVitals, 
+			systolic, 
+			diastolic, 
+			Valid = true,
+			Vitals = this.application.Patient.Vitals,
+			min, max, Msg, LastVital, pct, pctLast;
+		if (Vitals.length > 0) {
+			LastVitals = Vitals[0];
+			var BP = LastVitals.BP.split("/");
+			if (BP.length > 0) {
+				systolic = BP[0];
+				diastolic = BP[1];
+			}
+		}
+		if ("on" === IDESpec.MinMax) {
+			min = parseFloat(IDESpec.MinValue);
+			max = parseFloat(IDESpec.MaxValue);
+			Msg = IDESpec.MinMaxMsg;
+			if (fldValue < min || fldValue > max) {
+				errMsg += Msg + ". ";
+				Valid = false;
+			}
+		}
+		if ("on" === IDESpec.PctVarFromLast && LastVitals) {
+			pct = parseFloat(IDESpec.PctVarFromLastPct) / 100;
+			switch(fldName) {
+				case "ndVitalsTempF" : 
+					LastVital = LastVitals.Temperature;
+					break;
+				case "ndVitalsPulse" : 
+					LastVital = LastVitals.Pulse;
+					break;
+				case "ndVitalsHeightIN" : 
+					LastVital = LastVitals.Height;
+					break;
+				case "ndVitalsResp" : 
+					LastVital = LastVitals.Respiration;
+					break;
+				case "ndVitalsO2Level" : 
+					LastVital = LastVitals.SPO2;
+					break;
+				case "ndVitalsWeightP" : 
+					LastVital = LastVitals.Weight;
+					break;
+				case "ndVitalsPain" : 
+					LastVital = LastVitals.Pain;
+					break;
+				case "ndVitalsSystolic" : 
+					LastVital = systolic;
+					break;
+				case "ndVitalsDiastolic" : 
+					LastVital = diastolic;
+					break;
+			}
+			LastVital = parseFloat(LastVital);
+			pctLast = pct * LastVital;
+			min = LastVital - pctLast;
+			max = LastVital + pctLast;
+			Msg = IDESpec.PctVarFromLastMsg;
+			if (fldValue < min || fldValue > max) {
+				errMsg += Msg + ". ";
+				Valid = false;
+			}
+		}
+		if ("on" === IDESpec.PctVarFromValue) {
+			pct = parseFloat(IDESpec.PctVarFromValuePct) / 100;
+			valu = parseFloat(IDESpec.PctVarFromValueValue);
+			pctLast = pct * valu;
+			min = valu - pctLast;
+			max = valu + pctLast;
+			Msg = IDESpec.PctVarFromValueMsg;
+			if (fldValue < min || fldValue > max) {
+				errMsg += Msg + ". ";
+				Valid = false;
+			}
+		}
+
+		if (!Valid) {
+			fld.markInvalid(errMsg);
+			return false;
+		}
+		return true;
+	},
+
+	VitalsFieldValidation : function(fld, evt, eOpts) {
+		var IDESpec = this.application.IntelligentDataElements,
+			IDESpecLen = IDESpec.length, i,
+			fldName = fld.name, fldNameMap = [],
+			validity = true;
+
+		fldNameMap = [];
+		fldNameMap["ndVitalsTempF"] = "Temperature";
+		fldNameMap["ndVitalsPulse"] = "Pulse";
+		fldNameMap["ndVitalsSystolic"] = "BP_Systolic";
+		fldNameMap["ndVitalsDiastolic"] = "BP_Diastolic";
+		fldNameMap["ndVitalsHeightIN"] = "Height";
+		fldNameMap["ndVitalsResp"] = "Respiration";
+		fldNameMap["ndVitalsO2Level"] = "SP_O2";
+		fldNameMap["ndVitalsWeightP"] = "Weight";
+		fldNameMap["ndVitalsPain"] = "Pain";
+
+		for (i = 0; i < IDESpecLen; i++) {
+			if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
+				validity = this.procIDE(fld, IDESpec[i]);
+				if (validity) {
+					if ("ndVitalsTempF" === fldName ) {
+						this.ConvertTemp(fld, eOpts);
+					}
+					else if ("ndVitalsHeightIN" === fldName) {
+						this.ConvertHeight(fld, eOpts);
+					}
+					else if ("ndVitalsWeightP" === fldName) {
+						this.ConvertWeight(fld, eOpts);
+					}
+				}
+			}
+		}
+		return validity;
+	},
+
 
 	ndctRender : function( panel ) {
 		Ext.togglePanelOnTitleBarClick(panel);
@@ -440,7 +568,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
 		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
 
-		FNLPanel.update(this.application.Patient.OEMRecords.NeutropeniaRecommendation, false);
+		var theFNLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.NeutropeniaRecommendation);
+		FNLPanel.update(theFNLevelData, false);
 		FNLPanel.doLayout();
 	},
 
@@ -453,7 +582,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
 
-		EmoPanel.update(this.application.Patient.OEMRecords.ELevelRecommendation, false);
+		var theEmoLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendation);
+		EmoPanel.update(theEmoLevelData, false);
 		EmoPanel.doLayout();
 	},
 
@@ -506,7 +636,72 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
+	_saveVitals2DB : function(record, parent) {
+		var params = Ext.encode(record);
+		this.SavingVitals = true;
+		this.application.loadMask("One moment please, saving Patient Vitals...");
 
+		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
+		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
+		var Pulse = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPulse\"]")[0];
+		var Systolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsSystolic\"]")[0];
+		var Diastolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsDiastolic\"]")[0];
+		var Height = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsHeightIN\"]")[0];
+		var Respiration = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsResp\"]")[0];
+		var Weight = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsWeightP\"]")[0];
+		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
+		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
+		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
+        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+
+		Temperature.setValue("");
+		TemperatureLocation.setValue("");
+		Pulse.setValue("");
+		Systolic.setValue("");
+		Diastolic.setValue("");
+		Height.setValue("");
+		Respiration.setValue("");
+		Weight.setValue("");
+		Pain.setValue("");
+		SPO2.setValue("");
+		BSA.setValue("");
+        NDVitalsWeightKG.setValue("");
+        NDVitalsHeightCM.setValue("");
+        NDVitalsTempC.setValue("");
+
+		Ext.Ajax.request({
+			scope : this,
+			url: Ext.URLs.AddVitals,
+			method : "POST",
+			jsonData : params,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.SavingVitals = false;
+				// if (!this.SavingVitals && !this.SavingGenInfo) {
+					this.application.unMask();
+				// }
+
+
+				if (resp.success) {
+			        var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
+					newPlanTabCtl.loadVitals("Update Vitals");
+					Ext.MessageBox.alert("Vital Signs", "Vitals Information Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+				}
+				else {
+					Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
+				}
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				this.application.unMask();
+				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
+			}
+		});
+	},
 
 	SaveVitals : function(parent) {
 		var Patient = this.application.Patient;
@@ -514,15 +709,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		// { id, AdminDate, Cycle, Day, PostTherapy, PostTherapyInstr, PreTherapy, PreTherapyInstr, Therapy, TherapyInstr }
 
 		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
-        var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
+		var tValid1 = this.VitalsFieldValidation(Temperature);
+
 		var Pulse = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPulse\"]")[0];
+		var tValid2 = this.VitalsFieldValidation(Pulse);
+
 		var Systolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsSystolic\"]")[0];
-		var Height = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsHeightIN\"]")[0];
-		var Respiration = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsResp\"]")[0];
+		var tValid3 = this.VitalsFieldValidation(Systolic);
+
 		var Diastolic = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsDiastolic\"]")[0];
+		var tValid4 = this.VitalsFieldValidation(Diastolic);
+
+		var Height = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsHeightIN\"]")[0];
+		var tValid5 = this.VitalsFieldValidation(Height);
+
+		var Respiration = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsResp\"]")[0];
+		var tValid6 = this.VitalsFieldValidation(Respiration);
+
 		var Weight = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsWeightP\"]")[0];
+		var tValid7 = this.VitalsFieldValidation(Weight);
+
 		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
+		var tValid8 = this.VitalsFieldValidation(Pain);
+
 		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
+		var tValid9 = this.VitalsFieldValidation(SPO2);
+
+
+		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
         var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
         var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
@@ -560,25 +774,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return false;
 		}
-        if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
-            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-			return true;
-		}
-
-		Temperature.setValue("");
-        TemperatureLocation.setValue("");
-		Pulse.setValue("");
-		Systolic.setValue("");
-		Height.setValue("");
-		Respiration.setValue("");
-		Diastolic.setValue("");
-		Weight.setValue("");
-		Pain.setValue("");
-		SPO2.setValue("");
-		BSA.setValue("");
-        NDVitalsWeightKG.setValue("");
-        NDVitalsHeightCM.setValue("");
-        NDVitalsTempC.setValue("");
+//
+//		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
+//            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+//			return true;
+//		}
+//
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;
@@ -593,41 +794,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		record.BSA_Method = Patient.BSA_Method;
 		record.BSA_Weight = Patient.BSA_Weight;
 
-		var params = Ext.encode(record);
-		this.SavingVitals = true;
-		this.application.loadMask("One moment please, saving Patient Vitals...");
+		if (!(tValid1 && tValid2 && tValid3 && tValid4 && tValid5 && tValid6 && tValid7 && tValid8 && tValid9)) {
+			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. Check Fields for Input Errors" );
 
-		Ext.Ajax.request({
-			scope : this,
-			url: Ext.URLs.AddVitals,
-			method : "POST",
-			jsonData : params,
-			success: function( response, opts ){
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.SavingVitals = false;
-				// if (!this.SavingVitals && !this.SavingGenInfo) {
-					this.application.unMask();
-				// }
-
-
-				if (resp.success) {
-			        var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
-					newPlanTabCtl.loadVitals("Update Vitals");
-					Ext.MessageBox.alert("Vital Signs", "Vitals Information Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+			var quesAnswer = Ext.Msg.show({
+				"title" : "Vital Signs Exceed Parameters", 
+				"msg" : "One or more Vital Signs exceeds the recommended parameters. Please check indicated Vital Sign Fields for possible Input Errors. If you still wish to save these Vitals, click \"Yes\". To cancel and review, please click \"No\". Do you still want to save the current Vitals?", 
+				"buttons" : Ext.Msg.YESNO, 
+				"icon" : Ext.Msg.QUESTION,
+				"scope" : this,
+				"fn" : function( btnID, txt, opt) {
+					if ("yes" === btnID) {
+						this._saveVitals2DB(record, parent);
+					}
 				}
-				else {
-					Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
-				}
-			},
-			failure : function( response, opts ) {
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				this.application.unMask();
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
-			}
-		});
-		return (true);
+			});
+		}
+		else {
+			this._saveVitals2DB(record, parent);
+		}
+
+		return true;
 	},
 	
 	SaveGenInfo : function() {
@@ -703,6 +890,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			Ext.MessageBox.alert("No Data Saved", "There was no data specified to be saved" );
 		}
 	},
+
 
 
 

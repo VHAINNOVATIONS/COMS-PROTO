@@ -259,6 +259,13 @@ class LookUp extends Model {
         $courseNumMax = $formData->CourseNumMax;
         $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
         
+
+            $query = "SELECT NEWID()";
+            $Template_ID = $this->query($query);
+            $Template_ID = $Template_ID[0][""];
+
+
+
         $preMHInstructions = str_replace("'", "''", $formData->PreMHInstructions);
         $postMHInstructions = str_replace("'", "''", $formData->PostMHInstructions);
         $regimenInstruction = str_replace("'", "''", $formData->RegimenInstruction);
@@ -267,21 +274,17 @@ class LookUp extends Model {
         $adminDay = (empty($formData->AdminDay)) ? null : $formData->AdminDay;
         $adminDate = (empty($formData->AdminDate)) ? null : $formData->AdminDate;
         $patientId = (empty($formData->PatientID)) ? null : $formData->PatientID;
-        
+
         $locationIdResult = $this->getLookupIdByNameAndType('My Templates', 22);
         if (!empty($locationIdResult)) {
             $locationId = $locationIdResult[0]["id"];
         } else {
             $locationId = "###";
         }
-        
-		$userId = $_SESSION['Role_ID'];
-		
-    	if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
-    	} else if (DB_TYPE == 'mysql') {
-            $query = "SELECT NOW() AS currdate";
-    	}
+
+        $userId = $_SESSION['Role_ID'];
+
+        $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
         $currDateResult = $this->query($query);
         $currDate = $currDateResult[0]['currdate'];
         
@@ -295,9 +298,7 @@ class LookUp extends Model {
                     AND Admin_Date = '$adminDate'
                     AND Patient_ID = '$patientId'
             ";
-            
             $retVal = $this->query($query);
-            
             if($retVal){
                 return $retVal;
             }
@@ -306,6 +307,7 @@ class LookUp extends Model {
         if($diseaseStage){
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Disease_Stage_ID, 
@@ -323,6 +325,7 @@ class LookUp extends Model {
                     Regimen_Instruction,
                     Date_Created
                 ) VALUES (
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$diseaseStage',
@@ -345,6 +348,7 @@ class LookUp extends Model {
         } else if($cycle) {
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Location_ID, 
@@ -365,6 +369,7 @@ class LookUp extends Model {
                     Date_Created,
                     Patient_ID
                 ) VALUES (
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$locationId',
@@ -386,10 +391,10 @@ class LookUp extends Model {
                     '$patientId'
                 )
             ";
-            
         } else {
             $query = "
                 INSERT INTO Master_Template (
+                    Template_ID,
                     Regimen_ID, 
                     Cancer_ID, 
                     Location_ID, 
@@ -406,6 +411,7 @@ class LookUp extends Model {
                     Regimen_Instruction,
                     Date_Created
                 ) VALUES (
+                    '$Template_ID',
                     '$regimenId',
                     '$cancerId',
                     '$locationId',
@@ -424,33 +430,16 @@ class LookUp extends Model {
                 )
             ";
         }
-		
-		
-        $retVal = $this->query($query);
 
+        $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
             return $retVal;
         }
 
-        if($cycle){
-            $query = "
-                SELECT Template_ID AS lookupid 
-                FROM Master_Template 
-                WHERE Regimen_ID = '$regimenId' 
-                    AND Date_Created = '$currDate'
-            ";
-        }else{
-            $query = "
-                SELECT Template_ID AS lookupid 
-                FROM Master_Template 
-                WHERE Regimen_ID = '$regimenId' 
-                    AND Date_Created = '$currDate'
-                    AND Version = 1 
-                    AND Course_Number = 0
-            ";
-        }
-        
-        return $this->query($query);
+        $Ret = array();
+        $Ret[0] = array("lookupid" =>$Template_ID);
+
+        return $Ret;
     }
 
     function saveTemplateReferences($references, $templateid) {
@@ -1203,7 +1192,7 @@ class LookUp extends Model {
                          LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
                          LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
                          LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-                         INNER JOIN Workflows wf on WF.ReasonNo = case when tr.Reason is not null Then tr.Reason else 1 END
+                         INNER JOIN Workflows wf on wf.ReasonNo = case when tr.Reason is not null and tr.Reason > 1 Then tr.Reason else 1 end
                          INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
 
                      WHERE tr.Template_ID = '$id' 
@@ -1290,8 +1279,7 @@ class LookUp extends Model {
                     INNER JOIN Order_Status os on os.Order_ID = mh.Order_ID
                     where mh.Template_ID = '$id' 
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-                    order by Sequence_Number";
-
+                    order by Sequence_Number ";
             }
             else {
                 $query = "
@@ -1313,9 +1301,10 @@ class LookUp extends Model {
                     INNER JOIN LookUp lu ON lu.Lookup_ID = mh.Drug_ID 
                     where mh.Template_ID = '$id' 
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
-                    order by Sequence_Number";
+                    order by Sequence_Number ";
             }
-            $retVal = $this->query($query);
+			//echo $query;
+			$retVal = $this->query($query);
         }
 // error_log("Lookup Model getHydrations - Template Data - $query");
 // error_log(json_encode($retVal));
@@ -1360,6 +1349,7 @@ class LookUp extends Model {
                 JOIN Order_Status os on os.Order_ID = mhi.Order_ID
             WHERE mhi.MH_ID = '$id'
         ";
+
             }
             else {
         $query = "
@@ -1380,6 +1370,7 @@ class LookUp extends Model {
             WHERE mhi.MH_ID = '$id'
         ";
             }
+		//echo $query;
         $retVal = $this->query($query);
 // error_log("Lookup Model getMHInfusions - Template Data");
 // error_log("Query - $query");
@@ -1614,7 +1605,7 @@ else {
         $gotIt = $this->getRoundingRule();
         if (empty($gotIt)){
             $query = "INSERT into LookUp (Lookup_Type, Name, Description) values (" . 51 . ",'RoundingRule'," . $roundingrule . ")";
-            echo $query;
+            //echo $query;
         }
         else {
             $key = $gotIt[0]["Lookup_ID"];

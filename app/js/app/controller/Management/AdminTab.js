@@ -1,6 +1,6 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
-    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks'],
+    stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging'],
     views : [ 
 		'Management.AdminTab',
 		'Management.AddLookups',
@@ -160,9 +160,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		ref : "MedRisks_Details",
 		selector : "MedRisks [name=\"Details\"]"
 	}
-
-
-
     ],
     
 
@@ -314,10 +311,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				click: this.MedRisksLoadGrid
 			}
 		});
-    },
-
-
-
+	},
 
 	MedRisksLoadGrid : function(panel) {
 		this.application.loadMask("Please wait; Loading Clinic Information");
@@ -343,6 +337,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	clickMedRisksCancel : function(theBtn, theEvent, eOpts) {
+		theBtn.up('form').getForm().reset();
 	},
 
 	clickMedRisksSave : function(theBtn, theEvent, eOpts) {
@@ -448,6 +443,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	clickClinicInfoCancel : function(theBtn, theEvent, eOpts) {
+		theBtn.up('form').getForm().reset();
 	},
 
 	clickClinicInfoSave : function(theBtn, theEvent, eOpts) {
@@ -560,6 +556,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	clickDischargeInstructionCancel : function(theBtn, theEvent, eOpts) {
+		theBtn.up('form').getForm().reset();
 	},
 
 	clickDischargeInstructionSave : function(theBtn, theEvent, eOpts) {
@@ -711,6 +708,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			}
 	},
 	clickMedDocCancel : function() {
+		theBtn.up('form').getForm().reset();
 	},
 
 
@@ -808,7 +806,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
@@ -829,14 +827,14 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
     },
 
-    clickRoundingRuleCancel: function() {
-        alert("Cancel Rounding Rules");
+    clickRoundingRuleCancel: function(theBtn) {
+        theBtn.up('form').getForm().reset();
     },
 
     MedHoldFormRenderSetValues : function(scope, eOpts) {
@@ -854,7 +852,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
@@ -875,14 +873,14 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 this.application.unMask();
             },
             failure: function(response, opts) {
-                console.log('server-side failure with status code ' + response.status);
+                wccConsoleLog('server-side failure with status code ' + response.status);
                 this.application.unMask();
             }
         });
     },
 
-    clickMedHoldCancel: function() {
-        alert("Cancel Med Hold");
+    clickMedHoldCancel: function(theBtn) {
+        theBtn.up('form').getForm().reset();
     },
 
 

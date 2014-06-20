@@ -177,7 +177,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 	]
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     extend: "Ext.container.Container",
     alias: "widget.VitalSignsEntryForm",
@@ -422,7 +421,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     ]
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 	extend: "Ext.form.FieldSet",
 	alias : "widget.NursingDocs_VitalSigns",
@@ -430,6 +428,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 	title : "Vital Signs",
 	items : [{ xtype : "VitalSignsEntryForm" }]
 });
+
+
+
+
 
 
 

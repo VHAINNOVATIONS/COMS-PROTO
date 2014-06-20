@@ -126,6 +126,7 @@ catch (Exception $e) {
     error_log("Can't send mail");
 }
 
+
 //echo "Message: ".$message."";
 
 //Store Message
@@ -236,6 +237,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -281,13 +283,13 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
 catch (Exception $e) {
     error_log("Can't send mail");
 }
-
 
 }
 elseif ($ReasonNo == 6){
@@ -326,6 +328,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -370,6 +373,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -414,6 +418,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -503,6 +508,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -547,6 +553,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -591,6 +598,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -635,6 +643,7 @@ $headers = "From: <do_not_reply@dbitpro.com>\r\n";
 $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -718,6 +727,7 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -750,6 +760,7 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 //$headers .= "CC: sean.cassidy@dbitmail.com\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+
 try {
     // mail($To, $Subject, $message, $headers);
 }
@@ -1131,6 +1142,7 @@ $headers .= "Reply-To: ". strip_tags($MFrom) . "\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 //Send the Message
+
 try {
     // mail($To, $Subject, $message, $headers);
 }

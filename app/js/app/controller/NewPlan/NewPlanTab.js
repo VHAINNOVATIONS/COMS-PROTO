@@ -15,11 +15,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "PerfStatStore"
     , "TemperatureLocation"
     , "DeliveryMechanism"
+	, "IDEntry"
     ],
 
 
 
-	models : ["LabInfo", "AllTemplatesApplied2Patient"],
+	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry"],
 
     views : [
     "NewPlan.NewPlanTab"
@@ -53,6 +54,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"Common.selDiseaseStage"
     ,"Common.selTemplate"
 	,"Common.VitalSignsHistory"
+	,"Common.puWinSelCancer"
     ,"NewPlan.dspTemplateData"
     ,"NewPlan.AskQues2ApplyTemplate"
     ,"NewPlan.AmputationSelection"
@@ -83,7 +85,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		{ ref: "selTemplateType",				selector: "NewPlanTab PatientInfo CTOS selTemplateType"},
 		{ ref: "DiseaseAndStage",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage"},
-		{ ref: "AllTemplatesShownMsg",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
+		{ ref: "AllTemplatesShownMsg",			selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
 
 		{ ref: "Disease",						selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDisease"},
 		{ ref: "DiseaseStage",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDiseaseStage"},
@@ -110,17 +112,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
         this.control({
-			/***
-			"AskQues2ApplyTemplate button[text=\"Cancel\"]": {
-				click: this.cancelApply
-			},
-			"AskQues2ApplyTemplate radiogroup[name=\"amputeeRadio\"]":{
-				change : this.AmputeeSelected
-			},
-**/
-
-
-
             "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
                 change : this.TemplateTypeSelected
             },
@@ -181,12 +172,28 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 click: this.SaveVitals
             }
        });
-        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
+	   this.InitIntelligentDataElementStore();
+       wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
 
+	InitIntelligentDataElementStore : function() {
+		var theStore = this.getStore("IDEntry");
+		theStore.load({
+			scope: this,
+			callback: function(records, operation, success) {
+				var IDE = [], i, len = records.length, rec;
+				for (i = 0; i < len; i++) {
+					rec = records[i].getData();
+					IDE.push(rec);
+				}
+				this.application.IntelligentDataElements = IDE;
+			}
+		});
+	},
+
     cancelApply: function(button){
-		debugger;
+		wccConsoleLog("CancelApplication of Template");
     },
 
 
@@ -368,113 +375,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-
-	NO_LONGER_NEEDEDgetPatientDataAsString : function() {
-		var PatientInfo = this.application.Patient;
-		var PatientData = "";
-		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
-		var xx, yy, tmpData, tempBSA, DataEl, OEMData, OEM_Data_Record, OEMTmpData, templateTypeModel, i;
-
-		for (DataEl in PatientInfo){
-			if (PatientInfo.hasOwnProperty(DataEl)) {
-				tmpData = "";
-				xx = PatientInfo[DataEl];
-				if ("string" === (typeof xx)){
-					tmpData = xx;
-				}
-				else if ("number" === (typeof xx)){
-					tmpData = xx;
-				}
-				else if ("boolean" === (typeof xx)){
-					tmpData = xx;
-				}
-				else {
-					if (null !== xx) {
-						tmpData = " - " + xx.length + " Record";
-						if (1 !== xx.length) {
-							tmpData += "s";
-						}
-					}
-					switch (DataEl) {
-					case "Amputations":
-						tmpData += "<ul>";
-						for (i = 0; i < xx.length; i++) {
-							tmpData += "<li style=\"margin-left: 1em;\">" + xx[i].description + "</li>";
-						}
-						tmpData += "</ul>";
-						break;
-
-					case "Vitals":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "Allergies":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "History":
-						tmpData += "<ul>";
-						tmpData += "</ul>";
-						break;
-
-					case "OEMRecords":
-						tmpData = "<ul>";
-						yy = xx;
-						for (OEMData in yy) {
-							if (yy.hasOwnProperty(OEMData)) {
-								OEM_Data_Record = yy[OEMData];
-								OEMTmpData = "";
-								if ("string" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else if ("number" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else if ("boolean" === (typeof OEM_Data_Record)){
-									OEMTmpData = OEM_Data_Record;
-								}
-								else {
-									switch (OEMData) {
-										case "OEMRecords":
-											OEMTmpData = " - " + OEM_Data_Record.length + " Records";
-											break;
-
-										default:
-											OEMTmpData = "NYA - " + (typeof OEM_Data_Record);
-											break;
-									}
-								}
-								tmpData += "<li style=\"margin-left: 1em;\"><b>" + OEMData + "</b> - " + OEMTmpData + "</li>";
-							}
-						}
-						tmpData += "</ul>";
-						break;
-
-					case "TemplateHistory":
-						tmpData += "<ul>";
-						tmpData += "Array of Template History Data goes here";
-						tmpData += "</ul>";
-						break;
-
-					case "Disease":
-						tmpData += "<ul>";
-						tmpData += "Array of Disease Data goes here";
-						tmpData += "</ul>";
-						break;
-
-					default:
-						tmpData = "NYA - " + (typeof xx);
-						break;
-					}
-				}
-				PatientData += "<li><b>" + DataEl + "</b> - " + tmpData + "</li>";
-			}
-		}
-		return (PatientData);
-	},
-
     doBSASelection : function() {
         if (!this.puWinBSASelection) {
             var form = Ext.widget('form', {
@@ -570,7 +470,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.puWinBSASelection.show();
     },
 
-
+	doCancerSelection : function() {
+		this.puWinCancer = Ext.widget("puWinSelCancer");
+		this.puWinCancer.show();
+	},
 /**
  * Amputation information is stored in the Lookup table in the following manner:
  *  Lookup_Type = 30
@@ -738,7 +641,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		} else if("ShowAllPatientData" === tab2switch2) {
 			PatientInfo = Patient;
-			debugger;
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
 			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
@@ -766,6 +668,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             this.doAmputationSelection();
 		} else if ("AddEditBSA" === tab2switch2) {
 			this.doBSASelection();
+		} else if ("AddEditCancer" === tab2switch2) {
+            this.doCancerSelection();
 		} else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
 		} else {
@@ -804,7 +708,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }else{
                 id = this.application.Patient.Disease.id;
             }
-        } else if (picker.name == "Select Disease Control"){
+        } else if (picker.name == "selDisease"){
             if(eOpts.length && "Refresh" === eOpts){
                 URI = Ext.URLs.DiseaseType;
                 id = '';
@@ -2447,6 +2351,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     //
     //
     DiseaseSelected : function(combo, recs, eOpts) {
+		debugger;
         wccConsoleLog("Disease Type has been selected");
 
         if(this.application.Patient.Disease != recs[0].data){
@@ -2535,6 +2440,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
 					var CTOSData = thisCtl.getCTOSDataDsp();
 					CTOSData.update("<h2 class='errMsg'>No information available for Template " + this.application.Patient.Template.name + "</h2>");
+					Ext.MessageBox.alert("Template Load Error", "Unknown Error in loading Template " + this.application.Patient.Template.name + " - CTOS_DataLoad2" );
 
 					this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 				}
@@ -2612,8 +2518,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
-                    
-                    // console.log("Current Applied Template Loaded");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
@@ -2624,6 +2528,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	            failure : function (err, response) {
 					this.application.DataLoadCount--;
 					this.PatientDataLoadComplete("Current Applied Template - Failed to load - " + response.error);
+					Ext.MessageBox.alert("Loading Template Error", "NewPlanTab - Current Applied Template - Failed to load - " + response.error);
 				}
 	        });
 	},

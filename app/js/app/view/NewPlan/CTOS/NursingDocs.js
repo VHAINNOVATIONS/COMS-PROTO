@@ -37,7 +37,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 
 	items : [
 		{ xtype : "NursingDocs_Chemotherapy", cls : "Level1" },
-		{ xtype : "tabpanel", plain : true, autoEl : { tag : 'nav' },
+		{ xtype : "tabpanel", name : "NursingDocsTabs", plain : true, autoEl : { tag : 'nav' },
 			items : [
 				{ xtype : "NursingDocs_GenInfo", padding : "10" },
 				{ xtype : "NursingDocs_Assessment", padding : "10" },

@@ -931,7 +931,6 @@ function convertReason2ID($Reason) {
         
         $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '" .
                  $id . "'";
-        
         $regimenId = $this->query($query);
         
         if (null != $regimenId && array_key_exists('error', $regimenId)) {
@@ -1361,7 +1360,7 @@ function convertReason2ID($Reason) {
 
     function OEMupdateOrderStatus ($form_data)
     {
-        var_dump($form_data);
+        //var_dump($form_data);
         // var_dump($preHydrations);
         
         $TID = $form_data->{'TemplateID'};

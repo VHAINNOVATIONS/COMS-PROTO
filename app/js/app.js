@@ -41,6 +41,9 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
+Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
+
 Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
@@ -98,6 +101,10 @@ Ext.URLs.DiseaseType = "/LookUp/view/DiseaseType";
 // No Params,
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
+
+
+Ext.URLs.IntelligentDataEntry = "/LookUp/IDEntry";
+// Ext.URLs.IDEntry = "/LookUp/IDEntry";
 
 Ext.URLs.TemplateAlias = "/LookUp/view/TemplateAlias";
 // No Params,
@@ -172,7 +179,7 @@ Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
 Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
-Ext.URLs.EmotegenicLevel = "/LookUp/Erisk";
+Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
 
 
 
@@ -433,6 +440,8 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Returns list of all Messages for the specified Role ID, used in "MessagesTab" Grid Control
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
+
+Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
 Ext.COMSModels.DischargeInstruction = "COMS.model.DischargeInstruction";
 Ext.COMSModels.ClinicInfo = "COMS.model.ClinicInfo";
@@ -497,6 +506,7 @@ Ext.COMSModels.ND_CTCAE_Data = "COMS.model.ND_CTCAE_Data"; // MWB - 27 Feb 2012
 Ext.COMSModels.EoTS = "COMS.model.EndTreatmentSummary";
 Ext.COMSModels.ND_Treatment = "COMS.model.ND_Treatment";
 Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
+Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -560,18 +570,26 @@ Ext.require([
 	Ext.COMSModels.OrdersTable,
 	Ext.COMSModels.Flowsheet,
 	Ext.COMSModels.FluidType,
+	Ext.COMSModels.IDEntry,
+
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 
 	"COMS.controller.Navigation",
 	"COMS.controller.CkBoxTArea",
-	"COMS.controller.Common.selTemplateByStages",
+	// "COMS.controller.Common.selTemplateByStages",
+	"COMS.controller.Common.puWinSelCancer",
 	"COMS.controller.Orders.OrdersTab",
-	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.TemplateList.TemplateListTab",
+
+	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.Authoring.DrugRegimen",
 	"COMS.controller.Authoring.Hydration",
+
 	"COMS.controller.Management.AdminTab",
+	"COMS.controller.Management.DiseaseStaging",
+	"COMS.controller.Management.IntelligentDataElements",
+
 	"COMS.controller.Messages.MessagesTab",
 
 	"COMS.controller.NewPlan.AskQues2ApplyTemplate",
@@ -689,7 +707,8 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 		}
 	}
 	catch (e) {
-		debugger;
+		alert("Error togglePanelOnTitleBarClick");
+
 	}
 };
 
@@ -1448,6 +1467,84 @@ Ext.BSA_Boyd = function (h, w) { // Height in Meters, Weight in Kg
  *
  *************************************************************/
 
+
+Ext.GetListOfChangedFields = function(theForm) {
+	if (theForm.isDirty()) {
+		var changedData = Array();
+		var itemsList = theForm.getFields().items;
+		var iLen = itemsList.length;
+		var f;
+		for (var i = 0; i < iLen; i++){
+			f = itemsList[i];
+			if(f.isDirty()){
+				var data = {
+					"fieldName" : f.getName(),
+					"originalValue" : f.originalValue,
+					"newValue" : f.getValue()
+				};
+				if (data.originalValue) {
+					changedData.push(data);
+				}
+			}
+		}
+		return changedData;
+	}
+	return false;
+};
+
+/* Clear dirty flags for all fields on the form */
+/* Call upon successful form submit */
+Ext.ClearDirtyFlags = function(theForm) {
+	if (theForm.isDirty()) {
+		var i, f, itemsList = theForm.getFields().items;
+		var iLen = itemsList.length;
+		for (i = 0; i < iLen; i++){
+			f = itemsList[i];
+			if(f.isDirty()){
+				f.originalValue = f.getValue();
+			}
+		}
+	}
+};
+
+Ext.ClearForm = function(theForm) {
+	var i, f, itemsList = theForm.getFields().items;
+	var iLen = itemsList.length;
+	for (i = 0; i < iLen; i++){
+		f = itemsList[i];
+		if ("radiofield" == f.xtype) {
+			f.setValue(false);
+		}
+		else if ("checkboxfield" == f.xtype) {
+			f.setValue("off");
+		}
+		else {
+			f.setValue("");
+		}
+		f.originalValue = f.setValue();
+		
+	}
+};
+
+Ext.SetForm2ReadOnly = function(formID, readOnly) {
+	var allFields = Ext.query("#" + formID + " input");
+	var allText = Ext.query("#" + formID + "  textarea");
+	var i, f, itemsList = allFields.concat(allText);
+	var iLen = itemsList.length;
+	for (i = 0; i < iLen; i++){
+		f = itemsList[i];
+		f.readOnly = readOnly;
+		f.readonly = readOnly;
+		if (readOnly) {
+			f.setAttribute("disabled", true);
+		}
+		else {
+			f.removeAttribute("disabled");
+		}
+	}
+};
+
+
 Ext.application({
 	name: "COMS",
 
@@ -1458,7 +1555,18 @@ Ext.application({
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
 		,"CkBoxTArea"
-		,"Common.selTemplateByStages", "NewPlan.AskQues2ApplyTemplate", "NewPlan.NewPlanTab", "Orders.OrdersTab", "Authoring.AuthoringTab", "TemplateList.TemplateListTab", "Authoring.DrugRegimen", "Authoring.Hydration", "Management.AdminTab", "NewPlan.CTOS.NursingDocs.DischargeInstructions"
+		// ,"Common.selTemplateByStages"
+		, "NewPlan.AskQues2ApplyTemplate"
+		, "NewPlan.NewPlanTab"
+		, "Orders.OrdersTab"
+		, "Authoring.AuthoringTab"
+		, "TemplateList.TemplateListTab"
+		, "Authoring.DrugRegimen"
+		, "Authoring.Hydration"
+		, "Management.AdminTab"
+		, "Management.DiseaseStaging"
+		, "Management.IntelligentDataElements"
+		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
 		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
 		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record
@@ -1472,6 +1580,7 @@ Ext.application({
 		, "Messages.MessagesTab", "NewPlan.EndTreatmentSummary"
 		//		,"NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.ViewEndTreatmentSummary", "NewPlan.TreatmentDetails"
+		, "Common.puWinSelCancer"
 
 
 		// Controllers are not needed to be declared here unless they do something special???

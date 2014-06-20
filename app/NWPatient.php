@@ -29,10 +29,10 @@ $patientsearch = $match;
 	}
 	
 	//Include and Set phpseclib path
-    //set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
+    set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
 	
 	//Include SSH2 file
-	//include('Net/SSH2.php');
+	include('Net/SSH2.php');
 	
 	//Set Variables
 	$host = '172.19.100.94';
@@ -141,6 +141,32 @@ $patientsearch = $match;
 	sleep(1);
 	}elseif ($tdrug === 'RANITIDINE TAB'){
 	$ssh->write("RANITIDINE TAB ");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("1");
+	$ssh->write("\r");
+	sleep(1);
+	}elseif ($tdrug === 'DEXAMETHASONE TAB'){
+	$ssh->write("DEXAMETHASONE TAB");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("n");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("$doseorder MG");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("1");
+	$ssh->write("\r");
+	sleep(1);
+	}elseif ($tdrug === 'PROCHLORPERAZINE TAB'){
+	$ssh->write("PROCHLORPERAZINE TAB");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("n");
+	$ssh->write("\r");
+	sleep(1);
+	$ssh->write("$doseorder MG");
 	$ssh->write("\r");
 	sleep(1);
 	$ssh->write("1");

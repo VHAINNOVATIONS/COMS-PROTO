@@ -10,7 +10,7 @@ Ext.define('COMS.view.Messages.MessagesTab', {
 	},
 
 	autoScroll: 'y',
-	cls: 'custom-grid',
+//	cls: 'custom-grid',
 	columnLines: true,
 	viewConfig: {
 		stripeRows: true,

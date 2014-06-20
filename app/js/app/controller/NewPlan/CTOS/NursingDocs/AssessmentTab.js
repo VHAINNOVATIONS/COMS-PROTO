@@ -159,7 +159,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 				failure : function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + e.message + "<br />" + resp.msg );
+					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - <br />" + resp.msg );
 				}
 			});
 		}

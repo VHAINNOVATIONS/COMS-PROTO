@@ -1,22 +1,29 @@
 <?php
 include "dbitcon.php";
 include "session.php";
-$tsql = "SELECT * FROM COMS_Track WHERE ip != '74.102.74.34' AND ip != '108.33.77.130' AND ip != '50.190.93.103' AND ip != '172.19.110.122' AND date2 != '' ORDER BY timestamp DESC";
-//$tsql = "SELECT winauth,point,pointno,time,date2 FROM COMS_Track WHERE winauth != 'innovations\vaphscassis' AND winauth != 'innovations\vaphsferrul' AND winauth != 'innovations\vaphsbarlom'";
+
+//echo "<table><tr><td>User Name</td><td>Role</td><td>Login Time</td></tr>";
+
+$tsql = "SELECT * FROM COMS_Track";
 $getrole = sqlsrv_query($conn, $tsql);
-$json = array();
-$jsonRecord = array();
-$records = array();
-$aRec = array();
-while( $row = sqlsrv_fetch_array($getrole, SQLSRV_FETCH_ASSOC)) {
-	$aRec = $row;
-	$aDate = $aRec["date"];
-	$records[] = $row;
+$json = array(); 
+while( $row = sqlsrv_fetch_array($getrole, SQLSRV_FETCH_ASSOC))
+{
+$json['COMS_Track'][]=$row; 
+//$winauth = $row['winauth'];
+//$username= $row['username'];
+//$date2= $row['date2'];
+//$time= $row['time'];
+
+//echo "<tr><td>".$winauth."</td><td>".$username."</td><td>".$date2." ".$time."</td></tr>";
+
 }
 
-$jsonRecord['success'] = true;            
-$jsonRecord['total'] = count($records);
-$jsonRecord['records'] = $records;
  
-echo json_encode($jsonRecord); 
+
+echo json_encode($json); 
+ 
+//echo "</table>";
+
+
 ?>

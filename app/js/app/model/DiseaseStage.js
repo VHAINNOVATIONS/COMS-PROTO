@@ -1,8 +1,8 @@
 Ext.define('COMS.model.DiseaseStage', {
 	extend: 'Ext.data.Model',
 	fields: [
-		{ name: 'id', type: 'string'},
-		{ name: 'name', type: 'string'}
+		{ name: 'ID', type: 'string'},
+		{ name: 'Stage', type: 'string'}
 	],
 	proxy: {
 		type: 'rest',
