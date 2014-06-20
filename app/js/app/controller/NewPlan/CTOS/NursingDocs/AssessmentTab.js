@@ -44,7 +44,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		var i, len, AdverseReactionChecks = Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment checkbox");
 		var hasPrev = this.application.Patient.Assessments.length;
 		if (newValue && (hasPrev > 0)) {
-			Ext.MessageBox.alert("Previous Adverse Reactions Alert", "Warning this patient has had previous adverse reactions, please check and confirm that you want to keep this checked." );
+			Ext.MessageBox.alert("Previous Adverse Reactions Alert", "This patient has had previous adverse reactions to this regimen. Please confirm your response of no adverse reactions for today." );
 			len = AdverseReactionChecks.length;
 			for (i = 0; i < len; i++) {
 				AdverseReactionChecks[i].setValue(false);

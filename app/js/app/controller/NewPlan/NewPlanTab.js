@@ -1503,7 +1503,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	handlePatientSelectionClickEvent : function( evt, theBtn ) {
-        console.log("handlePatientSelectionClickEvent");
+        // console.log("handlePatientSelectionClickEvent");
 		wccConsoleLog("handlePatientSelectionClickEvent - PatientInfoTable!");
 
 		//---------------------------------
@@ -2041,7 +2041,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	UpdateOEMRecords : function(aRec, bRec) {
-		console.log("UpdateOEMRecords");
+		// console.log("UpdateOEMRecords");
 		try {
 			var oemEditRec = {
 				"TemplateID" : this.application.Patient.OEMRecords.id,
@@ -2129,7 +2129,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	DataLoadCountDecrement : function(module) {
 		this.application.DataLoadCount--;
 		wccConsoleLog("DataLoadCountDecrement - (" + this.application.DataLoadCount + ") " + module);
-		console.log("DataLoadCountDecrement - (" + this.application.DataLoadCount + ") " + module);
+		// console.log("DataLoadCountDecrement - (" + this.application.DataLoadCount + ") " + module);
 	},
 
 	PatientDataLoadComplete : function(Loaded) {
@@ -2223,7 +2223,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 		wccConsoleLog("DataLoadCount - " + DataLoadCount + " - " + Loaded);
-        console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
+        // console.log("DataLoadCount - " + DataLoadCount + " - " + Loaded);
 
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
