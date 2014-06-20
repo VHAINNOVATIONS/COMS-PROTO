@@ -200,6 +200,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		var NoneCkBox = this.getNoAdverseReactions();
 		var NoAdverseState = NoneCkBox.getValue();
 		if (NoAdverseState) {
+			this.AssessmentsPost(records, Patient, this.application);
 		}
 		else {
 			if (haveChecks) {

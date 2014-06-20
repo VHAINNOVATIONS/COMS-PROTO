@@ -243,7 +243,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				}
 				else {
 					theApp.fireEvent("loadAdverseEventsHistory");
-					Ext.MessageBox.alert("Pretreatment Infusion Reactions", "Pretreatment Infusion Reactions Section, Save complete" );
+					Ext.MessageBox.alert("Infusion Reactions", "Infusion Reactions Section, Save complete" );
 					Patient.InfuseReactionRecordID = resp.InfuseReactionRecordID;
 				}
 			},
@@ -293,9 +293,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				records.Details[ReactAssesessmentsCount++] = { "sequence" : i, "fieldLabel" : ReactAssesFormCheck.boxLabel, "choice" : true, "comments" : ReactAssesFormCommentsValue, "levelChosen" : ReactAssesFormValue, "sectionTitle" : sectionTitle};
 			}
 		}
-		if (haveChecks)	{
-			var PAT_ID = this.application.Patient.PAT_ID;	/* PAT_ID is used rather than just the Patient ID, because it defines a patient/treatment Regimen */
-			var view = Ext.widget("SelectAdverseReactionAlerts", { "PAT_ID" : PAT_ID, "type" : "Infusion Reactions", "records" : records, "scope" : this, "fnc" : this.InfuseReactPost });
+		if (haveChecks) {
+			if (this.getNoAdverseReactions().getValue()) {
+				this.InfuseReactPost(records, Patient, this.application);
+			}
+			else {
+				var PAT_ID = this.application.Patient.PAT_ID;	/* PAT_ID is used rather than just the Patient ID, because it defines a patient/treatment Regimen */
+				var view = Ext.widget("SelectAdverseReactionAlerts", { "PAT_ID" : PAT_ID, "type" : "Infusion Reactions", "records" : records, "scope" : this, "fnc" : this.InfuseReactPost });
+			}
 		}
 	}
 
