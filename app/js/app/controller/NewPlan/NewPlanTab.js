@@ -2028,6 +2028,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }
         else {
             this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
+            this.DataLoadCountDecrement("PatientSelected No Current Template Applied Second decrement of DataLoadCount");
             this.PatientDataLoadComplete("No Current Template Applied to patient to load");
         }
     },

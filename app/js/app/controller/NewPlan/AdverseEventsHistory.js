@@ -77,6 +77,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 
 	loadAdverseEventsHistory : function(recs, eOpts) {
 		var theModule = this.getAdverseEventsHistory();
+		if ("" !== this.application.Patient.PAT_ID) {
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
 		this.application.loadMask("Loading Adverse Events History Information...");
 		Ext.Ajax.request({
@@ -143,5 +144,6 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 				alert("AdverseEventsHistory Data Load Failed...");
 			}
 		});
+		}
 	}
 });
