@@ -416,10 +416,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 		"<hr />",
 	"</section>",
 "</tpl>",	// End TPL for AdminDay
-
-
-
-		"{[this.PostRendering(values, parent)]}",
 		"</section>",
 
 			{
@@ -430,12 +426,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				curCycle : 0,
 				curDay : 0,
                 SiteConfig : {},
-
-
-				PostRendering : function(values, parent) {
-						// Call this function when the entire xTemplate has been completed
-						Ext.PostTemplateProcessing("OEM", values, parent);
-				},
 
                 showReason : function(values, parent) {
                     if ("" !== values.Reason) {
