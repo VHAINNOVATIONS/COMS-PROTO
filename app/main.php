@@ -10,8 +10,10 @@ $ProjType = "Proof of Concept, 0.6, March 7, 2014";
 $ProjType = "Proof of Concept, 0.7, March 28, 2014";
 $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 $ProjType = "Proof of Concept, 0.9, May 9, 2014";
-*/
 $ProjType = "Proof of Concept, 0.10, May 30, 2014";
+$ProjType = "Proof of Concept, 0.11, June 20, 2014";
+*/
+$ProjType = "Proof of Concept, 0.12, July 11, 2014";
 
 ?>
 
@@ -25,46 +27,16 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 		<title>Chemotherapy Order Management System (COMS)</title>
 
-        <!-- <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>> -->
-        <!-- <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?> media="screen and (-ms-high-contrast: active) "> -->
-        <link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
-        <style>
-        @media only screen and (-ms-high-contrast: active) {
-            .MediaTest {
-                color: red;
-            }
-        }
-        @media only screen and (-ms-high-contrast: none) {
-            .MediaTest {
-                color: yellow;
-            }
-        }
-        </style>
-
-		<!-- CSS : ExtJS 4.0 Framework      -->
-        <!-- Theme Loader - WORK IN PROGRESS
-
-        
+<?php
+if ("High" == $_SESSION["BrowserMode"]) { ?>
         <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
-        -->
-		
-
-		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
-        <style>
-        .Test td { vertical-align: top!important; }
-        .RequiredInstr {
-            margin: 10px;
-            font-weight: bold;
-        }
-        .RequiredInstr em {
-            color: red;
-        }
-        .centeredMsg {
-            text-align: left;
-            margin-left: 200px;
-            font-weight: bold;
-        }
-        </style>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS-Access.css\"";?>>
+<?php 
+}
+else { ?>
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
+<?php }?>
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 		<script src="/libs/modernizr-2.0.6.js"></script>
@@ -91,10 +63,11 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
             ["MDWS_Suggestion"]=> "" 
  *************************************/
 /* Initializing of global JavaScript variables */
-    echo "      var Page2Open = '$page2Open';\n";
+    echo "		var AccessibilityMode = '" . $_SESSION["BrowserMode"] . "';\n";
+    echo "		var Page2Open = '$page2Open';\n";
 	echo "		var theJSPath = '$Version/';\n";
-    echo "      var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
-    echo "      var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
+    echo "		var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
+    echo "		var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
 	echo "		var User = '" . $_SESSION["winauth"] . "';\n";     /* Domain\User name of user currently logged into the domain */
 	echo "		var CurUser = '" . get_current_user() . "';\n";     /* User name of user currently logged into the domain */
 	echo "		var Sessionrid = '$rid';\n";
@@ -124,6 +97,15 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
             <div id="welcome">
                 Welcome <?php echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";?> -- 
                 <a href="support/" target='_blank'>Help</a>
+<?php if ("High" == $_SESSION["BrowserMode"]) { ?>
+                <!-- <button class="anchor" id="NormalContrastMode">Switch to Normal Contrast Mode</button> -->
+                <a href="?cmode=Normal" title="Warning: Reloads the application in Normal Contrast Mode, please save any work in progress first">Switch to Normal Contrast Mode</a>
+<?php }
+else { ?>
+                <!-- <button class="anchor" id="HighContrastMode">Switch to High Contrast Mode</button> -->
+                <a href="?cmode=High" title="Warning: Reloads the application in High Contrast Mode, please save any work in progress first">Switch to High Contrast Mode</a>
+<?php } ?>
+                
             </div>
         </header>
 
@@ -159,7 +141,7 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
     </div>
 
     <!-- Display ConsoleLog information here -->
-    <section style="color: silver; margin-left: 1em;">
+    <section class="consolelog">
         <h2>Log Info</h2>
         <div id="LogInfo" style="height:100px; overflow: auto;"></div>
     </section>

@@ -576,6 +576,7 @@ Ext.require([
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
+	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
@@ -599,6 +600,7 @@ Ext.require([
 	"COMS.controller.NewPlan.PatientInfoTable",
 	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
 	"COMS.controller.NewPlan.TreatmentDetails",
+	"COMS.controller.NewPlan.AmputationSelection",
 
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
@@ -1563,11 +1565,13 @@ Ext.application({
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
 		,"CkBoxTArea"
-		// ,"Common.selTemplateByStages"
 		, "Common.SelectAdverseReactionAlerts"
+		, "Common.puWinSelAmputation"
+		, "Common.puWinSelCancer"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
+		, "NewPlan.AmputationSelection"
 		, "Orders.OrdersTab"
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
@@ -1577,63 +1581,27 @@ Ext.application({
 		, "Management.DiseaseStaging"
 		, "Management.IntelligentDataElements"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
-		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
-		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
-		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record
-		, "NewPlan.CTOS.FlowSheetTab", "NewPlan.CTOS.ChronologyTab", "NewPlan.CTOS.PatientSummaryTab", "NewPlan.CTOS.NursingDocs.NursingDocs" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.GenInfoTab" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.AssessmentTab" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.PreTreatmentTab" // MWB 28 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.TreatmentTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.React_AssessTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.EducationTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "Messages.MessagesTab", "NewPlan.EndTreatmentSummary"
-		//		,"NewPlan.AskQues2ApplyTemplate"
-		, "NewPlan.ViewEndTreatmentSummary", "NewPlan.TreatmentDetails"
-		, "Common.puWinSelCancer"
-
-
-		// Controllers are not needed to be declared here unless they do something special???
-		//		, "ExistingPlan.ExistingPlanTab"
-		//		, "KnowledgeBase.KnowledgeBaseTab"
-		//		, "Management.ManagementTab"
+		, "NewPlan.OEM"
+		, "NewPlan.PatientInfoTable"
+		, "NewPlan.OEM_Edit"
+		, "NewPlan.CTOS.FlowSheetTab"
+		, "NewPlan.CTOS.ChronologyTab"
+		, "NewPlan.CTOS.PatientSummaryTab"
+		, "NewPlan.CTOS.NursingDocs.NursingDocs"
+		, "NewPlan.CTOS.NursingDocs.GenInfoTab"
+		, "NewPlan.CTOS.NursingDocs.AssessmentTab"
+		, "NewPlan.CTOS.NursingDocs.PreTreatmentTab"
+		, "NewPlan.CTOS.NursingDocs.TreatmentTab"
+		, "NewPlan.CTOS.NursingDocs.React_AssessTab"
+		, "NewPlan.CTOS.NursingDocs.EducationTab"
+		, "Messages.MessagesTab"
+		, "NewPlan.EndTreatmentSummary"
+		, "NewPlan.ViewEndTreatmentSummary"
+		, "NewPlan.TreatmentDetails"
 	],
 
 	launch: function () {
 		wccConsoleLog("Launching Application Base");
-
-/**
- * Theme Loader - WORK IN PROGRESS
- **
-    var COMS_theme = 'default';
-    if (document.cookie) {
-
-        index = document.cookie.indexOf('theme');
-        if (index !== -1) {
-            var f = (document.cookie.indexOf("=", index) + 1);
-            var t = document.cookie.indexOf(";", index);
-            if (t === -1) {
-                t = document.cookie.length;
-            }
-            COMS_theme = (document.cookie.substring(f, t));
-            Ext.util.Cookies.set('theme', "default");
-        }
-    }
-
-    if ((COMS_theme === 'default') || (COMS_theme !== 'gray' && COMS_theme !== 'access' && COMS_theme !== 'neptune')) {
-        document.write('<link rel="stylesheet" type="text/css" href="' + ThemeRoot + 'ext-all-debug.css" />');
-    }
-    else {
-        document.write('<link rel="stylesheet" type="text/css" href="' + ThemeRoot + 'ext-all-' + COMS_theme + '-debug.css" />');
-    }
-
-
-    if (COMS_theme === 'neptune') {
-        document.write('<script type="text/javascript" src="' + ScriptRoot + 'ext-theme-neptune.js"></scr'+'ipt>');
-    }
-**
- * END Theme Loader
- **/
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {
 			id: "AppContainer",
@@ -1667,6 +1635,7 @@ Ext.application({
 		 *	e.g. Ext.CalcInfusionTime( 1000, 100) returns ==> "10 / 0" (e.g. 10 hours / 0 minutes);
 		 *
 		 ******************************/
+
 
 		Ext.apply(Ext, {
 			roundNumber: function (number, decimals) { // Arguments: number to round, number of decimal places

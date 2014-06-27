@@ -1,3 +1,44 @@
+h1 {
+		font-family: 'arial black', arial, sans-serif;
+		text-align: center;
+		font-size: 150%;
+	}
+
+        a, button.anchor, .anchor button {
+	background : none;
+	border : 0 none;
+	color: white;
+	margin: 0;
+	padding: 0;
+	text-decoration : underline;
+	cursor : pointer;
+}
+
+.consolelog {
+    display:none;
+}
+/* .initialHide, #piSec-PatientLabel-ID, #piSec-Patient-ID { */
+	.initialHide {
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+		filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+		opacity:0;
+	}
+
+	footer, nav, section, header {
+		display: block;	/* IE 8 Specific */
+	}
+	footer, #footer {
+		text-align:center;
+	}
+
+
+
+
+
+
+
+
+
 /* check combo */ 
 .x-combo-checker { 
 	background-position: 50% -2px; 
@@ -15,14 +56,9 @@
 }
 
 
-body{
-		background:#EFEFEF;
-		color:navy;
-		
-	}
 
 .Level1, .Level3 {
-		background:#EFEFEF;
+		/* background:#EFEFEF; */
 }
 
         .Test td { vertical-align: top!important; }
@@ -41,34 +77,36 @@ body{
 
 
 .coms-section-emphasis {
-	background: #EFEFEF; 
+	/* background: #EFEFEF;  */
 	padding: 0.5em; 
-	border: thin solid navy;
+	border: thin solid;
 }
 
 .consolelog {
-    color: silver; 
-    margin-left: 1em;
+	display: none;
 }
 
 
 #results div {
-	border: thin solid #636363; 
+	display: none;
+	border: thin solid; 
+/*	color: #636363; */
 	width: 50em;
 	margin:10px auto; 
-	color: #636363;
+
 }
+/*
 	.container{
 		background:#FFF;
 		border-radius:5px;
 	}
-
+*/
 	footer, nav, section, header {
 		display: block;	/* IE 8 Specific */
 	}
 	footer, #footer {
 		text-align:center;
-		color:#636363;
+		/* color:#636363; */
 	}
 	h1 {
 		font-family: 'arial black', arial, sans-serif;
@@ -86,10 +124,10 @@ body{
 
 
 	#application {
-		background: none repeat scroll 0 0 white;
-		border: 1px solid #C9E0ED;
+		/* background: none repeat scroll 0 0; */
+		/* border: 1px solid #C9E0ED; */
 		margin: 5px auto;
-		width: 1024px;
+		/* width: 1024px; */
 	}
 
 	#AppContainer {
@@ -161,7 +199,7 @@ body{
 	h2.Development {
 		text-align: center;
 		font-size: 200%;
-		color: #416DA3;
+		/* color: #416DA3; */
 		margin: 5em 0;
 	}
 
@@ -206,7 +244,7 @@ body{
 }
 
 
-.CourseMeds th , .CourseMeds td { border-color: navy; }
+/* .CourseMeds th , .CourseMeds td { border-color: navy; } */
 
 .CourseMeds thead th { text-align: left; }
 
@@ -222,10 +260,11 @@ body{
 th.NoBorder { border-right: none; }
 td.NoBorder { border-left: none; }
 
+/*
 .style2 {
 	color: blue;
 }
-
+*/
 /*
 //#99BCE8
 // #B5B8C8
@@ -252,21 +291,22 @@ table.PI_PatientInformationTable, table.PI_PatientInformationTable td, table.PI_
 {
 	border-width: thin; 
 	border-style: solid; 
-	border-color: #99BCE8; 
+	/* border-color: #99BCE8;  */
 	border-collapse: collapse;
 }
 
 /* The "InformationTable" is a generic class which should be applied to all data tables */
-table.InformationTable, .PatHistResults, .PI_PatientInformationTable, table.PatHistResults, table.PI_PatientInformationTable { 
+/* table.InformationTable, .PatHistResults, .PI_PatientInformationTable, table.PatHistResults, table.PI_PatientInformationTable { 
 	border-color: #99BCE8; 
 }
+*/
 .VitalSignsEntryForm .x-table-layout,
 table.InformationTable th, .LabInfoResults th, .PatHistResults th, .PI_PatientInformationTable th { 
 	font-weight: bold; 
 	text-align: right; 
-	border-color: #99BCE8; 
+	/* border-color: #99BCE8;  */
 	padding: 0.25em; 
-	background:#EFEFEF; 
+	/* background:#EFEFEF;  */
 }
 
 .PatHistResults th {
@@ -276,7 +316,7 @@ table.InformationTable th, .LabInfoResults th, .PatHistResults th, .PI_PatientIn
 table.InformationTable td, .LabInfoResults td, .PatHistResults td, .PI_PatientInformationTable td { 
 	font-weight: normal; 
 	text-align: left; 
-	border-color: #99BCE8; 
+	/* border-color: #99BCE8;  */
 	padding: 0.25em .5em; 
 }
 
@@ -308,7 +348,7 @@ table.GFR_Calc, table.GFR_Calc td, table.GFR_Calc th {
 	border : none;
 }
 
-.x-body { color: navy; }
+/* .x-body { color: navy; } */
 
 
 .xLabInfoResults {
@@ -388,7 +428,7 @@ table.xxPatHistResults, table.LabInfoResults {
 }
 
 tr.LabInfoOutOfRange {
-	background-color: #e0e0e0;
+	/* background-color: #e0e0e0; */
 }
 
 .LabInfoOutOfRange {
@@ -449,7 +489,7 @@ table.Therapy .TherapyType th {
 	text-align: left !important;
 	padding: .5em;
 	font-size: 175% !important;
-	background: #D8D8D8;
+	/* background: #D8D8D8; */
 }
 
 table.Therapy .TherapyType th span {
@@ -502,7 +542,7 @@ table.Therapy td {
 table.Therapy .Pre th {
 	text-align: center;
 	font-weight: bold;
-	background: #D8D8D8;
+	/* background: #D8D8D8; */
 }
 
 
@@ -532,7 +572,7 @@ table.Flowsheet {
 
 table.Flowsheet tbody .TherapyType th {
 	text-align: left !important;
-	background: #D8D8D8;
+	/* background: #D8D8D8; */
 }
 
 table.Flowsheet .header th {
@@ -546,7 +586,7 @@ table.Flowsheet tr {
 
 th.TherapySpacer {
 	font-size: 1px;
-	background: navy !important;
+	/* background: navy !important; */
 }
 
 
@@ -588,7 +628,7 @@ th.drug {
 }
 
 .OptionalDosing {
-	background-color: silver;
+	/* background-color: silver; */
 }
 
 .NursingDocs-label { font-weight : bold!important; }
@@ -596,7 +636,7 @@ th.drug {
 .NursingDocs-boxLabel { font-weight : bold; padding-left: 1em; }
 
 a:visited, a {
-	color: blue;
+/* 	color: blue; */
 }
 
 abbr {
@@ -611,7 +651,7 @@ abbr {
 button.anchor, .anchor button {
 	background : none;
 	border : 0 none;
-	color: blue;
+/* 	color: blue; */
 	margin: 0;
 	padding: 0;
 	text-decoration : underline;

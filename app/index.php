@@ -29,6 +29,10 @@ $_SESSION['winauth']= $winauth;
 $ruser = $_SERVER['REMOTE_USER'];
 $_SESSION['ruser']= $ruser;
 
+if ( !empty($_GET['cmode']) ) {
+    $_SESSION['BrowserMode'] = htmlspecialchars($_GET['cmode']);
+}
+
 if (isset($_SESSION['COMSLogin'])) {
 $COMSLogin = $_SESSION['COMSLogin'];
 }else{
