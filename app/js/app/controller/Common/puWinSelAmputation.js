@@ -1,69 +1,36 @@
-Ext.define("COMS.controller.Common.puWinSelCancer", {
+Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	extend : "Ext.app.Controller",
-
-	stores : [ "DiseaseType", "DiseaseStage" ],
-	views : [ "Common.selDisease", "Common.selDiseaseStage" ],
-
 	init: function() {
 		this.control({
-			"selDisease": {
-				select: this.onDiseaseSelected
-			},
-			"selDiseaseStage": {
-				select: this.onDiseaseStageChange
-			},
-			"puWinSelCancer button[text=\"Cancel\"]" : {
+			"puWinSelAmputation button[text=\"Cancel\"]" : {
 				click: this.Cancel
 			},
-			"puWinSelCancer button[text=\"Save\"]" : {
+			"puWinSelAmputation button[text=\"Save\"]" : {
 				click: this.Save
-			},
-
-		});
-	},
-
-	onDiseaseSelected: function (combo, recs, eOpts) {
-		this.application.Cancer = recs[0].data;
-		var stage = combo.next();
-		var stageStore = stage.getStore();
-		stage.reset();
-		stageStore.removeAll();
-		stageStore.load({
-			scope : this,
-			params : {
-				URL : Ext.URLs.DiseaseStage + "/",
-				ID  : this.application.Cancer.id
 			}
 		});
 	},
 
-	onDiseaseStageChange: function (combo, recs, eOpts) {
-		this.application.Cancer.Stage = recs[0].data;
-	},
-
 	Save : function(btn) {
-		debugger;
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();
-			var postData = [], dataEl = [], patientCancerTypes = [];
-
+			var patient_id, AmputationDisplay, params, postData = [], dataEl = [], patientAmputations = [];
 			for (var key in theData) {
 				if (theData.hasOwnProperty(key)) {
 					var el = [];
 					el["description"] = key;
-					patientCancerTypes.push(el);
+					patientAmputations.push(el);
 					postData.push(key);
 				}
 			}
-/**
-			var params = {"Amputations" : postData };
+			params = {"Amputations" : postData };
 			this.application.Patient.Amputations = patientAmputations;
-			var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
+			AmputationDisplay = Ext.get("PatientInformationTableAmputations");
 			postData = postData.join("<br>");
 			AmputationDisplay.setHTML(postData);
 
-			var patient_id = this.application.Patient.id;
+			patient_id = this.application.Patient.id;
 			this.application.loadMask("Updating Patient Amputations");
 			Ext.Ajax.request({
 				url: Ext.URLs.Amputations + "/" + patient_id,
@@ -77,7 +44,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 					theForm.reset();
 					btn.up('window').hide();
 					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
+						Ext.MessageBox.alert("Amputation Selection Save Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
 						this.application.Patient.Amputations = "";
 					}
 					else {
@@ -88,12 +55,11 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 					this.application.unMask();
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
+					Ext.MessageBox.alert("Amputation Selection Save Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
 					theForm.reset();
 					btn.up('window').hide();
 				}
 			});
-**/
 		}
 	},
 	Cancel : function(btn) {

@@ -1,3 +1,4 @@
+/****************
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
     extend: "Ext.form.FieldSet",
     alias : "widget.NursingDocs_Chemotherapy",
@@ -22,7 +23,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
 		}
 	]
 });
-
+********************/
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.NursingDocs",

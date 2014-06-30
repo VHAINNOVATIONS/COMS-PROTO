@@ -576,6 +576,7 @@ Ext.require([
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
+	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Orders.OrdersTab",
@@ -711,12 +712,6 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 		alert("Error togglePanelOnTitleBarClick");
 
 	}
-};
-
-
-Ext.PostTemplateProcessing = function (mod, values, parent) {
-	// console.log("Post Template Processing - " + mod);
-	//		debugger;
 };
 
 Ext.GeneralRounding2Digits = function (n) {
@@ -1568,6 +1563,7 @@ Ext.application({
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
 		, "Common.puWinSelCancer"
+		, "Common.puWinSelBSA"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"

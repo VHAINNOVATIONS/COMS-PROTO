@@ -8,19 +8,33 @@
         <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
         <title>GIT Issues for Chemotherapy Order Management System (COMS)</title>
 
-        <!-- CSS : ExtJS 4.0 Framework      -->
-        <link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1RC1/resources/css/ext-all.css">
-		<link rel="stylesheet" type="text/css" href="COMS.css">
+<?php
+require_once "..\app\session.php";
+		$Deployment = "app.js";
+		$Version = "js"; // Demo Server version
+		$LibsVersion2 = "/libs/ExtJS_4.1.0";
+		$LibsVersion = $LibsVersion2; // New Default Library <--- MWB - 6/29/2012 - Old Library Version
 
-        <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-        <script src="/libs/modernizr-2.0.6.js"></script>
+
+if ("High" == $_SESSION["BrowserMode"]) { ?>
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS-Access.css\"";?>>
+<?php 
+}
+else { ?>
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
+<?php }?>
+
+		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+		<script src="/libs/modernizr-2.0.6.js"></script>
 		<style>
 			div#heading { margin: 1em; display:none; font-size: 110%; }
 			#heading ul { margin: 1em; }
 			#heading li { margin-left: 3em; list-style-type: disc; }
 		</style>
 
-    </head>
+	</head>
 <body>
 <div id="heading">
 This display presents open items and is stratified into the following three groups:  
@@ -33,7 +47,7 @@ To sort the lists within their respective categories, select the pull down menu 
 </div>
 
 <div id="GridPanel"></div>
- <script type="text/javascript" src="/libs/ExtJS_4.1RC1/ext-all-debug.js"></script>
+<script type="text/javascript" <?php echo "src=\"$LibsVersion/ext-all-debug.js\"";?>></script>
 
 <script>
 Ext.onReady(function(){

@@ -55,6 +55,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"Common.selTemplate"
 	,"Common.VitalSignsHistory"
 	,"Common.puWinSelCancer"
+	,"Common.puWinSelBSA"
+	,"Common.puWinSelAmputation"
     ,"NewPlan.dspTemplateData"
     ,"NewPlan.AskQues2ApplyTemplate"
     ,"NewPlan.AmputationSelection"
@@ -194,11 +196,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             },
             "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
                 click: this.SaveVitals
+            },
+            "PatientHistory [name=\"AddVitals\"] button[text=\"Cancel\"]" : {
+                click: this.CancelVitals
             }
        });
 	   this.InitIntelligentDataElementStore();
        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
+
+
 
 
 	InitIntelligentDataElementStore : function() {
@@ -221,7 +228,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 
-
+	CancelVitals : function(btn) {
+		btn.up('form').getForm().reset();
+	},
     SaveVitals : function() {
         var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
         if (theController) {
@@ -291,12 +300,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		CTOSPanel.setActiveTab(0);
         try {   /* One or more of the controls may not be available based on role of user */
             thisCtl.getNewPlan_CTOS_Form().getForm().reset();
-            // Ext.ComponentQuery.query("NewPlanTab selCTOSTemplate")[0].hide();
-
-            // Ext.ComponentQuery.query("NewPlanTab selTemplateType")[0].hide();
-            // Ext.ComponentQuery.query("NewPlanTab selDiseaseAndStage")[0].hide();
-            // Ext.ComponentQuery.query("NewPlanTab selTemplate")[0].hide();
-
             Ext.ComponentQuery.query("NewPlanTab dspTemplateData")[0].hide();
             Ext.ComponentQuery.query("NewPlanTab button[name=\"Apply\"]")[0].hide();
             Ext.ComponentQuery.query("NewPlanTab button[name=\"Edit\"]")[0].hide();
@@ -399,106 +402,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-
+/*
     doBSASelection : function() {
-        if (!this.puWinBSASelection) {
-            var form = Ext.widget('form', {
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
-                border: false,
-                bodyPadding: 10,
-
-                fieldDefaults: {
-                    labelAlign: 'top',
-                    labelWidth: 100,
-                    labelStyle: 'font-weight:bold'
-                },
-                defaults: {
-                    margins: '0 0 10 0'
-                },
-
-                items: [{ xtype : "BSASelection" }],
-
-                buttons: [
-                {
-                    text: 'Save',
-                    scope : this,
-                    handler: function(btn, event) {
-                        var theForm = btn.up('form').getForm();
-						var thisCtl = this.getController("NewPlan.NewPlanTab");
-						var Patient = this.application.Patient;
-
-						if (theForm.isValid()) {
-                            var theData = theForm.getValues();
-                            var patient_id = this.application.Patient.id;
-
-                            Ext.Ajax.request({
-                                url: "/Patient/BSA/" + patient_id,
-                                method : "POST",
-                                jsonData : theData,
-                                success: function( response, opts ){
-                                    var text = response.responseText;
-                                    var resp = Ext.JSON.decode( text );
-                                    if (!resp.success) {
-                                        Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + resp.msg );
-                                    }
-									else {
-										Patient.WeightFormula = theData.WeightFormula;
-										Patient.BSAFormula = theData.BSAFormula;
-										Patient.BSA_Method = theData.BSAFormula;
-										var piTableInfo = thisCtl.getPatientInfoTableInformation();
-										piTableInfo.update(Patient);
-									}
-                                },
-                                failure : function( response, opts ) {
-                                    var text = response.responseText;
-                                    var resp = Ext.JSON.decode( text );
-                                    Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + "e.message" + "<br />" + resp.msg );
-                                }
-                            });
-
-                            theForm.reset();
-                            btn.up('window').hide();
-                            Ext.MessageBox.alert('Thank you!', 'Patient BSA Determination has been saved');
-                        }
-                    }
-                },
-                {
-                    text: 'Cancel',
-                    handler: function(btn, event) {
-                        btn.up('form').getForm().reset();
-                        btn.up('window').hide();
-                    }
-                }]
-            });
-
-            this.puWinBSASelection = Ext.widget('window', {
-                title: "Body Surface Area Method Selection",
-                closeAction: 'hide',
-                width: 430,
-                height: 270,
-                minHeight: 270,
-                layout: 'fit',
-                resizable: true,
-                modal: true,
-                items: form
-            });
-        }
-        var theForm = this.puWinBSASelection.query("form")[0].form;
-        var BSA_Info = {};
-        BSA_Info["WeightFormula"] = this.application.Patient.WeightFormula;
-        BSA_Info["BSAFormula"] = this.application.Patient.BSAFormula;
-
-        theForm.setValues(BSA_Info);
-        this.puWinBSASelection.show();
+		this.puWinBSA = Ext.widget("puWinSelBSA");
+		this.puWinBSA.show();
     },
 
 	doCancerSelection : function() {
 		this.puWinCancer = Ext.widget("puWinSelCancer");
 		this.puWinCancer.show();
 	},
+*/
 /**
  * Amputation information is stored in the Lookup table in the following manner:
  *  Lookup_Type = 30
@@ -507,117 +421,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
  *  Description = Amputation (e.g. "Left Foot", "Lower Left Arm", etc) One Amputation per record
  *  Use Patient Controller
  **/
-    doAmputationSelection : function() {
-        if (!this.puWinAmputations) {
-            var form = Ext.widget('form', {
-                layout: {
-                    type: 'vbox',
-                    align: 'stretch'
-                },
-                border: false,
-                bodyPadding: 10,
-
-                fieldDefaults: {
-                    labelAlign: 'top',
-                    labelWidth: 100,
-                    labelStyle: 'font-weight:bold'
-                },
-                defaults: {
-                    margins: '0 0 10 0'
-                },
-
-                items: [{ xtype : "AmputationSelection" }],
-
-                buttons: [
-                {
-                    text: 'Save',
-                    scope : this,
-                    handler: function(btn, event) {
-                        var theForm = btn.up('form').getForm();
-                        if (theForm.isValid()) {
-                            var theData = theForm.getValues();
-                            var postData = [], dataEl = [], patientAmputations = [];
-
-                            for (var key in theData) {
-                                if (theData.hasOwnProperty(key)) {
-									var el = [];
-                                    el["description"] = key;
-                                    patientAmputations.push(el);
-                                    postData.push(key);
-                                }
-                            }
-                            var params = {"Amputations" : postData };
-                            this.application.Patient.Amputations = patientAmputations;
-                            var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
-                            postData = postData.join("<br>");
-                            AmputationDisplay.setHTML(postData);
-
-                            var patient_id = this.application.Patient.id;
-							this.application.loadMask("Updating Patient Amputations");
-							Ext.Ajax.request({
-								url: Ext.URLs.Amputations + "/" + patient_id,
-								method : "POST",
-								jsonData : params,
-								scope : this,
-								success: function( response, opts ){
-									this.application.unMask();
-									var text = response.responseText;
-									var resp = Ext.JSON.decode( text );
-									theForm.reset();
-									btn.up('window').hide();
-									if (!resp.success) {
-										Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
-										this.application.Patient.Amputations = "";
-									}
-									else {
-										Ext.MessageBox.alert('Thank you!', 'Patient amputation records have been saved');
-									}
-								},
-								failure : function( response, opts ) {
-									this.application.unMask();
-									var text = response.responseText;
-									var resp = Ext.JSON.decode( text );
-									Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
-									theForm.reset();
-									btn.up('window').hide();
-								}
-							});
-						}
-					}
-				},
-                {
-                    text: 'Cancel',
-                    handler: function(btn, event) {
-                        btn.up('form').getForm().reset();
-                        btn.up('window').hide();
-                    }
-                }]
-            });
-
-            this.puWinAmputations = Ext.widget('window', {
-                title: "Patient Amputations",
-                closeAction: 'hide',
-                width: 360,
-                height: 270,
-                minHeight: 270,
-                layout: 'fit',
-                resizable: true,
-                modal: true,
-                items: form
-            });
-        }
-        var theForm = this.puWinAmputations.query("form")[0].form;
-        var theAmputations = this.application.Patient.Amputations;
-        var i, fldAmputations = {};
-        for (i = 0; i < theAmputations.length; i++) {
-            var x = theAmputations[i];
-            var y = x.description;
-            fldAmputations[y] = "on";
-        }
-        theForm.setValues(fldAmputations);
-        this.puWinAmputations.show();
-    },
-
+ /*
+	doAmputationSelection : function() {
+		this.puWinAmputations = Ext.widget("puWinSelAmputation");
+		this.puWinAmputations.show();
+	},
+*/
 
 	ShowBSACalcsPUWin : function(opts, tab2switch2) {
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
@@ -635,10 +444,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			Ext.widget('window', {
 				title: "Body Surface Area Calculations",
 				closeAction: "destroy",
-				width: 430,
+				width: 520,
 				height: 370,
-				minHeight: 270,
-				// layout: "fit",
+				minHeight: 300,
 				resizable: true,
 				modal: true,
 				scope : this,
@@ -821,13 +629,19 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			this.CTOS_DataLoad2(templateID);
 			CTOSTabs = this.getCTOS();
 	        CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
-		} else if ("AddEditAmputation" === tab2switch2) {
+		} 
+		
+/*
+		else if ("AddEditAmputation" === tab2switch2) {
             this.doAmputationSelection();
 		} else if ("AddEditBSA" === tab2switch2) {
 			this.doBSASelection();
 		} else if ("AddEditCancer" === tab2switch2) {
             this.doCancerSelection();
-		} else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
+		} 
+		
+*/
+		else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
 		} else {
 			templateName = element.getAttribute("templatename");
@@ -2090,10 +1904,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
+/*********************/
 	reAddHandlers : function() {
 		// console.log("Re-Assigning event handlers in 30 seconds");
-		Ext.Function.defer( this.AssignBtnHandlers, 30000, this );
+		// Ext.Function.defer( this.AssignBtnHandlers, 30000, this );
 	},
+/**********************/
 
 	buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
         var TemplateInfo, 
@@ -2405,7 +2221,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 			}
 			// Order Entry Records - No functions at this time.
-			// console.log("Assigning button handlers in 2 seconds");
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 
 			// MWB - 7/1/2012 Should this process be called here or in the AssignBtnHandlers() which is where it was originally????
@@ -2479,25 +2294,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	AssignBtnHandlers : function() {
 		try {
 			var thisCtl = this.getController("NewPlan.NewPlanTab");
-			var Patient = this.application.Patient;
 			Ext.Patient = this.application.Patient;		// MWB - 5/30/2012 - Need this so that the Patient Info can be accessed within xTemplates
 
 			var patientTemplates = thisCtl.getPatientTemplates();
-			var piTableInfo = thisCtl.getPatientInfoTableInformation();
 
 			var btns1 = patientTemplates.el.select("button");
-			var btns2 = piTableInfo.el.select("button");
-
 			btns1.removeAllListeners();
-			btns2.removeAllListeners();
-
 			btns1.on("click", this.HandleTemplateBtnClicks, this);
-			btns2.on("click", this.HandleAnchorClicks, this);
 		}
 		catch (e) {
 			wccConsoleLog("Error in AssignBtnHandlers");
 		}
-		Ext.Function.defer( this.reAddHandlers, 3000, this );
 	},
 
 

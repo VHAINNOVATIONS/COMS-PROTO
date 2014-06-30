@@ -1,16 +1,10 @@
 Ext.define('COMS.view.NewPlan.AmputationSelection', {
 	"extend" : "Ext.container.Container",
 	alias : 'widget.AmputationSelection',
-    // buttonAlign: 'center',
-	// width: 320,
-    // name : "amputationLocation",
-    // layout : "hbox",
-    // defaults : { margin : "5 10 5 5" }, //, labelAlign : "top", labelWidth: 60},     //, labelClsExtra : "NursingDocs-label" },
     items : [
         { xtype: "checkboxgroup",
             vertical: true,
-            // width: 300,
-            // height: 150,
+            width: 350,
             columns: 2,
             shadow: true,
             name: "amputations",

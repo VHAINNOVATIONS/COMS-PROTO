@@ -178,14 +178,16 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
-    extend: "Ext.container.Container",
+    // extend: "Ext.container.Container",
+	extend: "Ext.form.Panel",
     alias: "widget.VitalSignsEntryForm",
     name: "NursingDocs.VitalSignsEntryForm",
-        cls : "VitalSignsEntryForm",
+    cls : "VitalSignsEntryForm",
+		height : 100,
+		border: false,
 
     layout: {
         type: "table",
-
         tableAttrs: {
             border: 1
         },
@@ -194,7 +196,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     defaults: {
         labelAlign: "right",
         labelWidth: 60,
-            cellCls : "InformationTable"
+        cellCls : "InformationTable"
     },
     items: [
         // Row 1 - Col 1

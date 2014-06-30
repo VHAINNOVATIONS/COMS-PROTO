@@ -30,13 +30,13 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
                 }
             }
         },
-        { xtype : "container", name : "AddVitals", hidden : true, items : [
-            { xtype : "VitalSignsEntryForm", margin: "5 auto 5 auto" },
-            { xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ 
-			    { xtype : "button", text : "Save"}, 
-			    { xtype : "button", text : "Cancel"  } 
-		    ]}
-        ]},
+		{ xtype : "container", name : "AddVitals", hidden : true, items : [
+			{ xtype : "VitalSignsEntryForm" },
+			{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ 
+				{ xtype : "button", text : "Save", scope : this }, 
+				{ xtype : "button", text : "Cancel" }
+			]}
+		]},
 		{ xtype : "VitalSignsHistory" }
 	],
 
