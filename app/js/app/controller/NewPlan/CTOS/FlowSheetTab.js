@@ -33,16 +33,33 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	    }
 	],
 
+	TabContentsCleared : true,
+	TabIsActive : false,
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Flow Sheet Tab Controller!");
 
-		this.application.on( { PatientSelected : this.PatientSelected, scope : this } );
+		this.application.on( 
+			{ 
+				PatientSelected : this.PatientSelected, 
+				PopulateNDTabs : this.GenInfoRendered,	// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
+				ClearNDTabs : this.ClearTabData,		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+				scope : this 
+			}
+		);
 
 		this.control({
 			"FlowSheet" : {
-				beforeactivate : this.BeforeTabActivated
+				beforeactivate : this.BeforeTabActivated,
+				activate : function() {
+					console.log("Flow Sheet Tab Activate");
+					this.TabIsActive = true;
+				},
+				deactivate : function() {
+					console.log("Flow Sheet Tab DE-Activate");
+					this.TabIsActive = false;
+				}
 			},
 
 			"FlowSheet [name=\"flowsheet grid\"]" : {
@@ -51,6 +68,81 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		});
 	},
 
+
+	ClearTabData : function() {
+		if (this.TabIsActive) {
+			console.log("Flowsheet - ClearTabData");
+		}
+	},
+
+	GenInfoRendered : function() {
+		if (this.TabIsActive) {
+			console.log("Flowsheet - GenInfoRendered");
+		}
+	},
+
+
+	/**********************
+	 *
+	 *	Called when the "PatientSelected" event is triggered from the top of the NewTab Panel Select Patient drop down
+	 *	This adjusts the values in the "Select Applied Template" drop down based on the selected user
+	 *
+	 **********************/
+	PatientSelected: function (combo, recs, eOpts) {
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+
+		var theGrid = Ext.getCmp("FlowsheetGrid");
+		if (theGrid && theGrid.rendered) {
+			Ext.destroy(theGrid);
+		}
+
+		var Flowsheet = thisCtl.getFlowSheet();
+		if (Flowsheet) {
+			if (Flowsheet.rendered) {
+				this.TabContentsCleared = true;
+				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+			}
+		}
+	},
+
+	TabRendered : function ( component, eOpts ) {
+		wccConsoleLog("Flow Sheet Tab has been rendered");
+		console.log("Flow Sheet TabRendered");
+
+		this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+		var ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
+		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+		thisCtl.ChemoBioSectionHandler(false, ThisAdminDay);
+	},
+
+	BeforeTabActivated : function (component, eOpts ) {
+		wccConsoleLog("Flow Sheet Tab has been rendered");
+		console.log("Flow Sheet BeforeTabActivated");
+
+		var PatientInfo = this.application.Patient;
+		if ("" === PatientInfo.TemplateID) {
+			alert("No Template has been applied to this patient\nTab will not display");
+			this.getCTOS_Tabs().setActiveTab( 0 );
+			var theGrid = Ext.getCmp("FlowsheetGrid");
+			if (theGrid && theGrid.rendered) {
+				Ext.destroy(theGrid);
+			}
+			return false;
+		}
+
+
+		if ( this.TabContentsCleared ) {
+			this.TabContentsCleared = false;
+		}
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+		var Flowsheet = thisCtl.getFlowSheet();
+		if (Flowsheet) {
+			if (Flowsheet.rendered) {
+				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+			}
+		}
+		return true;
+	},
 
 	CellEditCommit : function (editor, eObj) {
 		var Patient = this.application.Patient;
@@ -116,66 +208,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		alert("You can only edit the \"Disease Response\", \"Toxicity Side Effects\" or \"Other\" cells");
 		return false;
 	},
-	TabContentsCleared : true,
-
-	/**********************
-	 *
-	 *	Called when the "PatientSelected" event is triggered from the top of the NewTab Panel Select Patient drop down
-	 *	This adjusts the values in the "Select Applied Template" drop down based on the selected user
-	 *
-	 **********************/
-	PatientSelected: function (combo, recs, eOpts) {
-		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
-
-		var theGrid = Ext.getCmp("FlowsheetGrid");
-		if (theGrid && theGrid.rendered) {
-			Ext.destroy(theGrid);
-		}
-
-		var Flowsheet = thisCtl.getFlowSheet();
-		if (Flowsheet) {
-			if (Flowsheet.rendered) {
-				this.TabContentsCleared = true;
-				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
-			}
-		}
-	},
-
-	TabRendered : function ( component, eOpts ) {
-		wccConsoleLog("Flow Sheet Tab has been rendered");
-		this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
-		var ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-		thisCtl.ChemoBioSectionHandler(false, ThisAdminDay);
-	},
-
-	BeforeTabActivated : function (component, eOpts ) {
-		wccConsoleLog("Flow Sheet Tab has been rendered");
-
-		var PatientInfo = this.application.Patient;
-		if ("" === PatientInfo.TemplateID) {
-			alert("No Template has been applied to this patient\nTab will not display");
-			this.getCTOS_Tabs().setActiveTab( 0 );
-			var theGrid = Ext.getCmp("FlowsheetGrid");
-			if (theGrid && theGrid.rendered) {
-				Ext.destroy(theGrid);
-			}
-			return false;
-		}
 
 
-		if ( this.TabContentsCleared ) {
-			this.TabContentsCleared = false;
-		}
-		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
-		var Flowsheet = thisCtl.getFlowSheet();
-		if (Flowsheet) {
-			if (Flowsheet.rendered) {
-				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
-			}
-		}
-		return true;
-	},
 
 
 	HandleFlowsheetBtnClicks : function (event, element) {

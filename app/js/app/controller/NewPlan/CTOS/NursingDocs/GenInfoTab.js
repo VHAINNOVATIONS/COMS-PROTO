@@ -41,7 +41,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	views: [
-		"Common.VitalSignsHistory"
+		"Common.VitalSignsHistory", "NewPlan.CTOS.NursingDocs.Chemotherapy"
 	],
 
 	refs: [
@@ -138,7 +138,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			selector : "NursingDocs_GenInfo [name=\"ND_PT_LabInfo\"]"
 		},
 
-		
+/*
 		{
 			"ref" : "ndctWarning",
 			"selector" : "NursingDocs_Chemotherapy [name=\"ndctWarning\"]"
@@ -171,6 +171,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"ref" : "EmoPanel",
 			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
 		}
+*/
 	],
 
 
@@ -251,6 +252,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		});
 	},
 	procIDE : function(fld, IDESpec) {
+		console.log("GenInfoTab - procIDE");
 		var fldName = fld.name, 
 			fldValue = parseFloat(fld.getValue()), 
 			errMsg = "", 
@@ -339,6 +341,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	},
 
 	VitalsFieldValidation : function(fld, evt, eOpts) {
+		console.log("GenInfoTab - VitalsFieldValidation");
+
 		var IDESpec = this.application.IntelligentDataElements,
 			IDESpecLen = IDESpec.length, i,
 			fldName = fld.name, fldNameMap = [],
@@ -355,30 +359,43 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		fldNameMap["ndVitalsWeightP"] = "Weight";
 		fldNameMap["ndVitalsPain"] = "Pain";
 
-		for (i = 0; i < IDESpecLen; i++) {
-			if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
-				validity = this.procIDE(fld, IDESpec[i]);
-				if (validity) {
-					if ("ndVitalsTempF" === fldName ) {
-						this.ConvertTemp(fld, eOpts);
-					}
-					else if ("ndVitalsHeightIN" === fldName) {
-						this.ConvertHeight(fld, eOpts);
-					}
-					else if ("ndVitalsWeightP" === fldName) {
-						this.ConvertWeight(fld, eOpts);
+		if (IDESpecLen > 0) {
+			for (i = 0; i < IDESpecLen; i++) {
+				if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
+					validity = this.procIDE(fld, IDESpec[i]);
+					if (validity) {
+						if ("ndVitalsTempF" === fldName ) {
+							this.ConvertTemp(fld, eOpts);
+						}
+						else if ("ndVitalsHeightIN" === fldName) {
+							this.ConvertHeight(fld, eOpts);
+						}
+						else if ("ndVitalsWeightP" === fldName) {
+							this.ConvertWeight(fld, eOpts);
+						}
 					}
 				}
+			}
+		}
+		else {
+			if ("ndVitalsTempF" === fldName ) {
+				this.ConvertTemp(fld, eOpts);
+			}
+			else if ("ndVitalsHeightIN" === fldName) {
+				this.ConvertHeight(fld, eOpts);
+			}
+			else if ("ndVitalsWeightP" === fldName) {
+				this.ConvertWeight(fld, eOpts);
 			}
 		}
 		return validity;
 	},
 
-
+/*
 	ndctRender : function( panel ) {
 		Ext.togglePanelOnTitleBarClick(panel);
 	},
-
+*/
 	AuthenticateUser : function (button) {
 		var win = button.up('window');
 		var SigNameField = win.SigName;
@@ -450,6 +467,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         NDVitalsWeightKG.setValue("(" + kg + " kg)");
         this.ndgiUpdateBSA(fld);
 	},
+
 	ConvertHeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
         var NDVitalsHeightCM = fld.ownerCt.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
@@ -460,6 +478,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         NDVitalsHeightCM.setValue("(" + cm + " cm)");
         this.ndgiUpdateBSA(fld);
 	},
+
 	ConvertTemp : function( fld, eOpts ) {
         var inValue = fld.getValue();
         var NDVitalsTempC = fld.ownerCt.query("displayfield[name=\"ndVitalsTempC\"]")[0];
@@ -475,6 +494,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	ClearTabData : function() {
+		console.log("GenInfoTab - ClearTabData");
         var thisCtl;
 		try {
 			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
@@ -503,139 +523,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		thisCtl.getNdVitalsO2Level().setValue("");
 		thisCtl.getNdVitalsBSA().setValue("");
 
-		this.ChemoBioSectionHandler(true);
+		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+		thisCtl.ClearTabData();
 	},
 
 
-    getNextAdminDate : function() {
-        var ListOfAdminDays = this.application.Patient.OEMRecords.OEMRecords,
-            today = new Date(), 
-            AdminDate, 
-            AdminDate1 = null, 
-            LastAdminDate = null,
-            msg = "";
-        for (i = 0; i < ListOfAdminDays.length; i++ ) {
-            LastAdminDate = AdminDate;
-            AdminDate = ListOfAdminDays[i].AdminDate;
-            AdminDate1 = new Date(AdminDate);
-            if (AdminDate1.getTime() > today.getTime()) {
-                if (LastAdminDate !== null) {
-                    msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b>";
-                }
-                msg += "<br />Next Administration Date: <b>" + AdminDate + "</b>";
-                return msg;
-            }
-        }
-        if (LastAdminDate !== null) {
-            msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b><br />There are no additional Administration Dates";
-        }
 
-        return msg;
-    },
-
-	setNDCTWarning : function(msg, show, ThisAdminDay) {
-		var ndctWarning = this.getNdctWarning(), 
-			CycleInfo = this.getCycleInfo(),
-			ndctCycle = this.getNdctCycle(),
-			ndctDay = this.getNdctDay(),
-			ndctDate = this.getNdctDate();
-
-		el = ndctWarning.getEl();
-		if (el) {
-			if (show) {
-				el.setHTML(msg);
-				ndctWarning.show();
-			}
-			else {
-				el.setHTML("");
-				ndctWarning.hide();
-			}
-		}
-		if (ThisAdminDay) {
-			CycleInfo.show();
-			ndctCycle.setValue(ThisAdminDay.Cycle);
-			ndctDay.setValue(ThisAdminDay.Day);
-			ndctDate.setValue(ThisAdminDay.AdminDate);
-		}
-		else {
-			CycleInfo.hide();
-			ndctCycle.setValue("");
-			ndctDay.setValue("");
-			ndctDate.setValue("");
-		}
-	},
-
-
-	getFNRiskInfo : function(FNRisk) {
-		var FNLPanel = this.getFNLPanel();
-		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
-		FNLPanel.setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
-
-		var theFNLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.NeutropeniaRecommendation);
-		FNLPanel.update(theFNLevelData, false);
-		FNLPanel.doLayout();
-	},
-
-
-	getEmoLevelInfo : function(ELevel) {
-		var EmoPanel = this.getEmoPanel();
-		if (!ELevel) {
-			EmoPanel.setTitle("Emetogenic Level = Not Specified");
-			return;
-		}
-		EmoPanel.setTitle("Emetogenic Level = " + ELevel);
-
-		var theEmoLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendation);
-		EmoPanel.update(theEmoLevelData, false);
-		EmoPanel.doLayout();
-	},
-
-	ChemoBioSectionHandler : function ( Clear, ThisAdminDay ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
-		// if Clear is true then clear out the fields
-		
-		//var ndctRegimen = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]");
-		//var ndctCycle = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]");
-		//var ndctDay = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]");
-		//var ndctDate = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]");
-
-		var Patient = this.application.Patient;
-		var TempDesc = Patient.TemplateDescription;
-		if ("" === TempDesc) {
-			TempDesc = Patient.TemplateName;
-		}
-
-		var EmoLevel = "", FNRisk = "";
-		var Data = Patient.OEMRecords;
-		EmoLevel = Data.ELevelName;
-		FNRisk = Data.FNRisk;
-		this.getEmoLevelInfo(EmoLevel);
-		this.getFNRiskInfo(FNRisk);
-
-		this.getNdctRegimen().setValue(TempDesc);
-
-		if (Clear) {
-			this.getNdctWarning().setValue("");
-			this.getNdctWarning().hide();
-
-			this.getCycleInfo().setValue("");
-			this.getCycleInfo().hide();
-
-			this.getNdctRegimen().setValue("");
-
-			this.getNdctCycle().setValue("");
-			this.getNdctDay().setValue("");
-			this.getNdctDate().setValue("");
-		}
-		else {
-			if (ThisAdminDay) {
-				this.setNDCTWarning("", false, ThisAdminDay);
-			}
-			else {
-				var msg = this.getNextAdminDate();
-				this.setNDCTWarning("<div class=\"ndctWarning\"><span>Note:</span> - This is not a scheduled Administration Day for this Regimen</div>" + msg, true, ThisAdminDay);
-			}
-		}
-	},
 
 
 
@@ -909,6 +802,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	GenInfoRendered : function ( component, eOpts ) {
+		console.log("GenInfoTab - GenInfoRendered");
         var tempScratch, tempScratch1, Patient, thisCtl;
 		// try {
 			Patient = this.application.Patient;
@@ -952,8 +846,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			var VitalSigns = thisCtl.getVitalSignsHistory();
 			VitalSigns.update( Patient );
 
-			var ThisAdminDay = this.application.Patient.ThisAdminDay;
-			this.ChemoBioSectionHandler(false, ThisAdminDay);
+//			var ThisAdminDay = this.application.Patient.ThisAdminDay;
+//			this.ChemoBioSectionHandler(false, ThisAdminDay);
 
 			NDVitalsGender.setValue((("M" === Patient.Gender) ? "Male" : "Female"));
 			NDVitalsAge.setValue(Patient.Age);

@@ -614,7 +614,8 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
-	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab"
+	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
+	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy"
 ]);
 
 /*************************************************************
@@ -1590,10 +1591,12 @@ Ext.application({
 		, "NewPlan.CTOS.NursingDocs.TreatmentTab"
 		, "NewPlan.CTOS.NursingDocs.React_AssessTab"
 		, "NewPlan.CTOS.NursingDocs.EducationTab"
+		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
 		, "Messages.MessagesTab"
 		, "NewPlan.EndTreatmentSummary"
 		, "NewPlan.ViewEndTreatmentSummary"
 		, "NewPlan.TreatmentDetails"
+
 	],
 
 	launch: function () {
