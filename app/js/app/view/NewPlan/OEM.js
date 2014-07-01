@@ -599,23 +599,21 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                     today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
-						return ("");	// No Edit link if the Admin Date is before today
+						return "";	// No Edit link if the Admin Date is before today
 					}
-                    if ("Cancelled" == current.Order_Status || 
-                        "Dispensed" == current.Order_Status || 
-                        "Finalized" == current.Order_Status ) {
-                        return("");     // No links if Order has been dispensed or Finalized
-                    }
+					if ("Cancelled" == current.Order_Status || 
+						"Dispensed" == current.Order_Status || 
+						"Finalized" == current.Order_Status ) {
+						return "";	// No links if Order has been dispensed or Finalized
+					}
 
 					var Cycle = this.curCycle;
-					// var Day = parent[idx-1].Day;
 					var Day = this.curDay;
 					var Type = type;
 					var TypeIdx = idx;
 					var pIndex = this.pIndex;
 
 					var buf = "href=\"#Cycle_" + Cycle + "_Day_" + Day + "_Med_" + idx + "\" " + 
-						// "name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + 
 						"cycle=\"" + Cycle + "\" " + 
 						"day=\"" + Day + "\" " + 
 						"type=\"" + Type + "\" " + 
@@ -639,6 +637,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         }
                         btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button>";
                     }
+					else {
+						console.log("Med Hold NOT Available");
+					}
                     btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit</button>";
                     btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel</button>";
 

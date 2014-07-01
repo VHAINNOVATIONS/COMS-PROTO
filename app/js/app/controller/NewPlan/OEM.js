@@ -52,6 +52,7 @@ Minimal (<10%) risk -
 // Which when queried given an EmesisRisk will return the appropriate Recommendation from below:
 // EmesisLookup/ELevelID (from Lookup Table)
 // Returns one of the entries below (but only need ASCO and NCCN records in the real data)
+/*********************** REMOVED IN FAVOUR OF SITE CONFIG MANAGEMENT **********************
 var EmesisRisk = [];
 
 // Minimal (<10%) risk
@@ -100,122 +101,7 @@ function getEmesisRecommendation(level) {
 	return ({ "ASCO" : EmesisRisk[level-1].ASCO , "NCCN" : EmesisRisk[level-1].NCCN } );
 }
 
-
-
-
-
-
-
-
-
-/******************
-var ScratchDataRecord = {
-	"Cycle": 1,
-	"Day": 1,
-	"AdminDate": "01/25/2012",
-	"PreTherapyInstr": "Dosages given two hours beofre therapy.",
-	"TherapyInstr": "Pre-Therapy Required",
-	"PostTherapyInstr": "Post-Therapy Instructions.",
-	"PreTherapy": [
-		{
-			"Instr": "",
-			"Med": "Aprepitant",
-			"DescDose": "400",
-			"DescUnits": "Units / m2",
-			"Dose1": "400",
-			"DoseUnits1": "Units / m2",
-			"AdminMethod1": "SubQ",
-			"FluidType1": "",
-			"FlowRate1": "",
-			"InfusionTime1": "",
-			"BSA_Dose1": "736",
-			"Dose2": "350",
-			"DoseUnits2": "ml",
-			"AdminMethod2": "IV",
-			"FluidType2": "",
-			"FlowRate2": "100",
-			"InfusionTime2": "100",
-			"BSA_Dose2": "736",
-			"AdminTime": ""
-		},
-		{
-			"Instr": "",
-			"Med": "Dexamethasone",
-			"DescDose": "500",
-			"DescUnits": "MicroGram",
-			"Dose1": "500",
-			"DoseUnits1": "MicroGram",
-			"AdminMethod1": "IM",
-			"FluidType1": "",
-			"FlowRate1": "",
-			"InfusionTime1": "",
-			"BSA_Dose1": "",
-			"Dose2": "",
-			"DoseUnits2": "",
-			"AdminMethod2": "",
-			"FluidType2": "",
-			"FlowRate2": "",
-			"InfusionTime2": "",
-			"BSA_Dose2": "",
-			"AdminTime": ""
-		}
-	],
-	"Therapy": [
-		{
-			"Instr": "",
-			"Med": "Dexamethasone",
-			"DescDose": "450",
-			"DescUnits": "Units / m2",
-			"Dose": "450",
-			"DoseUnits": "Units / m2",
-			"AdminMethod": "",
-			"FluidType": "",
-			"FlowRate": "100",
-			"InfusionTime": "1200",
-			"BSA_Dose": "828",
-			"AdminTime": ""
-		},
-		{
-			"Instr": "",
-			"Med": "Pemetrexed",
-			"DescDose": "450",
-			"DescUnits": "MicroGram",
-			"Dose": "450",
-			"DoseUnits": "MicroGram",
-			"AdminMethod": "",
-			"FluidType": "",
-			"FlowRate": "100",
-			"InfusionTime": "1300",
-			"BSA_Dose": "",
-			"AdminTime": ""
-		}
-	],
-	"PostTherapy": [
-		{
-			"Instr": "",
-			"Med": "Aprepitant",
-			"DescDose": "150",
-			"DescUnits": "mg/m2",
-			"Dose1": "150",
-			"DoseUnits1": "mg/m2",
-			"AdminMethod1": "Oral",
-			"FluidType1": "",
-			"FlowRate1": "100",
-			"InfusionTime1": "1300",
-			"BSA_Dose1": "276",
-			"Dose2": "200",
-			"DoseUnits2": "ml",
-			"AdminMethod2": "IV",
-			"FluidType2": "",
-			"FlowRate2": "100",
-			"InfusionTime2": "",
-			"BSA_Dose2": "",
-			"AdminTime": ""
-		}
-	]
-};
-*********************/
-
+********************/
 
 Ext.define("COMS.controller.NewPlan.OEM", {
 	extend: "Ext.app.Controller",
@@ -300,9 +186,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				afterrender : this.tabRendered
 			}
 		});
-
 	},
-
 
 	// Determines if the date passed is an Admin Day for this Regimen
 	// If the date passed is an Admin Day then the OEM Data for that day is returned

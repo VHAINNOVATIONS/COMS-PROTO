@@ -101,24 +101,11 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 //		var ptInfo = Ext.ComponentQuery.query("PatientInfoTable")[0];
 //		ptInfo.body.query(".AddEditAmputation");
 
-
-
-
-
-
-
-
-
-
-
-
-		/**********/
 		this.control({
 			"NewPlanTab PatientInfo" : {
 				afterrender : this.PatientInfoRendered
 			}
 		});
-		/************/
 	},
 
 
