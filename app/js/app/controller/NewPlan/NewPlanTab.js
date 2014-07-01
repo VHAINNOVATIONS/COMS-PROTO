@@ -1689,6 +1689,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			scope : this,
 			url: URL,
 			success: function( response, opts ){
+				console.log("getEmoLevelInfo from Site Config - Complete");
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				resp = Ext.util.Format.htmlDecode(resp);
@@ -1718,8 +1719,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.RegimenName = this.application.Patient.TemplateName;
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
 
-					theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
-					theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
+					// theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
+					// theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
+
+					theData.ELevelRecommendationASCO = "NOT from Site Config";
+					theData.ELevelRecommendationNCCN = "";
+
 
 					this.application.Patient.OEMRecords = theData;
 					this.getEmoLevelInfo(theData.ELevelName);

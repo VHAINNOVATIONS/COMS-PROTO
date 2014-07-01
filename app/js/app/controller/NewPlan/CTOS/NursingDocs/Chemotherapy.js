@@ -36,78 +36,101 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 		}
 	],
 
-/*********************
+	
+
 	init: function () {
 		this.application.on( 
 			{ 
-				PopulateNDTabs : this.GenInfoRendered,	// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
-				ClearNDTabs : this.ClearTabData,		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+				PatientSelected : this.ChemoBioSectionHandler,
 				scope : this 
 			} 
 		);
-	
-
 		this.control({
-			"NursingDocs_GenInfo" : {
-				afterrender : this.GenInfoRendered
+			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
+				afterrender : function() {
+					var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+					thisCtl.getFNRiskInfoAfterRender();
+				},
+				scope : this 
+			},
+			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
+				afterrender : function() {
+					var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+					thisCtl.getEmoLevelInfoAfterRender();
+				},
+				scope : this 
 			}
+
 		});
-	},
-***/
-	GenInfoRendered : function ( component, eOpts ) {
-		console.log("Chemotherapy - GenInfoRendered");
-        var tempScratch, tempScratch1, Patient, thisCtl;
-		Patient = this.application.Patient;
-//		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-//		if (!thisCtl.getNdct_GenInfoTab().rendered) {
-//			return;		// Traps possible call from the PopulateNDTabs event
-//		}
-		this.application.Patient.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
-		var ThisAdminDay = this.application.Patient.ThisAdminDay;
-		this.ChemoBioSectionHandler(false, ThisAdminDay);
 	},
 
 	ClearTabData : function() {
+		debugger;
 		console.log("Chemotherapy - ClearTabData");
 		this.ChemoBioSectionHandler(true);
 	},
 
 
+
+	getFNRiskInfoAfterRender : function() {
+		var Data = this.application.Patient.OEMRecords;
+		if (Data) {
+			this.getFNRiskInfo(Data.FNRisk);
+		}
+	},
+
+	getEmoLevelInfoAfterRender : function() {
+		var Data = this.application.Patient.OEMRecords;
+		if (Data) {
+			this.getEmoLevelInfo(Data.ELevelName);
+		}
+	},
+
+	/* Calling getFNRiskInfo() or  getEmoLevelInfo() before the panels are rendered causes a the "Expand/Collapse Icon to not be displayed */
 	getFNRiskInfo : function(FNRisk) {
 		var i, len, FNLPanel = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]");
 		var FNLevelInfo = FNRisk < 10 ? "Low Risk" : FNRisk <= 20 ? "Intermediate Risk" : "High Risk";
 		var theFNLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.NeutropeniaRecommendation);
 
 		len = FNLPanel.length;
+		var theTitle = "Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")";
 
 		for (i = 0; i < len; i++) {
-			FNLPanel[i].setTitle("Febrile Neutropenia Level = " + FNRisk + "% (" + FNLevelInfo + ")");
-			FNLPanel[i].update(theFNLevelData, false);
-			FNLPanel[i].doLayout();
+			if (FNLPanel[i].rendered) {
+				FNLPanel[i].setTitle(theTitle);
+				FNLPanel[i].update(theFNLevelData);
+				FNLPanel[i].doLayout();
+			}
 		}
 	},
-
 
 	getEmoLevelInfo : function(ELevel) {
 		var i, len, EmoPanel = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"EmesisInfo\"]");
 		len = EmoPanel.length;
 		var emoTitle = "Emetogenic Level = Not Specified",
-			theEmoLevelData = "";
+			theEmoLevelData = "Not Yet Available";
 
-		if (ELevel) {
+		if (ELevel && Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendation)) {
 			emoTitle = "Emetogenic Level = " + ELevel;
 			theEmoLevelData = Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendation);
+			/*
+				"<abbr title=\"American Society of Clinical Oncology\">ASCO</abbr><p>" + Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendationASCO) + "</p>" +
+				"<abbr title=\"National Comprehensive Cancer Network\">NCCN</abbr><p>" + Ext.util.Format.htmlDecode(this.application.Patient.OEMRecords.ELevelRecommendationNCCN) + "</p>";
+			*/
 		}
 		for (i = 0; i < len; i++) {
-			EmoPanel[i].setTitle(emoTitle);
-			if (ELevel) {
-				EmoPanel[i].update(theEmoLevelData, false);
-				EmoPanel[i].doLayout();
+			if (EmoPanel[i].rendered) {
+				EmoPanel[i].setTitle(emoTitle);
+				if (ELevel) {
+					EmoPanel[i].update(theEmoLevelData);
+					EmoPanel[i].doLayout();
+				}
 			}
 		}
 	},
 
 	setChemoBioField : function(fieldQuery, value, showField) {
+		console.log("setChemoBioField - " + fieldQuery);
 		var theField = Ext.ComponentQuery.query(fieldQuery);
 		var i, len = theField.length;
 		for (i = 0; i < len; i++) {
@@ -121,7 +144,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 		}
 	},
 
-	showHideMultiContainer : function(fieldQuery, showField) {
+	showMultiContainer : function(fieldQuery, showField) {
 		var theField = Ext.ComponentQuery.query(fieldQuery);
 		var i, len = theField.length;
 		for (i = 0; i < len; i++) {
@@ -134,56 +157,77 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 		}
 	},
 
-	ChemoBioSectionHandler : function ( Clear, ThisAdminDay ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
-		console.log("Chemotherapy - ChemoBioSectionHandler");
-
+	ChemoBioSectionHandler : function ( Clear ) {		// Handles parsing and posting of data in the Chemotherapy/Biotherapy sections in ND and Flowsheet
+		if (!this.application.Patient.ThisAdminDay) {
+			this.application.Patient.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
+		}
+		var ThisAdminDay = this.application.Patient.ThisAdminDay;
+/*
 		var ndctRegimenAr = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]");
 		var ndctCycleAr = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]");
 		var ndctDayAr = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]");
 		var ndctDateAr = Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]");
-
+*/
 		var Patient = this.application.Patient;
 		var TempDesc = Patient.TemplateDescription;
 		if ("" === TempDesc) {
 			TempDesc = Patient.TemplateName;
 		}
 
-		var EmoLevel = "", FNRisk = "";
-		var Data = Patient.OEMRecords;
-		this.getEmoLevelInfo(Data.ELevelName);
-		this.getFNRiskInfo(Data.FNRisk);
+		// var EmoLevel = "", FNRisk = "";
+		// var Data = Patient.OEMRecords;
+		// this.getFNRiskInfo(Data.FNRisk);
+		// this.getEmoLevelInfo(Data.ELevelName);
 
-		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", TempDesc, false);
 
-		/*************************** NEW EXAMPLE USAGE MWB 6/27/2014 ****************************/
+		this.getFNRiskInfoAfterRender();
+		this.getEmoLevelInfoAfterRender();
 
-		if (Clear) {
-			this.setChemoBioField("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", "", false);
+		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", TempDesc, ("" !== TempDesc));
 
-			this.setChemoBioField("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", "", false);
-			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", "", false);
-			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]", "", false);
-			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]", "", false);
-			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]", "", false);
+/*
+		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", false);
+		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", false);
+		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", "", false);
+		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]", "", false);
+		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]", "", false);
+		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]", "", false);
+*/
+		if (ThisAdminDay) {
+			this.setNDCTWarning("", false, ThisAdminDay);
 		}
 		else {
-			if (ThisAdminDay) {
-				this.setNDCTWarning("", false, ThisAdminDay);
-			}
-			else {
-				var msg = this.getNextAdminDate();
-				this.setNDCTWarning("<div class=\"ndctWarning\"><span>Note:</span> - This is not a scheduled Administration Day for this Regimen</div>" + msg, true, ThisAdminDay);
-			}
+			var msg = this.getNextAdminDate();
+			this.setNDCTWarning("<div class=\"ndctWarning\"><span>Note:</span> - This is not a scheduled Administration Day for this Regimen</div>" + msg, true, ThisAdminDay);
 		}
+
+		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", true);
+		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", true);
+	
+	
 	},
 
 
 
 	setNDCTWarning : function(msg, show, ThisAdminDay) {
-		console.log("Chemotherapy - setNDCTWarning");
-		this.setChemoBioField("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", msg, show);
+		var theField = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"ndctWarning\"]");
+		var i, len = theField.length;
+		for (i = 0; i < len; i++) {
+			el = theField[i].getEl();
+			if (el) {
+				el.setHTML(msg);
+			}
+			if (show) {
+				theField[i].show();
+			}
+			else {
+				theField[i].hide();
+			}
+		}
 
-		this.showHideMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", !ThisAdminDay);
+
+
+		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", !ThisAdminDay);
 		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]", ThisAdminDay.Cycle, ThisAdminDay);
 		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]", ThisAdminDay.Day, ThisAdminDay);
 		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]", ThisAdminDay.AdminDate, ThisAdminDay);

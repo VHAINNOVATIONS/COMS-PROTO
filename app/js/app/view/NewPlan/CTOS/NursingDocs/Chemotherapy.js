@@ -2,12 +2,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
     extend: "Ext.form.FieldSet",
     alias : "widget.NursingDocs_Chemotherapy",
 	name : "NursingDocs.Chemotherapy",
-	title : "Chemotherapy / Biotherapy---",
+	title : "Chemotherapy / Biotherapy",
 
 	items : [ 
 		{ "xtype" : "displayfield", "name" : "ndctRegimen", "fieldLabel" : "Regimen", "labelClsExtra" : "NursingDocs-label" },
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "NeutropeniaInfo", "title" : "---"}, 
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "EmesisInfo", "title" : "---"}, 
+		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : 10, "name" : "NeutropeniaInfo"}, 
+		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : 10, "name" : "EmesisInfo"}, 
 		{ "xtype" : "box", "name" : "ndctWarning"}, 
 		{ 
 			xtype : "container", 

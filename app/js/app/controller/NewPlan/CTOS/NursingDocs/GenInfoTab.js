@@ -140,10 +140,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 /*
 		{
-			"ref" : "ndctWarning",
-			"selector" : "NursingDocs_Chemotherapy [name=\"ndctWarning\"]"
-		},
-		{
 			"ref" : "CycleInfo",
 			"selector" : "NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]"
 		},
@@ -196,7 +192,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			},
             "button[name=\"ShowBSA\]" : {
                 click: this.NDGIVS_BSA_Calculations
-					// this.HandleVSFormShowCalcButtons		// 
             },
 
             "NursingDocs_GenInfo button[action=\"save\"]": {
@@ -215,12 +210,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
                 click: this.AuthenticateUser
             },
 			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
-					afterrender : Ext.togglePanelOnTitleBarClick
+				afterrender : Ext.togglePanelOnTitleBarClick
 			},
 			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
-					afterrender : Ext.togglePanelOnTitleBarClick
+				afterrender : Ext.togglePanelOnTitleBarClick
 			},
-
 
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.VitalsFieldValidation,
@@ -252,7 +246,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		});
 	},
 	procIDE : function(fld, IDESpec) {
-		console.log("GenInfoTab - procIDE");
 		var fldName = fld.name, 
 			fldValue = parseFloat(fld.getValue()), 
 			errMsg = "", 
@@ -341,8 +334,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	},
 
 	VitalsFieldValidation : function(fld, evt, eOpts) {
-		console.log("GenInfoTab - VitalsFieldValidation");
-
 		var IDESpec = this.application.IntelligentDataElements,
 			IDESpecLen = IDESpec.length, i,
 			fldName = fld.name, fldNameMap = [],
@@ -494,7 +485,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	ClearTabData : function() {
-		console.log("GenInfoTab - ClearTabData");
         var thisCtl;
 		try {
 			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
@@ -802,94 +792,67 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	GenInfoRendered : function ( component, eOpts ) {
-		console.log("GenInfoTab - GenInfoRendered");
-        var tempScratch, tempScratch1, Patient, thisCtl;
-		// try {
-			Patient = this.application.Patient;
-			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-			if (!thisCtl.getNdct_GenInfoTab().rendered) {
-				return;		// Traps possible call from the PopulateNDTabs event
-			}
-		//}
-		//catch (e) {
-		//	Ext.MessageBox.alert("Loading Error", "ND - GenInfoRendered() - Error - " + e.message );
-		//}
+		var tempScratch, tempScratch1, Patient, thisCtl;
+		Patient = this.application.Patient;
+		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
 
-		
-		
-		wccConsoleLog("GenInfoTab Rendered ---- ");
-		wccConsoleLog("... GenInfoRendered() Called ... ");
+		if (!thisCtl.getNdct_GenInfoTab().rendered) {
+			return;		// Traps possible call from the PopulateNDTabs event
+		}
 
 		this.application.Patient.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
 
-//		try {
-			var NDVitalsTempF = thisCtl.getNdVitalsTempF();
-			var NDVitalsTempC = thisCtl.getNdVitalsTempC();
-			var NDVitalsTempLoc = thisCtl.getNdVitalsTempLoc();
-			var NDVitalsPulse = thisCtl.getNdVitalsPulse();
-			var NDVitalsSystolic = thisCtl.getNdVitalsSystolic();
-			var NDVitalsGender = thisCtl.getNdVitalsGender();
-			var NDVitalsHeightIN = thisCtl.getNdVitalsHeightIN();
-			var NDVitalsHeightCM = thisCtl.getNdVitalsHeightCM();
-			var NDVitalsResp = thisCtl.getNdVitalsResp();
-			var NDVitalsDiastolic = thisCtl.getNdVitalsDiastolic();
-			var NDVitalsAge = thisCtl.getNdVitalsAge();
-			var NDVitalsWeightP = thisCtl.getNdVitalsWeightP();
-			var NDVitalsWeightKG = thisCtl.getNdVitalsWeightKG();
-			var NDVitalsPain = thisCtl.getNdVitalsPain();
-			var NDVitalsO2Level = thisCtl.getNdVitalsO2Level();
-			var NDVitalsBSA = thisCtl.getNdVitalsBSA();
+		var NDVitalsTempF = thisCtl.getNdVitalsTempF();
+		var NDVitalsTempC = thisCtl.getNdVitalsTempC();
+		var NDVitalsTempLoc = thisCtl.getNdVitalsTempLoc();
+		var NDVitalsPulse = thisCtl.getNdVitalsPulse();
+		var NDVitalsSystolic = thisCtl.getNdVitalsSystolic();
+		var NDVitalsGender = thisCtl.getNdVitalsGender();
+		var NDVitalsHeightIN = thisCtl.getNdVitalsHeightIN();
+		var NDVitalsHeightCM = thisCtl.getNdVitalsHeightCM();
+		var NDVitalsResp = thisCtl.getNdVitalsResp();
+		var NDVitalsDiastolic = thisCtl.getNdVitalsDiastolic();
+		var NDVitalsAge = thisCtl.getNdVitalsAge();
+		var NDVitalsWeightP = thisCtl.getNdVitalsWeightP();
+		var NDVitalsWeightKG = thisCtl.getNdVitalsWeightKG();
+		var NDVitalsPain = thisCtl.getNdVitalsPain();
+		var NDVitalsO2Level = thisCtl.getNdVitalsO2Level();
+		var NDVitalsBSA = thisCtl.getNdVitalsBSA();
 
-			var LaboratoryInfo = thisCtl.getND_PT_TabLabInfo();
-			LaboratoryInfo.update( Patient.History );
+		var LaboratoryInfo = thisCtl.getND_PT_TabLabInfo();
+		LaboratoryInfo.update( Patient.History );
 
-			var VitalSigns = thisCtl.getVitalSignsHistory();
-			VitalSigns.update( Patient );
+		var VitalSigns = thisCtl.getVitalSignsHistory();
+		VitalSigns.update( Patient );
 
-//			var ThisAdminDay = this.application.Patient.ThisAdminDay;
-//			this.ChemoBioSectionHandler(false, ThisAdminDay);
+		NDVitalsGender.setValue((("M" === Patient.Gender) ? "Male" : "Female"));
+		NDVitalsAge.setValue(Patient.Age);
+		NDVitalsPain.setValue("");
+		NDVitalsO2Level.setValue("");
+		NDVitalsBSA.setValue("");		// Patient.BSA);
 
-			NDVitalsGender.setValue((("M" === Patient.Gender) ? "Male" : "Female"));
-			NDVitalsAge.setValue(Patient.Age);
-			NDVitalsPain.setValue("");
-			NDVitalsO2Level.setValue("");
-			NDVitalsBSA.setValue("");		// Patient.BSA);
+		NDVitalsTempF.setValue("");
+		NDVitalsTempC.setValue("");
+        NDVitalsTempLoc.setValue("");
+		NDVitalsPulse.setValue("");
 
-			NDVitalsTempF.setValue("");
-			NDVitalsTempC.setValue("");
-            NDVitalsTempLoc.setValue("");
-			NDVitalsPulse.setValue("");
+		NDVitalsSystolic.setValue("");
+		NDVitalsDiastolic.setValue("");
+		NDVitalsResp.setValue("");
+		NDVitalsHeightIN.setValue("");
+		NDVitalsHeightCM.setValue("( cm)");
+		NDVitalsWeightP.setValue("");
+		NDVitalsWeightKG.setValue("( kg)");
 
-			NDVitalsSystolic.setValue("");
-			NDVitalsDiastolic.setValue("");
-			NDVitalsResp.setValue("");
-			NDVitalsHeightIN.setValue("");
-			NDVitalsHeightCM.setValue("( cm)");
-			NDVitalsWeightP.setValue("");
-			NDVitalsWeightKG.setValue("( kg)");
-
-
-
-
-
-
-			var VSHTemplateDataBtns;
-			if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
-		        var newCtl = this.getController("NewPlan.NewPlanTab");
-				VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
-				VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
-			}
-
-//		}
-//		catch (e1) {
-//			debugger;
-//			//Ext.MessageBox.alert("Rendering Error", "ND - GenInfoRendered() - Error - " + e1.message );
-//		}
-
+		var VSHTemplateDataBtns;
+		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
+		    var newCtl = this.getController("NewPlan.NewPlanTab");
+			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
+			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
+		}
 	},
 
 	HandleVSFormShowCalcButtons : function (evt, btn) {
-		console.log("Patient Vitals in Patient Info Panel");
 		var Patient = this.application.Patient;
 		PatientData = Ext.ShowBSACalcs(Patient, false, null, null);
 

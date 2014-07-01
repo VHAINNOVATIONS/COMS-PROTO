@@ -36,15 +36,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	TabContentsCleared : true,
 	TabIsActive : false,
 
-	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Flow Sheet Tab Controller!");
 
 		this.application.on( 
 			{ 
 				PatientSelected : this.PatientSelected, 
-				PopulateNDTabs : this.GenInfoRendered,	// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
-				ClearNDTabs : this.ClearTabData,		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+				// PopulateNDTabs : this.GenInfoRendered,	// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
+				// ClearNDTabs : this.ClearTabData,		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
 				scope : this 
 			}
 		);
@@ -53,11 +52,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			"FlowSheet" : {
 				beforeactivate : this.BeforeTabActivated,
 				activate : function() {
-					console.log("Flow Sheet Tab Activate");
 					this.TabIsActive = true;
 				},
 				deactivate : function() {
-					console.log("Flow Sheet Tab DE-Activate");
 					this.TabIsActive = false;
 				}
 			},
@@ -67,20 +64,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			}
 		});
 	},
-
-
-	ClearTabData : function() {
-		if (this.TabIsActive) {
-			console.log("Flowsheet - ClearTabData");
-		}
-	},
-
-	GenInfoRendered : function() {
-		if (this.TabIsActive) {
-			console.log("Flowsheet - GenInfoRendered");
-		}
-	},
-
 
 	/**********************
 	 *
@@ -106,19 +89,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	TabRendered : function ( component, eOpts ) {
-		wccConsoleLog("Flow Sheet Tab has been rendered");
-		console.log("Flow Sheet TabRendered");
-
 		this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
-		var ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
-		thisCtl.ChemoBioSectionHandler(false, ThisAdminDay);
 	},
 
 	BeforeTabActivated : function (component, eOpts ) {
-		wccConsoleLog("Flow Sheet Tab has been rendered");
-		console.log("Flow Sheet BeforeTabActivated");
-
 		var PatientInfo = this.application.Patient;
 		if ("" === PatientInfo.TemplateID) {
 			alert("No Template has been applied to this patient\nTab will not display");
@@ -316,49 +290,47 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		 *
 		 **************************************/
 	// Loads the data which was entered in the Treatment Panel as well as the edited cells (e.g. "Disease Response", "Toxicity" and "Other")
-createFSGrid : function () {
-	// console.log("Create Flowsheet Grid and assign button handlers");
-				var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
-				var Flowsheet = thisCtl.getFlowSheetGrid();
-				var FlowsheetEl = Flowsheet.getEl();
-				var FSColumns = this.application.Patient.FSColumns;
+	createFSGrid : function () {
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+		var Flowsheet = thisCtl.getFlowSheetGrid();
+		var FlowsheetEl = Flowsheet.getEl();
+		var FSColumns = this.application.Patient.FSColumns;
 
-				// Since we have a dynamic store and data set we need to destroy and re-create the grid everytime we open the panel up
-				// to make sure that the latest data is displayed in the grid.
-				var theGrid = Ext.getCmp("FlowsheetGrid");
-				if (theGrid && theGrid.rendered) {
-					Ext.destroy(theGrid);
-				}
+		// Since we have a dynamic store and data set we need to destroy and re-create the grid everytime we open the panel up
+		// to make sure that the latest data is displayed in the grid.
+		var theGrid = Ext.getCmp("FlowsheetGrid");
+		if (theGrid && theGrid.rendered) {
+			Ext.destroy(theGrid);
+		}
 
-				theGrid = Ext.create('Ext.grid.Panel', {
-					id : "FlowsheetGrid",
-				    renderTo: FlowsheetEl,
-					autoScroll: 'y',
-					columnLines: true,
-					viewConfig: { stripeRows: true, forceFit: true },
+		theGrid = Ext.create('Ext.grid.Panel', {
+			id : "FlowsheetGrid",
+		    renderTo: FlowsheetEl,
+			autoScroll: 'y',
+			columnLines: true,
+			viewConfig: { stripeRows: true, forceFit: true },
 
-					store: Ext.data.StoreManager.lookup('ChemoResults'),
-				    columns: FSColumns,					// <-- Columns Data
-				    features: [{ftype:'grouping'}]
-				});
+			store: Ext.data.StoreManager.lookup('ChemoResults'),
+		    columns: FSColumns,					// <-- Columns Data
+		    features: [{ftype:'grouping'}]
+		});
 
-				theGrid.on("afterlayout", function() {
-					var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
-					var FlowsheetPanel = thisCtl.getFlowSheet();
-					FlowsheetPanel.forceComponentLayout();	// Since the grid is added after the panel has been rendered, this function causes the panel to resize to fit the grid.
+		theGrid.on("afterlayout", function() {
+			var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+			var FlowsheetPanel = thisCtl.getFlowSheet();
+			FlowsheetPanel.forceComponentLayout();	// Since the grid is added after the panel has been rendered, this function causes the panel to resize to fit the grid.
 
-					var btns1 = FlowsheetEl.select("button");
-					btns1.removeAllListeners();
-					btns1.on("click", this.HandleFlowsheetBtnClicks, this);
-				}, this);
+			var btns1 = FlowsheetEl.select("button");
+			btns1.removeAllListeners();
+			btns1.on("click", this.HandleFlowsheetBtnClicks, this);
+		}, this);
 
-},
+	},
 
 // FSModel (first parameter) was apparently never used.
 // buildGrid - function to build the grid upon completion of creating the store
 //	For some calls to this function (as in when we're doing the EoTS) a grid is not needed.
 LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
-	// console.log("Load Flowsheet Data via FS Service" );
 		var Patient = this.application.Patient;
 		var PAT_ID = Patient.PAT_ID;
 		this.FSData = FSData;
@@ -519,7 +491,6 @@ LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
  *
  ****/
 createFlowsheet : function (BuildGrid) {
-	// console.log("Create Flowsheet" );
 		var OEM_Data;
 		var OEM_DataLen;
 		var OEM_Record;
