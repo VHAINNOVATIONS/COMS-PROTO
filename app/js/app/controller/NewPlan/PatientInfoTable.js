@@ -183,11 +183,15 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
  **/
 				switch( theClass ) {
 					case "anchor AddEditAmputation" : 
-						this.puWinAmputations = Ext.widget("puWinSelAmputation");
+						if (!this.puWinAmputations) {
+							this.puWinAmputations = Ext.widget("puWinSelAmputation");
+						}
 						this.puWinAmputations.show();
 						break;
 					case "anchor AddEditBSA" : 
-						this.puWinBSA = Ext.widget("puWinSelBSA");
+						if (!this.puWinBSA) {
+							this.puWinBSA = Ext.widget("puWinSelBSA");
+						}
 						this.puWinBSA.show();
 						break;
 					case "anchor DoBSACalcs" : 
@@ -208,7 +212,9 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 						}).show();
 						break;
 					case "anchor AddEditCancer" : 
-						this.puWinCancer = Ext.widget("puWinSelCancer");
+						if (!this.puWinCancer) {
+							this.puWinCancer = Ext.widget("puWinSelCancer");
+						}
 						this.puWinCancer.show();
 						break;
 				}

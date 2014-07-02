@@ -18,12 +18,12 @@ require_once "..\app\session.php";
 
 if ("High" == $_SESSION["BrowserMode"]) { ?>
         <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
-        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS-Access.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" href="COMS-Access.css">
 <?php 
 }
 else { ?>
         <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
-        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" href="COMS.css">
 <?php }?>
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->

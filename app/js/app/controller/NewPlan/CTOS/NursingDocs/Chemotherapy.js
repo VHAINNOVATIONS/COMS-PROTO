@@ -225,39 +225,41 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 			}
 		}
 
-
-
 		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", !ThisAdminDay);
-		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]", ThisAdminDay.Cycle, ThisAdminDay);
-		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]", ThisAdminDay.Day, ThisAdminDay);
-		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]", ThisAdminDay.AdminDate, ThisAdminDay);
+		if (ThisAdminDay) {
+			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]", ThisAdminDay.Cycle, ThisAdminDay);
+			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]", ThisAdminDay.Day, ThisAdminDay);
+			this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]", ThisAdminDay.AdminDate, ThisAdminDay);
+		}
 	},
 
-    getNextAdminDate : function() {
-        var ListOfAdminDays = this.application.Patient.OEMRecords.OEMRecords,
-            today = new Date(), 
-            AdminDate, 
-            AdminDate1 = null, 
-            LastAdminDate = null,
-            msg = "";
-        for (i = 0; i < ListOfAdminDays.length; i++ ) {
-            LastAdminDate = AdminDate;
-            AdminDate = ListOfAdminDays[i].AdminDate;
-            AdminDate1 = new Date(AdminDate);
-            if (AdminDate1.getTime() > today.getTime()) {
-                if (LastAdminDate !== null) {
-                    msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b>";
-                }
-                msg += "<br />Next Administration Date: <b>" + AdminDate + "</b>";
-                return msg;
-            }
-        }
-        if (LastAdminDate !== null) {
-            msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b><br />There are no additional Administration Dates";
-        }
-
-        return msg;
-    }
+	getNextAdminDate : function() {
+		var ListOfAdminDays,
+			today = new Date(), 
+			AdminDate, 
+			AdminDate1 = null, 
+			LastAdminDate = null,
+			msg = "";
+		if (this.application.Patient && this.application.Patient.OEMRecords) {
+			ListOfAdminDays = this.application.Patient.OEMRecords.OEMRecords;
+			for (i = 0; i < ListOfAdminDays.length; i++ ) {
+				LastAdminDate = AdminDate;
+				AdminDate = ListOfAdminDays[i].AdminDate;
+				AdminDate1 = new Date(AdminDate);
+				if (AdminDate1.getTime() > today.getTime()) {
+					if (LastAdminDate !== null) {
+						msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b>";
+					}
+					msg += "<br />Next Administration Date: <b>" + AdminDate + "</b>";
+					return msg;
+				}
+			}
+			if (LastAdminDate !== null) {
+				msg = "<br />Last Administration Date: <b>" + LastAdminDate + "</b><br />There are no additional Administration Dates";
+			}
+		}
+		return msg;
+	}
 
 
 });

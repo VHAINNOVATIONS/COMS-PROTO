@@ -42,7 +42,6 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 	},
 
 	Save : function(btn) {
-		debugger;
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();

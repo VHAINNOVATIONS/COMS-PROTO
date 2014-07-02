@@ -21,12 +21,7 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 		{ ref : "RightFoot", selector: "[name=\"Right Foot\"]"}
 	],
 	"init" : function() {
-		// this.application.on({ "PatientSelected" : this.resetForm, "scope" : this });
 		this.control({
-			"AmputationSelection" : {
-				"afterrender" : this.renderAS
-			},
-
 			"checkbox" : {
 				"change" : this.itemChecked
 			}
@@ -43,7 +38,7 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 		fldObj.setValue(state);
 	},
 
-	"renderAS" : function(theContainer) {
+	"renderAS" : function() {
 		var Amputations = this.application.Patient.Amputations;
 		var i, a, len = Amputations.length, theCkBox;
 		for (i = 0; i < len; i++) {

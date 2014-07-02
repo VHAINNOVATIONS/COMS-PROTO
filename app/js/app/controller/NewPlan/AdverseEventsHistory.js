@@ -77,9 +77,14 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 
 	loadAdverseEventsHistory : function(recs, eOpts) {
 		var theModule = this.getAdverseEventsHistory();
+
+		theModule.setTitle("Adverse Events History (No Adverse Events Recorded)");
+		theModule.update({});
+		
 		if ("" !== this.application.Patient.PAT_ID) {
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
 		this.application.loadMask("Loading Adverse Events History Information...");
+
 		Ext.Ajax.request({
 			scope : this,
 			url: URL,

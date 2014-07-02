@@ -2,6 +2,9 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	extend : "Ext.app.Controller",
 	init: function() {
 		this.control({
+			"puWinSelAmputation" : {
+				"show" : this.ShowWindow
+			},
 			"puWinSelAmputation button[text=\"Cancel\"]" : {
 				click: this.Cancel
 			},
@@ -9,6 +12,11 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 				click: this.Save
 			}
 		});
+	},
+
+	ShowWindow : function() {
+		var AmpuSelCtl = this.getController("NewPlan.AmputationSelection");
+		AmpuSelCtl.renderAS();
 	},
 
 	Save : function(btn) {

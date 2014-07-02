@@ -24,7 +24,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 					"<tr>",
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight Method:</th><td>{WeightFormula}</td>",
-						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method:</th><td>{BSA_Method}</td>",
+						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Formula:</th><td>{BSA_Method}</td>",
 						"<th>",
 						"{[this.AddEditBtns(\"BSA\", values, parent)]}<abbr title=\"Body Surface Area\">BSA</abbr>:",
                         "</th><td>{[this.BSA_Cell(values, parent)]}</td>",
