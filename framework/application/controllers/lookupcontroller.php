@@ -1507,6 +1507,14 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
     }
 
 
+    function ToxicityInstruction($ID = null) {
+        $DataType = 'ToxicityInstruction';
+        $Msg = 'Toxicity Instructions Details';
+
+        return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
+    }
+
+
 
     function MedRisks($ID = null, $Type = null) {
         $DataType = 'Risks';

@@ -5,7 +5,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 	autoEl : { tag : "nav" },
 	padding : "10 10 5 10",
 	plain : true,
-	activeTab: 6,
+	activeTab: 7,
 	"defaults": { padding : "10 10 5 10", plain : true, "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	items : [
 		{ xtype : "AddLookups", title: "Manage LookUps" },
@@ -15,6 +15,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 		{ xtype : "Users", title: "COMS Users"},
 		{ xtype : "ActiveWorkflows", title: "Active Workflows"},
 		{ xtype : "IntelligentDataElements", title: "IDE"},
+		{ xtype : "Toxicity", title: "Toxicity"},
 		{ xtype : "tabpanel", title: "Discharge Info", 
 			defaults: {
 				padding : "10 10 5 10"
@@ -25,7 +26,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				,{ xtype : "MedRisks", title: "Neutropenia / Emesis Risks"}
 			]
 		},
-		{ xtype : "tabpanel", title: "Medications", activeTab: 3,
+		{ xtype : "tabpanel", title: "Medications",
 			defaults: {
 				padding : "10 10 5 10"
 			},
