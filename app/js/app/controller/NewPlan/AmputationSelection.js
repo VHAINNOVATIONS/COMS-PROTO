@@ -50,7 +50,7 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 				case "Lower Left Arm":
 					theCkBox = this.getLowerLeftArm();
 					break;
-				case "Left Hand":
+				case "Left Hand and Fingers":
 					theCkBox = this.getLeftHand();
 					break;
 				case "Upper Right Arm":
@@ -59,7 +59,7 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 				case "Lower Right Arm":
 					theCkBox = this.getLowerRightArm();
 					break;
-				case "Right Hand":
+				case "Right Hand and Fingers":
 					theCkBox = this.getRightHand();
 					break;
 				case "Left Thigh":
