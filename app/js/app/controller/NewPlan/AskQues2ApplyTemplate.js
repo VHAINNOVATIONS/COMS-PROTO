@@ -6,7 +6,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 	refs: [ 
 		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
 		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
-		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form checkboxgroup[name=\"amputations\"]"},
+		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
 		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"}
 	],
@@ -36,7 +36,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
     },
 
 	ShowWindow : function() {
-		if (this.application.Patient.Amputations) {
+		if (this.application.Patient.Amputations && this.application.Patient.Amputations.length > 0) {
 			this.getAmputeeYes().setValue(true);
 			this.AmputeeSelected("", { Amputee : true });
 			var AmpuSelCtl = this.getController("NewPlan.AmputationSelection");
