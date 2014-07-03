@@ -450,15 +450,15 @@ class PatientController extends Controller
      */
     private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
     {
-	//evar_dump($preHydrationRecord);
+	//var_dump($preHydrationRecord);
 	//$amt = $infusionMap->amt;
-	$amt = $infusionMap['amt'];
-	if (empty($infusionMap['type'])){
-	$route = $preHydrationRecord['route'];
-	}
-	else{
-	$route = $infusionMap['type'];
-	}
+	//$amt = $infusionMap['amt'];
+	//if (empty($infusionMap['type'])){
+	//$route = $preHydrationRecord['route'];
+	//}
+	//else{
+	//$route = $infusionMap['type'];
+	//}
 	
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
