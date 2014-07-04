@@ -1404,6 +1404,82 @@ function convertReason2ID($Reason) {
         }
         return $LK_Description;
     }
+
+    function selectCDH ($PatientID,$CDHID)
+    {
+        $query = "
+		SELECT ID,
+		Patient_ID,
+		MedID,
+		CumulativeDoseAmt,
+		CumulativeDoseUnits,
+		Date_Changed,
+		Author
+		FROM Patient_CumulativeDoseHistory
+		WHERE Patient_ID = '$PatientID'"; 
+		$result = $this->query($query);
+        return $result;
+    }
+
+    function selectCDHR ($PatientID,$CDHID)
+    {
+        $query = "
+		SELECT ID,
+		Patient_ID,
+		MedID,
+		CumulativeDoseAmt,
+		CumulativeDoseUnits,
+		Date_Changed,
+		Author
+		FROM Patient_CumulativeDoseHistory
+		WHERE ID = '$CDHID'"; 
+		$result = $this->query($query);
+        return $result;
+    }
+
+    function insertCDHR ($PatientID,$MedID,$CumulativeDoseAmt,$CumulativeDoseUnits)
+    {
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+        
+		$query = "INSERT INTO Patient_CumulativeDoseHistory
+           (ID,
+           Patient_ID
+           ,MedID
+           ,CumulativeDoseAmt
+           ,CumulativeDoseUnits
+		   ,Author)
+     VALUES
+           ('$GUID',
+           '$PatientID'
+           ,'$MedID'
+           ,'$CumulativeDoseAmt'
+           ,'$CumulativeDoseUnits'
+		   ,'".$_SESSION['rid']."')";
+		   
+		$result = $this->query($query);
+        
+		return $GUID;
+    }
+
+    function updateCDHR ($CDHID,$CumulativeDoseAmt,$CumulativeDoseUnits)
+    {
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+        
+		$query = "
+		UPDATE Patient_CumulativeDoseHistory
+		SET  CumulativeDoseAmt = '$CumulativeDoseAmt',
+        CumulativeDoseUnits = '$CumulativeDoseUnits',
+	    Author = '".$_SESSION['rid']."'
+		WHERE ID = '$CDHID'";
+		   
+		$result = $this->query($query);
+        echo $query;
+		return 'updated';
+    }
     
     // order check end of else
     // }

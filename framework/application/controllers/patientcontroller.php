@@ -450,16 +450,26 @@ class PatientController extends Controller
      */
     private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
     {
+	//echo "|||preHydrationRecord||| ";
 	//var_dump($preHydrationRecord);
-	//$amt = $infusionMap->amt;
-	//$amt = $infusionMap['amt'];
-	//if (empty($infusionMap['type'])){
-	//$route = $preHydrationRecord['route'];
-	//}
-	//else{
-	//$route = $infusionMap['type'];
-	//}
+	//echo "|||infusionMap||| ";
+	//var_dump($infusionMap);
 	
+	//$amt = $infusionMap['amt'];
+	if (empty($infusionMap['type'])){
+	$route = $preHydrationRecord['route'];
+	}
+	else{
+	$route = $infusionMap['type'];
+	}
+	
+	if (empty($infusionMap['amt'])){
+	$amt = 1;
+	}
+	else{
+	$amt = $infusionMap['amt'];
+	}
+
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
@@ -1970,5 +1980,76 @@ function buildJsonObj4Output() {
         return;
     }
 
+
+    function CumulativeDoseTracking($pid,$CDHID){
+        
+        $jsonRecord = array();
+        
+		if ($CDHID === NULL){
+        $records = $this->Patient->selectCDH($pid);
+        }else{
+		$records = $this->Patient->selectCDHR($pid,$CDHID);
+		}
+		
+        if ($this->checkForErrors('Get Patient CDH Failed. ', $records)) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        } 
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
+    }
+
+    function CumulativeDoseTrackingInsert($pid,$MedID,$CDAmts,$CDUnits){
+        
+        $jsonRecord = array();
+        
+        $records = $this->Patient->insertCDHR($pid,$MedID,$CDAmts,$CDUnits);
+        
+        if ($this->checkForErrors('Insert Patient CDH Failed. ', $records)) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        } 
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
+    }
+    function CumulativeDoseTrackingUpdate($CDHID,$CDAmts,$CDUnits){
+        
+        $jsonRecord = array();
+        
+        $records = $this->Patient->updateCDHR($CDHID,$CDAmts,$CDUnits);
+        
+        if ($this->checkForErrors('Update Patient CDH Failed. ', $records)) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        } 
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
+    }
+
+	
 
 }
