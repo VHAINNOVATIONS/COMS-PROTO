@@ -40,6 +40,8 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 
 	"renderAS" : function() {
 		var Amputations = this.application.Patient.Amputations;
+		var ItemInWindow = Ext.ComponentQuery.query("AmputationSelection");
+
 		var i, a, len = Amputations.length, theCkBox;
 		for (i = 0; i < len; i++) {
 			a = Amputations[i].description;

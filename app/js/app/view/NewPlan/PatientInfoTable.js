@@ -56,11 +56,19 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Allergies: </th>",
 						"<td colspan=5>",
+
+
+	"<tpl if=\"this.Allergies(values)\">",
 							"<table width=\"100%\"><tr><th style=\"text-align: center;\">Name</th><th style=\"text-align: center;\">Type</th><th style=\"text-align: center;\">Comment</th></tr>",
 							"<tpl for=\"Allergies\">",
 								"<tr><td>{name}</td><td>{type}</td><td>{comment}</td>",
 							"</tpl>",
 							"</table>",
+	"</tpl>",
+	"<tpl if=\"this.Allergies(values) == false\">",
+							"No Known Allergies",
+	"</tpl>",
+
 						"</td>",
 					"</tr>",
 					"<tr>",
@@ -99,8 +107,15 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return Pre + Mid + Post;
 					},
 
+					Allergies : function ( values ) {
+						if (values.Allergies.length > 0) {
+							return true;
+						}
+						return false;
+					},
+
 					Debugger : function ( values ) {
-						// debugger;
+						debugger;
 					},
 
 					hasData : function (data) {

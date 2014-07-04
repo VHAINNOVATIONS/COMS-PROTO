@@ -298,14 +298,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	resetCTOSPanel: function(thisCtl) {
 		var CTOSPanel = thisCtl.getCTOS();
 		CTOSPanel.setActiveTab(0);
-        try {   /* One or more of the controls may not be available based on role of user */
-            thisCtl.getNewPlan_CTOS_Form().getForm().reset();
-            Ext.ComponentQuery.query("NewPlanTab dspTemplateData")[0].hide();
-            Ext.ComponentQuery.query("NewPlanTab button[name=\"Apply\"]")[0].hide();
-            Ext.ComponentQuery.query("NewPlanTab button[name=\"Edit\"]")[0].hide();
-        }
-        catch (err) {
-        }
+		try {   /* One or more of the controls may not be available based on role of user */
+			thisCtl.getNewPlan_CTOS_Form().getForm().reset();
+			Ext.ComponentQuery.query("NewPlanTab box[name=\"AllTemplatesShownMsg\"]")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab selTemplate")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab selDiseaseAndStage")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab selCTOSTemplate")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab dspTemplateData")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab button[name=\"Apply\"]")[0].hide();
+			Ext.ComponentQuery.query("NewPlanTab button[name=\"Edit\"]")[0].hide();
+			this.getMyTemplates().hide();
+			this.getSelCTOSTemplate().hide();
+		}
+		catch (err) {
+		}
 	},
 
 	resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
@@ -928,6 +934,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
                         try {
+//							console.log("Generating EoTS then creating new instance of Widget");
                             var fncName = "Generate End of Treatment Summary";
                             this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
                             this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
@@ -943,7 +950,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			});
         }
 		else{
-			var theWidget = Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+			var haveWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
+			if (haveWidget.length > 0) {
+//				console.log("HAVE AskQues2ApplyTemplate widget");
+//				debugger;
+				haveWidget[0].show();
+			}
+			else {
+//				console.log("Creating AskQues2ApplyTemplate widget");
+				var theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+			}
 		}
     },
 
@@ -1034,7 +1050,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 set1.show();
             }
         }
-    },
+		var SelectATemplateCombo = Ext.ComponentQuery.query('NewPlanTab selTemplate');
+		if (SelectATemplateCombo) {
+			for (i = 0; i < SelectATemplateCombo.length; i++) {
+				SelectATemplateCombo[i].hide();
+			}
+		}
+	},
 
 
 
