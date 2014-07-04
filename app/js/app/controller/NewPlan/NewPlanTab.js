@@ -928,6 +928,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
                         try {
+//							console.log("Generating EoTS then creating new instance of Widget");
                             var fncName = "Generate End of Treatment Summary";
                             this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
                             this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
@@ -943,7 +944,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			});
         }
 		else{
-			var theWidget = Ext.widget('AskQues2ApplyTemplate',{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+			var haveWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
+			if (haveWidget.length > 0) {
+//				console.log("HAVE AskQues2ApplyTemplate widget");
+//				debugger;
+				haveWidget[0].show();
+			}
+			else {
+//				console.log("Creating AskQues2ApplyTemplate widget");
+				var theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+			}
 		}
     },
 
