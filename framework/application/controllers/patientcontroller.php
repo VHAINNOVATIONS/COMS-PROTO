@@ -456,7 +456,7 @@ class PatientController extends Controller
 	//var_dump($infusionMap);
 	
 	//$amt = $infusionMap['amt'];
-	if (empty($infusionMap['type'])){
+	/*if (empty($infusionMap['type'])){
 	$route = $preHydrationRecord['route'];
 	}
 	else{
@@ -469,10 +469,11 @@ class PatientController extends Controller
 	else{
 	$amt = $infusionMap['amt'];
 	}
-
+*/
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
+        $AdminDay = $preHydrationRecord['AdminDay'];
         $DrugID = $preHydrationRecord['id'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
@@ -489,7 +490,8 @@ class PatientController extends Controller
                 Patient_ID,
 				Notes,
 				Amt,
-				Route
+				Route,
+				AdminDay
             ) VALUES (
                 '$templateId',
                 '$orderStatus',
@@ -500,7 +502,8 @@ class PatientController extends Controller
                 '$patientid',
                 '$Notes',
                 '$amt',
-                '$route'
+                '$route',
+                '$AdminDay'
             )
         ";
         $this->Patient->query($query);

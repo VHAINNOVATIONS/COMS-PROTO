@@ -164,7 +164,11 @@ class EndTreatmentSummary extends Model
     {
         ChromePhp::log("saveEoTS() Start");
 
-        $this->_lastId = trim(com_create_guid(), '{}');
+        //$this->_lastId = trim(com_create_guid(), '{}');
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+		
         $Name = $form_data->Name;
         $Patient_ID = $form_data->PatientID;
         $Gender = $form_data->Gender;
@@ -202,7 +206,7 @@ class EndTreatmentSummary extends Model
                 PAT_ID,
                 ClinicalTrial
             ) VALUES (
-                '{$this->_lastId}',
+                '$GUID',
                 '$Name', 
                 '$Patient_ID', 
                 '$Gender', 
@@ -241,29 +245,46 @@ class EndTreatmentSummary extends Model
         ChromePhp::log("Update Assigned Templates - $query");
         $this->query($query);
         
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+		
         if (is_array($form_data->Meds)) {
-            $result = $this->_saveMeds($this->_lastId, $form_data->Meds);
+            //$result = $this->_saveMeds($this->_lastId, $form_data->Meds);
+            $result = $this->_saveMeds($GUID, $form_data->Meds);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
             
         if (is_array($form_data->DiseaseResponse)) {
-            $result = $this->_saveDiseaseResponse($this->_lastId, $form_data->DiseaseResponse);
+            $newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];			
+			//$result = $this->_saveDiseaseResponse($this->_lastId, $form_data->DiseaseResponse);
+            $result = $this->_saveDiseaseResponse($GUID, $form_data->DiseaseResponse);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
         
         if (is_array($form_data->Toxicity)) {
-            $result = $this->_saveToxicity($this->_lastId, $form_data->Toxicity);
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+            //$result = $this->_saveToxicity($this->_lastId, $form_data->Toxicity);
+            $result = $this->_saveToxicity($GUID, $form_data->Toxicity);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
         
         if (is_array($form_data->Other)) {
-            $result = $this->_saveOther($this->_lastId, $form_data->Other);
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+            //$result = $this->_saveOther($this->_lastId, $form_data->Other);
+            $result = $this->_saveOther($GUID, $form_data->Other);
             if (!empty($result['error'])) {
                 return $result;
             }
