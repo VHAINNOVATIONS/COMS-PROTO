@@ -15,15 +15,14 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 		{ xtype : "Users", title: "COMS Users"},
 		{ xtype : "ActiveWorkflows", title: "Active Workflows"},
 		{ xtype : "IntelligentDataElements", title: "IDE"},
-		{ xtype : "Toxicity", title: "Toxicity"},
 		{ xtype : "tabpanel", title: "Discharge Info", 
 			defaults: {
 				padding : "10 10 5 10"
 			},
 			items : [
 				{ xtype : "DischargeInstructionManagement", title: "Discharge Instructions"},
-				{ xtype : "ClinicInfo", title: "Clinic Information"}
-				,{ xtype : "MedRisks", title: "Neutropenia / Emesis Risks"}
+				{ xtype : "ClinicInfo", title: "Clinic Information"},
+				{ xtype : "MedRisks", title: "Neutropenia / Emesis Risks"}
 			]
 		},
 		{ xtype : "tabpanel", title: "Medications",
@@ -35,7 +34,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ xtype : "RoundingRules", title : "Rounding Rules"},
 				{ xtype : "MedicationHolds", title : "Medication Holds"},
 				{ xtype : "IV_Fluid_Types", title : "IV Fluid Types", name : "IV_Fluid_Types"},
-				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"}
+				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"},
+				{ xtype : "Toxicity", title: "Toxicity"}
 			]
 		}
 	]

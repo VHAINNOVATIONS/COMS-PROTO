@@ -2,11 +2,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	extend: "Ext.app.Controller",
 
 	stores: [
+		"Toxicity"
 	],
 
 	views: [
 		"NewPlan.CTOS.FlowSheet",
-		"NewPlan.CTOS.Toxicity_SideEffects"
+		"NewPlan.CTOS.ToxicitySideEffectsPanel",
+		"NewPlan.CTOS.ToxicitySideEffectsPUWin",
+		"NewPlan.CTOS.DiseaseResponsePUWin",
+		"NewPlan.CTOS.OtherPUWin"
 	],
 
 	refs: [
@@ -30,7 +34,28 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	    {
 		    ref: "FlowSheetBody",
 			selector: "FlowSheetBody"
-	    }
+	    },
+
+		{
+			ref: "TSE_Instr",
+			selector: "ToxicitySideEffectsPUWin [name=\"ToxInstr\"]"
+		},
+		{
+			ref: "TSE_Details",
+			selector: "ToxicitySideEffectsPUWin [name=\"ToxDetails\"]"
+		},
+		{
+			ref: "TSE_Data",
+			selector: "ToxicitySideEffectsPUWin [name=\"Data\"]"
+		},
+		{
+			ref: "DR_Data",
+			selector: "DiseaseResponsePUWin [name=\"Data\"]"
+		},
+		{
+			ref: "Othr_Data",
+			selector: "OtherPUWin [name=\"Data\"]"
+		}
 	],
 
 	TabContentsCleared : true,
@@ -61,8 +86,130 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 			"FlowSheet [name=\"flowsheet grid\"]" : {
 				render : this.TabRendered
+			},
+			"ToxicitySideEffectsPUWin combo[name=\"ToxInstr\"]" : {
+				change : this.SelectToxInstr
+			},
+			"ToxicitySideEffectsPUWin button[text=\"Save\"]" : {
+				click : this.SaveToxDetails
+			},
+			"ToxicitySideEffectsPUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
+			},
+			"DiseaseResponsePUWin button[text=\"Save\"]" : {
+				click : this.SaveResponseDetails
+			},
+			"DiseaseResponsePUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
+			},
+			"OtherPUWin button[text=\"Save\"]" : {
+				click : this.SaveOtherDetails
+			},
+			"OtherPUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
 			}
 		});
+	},
+
+	SaveResponseDetails : function (btn) {
+		debugger;
+		var theForm = btn.up('form').getForm();
+		var win = btn.up("window");
+		if (theForm.isValid()) {
+			var theData = theForm.getValues();
+			var Patient = this.application.Patient;
+			var AdminDay = Patient.ThisAdminDay;
+
+			var theData = this.getTSE_Data().getValue();
+
+
+
+
+			var newRecord = {};
+			newRecord.PAT_ID = Patient.PAT_ID;
+			newRecord.FlowsheetAdminDay = {};
+			newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+			newRecord.FlowsheetAdminDay.Cycle = AdminDay.Cycle;
+			newRecord.FlowsheetAdminDay.Day = AdminDay.Day;
+			newRecord.FlowsheetAdminDay.AdminDate = AdminDay.AdminDate;
+
+			newRecord.FlowsheetAdminDay.Disease_Response = theData;
+
+			var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+			fsTemplate.save({
+				scope: this,
+				success: function (data) {
+					wccConsoleLog("Saved Flowsheet " );
+					this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+					win.close();
+				},
+				failure : function ( data ) {
+					alert("Flowsheet Save unsuccessful");
+					win.close();
+				}
+			});
+		}
+
+	},
+
+	SaveOtherDetails : function (btn) {
+		debugger;
+	},
+
+	SaveToxDetails : function (btn) {
+		var theForm = btn.up('form').getForm();
+		var win = btn.up("window");
+		if (theForm.isValid()) {
+			var theData = theForm.getValues();
+			var Patient = this.application.Patient;
+			var AdminDay = Patient.ThisAdminDay;
+
+			var theInstr = this.getTSE_Instr();
+			var theRecID = theInstr.getValue();
+			var theStore = theInstr.getStore();
+			var theRecord = theStore.findRecord("ID", theRecID);
+			var theDetailsData = theRecord.get("Details");
+			var theData = this.getTSE_Data().getValue();
+
+			var newRecord = {};
+			newRecord.PAT_ID = Patient.PAT_ID;
+			newRecord.FlowsheetAdminDay = {};
+			newRecord.FlowsheetAdminDay.ToxicityLU_ID = theRecID;
+			newRecord.FlowsheetAdminDay.Toxicity = theData;
+			newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+			newRecord.FlowsheetAdminDay.Cycle = AdminDay.Cycle;
+			newRecord.FlowsheetAdminDay.Day = AdminDay.Day;
+			newRecord.FlowsheetAdminDay.AdminDate = AdminDay.AdminDate;
+
+			var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+			fsTemplate.save({
+				scope: this,
+				success: function (data) {
+					wccConsoleLog("Saved Template " );
+					this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+					win.close();
+				},
+				failure : function ( data ) {
+					alert("Flowsheet Save unsuccessful");
+					win.close();
+				}
+			});
+		}
+	},
+	CancelDetails : function (btn) {
+		btn.up('form').getForm().reset();
+		btn.up('window').hide();
+	},
+
+	SelectToxInstr : function (combo, recs, Opts) {
+		var theStore = combo.getStore();
+		var theRecord = theStore.findRecord("ID", recs);
+		var theData = theRecord.get("Details");
+		var theDetails = this.getTSE_Details();
+		theDetails.setValue(theData);
+		
 	},
 
 	/**********************
@@ -119,6 +266,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	CellEditCommit : function (editor, eObj) {
+		debugger;
 		var Patient = this.application.Patient;
 		var fieldName = eObj.grid.getStore().getAt(eObj.rowIdx).get("label");
 		switch (fieldName) {
@@ -198,88 +346,104 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var Patient = this.application.Patient;
 		// alert("Name - " + btnName + "\nType - " + btnType + "\nDate - " + btnDate + "\nData - " + btnData );
 		if ("ViewFSData" === btnName) {
+			var d1 = Ext.decode(btnData);
+			var mbMessage = "<table class=\"CCOrderSheet\">";
+			mbMessage += "<tr><th>Instructions:</th><td>" + d1.Instr + "</td></tr>";
+			mbMessage += "<tr><th>Details:</th><td>" + d1.Details + "</td></tr>";
+			mbMessage += "<tr><th>Comments:</th><td>" + d1.Comments + "</td></tr>";
+			mbMessage += "</table>";
+
+
 			Ext.MessageBox.show({
 				title : btnType,
-				msg : btnData,
+				msg : mbMessage,
 				buttons : Ext.MessageBox.OK
 			});
 		}
 		else {
-			Ext.create("Ext.window.Window", {
-				title: btnType,
-				height : 220,
-				width : 600,
-				layout: "form",
-				Hdr : btnRecHdr,
-				AdmDate : btnDate,
-				BtnType : btnType,
-				items : [{
-					xtype : "textareafield", grow : true, name : "Data", fieldLabel : "Enter text", margin: "10"
-				}],
-				buttons : [
-					{ 
-						text : "Save", 
-						scope : this,
-						handler : function(btn, evt) {
-					        var win = btn.up('window');
-							var initialConfig = win.getInitialConfig();
-							var theField = win.down('textareafield');
-					        var value = theField.getValue();
-							var fieldName;
-							var theGrid = Ext.getCmp("FlowsheetGrid");
-							var Patient = this.application.Patient;
-							var cType = win.initialConfig.BtnType;
-							var Header = win.initialConfig.Hdr;
-							var AdmDate = win.initialConfig.AdmDate;
-							switch (cType) {
-								case "Disease Response":
-									fieldName = "DiseaseResponse";
-									break;
-								case "Toxicity Side Effects":
-									fieldName = "Toxicity";
-									break;
-								case "Other":
-									fieldName = "Other";
-									break;
-							}
-
-
-							var cd = Header.split(", ");		// Header is formated like "Cycle XX, Day YY", so a split on ", " gives cd = [ "Cycle XX", "Day YY"];
-
-							var newRecord = {};
-							newRecord.PAT_ID = Patient.PAT_ID;		// Treatment ID;
-							newRecord.FlowsheetAdminDay = {};
-							newRecord.FlowsheetAdminDay[fieldName] = value;
-							newRecord.FlowsheetAdminDay.PatientID = Patient.id;
-							newRecord.FlowsheetAdminDay.Cycle = cd[0].split(" ")[1];
-							newRecord.FlowsheetAdminDay.Day = cd[1].split(" ")[1];
-							newRecord.FlowsheetAdminDay.AdminDate = AdmDate;
-
-					        var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
-
-							fsTemplate.save({
-					            scope: this,
-					            success: function (data) {
-					                wccConsoleLog("Saved Template " );
-									this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
-									win.close();
-								},
-								failure : function ( data ) {
-									alert("Flowsheet Save unsuccessful");
-									win.close();
+			if ("Toxicity Side Effects" === btnType) {
+				var tseWin = Ext.widget("ToxicitySideEffectsPUWin");
+			}
+			else if ("Disease Response" === btnType) {
+				var drWin = Ext.widget("DiseaseResponsePUWin");
+			}
+			else if ("Other" === btnType) {
+				var othrWin = Ext.widget("OtherPUWin");
+			}
+			else {
+				Ext.create("Ext.window.Window", {
+					title: btnType,
+					height : 220,
+					width : 600,
+					layout: "form",
+					Hdr : btnRecHdr,
+					AdmDate : btnDate,
+					BtnType : btnType,
+					items : [{
+						xtype : "textareafield", grow : true, name : "Data", fieldLabel : "Enter text", margin: "10"
+					}],
+					buttons : [
+						{ 
+							text : "Save", 
+							scope : this,
+							handler : function(btn, evt) {
+								var win = btn.up('window');
+								var initialConfig = win.getInitialConfig();
+								var theField = win.down('textareafield');
+								var value = theField.getValue();
+								var fieldName;
+								var theGrid = Ext.getCmp("FlowsheetGrid");
+								var Patient = this.application.Patient;
+								var cType = win.initialConfig.BtnType;
+								var Header = win.initialConfig.Hdr;
+								var AdmDate = win.initialConfig.AdmDate;
+								switch (cType) {
+									case "Disease Response":
+										fieldName = "DiseaseResponse";
+										break;
+									case "Toxicity Side Effects":
+										fieldName = "Toxicity";
+										break;
+									case "Other":
+										fieldName = "Other";
+										break;
 								}
-							});
+								var cd = Header.split(", ");		// Header is formated like "Cycle XX, Day YY", so a split on ", " gives cd = [ "Cycle XX", "Day YY"];
+								var newRecord = {};
+								newRecord.PAT_ID = Patient.PAT_ID;		// Treatment ID;
+								newRecord.FlowsheetAdminDay = {};
+								newRecord.FlowsheetAdminDay[fieldName] = value;
+								newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+								newRecord.FlowsheetAdminDay.Cycle = cd[0].split(" ")[1];
+								newRecord.FlowsheetAdminDay.Day = cd[1].split(" ")[1];
+								newRecord.FlowsheetAdminDay.AdminDate = AdmDate;
+
+								var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+								fsTemplate.save({
+									scope: this,
+									success: function (data) {
+										wccConsoleLog("Saved Template " );
+										this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+										win.close();
+									},
+									failure : function ( data ) {
+										alert("Flowsheet Save unsuccessful");
+										win.close();
+									}
+								});
+							}
+						},
+						{
+							text : "Cancel",
+							handler : function(btn, evt) {
+								var win = btn.up('window');
+								win.close();
+							}
 						}
-					},
-					{
-						text : "Cancel",
-						handler : function(btn, evt) {
-							var win = btn.up('window');
-							win.close();
-						}
-					}
-				]
-			}).show();
+					]
+				}).show();
+			}
 		}
 	},
 

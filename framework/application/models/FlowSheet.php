@@ -37,6 +37,7 @@ class Flowsheet extends Model
         $weight = (!empty($flowsheetAdminDay->Weight)) ? $flowsheetAdminDay->Weight : 'null';
         $diseaseResponse = (!empty($flowsheetAdminDay->DiseaseResponse)) ? $this->escapeString($flowsheetAdminDay->DiseaseResponse) : null;
         $toxicity = (!empty($flowsheetAdminDay->Toxicity)) ? $this->escapeString($flowsheetAdminDay->Toxicity) : null;
+        $ToxicityLU_ID = (!empty($flowsheetAdminDay->ToxicityLU_ID)) ? $this->escapeString($flowsheetAdminDay->ToxicityLU_ID) : null;
         $other = (!empty($flowsheetAdminDay->Other)) ? $this->escapeString($flowsheetAdminDay->Other) : null;
         
         $result = $this->query("
@@ -49,7 +50,7 @@ class Flowsheet extends Model
         ");
         
         if (empty($result)) {
-            $this->_flowsheetId = trim(com_create_guid(), '{}');
+            $this->_flowsheetId = $this->newGUID(); // trim(com_create_guid(), '{}');
             
             $query = 
                 "INSERT INTO Flowsheet_ProviderNotes (
@@ -57,6 +58,7 @@ class Flowsheet extends Model
                      Weight,
                      Disease_Response,
                      Toxicity,
+                     ToxicityLU_ID,
                      Other,
                      PAT_ID,
                      Cycle,
@@ -67,6 +69,7 @@ class Flowsheet extends Model
                      $weight,
                      '$diseaseResponse',
                      '$toxicity',
+                     '$ToxicityLU_ID',
                      '$other',
                      '$PAT_ID',
                      '$cycle',
@@ -81,12 +84,14 @@ class Flowsheet extends Model
             $weight = (empty($weight)) ? 'null' : $weight; // we actually need a second statement to assign the value for 'weight' to make sure the query still works with a null value
             $diseaseResponse = (empty($diseaseResponse)) ? $this->escapeString($result[0]['Disease_Response']) : $diseaseResponse;
             $toxicity = (empty($toxicity)) ? $this->escapeString($result[0]['Toxicity']) : $toxicity;
+            $ToxicityLU_ID = (empty($ToxicityLU_ID)) ? $this->escapeString($result[0]['ToxicityLU_ID']) : $ToxicityLU_ID;
             $other = (empty($other)) ? $this->escapeString($result[0]['Other']) : $other;
             $query = 
                 "UPDATE Flowsheet_ProviderNotes SET
                      Weight = $weight,
                      Disease_Response = '$diseaseResponse',
                      Toxicity = '$toxicity',
+                     ToxicityLU_ID = '$ToxicityLU_ID',
                      Other = '$other'
                  WHERE PAT_ID = '$PAT_ID'
                    AND Cycle = '$cycle'
@@ -94,7 +99,6 @@ class Flowsheet extends Model
                    AND AdminDate = '$adminDate'
                  ";
         }
-        
         return $this->query($query);
     }
 
@@ -201,27 +205,100 @@ class Flowsheet extends Model
     {
         $query = "
             SELECT 
-                ndt.PAT_ID AS patId, ndt.Cycle AS cycle, ndt.AdminDay AS adminDay, ndt.AdminDate AS adminDate, 
-                ndt.Type AS type, ndt.Drug AS drug, ndt.Dose AS dose, ndt.Unit AS unit,
-                fs.Weight AS weight, fs.Disease_Response AS disease, fs.Toxicity AS toxicity, fs.Other AS other
-            FROM ND_Treatment ndt LEFT JOIN Flowsheet_ProviderNotes fs ON (
+                ndt.PAT_ID AS patId, 
+                ndt.Cycle AS cycle, 
+                ndt.AdminDay AS adminDay, 
+                ndt.AdminDate AS adminDate, 
+                ndt.Type AS type, 
+                ndt.Drug AS drug, 
+                ndt.Dose AS dose, 
+                ndt.Unit AS unit,
+                fs.Weight AS weight, 
+                fs.Disease_Response AS disease, 
+                fs.ToxicityLU_ID AS ToxicityLU_ID, 
+                fs.Toxicity AS toxicity, 
+                fs.Other AS other
+            FROM ND_Treatment ndt 
+            LEFT JOIN Flowsheet_ProviderNotes fs ON (
                 ndt.PAT_ID = fs.PAT_ID AND ndt.AdminDate = fs.AdminDate
             )
             WHERE ndt.PAT_ID = '$id' 
-	
             UNION
-	
             SELECT 
-                fs.PAT_ID AS patId, fs.Cycle AS cycle, fs.Day AS adminDay, fs.AdminDate AS adminDate, 
-                ndt.Type AS type, ndt.Drug AS drug, ndt.Dose AS dose, ndt.Unit AS unit,
-                fs.Weight AS weight, fs.Disease_Response AS disease, fs.Toxicity AS toxicity, fs.Other AS other
-            FROM Flowsheet_ProviderNotes fs LEFT JOIN ND_Treatment ndt ON (
+                fs.PAT_ID AS patId, 
+                fs.Cycle AS cycle, 
+                fs.Day AS adminDay, 
+                fs.AdminDate AS adminDate, 
+                ndt.Type AS type, 
+                ndt.Drug AS drug, 
+                ndt.Dose AS dose, 
+                ndt.Unit AS unit,
+                fs.Weight AS weight, 
+                fs.Disease_Response AS disease, 
+                fs.ToxicityLU_ID AS ToxicityLU_ID, 
+                fs.Toxicity AS toxicity, 
+                fs.Other AS other
+            FROM Flowsheet_ProviderNotes fs 
+            LEFT JOIN ND_Treatment ndt ON (
                 ndt.PAT_ID = fs.PAT_ID AND ndt.AdminDate = fs.AdminDate
             )
             WHERE fs.PAT_ID = '$id'
         ";
+
+
+
+
+
+        $query = "
+            SELECT 
+                ndt.PAT_ID AS patId, 
+                ndt.Cycle AS cycle, 
+                ndt.AdminDay AS adminDay, 
+                ndt.AdminDate AS adminDate, 
+                ndt.Type AS type, 
+                ndt.Drug AS drug, 
+                ndt.Dose AS dose, 
+                ndt.Unit AS unit,
+                fs.Weight AS weight, 
+                fs.Disease_Response AS disease, 
+                fs.ToxicityLU_ID AS ToxicityLU_ID, 
+                convert(varchar(MAX), sci.details) as toxDetails,
+                sci.label as ToxInstr,
+                fs.Toxicity AS toxicity, 
+                fs.Other AS other
+            FROM ND_Treatment ndt 
+            LEFT JOIN Flowsheet_ProviderNotes fs ON (
+                ndt.PAT_ID = fs.PAT_ID AND ndt.AdminDate = fs.AdminDate
+            )
+            join SiteCommonInformation sci on sci.ID = fs.ToxicityLU_ID
+            WHERE ndt.PAT_ID = '$id' 
+            UNION
+            SELECT 
+                fs.PAT_ID AS patId, 
+                fs.Cycle AS cycle, 
+                fs.Day AS adminDay, 
+                fs.AdminDate AS adminDate, 
+                ndt.Type AS type, 
+                ndt.Drug AS drug, 
+                ndt.Dose AS dose, 
+                ndt.Unit AS unit,
+                fs.Weight AS weight, 
+                fs.Disease_Response AS disease, 
+                fs.ToxicityLU_ID AS ToxicityLU_ID, 
+                convert(varchar(MAX), sci.details) as toxDetails,
+                sci.label as ToxInstr,
+                fs.Toxicity AS toxicity, 
+                fs.Other AS other
+            FROM Flowsheet_ProviderNotes fs 
+            LEFT JOIN ND_Treatment ndt ON (
+                ndt.PAT_ID = fs.PAT_ID AND ndt.AdminDate = fs.AdminDate
+            )
+            join SiteCommonInformation sci on sci.ID = fs.ToxicityLU_ID
+            WHERE fs.PAT_ID = '$id'
+            ";
+
+
         $results = $this->query($query);
-        
         foreach ($results as $result) {
             if (empty($result['cycle']) || empty($result['adminDay'])) {
                 continue;
@@ -259,7 +336,12 @@ class Flowsheet extends Model
                 $flowsheetRow["01 General"]["Disease"][$index] = $result['disease'];
             }
             if (!empty($result['toxicity'])) {
-                $flowsheetRow["01 General"]["Toxicity"][$index] = $result['toxicity'];
+                $tox = array();
+                $tox["Instr"] = $result['ToxInstr'];
+                $tox["Details"] = $result['toxDetails'];
+                $tox["Comments"] = $result['toxicity'];
+
+                $flowsheetRow["01 General"]["Toxicity"][$index] = json_encode($tox);
             }
             if (!empty($result['other'])) {
                 $flowsheetRow["01 General"]["Other"][$index] = $result['other'];
@@ -292,6 +374,12 @@ class Flowsheet extends Model
                 'Type' => '01 General',
                 'label' => 'Toxicity'
             ), $flowsheetRow['01 General']['Toxicity']);
+        }
+        if (! empty($flowsheetRow['01 General']['ToxicityLU_ID'])) {
+            $flowsheet[] = array_merge(array(
+                'Type' => '01 General',
+                'label' => 'ToxicityLU_ID'
+            ), $flowsheetRow['01 General']['ToxicityLU_ID']);
         }
         
         if (! empty($flowsheetRow['01 General']['Other'])) {

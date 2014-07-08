@@ -1784,7 +1784,7 @@ function buildJsonObj4Output() {
                     $query = "
                         SELECT DischargeID, PatientID, 
                         CONVERT(varchar,date,101) as date
-                        FROM $DischargeLinkTable where PatientID = '$PatientID' order by date";
+                        FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
                 }
             }
             error_log("DischargeInstructions Query - $query");
@@ -1980,7 +1980,7 @@ function buildJsonObj4Output() {
         return;
     }
 
-
+/*********************** SEANS CODE ****************************
     function CumulativeDoseTracking($pid,$CDHID){
         
         $jsonRecord = array();
@@ -2049,7 +2049,249 @@ function buildJsonObj4Output() {
         $this->set('jsonRecord', $jsonRecord);
         
     }
+************************************/
+/**
+ * Cumulative Dose Tracking - This service call manages the Patient Cumulative Dose History records
+ * Each time a Patient Cumulative Dose History ("cdhRecord") record is generated for a particular patient a record is maintained consisting of the following:
+ * ...
+ *
+ * GET Call
+ *
+ * POST Call
+ *
+ * PUT Call
+ *
+ * DELETE Call
+ *
+ * Table Definition
+ *
 
-	
+// 7/1/2014 - MWB - Cumulative Dose Tracking SQL Table
+USE [COMS_TEST_2]
+CREATE TABLE [dbo].[Patient_CumulativeDoseHistory](
+      [ID] [uniqueidentifier] [uniqueidentifier] NOT NULL,
+      [Patient_ID] [uniqueidentifier] NOT NULL,
+      [MedID] [uniqueidentifier] NOT NULL,
+      [CumulativeDoseAmt] [varchar](30) NOT NULL,
+      [CumulativeDoseUnits] [varchar](30) NOT NULL,
+      [Date_Changed] [datetime] DEFAULT (getdate()),
+      [Author] [varchar](30) NULL
+) ON [PRIMARY]
 
+
+
+ INSERT INTO [COMS_TEST_2].[dbo].[Patient_CumulativeDoseHistory]
+           (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Author)
+     VALUES
+           ('B9D985FA-C493-46AC-A388-E42997AA2629', 'C4A968D0-06F3-E311-AC08-000C2935B86F', '7D95474E-A99F-E111-903E-000C2935B86F', 300, 'ml', 'Mike Barlow')
+
+
+SAMPLE GET for testing
+All records for patient:
+http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
+Specific record for patient:
+http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F/B9D985FA-C493-46AC-A388-E42997AA2629
+
+
+SAMPLE POST for testing (Note: MedID is for 'ACYCLOVIR INJ'
+URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
+Content-Type:application/json
+Data:
+{
+    "MedID":"7D95474E-A99F-E111-903E-000C2935B86F",
+    "CumulativeDoseAmt" : "993",
+    "CumulativeDoseUnits" : "Light Years",
+    "Author" : "NOT Someone"
+}
+
+SAMPLE PUT for testing
+URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F/C4A968D0-06F3-E311-AC08-000C2935B86F
+Content-Type:application/json
+Data:
+{
+    "MedID":"C4A968D0-06F3-E311-AC08-000C2935B86F",
+    "CumulativeDoseAmt" : "399",
+    "CumulativeDoseUnits" : "MiliRoentgens",
+    "Author" : "Someone"
+}
+ *
+ **/
+ 
+    function CumulativeDoseTracking($PatientID = null, $cdhRecordID=null ) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+
+        $DataTable = "Patient_CumulativeDoseHistory";
+        $GUID = "";
+        $this->Patient->beginTransaction();
+        $Date2 = date("F j, Y");
+
+
+            /* Get POST/PUT JSON data from input stream (content header must be set to: "Content-Type:application/json" for this method to work */
+            parse_str(file_get_contents("php://input"),$post_vars);
+            $MedID = "XXX";
+            $MedID = $post_vars["MedID"];
+            if (isset($post_vars['MedID'])) {
+                $MedID = $post_vars['MedID'];
+            }
+            $CumulativeDoseAmt = "XXX";
+            if (isset($post_vars['CumulativeDoseAmt'])) {
+                $CumulativeDoseAmt = $post_vars['CumulativeDoseAmt'];
+            }
+            $CumulativeDoseUnits = "XXX";
+            if (isset($post_vars['CumulativeDoseUnits'])) {
+                $CumulativeDoseUnits = $post_vars['CumulativeDoseUnits'];
+            }
+            $Author = "XXX";
+            if (isset($post_vars['Author'])) {
+                $Author = $post_vars['Author'];
+            }
+
+error_log("Input File Contents - " . file_get_contents("php://input"));
+error_log("post_vars - $dump");
+
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($PatientID) {
+                if ($cdhRecordID) {
+                    $query = "SELECT 
+                            dt.ID, 
+                            dt.Patient_ID, 
+                            dt.MedID, 
+                            dt.CumulativeDoseAmt, 
+                            dt.CumulativeDoseUnits, 
+                            dt.Author, 
+                            lu1.Name,
+                        CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
+                        from [dbo].[Patient_CumulativeDoseHistory] dt
+                        join LookUp lu1 on Lookup_ID = dt.MedID and Lookup_Type = 2
+                        where Patient_ID = '$PatientID' and dt.ID = '$cdhRecordID' order by Date_Changed desc";
+                }
+                else {
+                    $query = "SELECT 
+                            dt.ID, 
+                            dt.Patient_ID, 
+                            dt.MedID, 
+                            dt.CumulativeDoseAmt, 
+                            dt.CumulativeDoseUnits, 
+                            dt.Author, 
+                            lu1.Name,
+                        CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
+                        from [dbo].[Patient_CumulativeDoseHistory] dt
+                        join LookUp lu1 on Lookup_ID = dt.MedID and Lookup_Type = 2
+                        where Patient_ID = '$PatientID' order by Date_Changed desc";
+                }
+            }
+            error_log("CumulativeDoseTracking Query - $query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "SELECT NEWID()";
+            $GUID = $this->Patient->query($query);
+            $GUID = $GUID[0][""];
+
+/************
+            if (isset($_POST["MedID"])) {
+                $MedID = $_POST["MedID"];
+            }
+            if (isset($_POST["CumulativeDoseAmt"])) {
+                $CumulativeDoseAmt = $_POST["CumulativeDoseAmt"];
+            }
+            if (isset($_POST["CumulativeDoseUnits"])) {
+                $CumulativeDoseUnits = $_POST["CumulativeDoseUnits"];
+            }
+            if (isset($_POST["Author"])) {
+                $Author = $_POST["Author"];
+            }
+************/
+            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Author)
+            VALUES (
+                '$GUID',
+                '$PatientID',
+                '$MedID',
+                '$CumulativeDoseAmt',
+                '$CumulativeDoseUnits',
+                '$Author'
+            )";
+
+error_log($query);
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $query = "";    /* Reset query so we don't run it again in the final step */
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            /* Update table record */
+            $query = "
+                UPDATE $DataTable
+                   SET 
+                    MedID = '$MedID', 
+                    CumulativeDoseAmt = '$CumulativeDoseAmt', 
+                    CumulativeDoseUnits = '$CumulativeDoseUnits', 
+                    Date_Changed = '$Date_Changed', 
+                    Author = '$Author'
+                   WHERE ID = '$cdhRecordID'
+            ";
+            $retVal = $this->Patient->query($query);
+
+            /* Check for errors */
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $query = "";    /* Reset query so we don't run it again in the final step */
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from $DataTable WHERE ID = '$cdhRecordID'";
+            $retVal = $this->Patient->query($query);
+
+            /* Check for errors */
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $query = "";    /* Reset query so we don't run it again in the final step */
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for CumulativeDoseTracking Service (expected a GET/POST/PUS/DELETE got a " . $_SERVER['REQUEST_METHOD'];
+            $this->Patient->rollbackTransaction();
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        if ("" !== $query) {
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->Patient->rollbackTransaction();
+            }
+            else {
+                $jsonRecord['success'] = 'true';
+                if (count($retVal) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($retVal);
+                    $jsonRecord['records'] = $retVal;
+                }
+            }
+        }
+        $this->Patient->endTransaction();
+        $this->set('jsonRecord', $jsonRecord);
+        return;
+    }
 }

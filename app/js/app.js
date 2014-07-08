@@ -610,6 +610,7 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
+	// "COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel",
 
 	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs",
@@ -1589,6 +1590,8 @@ Ext.application({
 		, "NewPlan.CTOS.FlowSheetTab"
 		, "NewPlan.CTOS.ChronologyTab"
 		, "NewPlan.CTOS.PatientSummaryTab"
+		// , "NewPlan.CTOS.ToxicitySideEffectsPanel"
+
 		, "NewPlan.CTOS.NursingDocs.NursingDocs"
 		, "NewPlan.CTOS.NursingDocs.GenInfoTab"
 		, "NewPlan.CTOS.NursingDocs.AssessmentTab"

@@ -23,7 +23,7 @@ Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 				}
 			})
 		},
-		{ "xtype" : "htmleditor", "name" : "Documentation", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
+		{ "xtype" : "htmleditor", "name" : "Documentation", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 922, "margin" : "0 0 10 0" },
 		{ "xtype" : "ManagementBtns"},
 
 		{  

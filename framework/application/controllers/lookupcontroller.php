@@ -1710,7 +1710,10 @@ error_log("IDEntry");
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
         }
-        $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
+        $UniqMsg = "";
+        if (isset($requestData)) {
+            $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
+        }
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, $UniqMsg);
     }
 

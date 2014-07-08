@@ -191,7 +191,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab PatientInfo AdverseEventsHistory" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
-            "NewPlanTab Toxicity_SideEffects" : {
+            "NewPlanTab ToxicitySideEffectsPanel" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
             "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
