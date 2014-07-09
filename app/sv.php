@@ -25,6 +25,7 @@ echo "sshusr: ".$_SESSION['sshusr']."<br>";
 echo "sshpwd: ".$_SESSION['sshpwd']."<br>";
 echo "AC: ".$_SESSION['AC']."<br>";
 echo "VC: ".$_SESSION['VC']."<br>";
+echo "COMSchk: ".$_SESSION['COMSchk']."<br>";
 
 
 echo "<br>";
