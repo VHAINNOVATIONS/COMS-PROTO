@@ -783,7 +783,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
 				foreach($queryPI as $row){
 					$match =  $row['Match'];
-					echo "match: ".$match."";
+					//echo "match: ".$match."";
 					}
 				if ($match != ''){
 				
