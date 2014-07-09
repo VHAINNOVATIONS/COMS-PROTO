@@ -120,7 +120,11 @@ class NursingDoc extends Model {
      */
     public function updateTreatment($data)
     {
-        $this->_treatmentId = trim(com_create_guid(), '{}');
+        $query = "SELECT NEWID()";
+        $GUID = $this->query($query);
+        $GUID = $GUID[0][""];
+
+        $this->_treatmentId = trim($GUID, '{}');
         $Patient_ID = $data->patientID;
         $Template_ID = $data->templateID;
         $PAT_ID = $data->PAT_ID;

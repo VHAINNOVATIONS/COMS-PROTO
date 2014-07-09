@@ -5,8 +5,8 @@ Ext.define("COMS.view.Management.Toxicity" ,{
 	"autoEl" : { tag : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
-		{ "xtype" : "textfield", "name" : "Label", "fieldLabel" : "Toxicity Instruction", "labelWidth" : 160, "width" : 940},
-		{ "xtype" : "htmleditor", "style" : "color: white", "name" : "Details", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" },
+		{ "xtype" : "textfield", "name" : "Label", "fieldLabel" : "Toxicity Instruction", "labelWidth" : 160, "width" : 922},
+		{ "xtype" : "htmleditor", "style" : "color: white", "name" : "Details", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 922, "margin" : "0 0 10 0" },
 		{ "xtype" : "ManagementBtns"}
 	
 	,

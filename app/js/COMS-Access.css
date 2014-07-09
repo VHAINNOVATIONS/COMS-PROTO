@@ -82,6 +82,15 @@ h1 {
 	border: thin solid;
 }
 
+.coms-section-emphasis ul {
+	margin: 1.0em 2.5em;
+}
+
+.coms-section-emphasis li {
+	list-style: disc;
+}
+
+
 .consolelog {
 	display: none;
 }

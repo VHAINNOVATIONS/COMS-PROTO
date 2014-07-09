@@ -1,8 +1,8 @@
-Ext.define("COMS.view.NewPlan.CTOS.Toxicity_SideEffects" ,{
+Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPanel" ,{
 	"extend" : "Ext.panel.Panel",
-	"alias" : "widget.Toxicity_SideEffects",
+	"alias" : "widget.ToxicitySideEffectsPanel",
 	"title" : "Toxicity / Side Effects",
-	"name" : "Toxicity_SideEffects",
+	"name" : "ToxicitySideEffectsPanel",
 	"collapsible" : true, 
 	"collapsed" : true, 
 	"margin" : "0 0 10 0", 
