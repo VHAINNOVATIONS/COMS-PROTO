@@ -47,6 +47,9 @@ Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.ToxicityInstruction = "/LookUp/ToxicityInstruction";
+Ext.URLs.PatientCumulativeDosing = "/Patient/CumulativeDoseTracking";
+Ext.URLs.CumulativeDosingMeds = "/LookUp/view/CumulativeDoseMeds";
+
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
 
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
@@ -506,6 +509,7 @@ Ext.COMSModels.ND_Treatment = "COMS.model.ND_Treatment";
 Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
 Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
+Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -532,6 +536,7 @@ Ext.require([
 	Ext.COMSModels.TimeFrameUnit,
 	Ext.COMSModels.TotalCoursesMax,
 	Ext.COMSModels.Toxicity,
+	Ext.COMSModels.CumulativeDosingMeds,
 	Ext.COMSModels.EmotegenicLevel,
 	Ext.COMSModels.FebrileNeutropeniaRisk,
 	Ext.COMSModels.References,
@@ -593,6 +598,7 @@ Ext.require([
 	"COMS.controller.Management.DiseaseStaging",
 	"COMS.controller.Management.IntelligentDataElements",
 	"COMS.controller.Management.Toxicity",
+	"COMS.controller.Management.CumulativeDosing",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -610,7 +616,6 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
-	// "COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel",
 
 	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs",
@@ -1583,6 +1588,7 @@ Ext.application({
 		, "Management.DiseaseStaging"
 		, "Management.IntelligentDataElements"
 		, "Management.Toxicity"
+		, "Management.CumulativeDosing"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"
@@ -1590,7 +1596,6 @@ Ext.application({
 		, "NewPlan.CTOS.FlowSheetTab"
 		, "NewPlan.CTOS.ChronologyTab"
 		, "NewPlan.CTOS.PatientSummaryTab"
-		// , "NewPlan.CTOS.ToxicitySideEffectsPanel"
 
 		, "NewPlan.CTOS.NursingDocs.NursingDocs"
 		, "NewPlan.CTOS.NursingDocs.GenInfoTab"

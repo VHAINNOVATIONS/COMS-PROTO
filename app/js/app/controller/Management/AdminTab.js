@@ -16,7 +16,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.MedicationHolds',
 		'Management.IV_Fluid_Types', 
 		'Management.CheckCombo',
-		// 'Management.Meds',
 		'Management.Buttons',
 		'Management.MedicationDocumentation',
 		'Management.ClinicInfo',

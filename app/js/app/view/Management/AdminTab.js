@@ -5,7 +5,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 	autoEl : { tag : "nav" },
 	padding : "10 10 5 10",
 	plain : true,
-	activeTab: 7,
+	//activeTab: 7,
 	"defaults": { padding : "10 10 5 10", plain : true, "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	items : [
 		{ xtype : "AddLookups", title: "Manage LookUps" },
@@ -35,7 +35,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ xtype : "MedicationHolds", title : "Medication Holds"},
 				{ xtype : "IV_Fluid_Types", title : "IV Fluid Types", name : "IV_Fluid_Types"},
 				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"},
-				{ xtype : "Toxicity", title: "Toxicity"}
+				{ xtype : "Toxicity", title: "Toxicity"},
+				{ xtype : "CumulativeDosing", title: "Cumulative Dose Medications"}
 			]
 		}
 	]

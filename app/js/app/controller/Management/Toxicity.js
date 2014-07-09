@@ -130,6 +130,6 @@ Ext.define('COMS.controller.Management.Toxicity', {
 				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
 			}
 		}
-	}, 
+	}
 });
 

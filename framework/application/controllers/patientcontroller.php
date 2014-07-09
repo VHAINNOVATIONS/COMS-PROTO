@@ -2068,6 +2068,15 @@ function buildJsonObj4Output() {
  *
  * Table Definition
  *
+Initialize Lookup Table for Cumulative Dose Medications
+Cumulative Dose Medications are stored in the Lookup Table with a Lookup_Type_ID = 60.
+Note that Lookup_Types between 40 and 60 are used for other purposes than standard lookups.
+
+INSERT INTO [COMS_TEST_2].[dbo].[LookUp]
+           ([Lookup_Type],[Lookup_Type_ID],[Name],[Description])
+     VALUES
+           (0, 60, 'Cumulative Dosing Meds', 'Medication ID')
+
 
 // 7/1/2014 - MWB - Cumulative Dose Tracking SQL Table
 USE [COMS_TEST_2]
@@ -2098,14 +2107,9 @@ http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E31
 
 SAMPLE POST for testing (Note: MedID is for 'ACYCLOVIR INJ'
 URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
-Content-Type:application/json
+Content-Type:application/x-www-form-urlencoded; charset=UTF-8
 Data:
-{
-    "MedID":"7D95474E-A99F-E111-903E-000C2935B86F",
-    "CumulativeDoseAmt" : "993",
-    "CumulativeDoseUnits" : "Light Years",
-    "Author" : "NOT Someone"
-}
+    Medication=7D95474E-A99F-E111-903E-000C2935B86F
 
 SAMPLE PUT for testing
 URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F/C4A968D0-06F3-E311-AC08-000C2935B86F

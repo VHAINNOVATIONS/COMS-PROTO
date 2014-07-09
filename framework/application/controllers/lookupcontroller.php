@@ -80,12 +80,21 @@ class LookupController extends Controller {
     
 
     function save() {
-
-        $form_data = json_decode(file_get_contents('php://input'));
-        $id = $form_data->{'id'};
-        $name = $form_data->{'value'};
-        $description = $form_data->{'description'};
-        $lookupid = $form_data->{'lookupid'};
+        if (isset($_POST)) {
+            $id = $_POST["id"];
+            $name = $_POST["value"];
+            $description = $_POST["description"];
+            if (isset($_POST["lookupid"])) {
+                $lookupid = $_POST["lookupid"];
+            }
+        }
+        else {
+            $form_data = json_decode(file_get_contents('php://input'));
+            $id = $form_data->{'id'};
+            $name = $form_data->{'value'};
+            $description = $form_data->{'description'};
+            $lookupid = $form_data->{'lookupid'};
+        }
 
         $this->LookUp->beginTransaction();
         
@@ -340,7 +349,6 @@ class LookupController extends Controller {
     
     function view($name = null, $description = null, $id = null) {
         $this->set('title', 'All Lookups For - ' . $name);
-
         if (NULL === $description && NULL != $name && NULL === $id) {
             $this->set('lookups', $this->LookUp->getDataForJson($name));
         } else if (NULL != $description && NULL != $name && NULL === $id) {
