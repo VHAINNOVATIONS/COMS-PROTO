@@ -15,13 +15,52 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		});
 	},
 
+	addNewRecord : function(fields) {
+		var len = fields.length;
+		var i, v1, v2, fld;
+		var newRecord = {};
+		for (i = 0; i < len; i++) {
+			fld = fields.getAt(i);
+			v1 = "";
+			v2 = "";
+			if ("combobox" === fld.xtype) {
+				v1 = fld.getValue();
+				v2 = fld.getRawValue();
+				if ("value" == fld.name) {
+					newRecord.MedName = v2;
+					newRecord.MedID = v1;
+				}
+				else if ("Units" == fld.name) {
+					newRecord.Units = v2;
+					newRecord.CumulativeDoseUnits = v1;
+				}
+			}
+			else {
+				v1 = fld.getValue();
+				if ("LifetimeDose" === fld.name) {
+					newRecord.CumulativeDoseAmt = v1;
+				}
+				else if ("Source" === fld.name) {
+					newRecord.Souce = v1;
+				}
+			}
+		}
+		this.application.Patient.CumulativeDoseTracking.push(newRecord);
+	},
+
 	_submitForm : function(form) {
 		form.url += "/" + this.application.Patient.id;
+		this.addNewRecord(form.getFields());
 		form.submit(
 			{
+				scope : this,
 				success: function(form, action) {
 					form.owner.up("window").hide();
 					form.reset();
+					
+					var thisCtl = this.getController("NewPlan.NewPlanTab");
+					var thePITable = thisCtl.getPatientInfoTableInformation();
+					thePITable.update( this.application.Patient );
 				},
 				failure: function(form, action) {
 					switch (action.failureType) {
@@ -53,7 +92,6 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (resp.success) {
-
 						var i, dupMed = false, recs, len;
 						if (resp.records) {
 							recs = resp.records; 
@@ -71,12 +109,10 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						}
 					}
 					else {
-						debugger;
 						alert("ERROR - Saving Patient Cumulative Medication Dosing History");
 					}
 				},
 				failure : function( response, opts ) {
-					debugger;
 					alert("ERROR: Saving Patient Cumulative Medication Dosing History");
 				}
 			});
