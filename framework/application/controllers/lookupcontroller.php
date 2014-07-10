@@ -1815,6 +1815,28 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
             $ErrMsg = "Retrieving $Msg Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+
+/************** SAMPLE POST ***********
+Request URL:    http://coms-mwb.dbitpro.com:355/LookUp/CumulativeDoseMeds
+Request Method: POST
+Content-Type:   application/x-www-form-urlencoded; charset=UTF-8
+
+Form Data
+MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDoseUnits=AB85F3AA-0B21-E111-BF57-000C2935B86F
+
+        parse_str(file_get_contents("php://input"),$post_vars);
+
+        if (isset($post_vars["MedName"])) {
+            $MedID = $post_vars["MedName"];
+        }
+        if (isset($post_vars["CumulativeDoseAmt"])) {
+            $CumulativeDoseAmt = $post_vars["CumulativeDoseAmt"];
+        }
+        if (isset($post_vars["CumulativeDoseUnits"])) {
+            $CumulativeDoseUnits = $post_vars["CumulativeDoseUnits"];
+        }
+
+ *************************/
             $query = "INSERT INTO CumulativeDoseMeds (MedID, CumulativeDoseAmt, CumulativeDoseUnits) VALUES ('$MedID' ,'$CumulativeDoseAmt', '$CumulativeDoseUnits')";
             error_log("POST - $query");
             $jsonRecord['msg'] = "$Msg Record Created";

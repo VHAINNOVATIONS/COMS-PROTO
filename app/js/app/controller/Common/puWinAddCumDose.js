@@ -20,8 +20,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		form.submit(
 			{
 				success: function(form, action) {
-					form.up("window").hide();
-					form.reset();
+					form.owner.up("window").hide();
+					form.owner.reset();
 				},
 				failure: function(form, action) {
 					switch (action.failureType) {
@@ -34,8 +34,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						case Ext.form.action.Action.SERVER_INVALID:
 						   Ext.Msg.alert('Failure', action.result.msg);
 				   }
-					form.up("window").hide();
-					form.reset();
+					form.owner.up("window").hide();
+					form.owner.reset();
 				}
 			}
 		);
@@ -44,18 +44,20 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	Save : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
-				Ext.Ajax.request({
-					scope : this,
-					pForm : theForm,
-					url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
-					success: function( response, opts ){
-						debugger;
-						var selectedMedID = opts.pForm.getValues().value;
-						var text = response.responseText;
-						var resp = Ext.JSON.decode( text );
-						if (resp.success) {
+			Ext.Ajax.request({
+				scope : this,
+				pForm : theForm,
+				url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+				success: function( response, opts ){
+					var selectedMedID = opts.pForm.getValues().value;
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (resp.success) {
 
-							var i, dupMed = false, recs = resp.records, len = recs.length;
+						var i, dupMed = false, recs, len;
+						if (resp.records) {
+							recs = resp.records; 
+							len = recs.length;
 							for (i = 0; i < len; i++) {
 								if (recs[i].MedID === selectedMedID) {
 									alert("Duplicate Medication selected. Please select another");
@@ -63,27 +65,21 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 									break;
 								}
 							}
-							if (!dupMed) {
-								this._submitForm(theForm);
-							}
 						}
-						else {
-							debugger;
-							alert("ERROR - Saving Patient Cumulative Medication Dosing History");
+						if (!dupMed) {
+							this._submitForm(theForm);
 						}
-					},
-					failure : function( response, opts ) {
-						debugger;
-						alert("ERROR: Saving Patient Cumulative Medication Dosing History");
 					}
-				});
-
-// this._submitForm(theForm);
-
-
-
-
-
+					else {
+						debugger;
+						alert("ERROR - Saving Patient Cumulative Medication Dosing History");
+					}
+				},
+				failure : function( response, opts ) {
+					debugger;
+					alert("ERROR: Saving Patient Cumulative Medication Dosing History");
+				}
+			});
 		}
 	},
 	Cancel : function(btn) {

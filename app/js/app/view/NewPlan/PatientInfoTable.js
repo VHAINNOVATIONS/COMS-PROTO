@@ -16,7 +16,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 				"{[this.CalcBSA(values)]}",		// Needed to calculate the BSA Value if none retrieved.
 				"<table border=\"1\" class=\"InformationTable\">",
 					"<tr>",
-						"<th>Gender:</th><td>{Gender}</td>",
+						"<th style=\"width:15em\">Gender:</th><td>{Gender}</td>",
 						"<th>Age:</th><td>{Age}</td>",
 						"<th>{[this.AddEditBtns(\"Amputation\", values, parent)]}Amputee:</th><td id=\"PatientInformationTableAmputations\">{[this.Amputee(values.Amputations)]}</td>",
 					"</tr>",
@@ -61,11 +61,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 
 	"<tpl if=\"this.Allergies(values)\">",
-							"<table width=\"100%\">",
+							"<table class=\"DataTable\">",
 								"<tr>",
-									"<th style=\"text-align: center;\">Name</th>",
-									"<th style=\"text-align: center;\">Type</th>",
-									"<th style=\"text-align: center;\">Comment</th>",
+									"<th>Name</th>",
+									"<th>Type</th>",
+									"<th>Comment</th>",
 								"</tr>",
 								"<tpl for=\"Allergies\">",
 									"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
@@ -87,9 +87,15 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
 						"<td colspan=5>",
-						"<table width=\"100%\"><tr><th style=\"text-align: center;\">Medication</th><th style=\"text-align: center;\">Total Lifetime Dose</th></tr>",
+
+					"<table class=\"DataTable\">",
+						"<tr>",
+							"<th>Medication</th>",
+							"<th>Total Lifetime Dose</th>",
+							"<th>Source</th>",
+						"</tr>",
 						"<tpl for=\"CumulativeDoseTracking\">",
-							"<tr><td>{Name}</td><td>{CumulativeDoseAmt} {CumulativeDoseUnits}</td></tr>",
+							"<tr><td>{MedName}</td><td>{CumulativeDoseAmt} {Units}</td><td>{Source}</td></tr>",
 						"</tpl>",
 						"</table>",
 
