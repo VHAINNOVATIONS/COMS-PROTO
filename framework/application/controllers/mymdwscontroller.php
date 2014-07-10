@@ -255,29 +255,34 @@ class MymdwsController extends Controller
             }
             
             if (null != $client && !is_array($client)) {
+				if ($_SESSION['COMSchk'] === 1){
+				$username = get_current_user();
+				$roles = $this->Mymdws->getRoleInfo($username);
+				$client = $this->mdwsBase->MDWS_Setup($roles);
+				}
 
-				$allergiesJson = $this->Allergies($value,$client);
-				$vitalsJson = $this->AllVitals($value,$client);
-				$LabInfoJson = $this->LabInfoResults($value,$client);
+				//$allergiesJson = $this->Allergies($value,$client);
+				//$vitalsJson = $this->AllVitals($value,$client);
+				//$LabInfoJson = $this->LabInfoResults($value,$client);
 
 				$GoodMsg = 'Mega call completed succesfully with: ';
-				$GoodMsg .= $allergiesJson['message'] . '; ';
-				$GoodMsg .= $vitalsJson['message'] . '; ';
-				$GoodMsg .= $LabInfoJson['message'] . '; ';
+				//$GoodMsg .= $allergiesJson['message'] . '; ';
+				//$GoodMsg .= $vitalsJson['message'] . '; ';
+				//$GoodMsg .= $LabInfoJson['message'] . '; ';
 
 				$jsonRecord = array();
 
-				if(false === $allergiesJson['success']){
-					$jsonRecord = $allergiesJson;
-				}else if(false === $vitalsJson['success']){
-					$jsonRecord = $vitalsJson;
-				}else if(false === $LabInfoJson['success']){
-					$jsonRecord = $LabInfoJson;
-				}else {
+				//if(false === $allergiesJson['success']){
+					//$jsonRecord = $allergiesJson;
+				//}else if(false === $vitalsJson['success']){
+					//$jsonRecord = $vitalsJson;
+				//}else if(false === $LabInfoJson['success']){
+					//$jsonRecord = $LabInfoJson;
+				//}else {
 					$jsonRecord['success'] = true;
 					$jsonRecord['message'] = $GoodMsg;
 					$jsonRecord['records'] = '';
-				}
+				//}
 
                 $this->mdwsBase->MDWS_Disconnect($client);
 
@@ -322,22 +327,33 @@ class MymdwsController extends Controller
             $this->mdwsBase = new MdwsBase();
         }
         
-        $client = $this->mdwsBase->MDWS_Setup($roles);
+        if(true === $isSSN){
+		$records = $this->Mymdws->checkPatientCOMS($value);
+		
+		foreach ($records as $record) {
+		$Match = $record['Match'];
+		$name = "".$record['First_Name']." ".$record['Last_Name']."";
+		$DFNcoms = $record['DFN'];
+		$_SESSION['COMSchk'] = 1;
+		}		
+		
+		if (trim($Match) === $value){
+		$this->_dfn = $DFNcoms;
+		
+		return ($name);        
+		
+		}else{
+			$client = $this->mdwsBase->MDWS_Setup($roles);
 
-		if (null === $client) {
+			if (null === $client) {
 				$jsonRecord['success'] = false;
 				$jsonRecord['message'] = $this->mdwsBase->MDWSCrashed(true);
 				return $jsonRecord;
-		}
-        
-        if(true === $isSSN){
+			}
             $mdwspatients = $this->MDWSMatchPatient($client, $value);
-        
- //var_dump($value);
- //echo "<br>Count = " . $mdwspatients->count . "<br>";
- //var_dump($mdwspatients);
- //echo "<br>";
-
+			///var_dump($mdwspatients);
+		}
+ 
             if(null != $mdwspatients && 1 < $mdwspatients->count){
                 $jsonRecord['success'] = false;
                 $jsonRecord['message'] = 'More than 1 Patient with SSN matching '.$value;
@@ -350,11 +366,8 @@ class MymdwsController extends Controller
 
             $mdwspatient = $mdwspatients->patients->PatientTO;
             $this->_dfn = $mdwspatient->localPid;
-            
-        }else{
-            $this->_dfn = $value;
         }
-        
+
         $mdwspatient = $this->MDWSSelectPatientByDFN($client,$this->_dfn);            
         
         if(null === $mdwspatient){
@@ -388,7 +401,6 @@ class MymdwsController extends Controller
     }
 
     function LabInfoResults($lastFour,$existingClient=null){
-
         $jsonRecord = array();
         
         if(empty($existingClient)){
@@ -477,6 +489,7 @@ class MymdwsController extends Controller
         }
         
         if (null != $client && !is_array($client)) {
+
             $Allergies = $this->MDWSAllergies($client);
             if (null !== $Allergies) {
 
@@ -695,6 +708,10 @@ class MymdwsController extends Controller
 		if (null === $client) {
 			return "";
 		}
+		//sic
+		//var_dump($client);	
+		//$client = $this->mdwsBase->MDWS_Setup($roles);
+		
 		$result = $client->getAllergies();
 		$result = $this->mdwsBase->MDWsCrashReport($result->getAllergiesResult, "getAllergies", false);
 		if (null === $result) {
@@ -754,20 +771,40 @@ class MymdwsController extends Controller
 			return "";
 		}
         
-// echo "Calling MATCH - <br>";
-// var_dump(array('target'=>$lastFour));
-// echo "<br>";
-        $result = $client->match(array('target'=>$lastFour));
-// echo "<br>Returning from MATCH<br>";
-
-        $result = $this->mdwsBase->MDWsCrashReport($result->matchResult,"match",false);
-            
-		if (null === $result) {
-			return (null);
-		}
-		//echo "result:".var_dump(array('target'=>$result))."<br>";	
-		return ($result->arrays->TaggedPatientArray);
+		// echo "Calling MATCH - <br>";
+		// var_dump(array('target'=>$lastFour));
+		// echo "<br>";
         
+		///$records = $this->Mymdws->checkPatientCOMS($lastFour);
+		///if ($records = $lastFour){
+		
+		///	$result = $records;
+		///
+		///		if (null === $result) {
+		///			return (null);
+		///		}
+		
+			//echo "result:".var_dump(array('target'=>$result))."<br>";	
+			
+		///	return ($records);
+		///	echo "sql";
+		///}else{
+			
+			$result = $client->match(array('target'=>$lastFour));
+		
+			///var_dump($result);
+			// echo "<br>Returning from MATCH<br>";
+
+			$result = $this->mdwsBase->MDWsCrashReport($result->matchResult,"match",false);
+			
+			if (null === $result) {
+			return (null);
+			}
+			
+			//echo "result:".var_dump(array('target'=>$result))."<br>";	
+			return ($result->arrays->TaggedPatientArray);        
+			///echo "mdws";
+			///}   
     }
     
     function MDWSSelectPatientByDFN($client,$dfn){
