@@ -21,7 +21,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			{
 				success: function(form, action) {
 					form.owner.up("window").hide();
-					form.owner.reset();
+					form.reset();
 				},
 				failure: function(form, action) {
 					switch (action.failureType) {
@@ -35,7 +35,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						   Ext.Msg.alert('Failure', action.result.msg);
 				   }
 					form.owner.up("window").hide();
-					form.owner.reset();
+					form.reset();
 				}
 			}
 		);
