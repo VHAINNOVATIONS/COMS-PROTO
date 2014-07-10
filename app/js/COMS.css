@@ -21,6 +21,15 @@ body{
 		
 	}
 
+
+.DataTable { 
+	width: 100% 
+} 
+
+.DataTable th { 
+	text-align: center!important;
+} 
+
 .Level1, .Level3 {
 		background:#EFEFEF;
 }

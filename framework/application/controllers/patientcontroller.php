@@ -2068,11 +2068,20 @@ function buildJsonObj4Output() {
  *
  * Table Definition
  *
+Initialize Lookup Table for Cumulative Dose Medications
+Cumulative Dose Medications are stored in the Lookup Table with a Lookup_Type_ID = 60.
+Note that Lookup_Types between 40 and 60 are used for other purposes than standard lookups.
+
+INSERT INTO [COMS_TEST_2].[dbo].[LookUp]
+           ([Lookup_Type],[Lookup_Type_ID],[Name],[Description])
+     VALUES
+           (0, 60, 'Cumulative Dosing Meds', 'Medication ID')
+
 
 // 7/1/2014 - MWB - Cumulative Dose Tracking SQL Table
 USE [COMS_TEST_2]
 CREATE TABLE [dbo].[Patient_CumulativeDoseHistory](
-      [ID] [uniqueidentifier] [uniqueidentifier] NOT NULL,
+      [ID] [uniqueidentifier] NOT NULL,
       [Patient_ID] [uniqueidentifier] NOT NULL,
       [MedID] [uniqueidentifier] NOT NULL,
       [CumulativeDoseAmt] [varchar](30) NOT NULL,
@@ -2097,15 +2106,13 @@ http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E31
 
 
 SAMPLE POST for testing (Note: MedID is for 'ACYCLOVIR INJ'
-URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
-Content-Type:application/json
+URL: 
+http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
+http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking
+Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+
 Data:
-{
-    "MedID":"7D95474E-A99F-E111-903E-000C2935B86F",
-    "CumulativeDoseAmt" : "993",
-    "CumulativeDoseUnits" : "Light Years",
-    "Author" : "NOT Someone"
-}
+    Medication=7D95474E-A99F-E111-903E-000C2935B86F
 
 SAMPLE PUT for testing
 URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F/C4A968D0-06F3-E311-AC08-000C2935B86F
@@ -2129,62 +2136,42 @@ Data:
         $GUID = "";
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
-
-
-            /* Get POST/PUT JSON data from input stream (content header must be set to: "Content-Type:application/json" for this method to work */
-            parse_str(file_get_contents("php://input"),$post_vars);
-            $MedID = "XXX";
-            $MedID = $post_vars["MedID"];
-            if (isset($post_vars['MedID'])) {
-                $MedID = $post_vars['MedID'];
-            }
-            $CumulativeDoseAmt = "XXX";
-            if (isset($post_vars['CumulativeDoseAmt'])) {
-                $CumulativeDoseAmt = $post_vars['CumulativeDoseAmt'];
-            }
-            $CumulativeDoseUnits = "XXX";
-            if (isset($post_vars['CumulativeDoseUnits'])) {
-                $CumulativeDoseUnits = $post_vars['CumulativeDoseUnits'];
-            }
-            $Author = "XXX";
-            if (isset($post_vars['Author'])) {
-                $Author = $post_vars['Author'];
-            }
-
-error_log("Input File Contents - " . file_get_contents("php://input"));
-error_log("post_vars - $dump");
-
+        parse_str(file_get_contents("php://input"),$post_vars);
+        if (isset($post_vars["value"])) {
+            $MedID = $post_vars["value"];
+        }
+        if (isset($post_vars["LifetimeDose"])) {
+            $CumulativeDoseAmt = $post_vars["LifetimeDose"];
+        }
+        if (isset($post_vars["Units"])) {
+            $CumulativeDoseUnits = $post_vars["Units"];
+        }
+        if (isset($post_vars["Source"])) {
+            $Source = $post_vars["Source"];
+        }
 
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
+error_log("CumulativeDoseTracking - GET");
             if ($PatientID) {
+                $partialQuery = "SELECT 
+                   dt.CumulativeDoseAmt, 
+                   dt.CumulativeDoseUnits, 
+                   dt.Source,
+                   dt.MedID,
+                   dt.Author,
+                   lu1.Name as MedName,
+                   lu2.Name as Units,
+                   CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
+                   from Patient_CumulativeDoseHistory dt
+                   join LookUp lu1 on lu1.Lookup_ID = dt.MedID
+                   join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
+                   where Patient_ID = '$PatientID'";
                 if ($cdhRecordID) {
-                    $query = "SELECT 
-                            dt.ID, 
-                            dt.Patient_ID, 
-                            dt.MedID, 
-                            dt.CumulativeDoseAmt, 
-                            dt.CumulativeDoseUnits, 
-                            dt.Author, 
-                            lu1.Name,
-                        CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
-                        from [dbo].[Patient_CumulativeDoseHistory] dt
-                        join LookUp lu1 on Lookup_ID = dt.MedID and Lookup_Type = 2
-                        where Patient_ID = '$PatientID' and dt.ID = '$cdhRecordID' order by Date_Changed desc";
+                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by Name asc";
                 }
                 else {
-                    $query = "SELECT 
-                            dt.ID, 
-                            dt.Patient_ID, 
-                            dt.MedID, 
-                            dt.CumulativeDoseAmt, 
-                            dt.CumulativeDoseUnits, 
-                            dt.Author, 
-                            lu1.Name,
-                        CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
-                        from [dbo].[Patient_CumulativeDoseHistory] dt
-                        join LookUp lu1 on Lookup_ID = dt.MedID and Lookup_Type = 2
-                        where Patient_ID = '$PatientID' order by Date_Changed desc";
+                    $query =  $partialQuery;
                 }
             }
             error_log("CumulativeDoseTracking Query - $query");
@@ -2192,32 +2179,27 @@ error_log("post_vars - $dump");
             $ErrMsg = "Retrieving Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $query = "SELECT NEWID()";
-            $GUID = $this->Patient->query($query);
-            $GUID = $GUID[0][""];
+error_log("CumulativeDoseTracking - POST");
+/*********************************************************************************
+            Sample POST
+            URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
+            MEthod: POST
+            Headers: Content-Type:application/x-www-form-urlencoded; charset=UTF-8
+            Data: value=7A95474E-A99F-E111-903E-000C2935B86F&LifetimeDose=500&Units=32FC87C5-9C38-E111-9B9C-000C2935B86F&Source=Something
 
-/************
-            if (isset($_POST["MedID"])) {
-                $MedID = $_POST["MedID"];
-            }
-            if (isset($_POST["CumulativeDoseAmt"])) {
-                $CumulativeDoseAmt = $_POST["CumulativeDoseAmt"];
-            }
-            if (isset($_POST["CumulativeDoseUnits"])) {
-                $CumulativeDoseUnits = $_POST["CumulativeDoseUnits"];
-            }
-            if (isset($_POST["Author"])) {
-                $Author = $_POST["Author"];
-            }
-************/
-            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Author)
+            Data Collection Method: parse_str(file_get_contents("php://input"),$post_vars);
+            Field Access Method: $MedID = $post_vars["value"];
+ *********************************************************************************/
+            $GUID =  $this->Patient->newGUID();
+
+            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source)
             VALUES (
                 '$GUID',
                 '$PatientID',
                 '$MedID',
                 '$CumulativeDoseAmt',
                 '$CumulativeDoseUnits',
-                '$Author'
+                '$Source'
             )";
 
 error_log($query);
@@ -2238,11 +2220,13 @@ error_log($query);
                    SET 
                     MedID = '$MedID', 
                     CumulativeDoseAmt = '$CumulativeDoseAmt', 
-                    CumulativeDoseUnits = '$CumulativeDoseUnits', 
-                    Date_Changed = '$Date_Changed', 
-                    Author = '$Author'
-                   WHERE ID = '$cdhRecordID'
+                    CumulativeDoseUnits = '$CumulativeDoseUnits'
             ";
+            if (isset($Source)) {
+                $query .= ",Source = '$Source'";
+            }
+            $query .= " WHERE ID = '$cdhRecordID'";
+
             $retVal = $this->Patient->query($query);
 
             /* Check for errors */

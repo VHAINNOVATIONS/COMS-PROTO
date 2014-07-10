@@ -16,7 +16,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 				"{[this.CalcBSA(values)]}",		// Needed to calculate the BSA Value if none retrieved.
 				"<table border=\"1\" class=\"InformationTable\">",
 					"<tr>",
-						"<th>Gender:</th><td>{Gender}</td>",
+						"<th style=\"width:15em\">Gender:</th><td>{Gender}</td>",
 						"<th>Age:</th><td>{Age}</td>",
 						"<th>{[this.AddEditBtns(\"Amputation\", values, parent)]}Amputee:</th><td id=\"PatientInformationTableAmputations\">{[this.Amputee(values.Amputations)]}</td>",
 					"</tr>",
@@ -35,7 +35,9 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<tpl if=\"this.hasData(TemplateDescription)\">",
 							"<br />{TemplateDescription}",
 						"</tpl>",
-						"<br />{[this.Links(values.TemplateName, values.TemplateID)]}<button class=\"anchor ShowAllPatientData\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button></td>",
+						"{[this.Links(values.TemplateName, values.TemplateID)]}",
+						//"<button class=\"anchor ShowAllPatientData\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button>",
+						"</td>",
 					"</tr>",
 
 					"<tr>",
@@ -59,10 +61,15 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 
 	"<tpl if=\"this.Allergies(values)\">",
-							"<table width=\"100%\"><tr><th style=\"text-align: center;\">Name</th><th style=\"text-align: center;\">Type</th><th style=\"text-align: center;\">Comment</th></tr>",
-							"<tpl for=\"Allergies\">",
-								"<tr><td>{name}</td><td>{type}</td><td>{comment}</td>",
-							"</tpl>",
+							"<table class=\"DataTable\">",
+								"<tr>",
+									"<th>Name</th>",
+									"<th>Type</th>",
+									"<th>Comment</th>",
+								"</tr>",
+								"<tpl for=\"Allergies\">",
+									"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
+								"</tpl>",
 							"</table>",
 	"</tpl>",
 	"<tpl if=\"this.Allergies(values) == false\">",
@@ -71,6 +78,39 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 						"</td>",
 					"</tr>",
+
+						
+						
+						
+						
+						
+					"<tr>",
+						"<th>Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
+						"<td colspan=5>",
+
+					"<table class=\"DataTable\">",
+						"<tr>",
+							"<th>Medication</th>",
+							"<th>Total Lifetime Dose</th>",
+							"<th>Source</th>",
+						"</tr>",
+						"<tpl for=\"CumulativeDoseTracking\">",
+							"<tr><td>{MedName}</td><td>{CumulativeDoseAmt} {Units}</td><td>{Source}</td></tr>",
+						"</tpl>",
+						"</table>",
+
+						"</td>",
+					"</tr>",
+
+						
+						
+						
+						
+						
+						
+						
+						
+						
 					"<tr>",
 						"<th>Clinical Trial: </th>",
 						"<td colspan=5>",
@@ -95,8 +135,8 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							return "<abbr title=\"Not Available\">N/A</abbr>";
 						}
 						var buf = "<span id=\"PatientInfoTableBSA_Display\">" + values.BSA +  "</span>" + 
-						"<button style=\"margin-left: 1em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
-						"<span style=\"margin-left: 1em; font-weight: bold;\">Show</span> <button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+						"<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						return buf;
 					},
 

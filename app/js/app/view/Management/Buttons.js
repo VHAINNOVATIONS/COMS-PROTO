@@ -10,7 +10,7 @@ Ext.define("COMS.view.Management.Buttons" ,{
 			"items" : [ 
 				{ "xtype" : "button", "text" : "Save", "scope" : this }, 
 				{ "xtype" : "button", "text" : "Cancel", "scope" : this },
-				{ "xtype" : "box", "html" : "<div style=\"width:710px;\">&nbsp;</div>" },
+				{ "xtype" : "box", "html" : "<div style=\"width:700px;\">&nbsp;</div>" },
 				{ "xtype" : "button", "text" : "Delete", "scope" : this, "disabled" : true, "hidden" : true },
 				{ "xtype" : "button", "text" : "Refresh", "scope" : this }
 			]

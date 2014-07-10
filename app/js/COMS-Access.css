@@ -32,6 +32,13 @@ h1 {
 	}
 
 
+.DataTable { 
+	width: 100% 
+} 
+
+.DataTable th { 
+	text-align: center!important;
+} 
 
 
 
