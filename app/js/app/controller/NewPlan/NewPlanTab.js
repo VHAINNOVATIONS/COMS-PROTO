@@ -31,19 +31,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"NewPlan.PatientTemplates"
     ,"NewPlan.PatientHistory"
     ,"NewPlan.LabInfo"
-    // MWB - 12/12/2011
-    // Removed - During 09-Dec customer meeting, client said DiagImage & Pharmacy were not needed
-    // Also removed from PatientInfor view
-    // "NewPlan.DiagImage",
-    // "NewPlan.Pharmacy",
-    ,"NewPlan.OEM"	// MWB - 16-Jan-2012 - Added new view
+    ,"NewPlan.OEM"
     ,"NewPlan.AdverseEventsHistory"
 
 	,"NewPlan.CTOS"
-    ,"NewPlan.CTOS.PatientSummary"	// MWB 27-Jan-2012 - Added new view
-//    ,"NewPlan.CTOS.FlowSheet"		// MWB 27-Jan-2012 - Added new view
-    ,"NewPlan.CTOS.NursingDocs"		// MWB 27-Jan-2012 - Added new view
-    ,"NewPlan.CTOS.KnowledgeBase"	// MWB 27-Jan-2012 - Added new view
+    ,"NewPlan.CTOS.PatientSummary"
+    ,"NewPlan.CTOS.NursingDocs"
+    ,"NewPlan.CTOS.KnowledgeBase"
 
 
     ,'Common.Search4Template'
@@ -55,6 +49,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     ,"Common.selTemplate"
 	,"Common.VitalSignsHistory"
 	,"Common.puWinSelCancer"
+	,"Common.puWinAddCumDose"
 	,"Common.puWinSelBSA"
 	,"Common.puWinSelAmputation"
     ,"NewPlan.dspTemplateData"
@@ -1443,6 +1438,26 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 
+	loadCumulativeMedDosing : function() {
+		var liModel = this.getModel("PatientCumulativeDosing");
+		var liModelParam = this.application.Patient.id;
+		liModel.load(liModelParam, {
+			scope : this,
+				success : function( patientInfo, response ) {
+				var rawData = Ext.JSON.decode(response.response.responseText);
+				var tmp = "0 Records";
+				this.application.Patient.CumulativeDoseTracking = rawData.records;
+				this.DataLoadCountDecrement("loadCumulativeMedDosing PASS");
+				this.PatientDataLoadComplete("Cumulative Medication Dose Info");
+			},
+			failure : function (err, response) {
+				this.DataLoadCountDecrement("loadCumulativeMedDosing FAIL");
+				this.PatientDataLoadComplete("Cumulative Medication Dose Info - FAILED Loading");
+			}
+		});
+	},
+
+
     loadLabInfo : function() {
         var liModel = this.getModel("LabInfo");
 		var theStore = Ext.getStore("LabInfo");
@@ -1843,7 +1858,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.application.PatientSelectedOpts = eOpts;
 
 		this.application.loadMask("Loading Patient Records... For selected patient");
-		this.application.DataLoadCount = 9;		// Count of # of modules to load
+		this.application.DataLoadCount = 10;		// Count of # of modules to load
 		/* Modules to load - Update this count when a new module is added
 		 *	MDWS Mega Call Loaded - loadMDWSData
 		 *	Lab Info Loaded - loadLabInfo
@@ -1862,8 +1877,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.loadAllergyInfo();					// module 3
 		this.loadVitals("Vitals");						// module 4
 		this.loadTemplates("Templates");					// module 5
-        this.loadAllTemplatesApplied2Patient("PatientSelected");
+		this.loadAllTemplatesApplied2Patient("PatientSelected");
 		this.loadOrderRecords();				// module 6
+		this.loadCumulativeMedDosing();
+
         if (this.application.Patient.TemplateID) {
             this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
         }

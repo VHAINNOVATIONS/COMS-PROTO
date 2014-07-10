@@ -5,10 +5,9 @@ Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPUWin", {
 	"title" : "Toxicity Side Effects",
 	"layout" : "fit",
 	"autoShow" : true,
-	"width" : 500,
-	"height" : 300,
+	"width" : 850,
+	"height" : 450,
 	"closeAction" : "destroy",
-	// "url" : Ext.URLs.Edit_OEMRecord,
 
 	"items" : [
 		{
@@ -17,7 +16,7 @@ Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPUWin", {
 			"autoScroll" : true,
 			"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 			"items" : [
-				{ "xtype" : "combo", "width" : 430, "margin" : "10", "name" : "ToxInstr", "store" : "Toxicity", "displayField" : "Label", "valueField" : "ID", "optField" : "Details", "fieldLabel" : "Instructions" },
+				{ "xtype" : "combo", "width" : 830, "margin" : "10", "name" : "ToxInstr", "store" : "Toxicity", "displayField" : "Label", "valueField" : "ID", "optField" : "Details", "fieldLabel" : "Toxicity" },
 				{ "xtype" : "displayfield", "width" : 430, "margin" : "10", "name" : "ToxDetails", "fieldLabel" : "Details" },
 				{ "xtype" : "textareafield", "grow" : true, "width" : 430, "height" : 180, "margin" : "10", "name" : "Data", "fieldLabel" : "Comments"}
 			],

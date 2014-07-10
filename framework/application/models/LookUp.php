@@ -970,7 +970,8 @@ class LookUp extends Model {
                 $name = 'Cumulative Dosing Meds';
                 $query = "SELECT id=lu0.Lookup_ID, 
                 type=lu0.Lookup_Type, 
-                lu0.Name as Description, 
+                lu0.Name as MedID, 
+                lu0.Description as Description, 
                 lu.name as Name 
                 FROM LookUp lu0
                 JOIN LookUp lu ON lu.lookup_ID = lu0.Name                
@@ -1000,6 +1001,21 @@ class LookUp extends Model {
                 break;
             case "DELIVMECH":
                 $name = 'Delivery Mechanism';
+        $query = "
+            SELECT id=Lookup_ID, 
+                type=Lookup_Type, 
+                Name, 
+                Description 
+                FROM LookUp 
+                WHERE Lookup_Type = ( 
+                    SELECT 
+                        l.Lookup_Type_ID 
+                        FROM LookUp l 
+                        WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
+                ORDER BY $orderBy
+        ";
+                break;
+            default:
         $query = "
             SELECT id=Lookup_ID, 
                 type=Lookup_Type, 

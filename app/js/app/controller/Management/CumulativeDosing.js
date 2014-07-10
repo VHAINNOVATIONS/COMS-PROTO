@@ -1,7 +1,7 @@
 Ext.define('COMS.controller.Management.CumulativeDosing', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.CumulativeDosing' ],
-	stores : [ 'CumulativeDosingMeds' ],
+	stores : [ 'CumulativeDosingMeds', 'DrugUnitsStore2' ],
 	refs: [
 		{
 			ref : "Medication",
@@ -53,6 +53,10 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 
 
 	_formSubmit : function(form, URL, CMD) {
+			var dose_units = form.getValues().maxdosage + " / " + form.getValues().Units;
+
+			form.setValues({"description" : dose_units });
+			debugger;
 			form.submit({
 				scope : this,
 				clientValidation: true,
@@ -85,10 +89,10 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 		var URL = Ext.URLs.AddLookup;
 		var CMD = "POST";
 		var theStore = this.getTheGrid().store;
-		var theKey = form.getValues().Medication;
+		var theKey = form.getValues().value;
 		var theRecord;
 		if ("" !== theKey) {
-			theRecord = theStore.findRecord("Medication", theKey);
+			theRecord = theStore.findRecord("description", theKey);
 		}
 
 		if (theRecord) {

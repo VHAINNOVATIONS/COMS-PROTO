@@ -204,6 +204,7 @@ Ext.URLs.HydrationDrug = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydrat
 //Ext.URLs.Drugs = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
 Ext.URLs.Drugs = "/LookUp/view/Drug"; //KD - 05/17/12 - Will Append 'InPatient' or 'OutPatient' in Controller
 Ext.URLs.DrugUnits = "/LookUp/view/Unit/Drug"; // MWB - 12/29/2011 - Added drug units listing
+Ext.URLs.Units = "/LookUp/view/Unit"; // MWB - 12/29/2011 - Added drug units listing
 Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug Regimen
 Ext.URLs.Infusion = "/LookUp/view/Route"; // MWB - 12/30/2011 - Added Infusion
 Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/CTOS
@@ -510,6 +511,7 @@ Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
 Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
+Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -537,6 +539,7 @@ Ext.require([
 	Ext.COMSModels.TotalCoursesMax,
 	Ext.COMSModels.Toxicity,
 	Ext.COMSModels.CumulativeDosingMeds,
+	Ext.COMSModels.PatientCumulativeDosing,
 	Ext.COMSModels.EmotegenicLevel,
 	Ext.COMSModels.FebrileNeutropeniaRisk,
 	Ext.COMSModels.References,
@@ -584,6 +587,7 @@ Ext.require([
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
+	"COMS.controller.Common.puWinAddCumDose",
 	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
@@ -1574,6 +1578,7 @@ Ext.application({
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
 		, "Common.puWinSelCancer"
+		, "Common.puWinAddCumDose"
 		, "Common.puWinSelBSA"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
