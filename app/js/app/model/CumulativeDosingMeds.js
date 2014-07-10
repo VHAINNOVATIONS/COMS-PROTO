@@ -1,4 +1,4 @@
 Ext.define('COMS.model.CumulativeDosingMeds', {
 	extend: 'Ext.data.Model',
-	fields: ["name", "description"]
+	fields: ["MedName", "CumulativeDoseAmt", "UnitsID", "ID", "CumulativeDoseUnits", "MedID"]
 });

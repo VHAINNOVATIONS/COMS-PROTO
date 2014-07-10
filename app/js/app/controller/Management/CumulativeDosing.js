@@ -5,7 +5,15 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 	refs: [
 		{
 			ref : "Medication",
-			selector : "CumulativeDosing [name=\"Medication\"]"
+			selector : "CumulativeDosing [name=\"MedName\"]"
+		},
+		{
+			ref : "Dose",
+			selector : "CumulativeDosing [name=\"CumulativeDoseAmt\"]"
+		},
+		{
+			ref : "Units",
+			selector : "CumulativeDosing [name=\"CumulativeDoseUnits\"]"
 		},
 		{
 			ref : "ThePanel",
@@ -53,10 +61,6 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 
 
 	_formSubmit : function(form, URL, CMD) {
-			var dose_units = form.getValues().maxdosage + " / " + form.getValues().Units;
-
-			form.setValues({"description" : dose_units });
-			debugger;
 			form.submit({
 				scope : this,
 				clientValidation: true,
@@ -67,7 +71,7 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 					//this.CancelForm();
 				},
 				failure: function(form, action) {
-					var SaveTitle = "Saving Intelligent Data Entry Configuration FAILED";
+					var SaveTitle = "Saving Cumulative Dose Medication Configuration FAILED";
 					this.RefreshPanel();
 					//this.CancelForm();
 					switch (action.failureType) {
@@ -86,19 +90,19 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 		/* Cumulative Dosing Medications are stored in the Lookup Table with a Lookup_Type = "50" */
 	SaveForm : function(theBtn, theEvent, eOpts) {
 		var form = this.getThePanel().getForm();
-		var URL = Ext.URLs.AddLookup;
+		var URL = Ext.URLs.CumulativeDosingMeds;
 		var CMD = "POST";
 		var theStore = this.getTheGrid().store;
-		var theKey = form.getValues().value;
+		var theKey = form.getValues().MedName;
 		var theRecord;
 		if ("" !== theKey) {
-			theRecord = theStore.findRecord("description", theKey);
+			theRecord = theStore.findRecord("MedID", theKey);
 		}
 
 		if (theRecord) {
 			var quesAnswer = Ext.Msg.show({
 				"title" : "Duplicate Record", 
-				"msg" : "A " + theKey + " record already exsists, do you wish to overwrite the existing " + theKey + " record?", 
+				"msg" : "A record already exsists for that medication, do you wish to overwrite the existing record?", 
 				"buttons" : Ext.Msg.YESNO, 
 				"icon" : Ext.Msg.QUESTION,
 				"scope" : this,
@@ -112,6 +116,7 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 			});
 		}
 		else {
+			// var bForm = form.form;
 			this._formSubmit(form, URL, CMD);
 		}
 	},
@@ -123,33 +128,47 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 		var theStore = theGrid.getStore();
 		theStore.load();
 		theGrid.getSelectionModel().deselectAll();
+		var MedField = this.getMedication();
+		MedField.getStore().load();
+		var UnitsField = this.getUnits();
+		UnitsField.getStore().load();
 
-//		var rootCtrlr = this.getController("NewPlan.NewPlanTab");
-//		rootCtrlr.InitIntelligentDataElementStore();
-//		var delBtn = this.getDeleteBtn();
-//		delBtn.setDisabled(true);
-//		delBtn.show();
+		var delBtn = this.getDeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
 		this.application.unMask();
-	}
+	},
 
 
 
-/********** disabled for present ***************
+
 	deSelectGridRow : function(theRowModel, record, index, eOpts) {
 	},
 	
 	selectGridRow : function(theRowModel, record, index, eOpts) {
 		var records = theRowModel.getSelection();
-//		var delBtn = this.getDeleteBtn();
-//		if (records.length <= 0) {
-//			delBtn.setDisabled(true);
-//		}
-//		else {
-//			delBtn.setDisabled(false);
-//		}
+		var delBtn = this.getDeleteBtn();
+		if (records.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
 		var theForm = this.getThePanel();
-		theForm.loadRecord(record);
-	}
+
+		var MedField = this.getMedication();
+		MedField.setRawValue(record.getData().MedName);
+		MedField.setValue(record.getData().MedID);
+
+		var DoseField = this.getDose();
+		DoseField.setValue(record.getData().CumulativeDoseAmt);
+
+		var UnitsField = this.getUnits();
+		UnitsField.setValue(record.getData().UnitsID);
+		UnitsField.setRawValue(record.getData().CumulativeDoseUnits);
+
+		// theForm.loadRecord(record);
+	},
 
 
 
@@ -157,9 +176,9 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 	deleteRecord : function(theRecords) {
 		var record = theRecords.pop();
 		if (record) {
-			var rID = record.get("Vital2Check");
+			var rID = record.get("ID");
 			var CMD = "DELETE";
-			var URL = Ext.URLs.IntelligentDataEntry + "/" + rID;
+			var URL = Ext.URLs.CumulativeDosingMeds + "/" + rID;
 				Ext.Ajax.request({
 					url: URL,
 					method : CMD,
@@ -171,14 +190,13 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 					failure : function( response, opts ) {
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
-						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Delete IDE Record, Save Error - <br />" + resp.msg );
+						Ext.MessageBox.alert("Delete Error", "Delete Error", "Cumulative Dose Medication - Delete Record, Error - <br />" + resp.msg );
 					}
 				});
 		}
 		else {
 			this.application.unMask();
 			this.RefreshPanel();
-			this.CancelForm();
 		}
 	},
 
@@ -192,9 +210,9 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 				this.deleteRecord(theRecords);
 			}
 		}, this);
-	},
+	}
 
-*************************************/
+
 
 
 

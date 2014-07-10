@@ -5,10 +5,10 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 	"autoEl" : { tag : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
-		{ "xtype" : "hiddenfield", "name" : "id", "value" : "60" },					/* This represents the Lookup_Type_ID in the Lookup Table */
-		{ "xtype" : "hiddenfield", "name" : "description" },					/* This field will hold the Max Dosage and Units as a combined object in the lookup table */
+		// { "xtype" : "hiddenfield", "name" : "id", "value" : "60" },					/* This represents the Lookup_Type_ID in the Lookup Table */
+		// { "xtype" : "hiddenfield", "name" : "description" },					/* This field will hold the Max Dosage and Units as a combined object in the lookup table */
 		{ 
-			"xtype" : "combobox", "name" : "value", "fieldLabel" : "Medication",  "labelWidth" : 200,  "labelAlign" : "right", "width" : 922, 
+			"xtype" : "combobox", "name" : "MedName", "fieldLabel" : "Medication",  "labelWidth" : 200,  "labelAlign" : "right", "width" : 922, 
 			"displayField" : "name", "valueField" : "id", "allowBlank" : false,
 			"store" : Ext.create('Ext.data.Store', {
 				"model" : 'COMS.model.GenericLookupModel',
@@ -26,7 +26,7 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 			})
 		},
 		{ "xtype" : "container", "layout" : "hbox", "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" }, "items" : [
-			{ "xtype" : "textfield", "name" : "maxdosage", "emptyText" : "Enter Lifetime Max Allowable", "fieldLabel" : "Max Dosage", "labelWidth" : 200,  "labelAlign" : "right", "width" : 400 },
+			{ "xtype" : "textfield", "name" : "CumulativeDoseAmt", "emptyText" : "Enter Lifetime Max Allowable", "fieldLabel" : "Max Dosage", "labelWidth" : 200,  "labelAlign" : "right", "width" : 400 },
 			{
 				"xtype" : "combo",
 				"fieldLabel" : "Units <em>*</em>",
@@ -35,9 +35,9 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 				
 				"store" : "DrugUnitsStore2",
 				"displayField" : "name",
-				"valueField" : "name",
+				"valueField" : "id",
 				"allowBlank" : false,
-				"name" : "Units"
+				"name" : "CumulativeDoseUnits"
 			}
 		]},
 		{ "xtype" : "ManagementBtns"},
@@ -51,8 +51,14 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 			"margin" : "10 0 0 0",
 
 			"columns" : [ 
-				{ "text" : "Medication", "dataIndex" : "name", "flex" : 1},
-				{ "text" : "Max Dose", "dataIndex" : "description", "flex" : 3}
+				{ "text" : "Medication", "dataIndex" : "MedName", "flex" : 3},
+				{ "text" : "Max Dose", "dataIndex" : "CumulativeDoseAmt", "flex" : 1},
+				{ "text" : "Units", "dataIndex" : "CumulativeDoseUnits", "flex" : 1}
+			/*
+				{ "text" : "Units", "dataIndex" : "UnitsID", "flex" : 1},
+				{ "text" : "Units", "dataIndex" : "ID", "flex" : 1},
+				{ "text" : "Units", "dataIndex" : "MedID", "flex" : 1}
+			*/
 			]
 		}
 

@@ -16,7 +16,7 @@ class LookupController extends Controller {
 
     function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
         if ("" !== $query) {
-            error_log("Got Query");
+            error_log("Got Query - $query");
             $retVal = $this->LookUp->query($query);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 error_log("Error");
@@ -1535,6 +1535,10 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
 
+
+
+
+
 /****************************************************
  *
  *  GET List of stages for all diseases
@@ -1723,6 +1727,115 @@ error_log("IDEntry");
             $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
         }
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, $UniqMsg);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***
+CREATE TABLE [dbo].[CumulativeDoseMeds](
+      [ID] [uniqueidentifier] DEFAULT (newsequentialid()),
+      [MedID] [uniqueidentifier] NOT NULL,
+      [CumulativeDoseAmt] [varchar](30) NOT NULL,
+      [CumulativeDoseUnits] [uniqueidentifier] NOT NULL,
+      [Date_Changed] [datetime] DEFAULT (getdate()),
+      [Author] [varchar](30) NULL
+) ON [PRIMARY]
+ ***/
+
+    function CumulativeDoseMeds($ID = null) {
+        $Msg = "Cumulative Dose Meds";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = "";
+        parse_str(file_get_contents("php://input"),$post_vars);
+
+        if (isset($post_vars["MedName"])) {
+            $MedID = $post_vars["MedName"];
+        }
+        if (isset($post_vars["CumulativeDoseAmt"])) {
+            $CumulativeDoseAmt = $post_vars["CumulativeDoseAmt"];
+        }
+        if (isset($post_vars["CumulativeDoseUnits"])) {
+            $CumulativeDoseUnits = $post_vars["CumulativeDoseUnits"];
+        }
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+                $query = "Select 
+                  CDM.ID,
+                  CDM.MedID,
+                  CDM.CumulativeDoseAmt,
+                  CDM.CumulativeDoseUnits as UnitsID,
+                  LU.Name as MedName,
+                  LU2.Name as CumulativeDoseUnits
+                  from CumulativeDoseMeds CDM
+                  join Lookup LU on CDM.MedID = LU.Lookup_ID
+                  join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
+            if ($ID) {
+                $query .= "where ID = '$ID' order by LU.Name";
+            }
+            else {
+                $query .= "order by LU.Name";
+            }
+
+            error_log("$query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT INTO CumulativeDoseMeds (MedID, CumulativeDoseAmt, CumulativeDoseUnits) VALUES ('$MedID' ,'$CumulativeDoseAmt', '$CumulativeDoseUnits')";
+            error_log("POST - $query");
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE CumulativeDoseMeds SET CumulativeDoseAmt = '$CumulativeDoseAmt', CumulativeDoseUnits = '$CumulativeDoseUnits' WHERE MedID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from CumulativeDoseMeds where ID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
+        }
+
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
     }
 
 

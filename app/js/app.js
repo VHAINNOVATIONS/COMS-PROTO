@@ -48,7 +48,7 @@ Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
 Ext.URLs.ToxicityInstruction = "/LookUp/ToxicityInstruction";
 Ext.URLs.PatientCumulativeDosing = "/Patient/CumulativeDoseTracking";
-Ext.URLs.CumulativeDosingMeds = "/LookUp/view/CumulativeDoseMeds";
+Ext.URLs.CumulativeDosingMeds = "/LookUp/CumulativeDoseMeds";
 
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
 
