@@ -175,10 +175,11 @@ class Orders extends Model {
 		error_log("orders model 1 - $queryq");
 
         if (count($queryq) > 0) {
-
-            $query = "Update Order_Status set Order_Status = '".$OrderStatusF."',Drug_Name = '".$Drug_NameF."' " .
+		
+			$Notes = "Line 179";
+            ///$query = "Update Order_Status set Order_Status = '".$OrderStatusF."',Drug_Name = '".$Drug_NameF."',Notes = '".$Notes."' " .
                     //"where Template_ID = '" . $Template_IDF . "' AND Drug_Name = '".$Drug_NameF."'";
-                    "where Order_ID = '" . $OrderIDF . "' ";
+              ///      "where Order_ID = '" . $OrderIDF . "' ";
 					
         } else {
 		$Notes = "Line 184, Order.php";
@@ -193,14 +194,14 @@ class Orders extends Model {
 		if ($OrderStatusF === "Finalized"){
 		//echo $Template_IDF;
 
-		$this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF);
+		$this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF,$OrderIDF);
 		
 		}
 		elseif ($OrderStatusF === "Hold"){
 		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
 		}
 		elseif ($OrderStatusF === "Dispensed"){
-		echo "Dispensed!";
+		//echo "Dispensed!";
 		}
 		//echo $query;
         error_log("orders model 2 - $query");
@@ -222,16 +223,33 @@ class Orders extends Model {
         
     }	
 
-    function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID,$Notes){
-        	
+    function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID,$Notes,$OrderID){
+        
+	/*
+	echo " TID : ";
+		echo $TID;
+		echo " Drug_Name : ";
+		echo $Drug_Name;
+		echo " Order_Type : ";
+		echo $Order_Type;
+		echo " PID : ";
+		echo $PID;
+		echo " Notes : ";
+		echo $Notes;
+		echo " OrderID : ";
+		echo $OrderID;
+	*/
+
+		
 		$Template_IDchk = NULL;
 		$Drug_Namechk = NULL;
 		//$Notes = NULL;
 		
 		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
 		"FROM Order_Status " .
-		"WHERE Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."'";
+		"WHERE Order_ID = '".$OrderID."'";
+		//"WHERE Template_ID = '".$TID."' " .
+		//"AND Drug_Name = '".$Drug_Name."'";
 		
 			
 		$queryq = $this->query($query);
@@ -244,23 +262,28 @@ class Orders extends Model {
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-		$Notes = "Line 244, order.php";
+		//$Notes = "Line 244, order.php, empty string";
 		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes') ";
 		}
 		elseif ($Order_Statuschk = 'Finalized'){
+		//echo "HERE"
 		//update Order to Dispensed until VistA Order Reading is in place.
-		$Notes = 'Line 249';
+		//$Notes = 'Line 249';
 		$query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " .
-		"where Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Patient_ID = '".$PID."'";	
+		"WHERE Order_ID = '".$OrderID."' ";
+		//"where Template_ID = '".$TID."' " .
+		//"AND Drug_Name = '".$Drug_Name."' ".
+		//"AND Order_ID = '".$OrderID."' ".
+		//"AND Patient_ID = '".$PID."'";	
+		//echo $query;
 		}
 		else{
-		$Notes = 'Line 256';
+		//$Notes = 'Line 256';
 		$query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " .
-		"where Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Patient_ID = '".$PID."'";	
+		"WHERE Order_ID = '".$OrderID."'";
+		//"where Template_ID = '".$TID."' " .
+		//"AND Drug_Name = '".$Drug_Name."' ".
+		//"AND Patient_ID = '".$PID."'";	
 		
 		}
         $this->query($query);
@@ -376,7 +399,19 @@ function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
     }	
 
 	
-function sendCPRSOrderIn($TID,$PID,$typeF, $routeF){
+function sendCPRSOrderIn($TID,$PID,$typeF,$routeF,$OrderID){
+
+/*echo $TID;
+echo "||";
+echo $PID;
+echo "||";
+echo $typeF;
+echo "||";
+echo $routeF;
+echo "||";
+echo $OrderID;
+echo "||";
+*/
 
 $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 				$queryPI = $this->query($queryPIq);
@@ -435,7 +470,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							//echo " || ".$TR_Route_ID_Name." || ";
 							//yes, this one
 							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
-							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TH CprsOrdered',$PID,'Line 435');
+							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TH CprsOrdered',$PID,'Line 435',$OrderID);
 							/////trytihs							
 							//$this->updateOrderStatus($TID,$TR_Drug_ID_Name,'TR',$PID);
 							$this->valuecheck("".$match."End and Done");
@@ -539,7 +574,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					//yes, this one
 							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 539');
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 539',$OrderID);
 					$this->valuecheck("".$match."End and Done");
 				
 					
@@ -592,7 +627,8 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 	//////
 	//////////////////////
 	/////Non Oral Begin
-	/////////////////////
+	///////////////////////
+	//problem here - even thou drug is not oral, it's SubQ, need to add route for each call
 	if ($typeF === 'Therapy'){
 		
 	//echo "Non-Oral Therapy";	
@@ -650,9 +686,17 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 						$TR_Description = $this->LookupDescriptionIn($TR_Drug_ID);
 							$Regimen_Dose_Unit = $this->LookupNameIn($TR_Regimen_Dose_Unit_ID);
 							$TR_Route_ID_Name = $this->LookupNameIn($TR_Route_ID);
-							//yes, this one
+							/*
+							echo $TR_Drug_ID_Name;
+							echo " || ";
+							echo $TR_Regimen_Dose;
+							echo " || ";
+							echo $PID;
+							echo " || ";
+							echo $OrderID;
+							*/
 							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
-							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652');
+							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652',$OrderID);
 							$this->valuecheck("".$match."End and Done");
 
 					}
@@ -686,7 +730,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					//yes, this one
 							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 686');
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 686',$OrderID);
 				
 					
 			}
@@ -751,7 +795,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 751');
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 751',$OrderID);
 					$this->valuecheck("".$match."End and Done");
 				
 					
@@ -818,7 +862,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					//yes, this one
 							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 818');
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 818',$OrderID);
 					$this->valuecheck("".$match."End and Done");
 				
 					
@@ -848,9 +892,31 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 }
 
 
+	function OrderInVistA($OrderID){
+	//function OrderInVistA($TID,$PID,$typeF,$routeF,$OrderID){
 	
+	/*
+	echo $TID;
+	echo "||";
+	echo $PID;
+	echo "||";
+	echo $typeF;
+	echo "||";
+	echo $routeF;
+	echo "||";
+	echo $OrderID;
+	echo "||";
+	*/
 
+	$query = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " .
+				"Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " .
+				"Fluid_Vol as MH_Fluid_Vol, Admin_Time as MH_Admin_Time ".
+				"from Medication_Hydration WHERE Template_ID ='$TID'";
+	$results = $this->query($query);
+	echo $query;			
 
+	NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
+}
 
 	
 
