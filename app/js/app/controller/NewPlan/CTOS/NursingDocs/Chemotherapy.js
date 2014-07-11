@@ -65,7 +65,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 	},
 
 	ClearTabData : function() {
-		debugger;
 		console.log("Chemotherapy - ClearTabData");
 		this.ChemoBioSectionHandler(true);
 	},

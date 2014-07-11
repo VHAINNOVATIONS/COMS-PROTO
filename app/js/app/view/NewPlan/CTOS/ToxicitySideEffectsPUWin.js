@@ -16,9 +16,19 @@ Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPUWin", {
 			"autoScroll" : true,
 			"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 			"items" : [
-				{ "xtype" : "combo", "width" : 830, "margin" : "10", "name" : "ToxInstr", "store" : "Toxicity", "displayField" : "Label", "valueField" : "ID", "optField" : "Details", "fieldLabel" : "Toxicity" },
+				{ 
+					"xtype" : "combobox", 
+					"width" : 800, 
+					"margin" : "10", 
+					"name" : "ToxInstr", 
+					"store" : "Toxicity", 
+					"displayField" : "Label", 
+					"valueField" : "ID", 
+					// "optField" : "Details", 
+					"fieldLabel" : "Toxicity" 
+				},
 				{ "xtype" : "displayfield", "width" : 430, "margin" : "10", "name" : "ToxDetails", "fieldLabel" : "Details" },
-				{ "xtype" : "textareafield", "grow" : true, "width" : 430, "height" : 180, "margin" : "10", "name" : "Data", "fieldLabel" : "Comments"}
+				{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 180, "margin" : "10", "name" : "Data", "fieldLabel" : "Comments"}
 			],
 			"buttons" : [
 				{ "xtype" : "button", "text" : "Save",   "margin" : "10 30"},

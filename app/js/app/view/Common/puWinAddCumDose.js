@@ -39,7 +39,7 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 						"emptyText" : "Enter lifetime dose"
 					},
 					{
-						"xtype" : "combo",
+						"xtype" : "combobox",
 						"fieldLabel" : "Units <em>*</em>",
 						"width" : 150,
 						"labelWidth" : 60,

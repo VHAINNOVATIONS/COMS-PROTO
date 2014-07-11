@@ -162,7 +162,8 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	},
 
 	HandleBtnClicks : function(cmp, tag) {
-		debugger;
+		console.log("NewPlan - PatientInfoTable - HandleBtnClicks");
+		// debugger;
 	},
 
 	AssignLinkClicksInPatientInformationTable : function(thePanel, opts) {
