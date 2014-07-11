@@ -352,8 +352,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		if ("ViewFSData" === btnName) {
 			var d1 = Ext.decode(btnData);
 			var mbMessage = "<table class=\"CCOrderSheet\">";
-			mbMessage += "<tr><th>Instructions:</th><td>" + d1.Instr + "</td></tr>";
-			mbMessage += "<tr><th>Details:</th><td>" + d1.Details + "</td></tr>";
+			mbMessage += "<tr><th>Toxicity:</th><td>" + d1.Instr + "<br></td></tr>";
+			mbMessage += "<tr><th>Details:</th><td>" + Ext.util.Format.htmlDecode(d1.Details) + "<br></td></tr>";
 			mbMessage += "<tr><th>Comments:</th><td>" + d1.Comments + "</td></tr>";
 			mbMessage += "</table>";
 
