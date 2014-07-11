@@ -169,17 +169,24 @@ class Orders extends Model {
         $query = "SELECT Template_ID as Template_ID_CHK, Order_Status as Order_StatusCHK " .
                 "FROM Order_Status " .
 				"WHERE Order_ID = '" . $OrderIDF . "' ";
+				//"AND Order_Status != 'Dispensed' ";
 				
         
         $queryq = $this->query($query);
+		//var_dump($queryq);
 		error_log("orders model 1 - $queryq");
 
         if (count($queryq) > 0) {
 		
+		//echo $OrderStatusF;
+			//if (trim($OrderStatusF) === "Dispensed"){
+			//		}else{
 			$Notes = "Line 179";
-            ///$query = "Update Order_Status set Order_Status = '".$OrderStatusF."',Drug_Name = '".$Drug_NameF."',Notes = '".$Notes."' " .
+            $query = "Update Order_Status set Order_Status = '".$OrderStatusF."',Drug_Name = '".$Drug_NameF."',Notes = '".$Notes."' " .
                     //"where Template_ID = '" . $Template_IDF . "' AND Drug_Name = '".$Drug_NameF."'";
-              ///      "where Order_ID = '" . $OrderIDF . "' ";
+                    "where Order_ID = '" . $OrderIDF . "' ";
+					
+			//		}
 					
         } else {
 		$Notes = "Line 184, Order.php";
@@ -205,6 +212,7 @@ class Orders extends Model {
 		}
 		//echo $query;
         error_log("orders model 2 - $query");
+		
         return $this->query($query);
     }
     
@@ -251,7 +259,7 @@ class Orders extends Model {
 		//"WHERE Template_ID = '".$TID."' " .
 		//"AND Drug_Name = '".$Drug_Name."'";
 		
-			
+		//echo $query;
 		$queryq = $this->query($query);
 		foreach($queryq as $row){
 		$Template_IDchk =  $row['Template_ID_CHK'];
@@ -795,7 +803,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
-					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 751',$OrderID);
+					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 804',$OrderID);
 					$this->valuecheck("".$match."End and Done");
 				
 					
