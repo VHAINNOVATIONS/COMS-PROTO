@@ -41,11 +41,18 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 					newRecord.CumulativeDoseAmt = v1;
 				}
 				else if ("Source" === fld.name) {
-					newRecord.Souce = v1;
+					newRecord.Source = v1;
 				}
 			}
 		}
-		this.application.Patient.CumulativeDoseTracking.push(newRecord);
+		if (this.application.Patient.CumulativeDoseTracking) {
+			this.application.Patient.CumulativeDoseTracking.push(newRecord);
+		}
+		else {
+			this.application.Patient.CumulativeDoseTracking = [];
+			this.application.Patient.CumulativeDoseTracking.push(newRecord);
+		}
+
 	},
 
 	_submitForm : function(form) {
