@@ -41,7 +41,6 @@ var combo = new Ext.form.ComboBox({
 Ext.define("COMS.view.Orders.OrdersTab", {
 	extend: "Ext.grid.Panel",
 	alias: "widget.OrdersTab", // Any references to this view should be for an xtype : "OrdersTab"
-	// requires: ["Ext.ux.grid.column.ActionButtonColumn"],
 	name: "Orders Tab",
 	margin: "0 10 10 10",
 	autoScroll: "y",
@@ -61,10 +60,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	],
 
 	selType: "cellmodel",
-
-	// features: [Ext.create("Ext.grid.feature.Grouping")],
-	//, { groupHeaderTpl: "Group: {Patient} ({rows.length})"})
-
 
 	columns: [{
 		header: "Name",
@@ -166,54 +161,7 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		sortable: true,
 		align: "center",
 		editor: combo
-		//renderer: Ext.util.Format.comboRenderer(combo) 
-
 	}
-	
-	/**
-	, {
-		xtype: "actionbuttoncolumn",
-		width: 70,
-		header: "Set Status",
-		align: "center",
-		items: [{
-			disabled: true,
-			text: "Update",
-			handler: function (grid, rowIndex, colIndex) {
-				//var addHydrationDrug = Ext.ComponentQuery.query("OrdersTab")[0];
-				var rec = grid.getStore()
-					.getAt(rowIndex);
-				var order = Ext.create("COMS.model.OrdersTable", {
-					orderstatus: combo.getValue(),
-					templateID: rec.get("templateID"),
-					drug: rec.get("drug"),
-					patientID: rec.get("patientID"),
-					type: rec.get("type"),
-					route: rec.get("route"),
-					orderid: rec.get("orderid"),
-					Last_Name: rec.get("Last_Name")
-				});
-
-				if (null == combo.getValue() || "" == combo.getValue()) {
-					Ext.MessageBox.alert("Information", "Please select an Order Status");
-					return;
-				}
-
-				order.save({
-					scope: this,
-					success: function (data) {
-						//Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-					},
-					failure: function (record, op) {
-						//Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
-					}
-				});
-
-			}
-
-		}]
-	}
-	**/
 	],
 	buttons: [{
 		text: "Refresh"

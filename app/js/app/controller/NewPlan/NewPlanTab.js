@@ -2256,9 +2256,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 									/***********************************************/
 								}
 							}
-							if (updateRecord) {
+							// if (updateRecord) {
 								// this.UpdateOEMRecords(aRec, bRec);
-							}
+							// }
 						}
 					}
 					else {
