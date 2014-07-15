@@ -17,7 +17,7 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 	ClickLoadTreatmentData : function(theBtn) {
 		if (!this.application.Patient) {
 			alert("Patient has not been selected/loaded yet");
-			debugger;
+			// debugger;
 		}
 		else {
 			// var theStore = Ext.getStore("ND_Treatment");

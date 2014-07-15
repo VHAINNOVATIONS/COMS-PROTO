@@ -1035,6 +1035,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         var set0 = this.getMyTemplates();
         var set1 = this.getSelCTOSTemplate();
         this.application.Patient.AppliedTemplateID = null;
+		var i;
 
         var What2Do = rbtn.inputValue;
         if( newValue ) {

@@ -998,7 +998,7 @@ handleOEM_RecordMedHold : function( event, element) {
         buttons: Ext.Msg.YESNOCANCEL,
         el : element,
         fn: function(btnID, txt, opt) {
-            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
             var TherapyID;
             var Data = this.application.Patient.OEMRecords;
             var records = Data.OEMRecords;

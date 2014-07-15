@@ -64,15 +64,14 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                     'actionbuttonclick':true
                 };
                 Ext.Array.each(items, function(btn) {
-                    if (btn.handler) { 
-						// No Handler
+                    if (!btn.handler) { 
+						if (btn.eventName) {
+							evnts[btn.eventName] = true;
+						} else if (btn.cls) {
+							var evntName = btn.cls.replace(/[^a-zA-Z]/,'')+'click';
+							evnts[evntName]=true;
+						}
 					}
-                    else if (btn.eventName) {
-                        evnts[btn.eventName] = true;
-                    } else if (btn.cls) {
-                        var evntName = btn.cls.replace(/[^a-zA-Z]/,'')+'click';
-                        evnts[evntName]=true;
-                    }
                 });
                 view.addEvents(evnts);
             }
@@ -81,6 +80,21 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
             v = Ext.isFunction(cfg.renderer) ? cfg.renderer.apply(this, arguments)||'' : '';
 
             meta.tdCls += ' ' + Ext.baseCSSPrefix + 'action-col-cell';
+
+			var loopFcn = function(item) {
+                        var eventName = 'actionbuttonclick';
+                        if (typeof item.eventName != 'undefined') {
+                            eventName = item.eventName;
+                        } else if (typeof item.cls != 'undefined') {
+                            eventName = item.cls.replace(/[^a-zA-Z]/,'')+'click';
+                        }
+                        fun = function() {
+                            if (eventName != 'actionbuttonclick') {
+                                view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
+                            }
+                            view.fireEvent(eventName, view, rowIndex, colIndex);
+                        };
+                    }			};
 
             for (i = 0; i < l; i++) {
 
@@ -98,20 +112,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                     fun = Ext.bind(item.handler, context, [view, rowIndex, colIndex]);
                 }
                 else {
-                    (function(item) {
-                        var eventName = 'actionbuttonclick';
-                        if (typeof item.eventName != 'undefined') {
-                            eventName = item.eventName;
-                        } else if (typeof item.cls != 'undefined') {
-                            eventName = item.cls.replace(/[^a-zA-Z]/,'')+'click';
-                        }
-                        fun = function() {
-                            if (eventName != 'actionbuttonclick') {
-                                view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
-                            }
-                            view.fireEvent(eventName, view, rowIndex, colIndex);
-                        };
-                    })(item);
+                    loopFcn(item);
                 }
                 var hide;
                 if (typeof item.showIndex != 'undefined') {
