@@ -519,6 +519,7 @@ Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
 Ext.require([
 	// common view components
 	"COMS.view.RequiredInstr",
+	"COMS.view.ProgrammerBtns",
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
@@ -584,6 +585,7 @@ Ext.require([
 
 
 	"COMS.controller.Navigation",
+	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
@@ -1574,6 +1576,7 @@ Ext.application({
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
+		,"ProgrammerBtns"
 		,"CkBoxTArea"
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"

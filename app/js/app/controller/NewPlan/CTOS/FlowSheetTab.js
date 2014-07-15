@@ -112,7 +112,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	SaveResponseDetails : function (btn) {
-		console.log("CTOS - Flowsheet Tab - SaveResponseDetails");
+//		console.log("CTOS - Flowsheet Tab - SaveResponseDetails");
 		var theForm = btn.up('form').getForm();
 		var win = btn.up("window");
 		if (theForm.isValid()) {
@@ -120,7 +120,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			var Patient = this.application.Patient;
 			var AdminDay = Patient.ThisAdminDay;
 
-			var theData = this.getTSE_Data().getValue();
+			theData = this.getTSE_Data().getValue();
 
 
 
@@ -154,14 +154,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	SaveOtherDetails : function (btn) {
-		console.log("CTOS - Flowsheet Tab - SaveOtherDetails");
+		// console.log("CTOS - Flowsheet Tab - SaveOtherDetails");
 	},
 
 	SaveToxDetails : function (btn) {
 		var theForm = btn.up('form').getForm();
-		var win = btn.up("window");
+		var win = btn.up("window"), theData;
 		if (theForm.isValid()) {
-			var theData = theForm.getValues();
+			theData = theForm.getValues();
 			var Patient = this.application.Patient;
 			var AdminDay = Patient.ThisAdminDay;
 
@@ -174,7 +174,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				var theDetailsData = theRecord.get("Details");
 			}
 
-			var theData = this.getTSE_Data().getValue();
+			theData = this.getTSE_Data().getValue();
 
 			var newRecord = {};
 			newRecord.PAT_ID = Patient.PAT_ID;
@@ -270,7 +270,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	CellEditCommit : function (editor, eObj) {
-		console.log("CTOS - Flowsheet Tab - CellEditCommit");
+		// console.log("CTOS - Flowsheet Tab - CellEditCommit");
 		var Patient = this.application.Patient;
 		var fieldName = eObj.grid.getStore().getAt(eObj.rowIdx).get("label");
 		switch (fieldName) {

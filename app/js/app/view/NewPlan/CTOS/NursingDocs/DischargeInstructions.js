@@ -31,12 +31,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 						},
 						"items": [
 							{ "name": "PE_Taught", "inputValue": "1", "fieldLabel": "Yes" }, 
-							{ "name": "PE_Taught", "inputValue": "0", "fieldLabel": "No" }, 
+							{ "name": "PE_Taught", "inputValue": "0", "fieldLabel": "No" }
 						]
 					}, 
 					{
 						"xtype": "PatientEducationDetails",
-						"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
+						"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" }
 					}
 				]
 			},

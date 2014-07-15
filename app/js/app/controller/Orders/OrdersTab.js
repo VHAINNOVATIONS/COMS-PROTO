@@ -20,13 +20,21 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 				beforeactivate : this.PanelReady,
 				enable : this.PanelReady,
 				focus : this.PanelReady,
-				afterrender : this.PanelReady,
+				afterrender : this.PanelReady
 			},
 			"OrdersTab button[text=\"Refresh\"]": {
 				click: this.HandleRefresh
 			},
 			"OrdersTab button[text=\"Update Records\"]": {
 				click: function () {
+					var ResponseAlert = function(status, data, record, op) {
+						if (status) {
+							Ext.MessageBox.alert("Success", "The Order Status has been updated.");
+						}
+						else {
+							Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+						}
+					};
 					var theStore = Ext.getStore("OrdersStore");
 					var DirtyRecords = theStore.getUpdatedRecords();
 					if (DirtyRecords.length > 0) {
@@ -51,12 +59,8 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							});
 							order.save({
 								scope: this,
-								success: function (data) {
-									Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-								},
-								failure: function (record, op) {
-									Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
-								}
+								success: ResponseAlert(true),
+								failure: ResponseAlert(false)
 							});
 						}
 					}

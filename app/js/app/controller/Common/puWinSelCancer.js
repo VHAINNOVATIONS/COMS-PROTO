@@ -17,7 +17,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			},
 			"puWinSelCancer button[text=\"Save\"]" : {
 				click: this.Save
-			},
+			}
 
 		});
 	},
@@ -50,7 +50,8 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			for (var key in theData) {
 				if (theData.hasOwnProperty(key)) {
 					var el = [];
-					el["description"] = key;
+					// el["description"] = key;
+					el.description = key;
 					patientCancerTypes.push(el);
 					postData.push(key);
 				}

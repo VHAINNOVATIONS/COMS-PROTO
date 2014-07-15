@@ -9,6 +9,7 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 
 	items : [
 		{ xtype : "PatientSelection" },
+		{ "xtype" : "ProgrammerBtns" },
 		{ xtype : "PatientInfo" }
 	],
 	initComponent: function() {

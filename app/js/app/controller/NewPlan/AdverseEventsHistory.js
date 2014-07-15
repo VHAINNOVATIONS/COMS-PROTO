@@ -19,16 +19,16 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 MergeAssessmentAndReactionLists : function(assessments, reactions) {
 	var i, len = assessments.length;
 	var list = [];
-	var x, y, data = [];
+	var x, y, data = [], obj;
 
 	for (i = 0; i < len; i++) {
-		var obj = { "type" : "Assessment", "date" : assessments[i].assessmentLink.date, "Link" : assessments[i].assessmentLink };
+		obj = { "type" : "Assessment", "date" : assessments[i].assessmentLink.date, "Link" : assessments[i].assessmentLink };
 		list.push(obj);
 	}
 
 	len = reactions.length;
 	for (i = 0; i < len; i++) {
-		var obj = { "type" : "Reaction", "date" : reactions[i].InfuseReactLink.date, "Link" : reactions[i].InfuseReactLink };
+		obj = { "type" : "Reaction", "date" : reactions[i].InfuseReactLink.date, "Link" : reactions[i].InfuseReactLink };
 		list.push(obj);
 	}
 

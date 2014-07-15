@@ -64,7 +64,9 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                     'actionbuttonclick':true
                 };
                 Ext.Array.each(items, function(btn) {
-                    if (btn.handler) { }
+                    if (btn.handler) { 
+						// No Handler
+					}
                     else if (btn.eventName) {
                         evnts[btn.eventName] = true;
                     } else if (btn.cls) {

@@ -83,9 +83,13 @@ class FlowsheetController extends Controller
                     )
                 ));
         } else {
+            error_log("FS GET - ");
             $records = $this->Flowsheet->getFlowsheet($id);
             if (empty($records)) {
                 $records['error'] = 'No Records Found';
+            }
+            else {
+                error_log("FS GOT RECORDS - ");
             }
             if ($this->_checkForErrors('Get Flowsheet Failed. ', $records)) {
                 $this->set('jsonRecord', 

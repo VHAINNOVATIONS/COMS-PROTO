@@ -223,7 +223,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	var PostMeds = theTemplate.PostMHMeds;
 	var MedsList = { "PreMeds" : PreMeds, "Meds" : TheMeds, "PostMeds" : PostMeds };
 
-		var appTemplateField = this.getApplied_Template();
+		appTemplateField = this.getApplied_Template();
 		appTemplateField.setValue(this.application.Patient.AppliedTemplate.id);
 
 		// var MedListField = this.getMedList();
@@ -292,7 +292,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			scope: this,
 			theMeds : theMeds,
 			success: function( response, opts ){
-				var text = response.responseText;
+				var i, text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				var MedRecords = resp.records;
 				var thePanel = this.getMedSpecificInfoDisplay();
@@ -547,7 +547,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		if (newRecords || newRecords == "") {
 			this.SpclInstrGetSelected(newRecords);
 		}
-		var len = this.spclInstrStore.length;
+		var i, len = this.spclInstrStore.length;
 		if (records2Remove) {
 			for (i = 0; i < len; i++) {
 				var rec = this.spclInstrStore[i];
@@ -624,7 +624,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		if (newRecords || newRecords == "") {
 			this.sciGetSelected(newRecords);
 		}
-		var len = this.sciStore.length;
+		var i, len = this.sciStore.length;
 		if (records2Remove) {
 			for (i = 0; i < len; i++) {
 				var rec = this.sciStore[i];

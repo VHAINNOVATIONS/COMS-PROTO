@@ -532,7 +532,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 
 	createChildren : function( component, eOpts ) {
 		var i, j, fsIndex = 0, fsTitle, fsMargin, fsCollapsed, thisDay, thisDayFS, thisCycle, thisCycleFS, insertIdx = 0, InnerFSName = "";
-		var oTpl, dTpl, nTpl;
+		var oTpl, dTpl, nTpl, margin, collapsed, thisDayFSName;
 		var oHtml, dHtml, nHtml;
 		var Patient = this.application.Patient;
 		if ("" === Patient.TemplateID) {

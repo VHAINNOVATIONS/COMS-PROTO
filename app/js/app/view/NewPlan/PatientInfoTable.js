@@ -155,7 +155,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					},
 
 					Debugger : function ( values ) {
-						debugger;
+						// debugger;
 					},
 
 					hasData : function (data) {

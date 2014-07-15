@@ -165,7 +165,7 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		width: 90,
 		sortable: true,
 		align: "center",
-		editor: combo,
+		editor: combo
 		//renderer: Ext.util.Format.comboRenderer(combo) 
 
 	}

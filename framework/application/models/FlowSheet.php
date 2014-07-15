@@ -203,6 +203,7 @@ class Flowsheet extends Model
      */
     public function getFlowsheet($id)
     {
+        error_log("Get Flowsheet");
         $query = "
             SELECT 
                 ndt.PAT_ID AS patId, 
@@ -297,6 +298,7 @@ class Flowsheet extends Model
             WHERE fs.PAT_ID = '$id'
             ";
 
+error_log("FS - $query");
 
         $results = $this->query($query);
         foreach ($results as $result) {

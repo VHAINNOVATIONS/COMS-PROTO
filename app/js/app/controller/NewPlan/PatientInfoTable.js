@@ -131,7 +131,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 
 	PatientSelected : function(recs, eOpts) {	// MWB 10 Feb 2012 - This event is passed up from the PatientSelected handler in the NewPlanTab controller, NOT from the combo itself
 		wccConsoleLog("Patient selected - Adjust BSA Calculations");
-		console.log("PatientSelected within PatientInfoTable");
+		// console.log("PatientSelected within PatientInfoTable");
 		var thisCtl = this.getController("NewPlan.PatientInfoTable");
 		var piData = recs[0].data;
 
@@ -162,7 +162,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	},
 
 	HandleBtnClicks : function(cmp, tag) {
-		console.log("NewPlan - PatientInfoTable - HandleBtnClicks");
+		// console.log("NewPlan - PatientInfoTable - HandleBtnClicks");
 		// debugger;
 	},
 

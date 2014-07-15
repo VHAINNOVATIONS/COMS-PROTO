@@ -66,6 +66,7 @@ else { ?>
     echo "		var AccessibilityMode = '" . $_SESSION["BrowserMode"] . "';\n";
     echo "		var Page2Open = '$page2Open';\n";
 	echo "		var theJSPath = '$Version/';\n";
+    echo "		var dName = '" . $_SESSION['dname'] . "';\n";
     echo "		var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
     echo "		var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
 	echo "		var User = '" . $_SESSION["winauth"] . "';\n";     /* Domain\User name of user currently logged into the domain */

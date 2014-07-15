@@ -265,7 +265,7 @@ for (i = 0; i < eLen; i++) {
 //        console.log("Displaying OEM Record Data - " + fromEdit);
 
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
-		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;
+		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData, AdminDay2ViewCombo;
 
 		if (PatientInfo.OEMDataRendered) {
 		    return;
@@ -320,7 +320,7 @@ for (i = 0; i < eLen; i++) {
 
 		// MWB - 5/10/2012 - Need to debug this block...
 		var theTab = Ext.ComponentQuery.query("OEM dspOEMTemplateData")[0];
-        var al;
+        var a1;
 		if (theTab && theTab.rendered){
 			a1 = theTab.el.select("button.EditOEM_Record");
 			a1.on("click", this.handleEditOEM_Record, this);
@@ -399,11 +399,11 @@ for (i = 0; i < eLen; i++) {
 		var ElLen = Elements.length;
 		var theData = recs[0];
 
-		var thisCtl = this.getController("NewPlan.OEM");
+		thisCtl = this.getController("NewPlan.OEM");
 		var dspDate = theData.data.date;
 		var LinkName = theData.data.LinkName;
-		var Elements = Ext.query(".OEMRecord");
-		var ElLen = Elements.length;
+		Elements = Ext.query(".OEMRecord");
+		ElLen = Elements.length;
 		var i;
 		var theElement;
 		var tmpName;
@@ -551,9 +551,9 @@ for (i = 0; i < eLen; i++) {
             });
         }
 
-        Widget = "OEMPerformanceStatus";
-        Query = "OEMPerformanceStatus button[text=\"Save\"]";
-        params = {"itemsInGroup": itemsInGroup};
+        var Widget = "OEMPerformanceStatus";
+        var Query = "OEMPerformanceStatus button[text=\"Save\"]";
+        var params = {"itemsInGroup": itemsInGroup};
         var Win = Ext.widget(Widget, params);
         var SaveBtn = Ext.ComponentQuery.query(Query)[0];
         SaveBtn.on("click", this.SaveOEM_PS, this );
@@ -622,7 +622,7 @@ for (i = 0; i < eLen; i++) {
 						newPlanTabCtl.loadVitals("Update Vitals");
 						this.application.Patient.OEMRecords.PerformanceStatus = this.application.NewPerformanceStatus;
 						var thisCtl = this.getController("NewPlan.OEM");
-						OEMLevel1 = thisCtl.getOEM_Level1();
+						var OEMLevel1 = thisCtl.getOEM_Level1();
 						OEMLevel1.update(this.application.Patient.OEMRecords);
 						Ext.Function.defer(this.AssignBtnHandlers, 2000, this);
 					}
@@ -820,7 +820,7 @@ for (i = 0; i < eLen; i++) {
             buttons: Ext.Msg.YESNOCANCEL,
             el : element,
             fn: function(btnID, txt, opt) {
-                var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+                var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
                 var Data = this.application.Patient.OEMRecords;
                 var records = Data.OEMRecords;
                 var TherapyID;

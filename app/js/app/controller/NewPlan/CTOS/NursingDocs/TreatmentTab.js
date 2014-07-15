@@ -137,9 +137,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 						scope : this,
 						callback : function(record, operation) {
 							this.application.unMask();
-							if (operation.success) {
-							}
-							else {
+							if (!operation.success) {
 								Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
 							}
 						}
@@ -241,19 +239,18 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				// to find matches and then ensure that the treatmentStore records are updated with the TreatmentHistory records
 
 				var MatchingRecord, i, aRec, len = TreatmentHistoryRecords.length;
+				var findByFcn = function(record, id) {
+					return this.Record2Find.AdminDate === record.get("adminDate") && 
+					this.Record2Find.Drug === record.get("drug") && 
+					this.Record2Find.Type === record.get("type");
+				};
 				for (i = 0; i < len; i++) {
 					aRec = TreatmentHistoryRecords[i];
 					this.Record2Find = aRec;
-					MatchingRecord = treatmentStore.findBy(function (record, id) {
-						return this.Record2Find.AdminDate === record.get("adminDate") && 
-							this.Record2Find.Drug === record.get("drug") && 
-							this.Record2Find.Type === record.get("type");
-						},
-						this
-					);
+					MatchingRecord = treatmentStore.findBy(findByFcn, this);
 					tsRecord = treatmentStore.getAt(MatchingRecord);
 					if (tsRecord) {
-						var dbg_temp = tsRecord.data;
+						var temp, dbg_temp = tsRecord.data;
 						tsRecord.set("StartTime", aRec.StartTime);
 						tsRecord.set("EndTime", aRec.EndTime);
 						tsRecord.set("Comments", aRec.Comments);

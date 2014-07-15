@@ -136,7 +136,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		{
 			ref : "ND_PT_TabLabInfo",
 			selector : "NursingDocs_GenInfo [name=\"ND_PT_LabInfo\"]"
-		},
+		}
 
 /*
 		{
@@ -190,7 +190,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"button[id=\"AddVitals_PatientInfoPanel3\"]" : {
 					click : this.HandleVSFormShowCalcButtons
 			},
-            "button[name=\"ShowBSA\]" : {
+            "button[name=\"ShowBSA\"]" : {
                 click: this.NDGIVS_BSA_Calculations
             },
 
@@ -217,7 +217,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			},
 
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
-				"blur" : this.VitalsFieldValidation,
+				"blur" : this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsPulse\"]" : {
 				"blur" : this.VitalsFieldValidation
@@ -254,7 +254,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			diastolic, 
 			Valid = true,
 			Vitals = this.application.Patient.Vitals,
-			min, max, Msg, LastVital, pct, pctLast;
+			min, max, Msg, LastVital, pct, pctLast, valu;
 		if (Vitals.length > 0) {
 			LastVitals = Vitals[0];
 			var BP = LastVitals.BP.split("/");
@@ -340,15 +340,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			validity = true;
 
 		fldNameMap = [];
-		fldNameMap["ndVitalsTempF"] = "Temperature";
-		fldNameMap["ndVitalsPulse"] = "Pulse";
-		fldNameMap["ndVitalsSystolic"] = "BP_Systolic";
-		fldNameMap["ndVitalsDiastolic"] = "BP_Diastolic";
-		fldNameMap["ndVitalsHeightIN"] = "Height";
-		fldNameMap["ndVitalsResp"] = "Respiration";
-		fldNameMap["ndVitalsO2Level"] = "SP_O2";
-		fldNameMap["ndVitalsWeightP"] = "Weight";
-		fldNameMap["ndVitalsPain"] = "Pain";
+		fldNameMap.ndVitalsTempF = "Temperature";
+		fldNameMap.ndVitalsPulse = "Pulse";
+		fldNameMap.ndVitalsSystolic = "BP_Systolic";
+		fldNameMap.ndVitalsDiastolic = "BP_Diastolic";
+		fldNameMap.ndVitalsHeightIN = "Height";
+		fldNameMap.ndVitalsResp = "Respiration";
+		fldNameMap.ndVitalsO2Level = "SP_O2";
+		fldNameMap.ndVitalsWeightP = "Weight";
+		fldNameMap.ndVitalsPain = "Pain";
 
 		if (IDESpecLen > 0) {
 			for (i = 0; i < IDESpecLen; i++) {
@@ -513,7 +513,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		thisCtl.getNdVitalsO2Level().setValue("");
 		thisCtl.getNdVitalsBSA().setValue("");
 
-		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
 		thisCtl.ClearTabData();
 	},
 
@@ -584,7 +584,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + e.message + "<br />" + resp.msg );
+				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
 			}
 		});
 	},
@@ -758,7 +758,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			failure : function( response, opts ) {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - General Information Section, Save Error - " + e.message + "<br />" + resp.msg );
+				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - General Information Section, Save Error - " + resp.msg );
 			}
 		});
 		return (true);
@@ -854,7 +854,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	HandleVSFormShowCalcButtons : function (evt, btn) {
 		var Patient = this.application.Patient;
-		PatientData = Ext.ShowBSACalcs(Patient, false, null, null);
+		var PatientData = Ext.ShowBSACalcs(Patient, false, null, null);
 
 		Ext.MessageBox.show({
 			title : "Body Surface Area Calculations",

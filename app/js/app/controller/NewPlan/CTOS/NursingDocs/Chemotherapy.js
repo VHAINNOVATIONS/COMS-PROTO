@@ -65,7 +65,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 	},
 
 	ClearTabData : function() {
-		console.log("Chemotherapy - ClearTabData");
+		// console.log("Chemotherapy - ClearTabData");
 		this.ChemoBioSectionHandler(true);
 	},
 
@@ -129,7 +129,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 	},
 
 	setChemoBioField : function(fieldQuery, value, showField) {
-		console.log("setChemoBioField - " + fieldQuery);
+		// console.log("setChemoBioField - " + fieldQuery);
 		var theField = Ext.ComponentQuery.query(fieldQuery);
 		var i, len = theField.length;
 		for (i = 0; i < len; i++) {
@@ -210,7 +210,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 
 	setNDCTWarning : function(msg, show, ThisAdminDay) {
 		var theField = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"ndctWarning\"]");
-		var i, len = theField.length;
+		var i, el, len = theField.length;
 		for (i = 0; i < len; i++) {
 			el = theField[i].getEl();
 			if (el) {
@@ -238,7 +238,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 			AdminDate, 
 			AdminDate1 = null, 
 			LastAdminDate = null,
-			msg = "";
+			msg = "", i;
 		if (this.application.Patient && this.application.Patient.OEMRecords) {
 			ListOfAdminDays = this.application.Patient.OEMRecords.OEMRecords;
 			for (i = 0; i < ListOfAdminDays.length; i++ ) {

@@ -706,7 +706,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				}
 			}
 	},
-	clickMedDocCancel : function() {
+	clickMedDocCancel : function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
 

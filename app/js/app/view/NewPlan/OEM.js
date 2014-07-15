@@ -24,7 +24,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 	cls : "Tab", 
 	tpl : new Ext.XTemplate(
 		"<tpl for=\"Patient\">",
-//			"{[this.debugger( values, parent )]}",
+//			"{[this.debuggerFcn( values, parent )]}",
 			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders (opens new window)&nbsp;",
 			"<a href=\"Fsheet/?PID={id}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
 		"</tpl>",
@@ -61,7 +61,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 			{
 					// XTemplate Configuration
 				disableFormats: true,
-				debugger : function ( current, prev ) {
+				debuggerFcn : function ( current, prev ) {
 					// debugger;
 				},
 				goalLink : function ( current ) {
@@ -637,9 +637,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         }
                         btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button>";
                     }
-					else {
-						console.log("Med Hold NOT Available");
-					}
+					// else {
+						// console.log("Med Hold NOT Available");
+					// }
                     btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit</button>";
                     btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel</button>";
 

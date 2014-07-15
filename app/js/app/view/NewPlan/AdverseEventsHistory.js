@@ -8,7 +8,7 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 	"margin" : "0 0 10 0", 
 	"bodyPadding" : "10",
 	"tpl" : new Ext.XTemplate(
-		"{[this.debugger( values, parent )]}",
+		"{[this.debuggerFcn( values, parent )]}",
 	
 	"<tpl for=\".\">",
 		"<table border=\"1\" class=\"InformationTable\">",
@@ -24,7 +24,7 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 			"</tpl>",
 			"<tpl for=\"Reaction\">",
 				"<tpl if=\"Details.length != 0\">",
-						"{[this.debugger( values, parent )]}",
+						"{[this.debuggerFcn( values, parent )]}",
 					"<tr><th colspan=\"2\" style=\"text-align: center;\">Reaction - {date}</th></tr>",
 					"<tpl for=\"Details\">",
 						"<tpl if=\"alertEvent\"><tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">{sectionTitle} - {fieldLabel} - Flagged as an ALERT</th></tr></tpl>",
@@ -40,7 +40,7 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 			{
 					// XTemplate Configuration
 				disableFormats: true,
-				debugger : function ( current, prev ) {
+				debuggerFcn : function ( current, prev ) {
 					// debugger;
 				}
 			}

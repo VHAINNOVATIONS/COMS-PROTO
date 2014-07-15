@@ -16,6 +16,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "TemperatureLocation"
     , "DeliveryMechanism"
 	, "IDEntry"
+
     ],
 
 
@@ -101,7 +102,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
 		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
 
-		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"}
+		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
+		{ ref: "ProgrammerBtns",				selector: "ProgrammerBtns"}
     ],
 
 
@@ -239,6 +241,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         if (Btns) {
             Btns.on("click", this.handlePatientSelectionClickEvent, this);
         }
+		if ("Programmer" === dName ) {
+			this.getProgrammerBtns().show();
+		}
         Ext.togglePanelOnTitleBarClick(panel);
     },
 
@@ -1693,7 +1698,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
-				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + e.message + "<br />" + resp );
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Neutropenia Level - " + resp );
 			}
 		});
 	},
@@ -1726,7 +1731,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			scope : this,
 			url: URL,
 			success: function( response, opts ){
-				console.log("getEmoLevelInfo from Site Config - Complete");
+				// console.log("getEmoLevelInfo from Site Config - Complete");
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				resp = Ext.util.Format.htmlDecode(resp);
@@ -1738,7 +1743,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
-				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Emetogenic Level - " + e.message + "<br />" + resp );
+				Ext.MessageBox.alert("Retrieve Error", "Error attempting to retrieve information on Emetogenic Level - " + resp );
 			}
 		});
 	},
