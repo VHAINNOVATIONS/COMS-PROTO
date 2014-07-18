@@ -16,7 +16,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "TemperatureLocation"
     , "DeliveryMechanism"
 	, "IDEntry"
-
     ],
 
 

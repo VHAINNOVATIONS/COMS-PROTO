@@ -7,9 +7,13 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 	padding : "10",
 	items : [
 		{ xtype : "NursingDocs_Chemotherapy", cls : "Level1" },
-		{ xtype : "container", name : "flowsheet grid", margin : "0 0 10 0" },		// Grid is built on the fly in the 
+		{ xtype : "FlowSheetGrid" },
+
+	/**
+	{ xtype : "container", name : "flowsheet grid", margin : "0 0 10 0" },		// Grid is built on the fly in the 
 																// app\controller\NewPlan\CTOS\FlowSheetTab.js createFlowsheet() 
 																// (Search for: theGrid = Ext.create)
+**/
 		{ xtype : "ToxicitySideEffectsPanel" },
 		{ xtype : "LabInfo" }
 	]
