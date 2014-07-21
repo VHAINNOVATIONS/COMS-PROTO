@@ -86,6 +86,7 @@
 					$_SESSION['vista'] = $row['vista'];
 					$_SESSION['sshusr'] = $row['sshusr'];
 					$_SESSION['sshpwd'] = $row['sshpwd'];
+					$_SESSION['sshusr2']= $row['sshusr2'];
 				}
 				
 			$usql = "Update Roles set Last_SessionID = '".$_SESSION['sessionid']."' where username = '$AccessCode'";
