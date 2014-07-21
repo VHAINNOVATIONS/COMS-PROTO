@@ -246,9 +246,7 @@ class Flowsheet extends Model
             WHERE fs.PAT_ID = '$id'
         ";
 
-
-//echo "query 1: ".$query."<br>";
-$results1 = $this->query($query1);
+	$results1 = $this->query($query1);
 
         $query2 = "
             SELECT 
@@ -297,16 +295,11 @@ $results1 = $this->query($query1);
             join SiteCommonInformation sci on sci.ID = fs.ToxicityLU_ID
             WHERE fs.PAT_ID = '$id'
             ";
-//echo "query 2: ".$query."<br>";
-//error_log("FS - $query");
 
         $results2 = $this->query($query2);
-		//echo "results: ";
-		//var_dump($results1);
-		//var_dump($results2);
-		//echo "<br>";
+
 		$results = array_merge ((array)$results1,(array)$results2);
-        //var_dump($results);
+
 		foreach ($results as $result) {
             if (empty($result['cycle']) || empty($result['adminDay'])) {
                 continue;
