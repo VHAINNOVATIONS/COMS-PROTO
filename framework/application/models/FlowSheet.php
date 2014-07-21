@@ -204,7 +204,7 @@ class Flowsheet extends Model
     public function getFlowsheet($id)
     {
         error_log("Get Flowsheet");
-        $query = "
+        $query1 = "
             SELECT 
                 ndt.PAT_ID AS patId, 
                 ndt.Cycle AS cycle, 
@@ -247,10 +247,10 @@ class Flowsheet extends Model
         ";
 
 
+//echo "query 1: ".$query."<br>";
+$results1 = $this->query($query1);
 
-
-
-        $query = "
+        $query2 = "
             SELECT 
                 ndt.PAT_ID AS patId, 
                 ndt.Cycle AS cycle, 
@@ -297,11 +297,17 @@ class Flowsheet extends Model
             join SiteCommonInformation sci on sci.ID = fs.ToxicityLU_ID
             WHERE fs.PAT_ID = '$id'
             ";
+//echo "query 2: ".$query."<br>";
+//error_log("FS - $query");
 
-error_log("FS - $query");
-
-        $results = $this->query($query);
-        foreach ($results as $result) {
+        $results2 = $this->query($query2);
+		//echo "results: ";
+		//var_dump($results1);
+		//var_dump($results2);
+		//echo "<br>";
+		$results = array_merge ((array)$results1,(array)$results2);
+        //var_dump($results);
+		foreach ($results as $result) {
             if (empty($result['cycle']) || empty($result['adminDay'])) {
                 continue;
             }
@@ -421,5 +427,38 @@ error_log("FS - $query");
         if (! empty($flowsheet)) {
             return $flowsheet;
         }
+    }
+	///newfunction
+function FS($patientID){
+        
+        $query = "SELECT Match,First_Name as fname,Last_Name as lname,Middle_Name,DFN,Patient_ID as id FROM Patient WHERE Match = '$lastFour'";
+        $result = $this->query($query); 
+		
+		
+		
+		$query2 = "SELECT PAT_ID
+					,Patient_ID
+					,Template_ID
+					,Date_Applied
+					,Date_Started
+					,Date_Ended
+					,Is_Active
+					,AssignedByRoleID
+					,Goal
+					,Clinical_Trial
+					,Status
+					,Perf_Status_ID
+					,Weight_Formula
+					,BSA_Method
+					,Date_Ended_Actual
+					FROM Patient_Assigned_Templates";
+			$result2 = $this->query($query2);
+		
+		$arr = array_merge ((array)$result,(array)$result2);
+		
+		//echo "Match".$Match."";
+		//var_dump($arr);
+		//var_dump($name);
+        return ($result);
     }
 }
