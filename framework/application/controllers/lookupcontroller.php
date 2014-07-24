@@ -1349,7 +1349,11 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
  **/
     function _CommonServiceCallMethod($ID, $DataType, $Msg) {
-        error_log("SiteCommonInfo");
+        
+
+
+
+error_log("SiteCommonInfo");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $query = "";

@@ -83,7 +83,14 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 		}
 	$FirsLogin1 = $FirstLogin * 3;
 	}
-	if ($LastLogin1 > 300){
+
+
+    $TimeOutMax = 300;
+    $TimeOutMax = 5000;
+    $LastLogin1 = $TimeOutMax;
+
+
+	if ($LastLogin1 > $TimeOutMax){
 		include "login.php";
 	}elseif($FirstLogin === 0){
 		include "login.php";
@@ -111,7 +118,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 	  ,DateEntered
 	  ,DateGood
 		FROM COMS_Sessions	
-		WHERE $LastLogin <= 300
+		WHERE $LastLogin <= $TimeOutMax
 		AND AC != '' 
 		AND compname = '$ipcheck' 
 		order by timestamp desc ";

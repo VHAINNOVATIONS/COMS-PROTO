@@ -106,9 +106,9 @@ error_log("Optional Entry Point");
             $Cycle = $requestData["Cycle"];
             $Day = $requestData["Day"];
             $ToxInstrID = $requestData["ToxInstr"];
-            $ToxData = $requestData["Data"];
-            $DiseaseResponse = $requestData["DiseaseResponse"];
-            $FS_OtherData = $requestData["OtherData"];
+            $ToxData = $this->escapeString($requestData["Data"]);
+            $DiseaseResponse = $this->escapeString($requestData["DiseaseResponse"]);
+            $FS_OtherData = $this->escapeString($requestData["OtherData"]);
         }
 
         $this->Flowsheet->beginTransaction();

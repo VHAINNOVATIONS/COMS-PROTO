@@ -31,7 +31,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 
 		var comboStore = theCombo.getStore();
 		var theRecord = comboStore.findRecord("ID", nValue);
-		ToxDetailsField.setValue(theRecord.Details);
+		var theData = theRecord.getData();
+		ToxDetailsField.setValue(theData.Details);
 
 
 
