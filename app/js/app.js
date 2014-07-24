@@ -244,6 +244,8 @@ Ext.URLs.AddND_Treatment = "/Orders/Orders";
 
 Ext.URLs.FlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
 Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.FlowSheetOptionalInfo = "/Flowsheet/Optional"; // "Flowsheet Optional questions
+
 // OLD DATA ---> Param = Flowsheet Record GUID - This is the ID for the Flowsheet which is an array of FlowsheetAdminDay records
 // Param = PAT_ID - Patient Treatment ID which identifies the set of records for the current treatment (including flowsheet, nursing docs, OEM, etc)
 // Returns Success or Failure of data retrieval from MDWs as a standard JSON object:
@@ -621,6 +623,8 @@ Ext.require([
 
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
+	"COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues",
+
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
 
 	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
@@ -1602,6 +1606,8 @@ Ext.application({
 		, "NewPlan.PatientInfoTable"
 		, "NewPlan.OEM_Edit"
 		, "NewPlan.CTOS.FlowSheetTab"
+		, "NewPlan.CTOS.FlowSheetOptionalQues"
+
 		, "NewPlan.CTOS.ChronologyTab"
 		, "NewPlan.CTOS.PatientSummaryTab"
 

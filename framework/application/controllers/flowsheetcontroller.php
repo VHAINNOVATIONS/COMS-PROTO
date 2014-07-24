@@ -53,6 +53,149 @@ class FlowsheetController extends Controller
         return false;
     }
 
+
+    public function Optional($PAT_ID = null) {
+        /*************
+        [FS_ID]
+       ,[Weight]
+       ,[Disease_Response]
+       ,[ToxicityLU_ID]
+       ,[Toxicity]
+       ,[Other]
+       ,[PAT_ID]
+       ,[Cycle]
+       ,[Day]
+       ,[AdminDate]
+
+
+       POST/PUT Example using Advanced REST Client in Chrome
+       URL - http://coms-mwb.dbitpro.com:355/Flowsheet/Optional
+       Header - Select application/x-www-form-urlencoded
+       Data - ToxInstr=C8DD3E0F-07F3-E311-AC08-000C2935B86F&Data=Tox_Data&DiseaseResponse=DR_Data&OtherData=Other_Data&Cycle=1&Day=1
+       This will use the $_POST var to store the data
+         *************/
+
+error_log("Optional Entry Point");
+
+        $Msg = "Flowsheet Optional Information";
+        $TableName = "Flowsheet_ProviderNotes";
+        $GUID =  $this->Flowsheet->newGUID();
+
+        $retVal = array();
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $ErrMsg = "";
+        $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
+        $AdminDate = date("m/d/Y");
+
+
+        // Retrieve Data if Request is a PUT
+        parse_str(file_get_contents("php://input"),$requestData);
+        if (! empty($requestData)) {
+            error_log("Optional Data - via INPUT - " . $this->varDumpToString($requestData));
+        }
+        else if (!empty($_POST)) {
+            // Retrieve Data if Request is a POST
+            error_log("No INPUT Data Received, Checking POST");
+            error_log("Optional Data - via POST - " . $this->varDumpToString($_POST));  // This works...
+            $requestData = $_POST;
+        }
+
+        if (!empty($requestData)) {
+            $Cycle = $requestData["Cycle"];
+            $Day = $requestData["Day"];
+            $ToxInstrID = $requestData["ToxInstr"];
+            $ToxData = $requestData["Data"];
+            $DiseaseResponse = $requestData["DiseaseResponse"];
+            $FS_OtherData = $requestData["OtherData"];
+        }
+
+        $this->Flowsheet->beginTransaction();
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($PAT_ID) {       /* Get Specific Info */
+            $query = "select 
+                    pn.FS_ID, 
+                    pn.Disease_Response, 
+                    pn.ToxicityLU_ID, 
+                    pn.Other, 
+                    pn.Cycle, 
+                    pn.Day, 
+                    pn.Toxicity, 
+                    sci.Details as ToxicityDetails,
+                    sci.Label as ToxicityInstr,
+                    CONVERT(VARCHAR(10), pn.AdminDate, 101) as AdminDate
+                    from [COMS_TEST_2].[dbo].[Flowsheet_ProviderNotes ] pn 
+                    join COMS_TEST_2.dbo.SiteCommonInformation sci on sci.ID = pn.ToxicityLU_ID
+                    WHERE pn.PAT_ID = '$PAT_ID' 
+                    order by AdminDate desc";
+            }
+            else {       /* Get ALL Info */
+                $query = "select * from $TableName";
+            }
+            error_log("GET Request - $query");
+            $records = $this->Flowsheet->query($query);
+
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT INTO $TableName
+               (FS_ID, Disease_Response, ToxicityLU_ID, Toxicity, Other, PAT_ID, Cycle, Day, AdminDate)
+               VALUES
+               ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
+            error_log("POST Request - $query");
+
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+            $records = $this->Flowsheet->query($query);
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            error_log("PUT Request - NYA");
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            error_log("DELETE Request - NYA");
+        }
+
+
+        if ($this->_checkForErrors('Flowsheet Failed. ', $records)) {
+            $this->Flowsheet->rollbackTransaction();
+            $this->set('jsonRecord', 
+                array(
+                    'success' => false,
+                    'msg' => $this->get('frameworkErr') . $records['error']
+                ));
+            return;
+        }
+
+        $this->Flowsheet->endTransaction();
+        $this->set('jsonRecord', 
+            array(
+                'success' => true,
+                'total' => count($records),
+                'records' => $records
+            )
+        );
+    }
+
+
+
+
+    public function Optional2($PAT_ID = null) {
+error_log("Optional Entry Point");
+        $Msg = "Flowsheet Optional Information";
+        $TableName = "Flowsheet_ProviderNotes";
+
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        $ErrMsg = "";
+
+    }
+
+
+
+
     /**
      * 
      * @param String $id
@@ -71,26 +214,38 @@ error_log("FS Entry Point");
 $aRec = array(
       "-" => "01 General",
       "label" => "Date",
-      "Cycle 1, Day 1" => "07\/07\/2014",
-      "Cycle 1, Day 2" => "07\/08\/2014",
-      "Cycle 1, Day 3" => "07\/09\/2014",
-      "Cycle 1, Day 4" => "07\/10\/2014",
-      "Cycle 1, Day 5" => "07\/11\/2014",
-      "Cycle 1, Day 6" => "07\/12\/2014",
-      "Cycle 1, Day 7" => "07\/13\/2014",
-      "Cycle 1, Day 8" => "07\/14\/2014",
-      "Cycle 1, Day 9" => "07\/15\/2014",
-      "Cycle 1, Day 10" => "07\/16\/2014",
-      "Cycle 1, Day 11" => "07\/17\/2014",
-      "Cycle 1, Day 12" => "07\/18\/2014",
-      "Cycle 1, Day 13" => "07\/19\/2014",
-      "Cycle 1, Day 14" => "07\/20\/2014",
-      "Cycle 1, Day 15" => "07\/21\/2014",
-      "Cycle 1, Day 16" => "07\/22\/2014",
-      "Cycle 1, Day 17" => "07\/23\/2014",
-      "Cycle 1, Day 18" => "07\/24\/2014",
-      "Cycle 1, Day 19" => "07\/25\/2014"
+           "Cycle 1, Day 1" => "07/07/2014",
+           "Cycle 1, Day 2" => "07/08/2014",
+           "Cycle 1, Day 3" => "07/09/2014",
+           "Cycle 1, Day 4" => "07/10/2014",
+           "Cycle 1, Day 5" => "07/11/2014",
+
+           "Cycle 2, Day 1"  => "07/12/2014",
+           "Cycle 2, Day 2"  => "07/13/2014",
+           "Cycle 2, Day 3"  => "07/14/2014",
+           "Cycle 2, Day 4"  => "07/15/2014",
+           "Cycle 2, Day 5"  => "07/16/2014",
+
+           "Cycle 3, Day 1"  => "07/17/2014", 
+           "Cycle 3, Day 2"  => "07/18/2014", 
+           "Cycle 3, Day 3"  => "07/19/2014", 
+           "Cycle 3, Day 4"  => "07/20/2014", 
+           "Cycle 3, Day 5"  => "07/21/2014", 
+
+           "Cycle 4, Day 1"  => "07/22/2014", 
+           "Cycle 4, Day 2"  => "07/23/2014", 
+           "Cycle 4, Day 3"  => "07/24/2014", 
+           "Cycle 4, Day 4"  => "07/25/2014", 
+           "Cycle 4, Day 5"  => "07/26/2014", 
+                           
+           "Cycle 5, Day 1"  => "07/27/2014", 
+           "Cycle 5, Day 2"  => "07/28/2014", 
+           "Cycle 5, Day 3"  => "07/29/2014", 
+           "Cycle 5, Day 4"  => "07/30/2014", 
+           "Cycle 5, Day 5"  => "07/31/2014"
+
 );
+
 array_push($retVal, $aRec);
 
 error_log("Result - " . $this->varDumpToString($retVal));
@@ -98,53 +253,70 @@ error_log("Result - " . $this->varDumpToString($retVal));
 $aRec = array(
       "-" => "01 General",
       "label" => "Toxicity",
-      "Cycle 1, Day 25" => "&lt;u>View</u>",
-      "Cycle 1, Day 28" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 1" =>   "&lt;u>View</u>",
-      "Cycle 1, Day 2" =>   "&lt;u>View</u>",
+      "Cycle 1, Day 1" => "&lt;u>View</u>",
+      "Cycle 1, Day 2" =>  "&lt;u>View</u>",
       "Cycle 1, Day 3" =>   "&lt;u>View</u>",
       "Cycle 1, Day 4" =>   "&lt;u>View</u>",
       "Cycle 1, Day 5" =>   "&lt;u>View</u>",
-      "Cycle 1, Day 6" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 7" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 8" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 9" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 10" => "&lt;u>View</u>",
-      "Cycle 1, Day 11" => "&lt;u>View</u>",
-      "Cycle 1, Day 12" => "&lt;u>View</u>",
-      "Cycle 1, Day 13" => "&lt;u>View</u>",
-      "Cycle 1, Day 14" => "&lt;u>View</u>",
-      "Cycle 1, Day 15" => "&lt;u>View</u>",
-      "Cycle 1, Day 16" => "&lt;u>View</u>",
-      "Cycle 1, Day 17" => "&lt;u>View</u>",
-      "Cycle 1, Day 18" => "&lt;u>View</u>",
-      "Cycle 1, Day 19" => "&lt;u>View</u>"
+
+      "Cycle 2, Day 1" =>   "&lt;u>View</u>",
+      "Cycle 2, Day 2" =>  "&lt;u>View</u>",
+      "Cycle 2, Day 3" =>  "&lt;u>View</u>",
+      "Cycle 2, Day 4" =>  "&lt;u>View</u>",
+      "Cycle 2, Day 5" =>  "&lt;u>View</u>",
+
+      "Cycle 3, Day 1" => "&lt;u>View</u>",
+      "Cycle 3, Day 2" => "&lt;u>View</u>",
+      "Cycle 3, Day 3" => "&lt;u>View</u>",
+      "Cycle 3, Day 4" => "&lt;u>View</u>",
+      "Cycle 3, Day 5" => "&lt;u>View</u>",
+
+      "Cycle 4, Day 1" => "&lt;u>View</u>",
+      "Cycle 4, Day 2" => "&lt;u>View</u>",
+      "Cycle 4, Day 3" => "&lt;u>View</u>",
+      "Cycle 4, Day 4" => "&lt;u>View</u>",
+      "Cycle 4, Day 5" => "&lt;u>View</u>",
+                       
+      "Cycle 5, Day 1" => "&lt;u>View</u>",
+      "Cycle 5, Day 2" => "&lt;u>View</u>",
+      "Cycle 5, Day 3" => "&lt;u>View</u>",
+      "Cycle 5, Day 4" => "&lt;u>View</u>",
+      "Cycle 5, Day 5" => "&lt;u>View</u>"
 );
 array_push($retVal, $aRec);
 
 $aRec = array(
-
       "-" => "01 General",
       "label" => "Disease Response",
-      "Cycle 1, Day 1" =>  "N/C",
-      "Cycle 1, Day 2" =>  "N/C",
-      "Cycle 1, Day 3" =>  "N/C",
-      "Cycle 1, Day 4" =>  "N/C",
-      "Cycle 1, Day 5" =>  "N/C",
-      "Cycle 1, Day 6" =>  "N/C",
-      "Cycle 1, Day 7" =>  "N/C",
-      "Cycle 1, Day 8" =>  "N/C",
-      "Cycle 1, Day 9" =>  "N/C",
-      "Cycle 1, Day 10" => "N/C",
-      "Cycle 1, Day 11" => "N/C",
-      "Cycle 1, Day 12" => "N/C",
-      "Cycle 1, Day 13" => "N/C",
-      "Cycle 1, Day 14" => "N/C",
-      "Cycle 1, Day 15" => "N/C",
-      "Cycle 1, Day 16" => "N/C",
-      "Cycle 1, Day 17" => "N/C",
-      "Cycle 1, Day 18" => "N/C",
-      "Cycle 1, Day 19" => "N/C"
+      "Cycle 1, Day 1" =>  " ",
+      "Cycle 1, Day 2" =>  " ",
+      "Cycle 1, Day 3" =>  " ",
+      "Cycle 1, Day 4" =>  " ",
+      "Cycle 1, Day 5" =>  " ",
+
+      "Cycle 2, Day 1" =>  " ",
+      "Cycle 2, Day 2" =>  " ",
+      "Cycle 2, Day 3" =>  " ",
+      "Cycle 2, Day 4" =>  " ",
+      "Cycle 2, Day 5" =>  " ",
+
+      "Cycle 3, Day 1" =>  " ",
+      "Cycle 3, Day 2" =>  " ",
+      "Cycle 3, Day 3" =>  " ",
+      "Cycle 3, Day 4" =>  " ",
+      "Cycle 3, Day 5" =>  " ",
+
+      "Cycle 4, Day 1" =>  " ",
+      "Cycle 4, Day 2" =>  " ",
+      "Cycle 4, Day 3" =>  " ",
+      "Cycle 4, Day 4" =>  " ",
+      "Cycle 4, Day 5" =>  " ",
+
+      "Cycle 5, Day 1" =>  " ",
+      "Cycle 5, Day 2" =>  " ",
+      "Cycle 5, Day 3" =>  " ",
+      "Cycle 5, Day 4" =>  " ",
+      "Cycle 5, Day 5" =>  " "
 );
 array_push($retVal, $aRec);
 
@@ -156,28 +328,39 @@ $aRec = array(
       "Cycle 1, Day 3" =>  " ",
       "Cycle 1, Day 4" =>  " ",
       "Cycle 1, Day 5" =>  " ",
-      "Cycle 1, Day 6" =>  " ",
-      "Cycle 1, Day 7" =>  " ",
-      "Cycle 1, Day 8" =>  " ",
-      "Cycle 1, Day 9" =>  " ",
-      "Cycle 1, Day 10" => " ",
-      "Cycle 1, Day 11" => " ",
-      "Cycle 1, Day 12" => " ",
-      "Cycle 1, Day 13" => " ",
-      "Cycle 1, Day 14" => " ",
-      "Cycle 1, Day 15" => " ",
-      "Cycle 1, Day 16" => " ",
-      "Cycle 1, Day 17" => " ",
-      "Cycle 1, Day 18" => " ",
-      "Cycle 1, Day 19" => " "
+
+      "Cycle 2, Day 1" =>  " ",
+      "Cycle 2, Day 2" =>  " ",
+      "Cycle 2, Day 3" =>  " ",
+      "Cycle 2, Day 4" =>  " ",
+      "Cycle 2, Day 5" =>  " ",
+
+      "Cycle 3, Day 1" =>  " ",
+      "Cycle 3, Day 2" =>  " ",
+      "Cycle 3, Day 3" =>  " ",
+      "Cycle 3, Day 4" =>  " ",
+      "Cycle 3, Day 5" =>  " ",
+
+      "Cycle 4, Day 1" =>  " ",
+      "Cycle 4, Day 2" =>  " ",
+      "Cycle 4, Day 3" =>  " ",
+      "Cycle 4, Day 4" =>  " ",
+      "Cycle 4, Day 5" =>  " ",
+
+      "Cycle 5, Day 1" =>  " ",
+      "Cycle 5, Day 2" =>  " ",
+      "Cycle 5, Day 3" =>  " ",
+      "Cycle 5, Day 4" =>  " ",
+      "Cycle 5, Day 5" =>  " "
 );
 array_push($retVal, $aRec);
 
             $this->set('jsonRecord', 
                 array(
                     'success' => true,
-                    'total' => count($records),
-                    'records' => $retVal
+                    'total' => count($retVal),
+                    'records' => $retVal,
+                    'Foo' => "Bar1"
                 ));
 
 

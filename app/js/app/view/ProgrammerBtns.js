@@ -7,6 +7,8 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	"hidden" : true,
 
 	"items" : [
-		{ "xtype" : "button", "text" : "Load Treatment Data" }
+		{ "xtype" : "button", "text" : "Debugger" },
+		{ "xtype" : "button", "text" : "Load Treatment Data" },
+		{ "xtype" : "button", "text" : "FS Optional Ques" }
 	]
 });
