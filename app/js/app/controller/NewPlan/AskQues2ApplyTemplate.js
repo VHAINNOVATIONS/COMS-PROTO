@@ -181,42 +181,39 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
         });
 
 		patientTemplate.save({
-            scope: this,
-            success: function (data) {
-                wccConsoleLog("Apply Template SUCCESS" );
-					Ext.MessageBox.hide();
+			scope: this,
+			success: function (data) {
+				wccConsoleLog("Apply Template SUCCESS" );
+				Ext.MessageBox.hide();
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				var PatientSelection = thisCtl.getPatientSelectionPanel();
+				PatientSelection.collapse();
+				thisCtl.resetPanels(thisCtl, "", "", "");
 
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var PatientSelection = thisCtl.getPatientSelectionPanel();
-					PatientSelection.collapse();
-					thisCtl.resetPanels(thisCtl, "", "", "");
-
-					/**********
-					 *	data.data = {
-					 *	Amputations :  []
-					 *	BSAFormula :  "DuBois"
-					 *	ClinicalTrial :  ""
-					 *	DateApplied :  "2012-05-25"
-					 *	DateEnded :  "2012-11-9"
-					 *	DateStarted :  "2012-05-25"
-					 *	Goal :  "Curative"
-					 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
-					 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
-					 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
-					 *	WeightFormula :  "Actual Weight"
-					 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
-					 *	}
-					 ***********/
-					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
-					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
-            },
-            failure : function(record, op) {
-                wccConsoleLog("Apply Template Failed");
-                Ext.MessageBox.hide();
-                Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
-
-            }
-        });
-
-    }
+				/**********
+				 *	data.data = {
+				 *	Amputations :  []
+				 *	BSAFormula :  "DuBois"
+				 *	ClinicalTrial :  ""
+				 *	DateApplied :  "2012-05-25"
+				 *	DateEnded :  "2012-11-9"
+				 *	DateStarted :  "2012-05-25"
+				 *	Goal :  "Curative"
+				 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
+				 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
+				 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
+				 *	WeightFormula :  "Actual Weight"
+				 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
+				 *	}
+				 ***********/
+				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
+				Ext.MessageBox.alert('Success', 'Template applied to Patient ');
+			},
+			failure : function(record, op) {
+				wccConsoleLog("Apply Template Failed");
+				Ext.MessageBox.hide();
+				Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
+			}
+		});
+	}
 });
