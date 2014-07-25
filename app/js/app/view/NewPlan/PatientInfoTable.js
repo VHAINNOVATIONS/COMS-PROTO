@@ -12,7 +12,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	items: [
 		{ xtype: "container", name: "PatientInfoTable", cls: "PI_PatientInformationTable", tpl: 
 			new Ext.XTemplate(
-				// "{[this.Debugger(values)]}",
+				// "{[this.DebuggerFcn(values)]}",
 				"{[this.CalcBSA(values)]}",		// Needed to calculate the BSA Value if none retrieved.
 				"<table border=\"1\" class=\"InformationTable\">",
 					"<tr>",
@@ -154,7 +154,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return false;
 					},
 
-					Debugger : function ( values ) {
+					DebuggerFcn : function ( values ) {
 						// debugger;
 					},
 

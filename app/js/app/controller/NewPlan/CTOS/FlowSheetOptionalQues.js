@@ -26,7 +26,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	},
 
 	SelectToxInstr : function(theCombo, nValue, oValue, eOpts) {
-		debugger;
+		// debugger;
 		var ToxDetailsField = this.getToxDetails();
 
 		var comboStore = theCombo.getStore();
