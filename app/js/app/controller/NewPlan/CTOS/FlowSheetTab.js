@@ -1,75 +1,103 @@
 Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
-	extend: "Ext.app.Controller",
+	"extend" : "Ext.app.Controller",
 
-	stores: [
+	"stores" : [
 		"Toxicity",
 		"FlowSheetCombo"
 	],
 
-	views: [
+	"views" : [
 		"NewPlan.CTOS.FlowSheet",
 		"NewPlan.CTOS.ToxicitySideEffectsPanel",
 		"NewPlan.CTOS.ToxicitySideEffectsPUWin",
 		"NewPlan.CTOS.DiseaseResponsePUWin",
 		"NewPlan.CTOS.OtherPUWin",
 		"NewPlan.CTOS.FlowSheetGrid",
-		"NewPlan.CTOS.FlowSheetOptionalQues"
+		"NewPlan.CTOS.FlowSheetOptionalQues",
+		"NewPlan.CTOS.DiseaseResponsePanel",
+		"NewPlan.CTOS.ToxicitySideEffectsPanel",
+		"NewPlan.CTOS.OtherInfoPanel"
 	],
 
-    refs: [
-		{ ref: "FlowSheetGrid",					selector: "FlowSheet FlowSheetGrid"},
-		{ ref: "FlowSheetGridEdit",					selector: "Flowsheet button[name=\"EditOptionalQues\"]"}
+	"refs" : [
+		{ "ref" : "FlowSheetGrid",					"selector" : "FlowSheet FlowSheetGrid"},
+		{ "ref" : "FlowSheetGridEdit",				"selector" : "FlowSheet button[name=\"EditOptionalQues\"]"},
+		{ "ref" : "DiseaseResponsePanel",			"selector" : "FlowSheet DiseaseResponsePanel"},
+		{ "ref" : "ToxicitySideEffectsPanel",		"selector" : "FlowSheet ToxicitySideEffectsPanel"},
+		{ "ref" : "OtherInfoPanel",					"selector" : "FlowSheet OtherInfoPanel"}
+	
 	],
 
-	TabContentsCleared : true,
-	TabIsActive : false,
-
-
-	init: function () {
+	"init" : function () {
 		wccConsoleLog("Initialized Flow Sheet Tab Controller!");
 
 		this.application.on( 
 			{ 
-				PatientSelected : this.PatientSelected, 
-				scope : this 
+				"PatientSelected" : this.PatientSelected, 
+				"scope" : this 
 			}
 		);
 
 		this.control({
+			"scope" : this,
 			"FlowSheet FlowSheetGrid" : {
 				render : this.TabRendered
 			},
 			"FlowSheet" : {
-				beforeactivate : this.BeforeTabActivated,
-				activate : function(component) {
-					this.TabIsActive = true;
-					var theGrid = this.getFlowSheetGrid();
-					this.getFlowSheetData("PAT_ID", theGrid);
-				},
-				deactivate : function() {
-					this.TabIsActive = false;
-				}
+				activate : this.updateFlowsheetPanel
+			},
+			"FlowSheetGrid" : {
+					select : this.clickNamedAnchor		// ( this, record, row, column, eOpts )
 			},
 			"FlowSheetGrid button[name=\"EditOptionalQues\"]" : {
 				click: this.EditOptionalQuestions
 			},
 			"FlowSheetGrid [name=\"ShowCycles\"]" : {
 				change: this.ComboSelect
-			}
+			},
 
+			"FlowSheet DiseaseResponsePanel" : {
+				afterrender : Ext.togglePanelOnTitleBarClick
+			},
+			"FlowSheet ToxicitySideEffectsPanel" : {
+				afterrender : Ext.togglePanelOnTitleBarClick
+			},
+			"FlowSheet OtherInfoPanel" : {
+				afterrender : Ext.togglePanelOnTitleBarClick
+			},
+
+			"FlowSheet ToxicitySideEffectsPanel" : {
+			}
 		});
 	},
 
+	clickNamedAnchor : function (grid, record, row, column, eOpts) {
+		var theLabel = record.getData()["label"];
+		if ("Date" == theLabel || "Weight" == theLabel) {
+			return;
+		}
+		var thePanel = this.getToxicitySideEffectsPanel();
+		thePanel.expand();
 
-	ComboSelect : function(theCombo, newValue, oldValue, eOpts) {
-		var grid = theCombo.up("grid");
-		var comboStore = theCombo.getStore();
-		var theRecord = comboStore.findRecord("label", theCombo.rawValue);
-		var data, start, end;
-		var i, col, cols, colID;
-		data = theRecord.getData();
-		start = data.StartIdx;
-		end = data.EndIdx;
+		// var theCell = grid.view.getCellByPosition({row:row, column:column});
+		var theKey = this.getFlowSheetGrid().normalGrid.columns[column].key;
+		var theDate = grid.store.getAt(0).data[theKey];
+		var tableID = "ToxPanel-" + theDate;
+
+	},
+
+	"updateFlowsheetPanel" : function() {
+		var theGrid = this.getFlowSheetGrid();
+		this.getFlowSheetData("PAT_ID", theGrid);
+		this.getOptionalInfoData("PAT_ID");
+		var CurCycle = this.application.Patient.CurFlowSheetCycle;
+		if (CurCycle) {
+			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
+		}
+	},
+
+
+	ShowSelectedCycles : function(grid, start, end) {
 		// Note: A Locked Grid consists of TWO grids, one normal one and one locked
 		// Hence the weird check for columns, because "grid" contains NO columns, the columns are in locked and normal grids.
 		if (grid.normalGrid) {
@@ -106,6 +134,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				col.hide();
 			}
 		}
+	},
+
+
+	"ComboSelect" : function(theCombo, newValue, oldValue, eOpts) {
+		this.application.loadMask("Showing Cycles");
+		var grid = theCombo.up("grid");
+		var comboStore = theCombo.getStore();
+		var theRecord = comboStore.findRecord("label", theCombo.rawValue);
+		var data, start, end;
+		var i, col, cols, colID;
+		data = theRecord.getData();
+		start = data.StartIdx;
+		end = data.EndIdx;
+
+		this.ShowSelectedCycles(grid, start, end);
+
+		this.application.unMask();
 
 	},
 
@@ -113,10 +158,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	EditOptionalQuestions : function(btn) {
 		var OptQues = Ext.widget("FlowSheetOptionalQues");
 	},
-
-	BeforeTabActivated : function (component, eOpts ) {
-	},
-
 
 	buildCycleList : function (data) {
 		var startDay, endDay, days, hold, key, curCycle, cyc_day, attrName, cycleNum, cycleDay, part, aDate, startDate, endDate;
@@ -245,6 +286,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		CurCycle.StartIdx = LastCycle.StartIdx;
 		CurCycle.EndDate = LastCycle.EndDate;
 		CurCycle.EndIdx = LastCycle.EndIdx;
+		this.application.Patient.CurFlowSheetCycle = CurCycle;
 
 		var comboStore = [];
 		comboStore.push(AllCycles);
@@ -259,6 +301,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	getFlowSheetData : function(PAT_ID, theGrid) {
+		this.application.loadMask("Loading Flow Sheet Information");
 		Ext.Ajax.request({
 			scope : this,
 			url : Ext.URLs.FlowSheetRecords + "/" + PAT_ID,
@@ -270,11 +313,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				var comboStore = Ext.getStore("FlowSheetCombo");
 				comboStore.loadData(colsRecords);
 				theGrid.reconfigure(theStore, theCols);
-				// this.application.unMask();
+				this.application.unMask();
 			},
 
 			failure : function( ) {
-				// this.application.unMask();
+				this.application.unMask();
+				alert("Attempt to load Flow Sheet data failed.");
+			}
+		});
+	},
+
+	getOptionalInfoData : function(PAT_ID) {
+		this.application.loadMask("Loading Flow Sheet Information");
+		Ext.Ajax.request({
+			scope : this,
+			url : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
+			success : function( response) {
+				var obj = Ext.decode(response.responseText);
+				var Panel = this.getDiseaseResponsePanel();
+				Panel.update(obj);
+				Panel = this.getToxicitySideEffectsPanel();
+				Panel.update(obj);
+				Panel = this.getOtherInfoPanel();
+				Panel.update(obj);
+				this.application.unMask();
+			},
+
+			failure : function( ) {
+				this.application.unMask();
 				alert("Attempt to load Flow Sheet data failed.");
 			}
 		});
@@ -310,6 +376,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				jObj.idx = idx;
 				jObj.width = 140;
 				jObj.dataIndex = key;
+				jObj.renderer = Ext.util.Format.htmlDecode;
+
 				jObj.id = "Col-" + idx;
 				if ("-" === key || "&nbsp;" === key) {
 					jObj.hidden = true;

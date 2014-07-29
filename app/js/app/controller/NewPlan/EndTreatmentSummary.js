@@ -539,8 +539,8 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		thisCtl.EoTS_Other = [];
 		thisCtl.EoTS_Drugs = [];
 		
-		
-		var Flowsheet = Ctl.createFlowsheet(thisCtl.parseFlowsheetData);
+//		var Flowsheet = Ctl.createFlowsheet(thisCtl.parseFlowsheetData);
+console.log("Create Flowsheet no longer exists - EndTreatmentSummary.js");
 
 		this.EoTSData.OriginalEnd = this.application.Patient.TreatmentEnd;
 		this.EoTSData.Meds = this.EoTS_Drugs;
