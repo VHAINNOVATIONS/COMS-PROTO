@@ -421,37 +421,105 @@ class Flowsheet extends Model
             return $flowsheet;
         }
     }
-	///newfunction
+
+///newfunction
 function FS($patientID){
         
-        $query = "SELECT Match,First_Name as fname,Last_Name as lname,Middle_Name,DFN,Patient_ID as id FROM Patient WHERE Match = '$lastFour'";
-        $result = $this->query($query); 
+
+$query = "SELECT 
+Performance_ID as ph_Performance_ID ,Patient_History.Weight as ph_Weight ,Treatment_ID as ndt_TreatmentID 
+,ndt.Patient_ID as ndt_Patient_ID ,ndt.Template_ID as ndt_Template_ID ,ndt.PAT_ID as ndt_PATID 
+,fspn.PAT_ID as fs_PATID ,ndt.Cycle as ndt_Cycle ,AdminDay as ndt_AdminDay ,ndt.AdminDate as ndt_AdminDate 
+,Type as ndt_Type ,Drug as ndt_Drug ,Dose as ndt_Dose ,Unit as ndt_Unit ,Route as ndt_Route 
+,StartTime as ndt_StartTime ,EndTime as ndt_EndTime ,Comments as ndt_Comments ,Treatment_User as ndt_TreatmentUser 
+,Treatment_Date as ndt_TreatmentDate ,Drug_OriginalValue as ndt_DrugOriginalValue 
+,Dose_OriginalValue as ndt_DoseOriginalValue ,Unit_OriginalValue as ndt_UnitOriginalValue 
+,Route_OriginalValue as ndt_RouteOriginalValue 
+FROM ND_Treatment ndt 
+CROSS JOIN Patient_History
+ LEFT JOIN FlowSheet_ProviderNotes fspn ON fspn.PAT_ID = ndt.PAT_ID 
+ AND ndt.Patient_ID = '$patientID'
+WHERE Patient_History.Weight IS NOT NULL
+AND Patient_History.Weight != ''";  
 		
+		$result = $this->query($query);
+
+	$query2 = "SELECT TOP 1 Performance_ID as ph_Performance_ID
+		,Patient_History.Weight as ph_Weight,
+		Date_taken 
+		FROM Patient_History
+		Where Patient_ID = '$patientID'
+		AND Weight != ''";
 		
+		$result2 = $this->query($query2);
+
+		$query3 = "SELECT Template_ID
+  FROM Patient_Assigned_Templates
+  WHERE Patient_ID = '$patientID'";
 		
-		$query2 = "SELECT PAT_ID
-					,Patient_ID
-					,Template_ID
-					,Date_Applied
-					,Date_Started
-					,Date_Ended
-					,Is_Active
-					,AssignedByRoleID
-					,Goal
-					,Clinical_Trial
-					,Status
-					,Perf_Status_ID
-					,Weight_Formula
-					,BSA_Method
-					,Date_Ended_Actual
-					FROM Patient_Assigned_Templates";
-			$result2 = $this->query($query2);
+		$tq = $this->query($query3);
 		
-		$arr = array_merge ((array)$result,(array)$result2);
+		foreach($tq as $row){
+		$TemplateID = $row['Template_ID'];
 		
-		//echo "Match".$Match."";
-		//var_dump($arr);
-		//var_dump($name);
-        return ($result);
+		}
+		
+		$query4 = "SELECT MH_ID
+      ,Drug_ID
+      ,Template_ID
+      ,Pre_Or_Post
+      ,Description
+      ,Flow_Rate
+      ,Admin_Day
+      ,Infusion_Time
+      ,Sequence_Number
+      ,Fluid_Vol
+      ,Admin_Time
+      ,Order_ID
+      ,Status
+      ,Reason
+      ,Date_Entered
+  FROM Medication_Hydration
+  WHERE Template_ID = '$TemplateID'";
+		
+		$result3 = $this->query($query4);
+
+		$query5 = "SELECT Patient_Regimen_ID
+      ,Template_ID
+      ,Drug_ID
+      ,Regimen_Number
+      ,Regimen_Dose
+      ,Regimen_Dose_Unit_ID
+      ,Regimen_Dose_Pct
+      ,Regimen_Reason
+      ,Patient_Dose
+      ,Patient_Dose_Unit_ID
+      ,Route_ID
+      ,Admin_Day
+      ,Infusion_Time
+      ,Fl_Vol_Unit_ID
+      ,Fl_Vol_Description
+      ,Date_Created
+      ,Created_By
+      ,Date_Modified
+      ,Modified_By
+      ,Flow_Rate
+      ,Instructions
+      ,Fluid_Vol
+      ,Sequence_Number
+      ,Admin_Time
+      ,BSA_Dose
+      ,Fluid_Type
+      ,T_Type
+      ,Order_ID
+      ,Status
+      ,Reason
+      ,Date_Entered
+  FROM Template_Regimen
+  WHERE Template_ID = '$TemplateID'";
+		
+		$result4 = $this->query($query5);
+		$arr = array_merge ((array)$result,(array)$result2,(array)$result3,(array)$result4);
+        return ($arr);
     }
 }

@@ -384,7 +384,11 @@ class MymdwsController extends Controller
             
             $this->Mymdws->beginTransaction();
             
-            $retVal = $comspatientModel->addNewPatient($mdwspatient,$value);
+			$query = "SELECT NEWID()";
+			$GUID = $this->Mymdws->query($query);
+			$GUID = $GUID[0][""];
+			
+            $retVal = $comspatientModel->addNewPatient($mdwspatient,$value,$GUID);
 
             if($this->checkForErrors('Add New Patient from MDWS Failed. ', $retVal)){
                 $jsonRecord['success'] = false;
