@@ -110,6 +110,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 
 
 	/* See: http://stackoverflow.com/questions/8079942/ext-js-proper-technique-to-add-listeners-to-dom-created-via-an-xtemplate */
+	/* Also see: Element.addListener delegate property */
 	attachCOMSEvents : function() {
 		/* Switching Contrast Mode */
 		/*

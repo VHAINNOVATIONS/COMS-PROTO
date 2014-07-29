@@ -6,7 +6,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GoalInfo" ,{
 	title : "Patient Identification",
 
 	defaults : {
-        labelAlign: "right",
+		labelAlign: "right",
 		labelWidth : 210,
 		width : 320,
 		margin : "5 10 15 10"

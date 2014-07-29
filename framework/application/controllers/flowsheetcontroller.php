@@ -86,6 +86,9 @@ error_log("Optional Entry Point");
         $jsonRecord['success'] = true;
         $query = "";
         $ErrMsg = "";
+        if (null == $PAT_ID) {
+            $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
+        }
         $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
         $AdminDate = date("m/d/Y");
 
@@ -107,14 +110,14 @@ error_log("Optional Entry Point");
             $Day = $requestData["Day"];
             $ToxInstrID = $requestData["ToxInstr"];
             $ToxData = $this->escapeString($requestData["Data"]);
-            $DiseaseResponse = $this->escapeString($requestData["DiseaseResponse"]);
+            $DiseaseResponse = $this->escapeString($requestData["DRData"]);
             $FS_OtherData = $this->escapeString($requestData["OtherData"]);
         }
 
         $this->Flowsheet->beginTransaction();
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             if ($PAT_ID) {       /* Get Specific Info */
-            $query = "select 
+                $query = "select
                     pn.FS_ID, 
                     pn.Disease_Response, 
                     pn.ToxicityLU_ID, 
@@ -122,11 +125,11 @@ error_log("Optional Entry Point");
                     pn.Cycle, 
                     pn.Day, 
                     pn.Toxicity, 
-                    sci.Details as ToxicityDetails,
-                    sci.Label as ToxicityInstr,
+                    case when pn.ToxicityLU_ID is not null then sci.Details else '' end as ToxicityDetails,
+                    case when pn.ToxicityLU_ID is not null then sci.Label else '' end as ToxicityInstr,
                     CONVERT(VARCHAR(10), pn.AdminDate, 101) as AdminDate
-                    from [COMS_TEST_2].[dbo].[Flowsheet_ProviderNotes ] pn 
-                    join COMS_TEST_2.dbo.SiteCommonInformation sci on sci.ID = pn.ToxicityLU_ID
+                    from Flowsheet_ProviderNotes pn 
+                    left join SiteCommonInformation sci on sci.ID = pn.ToxicityLU_ID
                     WHERE pn.PAT_ID = '$PAT_ID' 
                     order by AdminDate desc";
             }
@@ -140,15 +143,25 @@ error_log("Optional Entry Point");
             $ErrMsg = "Retrieving $Msg Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $query = "INSERT INTO $TableName
-               (FS_ID, Disease_Response, ToxicityLU_ID, Toxicity, Other, PAT_ID, Cycle, Day, AdminDate)
-               VALUES
-               ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
-            error_log("POST Request - $query");
+            if ("" !== $ToxInstrID || "" !== $DiseaseResponse || "" !== $FS_OtherData || "" !== $ToxData) {
+                if ("" == $ToxInstrID) {
+                    $query = "INSERT INTO $TableName
+                       (FS_ID, Disease_Response, ToxicityLU_ID, Toxicity, Other, PAT_ID, Cycle, Day, AdminDate)
+                       VALUES
+                       ( '$GUID', '$DiseaseResponse', null, '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
+                }
+                else {
+                    $query = "INSERT INTO $TableName
+                       (FS_ID, Disease_Response, ToxicityLU_ID, Toxicity, Other, PAT_ID, Cycle, Day, AdminDate)
+                       VALUES
+                       ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
+                }
+                error_log("POST Request - $query");
 
-            $jsonRecord['msg'] = "$Msg Record Created";
-            $ErrMsg = "Creating $Msg Record";
-            $records = $this->Flowsheet->query($query);
+                $jsonRecord['msg'] = "$Msg Record Created";
+                $ErrMsg = "Creating $Msg Record";
+                $records = $this->Flowsheet->query($query);
+            }
         }
         else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
             error_log("PUT Request - NYA");
@@ -253,35 +266,35 @@ error_log("Result - " . $this->varDumpToString($retVal));
 $aRec = array(
       "-" => "01 General",
       "label" => "Toxicity",
-      "Cycle 1, Day 1" => "&lt;u>View</u>",
-      "Cycle 1, Day 2" =>  "&lt;u>View</u>",
-      "Cycle 1, Day 3" =>   "&lt;u>View</u>",
-      "Cycle 1, Day 4" =>   "&lt;u>View</u>",
-      "Cycle 1, Day 5" =>   "&lt;u>View</u>",
+      "Cycle 1, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 1, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 1, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 1, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 1, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
 
-      "Cycle 2, Day 1" =>   "&lt;u>View</u>",
-      "Cycle 2, Day 2" =>  "&lt;u>View</u>",
-      "Cycle 2, Day 3" =>  "&lt;u>View</u>",
-      "Cycle 2, Day 4" =>  "&lt;u>View</u>",
-      "Cycle 2, Day 5" =>  "&lt;u>View</u>",
+      "Cycle 2, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 2, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 2, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 2, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 2, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
 
-      "Cycle 3, Day 1" => "&lt;u>View</u>",
-      "Cycle 3, Day 2" => "&lt;u>View</u>",
-      "Cycle 3, Day 3" => "&lt;u>View</u>",
-      "Cycle 3, Day 4" => "&lt;u>View</u>",
-      "Cycle 3, Day 5" => "&lt;u>View</u>",
+      "Cycle 3, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 3, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 3, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 3, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 3, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
 
-      "Cycle 4, Day 1" => "&lt;u>View</u>",
-      "Cycle 4, Day 2" => "&lt;u>View</u>",
-      "Cycle 4, Day 3" => "&lt;u>View</u>",
-      "Cycle 4, Day 4" => "&lt;u>View</u>",
-      "Cycle 4, Day 5" => "&lt;u>View</u>",
-                       
-      "Cycle 5, Day 1" => "&lt;u>View</u>",
-      "Cycle 5, Day 2" => "&lt;u>View</u>",
-      "Cycle 5, Day 3" => "&lt;u>View</u>",
-      "Cycle 5, Day 4" => "&lt;u>View</u>",
-      "Cycle 5, Day 5" => "&lt;u>View</u>"
+      "Cycle 4, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 4, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 4, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 4, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 4, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+
+      "Cycle 5, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 5, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 5, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 5, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
+      "Cycle 5, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>"
 );
 array_push($retVal, $aRec);
 

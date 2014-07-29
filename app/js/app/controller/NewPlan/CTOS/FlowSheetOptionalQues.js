@@ -58,7 +58,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 				"Day" : Day
 			},
 			success: function(form, action) {
-			   Ext.Msg.alert('Success', "Optional Information has been successfully saved");
+			   Ext.Msg.alert('Success', "General Information has been successfully saved");
 			   theForm.up("window").close();
 			},
 			failure: function(form, action) {

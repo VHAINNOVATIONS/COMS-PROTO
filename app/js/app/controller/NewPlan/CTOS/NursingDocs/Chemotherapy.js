@@ -183,7 +183,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 		this.getEmoLevelInfoAfterRender();
 
 		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", TempDesc, ("" !== TempDesc));
-
+		var theField = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"Link2XternalFlowsheet\"]");
+		var i, len = theField.length, data = "<a href=\"Fsheet/?PID=" + this.application.Patient.PAT_ID + "&PName=" + this.application.Patient.name + "\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)";
+		for (i = 0; i < len; i++) {
+			theField[i].update(data);
+		}
 /*
 		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", false);
 		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", false);
@@ -202,8 +206,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 
 		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctWarning\"]", true);
 		this.showMultiContainer("NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]", true);
-	
-	
 	},
 
 

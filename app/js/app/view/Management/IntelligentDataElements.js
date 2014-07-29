@@ -54,14 +54,6 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 
 
 		{ "xtype" : "ManagementBtns"},
-
-
-/**
-		{ "xtype" : "selDisease", "name" : "Disease", "fieldLabel" : "Disease", "labelWidth" : 140, "hiddenName" : "DiseaseID", "submitValue" : true },
-		{ "xtype" : "hidden", "name" : "DiseaseID" },
-		{ "xtype" : "textfield", "name" : "Stage", "fieldLabel" : "Stage", "labelWidth" : 140},
-		{ "xtype" : "ManagementBtns"},
-***/
 		{  
 			"xtype" : "grid",  "name" : "IDEntryList", "title" : "Intelligent Data Entry", 
 			"store" : "IDEntry",

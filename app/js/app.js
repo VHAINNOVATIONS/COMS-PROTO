@@ -627,6 +627,11 @@ Ext.require([
 
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
 
+	"COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel",
+	"COMS.controller.NewPlan.CTOS.DiseaseResponsePanel",
+	"COMS.controller.NewPlan.CTOS.OtherInfoPanel",
+
+
 	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab",

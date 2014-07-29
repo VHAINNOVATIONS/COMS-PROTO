@@ -12,8 +12,9 @@ $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 $ProjType = "Proof of Concept, 0.9, May 9, 2014";
 $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 $ProjType = "Proof of Concept, 0.11, June 20, 2014";
-*/
 $ProjType = "Proof of Concept, 0.12, July 11, 2014";
+*/
+$ProjType = "Proof of Concept, 0.13, August 1, 2014";
 
 ?>
 

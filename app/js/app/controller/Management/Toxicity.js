@@ -14,40 +14,54 @@ Ext.define('COMS.controller.Management.Toxicity', {
 		{
 			ref : "ToxicityInstruction_Documentation",
 			selector : "Toxicity [name=\"Details\"]"
+		},
+		{
+			ref : "DeleteBtn",
+			selector : "Toxicity button[text=\"Delete\"]"
 		}
+
 	],
 
 	init: function() {
 		this.control({
 			"Toxicity" : {
-				beforerender: this.ToxicityInstructionLoadGrid
+				beforerender: this.RefreshPanel
 			},
 			"Toxicity grid" : {
-					select: this.selectToxicityInstructionGridRow
+					select: this.selectGridRow,
+					deselect: this.deSelectGridRow
 			},
 			"Toxicity button[text=\"Cancel\"]" : {
-				click: this.clickToxicityInstructionCancel
+				click: this.CancelForm
 			},
 			"Toxicity button[text=\"Save\"]" : {
-				click: this.clickToxicityInstructionSave
+				click: this.SaveForm
 			},
 			"Toxicity button[text=\"Refresh\"]" : {
-				click: this.ToxicityInstructionLoadGrid
+				click: this.RefreshPanel
+			},
+			"Toxicity button[text=\"Delete\"]" : {
+				click: this.DeleteSelectedRecords
 			}
 		});
 	},
 
-/* Toxicity Instruction */
-	ToxicityInstructionLoadGrid : function(panel) {
+
+	RefreshPanel : function(panel) {
 		this.application.loadMask("Please wait; Loading Toxicity Instructions");
 		var theGrid = this.getToxicityInstructionGrid();
 		var theStore = theGrid.getStore();
 		theStore.load();
+
+		var delBtn = this.getDeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
+
 		this.application.unMask();
 		return true;
 	},
 
-	selectToxicityInstructionGridRow : function(theRowModel, record, index, eOpts) {
+	selectGridRow : function(theRowModel, record, index, eOpts) {
 		var recID = record.get("ID");
 		var Label = record.get("Label");
 		var Details = record.get("Details");
@@ -59,13 +73,68 @@ Ext.define('COMS.controller.Management.Toxicity', {
 		var theDocsField = this.getToxicityInstruction_Documentation();
 		theInstructionField.setValue(Label);
 		theDocsField.setValue(Details);
+
+		var records = theRowModel.getSelection();
+		var delBtn = this.getDeleteBtn();
+		if (records.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
 	},
 
-	clickToxicityInstructionCancel : function(theBtn, theEvent, eOpts) {
+	deSelectGridRow : function(theRowModel, record, index, eOpts) {
+	},
+
+
+
+	deleteRecord : function(theRecords) {
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.get("ID");
+			var CMD = "DELETE";
+			var URL = Ext.URLs.ToxicityInstruction + "/" + rID;
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				scope: this,
+				records : theRecords,
+				success: function( response, opts ){
+					this.deleteRecord(opts.records);
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Delete Toxicity Record, Save Error - <br />" + resp.msg );
+				}
+			});
+		}
+		else {
+			this.application.unMask();
+			this.RefreshPanel();
+			this.CancelForm();
+		}
+	},
+
+	DeleteSelectedRecords : function() {
+		var theGrid = this.getToxicityInstructionGrid();
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Toxicity records?", function(btn) {
+			if ("yes" === btn) {
+				this.application.loadMask("Please wait; Deleting Selected Records");
+				this.deleteRecord(theRecords);
+			}
+		}, this);
+	},
+
+
+	CancelForm : function(theBtn, theEvent, eOpts) {
 		theBtn.up('form').getForm().reset();
 	},
 
-	clickToxicityInstructionSave : function(theBtn, theEvent, eOpts) {
+	SaveForm : function(theBtn, theEvent, eOpts) {
 		var form = theBtn.up('form').getForm();
 		var theData = form.getValues(false, false, false, true);
 
@@ -75,7 +144,8 @@ Ext.define('COMS.controller.Management.Toxicity', {
 			var recID = this.CurrentToxicityInstructionRecordID;
 			var URL = Ext.URLs.ToxicityInstruction;
 			var CMD = "POST";
-			if ("" !== recID && this.CurrentToxicityInstruction === Label) {
+			// if ("" !== recID && this.CurrentToxicityInstruction === Label) {
+			if ("" !== recID) {
 				URL += "/" + recID;
 				CMD = "PUT";
 			}
