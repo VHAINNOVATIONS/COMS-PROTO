@@ -34,7 +34,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheetGrid" ,{
 					"xtype" : "combobox",
 					"name" : "ShowCycles",
 					"fieldLabel" : "Select Cycle(s) to show",
-					"labelWidth" : 120,
+					"labelWidth" : 150,
 					"labelAlign" : "right",
 					"width" : 500,
 					"emptyText" : "List of Cycles",
