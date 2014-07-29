@@ -363,6 +363,8 @@ function convertReason2ID($Reason) {
                 LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
                 WHERE ph.Patient_ID = '$id' 
                 ORDER BY Date_Taken DESC";
+				//possible error with above query - sic
+				//echo $query;
             } else {
                 $query = "SELECT 
                 ph.Height as Height,
@@ -1477,7 +1479,7 @@ function convertReason2ID($Reason) {
 		WHERE ID = '$CDHID'";
 		   
 		$result = $this->query($query);
-        echo $query;
+        //echo $query;
 		return 'updated';
     }
     
