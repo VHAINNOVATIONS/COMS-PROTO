@@ -414,5 +414,60 @@ array_push($retVal, $aRec);
         }
 ***************************/
     }
+    public function FS2($id = null) {
 
+error_log("FS Entry Point");
+
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $retVal = array();
+
+        $requestData = json_decode(file_get_contents('php://input'));
+        if (! empty($requestData)) {
+            $this->Flowsheet->beginTransaction();
+            $returnVal = $this->Flowsheet->saveFlowsheet($requestData);
+            if ($this->_checkForErrors('Update Flowsheet Notes Values Failed. ', $returnVal)) {
+                $this->Flowsheet->rollbackTransaction();
+                $this->set('jsonRecord', 
+                    array(
+                        'success' => false,
+                        'msg' => $this->get('frameworkErr')
+                    ));
+                return;
+            }
+            $this->Flowsheet->endTransaction();
+            $this->set('jsonRecord', 
+                array(
+                    'success' => true,
+                    'total' => 1,
+                    'records' => array(
+                        'FS_ID' => $this->Flowsheet->getFlowsheetId()
+                    )
+                ));
+        } else {
+            error_log("FS GET - ");
+            //$records = $this->Flowsheet->getFlowsheet($id);
+            $records = $this->Flowsheet->FS($id);
+            if (empty($records)) {
+                $records['error'] = 'No Records Found';
+            }
+            else {
+                error_log("FS GOT RECORDS - ");
+            }
+            if ($this->_checkForErrors('Get Flowsheet Failed. ', $records)) {
+                $this->set('jsonRecord', 
+                    array(
+                        'success' => false,
+                        'msg' => $this->get('frameworkErr') . $records['error']
+                    ));
+                return;
+            }
+            $this->set('jsonRecord', 
+                array(
+                    'success' => true,
+                    'total' => count($records),
+                    'records' => $records
+                ));
+        }
+	}
 }
