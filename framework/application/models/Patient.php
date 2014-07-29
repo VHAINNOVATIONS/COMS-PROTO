@@ -792,13 +792,14 @@ function convertReason2ID($Reason) {
         }
     }
 
-    function addNewPatient ($patient, $value)
+    function addNewPatient ($patient, $value, $GUID)
     {
         $fullName = explode(',', $patient->name);
         $gender = $patient->gender;
         $dob = $patient->dob;
         $dfn = $patient->localPid;
         
+		
         $lastName = $fullName[0];
         $firstName = $fullName[1];
         
@@ -812,11 +813,18 @@ function convertReason2ID($Reason) {
         
         $sqlDob = $month . "/" . $day . "/" . $year;
         
-        $query = "INSERT INTO Patient (Last_Name,First_Name,DOB,Gender,Date_Created,DFN,Match,Middle_Name) values(" .
+        $query = "INSERT INTO Patient (Patient_ID,Last_Name,First_Name,DOB,Gender,Date_Created,DFN,Match,Middle_Name) values('".$GUID."'," .
                  "'" . $lastName . "','" . $firstName . "','" . $sqlDob . "','" .
                  $gender . "','" . $this->getCurrentDate() . "','" . $dfn . "','" .
                  $value . "',";
+		
+		$Performance_ID = '73DA9443-FF74-E111-B684-000C2935B86F';
+		
+		$query2 = "INSERT INTO Patient_History (Performance_ID,Patient_ID) values(" .
+                 "'" . $Performance_ID . "','" . $GUID . "')";
 
+		$this->query($query2);
+		
         (empty($middleName)) ? $query .= "null)" : $query .= "'" . $middleName .
                  "')";
         
