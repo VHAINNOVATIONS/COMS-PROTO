@@ -88,8 +88,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 	"updateFlowsheetPanel" : function() {
 		var theGrid = this.getFlowSheetGrid();
-		this.getFlowSheetData("PAT_ID", theGrid);
-		this.getOptionalInfoData("PAT_ID");
+		// this.getFlowSheetData("PAT_ID", theGrid);
+		this.getFlowSheetData(this.application.Patient.id, theGrid);
+		// this.getOptionalInfoData("PAT_ID");
+		this.getOptionalInfoData(this.application.Patient.id);
+
 		var CurCycle = this.application.Patient.CurFlowSheetCycle;
 		if (CurCycle) {
 			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
@@ -397,7 +400,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	TabRendered : function ( component, eOpts ) {
-		this.getFlowSheetData("PAT_ID", component);
+		this.getFlowSheetData(this.application.Patient.id, component);
+		// this.getFlowSheetData("PAT_ID", component);
 	},
 
 	PatientSelected: function (combo, recs, eOpts) {

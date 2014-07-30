@@ -42,6 +42,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	views: [
 		"Common.VitalSignsHistory", "NewPlan.CTOS.NursingDocs.Chemotherapy"
+// , "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm" <--- To be worked on MWB 30 July 2014
 	],
 
 	refs: [
