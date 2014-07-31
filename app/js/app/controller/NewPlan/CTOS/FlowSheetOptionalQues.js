@@ -39,6 +39,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	},
 
 	Save : function(btn) {
+		this.application.loadMask("Saving Information");
 		var PAT_ID = "", Cycle = "", Day = "";
 		if (this.application && this.application.Patient) {
 			PAT_ID = this.application.Patient.PAT_ID;
@@ -51,7 +52,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		var theForm = btn.up("form");
 		theForm.getForm().submit({
 			clientValidation: true,
-			"url" : Ext.URLs.FlowSheetOptionalInfo,
+			"url" : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
 			params : {
 				"PAT_ID" : PAT_ID,
 				"Cycle" : Cycle,
@@ -60,6 +61,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			success: function(form, action) {
 			   Ext.Msg.alert('Success', "General Information has been successfully saved");
 			   theForm.up("window").close();
+			   this.application.unMask();
 			},
 			failure: function(form, action) {
 				switch (action.failureType) {
@@ -72,6 +74,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 					case Ext.form.action.Action.SERVER_INVALID:
 					   Ext.Msg.alert('Failure', action.result.msg);
 			   }
+			   this.application.unMask();
 			}
 		});
 	}
