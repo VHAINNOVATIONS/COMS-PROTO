@@ -100,8 +100,6 @@ class FlowsheetController extends Controller
        This will use the $_POST var to store the data
          *************/
 
-error_log("Optional Entry Point");
-
         $Msg = "Flowsheet Optional Information";
         $TableName = "Flowsheet_ProviderNotes";
         $GUID =  $this->Flowsheet->newGUID();
@@ -232,7 +230,7 @@ error_log("Optional Entry Point");
 
 
 
-public function FSDataConvert($id = null, $PAT_ID = null) {
+public function FSDataConvert($id = null, $PAT_ID = null, $PreT, $Therapy, $PostT) {
 
     $GeneralInfoRecords = $this->getGeneralInfo($PAT_ID);
     $GIRDates = array();
@@ -337,37 +335,77 @@ foreach($oemRecords as $aRecord) {
     }
     $PSRow += array($CycleColLabel=>"");
 
+
+
+
+
     $PreMeds = $aRecord["PreTherapy"];
     foreach($PreMeds as $Med) {
         $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
         if (!isset($PreTherapy[$MedName])) {
             $PreTherapy[$MedName] = array();
             $PreTherapy[$MedName] += array("-"=>"02 Pre Therapy");
             $PreTherapy[$MedName] += array("label"=>$MedName);
         }
-        $PreTherapy[$MedName] += array($CycleColLabel => $Med["Dose1"] . " " . $Med["DoseUnits1"]);
+        $MedData = "";
+        if (array_key_exists($Key, $PreT)) {
+            $aTempRec = $PreT[$Key];
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+        }
+        // error_log("Pre Therapy - $Key - $MedData");
+        $PreTherapy[$MedName] += array($CycleColLabel => $MedData);
     }
 
     $Meds = $aRecord["Therapy"];
     foreach($Meds as $Med) {
         $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
         if (!isset($Therapy[$MedName])) {
             $Therapy[$MedName] = array();
             $Therapy[$MedName] += array("-"=>"03 Therapy");
             $Therapy[$MedName] += array("label"=>$MedName);
         }
-        $Therapy[$MedName] += array($CycleColLabel => $Med["Dose"] . " " . $Med["DoseUnits"]);
+        $MedData = "";
+        if (array_key_exists($Key, $Therapy)) {
+            $aTempRec = $Therapy[$Key];
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+        }
+        error_log("Therapy - ($Key) - ($MedData)");
+        $Therapy[$MedName] += array($CycleColLabel => $MedData);
     }
 
     $PostMeds = $aRecord["PostTherapy"];
     foreach($PostMeds as $Med) {
         $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
         if (!isset($PostTherapy[$MedName])) {
             $PostTherapy[$MedName] = array();
             $PostTherapy[$MedName] += array("-"=>"04 Post Therapy");
             $PostTherapy[$MedName] += array("label"=>$MedName);
         }
-        $PostTherapy[$MedName] += array($CycleColLabel => $Med["Dose1"] . " " . $Med["DoseUnits1"]);
+        $MedData = "";
+        if (array_key_exists($Key, $PostT)) {
+            $aTempRec = $PostT[$Key];
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+        }
+        // error_log("Post Therapy - $Key - $MedData");
+        $PostTherapy[$MedName] += array($CycleColLabel => $MedData);
     }
 }
 
@@ -404,12 +442,12 @@ foreach($PostTherapy as $Med) {
 
     public function FS2($id = null, $PAT_ID = null) {
 
-error_log("FS Entry Point");
+        error_log("FS-II Entry Point");
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $retVal = array();
-/****************
+/****************/
         $requestData = json_decode(file_get_contents('php://input'));
         if (! empty($requestData)) {
             $this->Flowsheet->beginTransaction();
@@ -450,6 +488,69 @@ error_log("FS Entry Point");
                     ));
                 return;
             }
+
+
+
+$PreAdminRecords = array();
+$TherapyAdminRecords = array();
+$PostAdminRecords = array();
+
+$TKeys = array();
+error_log("=================++++++++++++++++++++++++====================");
+foreach ($records as $aRec) {
+    // error_log("Order Record = " . $this->varDumpToString($aRec));
+
+    if (array_key_exists("ndt_Type", $aRec)) {
+        $Type = $aRec["ndt_Type"];
+        $aDate = $aRec["ndt_AdminDate"];
+        $MedName = $aRec["ndt_Drug"];
+        $Key = "$aDate-$MedName";
+        $s1 = explode("T", $aRec["ndt_StartTime"]);
+        $s1 = $s1[1];
+        $e1 = explode("T", $aRec["ndt_EndTime"]);
+        $e1 = $e1[1];
+        $tmpRec = array(
+            "Dose"=>$aRec["ndt_Dose"], 
+            "Unit"=>$aRec["ndt_Unit"], 
+            "Route"=>$aRec["ndt_Route"], 
+            "Start"=>$s1, 
+            "End"=>$e1
+         );
+        $tmpARec = array($Key => $tmpRec);
+
+        
+        if ("Pre Therapy" == $Type) {
+            // error_log("Saving Pre Therapy - $aDate");
+            $PreAdminRecords += $tmpARec;
+        }
+        else if ("Post Therapy" == $Type) {
+            // error_log("Saving Post Therapy - $aDate");
+            $PostAdminRecords += $tmpARec;
+        }
+        else if ("Therapy" == $Type) {
+            error_log("Saving Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
+            $TKeys[] = $Key;
+            if (!array_key_exists($Key, $TherapyAdminRecords)) {
+                $TherapyAdminRecords += $tmpARec;
+            }
+        }
+//        else {
+//            error_log("Saving Unknown Therapy - $aDate");
+//        }
+    }
+//    else {
+//        error_log("ndt_Type key does not exist");
+//    }
+}
+error_log("================================================");
+$KeysList = array_keys($TKeys);
+error_log("TKeys - " . count($TKeys) . " - " . $this->varDumpToString($KeysList));
+error_log("================================================");
+
+
+
+
+
             $this->set('FS_OrderRecords', $records); 
 
             $this->set('jsonRecord', 
@@ -459,10 +560,9 @@ error_log("FS Entry Point");
                     'records' => $records
                 ));
         }
-***********************/
+/***********************/
 
-
-        $this->FSDataConvert($id, $PAT_ID);
+        $this->FSDataConvert($id, $PAT_ID, $PreAdminRecords, $TherapyAdminRecords, $PostAdminRecords);
 
 	}
 }

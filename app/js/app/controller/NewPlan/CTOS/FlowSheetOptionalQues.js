@@ -52,6 +52,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		var theForm = btn.up("form");
 		theForm.getForm().submit({
 			clientValidation: true,
+			scope : this,
 			"url" : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
 			params : {
 				"PAT_ID" : PAT_ID,
