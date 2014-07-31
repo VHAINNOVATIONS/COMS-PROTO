@@ -39,7 +39,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	},
 
 	Save : function(btn) {
-		var PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F", Cycle = "", Day = "";
+		var PAT_ID = "", Cycle = "", Day = "";
 		if (this.application && this.application.Patient) {
 			PAT_ID = this.application.Patient.PAT_ID;
 			if (this.application.Patient.ThisAdminDay) {

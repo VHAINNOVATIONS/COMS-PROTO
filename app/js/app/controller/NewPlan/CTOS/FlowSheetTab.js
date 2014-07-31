@@ -47,7 +47,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				activate : this.updateFlowsheetPanel
 			},
 			"FlowSheetGrid" : {
-					select : this.clickNamedAnchor		// ( this, record, row, column, eOpts )
+				select : this.clickNamedAnchor		// ( this, record, row, column, eOpts )
 			},
 			"FlowSheetGrid button[name=\"EditOptionalQues\"]" : {
 				click: this.EditOptionalQuestions
@@ -72,12 +72,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	clickNamedAnchor : function (grid, record, row, column, eOpts) {
-		var theLabel = record.getData()["label"];
+		var theData = record.getData();
+		var theLabel = theData["label"];
+		var theColumnValue = theData[Object.keys(theData)[column+1]];
+
 		if ("Date" == theLabel || "Weight" == theLabel) {
 			return;
 		}
-		var thePanel = this.getToxicitySideEffectsPanel();
-		thePanel.expand();
+		var thePanel = null;
+		if ("Disease Response" == theLabel) {
+			thePanel = this.getDiseaseResponsePanel();
+		}
+		else if ("Toxicity" == theLabel) {
+			thePanel = this.getToxicitySideEffectsPanel();
+		}
+		else if ("Other" == theLabel) {
+			thePanel = this.getOtherInfoPanel();
+		}
+		if (thePanel && "View" == theColumnValue) {
+			thePanel.expand();
+		}
+
 
 		// var theCell = grid.view.getCellByPosition({row:row, column:column});
 		var theKey = this.getFlowSheetGrid().normalGrid.columns[column].key;
@@ -89,9 +104,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	"updateFlowsheetPanel" : function() {
 		var theGrid = this.getFlowSheetGrid();
 		// this.getFlowSheetData("PAT_ID", theGrid);
-		this.getFlowSheetData(this.application.Patient.id, theGrid);
+		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
 		// this.getOptionalInfoData("PAT_ID");
-		this.getOptionalInfoData(this.application.Patient.id);
+		this.getOptionalInfoData(this.application.Patient.PAT_ID);
 
 		var CurCycle = this.application.Patient.CurFlowSheetCycle;
 		if (CurCycle) {
@@ -150,11 +165,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		data = theRecord.getData();
 		start = data.StartIdx;
 		end = data.EndIdx;
-
 		this.ShowSelectedCycles(grid, start, end);
-
 		this.application.unMask();
-
 	},
 
 
@@ -165,12 +177,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	buildCycleList : function (data) {
 		var startDay, endDay, days, hold, key, curCycle, cyc_day, attrName, cycleNum, cycleDay, part, aDate, startDate, endDate;
 		var comboRec = {}, dayIdx = 0, CycleRecords = [], aRec = data;
-
-// Data Model
-// Label : Date in string format (dd/mm/yyyy)
-// Column Model
-// { "label", "Cycle", "StartDate", "StartDay", "StartIdx", "EndDate", "EndDay", "EndIdx"};
-
 		for(key in aRec){
 			if (aRec.hasOwnProperty(key)) {
 				if (key !== "label" && key !== "-") {
@@ -303,11 +309,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 
-	getFlowSheetData : function(PAT_ID, theGrid) {
+	getFlowSheetData : function(PatientID, PAT_ID, theGrid) {
 		this.application.loadMask("Loading Flow Sheet Information");
+
 		Ext.Ajax.request({
 			scope : this,
-			url : Ext.URLs.FlowSheetRecords + "/" + PAT_ID,
+			url : Ext.URLs.FlowSheetRecords + "/" + PatientID + "/" + PAT_ID,
 			success : function( response) {
 				var obj = Ext.decode(response.responseText);
 				var theStore = this.createStore(obj.records);
@@ -400,8 +407,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	TabRendered : function ( component, eOpts ) {
-		this.getFlowSheetData(this.application.Patient.id, component);
-		// this.getFlowSheetData("PAT_ID", component);
+		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, component);
 	},
 
 	PatientSelected: function (combo, recs, eOpts) {
