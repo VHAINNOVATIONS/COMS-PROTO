@@ -41,7 +41,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		this.control({
 			"scope" : this,
 			"FlowSheet FlowSheetGrid" : {
-				render : this.TabRendered
+				// render : this.TabRendered
 			},
 			"FlowSheet" : {
 				activate : this.updateFlowsheetPanel
@@ -98,30 +98,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		else if ("Other" == theLabel) {
 			thePanel = this.getOtherInfoPanel();
 		}
-		if (thePanel && theEl) {
+		if (thePanel && "" != theElID) {
 			thePanel.expand();
+			theEl = thePanel.getEl();
 			theEl.scrollIntoView(document.body);
+			theEl.focus(100);
 		}
 
 
 		// var theCell = grid.view.getCellByPosition({row:row, column:column});
-		var theKey = this.getFlowSheetGrid().normalGrid.columns[column].key;
-		var theDate = grid.store.getAt(0).data[theKey];
-		var tableID = "ToxPanel-" + theDate;
+//		var theKey = this.getFlowSheetGrid().normalGrid.columns[column].key;
+//		var theDate = grid.store.getAt(0).data[theKey];
+//		var tableID = "ToxPanel-" + theDate;
 
 	},
 
 	"updateFlowsheetPanel" : function() {
+		this.application.loadMask("Saving Information");
+		Ext.suspendLayouts(); 
 		var theGrid = this.getFlowSheetGrid();
-		// this.getFlowSheetData("PAT_ID", theGrid);
 		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
-		// this.getOptionalInfoData("PAT_ID");
 		this.getOptionalInfoData(this.application.Patient.PAT_ID);
 
-		var CurCycle = this.application.Patient.CurFlowSheetCycle;
-		if (CurCycle) {
-			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
-		}
+//		var CurCycle = this.application.Patient.CurFlowSheetCycle;
+//		if (CurCycle) {
+//			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
+//		}
+		Ext.resumeLayouts(true);
+		this.application.unMask();
 	},
 
 

@@ -316,21 +316,21 @@ foreach($oemRecords as $aRecord) {
             $DRRow += array($CycleColLabel=>"");
         }
         else {
-            $DRRow += array($CycleColLabel=>"<a href=\"#DR_$AdminDate\" recid=\"DRPanel-$AdminDate-\">View</a>");
+            $DRRow += array($CycleColLabel=>"<a href=\"#\" recid=\"DRPanel-$AdminDate-\">View</a>");
         }
 
         if ($giRec["ToxicityLU_ID"] == "") {
             $ToxicityRow += array($CycleColLabel=>"");
         }
         else {
-            $ToxicityRow += array($CycleColLabel=>"<a href=\"#Tox_$AdminDate\" recid=\"ToxPanelPanel-$AdminDate-\">View</a>");
+            $ToxicityRow += array($CycleColLabel=>"<a href=\"#\" recid=\"ToxPanelPanel-$AdminDate-\">View</a>");
         }
 
         if ($giRec["Other"] == "") {
             $OtherRow += array($CycleColLabel=>"");
         }
         else {
-            $OtherRow += array($CycleColLabel=>"<a href=\"#OI_$AdminDate\" recid=\"OIPanel-$AdminDate-\">View</a>");
+            $OtherRow += array($CycleColLabel=>"<a href=\"#\" recid=\"OIPanel-$AdminDate-\">View</a>");
         }
     }
     $PSRow += array($CycleColLabel=>"");

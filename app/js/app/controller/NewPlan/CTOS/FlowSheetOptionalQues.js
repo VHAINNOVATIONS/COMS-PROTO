@@ -62,7 +62,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			success: function(form, action) {
 			   Ext.Msg.alert('Success', "General Information has been successfully saved");
 			   theForm.up("window").close();
-			   this.application.unMask();
+			   var theCtrlr = this.getController("NewPlan.CTOS.FlowSheetTab");
+			   theCtrlr.updateFlowsheetPanel();
 			},
 			failure: function(form, action) {
 				switch (action.failureType) {
