@@ -316,21 +316,21 @@ foreach($oemRecords as $aRecord) {
             $DRRow += array($CycleColLabel=>"");
         }
         else {
-            $DRRow += array($CycleColLabel=>"View");
+            $DRRow += array($CycleColLabel=>"<a href=\"#DR_$AdminDate\" recid=\"DRPanel-$AdminDate-\">View</a>");
         }
 
         if ($giRec["ToxicityLU_ID"] == "") {
             $ToxicityRow += array($CycleColLabel=>"");
         }
         else {
-            $ToxicityRow += array($CycleColLabel=>"View");
+            $ToxicityRow += array($CycleColLabel=>"<a href=\"#Tox_$AdminDate\" recid=\"ToxPanelPanel-$AdminDate-\">View</a>");
         }
 
         if ($giRec["Other"] == "") {
             $OtherRow += array($CycleColLabel=>"");
         }
         else {
-            $OtherRow += array($CycleColLabel=>"View");
+            $OtherRow += array($CycleColLabel=>"<a href=\"#OI_$AdminDate\" recid=\"OIPanel-$AdminDate-\">View</a>");
         }
     }
     $PSRow += array($CycleColLabel=>"");
@@ -374,14 +374,22 @@ foreach($oemRecords as $aRecord) {
         $MedData = "";
         if (array_key_exists($Key, $Therapy)) {
             $aTempRec = $Therapy[$Key];
+            error_log("Therapy Check - " . count($aTempRec));
+            if(count($aTempRec) > 1) {
+                $aTempRec = $aTempRec[0];
+            }
             $MedData = 
                 $aTempRec["Dose"] . " " . 
                 $aTempRec["Unit"] . " " . 
                 $aTempRec["Route"] . "<br>From " . 
                 $aTempRec["Start"] . "<br>to " . 
                 $aTempRec["End"];
+            error_log("Therapy - ($Key) - ($MedData)");
         }
-        error_log("Therapy - ($Key) - ($MedData)");
+        else {
+            error_log("No Matching Record in Therapy for $Key");
+        }
+        
         $Therapy[$MedName] += array($CycleColLabel => $MedData);
     }
 
@@ -521,7 +529,17 @@ foreach ($records as $aRec) {
         
         if ("Pre Therapy" == $Type) {
             // error_log("Saving Pre Therapy - $aDate");
-            $PreAdminRecords += $tmpARec;
+            // $PreAdminRecords += $tmpARec;
+            error_log("Saving PRE Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
+            error_log("Saving PRE Therapy -  - " . $this->varDumpToString($tmpARec));
+            if (!array_key_exists($Key, $PreAdminRecords)) {
+                error_log("Saving PRE Therapy - Key ($Key) does NOT exist so appending new record - ");
+                $PreAdminRecords += $tmpARec;
+            }
+            else {
+                error_log("NOT Saving PRE Therapy - Key ($Key) DOES exist so NOT appending new record - ");
+            }
+
         }
         else if ("Post Therapy" == $Type) {
             // error_log("Saving Post Therapy - $aDate");
@@ -529,9 +547,14 @@ foreach ($records as $aRec) {
         }
         else if ("Therapy" == $Type) {
             error_log("Saving Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
+            error_log("Saving Therapy -  - " . $this->varDumpToString($tmpARec));
             $TKeys[] = $Key;
             if (!array_key_exists($Key, $TherapyAdminRecords)) {
+                error_log("Saving Therapy - Key ($Key) does NOT exist so appending new record - ");
                 $TherapyAdminRecords += $tmpARec;
+            }
+            else {
+                error_log("NOT Saving Therapy - Key ($Key) DOES exist so NOT appending new record - ");
             }
         }
 //        else {
@@ -542,11 +565,12 @@ foreach ($records as $aRec) {
 //        error_log("ndt_Type key does not exist");
 //    }
 }
+/**
 error_log("================================================");
 $KeysList = array_keys($TKeys);
 error_log("TKeys - " . count($TKeys) . " - " . $this->varDumpToString($KeysList));
 error_log("================================================");
-
+**/
 
 
 
