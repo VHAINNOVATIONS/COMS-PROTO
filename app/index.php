@@ -8,7 +8,11 @@ error_log("-------------------------");
 error_log("Start Process - $mwbTemp");
 
 //Include and Set phpseclib path
+<<<<<<< HEAD
+//set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib'); <-- Commented on on 30 May 2014
+=======
 //set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 //Include SSH2 file
 //include('Net/SSH2.php');
 require_once "dbitcon.php";
@@ -29,6 +33,13 @@ $_SESSION['winauth']= $winauth;
 $ruser = $_SERVER['REMOTE_USER'];
 $_SESSION['ruser']= $ruser;
 
+<<<<<<< HEAD
+if ( !empty($_GET['cmode']) ) {
+    $_SESSION['BrowserMode'] = htmlspecialchars($_GET['cmode']);
+}
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 if (isset($_SESSION['COMSLogin'])) {
 $COMSLogin = $_SESSION['COMSLogin'];
 }else{
@@ -66,6 +77,10 @@ PostTrack($_SESSION['ruser'],$notset,$point,0,$_SESSION['sessionid']);
 		$Deployment = "app.js";
 		$LibsVersion2 = "/libs/ExtJS_4.1RC1";
 		$LibsVersion2 = "/libs/ExtJS_4.1.0";
+<<<<<<< HEAD
+		$LibsVersion2 = "/libs/ExtJS_4.1.0";
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		/*
 		 * Temporarily modifying the ExtJS library because
 		 * a new JS was added into /examples/ux/grid/column in order to display 

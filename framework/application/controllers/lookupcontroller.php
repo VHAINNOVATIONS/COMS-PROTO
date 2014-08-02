@@ -16,7 +16,11 @@ class LookupController extends Controller {
 
     function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
         if ("" !== $query) {
+<<<<<<< HEAD
+            error_log("Got Query - $query");
+=======
             error_log("Got Query");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $retVal = $this->LookUp->query($query);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 error_log("Error");
@@ -46,6 +50,8 @@ class LookupController extends Controller {
        error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
     }
 
+<<<<<<< HEAD
+=======
     public function escapeString($string)
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
@@ -61,6 +67,7 @@ class LookupController extends Controller {
         return $result;
     }
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     function checkForErrors($errorMsg,$retVal){
         $ErrorCode = "";
         $this->set('frameworkErrCodes', $ErrorCode);
@@ -95,12 +102,21 @@ class LookupController extends Controller {
     
 
     function save() {
-
-        $form_data = json_decode(file_get_contents('php://input'));
-        $id = $form_data->{'id'};
-        $name = $form_data->{'value'};
-        $description = $form_data->{'description'};
-        $lookupid = $form_data->{'lookupid'};
+        if (isset($_POST)) {
+            $id = $_POST["id"];
+            $name = $_POST["value"];
+            $description = $_POST["description"];
+            if (isset($_POST["lookupid"])) {
+                $lookupid = $_POST["lookupid"];
+            }
+        }
+        else {
+            $form_data = json_decode(file_get_contents('php://input'));
+            $id = $form_data->{'id'};
+            $name = $form_data->{'value'};
+            $description = $form_data->{'description'};
+            $lookupid = $form_data->{'lookupid'};
+        }
 
         $this->LookUp->beginTransaction();
         
@@ -133,6 +149,16 @@ class LookupController extends Controller {
 
 	}
 
+<<<<<<< HEAD
+    /*
+     *
+     * Note: Magic Numbers used...
+     *    "Magic Number" 4 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'Regimen' records (description = Template Selector Values with Template Name in Description)
+     *    "Magic Number" 25 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'TemplateAlias' records (description = Alias for template name)
+     *
+     */
+
+=======
 
 
 
@@ -144,6 +170,7 @@ class LookupController extends Controller {
      *
      */
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
     function saveTemplate() {
         $form_data = json_decode(file_get_contents('php://input'));
@@ -172,7 +199,10 @@ class LookupController extends Controller {
 		while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
+<<<<<<< HEAD
+=======
 			echo $templateName;
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
         }
 
@@ -359,7 +389,6 @@ class LookupController extends Controller {
     
     function view($name = null, $description = null, $id = null) {
         $this->set('title', 'All Lookups For - ' . $name);
-
         if (NULL === $description && NULL != $name && NULL === $id) {
             $this->set('lookups', $this->LookUp->getDataForJson($name));
         } else if (NULL != $description && NULL != $name && NULL === $id) {
@@ -510,6 +539,16 @@ class LookupController extends Controller {
             }
             
             $this->set('references', $retVal);
+<<<<<<< HEAD
+
+
+
+
+
+            $retVal = $this->LookUp->getHydrations($id, 'pre');
+/* Removed the checks for records because sometimes we do not have all the meds.
+            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
+=======
 
 
 
@@ -519,6 +558,7 @@ class LookupController extends Controller {
 
             if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
 //error_log("Get Pre Medication_Hydration Failed. 1");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 $this->set('templatedata', null);
                 return;
             }
@@ -526,15 +566,23 @@ class LookupController extends Controller {
             if (count($retVal) <= 0) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
                 $this->set('templatedata', null);
+<<<<<<< HEAD
+=======
 //error_log("Get Pre Medication_Hydration Failed.2 ");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 return;
             }
             if (!isset($retVal[0]["id"])) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
                 $this->set('templatedata', null);
+<<<<<<< HEAD
+               return;
+            }*/
+=======
 //error_log("Get Pre Medication_Hydration Failed. 3");
                return;
             }
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $prehydrations = $retVal;
             $infusionMap = array();
 //error_log("Pre Medication_Hydration Count. " . count($prehydrations));
@@ -552,7 +600,8 @@ class LookupController extends Controller {
             $retVal = $this->LookUp->getHydrations($id, 'post');
             $posthydrations = $retVal;
 
-            if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
+            /*removed checks, sometimes null is ok
+			if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
@@ -566,7 +615,11 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
+<<<<<<< HEAD
+            */
+=======
             
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             
             $infusionMap = array();
 
@@ -1530,6 +1583,17 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
     }
 
 
+<<<<<<< HEAD
+    function ToxicityInstruction($ID = null) {
+        $DataType = 'ToxicityInstruction';
+        $Msg = 'Toxicity Instructions Details';
+
+        return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
+    }
+
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
     function MedRisks($ID = null, $Type = null) {
         $DataType = 'Risks';
@@ -1542,6 +1606,13 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
 
+<<<<<<< HEAD
+
+
+
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 /****************************************************
  *
  *  GET List of stages for all diseases
@@ -1725,9 +1796,150 @@ error_log("IDEntry");
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
         }
+<<<<<<< HEAD
+        $UniqMsg = "";
+        if (isset($requestData)) {
+            $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
+        }
+=======
         $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, $UniqMsg);
     }
 
 
+<<<<<<< HEAD
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***
+CREATE TABLE [dbo].[CumulativeDoseMeds](
+      [ID] [uniqueidentifier] DEFAULT (newsequentialid()),
+      [MedID] [uniqueidentifier] NOT NULL,
+      [CumulativeDoseAmt] [varchar](30) NOT NULL,
+      [CumulativeDoseUnits] [uniqueidentifier] NOT NULL,
+      [Date_Changed] [datetime] DEFAULT (getdate()),
+      [Author] [varchar](30) NULL
+) ON [PRIMARY]
+ ***/
+
+    function CumulativeDoseMeds($ID = null) {
+        $Msg = "Cumulative Dose Meds";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = "";
+        parse_str(file_get_contents("php://input"),$post_vars);
+
+        if (isset($post_vars["MedName"])) {
+            $MedID = $post_vars["MedName"];
+        }
+        if (isset($post_vars["CumulativeDoseAmt"])) {
+            $CumulativeDoseAmt = $post_vars["CumulativeDoseAmt"];
+        }
+        if (isset($post_vars["CumulativeDoseUnits"])) {
+            $CumulativeDoseUnits = $post_vars["CumulativeDoseUnits"];
+        }
+
+        $ErrMsg = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+                $query = "Select 
+                  CDM.ID,
+                  CDM.MedID,
+                  CDM.CumulativeDoseAmt,
+                  CDM.CumulativeDoseUnits as UnitsID,
+                  LU.Name as MedName,
+                  LU2.Name as CumulativeDoseUnits
+                  from CumulativeDoseMeds CDM
+                  join Lookup LU on CDM.MedID = LU.Lookup_ID
+                  join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
+            if ($ID) {
+                $query .= "where ID = '$ID' order by LU.Name";
+            }
+            else {
+                $query .= "order by LU.Name";
+            }
+
+            error_log("$query");
+            $jsonRecord['msg'] = "No records to find";
+            $ErrMsg = "Retrieving $Msg Records";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+
+/************** SAMPLE POST ***********
+Request URL:    http://coms-mwb.dbitpro.com:355/LookUp/CumulativeDoseMeds
+Request Method: POST
+Content-Type:   application/x-www-form-urlencoded; charset=UTF-8
+
+Form Data
+MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDoseUnits=AB85F3AA-0B21-E111-BF57-000C2935B86F
+
+        parse_str(file_get_contents("php://input"),$post_vars);
+
+        if (isset($post_vars["MedName"])) {
+            $MedID = $post_vars["MedName"];
+        }
+        if (isset($post_vars["CumulativeDoseAmt"])) {
+            $CumulativeDoseAmt = $post_vars["CumulativeDoseAmt"];
+        }
+        if (isset($post_vars["CumulativeDoseUnits"])) {
+            $CumulativeDoseUnits = $post_vars["CumulativeDoseUnits"];
+        }
+
+ *************************/
+            $query = "INSERT INTO CumulativeDoseMeds (MedID, CumulativeDoseAmt, CumulativeDoseUnits) VALUES ('$MedID' ,'$CumulativeDoseAmt', '$CumulativeDoseUnits')";
+            error_log("POST - $query");
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE CumulativeDoseMeds SET CumulativeDoseAmt = '$CumulativeDoseAmt', CumulativeDoseUnits = '$CumulativeDoseUnits' WHERE MedID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from CumulativeDoseMeds where ID = '$ID'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
+        }
+
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
+    }
+
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 }

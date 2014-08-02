@@ -41,7 +41,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	views: [
+<<<<<<< HEAD
+		"Common.VitalSignsHistory", "NewPlan.CTOS.NursingDocs.Chemotherapy"
+=======
 		"Common.VitalSignsHistory"
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 
 	refs: [
@@ -138,11 +142,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			selector : "NursingDocs_GenInfo [name=\"ND_PT_LabInfo\"]"
 		},
 
+<<<<<<< HEAD
+/*
+=======
 		
 		{
 			"ref" : "ndctWarning",
 			"selector" : "NursingDocs_Chemotherapy [name=\"ndctWarning\"]"
 		},
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		{
 			"ref" : "CycleInfo",
 			"selector" : "NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]"
@@ -171,6 +179,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"ref" : "EmoPanel",
 			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
 		}
+<<<<<<< HEAD
+*/
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 
 
@@ -190,7 +202,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"NursingDocs_GenInfo" : {
 				afterrender : this.GenInfoRendered
 			},
+<<<<<<< HEAD
+			"button[id=\"AddVitals_PatientInfoPanel3\"]" : {
+					click : this.HandleVSFormShowCalcButtons
+			},
+            "button[name=\"ShowBSA\]" : {
+=======
             "VitalSignsEntryForm button[name=\"ShowBSA\]" : {
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 click: this.NDGIVS_BSA_Calculations
             },
 
@@ -210,6 +229,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
                 click: this.AuthenticateUser
             },
 			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
+<<<<<<< HEAD
+				afterrender : Ext.togglePanelOnTitleBarClick
+			},
+			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
+				afterrender : Ext.togglePanelOnTitleBarClick
+			},
+
+=======
 					afterrender : Ext.togglePanelOnTitleBarClick
 			},
 			"NursingDocs_Chemotherapy [name=\"EmesisInfo\"]" : {
@@ -218,6 +245,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.VitalsFieldValidation,
 			},
@@ -352,6 +380,22 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		fldNameMap["ndVitalsWeightP"] = "Weight";
 		fldNameMap["ndVitalsPain"] = "Pain";
 
+<<<<<<< HEAD
+		if (IDESpecLen > 0) {
+			for (i = 0; i < IDESpecLen; i++) {
+				if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
+					validity = this.procIDE(fld, IDESpec[i]);
+					if (validity) {
+						if ("ndVitalsTempF" === fldName ) {
+							this.ConvertTemp(fld, eOpts);
+						}
+						else if ("ndVitalsHeightIN" === fldName) {
+							this.ConvertHeight(fld, eOpts);
+						}
+						else if ("ndVitalsWeightP" === fldName) {
+							this.ConvertWeight(fld, eOpts);
+						}
+=======
 		for (i = 0; i < IDESpecLen; i++) {
 			if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
 				validity = this.procIDE(fld, IDESpec[i]);
@@ -364,10 +408,32 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 					}
 					else if ("ndVitalsWeightP" === fldName) {
 						this.ConvertWeight(fld, eOpts);
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					}
 				}
 			}
 		}
+<<<<<<< HEAD
+		else {
+			if ("ndVitalsTempF" === fldName ) {
+				this.ConvertTemp(fld, eOpts);
+			}
+			else if ("ndVitalsHeightIN" === fldName) {
+				this.ConvertHeight(fld, eOpts);
+			}
+			else if ("ndVitalsWeightP" === fldName) {
+				this.ConvertWeight(fld, eOpts);
+			}
+		}
+		return validity;
+	},
+
+/*
+	ndctRender : function( panel ) {
+		Ext.togglePanelOnTitleBarClick(panel);
+	},
+*/
+=======
 		return validity;
 	},
 
@@ -376,6 +442,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		Ext.togglePanelOnTitleBarClick(panel);
 	},
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	AuthenticateUser : function (button) {
 		var win = button.up('window');
 		var SigNameField = win.SigName;
@@ -447,6 +514,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         NDVitalsWeightKG.setValue("(" + kg + " kg)");
         this.ndgiUpdateBSA(fld);
 	},
+<<<<<<< HEAD
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	ConvertHeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
         var NDVitalsHeightCM = fld.ownerCt.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
@@ -457,6 +528,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         NDVitalsHeightCM.setValue("(" + cm + " cm)");
         this.ndgiUpdateBSA(fld);
 	},
+<<<<<<< HEAD
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	ConvertTemp : function( fld, eOpts ) {
         var inValue = fld.getValue();
         var NDVitalsTempC = fld.ownerCt.query("displayfield[name=\"ndVitalsTempC\"]")[0];
@@ -500,6 +575,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		thisCtl.getNdVitalsO2Level().setValue("");
 		thisCtl.getNdVitalsBSA().setValue("");
 
+<<<<<<< HEAD
+		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+		thisCtl.ClearTabData();
+	},
+
+
+
+=======
 		this.ChemoBioSectionHandler(true);
 	},
 
@@ -633,6 +716,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			}
 		}
 	},
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 
@@ -906,6 +990,66 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	GenInfoRendered : function ( component, eOpts ) {
+<<<<<<< HEAD
+		var tempScratch, tempScratch1, Patient, thisCtl;
+		Patient = this.application.Patient;
+		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+
+		if (!thisCtl.getNdct_GenInfoTab().rendered) {
+			return;		// Traps possible call from the PopulateNDTabs event
+		}
+
+		this.application.Patient.ThisAdminDay = this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
+
+		var NDVitalsTempF = thisCtl.getNdVitalsTempF();
+		var NDVitalsTempC = thisCtl.getNdVitalsTempC();
+		var NDVitalsTempLoc = thisCtl.getNdVitalsTempLoc();
+		var NDVitalsPulse = thisCtl.getNdVitalsPulse();
+		var NDVitalsSystolic = thisCtl.getNdVitalsSystolic();
+		var NDVitalsGender = thisCtl.getNdVitalsGender();
+		var NDVitalsHeightIN = thisCtl.getNdVitalsHeightIN();
+		var NDVitalsHeightCM = thisCtl.getNdVitalsHeightCM();
+		var NDVitalsResp = thisCtl.getNdVitalsResp();
+		var NDVitalsDiastolic = thisCtl.getNdVitalsDiastolic();
+		var NDVitalsAge = thisCtl.getNdVitalsAge();
+		var NDVitalsWeightP = thisCtl.getNdVitalsWeightP();
+		var NDVitalsWeightKG = thisCtl.getNdVitalsWeightKG();
+		var NDVitalsPain = thisCtl.getNdVitalsPain();
+		var NDVitalsO2Level = thisCtl.getNdVitalsO2Level();
+		var NDVitalsBSA = thisCtl.getNdVitalsBSA();
+
+		var LaboratoryInfo = thisCtl.getND_PT_TabLabInfo();
+		LaboratoryInfo.update( Patient.History );
+
+		var VitalSigns = thisCtl.getVitalSignsHistory();
+		VitalSigns.update( Patient );
+
+		NDVitalsGender.setValue((("M" === Patient.Gender) ? "Male" : "Female"));
+		NDVitalsAge.setValue(Patient.Age);
+		NDVitalsPain.setValue("");
+		NDVitalsO2Level.setValue("");
+		NDVitalsBSA.setValue("");		// Patient.BSA);
+
+		NDVitalsTempF.setValue("");
+		NDVitalsTempC.setValue("");
+        NDVitalsTempLoc.setValue("");
+		NDVitalsPulse.setValue("");
+
+		NDVitalsSystolic.setValue("");
+		NDVitalsDiastolic.setValue("");
+		NDVitalsResp.setValue("");
+		NDVitalsHeightIN.setValue("");
+		NDVitalsHeightCM.setValue("( cm)");
+		NDVitalsWeightP.setValue("");
+		NDVitalsWeightKG.setValue("( kg)");
+
+		var VSHTemplateDataBtns;
+		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
+		    var newCtl = this.getController("NewPlan.NewPlanTab");
+			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
+			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
+		}
+=======
         var tempScratch, tempScratch1, Patient, thisCtl;
 		// try {
 			Patient = this.application.Patient;
@@ -989,6 +1133,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 //			//Ext.MessageBox.alert("Rendering Error", "ND - GenInfoRendered() - Error - " + e1.message );
 //		}
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	},
 
 	HandleVSFormShowCalcButtons : function (evt, btn) {

@@ -52,6 +52,10 @@ Minimal (<10%) risk -
 // Which when queried given an EmesisRisk will return the appropriate Recommendation from below:
 // EmesisLookup/ELevelID (from Lookup Table)
 // Returns one of the entries below (but only need ASCO and NCCN records in the real data)
+<<<<<<< HEAD
+/*********************** REMOVED IN FAVOUR OF SITE CONFIG MANAGEMENT **********************
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 var EmesisRisk = [];
 
 // Minimal (<10%) risk
@@ -100,6 +104,9 @@ function getEmesisRecommendation(level) {
 	return ({ "ASCO" : EmesisRisk[level-1].ASCO , "NCCN" : EmesisRisk[level-1].NCCN } );
 }
 
+<<<<<<< HEAD
+********************/
+=======
 
 
 
@@ -216,6 +223,7 @@ var ScratchDataRecord = {
 };
 *********************/
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 Ext.define("COMS.controller.NewPlan.OEM", {
 	extend: "Ext.app.Controller",
@@ -300,10 +308,15 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				afterrender : this.tabRendered
 			}
 		});
+<<<<<<< HEAD
+	},
+
+=======
 
 	},
 
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	// Determines if the date passed is an Admin Day for this Regimen
 	// If the date passed is an Admin Day then the OEM Data for that day is returned
 	// else returns null.

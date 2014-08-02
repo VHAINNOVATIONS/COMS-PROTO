@@ -74,7 +74,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
+<<<<<<< HEAD
+				Ext.MessageBox.alert("Error", "You MUST specify at least a \"Start Time\" for this administration");
+=======
 				Ext.MessageBox.alert("Error", "You MUST specify at least a \"Start Time\" for this treatment");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 			else {
 				this.curTreatmentRecord = record;
@@ -140,7 +144,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 							if (operation.success) {
 							}
 							else {
+<<<<<<< HEAD
+								Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
+=======
 								Ext.MessageBox.alert("Error", "Treatment Record Save failed... unknown reason");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 							}
 						}
 					});
@@ -275,7 +283,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				}
 			},
 			failure : function( response, opts ) {
+<<<<<<< HEAD
+				Ext.MessageBox.alert("Error", "Administration Information failed to load");
+=======
 				Ext.MessageBox.alert("Error", "Treatment Information failed to load");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		});
 	},
@@ -296,7 +308,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			,{property: "orderstatus", value: reDispensed}
 		]);
 
+<<<<<<< HEAD
+		this.application.loadMask("Loading Treatment Administration Information");
+=======
 		this.application.loadMask("Loading Treatment Information");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){
@@ -307,7 +323,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					this.LoadPreviousTreatmentData();
 				}
 				else {
+<<<<<<< HEAD
+					Ext.MessageBox.alert("Error", "Administration Grid store failed to load");
+=======
 					Ext.MessageBox.alert("Error", "Treatment Grid store failed to load");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				}
 			}
 		});
@@ -335,7 +355,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 
 	TabRendered : function ( component, eOpts ) {
+<<<<<<< HEAD
+		wccConsoleLog("Nursing Docs Treatment Administration Tab Rendered");
+=======
 		wccConsoleLog("Nursing Docs Treatment Tab Rendered");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		var Patient = this.application.Patient;
 		var thisCtl;
 		try {
@@ -345,7 +369,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		}
 		catch (e) {
+<<<<<<< HEAD
+			Ext.MessageBox.alert("Error", "Loading Error - Nursing Docs Treatment Administration Tab Render() - Error - " + e.message );
+=======
 			Ext.MessageBox.alert("Error", "Loading Error - Nursing Docs Treatment Tab Render() - Error - " + e.message );
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			return;
 		}
 
@@ -421,10 +449,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			icon: Ext.Msg.QUESTION,
 			callback: function(btn, text){
 				if ("yes" === btn) {
+<<<<<<< HEAD
+					Ext.MessageBox.alert("Administration completion", "Administration is complete, Save complete");
+				}
+				else {
+					Ext.MessageBox.alert("Administration completion", "Administration is NOT complete, No data specified to be saved");
+=======
 					Ext.MessageBox.alert("Treatment completion", "Treatment is complete, Save complete");
 				}
 				else {
 					Ext.MessageBox.alert("Treatment completion", "Treatment is NOT complete, No data specified to be saved");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				}
 			}
 		});

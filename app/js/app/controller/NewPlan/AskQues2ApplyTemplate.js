@@ -6,11 +6,24 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 	refs: [ 
 		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
 		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
+<<<<<<< HEAD
+		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
+		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
+		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"}
+=======
         { ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form checkboxgroup[name=\"amputations\"]"}
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
 		this.control({
+<<<<<<< HEAD
+			"AskQues2ApplyTemplate" : {
+				"show" : this.ShowWindow,
+				"scope" : this
+			},
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			"AskQues2ApplyTemplate button[text=\"Apply Template\"]": {
 				click: this.ApplyTemplate
 			},
@@ -29,6 +42,22 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		button.up("window").close();
     },
 
+<<<<<<< HEAD
+	ShowWindow : function() {
+		if (this.application.Patient.Amputations && this.application.Patient.Amputations.length > 0) {
+			this.getAmputeeYes().setValue(true);
+			this.AmputeeSelected("", { Amputee : true });
+			var AmpuSelCtl = this.getController("NewPlan.AmputationSelection");
+			AmpuSelCtl.renderAS();
+		}
+		else {
+			this.getAmputeeNo().setValue(true);
+			this.AmputeeSelected("", { Amputee : false });
+		}
+	},
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     AmputeeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Amputee Type");
 

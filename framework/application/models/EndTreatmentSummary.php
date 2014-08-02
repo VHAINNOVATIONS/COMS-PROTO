@@ -164,7 +164,15 @@ class EndTreatmentSummary extends Model
     {
         ChromePhp::log("saveEoTS() Start");
 
+<<<<<<< HEAD
+        //$this->_lastId = trim(com_create_guid(), '{}');
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+		
+=======
         $this->_lastId = trim(com_create_guid(), '{}');
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         $Name = $form_data->Name;
         $Patient_ID = $form_data->PatientID;
         $Gender = $form_data->Gender;
@@ -202,7 +210,7 @@ class EndTreatmentSummary extends Model
                 PAT_ID,
                 ClinicalTrial
             ) VALUES (
-                '{$this->_lastId}',
+                '$GUID',
                 '$Name', 
                 '$Patient_ID', 
                 '$Gender', 
@@ -241,29 +249,45 @@ class EndTreatmentSummary extends Model
         ChromePhp::log("Update Assigned Templates - $query");
         $this->query($query);
         
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+		
         if (is_array($form_data->Meds)) {
-            $result = $this->_saveMeds($this->_lastId, $form_data->Meds);
+            //$result = $this->_saveMeds($this->_lastId, $form_data->Meds);
+            $result = $this->_saveMeds($GUID, $form_data->Meds);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
             
         if (is_array($form_data->DiseaseResponse)) {
-            $result = $this->_saveDiseaseResponse($this->_lastId, $form_data->DiseaseResponse);
+            $newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];			
+			//$result = $this->_saveDiseaseResponse($this->_lastId, $form_data->DiseaseResponse);
+            $result = $this->_saveDiseaseResponse($GUID, $form_data->DiseaseResponse);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
         
         if (is_array($form_data->Toxicity)) {
-            $result = $this->_saveToxicity($this->_lastId, $form_data->Toxicity);
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+            //$result = $this->_saveToxicity($this->_lastId, $form_data->Toxicity);
+            $result = $this->_saveToxicity($GUID, $form_data->Toxicity);
             if (!empty($result['error'])) {
                 return $result;
             }
         }
         
         if (is_array($form_data->Other)) {
-            $result = $this->_saveOther($this->_lastId, $form_data->Other);
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+            $result = $this->_saveOther($GUID, $form_data->Other);
             if (!empty($result['error'])) {
                 return $result;
             }
@@ -271,6 +295,9 @@ class EndTreatmentSummary extends Model
         
         if (is_array($form_data->Allergies)) {
             foreach ($form_data->Allergies as $allergy) {
+				$newidquery = "SELECT NEWID()";
+			$GUID = $this->query($newidquery);
+			$GUID = $GUID[0][""];
                 $query = "
                     INSERT INTO EoTS_Allergies (
                         EoTS_ID,
@@ -278,7 +305,7 @@ class EndTreatmentSummary extends Model
                         type,
                         comment
                     ) VALUES (
-                        '{$this->_lastId}',
+                        '$GUID',
                         '{$allergy->name}',
                         '{$allergy->type}',
                         '{$allergy->comment}'
@@ -292,12 +319,15 @@ class EndTreatmentSummary extends Model
         
         if (is_array($form_data->Amputations)) {
             foreach ($form_data->Amputations as $amputation) {
+				$newidquery = "SELECT NEWID()";
+				$GUID = $this->query($newidquery);
+				$GUID = $GUID[0][""];
                 $query = "
                     INSERT INTO EoTS_Amputations (
                         EoTS_ID,
                         description
                     ) VALUES (
-                        '{$this->_lastId}',
+                        '$GUID',
                         '{$amputation->description}'
                     )";
                 $result = $this->query($query);
@@ -308,7 +338,10 @@ class EndTreatmentSummary extends Model
         }
         
         if (is_array($form_data->Vitals)) {
-            $result = $this->_saveVitals($this->_lastId, $form_data->Vitals);
+				$newidquery = "SELECT NEWID()";
+				$GUID = $this->query($newidquery);
+				$GUID = $GUID[0][""];
+            $result = $this->_saveVitals($GUID, $form_data->Vitals);
             if (!empty($result['error'])) {
                 return $result;
             }
@@ -317,13 +350,21 @@ class EndTreatmentSummary extends Model
     
     public function getLastId()
     {
-        return $this->_lastId;
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+        return $GUID;
+        //return $this->_lastId;
     }
     
     private function _saveVitals($id, $vitals)
     {
         foreach ($vitals as $vital) {
-            $vitalId = trim(com_create_guid(),'{}');
+				$newidquery = "SELECT NEWID()";
+				$GUID = $this->query($newidquery);
+				$GUID = $GUID[0][""];
+        
+        //    $vitalId = trim(com_create_guid(),'{}');
             $query = "
                 INSERT INTO EoTS_Vitals (
                     EoTS_ID,
@@ -365,7 +406,7 @@ class EndTreatmentSummary extends Model
                     '{$vital->PS}',
                     {$vital->Age},
                     '{$vital->Gender}',
-                    '$vitalId',
+                    '$GUID',
                     '{$vital->Respiration}',
                     '{$vital->Cycle}',
                     '{$vital->Day}'
@@ -382,7 +423,7 @@ class EndTreatmentSummary extends Model
                         EoTS_Vitals_Id,
                         Description
                     ) VALUES (
-                        '$vitalId',
+                        '$GUID',
                         '{$amputation->description}'
                     )
                 ";

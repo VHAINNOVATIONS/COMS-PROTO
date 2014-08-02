@@ -75,7 +75,11 @@ Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 										"<th><abbr title=\"Oxygen %\">SPO2</abbr></th>",
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight Method</th>",
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight</th>",
+<<<<<<< HEAD
+										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Formula</th>",
+=======
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method</th>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr></th>",
 									"</tr>",
 									"<tr>",
@@ -115,7 +119,11 @@ Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 										"<th><abbr title=\"Oxygen %\">SPO2</abbr></th>",
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight Method</th>",
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight</th>",
+<<<<<<< HEAD
+										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Formula</th>",
+=======
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method</th>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 										"<th><abbr title=\"Body Surface Area\">BSA</abbr></th>",
 									"</tr>",
 									"<tr>",

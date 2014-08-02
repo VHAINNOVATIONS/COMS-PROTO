@@ -178,6 +178,18 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
+<<<<<<< HEAD
+    // extend: "Ext.container.Container",
+	extend: "Ext.form.Panel",
+    alias: "widget.VitalSignsEntryForm",
+    name: "NursingDocs.VitalSignsEntryForm",
+    cls : "VitalSignsEntryForm",
+		height : 100,
+		border: false,
+
+    layout: {
+        type: "table",
+=======
     extend: "Ext.container.Container",
     alias: "widget.VitalSignsEntryForm",
     name: "NursingDocs.VitalSignsEntryForm",
@@ -186,6 +198,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     layout: {
         type: "table",
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         tableAttrs: {
             border: 1
         },
@@ -194,7 +207,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     defaults: {
         labelAlign: "right",
         labelWidth: 60,
+<<<<<<< HEAD
+        cellCls : "InformationTable"
+=======
             cellCls : "InformationTable"
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     },
     items: [
         // Row 1 - Col 1
@@ -409,6 +426,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 margin: "0 5 0 0",
                 labelClsExtra: "NursingDocs-label"
             }, 
+<<<<<<< HEAD
+			{ "xtype" : "button", "baseCls" : "anchor", "name" : "AddVitals_PatientInfoPanel", "text" : "Calculations" }
+=======
             {
                 xtype: "container",
                 name: "ndVitalsCalcBSA",
@@ -416,6 +436,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 margin: "0 10 0 0"
             }
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             ]
         }
     ]

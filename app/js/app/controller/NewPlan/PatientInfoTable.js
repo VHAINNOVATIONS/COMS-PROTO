@@ -96,6 +96,16 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	// Ext.ComponentQuery.query("NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] [name=\"BSA_CalcFormula\"]")[0].el.dom
 	init: function() {
 		wccConsoleLog("Initialized PatientInformationTable Controller!");
+<<<<<<< HEAD
+		this.application.on({ PatientSelected : this.PatientSelected, scope : this });
+
+//		var ptInfo = Ext.ComponentQuery.query("PatientInfoTable")[0];
+//		ptInfo.body.query(".AddEditAmputation");
+
+		this.control({
+			"NewPlanTab PatientInfo" : {
+				afterrender : this.PatientInfoRendered
+=======
 
 		this.application.on({ CalculateBSA : this.CalculateBSA, scope : this });
 		this.application.on({ PatientSelected : this.PatientSelected, scope : this });
@@ -108,11 +118,40 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
             },
 			"NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] container [name=\"BSA_CappedValue\"]" : {
 				blur : this.BSA_Capped_Blur
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		});
 	},
 
 
+<<<<<<< HEAD
+	/* See: http://stackoverflow.com/questions/8079942/ext-js-proper-technique-to-add-listeners-to-dom-created-via-an-xtemplate */
+	attachCOMSEvents : function() {
+		/* Switching Contrast Mode */
+		/*
+		Ext.getBody().on("click", function(event, target){
+			alert("Switching to Normal Contrast Mode");
+			location.href = document.url;
+		}, null, {
+			delegate: "button#NormalContrastMode"
+		});
+		Ext.getBody().on("click", function(event, target){
+			alert("Switching to High Contrast Mode");
+			location.href = document.url;
+		}, null, {
+			delegate: "button#HighContrastMode"
+		});
+		*/
+	},
+
+
+	PatientSelected : function(recs, eOpts) {	// MWB 10 Feb 2012 - This event is passed up from the PatientSelected handler in the NewPlanTab controller, NOT from the combo itself
+		wccConsoleLog("Patient selected - Adjust BSA Calculations");
+		console.log("PatientSelected within PatientInfoTable");
+		var thisCtl = this.getController("NewPlan.PatientInfoTable");
+		var piData = recs[0].data;
+
+=======
 
 
 	/*************************************************************
@@ -220,6 +259,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 // MWB 10 Feb 2012 - 
 // Add functionality to grab BSA from the first Measurement element (which should be the most recent data) and use that to preset the BSA values for the OEM tab
 // If no BSA exists for that then require the calculation of a BSA
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		
 		try {
 			thisCtl.getBSA_WeightFormula().labelEl.dom.innerHTML = "";
@@ -242,6 +282,84 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		}
 	},
 
+<<<<<<< HEAD
+	PatientInfoRendered : function(thePanel, opts) {
+		this.AssignLinkClicksInPatientInformationTable(thePanel, opts);
+	},
+
+	HandleBtnClicks : function(cmp, tag) {
+		console.log("NewPlan - PatientInfoTable - HandleBtnClicks");
+		// debugger;
+	},
+
+	AssignLinkClicksInPatientInformationTable : function(thePanel, opts) {
+	/* See: http://stackoverflow.com/questions/8079942/ext-js-proper-technique-to-add-listeners-to-dom-created-via-an-xtemplate */
+		thePanel.body.on("click", 
+			function( evt, target ) {
+				var theClass = target.className;
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				// var tabType = target.getAttribute("tabtype");
+
+/**
+ * Amputation information is stored in the Lookup table in the following manner:
+ *  Lookup_Type = 30
+ *  Lookup_Type_ID = null
+ *  Name = Patient GUID
+ *  Description = Amputation (e.g. "Left Foot", "Lower Left Arm", etc) One Amputation per record
+ *  Use Patient Controller
+ **/
+				switch( theClass ) {
+					case "anchor AddEditAmputation" : 
+						if (!this.puWinAmputations) {
+							this.puWinAmputations = Ext.widget("puWinSelAmputation");
+						}
+						this.puWinAmputations.show();
+						break;
+					case "anchor AddEditBSA" : 
+						if (!this.puWinBSA) {
+							this.puWinBSA = Ext.widget("puWinSelBSA");
+						}
+						this.puWinBSA.show();
+						break;
+					case "anchor DoBSACalcs" : 
+						thisCtl.ShowBSACalcsPUWin({}, "DoBSACalcs");
+						break;
+					case "anchor ShowBSACalcs" : 
+						thisCtl.ShowBSACalcsPUWin({}, "ShowBSACalcs");
+						break;
+					case "anchor ShowAllPatientData" : 
+						var Patient = this.application.Patient;
+						var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
+						Ext.create('Ext.window.Window', {
+							title: 'Patient Info',
+							height: 800,
+							width: 950,
+							autoScroll : true,
+							html : htmlData
+						}).show();
+						break;
+					case "anchor AddEditCancer" : 
+						if (!this.puWinCancer) {
+							this.puWinCancer = Ext.widget("puWinSelCancer");
+						}
+						this.puWinCancer.show();
+						break;
+					case "anchor AddCumulativeMedication" :
+						if (!this.puWinCumDose) {
+							this.puWinCumDose = Ext.widget("puWinAddCumDose");
+						}
+						this.puWinCumDose.show();
+						break;
+				}
+			},
+			this, 
+			{
+				delegate : "button.anchor"
+			}
+		);
+	}
+});
+=======
 	BSA_Capped_Blur : function(cappedFld, eOpts) {		// Called when focus moves out of the BSA_Capped Value field
 		this.application.Patient.BSA = cappedFld.getRawValue();
 		this.application.Patient.BSAFormula = "Capped";
@@ -534,3 +652,4 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 });
 
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca

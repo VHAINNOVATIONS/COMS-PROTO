@@ -161,6 +161,9 @@ var theMainItemsList = function(itemsInGroup) {
 						"checked" : true
 					}]
 				}, 
+<<<<<<< HEAD
+				{ xtype : "AmputationSelection", "hidden" : true },
+=======
 				{
 					"xtype" : "checkboxgroup",
 					"vertical" : true,
@@ -209,6 +212,7 @@ var theMainItemsList = function(itemsInGroup) {
 						"name" : "bodyPart12"
 					}]
 				},
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				IIG_Panel
 			]
 		}

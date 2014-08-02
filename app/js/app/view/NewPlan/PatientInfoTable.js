@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 Ext.define("COMS.view.NewPlan.BSAInfoTable", {
 	extend: "Ext.container.Container",
 	alias: "widget.BSAInfoTable",
@@ -145,6 +147,7 @@ Ext.define("COMS.view.NewPlan.BSAInfoTable", {
 
 
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	extend: "Ext.panel.Panel",
 	alias: "widget.PatientInfoTable",
@@ -163,7 +166,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 				"{[this.CalcBSA(values)]}",		// Needed to calculate the BSA Value if none retrieved.
 				"<table border=\"1\" class=\"InformationTable\">",
 					"<tr>",
+<<<<<<< HEAD
+						"<th style=\"width:15em\">Gender:</th><td>{Gender}</td>",
+=======
 						"<th>Gender:</th><td>{Gender}</td>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 						"<th>Age:</th><td>{Age}</td>",
 						"<th>{[this.AddEditBtns(\"Amputation\", values, parent)]}Amputee:</th><td id=\"PatientInformationTableAmputations\">{[this.Amputee(values.Amputations)]}</td>",
 					"</tr>",
@@ -171,7 +178,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 					"<tr>",
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Weight Method:</th><td>{WeightFormula}</td>",
+<<<<<<< HEAD
+						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Formula:</th><td>{BSA_Method}</td>",
+=======
 						"<th><abbr title=\"Body Surface Area\">BSA</abbr> Method:</th><td>{BSA_Method}</td>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 						"<th>",
 						"{[this.AddEditBtns(\"BSA\", values, parent)]}<abbr title=\"Body Surface Area\">BSA</abbr>:",
                         "</th><td>{[this.BSA_Cell(values, parent)]}</td>",
@@ -182,7 +193,13 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<tpl if=\"this.hasData(TemplateDescription)\">",
 							"<br />{TemplateDescription}",
 						"</tpl>",
+<<<<<<< HEAD
+						"{[this.Links(values.TemplateName, values.TemplateID)]}",
+						//"<button class=\"anchor ShowAllPatientData\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button>",
+						"</td>",
+=======
 						"<br />{[this.Links(values.TemplateName, values.TemplateID)]}<button class=\"anchor\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button></td>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					"</tr>",
 
 					"<tr>",
@@ -192,7 +209,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"</tr>",
 					"<tr>",
 						"<th>",
+<<<<<<< HEAD
+						"{[this.AddEditBtns(\"Cancer\", values, parent)]}",
+=======
 						/*** "{[this.AddEditBtns(\"Cancer\", values, parent)]}", ***/
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 						"Type(s) of Cancer: </th>",
 						"<td colspan=3>",
 							"<tpl for=\"Disease\">",
@@ -203,6 +224,61 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Allergies: </th>",
 						"<td colspan=5>",
+<<<<<<< HEAD
+
+
+	"<tpl if=\"this.Allergies(values)\">",
+							"<table class=\"DataTable\">",
+								"<tr>",
+									"<th>Name</th>",
+									"<th>Type</th>",
+									"<th>Comment</th>",
+								"</tr>",
+								"<tpl for=\"Allergies\">",
+									"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
+								"</tpl>",
+							"</table>",
+	"</tpl>",
+	"<tpl if=\"this.Allergies(values) == false\">",
+							"No Known Allergies",
+	"</tpl>",
+
+						"</td>",
+					"</tr>",
+
+						
+						
+						
+						
+						
+					"<tr>",
+						"<th>Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
+						"<td colspan=5>",
+
+					"<table class=\"DataTable\">",
+						"<tr>",
+							"<th>Medication</th>",
+							"<th>Total Lifetime Dose</th>",
+							"<th>Source</th>",
+						"</tr>",
+						"<tpl for=\"CumulativeDoseTracking\">",
+							"<tr><td>{MedName}</td><td>{CumulativeDoseAmt} {Units}</td><td>{Source}</td></tr>",
+						"</tpl>",
+						"</table>",
+
+						"</td>",
+					"</tr>",
+
+						
+						
+						
+						
+						
+						
+						
+						
+						
+=======
 							"<table width=\"100%\"><tr><th style=\"text-align: center;\">Name</th><th style=\"text-align: center;\">Type</th><th style=\"text-align: center;\">Comment</th></tr>",
 							"<tpl for=\"Allergies\">",
 								"<tr><td>{name}</td><td>{type}</td><td>{comment}</td>",
@@ -210,6 +286,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							"</table>",
 						"</td>",
 					"</tr>",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					"<tr>",
 						"<th>Clinical Trial: </th>",
 						"<td colspan=5>",
@@ -217,7 +294,10 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"</td>",
 					"</tr>",
 				"</table>",
+<<<<<<< HEAD
+=======
 				"{[this.PostRendering(values, parent)]}",
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				{
 					// XTemplate Configuration
 					disableFormats: true,
@@ -234,6 +314,30 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						if ("" === values.BSA_Method || "" === values.WeightFormula) {
 							return "<abbr title=\"Not Available\">N/A</abbr>";
 						}
+<<<<<<< HEAD
+						var buf = "<span id=\"PatientInfoTableBSA_Display\">" + values.BSA +  "</span>" + 
+						"<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+						return buf;
+					},
+
+					AddEditBtns : function (btnName, values, parent) {
+						var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
+						var Mid = "name=\"AddEdit" + btnName + "\" ";
+						var Post = ">Add/Edit</button>&nbsp;&nbsp;";
+						return Pre + Mid + Post;
+					},
+
+					Allergies : function ( values ) {
+						if (values.Allergies.length > 0) {
+							return true;
+						}
+						return false;
+					},
+
+					Debugger : function ( values ) {
+						debugger;
+=======
 						var buf = values.BSA + 
 						"<button class=\"anchor\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Calculate BSA</button> " + 
 						"<button class=\"anchor\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Show Calculations</button>";
@@ -258,6 +362,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						catch (e) {
 							// debugger;
 						}
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					},
 
 					hasData : function (data) {
@@ -275,6 +380,42 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					},
 
 					Links : function (name, id) {
+<<<<<<< HEAD
+						var buf1 = "";
+
+						try {
+							if ("" === name) {
+								return ("&nbsp;");
+							}
+
+							// This is the link which appears at the end of the "Calculate BSA" table.
+							// This was formerly an anchor
+							Ext.ComponentQuery.query("NewPlanTab PatientInfo PatientInfoTable container[name=\"BSA_OEM_Link\"]")[0].el.dom.innerHTML = 
+								"&nbsp;<button class=\"anchor\" " + 
+								"name=\"Open Order Entry Management Tab\" " + 
+								"title=\"Open Order Entry Management Tab\" " + 
+								"tabType=\"OEM\" " + 
+								"templateName=\"" + name + "\" " + 
+								"templateID=\"" + id + "\" " + 
+								">Open</button> " +
+								"Order Entry Management (<abbr title=\"Order Entry Management\">OEM</abbr>) Tab using this Body Surface Area (<abbr title=\"Body Surface Area\">BSA</abbr>) Value";
+
+							// This was formerly an anchor
+							buf1 = 
+								"&nbsp;<button class=\"anchor\" " + 
+								"name=\"Open Template in CTOS Tab\" " +
+								"title=\"Open Template in CTOS Tab\" " +
+								"tabType=\"CTOS\" " +
+								"templateName=\"" + name + "\" " +
+								"templateID=\"" + id + "\" " +
+								">Open Template</button> " + 
+								"in Chemotherapy Template Order Source (<abbr title=\"Chemotherapy Template Order Source\">CTOS</abbr>) Tab";
+						}
+						catch (e) {
+							return "";
+						}
+						return buf1;
+=======
 						// debugger;
 						var buf1 = "";
 
@@ -312,6 +453,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						}
 
 						return ( buf1 );
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					},
 
 					Amputee : function(a) {
@@ -328,10 +470,15 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							return (buf);
 						}
 						catch (e) {
+<<<<<<< HEAD
+							return "";
+						}
+=======
 							// debugger;
 							return ("");
 						}
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					},
 
 					CalcBSA : function( data, parent ) {
@@ -342,13 +489,21 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							}
 						}
 						catch (e) {
+<<<<<<< HEAD
+							return "";
+=======
 							// debugger;
 							return ("");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 						}
 					}
 				}
 			)
+<<<<<<< HEAD
+		}
+=======
 		},
 		{ xtype: "BSAInfoTable" }
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	]
 });

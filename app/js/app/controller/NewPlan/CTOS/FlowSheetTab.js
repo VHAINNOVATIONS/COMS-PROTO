@@ -2,10 +2,22 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	extend: "Ext.app.Controller",
 
 	stores: [
+<<<<<<< HEAD
+		"Toxicity"
+	],
+
+	views: [
+		"NewPlan.CTOS.FlowSheet",
+		"NewPlan.CTOS.ToxicitySideEffectsPanel",
+		"NewPlan.CTOS.ToxicitySideEffectsPUWin",
+		"NewPlan.CTOS.DiseaseResponsePUWin",
+		"NewPlan.CTOS.OtherPUWin"
+=======
 	],
 
 	views: [
 	    "NewPlan.CTOS.FlowSheet"
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 
 	refs: [
@@ -29,6 +41,56 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	    {
 		    ref: "FlowSheetBody",
 			selector: "FlowSheetBody"
+<<<<<<< HEAD
+	    },
+
+		{
+			ref: "TSE_Instr",
+			selector: "ToxicitySideEffectsPUWin [name=\"ToxInstr\"]"
+		},
+		{
+			ref: "TSE_Details",
+			selector: "ToxicitySideEffectsPUWin [name=\"ToxDetails\"]"
+		},
+		{
+			ref: "TSE_Data",
+			selector: "ToxicitySideEffectsPUWin [name=\"Data\"]"
+		},
+		{
+			ref: "DR_Data",
+			selector: "DiseaseResponsePUWin [name=\"Data\"]"
+		},
+		{
+			ref: "Othr_Data",
+			selector: "OtherPUWin [name=\"Data\"]"
+		}
+	],
+
+	TabContentsCleared : true,
+	TabIsActive : false,
+
+	init: function () {
+		wccConsoleLog("Initialized Flow Sheet Tab Controller!");
+
+		this.application.on( 
+			{ 
+				PatientSelected : this.PatientSelected, 
+				// PopulateNDTabs : this.GenInfoRendered,	// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
+				// ClearNDTabs : this.ClearTabData,		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+				scope : this 
+			}
+		);
+
+		this.control({
+			"FlowSheet" : {
+				beforeactivate : this.BeforeTabActivated,
+				activate : function() {
+					this.TabIsActive = true;
+				},
+				deactivate : function() {
+					this.TabIsActive = false;
+				}
+=======
 	    }
 	],
 
@@ -42,16 +104,204 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		this.control({
 			"FlowSheet" : {
 				beforeactivate : this.BeforeTabActivated
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			},
 
 			"FlowSheet [name=\"flowsheet grid\"]" : {
 				render : this.TabRendered
+<<<<<<< HEAD
+			},
+			"ToxicitySideEffectsPUWin combo[name=\"ToxInstr\"]" : {
+				change : this.SelectToxInstr
+			},
+			"ToxicitySideEffectsPUWin button[text=\"Save\"]" : {
+				click : this.SaveToxDetails
+			},
+			"ToxicitySideEffectsPUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
+			},
+			"DiseaseResponsePUWin button[text=\"Save\"]" : {
+				click : this.SaveResponseDetails
+			},
+			"DiseaseResponsePUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
+			},
+			"OtherPUWin button[text=\"Save\"]" : {
+				click : this.SaveOtherDetails
+			},
+			"OtherPUWin button[text=\"Cancel\"]" : {
+				click : this.CancelDetails
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		});
 	},
 
+<<<<<<< HEAD
+	SaveResponseDetails : function (btn) {
+		console.log("CTOS - Flowsheet Tab - SaveResponseDetails");
+		var theForm = btn.up('form').getForm();
+		var win = btn.up("window");
+		if (theForm.isValid()) {
+			var theData = theForm.getValues();
+			var Patient = this.application.Patient;
+			var AdminDay = Patient.ThisAdminDay;
+
+			var theData = this.getTSE_Data().getValue();
+
+
+
+
+			var newRecord = {};
+			newRecord.PAT_ID = Patient.PAT_ID;
+			newRecord.FlowsheetAdminDay = {};
+			newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+			newRecord.FlowsheetAdminDay.Cycle = AdminDay.Cycle;
+			newRecord.FlowsheetAdminDay.Day = AdminDay.Day;
+			newRecord.FlowsheetAdminDay.AdminDate = AdminDay.AdminDate;
+
+			newRecord.FlowsheetAdminDay.Disease_Response = theData;
+
+			var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+			fsTemplate.save({
+				scope: this,
+				success: function (data) {
+					wccConsoleLog("Saved Flowsheet " );
+					this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+					win.close();
+				},
+				failure : function ( data ) {
+					alert("Flowsheet Save unsuccessful");
+					win.close();
+				}
+			});
+		}
+
+	},
+
+	SaveOtherDetails : function (btn) {
+		console.log("CTOS - Flowsheet Tab - SaveOtherDetails");
+	},
+
+	SaveToxDetails : function (btn) {
+		var theForm = btn.up('form').getForm();
+		var win = btn.up("window");
+		if (theForm.isValid()) {
+			var theData = theForm.getValues();
+			var Patient = this.application.Patient;
+			var AdminDay = Patient.ThisAdminDay;
+
+			var theInstr = this.getTSE_Instr();
+			var theRecID = theInstr.getValue();
+
+			var theStore = theInstr.getStore();
+			var theRecord = theStore.findRecord("ID", theRecID);
+			if (theRecord) {
+				var theDetailsData = theRecord.get("Details");
+			}
+
+			var theData = this.getTSE_Data().getValue();
+
+			var newRecord = {};
+			newRecord.PAT_ID = Patient.PAT_ID;
+			newRecord.FlowsheetAdminDay = {};
+			newRecord.FlowsheetAdminDay.ToxicityLU_ID = theRecID;
+			newRecord.FlowsheetAdminDay.Toxicity = theData;
+			newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+			newRecord.FlowsheetAdminDay.Cycle = AdminDay.Cycle;
+			newRecord.FlowsheetAdminDay.Day = AdminDay.Day;
+			newRecord.FlowsheetAdminDay.AdminDate = AdminDay.AdminDate;
+
+			var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+			fsTemplate.save({
+				scope: this,
+				success: function (data) {
+					wccConsoleLog("Saved Template " );
+					this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+					win.close();
+				},
+				failure : function ( data ) {
+					alert("Flowsheet Save unsuccessful");
+					win.close();
+				}
+			});
+		}
+	},
+	CancelDetails : function (btn) {
+		btn.up('form').getForm().reset();
+		btn.up('window').hide();
+	},
+
+	SelectToxInstr : function (combo, recs, Opts) {
+		var theStore = combo.getStore();
+		var theRecord = theStore.findRecord("ID", recs);
+		var theData = theRecord.get("Details");
+		var theDetails = this.getTSE_Details();
+		theDetails.setValue(theData);
+		
+	},
+
+	/**********************
+	 *
+	 *	Called when the "PatientSelected" event is triggered from the top of the NewTab Panel Select Patient drop down
+	 *	This adjusts the values in the "Select Applied Template" drop down based on the selected user
+	 *
+	 **********************/
+	PatientSelected: function (combo, recs, eOpts) {
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+
+		var theGrid = Ext.getCmp("FlowsheetGrid");
+		if (theGrid && theGrid.rendered) {
+			Ext.destroy(theGrid);
+		}
+
+		var Flowsheet = thisCtl.getFlowSheet();
+		if (Flowsheet) {
+			if (Flowsheet.rendered) {
+				this.TabContentsCleared = true;
+				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+			}
+		}
+	},
+
+	TabRendered : function ( component, eOpts ) {
+		this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+	},
+
+	BeforeTabActivated : function (component, eOpts ) {
+		var PatientInfo = this.application.Patient;
+		if ("" === PatientInfo.TemplateID) {
+			alert("No Template has been applied to this patient\nTab will not display");
+			this.getCTOS_Tabs().setActiveTab( 0 );
+			var theGrid = Ext.getCmp("FlowsheetGrid");
+			if (theGrid && theGrid.rendered) {
+				Ext.destroy(theGrid);
+			}
+			return false;
+		}
+
+
+		if ( this.TabContentsCleared ) {
+			this.TabContentsCleared = false;
+		}
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+		var Flowsheet = thisCtl.getFlowSheet();
+		if (Flowsheet) {
+			if (Flowsheet.rendered) {
+				this.createFlowsheet(this.createFSGrid);		// TRUE, because we want to build & Display the FS Grid after generating the store
+			}
+		}
+		return true;
+	},
 
 	CellEditCommit : function (editor, eObj) {
+		console.log("CTOS - Flowsheet Tab - CellEditCommit");
+=======
+
+	CellEditCommit : function (editor, eObj) {
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		var Patient = this.application.Patient;
 		var fieldName = eObj.grid.getStore().getAt(eObj.rowIdx).get("label");
 		switch (fieldName) {
@@ -115,6 +365,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		alert("You can only edit the \"Disease Response\", \"Toxicity Side Effects\" or \"Other\" cells");
 		return false;
 	},
+<<<<<<< HEAD
+
+
+=======
 	TabContentsCleared : true,
 
 	/**********************
@@ -175,6 +429,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		}
 		return true;
 	},
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 	HandleFlowsheetBtnClicks : function (event, element) {
@@ -189,13 +444,112 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var Patient = this.application.Patient;
 		// alert("Name - " + btnName + "\nType - " + btnType + "\nDate - " + btnDate + "\nData - " + btnData );
 		if ("ViewFSData" === btnName) {
+<<<<<<< HEAD
+			var d1 = Ext.decode(btnData);
+			var mbMessage = "<table class=\"CCOrderSheet\">";
+			mbMessage += "<tr><th>Toxicity:</th><td>" + d1.Instr + "<br></td></tr>";
+			mbMessage += "<tr><th>Details:</th><td>" + Ext.util.Format.htmlDecode(d1.Details) + "<br></td></tr>";
+			mbMessage += "<tr><th>Comments:</th><td>" + d1.Comments + "</td></tr>";
+			mbMessage += "</table>";
+
+
+			Ext.MessageBox.show({
+				title : btnType,
+				msg : mbMessage,
+=======
 			Ext.MessageBox.show({
 				title : btnType,
 				msg : btnData,
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				buttons : Ext.MessageBox.OK
 			});
 		}
 		else {
+<<<<<<< HEAD
+			if ("Toxicity Side Effects" === btnType) {
+				var tseWin = Ext.widget("ToxicitySideEffectsPUWin");
+			}
+			else if ("Disease Response" === btnType) {
+				var drWin = Ext.widget("DiseaseResponsePUWin");
+			}
+			else if ("Other" === btnType) {
+				var othrWin = Ext.widget("OtherPUWin");
+			}
+			else {
+				Ext.create("Ext.window.Window", {
+					title: btnType,
+					height : 220,
+					width : 600,
+					layout: "form",
+					Hdr : btnRecHdr,
+					AdmDate : btnDate,
+					BtnType : btnType,
+					items : [{
+						xtype : "textareafield", grow : true, name : "Data", fieldLabel : "Enter text", margin: "10"
+					}],
+					buttons : [
+						{ 
+							text : "Save", 
+							scope : this,
+							handler : function(btn, evt) {
+								var win = btn.up('window');
+								var initialConfig = win.getInitialConfig();
+								var theField = win.down('textareafield');
+								var value = theField.getValue();
+								var fieldName;
+								var theGrid = Ext.getCmp("FlowsheetGrid");
+								var Patient = this.application.Patient;
+								var cType = win.initialConfig.BtnType;
+								var Header = win.initialConfig.Hdr;
+								var AdmDate = win.initialConfig.AdmDate;
+								switch (cType) {
+									case "Disease Response":
+										fieldName = "DiseaseResponse";
+										break;
+									case "Toxicity Side Effects":
+										fieldName = "Toxicity";
+										break;
+									case "Other":
+										fieldName = "Other";
+										break;
+								}
+								var cd = Header.split(", ");		// Header is formated like "Cycle XX, Day YY", so a split on ", " gives cd = [ "Cycle XX", "Day YY"];
+								var newRecord = {};
+								newRecord.PAT_ID = Patient.PAT_ID;		// Treatment ID;
+								newRecord.FlowsheetAdminDay = {};
+								newRecord.FlowsheetAdminDay[fieldName] = value;
+								newRecord.FlowsheetAdminDay.PatientID = Patient.id;
+								newRecord.FlowsheetAdminDay.Cycle = cd[0].split(" ")[1];
+								newRecord.FlowsheetAdminDay.Day = cd[1].split(" ")[1];
+								newRecord.FlowsheetAdminDay.AdminDate = AdmDate;
+
+								var fsTemplate = Ext.create(Ext.COMSModels.Flowsheet, newRecord );
+
+								fsTemplate.save({
+									scope: this,
+									success: function (data) {
+										wccConsoleLog("Saved Template " );
+										this.createFlowsheet(this.createFSGrid);		// Refresh so we can display the new cell. TRUE, because we want to build & Display the FS Grid after generating the store
+										win.close();
+									},
+									failure : function ( data ) {
+										alert("Flowsheet Save unsuccessful");
+										win.close();
+									}
+								});
+							}
+						},
+						{
+							text : "Cancel",
+							handler : function(btn, evt) {
+								var win = btn.up('window');
+								win.close();
+							}
+						}
+					]
+				}).show();
+			}
+=======
 			Ext.create("Ext.window.Window", {
 				title: btnType,
 				height : 220,
@@ -271,6 +625,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 					}
 				]
 			}).show();
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		}
 	},
 
@@ -281,6 +636,44 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		 *
 		 **************************************/
 	// Loads the data which was entered in the Treatment Panel as well as the edited cells (e.g. "Disease Response", "Toxicity" and "Other")
+<<<<<<< HEAD
+	createFSGrid : function () {
+		var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+		var Flowsheet = thisCtl.getFlowSheetGrid();
+		var FlowsheetEl = Flowsheet.getEl();
+		var FSColumns = this.application.Patient.FSColumns;
+
+		// Since we have a dynamic store and data set we need to destroy and re-create the grid everytime we open the panel up
+		// to make sure that the latest data is displayed in the grid.
+		var theGrid = Ext.getCmp("FlowsheetGrid");
+		if (theGrid && theGrid.rendered) {
+			Ext.destroy(theGrid);
+		}
+
+		theGrid = Ext.create('Ext.grid.Panel', {
+			id : "FlowsheetGrid",
+		    renderTo: FlowsheetEl,
+			autoScroll: 'y',
+			columnLines: true,
+			viewConfig: { stripeRows: true, forceFit: true },
+
+			store: Ext.data.StoreManager.lookup('ChemoResults'),
+		    columns: FSColumns,					// <-- Columns Data
+		    features: [{ftype:'grouping'}]
+		});
+
+		theGrid.on("afterlayout", function() {
+			var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
+			var FlowsheetPanel = thisCtl.getFlowSheet();
+			FlowsheetPanel.forceComponentLayout();	// Since the grid is added after the panel has been rendered, this function causes the panel to resize to fit the grid.
+
+			var btns1 = FlowsheetEl.select("button");
+			btns1.removeAllListeners();
+			btns1.on("click", this.HandleFlowsheetBtnClicks, this);
+		}, this);
+
+	},
+=======
 createFSGrid : function () {
 	// console.log("Create Flowsheet Grid and assign button handlers");
 				var thisCtl = this.getController("NewPlan.CTOS.FlowSheetTab");
@@ -318,12 +711,16 @@ createFSGrid : function () {
 				}, this);
 
 },
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 // FSModel (first parameter) was apparently never used.
 // buildGrid - function to build the grid upon completion of creating the store
 //	For some calls to this function (as in when we're doing the EoTS) a grid is not needed.
 LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
+<<<<<<< HEAD
+=======
 	// console.log("Load Flowsheet Data via FS Service" );
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		var Patient = this.application.Patient;
 		var PAT_ID = Patient.PAT_ID;
 		this.FSData = FSData;
@@ -484,7 +881,10 @@ LoadFlowsheetData : function (FSFields, FSColumns, FSData, buildGrid) {
  *
  ****/
 createFlowsheet : function (BuildGrid) {
+<<<<<<< HEAD
+=======
 	// console.log("Create Flowsheet" );
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		var OEM_Data;
 		var OEM_DataLen;
 		var OEM_Record;
@@ -596,7 +996,11 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSPreMedsList[i] = {};
 			FSPreMedsList[i].label = PreTherapyMeds[i].Drug;
+<<<<<<< HEAD
+			FSPreMedsList[i]["&nbsp;"] = "02 Pre Therapy";
+=======
 			FSPreMedsList[i]["&nbsp;"] = "03 Pre Therapy";
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
@@ -611,7 +1015,11 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < MedsListLen; i++) {
 			FSMedsList[i] = {};
 			FSMedsList[i].label = TherapyMeds[i].Drug;
+<<<<<<< HEAD
+			FSMedsList[i]["&nbsp;"] = "03 Therapy";
+=======
 			FSMedsList[i]["&nbsp;"] = "04 Therapy";
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
@@ -627,7 +1035,11 @@ createFlowsheet : function (BuildGrid) {
 		for (i = 0; i < PostMedsListLen; i++) {
 			FSPostMedsList[i] = {};
 			FSPostMedsList[i].label = PostTherapyMeds[i].Drug;
+<<<<<<< HEAD
+			FSPostMedsList[i]["&nbsp;"] = "04 Post Therapy";
+=======
 			FSPostMedsList[i]["&nbsp;"] = "05 Post Therapy";
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			for (j = 0; j < OEM_DataLen; j++) {
 				OEM_Record = OEM_Data[j];
 				hdr = "Cycle " + OEM_Record.Cycle + ", Day " + OEM_Record.Day;
@@ -643,7 +1055,11 @@ createFlowsheet : function (BuildGrid) {
 		FSData.push(FSDiseaseResponse);
 		FSData.push(FSToxicity);
 		FSData.push(FSOther);
+<<<<<<< HEAD
+		// FSData.push(FSLabs);
+=======
 		FSData.push(FSLabs);
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 		for (i = 0; i < PreMedsListLen; i++) {
 			FSData.push(FSPreMedsList[i]);

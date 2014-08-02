@@ -1305,7 +1305,7 @@ function convertReason2ID($Reason) {
         $this->query($query);
     }
 
-    function updateOrderStatusIn ($TID, $Drug_Name, $Order_Type, $PID)
+    function updateOrderStatusIn ($TID, $Drug_Name, $Order_Type, $PID, $Notes)
     {
         $Template_IDchk = NULL;
         $Drug_Namechk = NULL;
@@ -1322,7 +1322,7 @@ function convertReason2ID($Reason) {
         }
         if ($Template_IDchk === NULL) {
             // echo "empty sring";
-            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID) VALUES ('$TID','Finalized','$Drug_Name','$Order_Type','$PID')";
+            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Finalized','$Drug_Name','$Order_Type','$PID','Line 1325')";
         } else {
             $query = "Update Order_Status set Order_Status = 'Finalized' " .
                      "where Template_ID = '" . $TID . "' " . "AND Drug_Name = '" .
@@ -1403,6 +1403,82 @@ function convertReason2ID($Reason) {
             $LK_Description = $row['LK_Description'];
         }
         return $LK_Description;
+    }
+
+    function selectCDH ($PatientID,$CDHID)
+    {
+        $query = "
+		SELECT ID,
+		Patient_ID,
+		MedID,
+		CumulativeDoseAmt,
+		CumulativeDoseUnits,
+		Date_Changed,
+		Author
+		FROM Patient_CumulativeDoseHistory
+		WHERE Patient_ID = '$PatientID'"; 
+		$result = $this->query($query);
+        return $result;
+    }
+
+    function selectCDHR ($PatientID,$CDHID)
+    {
+        $query = "
+		SELECT ID,
+		Patient_ID,
+		MedID,
+		CumulativeDoseAmt,
+		CumulativeDoseUnits,
+		Date_Changed,
+		Author
+		FROM Patient_CumulativeDoseHistory
+		WHERE ID = '$CDHID'"; 
+		$result = $this->query($query);
+        return $result;
+    }
+
+    function insertCDHR ($PatientID,$MedID,$CumulativeDoseAmt,$CumulativeDoseUnits)
+    {
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+        
+		$query = "INSERT INTO Patient_CumulativeDoseHistory
+           (ID,
+           Patient_ID
+           ,MedID
+           ,CumulativeDoseAmt
+           ,CumulativeDoseUnits
+		   ,Author)
+     VALUES
+           ('$GUID',
+           '$PatientID'
+           ,'$MedID'
+           ,'$CumulativeDoseAmt'
+           ,'$CumulativeDoseUnits'
+		   ,'".$_SESSION['rid']."')";
+		   
+		$result = $this->query($query);
+        
+		return $GUID;
+    }
+
+    function updateCDHR ($CDHID,$CumulativeDoseAmt,$CumulativeDoseUnits)
+    {
+		$newidquery = "SELECT NEWID()";
+		$GUID = $this->query($newidquery);
+		$GUID = $GUID[0][""];
+        
+		$query = "
+		UPDATE Patient_CumulativeDoseHistory
+		SET  CumulativeDoseAmt = '$CumulativeDoseAmt',
+        CumulativeDoseUnits = '$CumulativeDoseUnits',
+	    Author = '".$_SESSION['rid']."'
+		WHERE ID = '$CDHID'";
+		   
+		$result = $this->query($query);
+        echo $query;
+		return 'updated';
     }
     
     // order check end of else

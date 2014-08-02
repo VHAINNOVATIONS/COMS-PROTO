@@ -21,10 +21,59 @@ body{
 		
 	}
 
+<<<<<<< HEAD
+
+.DataTable { 
+	width: 100% 
+} 
+
+.DataTable th { 
+	text-align: center!important;
+} 
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 .Level1, .Level3 {
 		background:#EFEFEF;
 }
 
+<<<<<<< HEAD
+        .Test td { vertical-align: top!important; }
+        .RequiredInstr {
+            margin: 10px;
+            font-weight: bold;
+        }
+        .RequiredInstr em {
+            color: red;
+        }
+        .centeredMsg {
+            text-align: left;
+            margin-left: 200px;
+            font-weight: bold;
+        }
+
+
+.coms-section-emphasis {
+	background: #EFEFEF; 
+	padding: 0.5em; 
+	border: thin solid navy;
+}
+
+
+.coms-section-emphasis ul {
+	margin: 1.0em 2.5em;
+}
+
+.coms-section-emphasis li {
+	list-style: disc;
+}
+
+.consolelog {
+    color: silver; 
+    margin-left: 1em;
+}
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 #results div {
@@ -566,7 +615,12 @@ th.drug {
 	background-color: silver;
 }
 
+<<<<<<< HEAD
+.NursingDocs-label { font-weight : bold!important; }
+.NursingDocs-right { text-align : right!important; }
+=======
 .NursingDocs-label { font-weight : bold; }
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 .NursingDocs-boxLabel { font-weight : bold; padding-left: 1em; }
 
 a:visited, a {
@@ -654,4 +708,42 @@ table.OEMRecord_Element tr {
 
 .ndctWarning span, .scEditInstructions span {
 	color: red;
+<<<<<<< HEAD
 }
+
+.BSACalcTable table {
+	width: 100%;
+}
+
+/*
+.BSACalcTable .x-form-item-Label, 
+.BSACalcTable .x-field-label-cell {
+	border: thin solid #99BCE8;
+	font-weight: bold;
+	background-color: white;
+	font-size: smaller;
+}
+
+.BSACalcTable .x-form-item-Field,
+.BSACalcTable .x-form-item-body {
+	border: thin solid #99BCE8;
+	font-weight: normal;
+	background-color: transparent;
+	font-size: smaller;
+}
+*/
+
+.BSACalcTable tr, .BSACalcTable td {
+	border: thin solid #99BCE8;
+}
+
+
+.BSACalcTable td table { margin-bottom: 0; }
+
+.BSACalcTable label {
+	font-weight: bold!important;
+	margin-right: 0.5em;
+}
+=======
+}
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca

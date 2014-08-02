@@ -26,11 +26,23 @@ Ext.define('COMS.controller.Navigation', {
 				beforetabchange: this.tabChanged
 			}
 		});
+<<<<<<< HEAD
+
+=======
         // this.application.loadMask("Loading Site Configuration Parameters...");
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.SiteConfig,
 			success: function( response, opts ){
+<<<<<<< HEAD
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (resp.success) {
+					this.application.SiteConfig = {};
+					this.application.SiteConfig.MedHold = resp.MedHold;
+					this.application.SiteConfig.RoundingRule  = resp.RoundingRule;
+=======
 				// this.application.unMask();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -38,17 +50,24 @@ Ext.define('COMS.controller.Navigation', {
                     this.application.SiteConfig = {};
                     this.application.SiteConfig.MedHold = resp.MedHold;
                     this.application.SiteConfig.RoundingRule  = resp.RoundingRule;
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				}
 				else {
 					alert("load Site Configuration - Error");
 				}
 			},
 			failure : function( response, opts ) {
+<<<<<<< HEAD
+				alert("load Site Configuration - FAILED");
+			}
+		});
+=======
 				// this.application.unMask();
 				alert("load Site Configuration - FAILED");
 			}
 		});
 
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	},
 
 	tabChanged: function (tabPanel, newCard, oldCard, eOpts) {
@@ -61,6 +80,10 @@ Ext.define('COMS.controller.Navigation', {
 		var template = null;
 
 		if ("Orders" === newCard.title) {
+<<<<<<< HEAD
+			var Orders = this.getController("Orders.OrdersTab");
+			Orders.LoadOrdersStore();
+=======
 			try {
 				var theStore = Ext.getStore("OrdersStore");
 				if (theStore) {
@@ -71,6 +94,7 @@ Ext.define('COMS.controller.Navigation', {
 			catch (e) {
 				alert("Store Load Error in Navigation.js");
 			}
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		}
 
 		if (!editTemplate && "Template Authoring" == newCard.title && "Start New Plan" == oldCard.title) {

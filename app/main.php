@@ -10,8 +10,15 @@ $ProjType = "Proof of Concept, 0.6, March 7, 2014";
 $ProjType = "Proof of Concept, 0.7, March 28, 2014";
 $ProjType = "Proof of Concept, 0.8, April 18, 2014";
 $ProjType = "Proof of Concept, 0.9, May 9, 2014";
+<<<<<<< HEAD
+$ProjType = "Proof of Concept, 0.10, May 30, 2014";
+$ProjType = "Proof of Concept, 0.11, June 20, 2014";
+*/
+$ProjType = "Proof of Concept, 0.12, July 11, 2014";
+=======
 */
 $ProjType = "Proof of Concept, 0.10, May 30, 2014";
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 ?>
 
@@ -25,6 +32,18 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
 		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
 		<title>Chemotherapy Order Management System (COMS)</title>
 
+<<<<<<< HEAD
+<?php
+if ("High" == $_SESSION["BrowserMode"]) { ?>
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all-access.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS-Access.css\"";?>>
+<?php 
+}
+else { ?>
+        <link rel="stylesheet" id="COMS_Theme" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
+        <link rel="stylesheet" id="COMS_Theme1" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
+<?php }?>
+=======
 		<!-- CSS : ExtJS 4.0 Framework      -->
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$LibsVersion/resources/css/ext-all.css\"";?>>
 		<link rel="stylesheet" type="text/css" <?php echo "href=\"$Version/COMS.css\"";?>>
@@ -43,6 +62,7 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
             font-weight: bold;
         }
         </style>
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 		<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 		<script src="/libs/modernizr-2.0.6.js"></script>
@@ -69,10 +89,18 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
             ["MDWS_Suggestion"]=> "" 
  *************************************/
 /* Initializing of global JavaScript variables */
+<<<<<<< HEAD
+    echo "		var AccessibilityMode = '" . $_SESSION["BrowserMode"] . "';\n";
+    echo "		var Page2Open = '$page2Open';\n";
+	echo "		var theJSPath = '$Version/';\n";
+    echo "		var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
+    echo "		var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
+=======
     echo "      var Page2Open = '$page2Open';\n";
 	echo "		var theJSPath = '$Version/';\n";
     echo "      var session_ID = '" . $_SESSION["sessionid"] . "';\n";    /* Unique Session ID */
     echo "      var User_ID = '" . $_SESSION["Role_ID"] . "';\n";         /* Unique User ID */
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	echo "		var User = '" . $_SESSION["winauth"] . "';\n";     /* Domain\User name of user currently logged into the domain */
 	echo "		var CurUser = '" . get_current_user() . "';\n";     /* User name of user currently logged into the domain */
 	echo "		var Sessionrid = '$rid';\n";
@@ -86,11 +114,16 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
     	echo "		var FirstURL = '';\n";
     }
 	echo "		var SessionUser = '" . $_SESSION["AC"] . "';\n";   /* CPRS User Name of user currently logged into App via CPRS */
+<<<<<<< HEAD
+    echo "ScriptRoot = \"$LibsVersion/\";";
+    echo "ThemeRoot = \"$LibsVersion/resources/css/\";";
+
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 ?>
 		</script>
 	</head>
 <body>
-
     <div id="Loader" style="position: absolute; left: 20%; margin: 20%; font-size: 24px; font-family: tahoma,arial,verdana,sans-serif">Loading Application</div>
 
     <div id="application" class="container initialHide">
@@ -100,6 +133,18 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
             <div id="welcome">
                 Welcome <?php echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";?> -- 
                 <a href="support/" target='_blank'>Help</a>
+<<<<<<< HEAD
+<?php if ("High" == $_SESSION["BrowserMode"]) { ?>
+                <!-- <button class="anchor" id="NormalContrastMode">Switch to Normal Contrast Mode</button> -->
+                <a href="?cmode=Normal" title="Warning: Reloads the application in Normal Contrast Mode, please save any work in progress first">Switch to Normal Contrast Mode</a>
+<?php }
+else { ?>
+                <!-- <button class="anchor" id="HighContrastMode">Switch to High Contrast Mode</button> -->
+                <a href="?cmode=High" title="Warning: Reloads the application in High Contrast Mode, please save any work in progress first">Switch to High Contrast Mode</a>
+<?php } ?>
+                
+=======
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             </div>
         </header>
 
@@ -109,7 +154,11 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
                 <ul style="text-align: right; font-size:small;">
                     <!--<li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>-->
                     <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
+<<<<<<< HEAD
+                    <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
+=======
 					<li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                     <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                     <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                     <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
@@ -135,7 +184,11 @@ $ProjType = "Proof of Concept, 0.10, May 30, 2014";
     </div>
 
     <!-- Display ConsoleLog information here -->
+<<<<<<< HEAD
+    <section class="consolelog">
+=======
     <section style="color: silver; margin-left: 1em;">
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         <h2>Log Info</h2>
         <div id="LogInfo" style="height:100px; overflow: auto;"></div>
     </section>

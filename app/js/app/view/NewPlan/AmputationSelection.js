@@ -1,4 +1,12 @@
 Ext.define('COMS.view.NewPlan.AmputationSelection', {
+<<<<<<< HEAD
+	"extend" : "Ext.container.Container",
+	alias : 'widget.AmputationSelection',
+    items : [
+        { xtype: "checkboxgroup",
+            vertical: true,
+            width: 350,
+=======
 	extend: 'Ext.panel.Panel',
 	alias : 'widget.AmputationSelection',
     buttonAlign: 'center',
@@ -15,6 +23,7 @@ Ext.define('COMS.view.NewPlan.AmputationSelection', {
             vertical: true,
             width: 300,
             height: 150,
+>>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             columns: 2,
             shadow: true,
             name: "amputations",
