@@ -23,24 +23,18 @@ class MdwsBase {
                             return null;
                     }
 
-<<<<<<< HEAD
 /*					
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'vaphsdb04','datasource'=>'54.243.40.32','port'=>'9210','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;
                     }
-<<<<<<< HEAD
 */
 					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'I20355VSTLNX','datasource'=>'54.83.44.110','port'=>'9210','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;
                     }
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
                     $connect = $client->connect(array('sitelist'=>$sitelist));
                     if (isset($connect->connectResult->fault)) {

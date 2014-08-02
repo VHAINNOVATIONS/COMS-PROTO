@@ -45,10 +45,7 @@ Ext.define("COMS.model.FlowsheetAdminDay", {
 		"Weight",
 		"DiseaseResponse",
 		"Toxicity",
-<<<<<<< HEAD
 		"ToxicityLU_ID",
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		"Other",
 		"Labs",
 		"PreTherapy",

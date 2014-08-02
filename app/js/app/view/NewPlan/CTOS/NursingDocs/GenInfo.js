@@ -6,7 +6,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GoalInfo" ,{
 	title : "Patient Identification",
 
 	defaults : {
-        labelAlign: "right",
+		labelAlign: "right",
 		labelWidth : 210,
 		width : 320,
 		margin : "5 10 15 10"
@@ -178,7 +178,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
-<<<<<<< HEAD
     // extend: "Ext.container.Container",
 	extend: "Ext.form.Panel",
     alias: "widget.VitalSignsEntryForm",
@@ -189,16 +188,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
 
     layout: {
         type: "table",
-=======
-    extend: "Ext.container.Container",
-    alias: "widget.VitalSignsEntryForm",
-    name: "NursingDocs.VitalSignsEntryForm",
-        cls : "VitalSignsEntryForm",
-
-    layout: {
-        type: "table",
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         tableAttrs: {
             border: 1
         },
@@ -207,11 +196,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
     defaults: {
         labelAlign: "right",
         labelWidth: 60,
-<<<<<<< HEAD
         cellCls : "InformationTable"
-=======
-            cellCls : "InformationTable"
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     },
     items: [
         // Row 1 - Col 1
@@ -426,17 +411,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 margin: "0 5 0 0",
                 labelClsExtra: "NursingDocs-label"
             }, 
-<<<<<<< HEAD
 			{ "xtype" : "button", "baseCls" : "anchor", "name" : "AddVitals_PatientInfoPanel", "text" : "Calculations" }
-=======
-            {
-                xtype: "container",
-                name: "ndVitalsCalcBSA",
-                html: "Show <button name=\"ShowBSA\" class=\"anchor NDGIVS_BSA_Calculations\">Calculations</button>",
-                margin: "0 10 0 0"
-            }
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             ]
         }
     ]

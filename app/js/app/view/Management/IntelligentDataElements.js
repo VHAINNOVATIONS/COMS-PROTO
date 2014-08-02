@@ -34,7 +34,7 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 		{ "xtype" : "checkbox",  "name" : "MinMax", "labelWidth" : 220, "fieldLabel" : "Min/Max Value" },
 		{ "xtype" : "textfield", "name" : "MinValue", "labelWidth" : 80, "width" : 130, "fieldLabel" : "Min" },
 		{ "xtype" : "textfield", "name" : "MaxValue", "labelWidth" : 50, "width" : 100, "fieldLabel" : "Max" },
-		{ "xtype" : "textfield", "name" : "MinMaxMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding Min/Max" },
+		{ "xtype" : "textfield", "name" : "MinMaxMsg", "labelWidth" : 150, "width" : 400, "fieldLabel" : "Display if exceeding Min/Max" }
 
 	]},
 	{ "xtype" : "container", "layout" : "hbox", "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "0 10 10 0" }, "items" : [
@@ -54,14 +54,6 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 
 
 		{ "xtype" : "ManagementBtns"},
-
-
-/**
-		{ "xtype" : "selDisease", "name" : "Disease", "fieldLabel" : "Disease", "labelWidth" : 140, "hiddenName" : "DiseaseID", "submitValue" : true },
-		{ "xtype" : "hidden", "name" : "DiseaseID" },
-		{ "xtype" : "textfield", "name" : "Stage", "fieldLabel" : "Stage", "labelWidth" : 140},
-		{ "xtype" : "ManagementBtns"},
-***/
 		{  
 			"xtype" : "grid",  "name" : "IDEntryList", "title" : "Intelligent Data Entry", 
 			"store" : "IDEntry",

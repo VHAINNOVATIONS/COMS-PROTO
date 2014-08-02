@@ -207,12 +207,9 @@ class Orders extends Model {
 		elseif ($OrderStatusF === "Hold"){
 		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
 		}
-<<<<<<< HEAD
 		elseif ($OrderStatusF === "Dispensed"){
 		//echo "Dispensed!";
 		}
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		//echo $query;
         error_log("orders model 2 - $query");
 		
@@ -234,7 +231,6 @@ class Orders extends Model {
         
     }	
 
-<<<<<<< HEAD
     function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID,$Notes,$OrderID){
         
 	/*
@@ -302,9 +298,6 @@ class Orders extends Model {
     }
 
     function updateOrderStatusCancelled($TID,$Drug_Name,$Order_Type,$PID){
-=======
-    function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID){
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         
 		$Template_IDchk = NULL;
 		$Drug_Namechk = NULL;
@@ -325,7 +318,6 @@ class Orders extends Model {
 		}
 		if ($Template_IDchk === NULL){
 		//echo "empty sring";
-<<<<<<< HEAD
 		$Notes = "Line 277, Orders.php"; 
 		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
 		}
@@ -334,71 +326,10 @@ class Orders extends Model {
 		"where Template_ID = '".$TID."' " .
 		"AND Drug_Name = '".$Drug_Name."' ".
 		"AND Patient_ID = '".$PID."'";
-=======
-		$Notes = "Line 240, order.php";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
-		}
-		else{
-		$notes = 'Line 242';
-		$query = "Update Order_Status set Order_Status = 'Dispensed' " .
-		"where Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Notes = '".$Notes."' ".
-		"AND Patient_ID = '".$PID."'";	
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		
 		}
 		
         $this->query($query);
-    }
-
-<<<<<<< HEAD
-function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
-=======
-    function updateOrderStatusCancelled($TID,$Drug_Name,$Order_Type,$PID){
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
-        
-		$Template_IDchk = NULL;
-		$Drug_Namechk = NULL;
-		
-		$query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " .
-		"FROM Order_Status " .
-		"WHERE Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."'";
-		
-			
-		$queryq = $this->query($query);
-		foreach($queryq as $row){
-		$Template_IDchk =  $row['Template_ID_CHK'];
-		$Drug_Namechk =  $row['Drug_Name_CHK'];
-		$Order_Statuschk =  $row['Order_Statuschk'];
-
-
-		}
-		if ($Template_IDchk === NULL){
-		//echo "empty sring";
-<<<<<<< HEAD
-		$Notes = "Line 312, orders.php";
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
-		}
-		else{
-		$query = "Update Order_Status set Order_Status = 'Hold' " .
-=======
-		$Notes = "Line 277, Orders.php"; 
-		$query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes')";
-		}
-		else{
-		$query = "Update Order_Status set Order_Status = 'Cancelled' " .
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
-		"where Template_ID = '".$TID."' " .
-		"AND Drug_Name = '".$Drug_Name."' ".
-		"AND Patient_ID = '".$PID."'";
-		
-		}
-		
-        $this->query($query);
-<<<<<<< HEAD
-=======
     }
 
 function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
@@ -434,7 +365,6 @@ function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
 		}
 		
         $this->query($query);
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     }	
 	
     function LookupNameIn($LID){

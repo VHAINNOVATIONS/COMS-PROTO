@@ -945,22 +945,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		wccConsoleLog('Disease Type has been selected');
 		if (this.application.Cancer != recs[0].data) {
 			this.application.ResetClicked = false;
-<<<<<<< HEAD
 			var selDiseaseStage = this.getDiseaseStage();
 			selDiseaseStage.reset();
 		}
 		this.application.Cancer = recs[0].data;
-=======
-
-
-// var selDiseaseStage = this.getDiseaseStage();
-// delete selDiseaseStage.combo.lastQuery;
-
-
-		}
-		this.application.Cancer = recs[0].data;
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		this.getTemplate().show();
 	},
 

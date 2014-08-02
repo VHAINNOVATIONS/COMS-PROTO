@@ -13,7 +13,6 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 
 	Save : function(btn) {
 		var theForm = btn.up('form').getForm();
-		var theForm = btn.up('form').getForm();
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
 		if (theForm.isValid()) {

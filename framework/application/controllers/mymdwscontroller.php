@@ -351,18 +351,9 @@ class MymdwsController extends Controller
 				return $jsonRecord;
 			}
             $mdwspatients = $this->MDWSMatchPatient($client, $value);
-<<<<<<< HEAD
 			///var_dump($mdwspatients);
 		}
  
-=======
-        
- //var_dump($value);
- //echo "<br>Count = " . $mdwspatients->count . "<br>";
- //var_dump($mdwspatients);
- //echo "<br>";
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             if(null != $mdwspatients && 1 < $mdwspatients->count){
                 $jsonRecord['success'] = false;
                 $jsonRecord['message'] = 'More than 1 Patient with SSN matching '.$value;
@@ -393,7 +384,11 @@ class MymdwsController extends Controller
             
             $this->Mymdws->beginTransaction();
             
-            $retVal = $comspatientModel->addNewPatient($mdwspatient,$value);
+			$query = "SELECT NEWID()";
+			$GUID = $this->Mymdws->query($query);
+			$GUID = $GUID[0][""];
+			
+            $retVal = $comspatientModel->addNewPatient($mdwspatient,$value,$GUID);
 
             if($this->checkForErrors('Add New Patient from MDWS Failed. ', $retVal)){
                 $jsonRecord['success'] = false;
@@ -808,19 +803,12 @@ class MymdwsController extends Controller
 			
 			if (null === $result) {
 			return (null);
-<<<<<<< HEAD
 			}
 			
 			//echo "result:".var_dump(array('target'=>$result))."<br>";	
 			return ($result->arrays->TaggedPatientArray);        
 			///echo "mdws";
 			///}   
-=======
-		}
-		//echo "result:".var_dump(array('target'=>$result))."<br>";	
-		return ($result->arrays->TaggedPatientArray);
-        
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     }
     
     function MDWSSelectPatientByDFN($client,$dfn){

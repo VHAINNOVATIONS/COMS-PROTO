@@ -7,7 +7,6 @@ Ext.define('COMS.view.NavigationTabs' ,{
 // resizable: true,
 // autoScroll : true,
     plain : true,
-<<<<<<< HEAD
 	
 /************** WORK IN PROGRESS...
 	tabBar : {
@@ -40,9 +39,6 @@ Ext.define('COMS.view.NavigationTabs' ,{
 		}]
 	},
 ************/
-=======
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     initComponent: function() {
         wccConsoleLog("Navigation Tabs View - Initialization");
 

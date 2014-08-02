@@ -26,11 +26,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 				// XTemplate Configuration
 			disableFormats: true,
 			tempCalc: function (data) {
-<<<<<<< HEAD
 				// debugger;
-=======
-				debugger;
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		}
 	)
@@ -163,10 +159,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 			"defaults": {"labelAlign": "right","labelWidth": 200,"labelClsExtra": "NursingDocs-label"},
 			"items": [{
 				"fieldLabel": "None",
-				"name" : "Barrier_None",
+				"name" : "Barrier_None"
 			}, {
 				"fieldLabel": "Desire/motivation",
-				"name" : "Barrier_Desire",
+				"name" : "Barrier_Desire"
 			}, {
 				"xtype": "CkBoxTArea",
 				"name": "Barrier_Physical",

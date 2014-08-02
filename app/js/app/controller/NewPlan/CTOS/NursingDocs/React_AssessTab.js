@@ -6,7 +6,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 	views: [
-<<<<<<< HEAD
 		"Common.SelectAdverseReactionAlerts"
 	],
 
@@ -15,23 +14,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		{ ref : "NursingDocsTabSet", selector : "NursingDocs" },
 		{ ref : "ND_RA_Tab", selector : "NursingDocs_React_Assess" },
 		{ ref: "NoAdverseReactions", selector: "NursingDocs_React_Assess [name=\"ND_InfusReact_None\"]" }
-=======
-	],
-
-	refs: [
-	    {
-		    ref: "CTOS",
-			selector: "NewPlanTab CTOS"
-	    },
-		{
-			ref : "NursingDocsTabSet",
-			selector : "NursingDocs"
-		},
-		{
-			ref : "ND_RA_Tab",
-			selector : "NursingDocs_React_Assess"
-		}
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 
 
@@ -39,7 +21,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 	init: function () {
 		wccConsoleLog("Initialized Nursing Docs React / Assess Tab Controller!");
 
-<<<<<<< HEAD
 		this.application.on({
 			PatientSelected : this.PatientSelected,
 			scope : this
@@ -50,14 +31,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				change : this.ClickNoneCheckbox
 			},
 
-=======
-//		this.application.on({
-//			PatientSelected : this.PatientSelected,
-//			scope : this
-//		});
-		
-		this.control({
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			"NursingDocs_React_Assess checkbox" : {
 				change : this.ClickCheckbox
 			},
@@ -71,7 +44,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		});
 	},
 
-<<<<<<< HEAD
 	PatientSelected : function() {
 		// debugger;
 	},
@@ -102,70 +74,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				fldName = "";
 			break;
 
-=======
-	SaveReact_Assess : function() {
-		var Patient = this.application.Patient;
-
-		var ReactAssesFormChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
-		var i, v, haveChecks = false, numChecks = ReactAssesFormChecks.length, ReactAssesFormCheck, ReactAssesFormValue, ReactAssesFormOption, ReactAssesFormComments, ReactAssesFormCommentsValue;
-		var record = {}, ReactAssesessmentsCount = 0;
-		record.patientId = Patient.id;
-		record.Details = [];
-
-		for (i = 0; i < numChecks; i++) {
-			ReactAssesFormCheck = ReactAssesFormChecks[i];
-			v = ReactAssesFormCheck.getValue();
-			if (v) {
-				haveChecks = true;
-				ReactAssesFormOption = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + ReactAssesFormCheck.name + "Options\"]");
-				ReactAssesFormComments = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + ReactAssesFormCheck.name + "Comments\"]");
-
-				ReactAssesFormValue = 0;
-				ReactAssesFormCommentsValue = "";
-
-				if (ReactAssesFormOption && ReactAssesFormOption[0]) {
-					ReactAssesFormValue = ReactAssesFormOption[0].getValue();
-					if (null === ReactAssesFormValue) {
-						ReactAssesFormValue = 0;
-					}
-				}
-				if (ReactAssesFormComments && ReactAssesFormComments[0]) {
-					ReactAssesFormCommentsValue = ReactAssesFormComments[0].getValue();
-				}
-
-				record.Details[ReactAssesessmentsCount++] = { "sequence" : i, "fieldLabel" : ReactAssesFormCheck.boxLabel, "choice" : true, "comments" : ReactAssesFormCommentsValue, "levelChosen" : ReactAssesFormValue};
-			}
-		}
-		if (haveChecks)	{
-			var params = Ext.encode(record);
-			/***************
-			Ext.Ajax.request({
-				url: Ext.URLs.AddND_React_Assess,
-				method : "POST",
-				jsonData : params,
-				success: function( response, opts ){
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + resp.msg );
-					}
-				},
-				failure : function( response, opts ) {
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + e.message + "<br />" + resp.msg );
-				}
-			});
-			*****************/
-			Ext.MessageBox.alert("Infusion Reactions", "Infusion Reactions Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-		}
-	},
-
-
-	ClickCheckbox : function(btn, newValue, oldValue, eOpts) {
-		var fldName = "", commentName, txtField, comments;
-		switch (btn.name) {
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			case "ND_RA_Xtrav_Heat":
 				fldName = "ND_RA_Xtrav_HeatFreq";
 			break;
@@ -222,16 +130,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				fldName = "ND_RA_HorA_OtherDetails";
 			break;
 			
-<<<<<<< HEAD
-=======
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			case "ND_RA_CR_Reaction":
 				fldName = "ND_RA_CR_Comments";
 			break;
 		}
 
-<<<<<<< HEAD
 		if (btn.value && "ND_InfusReact_None" !== btn.name) {
 			NoneCkBox.setValue(false);
 		}
@@ -268,29 +171,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Pulse\"]")[0];
 				}
 				txtField.setValue("");
-=======
-		if ("" !== fldName ) {
-			txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + fldName + "\"]")[0];
-			if (btn.value) {
-				if ("" !== fldName ) {
-					txtField.show();
-					if ("ND_RA_HorA_HypotensionBP" === fldName) {
-						txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Systolic\"]")[0];
-					}
-					else if ("ND_RA_CRS_HypotensionBP" === fldName) {
-						txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Systolic\"]")[0];
-					}
-					else if ("ND_RA_CRS_TachycardiaPulse" === fldName) {
-						txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Pulse\"]")[0];
-					}
-					txtField.focus(true, true);
-				}
-			}
-			else {
-				if ("" !== fldName ) {
-					txtField.hide();
-				}
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		}
 	},
@@ -299,7 +179,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		wccConsoleLog("React / Assess Tab Rendered");
 		var Patient = this.application.Patient;
 		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.React_AssessTab");
-<<<<<<< HEAD
 	},
 
 
@@ -425,7 +304,4 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		}
 	}
 
-=======
-	}
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 });

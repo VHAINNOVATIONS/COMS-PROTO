@@ -27,7 +27,8 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 			for (var key in theData) {
 				if (theData.hasOwnProperty(key)) {
 					var el = [];
-					el["description"] = key;
+					// el["description"] = key;
+					el.description = key;
 					patientAmputations.push(el);
 					postData.push(key);
 				}

@@ -6,24 +6,17 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 	refs: [ 
 		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
 		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
-<<<<<<< HEAD
 		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
 		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"}
-=======
-        { ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form checkboxgroup[name=\"amputations\"]"}
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
 		this.control({
-<<<<<<< HEAD
 			"AskQues2ApplyTemplate" : {
 				"show" : this.ShowWindow,
 				"scope" : this
 			},
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			"AskQues2ApplyTemplate button[text=\"Apply Template\"]": {
 				click: this.ApplyTemplate
 			},
@@ -42,7 +35,6 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		button.up("window").close();
     },
 
-<<<<<<< HEAD
 	ShowWindow : function() {
 		if (this.application.Patient.Amputations && this.application.Patient.Amputations.length > 0) {
 			this.getAmputeeYes().setValue(true);
@@ -56,8 +48,6 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		}
 	},
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     AmputeeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Amputee Type");
 
@@ -191,42 +181,39 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
         });
 
 		patientTemplate.save({
-            scope: this,
-            success: function (data) {
-                wccConsoleLog("Apply Template SUCCESS" );
-					Ext.MessageBox.hide();
+			scope: this,
+			success: function (data) {
+				wccConsoleLog("Apply Template SUCCESS" );
+				Ext.MessageBox.hide();
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				var PatientSelection = thisCtl.getPatientSelectionPanel();
+				PatientSelection.collapse();
+				thisCtl.resetPanels(thisCtl, "", "", "");
 
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var PatientSelection = thisCtl.getPatientSelectionPanel();
-					PatientSelection.collapse();
-					thisCtl.resetPanels(thisCtl, "", "", "");
-
-					/**********
-					 *	data.data = {
-					 *	Amputations :  []
-					 *	BSAFormula :  "DuBois"
-					 *	ClinicalTrial :  ""
-					 *	DateApplied :  "2012-05-25"
-					 *	DateEnded :  "2012-11-9"
-					 *	DateStarted :  "2012-05-25"
-					 *	Goal :  "Curative"
-					 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
-					 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
-					 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
-					 *	WeightFormula :  "Actual Weight"
-					 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
-					 *	}
-					 ***********/
-					this.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
-					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
-            },
-            failure : function(record, op) {
-                wccConsoleLog("Apply Template Failed");
-                Ext.MessageBox.hide();
-                Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
-
-            }
-        });
-
-    }
+				/**********
+				 *	data.data = {
+				 *	Amputations :  []
+				 *	BSAFormula :  "DuBois"
+				 *	ClinicalTrial :  ""
+				 *	DateApplied :  "2012-05-25"
+				 *	DateEnded :  "2012-11-9"
+				 *	DateStarted :  "2012-05-25"
+				 *	Goal :  "Curative"
+				 *	PatientID :  "B1781155-AAA6-E111-903E-000C2935B86F"
+				 *	PerformanceStatus :  "72DA9443-FF74-E111-B684-000C2935B86F"
+				 *	TemplateID :  "2C987ADB-F6A0-E111-903E-000C2935B86F"
+				 *	WeightFormula :  "Actual Weight"
+				 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
+				 *	}
+				 ***********/
+				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
+				Ext.MessageBox.alert('Success', 'Template applied to Patient ');
+			},
+			failure : function(record, op) {
+				wccConsoleLog("Apply Template Failed");
+				Ext.MessageBox.hide();
+				Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
+			}
+		});
+	}
 });

@@ -1,5 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
+/*********** Search for - LIST OF CONTROLLERS 
+ **** Controllers ~ 591 & 1583
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -46,13 +48,10 @@ Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 
 Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
 Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
-<<<<<<< HEAD
 Ext.URLs.ToxicityInstruction = "/LookUp/ToxicityInstruction";
 Ext.URLs.PatientCumulativeDosing = "/Patient/CumulativeDoseTracking";
 Ext.URLs.CumulativeDosingMeds = "/LookUp/CumulativeDoseMeds";
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
 
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
@@ -207,10 +206,7 @@ Ext.URLs.HydrationDrug = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydrat
 //Ext.URLs.Drugs = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
 Ext.URLs.Drugs = "/LookUp/view/Drug"; //KD - 05/17/12 - Will Append 'InPatient' or 'OutPatient' in Controller
 Ext.URLs.DrugUnits = "/LookUp/view/Unit/Drug"; // MWB - 12/29/2011 - Added drug units listing
-<<<<<<< HEAD
 Ext.URLs.Units = "/LookUp/view/Unit"; // MWB - 12/29/2011 - Added drug units listing
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug Regimen
 Ext.URLs.Infusion = "/LookUp/view/Route"; // MWB - 12/30/2011 - Added Infusion
 Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/CTOS
@@ -248,8 +244,10 @@ Ext.URLs.AddND_Treatment = "/Orders/Orders";
 // (see app\controller\NewPlan\CTOS\NursingDocs\TreatmentTab.js)
 
 
-Ext.URLs.FlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
-Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.FlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.FlowSheetOptionalInfo = "/Flowsheet/Optional"; // "Flowsheet Optional questions
+
 // OLD DATA ---> Param = Flowsheet Record GUID - This is the ID for the Flowsheet which is an array of FlowsheetAdminDay records
 // Param = PAT_ID - Patient Treatment ID which identifies the set of records for the current treatment (including flowsheet, nursing docs, OEM, etc)
 // Returns Success or Failure of data retrieval from MDWs as a standard JSON object:
@@ -388,16 +386,7 @@ Ext.URLs.AddND_IVSite = "/NursingDoc/IVSite/";
 
 
 
-<<<<<<< HEAD
 Ext.URLs.AddND_React_Assess = "/NursingDoc/ReactAssess/";
-=======
-Ext.URLs.ND_React_Assess = "/NursingDoc/React_Assess/";
-// Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
-// Returns $$$$$$$$$$$$$$$ for specified patient
-// Example Usage - https://devtest.dbitpro.com/NursingDoc/React_Assess/28225CF5-3937-E111-9B9C-000C2935B86F
-
-Ext.URLs.AddND_React_Assess = "/NursingDoc/React_Assess/";
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 Ext.URLs.ND_Assessment = "/NursingDoc/Assessment/"; // MWB - 22 Feb 2012
@@ -428,11 +417,8 @@ Ext.URLs.CTCAE_SOC = "/NursingDoc/CTCAE_SOC";
 // Ext.URLs.CTCAE_Data = "/js/MWB_OEM1/app/data1/NursingDocs/CTCAE_Data";
 Ext.URLs.CTCAE_Data = "/NursingDoc/CTCAE_Data";
 
-<<<<<<< HEAD
 Ext.URLs.AdverseEventsHistory = "/NursingDoc/AdverseEventsHistory";
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 Ext.URLs.EoTS = "/EndTreatmentSummary/EoTS";
@@ -527,12 +513,9 @@ Ext.COMSModels.EoTS = "COMS.model.EndTreatmentSummary";
 Ext.COMSModels.ND_Treatment = "COMS.model.ND_Treatment";
 Ext.COMSModels.Flowsheet = "COMS.model.Flowsheet";
 Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
-<<<<<<< HEAD
 Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -540,6 +523,7 @@ Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
 Ext.require([
 	// common view components
 	"COMS.view.RequiredInstr",
+	"COMS.view.ProgrammerBtns",
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
@@ -558,12 +542,9 @@ Ext.require([
 	Ext.COMSModels.DiseaseStage,
 	Ext.COMSModels.TimeFrameUnit,
 	Ext.COMSModels.TotalCoursesMax,
-<<<<<<< HEAD
 	Ext.COMSModels.Toxicity,
 	Ext.COMSModels.CumulativeDosingMeds,
 	Ext.COMSModels.PatientCumulativeDosing,
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	Ext.COMSModels.EmotegenicLevel,
 	Ext.COMSModels.FebrileNeutropeniaRisk,
 	Ext.COMSModels.References,
@@ -606,18 +587,16 @@ Ext.require([
 
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
-
+/*********** LIST OF CONTROLLERS *********************/
 	"COMS.controller.Navigation",
+	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
 	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
-<<<<<<< HEAD
 	"COMS.controller.Common.puWinAddCumDose",
 	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 
@@ -628,19 +607,13 @@ Ext.require([
 	"COMS.controller.Management.AdminTab",
 	"COMS.controller.Management.DiseaseStaging",
 	"COMS.controller.Management.IntelligentDataElements",
-<<<<<<< HEAD
 	"COMS.controller.Management.Toxicity",
 	"COMS.controller.Management.CumulativeDosing",
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 	"COMS.controller.Messages.MessagesTab",
 
 	"COMS.controller.NewPlan.AskQues2ApplyTemplate",
-<<<<<<< HEAD
 	"COMS.controller.NewPlan.AdverseEventsHistory",
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	"COMS.controller.NewPlan.EndTreatmentSummary",
 	"COMS.controller.NewPlan.NewPlanTab",
 	"COMS.controller.NewPlan.OEM",
@@ -648,14 +621,19 @@ Ext.require([
 	"COMS.controller.NewPlan.PatientInfoTable",
 	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
 	"COMS.controller.NewPlan.TreatmentDetails",
-<<<<<<< HEAD
 	"COMS.controller.NewPlan.AmputationSelection",
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
+//	"COMS.controller.NewPlan.PatientHistory",
 
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
+	"COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues",
+
 	"COMS.controller.NewPlan.CTOS.PatientSummaryTab",
+
+	"COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel",
+	"COMS.controller.NewPlan.CTOS.DiseaseResponsePanel",
+	"COMS.controller.NewPlan.CTOS.OtherInfoPanel",
+
 
 	"COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs",
@@ -664,12 +642,9 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
-<<<<<<< HEAD
 	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy"
-=======
-	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab"
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
+//	, "COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 ]);
 
 /*************************************************************
@@ -769,15 +744,6 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 	}
 };
 
-<<<<<<< HEAD
-=======
-
-Ext.PostTemplateProcessing = function (mod, values, parent) {
-	// console.log("Post Template Processing - " + mod);
-	//		debugger;
-};
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.GeneralRounding2Digits = function (n) {
 	var ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2) + "e-" + 2), "0.00");
 	return ret;
@@ -1051,17 +1017,12 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",
-<<<<<<< HEAD
 		"<tr><th>Height:</th><td>{Height} in {[this.HeightInCM(values)]}</td></tr>",
 		"<tr><th>Weight</th><td>{Weight} lbs {[this.WeightInKG(values)]}</td></tr>",
 		"<tr><td colspan=\"2\" style=\"text-align: center;\">",
 		"<button class=\"anchor changeBSAHeightWeight\" title=\"Select Height/Weight used in BSA Calculations from list of Vitals\">Select</button> different Height/Weight from Vitals",
 	// {[this.changeHeightWeight(values)]}
 		"</td></tr>",
-=======
-		"<tr><th>Height:</th><td>{Height} in{[this.HeightInCM(values)]}</td></tr>",
-		"<tr><th>Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]}</td></tr>",
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		"<tr><th>Gender</th><td>{Gender}</td></tr>",
 		"<tr><th>Amputations</th><td>",
 
@@ -1157,11 +1118,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 					break;
 				case "Adjusted Weight":
 					x1 = Ext.AdjustedWeight(x.Weight, x.Height, x.Gender);
-<<<<<<< HEAD
 					tmp1 = ("((" + WeightInKilos + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
-=======
-					tmp1 = ("((" + x.Weight + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					tmp1 += " = " + x1 + " kg";
 					//console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
@@ -1260,13 +1217,10 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 			finalBSA: function (v) {
 				return ("= " + Ext.BSA_Calc(v) + " m<sup>2</sup>");
-<<<<<<< HEAD
 			},
 
 			changeHeightWeight : function () {
 				return "<button class=\"anchor changeBSAHeightWeight\" title=\"Change Height/Weight used in BSA Calculations\">Change Height/Weight</button>";
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 			}
 		}
 	);
@@ -1279,10 +1233,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	}
 
 	return newFormula;
-<<<<<<< HEAD
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 };
 
 
@@ -1632,14 +1583,15 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 Ext.application({
 	name: "COMS",
 
+	/******************** LIST OF CONTROLLERS *****************/
 	controllers: [
 		// Include all controllers used in this app here
 		// Each controller must include all the views used by that controller
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
+		,"ProgrammerBtns"
 		,"CkBoxTArea"
-<<<<<<< HEAD
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
 		, "Common.puWinSelCancer"
@@ -1649,11 +1601,7 @@ Ext.application({
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
 		, "NewPlan.AmputationSelection"
-=======
-		// ,"Common.selTemplateByStages"
-		, "NewPlan.AskQues2ApplyTemplate"
-		, "NewPlan.NewPlanTab"
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
+//		, "NewPlan.PatientHistory"
 		, "Orders.OrdersTab"
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
@@ -1662,7 +1610,6 @@ Ext.application({
 		, "Management.AdminTab"
 		, "Management.DiseaseStaging"
 		, "Management.IntelligentDataElements"
-<<<<<<< HEAD
 		, "Management.Toxicity"
 		, "Management.CumulativeDosing"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
@@ -1670,6 +1617,8 @@ Ext.application({
 		, "NewPlan.PatientInfoTable"
 		, "NewPlan.OEM_Edit"
 		, "NewPlan.CTOS.FlowSheetTab"
+		, "NewPlan.CTOS.FlowSheetOptionalQues"
+
 		, "NewPlan.CTOS.ChronologyTab"
 		, "NewPlan.CTOS.PatientSummaryTab"
 
@@ -1681,42 +1630,16 @@ Ext.application({
 		, "NewPlan.CTOS.NursingDocs.React_AssessTab"
 		, "NewPlan.CTOS.NursingDocs.EducationTab"
 		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
+//		, "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 		, "Messages.MessagesTab"
 		, "NewPlan.EndTreatmentSummary"
 		, "NewPlan.ViewEndTreatmentSummary"
 		, "NewPlan.TreatmentDetails"
 
-=======
-		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
-		, "NewPlan.OEM" // MWB Added new controller for the OEM Tab
-		, "NewPlan.PatientInfoTable" // MWB 31 Jan 2012 - Added new controller for the Patient Information Table
-		, "NewPlan.OEM_Edit" // MWB 09 Feb 2012 - Added for editing an OEM Record
-		, "NewPlan.CTOS.FlowSheetTab", "NewPlan.CTOS.ChronologyTab", "NewPlan.CTOS.PatientSummaryTab", "NewPlan.CTOS.NursingDocs.NursingDocs" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.GenInfoTab" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.AssessmentTab" // MWB 14 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.PreTreatmentTab" // MWB 28 Feb 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.TreatmentTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.React_AssessTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "NewPlan.CTOS.NursingDocs.EducationTab" // MWB 01 Mar 2012 - Added for Nursing Documentation Tab
-		, "Messages.MessagesTab", "NewPlan.EndTreatmentSummary"
-		//		,"NewPlan.AskQues2ApplyTemplate"
-		, "NewPlan.ViewEndTreatmentSummary", "NewPlan.TreatmentDetails"
-		, "Common.puWinSelCancer"
-
-
-		// Controllers are not needed to be declared here unless they do something special???
-		//		, "ExistingPlan.ExistingPlanTab"
-		//		, "KnowledgeBase.KnowledgeBaseTab"
-		//		, "Management.ManagementTab"
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	],
 
 	launch: function () {
 		wccConsoleLog("Launching Application Base");
-<<<<<<< HEAD
-=======
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {
 			id: "AppContainer",
@@ -1751,10 +1674,7 @@ Ext.application({
 		 *
 		 ******************************/
 
-<<<<<<< HEAD
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		Ext.apply(Ext, {
 			roundNumber: function (number, decimals) { // Arguments: number to round, number of decimal places
 				var n1 = parseFloat(number);

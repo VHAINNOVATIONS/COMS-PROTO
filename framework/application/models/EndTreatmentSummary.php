@@ -164,15 +164,11 @@ class EndTreatmentSummary extends Model
     {
         ChromePhp::log("saveEoTS() Start");
 
-<<<<<<< HEAD
         //$this->_lastId = trim(com_create_guid(), '{}');
 		$newidquery = "SELECT NEWID()";
 		$GUID = $this->query($newidquery);
 		$GUID = $GUID[0][""];
 		
-=======
-        $this->_lastId = trim(com_create_guid(), '{}');
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         $Name = $form_data->Name;
         $Patient_ID = $form_data->PatientID;
         $Gender = $form_data->Gender;

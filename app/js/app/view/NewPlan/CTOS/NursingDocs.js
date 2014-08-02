@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 /****************
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
     extend: "Ext.form.FieldSet",
     alias : "widget.NursingDocs_Chemotherapy",
@@ -26,11 +23,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
 		}
 	]
 });
-<<<<<<< HEAD
 ********************/
-=======
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.NursingDocs",

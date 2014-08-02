@@ -8,5 +8,5 @@ Ext.define('COMS.model.Toxicity', {
 			type: 'json',
 			root : 'records'
 		}
-	},
+	}
 });

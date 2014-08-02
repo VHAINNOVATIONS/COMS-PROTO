@@ -16,10 +16,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.MedicationHolds',
 		'Management.IV_Fluid_Types', 
 		'Management.CheckCombo',
-<<<<<<< HEAD
-=======
-		// 'Management.Meds',
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		'Management.Buttons',
 		'Management.MedicationDocumentation',
 		'Management.ClinicInfo',
@@ -710,7 +706,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				}
 			}
 	},
-	clickMedDocCancel : function() {
+	clickMedDocCancel : function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
 

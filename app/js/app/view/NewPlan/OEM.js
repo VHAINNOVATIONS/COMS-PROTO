@@ -24,7 +24,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 	cls : "Tab", 
 	tpl : new Ext.XTemplate(
 		"<tpl for=\"Patient\">",
-//			"{[this.debugger( values, parent )]}",
+//			"{[this.debuggerFcn( values, parent )]}",
 			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders (opens new window)&nbsp;",
 			"<a href=\"Fsheet/?PID={id}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
 		"</tpl>",
@@ -61,12 +61,8 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 			{
 					// XTemplate Configuration
 				disableFormats: true,
-				debugger : function ( current, prev ) {
-<<<<<<< HEAD
+				debuggerFcn : function ( current, prev ) {
 					// debugger;
-=======
-					debugger;
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				},
 				goalLink : function ( current ) {
 					return (current.Goal || "No Goal Specified - <button name=\"AddGoal\" class=\"anchor\">Add Goal</button>");
@@ -420,13 +416,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 		"<hr />",
 	"</section>",
 "</tpl>",	// End TPL for AdminDay
-<<<<<<< HEAD
-=======
-
-
-
-		"{[this.PostRendering(values, parent)]}",
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 		"</section>",
 
 			{
@@ -438,15 +427,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				curDay : 0,
                 SiteConfig : {},
 
-<<<<<<< HEAD
-=======
-
-				PostRendering : function(values, parent) {
-						// Call this function when the entire xTemplate has been completed
-						Ext.PostTemplateProcessing("OEM", values, parent);
-				},
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 showReason : function(values, parent) {
                     if ("" !== values.Reason) {
                         return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
@@ -619,7 +599,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                     today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
-<<<<<<< HEAD
 						return "";	// No Edit link if the Admin Date is before today
 					}
 					if ("Cancelled" == current.Order_Status || 
@@ -629,28 +608,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					}
 
 					var Cycle = this.curCycle;
-=======
-						return ("");	// No Edit link if the Admin Date is before today
-					}
-                    if ("Cancelled" == current.Order_Status || 
-                        "Dispensed" == current.Order_Status || 
-                        "Finalized" == current.Order_Status ) {
-                        return("");     // No links if Order has been dispensed or Finalized
-                    }
-
-					var Cycle = this.curCycle;
-					// var Day = parent[idx-1].Day;
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 					var Day = this.curDay;
 					var Type = type;
 					var TypeIdx = idx;
 					var pIndex = this.pIndex;
 
 					var buf = "href=\"#Cycle_" + Cycle + "_Day_" + Day + "_Med_" + idx + "\" " + 
-<<<<<<< HEAD
-=======
-						// "name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + 
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 						"cycle=\"" + Cycle + "\" " + 
 						"day=\"" + Day + "\" " + 
 						"type=\"" + Type + "\" " + 
@@ -674,12 +637,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                         }
                         btn2 = "<button class=\"anchor OEM_RecordMedHold\" " + buf2 + " id=\"Hold_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">" + StatusMsg + "</button>";
                     }
-<<<<<<< HEAD
-					else {
-						console.log("Med Hold NOT Available");
-					}
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
+					// else {
+						// console.log("Med Hold NOT Available");
+					// }
                     btn1 = "<button class=\"anchor EditOEM_Record\" " + buf + " name=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" id=\"Edit_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Edit</button>";
                     btn3 = "<button class=\"anchor OEM_RecordMedCancel\" " + buf2 + " id=\"Cancel_" + Type + "_" + Cycle + "_" + Day + "_" + idx + "\" " + ">Cancel</button>";
 

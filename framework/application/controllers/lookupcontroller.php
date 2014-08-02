@@ -16,11 +16,7 @@ class LookupController extends Controller {
 
     function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
         if ("" !== $query) {
-<<<<<<< HEAD
             error_log("Got Query - $query");
-=======
-            error_log("Got Query");
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $retVal = $this->LookUp->query($query);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 error_log("Error");
@@ -50,24 +46,6 @@ class LookupController extends Controller {
        error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
     }
 
-<<<<<<< HEAD
-=======
-    public function escapeString($string)
-    {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            return str_replace("'", "''", $string);
-        }
-        return $string;
-    }
-
-    function varDumpToString ($var) {
-        ob_start();
-        var_dump($var);
-        $result = ob_get_clean();
-        return $result;
-    }
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     function checkForErrors($errorMsg,$retVal){
         $ErrorCode = "";
         $this->set('frameworkErrCodes', $ErrorCode);
@@ -149,7 +127,6 @@ class LookupController extends Controller {
 
 	}
 
-<<<<<<< HEAD
     /*
      *
      * Note: Magic Numbers used...
@@ -158,19 +135,6 @@ class LookupController extends Controller {
      *
      */
 
-=======
-
-
-
-    /*
-     *
-     * Note: Magic Numbers used...
-     *    "Magic Number" 4 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'Regimen' records (description = Template Selector Values with Template Name in Description)
-     *    "Magic Number" 25 is the "[Lookup_Type_ID]" in the [LookUp] table for the 'TemplateAlias' records (description = Alias for template name)
-     *
-     */
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
     function saveTemplate() {
         $form_data = json_decode(file_get_contents('php://input'));
@@ -199,10 +163,6 @@ class LookupController extends Controller {
 		while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
-<<<<<<< HEAD
-=======
-			echo $templateName;
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
         }
 
@@ -539,7 +499,6 @@ class LookupController extends Controller {
             }
             
             $this->set('references', $retVal);
-<<<<<<< HEAD
 
 
 
@@ -548,17 +507,6 @@ class LookupController extends Controller {
             $retVal = $this->LookUp->getHydrations($id, 'pre');
 /* Removed the checks for records because sometimes we do not have all the meds.
             if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
-=======
-
-
-
-
-
-            $retVal = $this->LookUp->getHydrations($id, 'pre');
-
-            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
-//error_log("Get Pre Medication_Hydration Failed. 1");
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 $this->set('templatedata', null);
                 return;
             }
@@ -566,31 +514,19 @@ class LookupController extends Controller {
             if (count($retVal) <= 0) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
                 $this->set('templatedata', null);
-<<<<<<< HEAD
-=======
-//error_log("Get Pre Medication_Hydration Failed.2 ");
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 return;
             }
             if (!isset($retVal[0]["id"])) {
                 $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
                 $this->set('templatedata', null);
-<<<<<<< HEAD
                return;
             }*/
-=======
-//error_log("Get Pre Medication_Hydration Failed. 3");
-               return;
-            }
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             $prehydrations = $retVal;
             $infusionMap = array();
-//error_log("Pre Medication_Hydration Count. " . count($prehydrations));
 
             foreach ($prehydrations as $prehydration) {
                 $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
                 $infusionMap[$prehydration['id']] = $infusions;
-//error_log(json_encode($infusions));
             }
 
             $this->set('prehydrations', $prehydrations);
@@ -615,11 +551,7 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
-<<<<<<< HEAD
             */
-=======
-            
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             
             $infusionMap = array();
 
@@ -1417,7 +1349,11 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
  **/
     function _CommonServiceCallMethod($ID, $DataType, $Msg) {
-        error_log("SiteCommonInfo");
+        
+
+
+
+error_log("SiteCommonInfo");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $query = "";
@@ -1583,7 +1519,6 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
     }
 
 
-<<<<<<< HEAD
     function ToxicityInstruction($ID = null) {
         $DataType = 'ToxicityInstruction';
         $Msg = 'Toxicity Instructions Details';
@@ -1592,8 +1527,6 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
     }
 
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
     function MedRisks($ID = null, $Type = null) {
         $DataType = 'Risks';
@@ -1606,13 +1539,10 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
 
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 /****************************************************
  *
  *  GET List of stages for all diseases
@@ -1796,19 +1726,14 @@ error_log("IDEntry");
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET or POST got a " . $_SERVER['REQUEST_METHOD'];
         }
-<<<<<<< HEAD
         $UniqMsg = "";
         if (isset($requestData)) {
             $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
         }
-=======
-        $UniqMsg = " (" . $this->escapeString($requestData["Vital2Check"]) . " already exists)";
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, $UniqMsg);
     }
 
 
-<<<<<<< HEAD
 
 
 
@@ -1940,6 +1865,4 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
     }
 
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 }

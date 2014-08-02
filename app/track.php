@@ -110,5 +110,46 @@ function PostSQLQuery($query){
 		$postsqlq = sqlsrv_query($conn, $tsql1);
 		
 	}
+function ChkSes(){
+	include "dbitcon.php";
+	$ipcheck = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+	$sessionid = $_SESSION['sessionid'];
+	echo $sessionid;
+	$query = "SELECT TOP 1 sessionid
+      ,timestamp
+      ,compname
+      ,ref
+      ,username
+      ,winauth
+      ,time
+      ,date2
+      ,dname
+      ,role
+      ,rid
+      ,sitelist
+      ,Role_ID	
+      ,ruser
+      ,NWLoginR
+      ,COMSLogin
+      ,mdws
+      ,AC
+      ,VC
+		FROM COMS_Sessions
+		WHERE sessionid = '$sessionid'
+		order by timestamp desc ";
 	
+	$ChkSesq = sqlsrv_query($conn, $tsql1);
+	
+	foreach($ChkSesq as $row){
+		$compname =  $row['compname'];
+		}
+		
+	if ($compname = $ipcheck){
+	
+	}else{
+	include "login.php";
+	}
+return ($VC);
+}	
+
 ?>

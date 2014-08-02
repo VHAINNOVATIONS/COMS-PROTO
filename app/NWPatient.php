@@ -29,17 +29,10 @@ $patientsearch = $match;
 	}
 	
 	//Include and Set phpseclib path
-<<<<<<< HEAD
     set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');	 /* Changed to match Sandbox - 30 May 2014 */
 	
 	//Include SSH2 file
 	include('Net/SSH2.php');	 /* Changed to match Sandbox - 30 May 2014 */
-=======
-    set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');
-	
-	//Include SSH2 file
-	include('Net/SSH2.php');
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	
 	//Set Variables
 	$host = '172.19.100.94';
@@ -147,12 +140,8 @@ $patientsearch = $match;
 	$ssh->write("\r");
 	sleep(1);
 	}elseif ($tdrug === 'RANITIDINE TAB'){
-<<<<<<< HEAD
 	$ssh->write("RANITIDINE TAB ");		 
 /* Block below vvvvvvvvvvvvvvvvvv changed to match Sandbox - 30 May 2014 */
-=======
-	$ssh->write("RANITIDINE TAB ");
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	$ssh->write("\r");
 	sleep(1);
 	$ssh->write("1");
@@ -179,10 +168,7 @@ $patientsearch = $match;
 	$ssh->write("\r");
 	sleep(1);
 	$ssh->write("$doseorder MG");
-<<<<<<< HEAD
 /* Block above ^^^^^^^^^^^^^^^^^^^^^^^ changed to match Sandbox - 30 May 2014 */
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	$ssh->write("\r");
 	sleep(1);
 	$ssh->write("1");

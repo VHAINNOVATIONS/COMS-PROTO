@@ -161,58 +161,7 @@ var theMainItemsList = function(itemsInGroup) {
 						"checked" : true
 					}]
 				}, 
-<<<<<<< HEAD
 				{ xtype : "AmputationSelection", "hidden" : true },
-=======
-				{
-					"xtype" : "checkboxgroup",
-					"vertical" : true,
-					"width" : 300,
-					"height" : 150,
-					"columns" : 2,
-					"shadow" : true,
-					"name" : "amputations",
-					"hidden" : true,
-
-					"items" : [{
-						"boxLabel" : "Upper Left Arm",
-						"name" : "bodyPart1"
-					}, {
-						"boxLabel" : "Lower Left Arm",
-						"name" : "bodyPart2"
-					}, {
-						"boxLabel" : "Left Hand and Fingers",
-						"name" : "bodyPart3"
-					}, {
-						"boxLabel" : "Left Thigh",
-						"name" : "bodyPart4"
-					}, {
-						"boxLabel" : "Lower Left Leg",
-						"name" : "bodyPart5"
-					}, {
-						"boxLabel" : "Left Foot",
-						"name" : "bodyPart6"
-					}, {
-						"boxLabel" : "Upper Right Arm",
-						"name" : "bodyPart7"
-					}, {
-						"boxLabel" : "Lower Right Arm",
-						"name" : "bodyPart8"
-					}, {
-						"boxLabel" : "Right Hand and Fingers",
-						"name" : "bodyPart9"
-					}, {
-						"boxLabel" : "Right Thigh",
-						"name" : "bodyPart10"
-					}, {
-						"boxLabel" : "Lower Right Leg",
-						"name" : "bodyPart11"
-					}, {
-						"boxLabel" : "Right Foot",
-						"name" : "bodyPart12"
-					}]
-				},
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 				IIG_Panel
 			]
 		}

@@ -15,6 +15,7 @@ Ext.define("COMS.view.Management.Toxicity" ,{
 			"overflowY" : "scroll",
 			"minHeight" : 500,
 			"margin" : "10 0 0 0",
+			"multiSelect" : true,
 
 			"columns" : [ 
 				{ "text" : "Toxicity", "dataIndex" : "Label", "flex" : 1}, 

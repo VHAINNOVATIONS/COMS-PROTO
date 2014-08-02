@@ -1,5 +1,4 @@
 GIT_COMMAND_LOG.log 
-
 *.bak
 *.db
 web.config
@@ -7,13 +6,16 @@ web.xml
 
 app\SSHDebug\*
 app\config_Constants.php
+app\dbitcon.php
 app/config_Constants.php
+app/dbitcon.php
+app\js_Files2Ignore\*
 aspnet_client\*
-aspnet_client/*
 build\* 
 framework\config\* 
+
+app/config_Constants.php
+app/dbitcon.php
+app/js_Files2Ignore/*
+aspnet_client/*
 framework/config/* 
-
-*\*.bak
-build\* 
-

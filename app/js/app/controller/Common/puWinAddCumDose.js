@@ -11,7 +11,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			},
 			"puWinAddCumDose button[text=\"Save\"]" : {
 				click: this.Save
-			},
+			}
 		});
 	},
 

@@ -1,230 +1,3 @@
-
-/**************************************** MWB 17 Feb 2012 ****************************************
-http://www.cancer.gov/cancertopics/pdq/supportivecare/nausea/HealthProfessional/Table3
-Antiemetic Recommendations by Emetic Risk Categories
-
-Emetic Risk Category     ASCO Guidelines     NCCN Guidelines 
-High (>90%) risk -	
-		ASCO Guidelines -	Three-drug combination of a 5-HT3 receptor antagonist, dexamethasone, and aprepitant recommended prechemotherapy.	
-
-							For patients receiving cisplatin and all other agents of high emetic risk, 
-							the two-drug combination of dexamethasone and aprepitant recommended for prevention of delayed emesis.	
-
-		NCCN Guidelines -	Prechemotherapy, a 5-HT3 receptor antagonist (ondansetron, granisetron, dolasetron, or palonosetronb), 
-							dexamethasone (12 mg), and aprepitant (125 mg) recommended, with or without lorazepam.
-
-							For prevention of delayed emesis, dexamethasone (8 mg) on days 2 - 4 plus aprepitant (80 mg) on days 2 and 3 recommended, 
-							with or without lorazepam on days 2 - 4.
-
-
-Moderate (30%-90%) risk - 
-		ASCO Guidelines -	For patients receiving an anthracycline and cyclophosphamide, 
-							the three-drug combination of a 5-HT3 receptor antagonist, dexamethasone, and aprepitant recommended prechemotherapy; 
-							single-agent aprepitant recommended on days 2 and 3 for prevention of delayed emesis.
-
-							For patients receiving other chemotherapies of moderate emetic risk, the two-drug combination of a 5-HT3 receptor antagonist and 
-							dexamethasone recommended prechemotherapy; 
-							single-agent dexamethasone or a 5-HT3 receptor antagonist recommended on days 2 and 3 for prevention of delayed emesis.
-
-		NCCN Guidelines -	For patients receiving an anthracycline and cyclophosphamide and selected patients receiving other chemotherapies of moderate emetic risk 
-							(e.g., carboplatin, cisplatin, doxorubicin, epirubicin, ifosfamide, irinotecan, or methotrexate), a 5-HT3 receptor antagonist 
-							(ondansetron, granisetron, dolasetron, or palonosetronb), dexamethasone (12 mg), and aprepitant (125 mg) recommended, with or without lorazepam, 
-							prechemotherapy; for other patients, aprepitant is not recommended.
-
-							For prevention of delayed emesis, dexamethasone (8 mg) or a 5-HT3 receptor antagonist on days 2 - 4 or, if used on day 1, 
-							aprepitant (80 mg) on days 2 and 3, with or without dexamethasone (8 mg) on days 2 - 4, recommended, with or without lorazepam on days 2 - 4.
-
-
-
-Low (10%-30%) risk	- 
-		ASCO Guidelines -	Dexamethasone (8 mg) recommended; no routine preventive use of antiemetics for delayed emesis recommended.
-		NCCN Guidelines -	Metoclopramide, with or without diphenhydramine; dexamethasone (12 mg); or prochlorperazine recommended, with or without lorazepam.
-
-
-Minimal (<10%) risk - 
-		ASCO Guidelines -	No antiemetic administered routinely pre- or postchemotherapy.
-		NCCN Guidelines -	No routine prophylaxis; consider using antiemetics listed under primary prophylaxis as treatment.
-
-
-**************************************** MWB 17 Feb 2012 ****************************************/
-
-// Need to build new entries into the LookupTable for EmesisRiskRecommendationsASCO and EmesisRiskRecommendationsNCCN
-// Which when queried given an EmesisRisk will return the appropriate Recommendation from below:
-// EmesisLookup/ELevelID (from Lookup Table)
-// Returns one of the entries below (but only need ASCO and NCCN records in the real data)
-<<<<<<< HEAD
-/*********************** REMOVED IN FAVOUR OF SITE CONFIG MANAGEMENT **********************
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
-var EmesisRisk = [];
-
-// Minimal (<10%) risk
-EmesisRisk["B685F3AA-0B21-E111-BF57-000C2935B86F"] = 
-{
-	riskID : "B685F3AA-0B21-E111-BF57-000C2935B86F",
-	level : 1, 
-	ASCO : "<p>No antiemetic administered routinely pre- or postchemotherapy.</p>", 
-	NCCN : "<p>No routine prophylaxis; consider using antiemetics listed under primary prophylaxis as treatment.</p>"
-};
-
-// Low (10%–30%) risk
-EmesisRisk["B785F3AA-0B21-E111-BF57-000C2935B86F"] = 
-{
-	riskID : "B785F3AA-0B21-E111-BF57-000C2935B86F",
-	level : 2, 
-	ASCO : "<p>Dexamethasone (8 mg) recommended; no routine preventive use of antiemetics for delayed emesis recommended.</p>", 
-	NCCN : "<p>Metoclopramide, with or without diphenhydramine; dexamethasone (12 mg); or prochlorperazine recommended, with or without lorazepam.</p>"
-};
-
-// Moderate (30%-90%) risk
-EmesisRisk["B885F3AA-0B21-E111-BF57-000C2935B86F"] = 
-{ 
-	riskID : "B885F3AA-0B21-E111-BF57-000C2935B86F",
-	level : 3, 
-	ASCO :	"<p>For patients receiving an anthracycline and cyclophosphamide, the three-drug combination of a 5-HT3 receptor antagonist, dexamethasone, and aprepitant recommended prechemotherapy; single-agent aprepitant recommended on days 2 and 3 for prevention of delayed emesis.</p>" +  
-			"<p>For patients receiving other chemotherapies of moderate emetic risk, the two-drug combination of a 5-HT3 receptor antagonist and dexamethasone recommended prechemotherapy; single-agent dexamethasone or a 5-HT3 receptor antagonist recommended on days 2 and 3 for prevention of delayed emesis.</p>", 
-	NCCN :	"<p>For patients receiving an anthracycline and cyclophosphamide and selected patients receiving other chemotherapies of moderate emetic risk (e.g., carboplatin, cisplatin, doxorubicin, epirubicin, ifosfamide, irinotecan, or methotrexate), a 5-HT3 receptor antagonist (ondansetron, granisetron, dolasetron, or palonosetronb), dexamethasone (12 mg), and aprepitant (125 mg) recommended, with or without lorazepam, prechemotherapy; for other patients, aprepitant is not recommended.</p>" +  
-			"<p>For prevention of delayed emesis, dexamethasone (8 mg) or a 5-HT3 receptor antagonist on days 2 - 4 or, if used on day 1, aprepitant (80 mg) on days 2 and 3, with or without dexamethasone (8 mg) on days 2 - 4, recommended, with or without lorazepam on days 2 - 4.</p>"
-};
-
-// High (>90%) risk
-EmesisRisk["B985F3AA-0B21-E111-BF57-000C2935B86F"] = 
-{
-	riskID : "B985F3AA-0B21-E111-BF57-000C2935B86F",
-	level : 4, 
-	ASCO :	"<p>Three-drug combination of a 5-HT3 receptor antagonist, dexamethasone, and aprepitant recommended prechemotherapy.</p>" +  
-			"<p>For patients receiving cisplatin and all other agents of high emetic risk, the two-drug combination of dexamethasone and aprepitant recommended for prevention of delayed emesis.</p>", 
-	NCCN :	"<p>Prechemotherapy, a 5-HT3 receptor antagonist (ondansetron, granisetron, dolasetron, or palonosetronb), dexamethasone (12 mg), and aprepitant (125 mg) recommended, with or without lorazepam.</p>" +  
-			"<p>For prevention of delayed emesis, dexamethasone (8 mg) on days 2 - 4 plus aprepitant (80 mg) on days 2 and 3 recommended, with or without lorazepam on days 2 - 4.</p>"
-};
-
-
-
-function getEmesisRecommendation(level) {
-	return ({ "ASCO" : EmesisRisk[level-1].ASCO , "NCCN" : EmesisRisk[level-1].NCCN } );
-}
-
-<<<<<<< HEAD
-********************/
-=======
-
-
-
-
-
-
-
-
-/******************
-var ScratchDataRecord = {
-	"Cycle": 1,
-	"Day": 1,
-	"AdminDate": "01/25/2012",
-	"PreTherapyInstr": "Dosages given two hours beofre therapy.",
-	"TherapyInstr": "Pre-Therapy Required",
-	"PostTherapyInstr": "Post-Therapy Instructions.",
-	"PreTherapy": [
-		{
-			"Instr": "",
-			"Med": "Aprepitant",
-			"DescDose": "400",
-			"DescUnits": "Units / m2",
-			"Dose1": "400",
-			"DoseUnits1": "Units / m2",
-			"AdminMethod1": "SubQ",
-			"FluidType1": "",
-			"FlowRate1": "",
-			"InfusionTime1": "",
-			"BSA_Dose1": "736",
-			"Dose2": "350",
-			"DoseUnits2": "ml",
-			"AdminMethod2": "IV",
-			"FluidType2": "",
-			"FlowRate2": "100",
-			"InfusionTime2": "100",
-			"BSA_Dose2": "736",
-			"AdminTime": ""
-		},
-		{
-			"Instr": "",
-			"Med": "Dexamethasone",
-			"DescDose": "500",
-			"DescUnits": "MicroGram",
-			"Dose1": "500",
-			"DoseUnits1": "MicroGram",
-			"AdminMethod1": "IM",
-			"FluidType1": "",
-			"FlowRate1": "",
-			"InfusionTime1": "",
-			"BSA_Dose1": "",
-			"Dose2": "",
-			"DoseUnits2": "",
-			"AdminMethod2": "",
-			"FluidType2": "",
-			"FlowRate2": "",
-			"InfusionTime2": "",
-			"BSA_Dose2": "",
-			"AdminTime": ""
-		}
-	],
-	"Therapy": [
-		{
-			"Instr": "",
-			"Med": "Dexamethasone",
-			"DescDose": "450",
-			"DescUnits": "Units / m2",
-			"Dose": "450",
-			"DoseUnits": "Units / m2",
-			"AdminMethod": "",
-			"FluidType": "",
-			"FlowRate": "100",
-			"InfusionTime": "1200",
-			"BSA_Dose": "828",
-			"AdminTime": ""
-		},
-		{
-			"Instr": "",
-			"Med": "Pemetrexed",
-			"DescDose": "450",
-			"DescUnits": "MicroGram",
-			"Dose": "450",
-			"DoseUnits": "MicroGram",
-			"AdminMethod": "",
-			"FluidType": "",
-			"FlowRate": "100",
-			"InfusionTime": "1300",
-			"BSA_Dose": "",
-			"AdminTime": ""
-		}
-	],
-	"PostTherapy": [
-		{
-			"Instr": "",
-			"Med": "Aprepitant",
-			"DescDose": "150",
-			"DescUnits": "mg/m2",
-			"Dose1": "150",
-			"DoseUnits1": "mg/m2",
-			"AdminMethod1": "Oral",
-			"FluidType1": "",
-			"FlowRate1": "100",
-			"InfusionTime1": "1300",
-			"BSA_Dose1": "276",
-			"Dose2": "200",
-			"DoseUnits2": "ml",
-			"AdminMethod2": "IV",
-			"FluidType2": "",
-			"FlowRate2": "100",
-			"InfusionTime2": "",
-			"BSA_Dose2": "",
-			"AdminTime": ""
-		}
-	]
-};
-*********************/
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
-
 Ext.define("COMS.controller.NewPlan.OEM", {
 	extend: "Ext.app.Controller",
 
@@ -280,11 +53,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			ref : "GoalBtn",
 			selector : "OEM OEM_Level1 [name=\"AddGoal\"]"
 	}
-
 	],
 
-
-	// Ext.ComponentQuery.query("OEM container[name=\"OEM_Level1\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized OEM Tab Controller!");
 
@@ -298,8 +68,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				beforequery: this.selTemplateQuery
 			},
 			"NewPlanTab PatientInfo OEM" : {
-				beforeactivate : this.BeforeTabActivated,
-				afterrender : this.AssignBtnHandlers
+				beforeactivate : this.BeforeTabActivated
 			},
 			"OEM combo[name=\"SelectAdminDay2View\"]" : {
 				select : this.selAdminDayChange
@@ -308,15 +77,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				afterrender : this.tabRendered
 			}
 		});
-<<<<<<< HEAD
 	},
 
-=======
-
-	},
-
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 	// Determines if the date passed is an Admin Day for this Regimen
 	// If the date passed is an Admin Day then the OEM Data for that day is returned
 	// else returns null.
@@ -338,33 +100,33 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				}
 			}
 		}
-		catch (e)
-		{
+		catch (e) {
 		}
 		return null;
 	},
 
 
 	tabRendered : function( theTab, eOpts ) {
-			// var a1 = theTab.el.select("button.EditOEM_Record");
-			// a1.on("click", this.handleEditOEM_Record, this);
+		var a1 = theTab.el.select("button.EditOEM_Record");
+		a1.on("click", this.handleEditOEM_Record, this);
 
-			// Attach event to the "Add Goal" and "Add Clinical Trial" buttons (styled to look like links)
+		a1 = theTab.el.select("button.OEM_RecordMedHold");
+		a1.on("click", this.handleOEM_RecordMedHold, this);
 
-			// var Goal_CTrialBtn = theTab.el.select("button.anchor");		<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
-/********** Debugging code to display list of all button names selected *************
- *** the data returned from the above query includes all calculated dosages as well as edit links for editing OEM Data/Admin Days
-var Elements = Goal_CTrialBtn.elements;
-var element;
-var eLen = Elements.length;
-var i, BtnName;
-for (i = 0; i < eLen; i++) {
-	element = Elements[i];
-	BtnName = element.getAttribute("name");
-	console.log(BtnName);
-}
-***************************************************************************************/
-			// Goal_CTrialBtn.on("click", this.handleGoal_CTrial, this);		<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
+		a1 = theTab.el.select("button.OEM_RecordMedCancel");
+		a1.on("click", this.handleOEM_RecordMedCancel, this);
+
+		a1 = theTab.el.select("button.ChangeOEM_AdminDate");
+		a1.on("click", this.HandleChangeAdminDateButtons, this);
+
+		var OEMLevel1 = this.getOEM_Level1();
+		var OEMLevel1Btns = OEMLevel1.el.select("button");		// MWB - 6/26/2012 - Currently only the "Edit Performance Status" button exists in this section
+		OEMLevel1Btns.on("click", this.HandleOEMLevel1Buttons, this);
+
+		var dspOEMTemplateData = this.getDspOEMTemplateData();
+		var OEMTemplateDataBtns = dspOEMTemplateData.el.select("button.dspOEMDoseCalcs");
+		OEMTemplateDataBtns.on("click", this.HandleOEMCalcDoseButtons, this);
+
 
 		// When rendering the tab, if today is an Admin Day then show today's OEM Records, else show all the OEM Records.
 		var LinkName, Elements, theElement, theID, tmpData = this.IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -391,10 +153,9 @@ for (i = 0; i < eLen; i++) {
  *
  ***********************************************************************************/
 	displayOEM_Record_Data : function( PatientInfo, fromEdit) {
-//        console.log("Displaying OEM Record Data - " + fromEdit);
 
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
-		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData;
+		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData, AdminDay2ViewCombo;
 
 		if (PatientInfo.OEMDataRendered) {
 		    return;
@@ -417,7 +178,6 @@ for (i = 0; i < eLen; i++) {
         OEMLevel1 = this.getOEM_Level1();
         OEMLevel1.update(theData);
         OEMLevel1.show();
-// console.log("OEM Data Rendered");
 
 
 
@@ -446,43 +206,6 @@ for (i = 0; i < eLen; i++) {
 		dspOEMTemplateData = this.getDspOEMTemplateData();
 		dspOEMTemplateData.update( theData );
 		dspOEMTemplateData.show();
-
-		// MWB - 5/10/2012 - Need to debug this block...
-		var theTab = Ext.ComponentQuery.query("OEM dspOEMTemplateData")[0];
-        var al;
-		if (theTab && theTab.rendered){
-			a1 = theTab.el.select("button.EditOEM_Record");
-			a1.on("click", this.handleEditOEM_Record, this);
-
-            a1 = theTab.el.select("button.OEM_RecordMedHold");
-			a1.on("click", this.handleOEM_RecordMedHold, this);
-
-            a1 = theTab.el.select("button.OEM_RecordMedCancel");
-			a1.on("click", this.handleOEM_RecordMedCancel, this);
-
-
-			// Attach event to the "Add Goal" and "Add Clinical Trial" buttons (styled to look like links)
-			// var Goal_CTrialBtn = theTab.el.select("button.anchor");		<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
-			// Goal_CTrialBtn.on("click", this.handleGoal_CTrial, this);	<--- MWB - 6/26/2012 - No longer needed as this info is set at Apply Template Time.
-
-		var LinkName, Elements, theElement, theID, tmpData = this.IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
-		if (null !== tmpData) {
-			// dspOEMTemplateData
-			LinkName = "Section_Cycle_" + tmpData.Cycle + "_Day_" + tmpData.Day;
-			Elements = Ext.query(".OEMRecord");
-			for (i = 0; i < Elements.length; i++) {
-				theElement = Elements[i];
-				theID = theElement.id;
-				if (theID === LinkName) {
-					theElement.style.display="";
-				}
-				else {
-					theElement.style.display="none";
-				}
-			}
-		}
-		}
-
 		this.application.Patient.OEMDataRendered = true;
 	},
 /***********************************************************************************
@@ -528,11 +251,11 @@ for (i = 0; i < eLen; i++) {
 		var ElLen = Elements.length;
 		var theData = recs[0];
 
-		var thisCtl = this.getController("NewPlan.OEM");
+		thisCtl = this.getController("NewPlan.OEM");
 		var dspDate = theData.data.date;
 		var LinkName = theData.data.LinkName;
-		var Elements = Ext.query(".OEMRecord");
-		var ElLen = Elements.length;
+		Elements = Ext.query(".OEMRecord");
+		ElLen = Elements.length;
 		var i;
 		var theElement;
 		var tmpName;
@@ -611,49 +334,6 @@ for (i = 0; i < eLen; i++) {
 	TabActivated : false,
 
 
-	deferredAssignBtnHandler : function() {
-		var OEMLevel1 = this.getOEM_Level1();
-		var OEMLevel1Btns = OEMLevel1.el.select("button");		// MWB - 6/26/2012 - Currently only the "Edit Performance Status" button exists in this section
-		OEMLevel1Btns.on("click", this.HandleOEMLevel1Buttons, this);
-	},
-
-	deferredAssignBtnHandler2 : function() {
-		var dspOEMTemplateData = this.getDspOEMTemplateData();
-		var OEMTemplateDataBtns = dspOEMTemplateData.el.select("button.dspOEMDoseCalcs");
-		OEMTemplateDataBtns.on("click", this.HandleOEMCalcDoseButtons, this);
-	},
-
-/***********************************************************************************
- *
- *
- *
- ***********************************************************************************/
-	AssignBtnHandlers : function(thePanel, eOpts) {
-		var PatientInfo = this.application.Patient;
-		var dspOEMTemplateData, OEMTemplateDataBtns;
-
-		// These are the buttons to 
-		//		"Add Clinical Trial" (which might no longer be necessary as it's set when applying the template)
-		//		"Edit Performance Status"
-		// which aren't needed to be set here at this time
-		Ext.Function.defer(this.deferredAssignBtnHandler, 2000, this);
-		Ext.Function.defer(this.deferredAssignBtnHandler2, 2000, this);
-
-		// Buttons for the individual OEM records:
-		//		class="anchor ChangeOEM_AdminDate"
-		//		class="anchor EditOEM_Record"
-		//		class="anchor dspOEMDoseCalcs"
-		dspOEMTemplateData = this.getDspOEMTemplateData();
-
-
-		OEMTemplateDataBtns = dspOEMTemplateData.el.select("button.ChangeOEM_AdminDate");
-		OEMTemplateDataBtns.on("click", this.HandleChangeAdminDateButtons, this);
-
-
-		OEMTemplateDataBtns = dspOEMTemplateData.el.select("button.EditOEM_Record");
-		OEMTemplateDataBtns.on("click", this.handleEditOEM_Record, this);
-	},
-
 	HandleChangeAdminDateButtons : function( event, element ) {
 		alert("Function not yet available");
 	},
@@ -680,9 +360,9 @@ for (i = 0; i < eLen; i++) {
             });
         }
 
-        Widget = "OEMPerformanceStatus";
-        Query = "OEMPerformanceStatus button[text=\"Save\"]";
-        params = {"itemsInGroup": itemsInGroup};
+        var Widget = "OEMPerformanceStatus";
+        var Query = "OEMPerformanceStatus button[text=\"Save\"]";
+        var params = {"itemsInGroup": itemsInGroup};
         var Win = Ext.widget(Widget, params);
         var SaveBtn = Ext.ComponentQuery.query(Query)[0];
         SaveBtn.on("click", this.SaveOEM_PS, this );
@@ -751,9 +431,8 @@ for (i = 0; i < eLen; i++) {
 						newPlanTabCtl.loadVitals("Update Vitals");
 						this.application.Patient.OEMRecords.PerformanceStatus = this.application.NewPerformanceStatus;
 						var thisCtl = this.getController("NewPlan.OEM");
-						OEMLevel1 = thisCtl.getOEM_Level1();
+						var OEMLevel1 = thisCtl.getOEM_Level1();
 						OEMLevel1.update(this.application.Patient.OEMRecords);
-						Ext.Function.defer(this.AssignBtnHandlers, 2000, this);
 					}
 					else {
 						Ext.MessageBox.alert("Saving Error", "Performance State, Save Error - " + oper.error);
@@ -772,13 +451,6 @@ for (i = 0; i < eLen; i++) {
  ***********************************************************************************/
 	BeforeTabActivated : function(thePanel, eOpts) {
 		var PatientInfo = this.application.Patient;
-
-		// clear out any previous data before making the tab visible.
-//		this.getOEM_Level1().update("");
-//		this.getOEM_Level1().hide();
-//		this.getDspOEMTemplateData().update( "" );
-//		this.getDspOEMTemplateData().hide();
-//		this.getSelectAdminDay2View().hide();
 
 		var retFlg = true;
 		if ("" === PatientInfo.TemplateID) {
@@ -868,7 +540,6 @@ for (i = 0; i < eLen; i++) {
 
 		if (this.application.Patient.TemplateID) {
 			this.application.Patient.OEMDataRendered = false;
-			// this.loadOEM_Record_Data(this.application.Patient.id);	MWB - 5/16/2012 - Removed from here as the OEM Records are loaded at PatientSelected time from the NewPlanTab controller
 		}
 	
 		this.getCTOS_Tabs().setActiveTab( this.getCTOSTab() );		// Force the "CTOS" tab to be opened when changing a patient
@@ -918,7 +589,6 @@ for (i = 0; i < eLen; i++) {
 		}
 		else {
 			this.application.Patient.Template = TemplateObj;
-			// this.loadOEM_Record_Data (this.application.Patient.id);	MWB - 5/16/2012 - Removed from here as the OEM Records are loaded at PatientSelected time from the NewPlanTab controller
 
 			var NewPlanTabCtl = this.getController("NewPlan.NewPlanTab");
 			NewPlanTabCtl.loadOrderRecords();
@@ -949,7 +619,7 @@ for (i = 0; i < eLen; i++) {
             buttons: Ext.Msg.YESNOCANCEL,
             el : element,
             fn: function(btnID, txt, opt) {
-                var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+                var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
                 var Data = this.application.Patient.OEMRecords;
                 var records = Data.OEMRecords;
                 var TherapyID;
@@ -1127,7 +797,7 @@ handleOEM_RecordMedHold : function( event, element) {
         buttons: Ext.Msg.YESNOCANCEL,
         el : element,
         fn: function(btnID, txt, opt) {
-            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID, btnID;
+            var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
             var TherapyID;
             var Data = this.application.Patient.OEMRecords;
             var records = Data.OEMRecords;

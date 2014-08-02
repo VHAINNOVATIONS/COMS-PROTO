@@ -27,18 +27,6 @@ class PatientController extends Controller
         return false;
     }
 
-<<<<<<< HEAD
-=======
-    public function escapeString($string) {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            return str_replace("'", "''", $string);
-        } else if (DB_TYPE == 'mysql') {
-            return mysql_real_escape_string($string);  	
-        }
-        return $string;
-    }
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
     function MedicationSanityCheck () {
         // Get all templates from the Master Template
         $query = "select * from Master_Template";
@@ -462,7 +450,6 @@ class PatientController extends Controller
      */
     private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
     {
-<<<<<<< HEAD
 	//echo "|||preHydrationRecord||| ";
 	//var_dump($preHydrationRecord);
 	//echo "|||infusionMap||| ";
@@ -483,8 +470,6 @@ class PatientController extends Controller
 	$amt = $infusionMap['amt'];
 	}
 */
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
@@ -503,14 +488,10 @@ class PatientController extends Controller
 				Drug_ID,
                 Order_Type, 
                 Patient_ID,
-<<<<<<< HEAD
 				Notes,
 				Amt,
 				Route,
 				AdminDay
-=======
-				Notes
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             ) VALUES (
                 '$templateId',
                 '$orderStatus',
@@ -519,14 +500,10 @@ class PatientController extends Controller
                 '$DrugID',
                 '$orderType',
                 '$patientid',
-<<<<<<< HEAD
                 '$Notes',
                 '$amt',
                 '$route',
                 '$AdminDay'
-=======
-                '$Notes'
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
             )
         ";
         $this->Patient->query($query);
@@ -878,7 +855,7 @@ class PatientController extends Controller
  *  Get the disease this patient has
  *  
  **/
-	private function genOEMData($id) {
+	function genOEMData($id) {
 		$lookup = new LookUp();
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
@@ -1810,11 +1787,7 @@ function buildJsonObj4Output() {
                     $query = "
                         SELECT DischargeID, PatientID, 
                         CONVERT(varchar,date,101) as date
-<<<<<<< HEAD
                         FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
-=======
-                        FROM $DischargeLinkTable where PatientID = '$PatientID' order by date";
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
                 }
             }
             error_log("DischargeInstructions Query - $query");
@@ -2010,7 +1983,6 @@ function buildJsonObj4Output() {
         return;
     }
 
-<<<<<<< HEAD
 /*********************** SEANS CODE ****************************
     function CumulativeDoseTracking($pid,$CDHID){
         
@@ -2309,7 +2281,4 @@ error_log($query);
         $this->set('jsonRecord', $jsonRecord);
         return;
     }
-=======
-
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 }

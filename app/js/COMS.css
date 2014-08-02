@@ -21,7 +21,6 @@ body{
 		
 	}
 
-<<<<<<< HEAD
 
 .DataTable { 
 	width: 100% 
@@ -31,13 +30,10 @@ body{
 	text-align: center!important;
 } 
 
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 .Level1, .Level3 {
 		background:#EFEFEF;
 }
 
-<<<<<<< HEAD
         .Test td { vertical-align: top!important; }
         .RequiredInstr {
             margin: 10px;
@@ -72,8 +68,6 @@ body{
     color: silver; 
     margin-left: 1em;
 }
-=======
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 
 
 #results div {
@@ -615,12 +609,8 @@ th.drug {
 	background-color: silver;
 }
 
-<<<<<<< HEAD
 .NursingDocs-label { font-weight : bold!important; }
 .NursingDocs-right { text-align : right!important; }
-=======
-.NursingDocs-label { font-weight : bold; }
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
 .NursingDocs-boxLabel { font-weight : bold; padding-left: 1em; }
 
 a:visited, a {
@@ -708,7 +698,6 @@ table.OEMRecord_Element tr {
 
 .ndctWarning span, .scEditInstructions span {
 	color: red;
-<<<<<<< HEAD
 }
 
 .BSACalcTable table {
@@ -744,6 +733,22 @@ table.OEMRecord_Element tr {
 	font-weight: bold!important;
 	margin-right: 0.5em;
 }
-=======
+
+table.FlowsheetTable {
+	margin-bottom: 1em;
 }
->>>>>>> c9b7783a07de42db6a9bffa8044fb045a06334ca
+
+.FlowsheetTable thead th {
+	text-align: left;
+	font-weight: bold;
+	font-size: 110%;
+	background-color: #c5c5c5;
+	padding-left: 0.5em;
+}
+.FlowsheetTable td {
+	padding: 0.25em;
+}
+
+.FlowsheetTable a {
+	color: black;
+}

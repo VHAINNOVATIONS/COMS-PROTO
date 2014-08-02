@@ -104,19 +104,21 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	SaveMedRecord : function(record, values, multipleRecords) {
 		record.set(values);
 		var PatientInfo = this.application.Patient;
-		var MedRecord = PatientInfo.MedRecord; 
+		var MedRecord = PatientInfo.MedRecord;
+		var MedRecord2Check; 
 		var CycleIdx = MedRecord.CycleIdx;
 		var DayIdx = MedRecord.DayIdx;
 		var MedIdx = MedRecord.MedIdx;
-		var MedID = MedRecord.MedID
+		var MedID = MedRecord.MedID;
 		var TherapyType = MedRecord.TherapyType;
+		var saveCfg, CalcDayIndex;
 
 		var AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 
 		var MaxRecords = PatientInfo.OEMRecords.OEMRecords.length;
-		var i;
+		var i, CkRecord2Match;
 		for (i = 0; i < MaxRecords; i++) {
-			var CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
+			CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
 			if (CkRecord2Match.Cycle == CycleIdx && CkRecord2Match.Day == DayIdx) {
 				CalcDayIndex = i;
 			}
@@ -166,8 +168,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 		if (multipleRecords) {
 			for (i = CalcDayIndex; i < MaxRecords; i++) {
-				var CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
-				var MedRecord2Check;
+				CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
 				if ("Pre" == TherapyType) {
 					MedRecord2Check = PatientInfo.OEMRecords.OEMRecords[i].PreTherapy[MedIdx - 1];
 				}else if ("Post" == TherapyType) {
@@ -184,7 +185,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 						PatientInfo.OEMRecords.OEMRecords[i].Therapy[MedIdx - 1] = MedRecord1;
 					}
 
-					var saveCfg = { scope : this};
+					saveCfg = { scope : this};
 					record.save();
 				}
 			}
@@ -202,7 +203,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 				PatientInfo.OEMRecords.OEMRecords[CalcDayIndex].Therapy[MedIdx - 1] = MedRecord1;
 			}
 
-			var saveCfg = { scope : this, callback : function( records, operation, success ) {
+			saveCfg = { scope : this, callback : function( records, operation, success ) {
 				var PatientInfo = this.application.Patient;
 				var CycleIdx = PatientInfo.MedRecord.CycleIdx;
 				var DayIdx = PatientInfo.MedRecord.DayIdx;
@@ -213,7 +214,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			record.save();
 		}
 	
-		var PatientInfo = this.application.Patient;
+		PatientInfo = this.application.Patient;
 		PatientInfo.OEMDataRendered = false;
 		this.application.fireEvent("DisplayOEMData", PatientInfo, "fromEdit");
 	},
