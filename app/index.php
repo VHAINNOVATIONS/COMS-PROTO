@@ -177,6 +177,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 			$ruser = $_SESSION['ruser'];
 			$sitelist = $_SESSION['sitelist'];
 			$Email = $_SESSION['Email'];
+			$TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
 				
 		include_once "workflow.php";
 		include_once "template.php";
