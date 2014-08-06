@@ -2,6 +2,7 @@
 
 class NursingDocController extends Controller {
 
+// This function has apparently been moved to the Patient Controller - MWB - 8/5/2014
     public function DischargeInstruction($id = null)
     {
         $form_data = json_decode(file_get_contents('php://input'));
@@ -390,7 +391,7 @@ foreach ($Meds as $Med) {
 
 
 
-    
+// This function has apparently been moved to the Patient Controller - MWB - 8/5/2014
     public function ActiveDischargeInstructions()
     {
         $records = $this->NursingDoc->getActiveDischargeInstructions();

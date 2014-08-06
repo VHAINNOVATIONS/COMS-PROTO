@@ -752,3 +752,13 @@ table.FlowsheetTable {
 .FlowsheetTable a {
 	color: black;
 }
+
+.x-column-header-text div {
+	font-weight: bold;
+	text-align: center;
+	padding-top: 0.5em;
+}
+
+.x-column-header-text div.multiLine {
+	padding-top: 0!important;
+}

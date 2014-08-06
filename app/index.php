@@ -1,4 +1,7 @@
-<?php	
+<?php
+
+// phpinfo();
+// return;
 $FirstLogin = null;
 $LastLogin = null;
 $AccessCode = null;
