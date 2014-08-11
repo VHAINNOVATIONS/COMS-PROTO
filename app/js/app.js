@@ -643,7 +643,8 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
-	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy"
+	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy",
+	"COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 //	, "COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 ]);
 
@@ -1631,6 +1632,7 @@ Ext.application({
 		, "NewPlan.CTOS.NursingDocs.EducationTab"
 		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
 //		, "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
+		, "NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 		, "Messages.MessagesTab"
 		, "NewPlan.EndTreatmentSummary"
 		, "NewPlan.ViewEndTreatmentSummary"
