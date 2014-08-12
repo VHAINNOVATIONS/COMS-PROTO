@@ -78,6 +78,24 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		});
 	},
 
+	"ComboSelect" : function(theCombo, newValue, oldValue, eOpts) {
+		this.application.loadMask("Showing Cycles");
+		var grid = theCombo.up("grid");
+		var comboStore = theCombo.getStore();
+		var theRecord = comboStore.findRecord("label", theCombo.rawValue);
+		var data, start, end;
+		var i, col, cols, colID;
+		data = theRecord.getData();
+		start = data.StartIdx;
+		end = data.EndIdx;
+		this.ShowSelectedCycles(grid, start, end);
+		this.application.unMask();
+	},
+
+	EditOptionalQuestions : function(btn) {
+		var OptQues = Ext.widget("FlowSheetOptionalQues");
+	},
+
 	clickNamedAnchor : function (grid, record, row, column, eOpts) {
 		var theData = record.getData();
 		var theLabel = theData["label"];
@@ -113,116 +131,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 	},
 
-	"updateFlowsheetPanel" : function() {
-		this.application.loadMask("Saving Information");
-		Ext.suspendLayouts(); 
-		var theGrid = this.getFlowSheetGrid();
-		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
-		this.getOptionalInfoData(this.application.Patient.PAT_ID);
 
-//		var CurCycle = this.application.Patient.CurFlowSheetCycle;
-//		if (CurCycle) {
-//			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
-//		}
-		Ext.resumeLayouts(true);
-		this.application.unMask();
-	},
-
-
-	ShowSelectedCycles : function(grid, start, end) {
-		Ext.suspendLayouts(); 
-		end = end + 1;
-		var theCols = this.createColumns(this.application.Patient.FlowsheetData);
-		var theStore = this.createStore(this.application.Patient.FlowsheetData);
-		var numCols2Show = end - start;
-		var theCols1 = theCols;
-		var num2remove;
-		if (start > 2) {
-			num2remove = start - 2;
-			theCols1 = theCols.splice(2, num2remove);
-		}
-		if (end < theCols.length) {
-			if (start <= 2) {
-				num2remove = theCols.length - end-1;
-			}
-			else {
-				num2remove = theCols.length - start-1;
-			}
-			theCols1 = theCols.splice(start, num2remove);
-		}
-		grid.reconfigure(theStore, theCols);
-		Ext.resumeLayouts(true);
-		return;
-
-
-
-
-
-
-		// Note: A Locked Grid consists of TWO grids, one normal one and one locked
-		// Hence the weird check for columns, because "grid" contains NO columns, the columns are in locked and normal grids.
-		if (grid.normalGrid) {
-			cols = grid.normalGrid.columns
-		}
-		else {
-			cols = grid.columns;
-		}
-		
-		var numCols = cols.length;
-		console.log("Total Cols = " + numCols);
-		// Hide all cycles after selected one
-		// for (i = end+1; i < numCols-1; i++) {
-		for (i = numCols; i > end; i--) {
-			colID = "#Col-" + i;
-			col = grid.down(colID);
-			if (col) {
-				console.log("Hiding - " + colID);
-				col.hide();
-			}
-		}
-
-		// Note: Col 2 starts the Cycle Days, the first 2 columns hold the Category and Row Labels
-		// Hide all cycles before selected one
-		for (i = 2; i < start; i++) {
-			colID = "#Col-" + i;
-			col = grid.down(colID);
-			if (col) {
-				console.log("Hiding - " + colID);
-				col.hide();
-			}
-		}
-		// Show selected cycles
-		for (i = start; i <= end; i++) {
-			colID = "#Col-" + i;
-			col = grid.down(colID);
-			if (col) {
-				console.log("Showing - " + colID);
-				col.show();
-			}
-		}
-		console.log("End of Cycle Changing");
-
-	},
-
-
-	"ComboSelect" : function(theCombo, newValue, oldValue, eOpts) {
-		this.application.loadMask("Showing Cycles");
-		var grid = theCombo.up("grid");
-		var comboStore = theCombo.getStore();
-		var theRecord = comboStore.findRecord("label", theCombo.rawValue);
-		var data, start, end;
-		var i, col, cols, colID;
-		data = theRecord.getData();
-		start = data.StartIdx;
-		end = data.EndIdx;
-		this.ShowSelectedCycles(grid, start, end);
-		this.application.unMask();
-	},
-
-
-	EditOptionalQuestions : function(btn) {
-		var OptQues = Ext.widget("FlowSheetOptionalQues");
-	},
 
 	buildCycleList : function (data) {
 		var startDay, endDay, days, hold, key, curCycle, cyc_day, attrName, cycleNum, cycleDay, part, aDate, startDate, endDate;
@@ -358,6 +267,131 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		return comboStore;
 	},
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	"updateFlowsheetPanel" : function() {
+		this.application.loadMask("Saving Information");
+		Ext.suspendLayouts(); 
+		var theGrid = this.getFlowSheetGrid();
+		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
+		this.getOptionalInfoData(this.application.Patient.PAT_ID);
+
+//		var CurCycle = this.application.Patient.CurFlowSheetCycle;
+//		if (CurCycle) {
+//			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
+//		}
+		Ext.resumeLayouts(true);
+		this.application.unMask();
+	},
+
+
+	ShowSelectedCycles : function(grid, start, end) {
+		Ext.suspendLayouts(); 
+		end = end + 1;
+		var theCols = this.createColumns(this.application.Patient.FlowsheetData);
+		var theStore = this.createStore(this.application.Patient.FlowsheetData);
+		var numCols2Show = end - start;
+		var theCols1 = theCols;
+		var num2remove;
+		if (start > 2) {
+			num2remove = start - 2;
+			theCols1 = theCols.splice(2, num2remove);
+		}
+		if (end < theCols.length) {
+			if (start <= 2) {
+				num2remove = theCols.length - end-1;
+			}
+			else {
+				num2remove = theCols.length - start-1;
+			}
+			theCols1 = theCols.splice(start, num2remove);
+		}
+		grid.reconfigure(theStore, theCols);
+		Ext.resumeLayouts(true);
+		return;
+
+
+
+
+
+
+		// Note: A Locked Grid consists of TWO grids, one normal one and one locked
+		// Hence the weird check for columns, because "grid" contains NO columns, the columns are in locked and normal grids.
+		if (grid.normalGrid) {
+			cols = grid.normalGrid.columns
+		}
+		else {
+			cols = grid.columns;
+		}
+		
+		var numCols = cols.length;
+		console.log("Total Cols = " + numCols);
+		// Hide all cycles after selected one
+		// for (i = end+1; i < numCols-1; i++) {
+		for (i = numCols; i > end; i--) {
+			colID = "#Col-" + i;
+			col = grid.down(colID);
+			if (col) {
+				console.log("Hiding - " + colID);
+				col.hide();
+			}
+		}
+
+		// Note: Col 2 starts the Cycle Days, the first 2 columns hold the Category and Row Labels
+		// Hide all cycles before selected one
+		for (i = 2; i < start; i++) {
+			colID = "#Col-" + i;
+			col = grid.down(colID);
+			if (col) {
+				console.log("Hiding - " + colID);
+				col.hide();
+			}
+		}
+		// Show selected cycles
+		for (i = start; i <= end; i++) {
+			colID = "#Col-" + i;
+			col = grid.down(colID);
+			if (col) {
+				console.log("Showing - " + colID);
+				col.show();
+			}
+		}
+		console.log("End of Cycle Changing");
+
+	},
 
 	getFlowSheetData : function(PatientID, PAT_ID, theGrid) {
 		this.application.loadMask("Loading Flow Sheet Information");

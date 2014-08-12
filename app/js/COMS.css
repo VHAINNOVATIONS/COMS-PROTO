@@ -762,3 +762,18 @@ table.FlowsheetTable {
 .x-column-header-text div.multiLine {
 	padding-top: 0!important;
 }
+
+
+.TCDWarning {
+	font-size: 200%;
+	font-weight: bold!important;
+	color: red;
+	text-align: center!important;
+}
+
+.smlTCDWarning {
+	font-size: 100%;
+	font-weight: bold!important;
+	color: red;
+	text-align: center!important;
+}

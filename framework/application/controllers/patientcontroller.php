@@ -856,6 +856,15 @@ class PatientController extends Controller
  *  
  **/
 	function genOEMData($id) {
+
+                $MicroTime_ST = microtime(true);
+                error_log("genOEMData Entry Point - (Timestamp in MS = $MicroTime_ST)");
+
+
+
+
+
+
 		$lookup = new LookUp();
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
@@ -863,6 +872,10 @@ class PatientController extends Controller
             // error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
 			return;
 		}
+
+                $MicroTime_ST1 = microtime(true);
+                $TimeDiff = $MicroTime_ST1 - $MicroTime_ST;
+                error_log("genOEMData BP1 - (Timestamp in MS = $MicroTime_ST1 - TimeDiff = $TimeDiff)");
 
 		if (0 == count($templateId)) {
 			$this->set('oemsaved', null);
@@ -881,6 +894,11 @@ class PatientController extends Controller
 			return;
 		}
 
+                $MicroTime_ST2 = microtime(true);
+                $TimeDiff = $MicroTime_ST2 - $MicroTime_ST1;
+                error_log("genOEMData BP2 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
+
+
 		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
 		$lookup = new LookUp();
 		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
@@ -889,6 +907,12 @@ class PatientController extends Controller
             // error_log("Get Disease Info Failed. $Disease");
 			return;
 		}
+
+                $MicroTime_ST3 = microtime(true);
+                $TimeDiff = $MicroTime_ST3 - $MicroTime_ST2;
+                error_log("genOEMData BP3 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
+
+
 		$masterRecord[0]['DiseaseRecord'] = $Disease;
 		$this->set('masterRecord', $masterRecord);
 
@@ -903,11 +927,27 @@ class PatientController extends Controller
 		}
 		$this->set('oemrecords', $oemrecords);
 
+                $MicroTime_ST4 = microtime(true);
+                $TimeDiff = $MicroTime_ST4 - $MicroTime_ST3;
+                error_log("genOEMData BP4 - (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff)");
+
+
+        /**
+         * Here is the big 32 second bottleneck
+         **/
+error_log("..");
+error_log("Looping through records to get all the Pre/Post/Therapy Med Record Information");
 		$oemMap = array();
+        $loopCount4Display = 0;
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
             $oemRecordTemplateID = $oemrecord['TemplateID'];
 
+
+                if (0 == $loopCount4Display) {
+                    $MicroTime_ST_Hdr1 = microtime(true);
+                    error_log("genOEMData Pre Hydrations Start (Timestamp in MS = $MicroTime_ST_Hdr1)");
+                }
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -917,6 +957,11 @@ class PatientController extends Controller
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
 			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
 
+if (0 == $loopCount4Display) {
+                $MicroTime_ST_Hdr2 = microtime(true);
+                $TimeDiff = $MicroTime_ST_Hdr2 - $MicroTime_ST_Hdr1;
+                error_log("genOEMData Pre Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr2 - TimeDiff = $TimeDiff)");
+}
 
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
@@ -927,6 +972,12 @@ class PatientController extends Controller
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
 			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
 
+if (0 == $loopCount4Display) {
+                $MicroTime_ST_Hdr3 = microtime(true);
+                $TimeDiff = $MicroTime_ST_Hdr3 - $MicroTime_ST_Hdr2;
+                error_log("genOEMData Post Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
+}
+
             $retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -935,7 +986,19 @@ class PatientController extends Controller
 			}
 			$oemDetails['Therapy'] = $this->get('regimens');
 			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
+
+ if (0 == $loopCount4Display) {
+                $MicroTime_ST_Hdr4 = microtime(true);
+                $TimeDiff = $MicroTime_ST_Hdr4 - $MicroTime_ST_Hdr3;
+                error_log("genOEMData Therapy End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
+ }
+$loopCount4Display++;
 		}
+error_log("..");
+
+                $MicroTime_ST5 = microtime(true);
+                $TimeDiff = $MicroTime_ST5 - $MicroTime_ST4;
+                error_log("genOEMData BP5 - in patientcontroller.php (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff) for " . count($oemrecords) . " records");
 
 		$this->set('oemMap', $oemMap);
 		$this->set('oemsaved', null);
@@ -1183,7 +1246,12 @@ function buildJsonObj4Output() {
         
         if ($id != NULL) {  // This assumes command is a GET, ignores PUT/DELETE
             if ("GET" == $_SERVER['REQUEST_METHOD']) {
+                $MicroTime_ST = microtime(true);
+                error_log("Get OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST)");
                 $this->genOEMData($id);
+                $MicroTime_END = microtime(true);
+                $TimeDiff = $MicroTime_END - $MicroTime_ST;
+                error_log("GOT OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST (Diff = $TimeDiff))");
             }
         }
         else if ($form_data) {
@@ -1243,7 +1311,13 @@ function buildJsonObj4Output() {
             $this->set('frameworkErr', 'No Template ID provided.');
         }
 
+
+        $MicroTime_ST2 = microtime(true);
+        error_log("Build JSON Data for output in Patient Controller - (Timestamp in MS = $MicroTime_ST2)");
         $this->buildJsonObj4Output();
+        $MicroTime_END2 = microtime(true);
+        $TimeDiff = $MicroTime_END2 - $MicroTime_ST2;
+        error_log("JSON Data for output in (Timestamp in MS = $MicroTime_END2 (Diff = $TimeDiff))");
     }
 
     function Regimens($id = null)
@@ -1359,27 +1433,19 @@ function buildJsonObj4Output() {
     function Hydrations($type = null, $id = null)
     {
         $lookup = new LookUp();
-        
         $hydrations = $lookup->getHydrations($id, $type);
-       
         if (null != $hydrations && array_key_exists('error', $hydrations)) {
             return $hydrations;
         }
-        
         $infusionMap = array();
         $origInfusionMap = array();
-        
         foreach ($hydrations as $hydration) {
-            
             $infusions = $lookup->getMHInfusions($hydration['id']);
             if (null != $infusions && array_key_exists('error', $infusions)) {
                 return $infusions;
             }
-            
             $myinfusions = array();
-            
             $origInfusionMap[$hydration['id']] = $infusions;
-            
             for ($i = 0; $i < count($infusions); $i ++) {
                 $myinfusion = array();
                 $myinfusion['amt'] = $infusions[$i]['amt'];
@@ -1398,10 +1464,8 @@ function buildJsonObj4Output() {
                 }
                 $myinfusions[$i]->{'data'} = $myinfusion;
             }
-            
             $infusionMap[$hydration['id']] = $myinfusions;
         }
-        
         $this->set($type . 'hydrations', $hydrations);
         $this->set($type . 'infusions', $infusionMap);
         $this->set($type . 'origInfusions', $origInfusionMap);

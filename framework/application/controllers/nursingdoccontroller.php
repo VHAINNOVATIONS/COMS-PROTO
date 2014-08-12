@@ -491,18 +491,6 @@ foreach ($Meds as $Med) {
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($genInfoRecords);
-            
-            /*
-            foreach ($genInfoRecords as $genInfoRecord) {
-                $genInfoRecord['allergies'] = $tmpAllergy;
-                array_push($modGenInfoRecords, $genInfoRecord);
-                
-            }
-            
-            $jsonRecord['records'] = $modGenInfoRecords;
-             * 
-             */
-            
             $jsonRecord['records'] = $genInfoRecords;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -732,7 +720,9 @@ error_log("Assessment - $PAT_ID");
                     $assessment['assessmentLink']['Details'] = $assessmentDetails;
                     array_push($AssessmentRecords, $assessment);
                 }
+                $jsonRecord['total'] = count($AssessmentRecords);
                 $jsonRecord['records'] = $AssessmentRecords;
+
                 $this->set('jsonRecord', $jsonRecord);
                 $this->set('frameworkErr', null);
                 return;
@@ -793,7 +783,7 @@ error_log("Assessment - $PAT_ID");
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'] . ")";
             $this->Patient->rollbackTransaction();
             $this->set('jsonRecord', $jsonRecord);
             return;
@@ -826,7 +816,6 @@ error_log("Assessment - $PAT_ID");
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($ivSites);
-            
             $jsonRecord['records'] = $ivSites;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -986,6 +975,52 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
         return $retVal;
     }
 
+    function ReactAssessList($PAT_ID = null ) {
+        error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
+        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            if ($PAT_ID) {
+                $InfuseReactLinkID = $this->_getInfuseReactLink($PAT_ID, $InfuseReactRecordID);
+                if($this->checkForErrors('Get ND_ReactAssess Link Records Failed. ', $InfuseReactLinkID)){
+                    $this->set('jsonRecord', null);
+                    return;
+                }
+
+                $jsonRecord['total'] = count($InfuseReactLinkID);
+                $jsonRecord['records'] = $InfuseReactLinkID;
+                $this->set('jsonRecord', $jsonRecord);
+                $this->set('frameworkErr', null);
+                return;
+            }
+            else {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = "No Patient ID Passed";
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+        }
+        else {
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'] . ")";
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        }
+
+        $jsonRecord['msg'] = "Infusion Reactions records Process successful!";
+        $jsonRecord['InfuseReactionsID'] = $GUID;
+        
+        $this->set('jsonRecord', $jsonRecord);
+        
+        $this->set('frameworkErr', null);
+        return;
+
+    }
+
+
 
     function ReactAssess($PAT_ID = null, $InfuseReactRecordID=null ) {
         error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
@@ -1005,17 +1040,43 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
         $GUID = $this->NursingDoc->newGUID();
 
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
+
+
+            if("ireact_id" == strtolower($PAT_ID)) {
+                error_log("Get Records by Infusion Reaction Link ID - $InfuseReactRecordID");
+                $InfuseReactDetails = $this->_getInfuseReactDetails($InfuseReactRecordID);
+                if($this->checkForErrors('Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink)){
+                    error_log("ReactAssess Details - ERROR");
+                    $this->set('jsonRecord', null);
+                    return;
+                }
+                $InfuseReact['InfuseReactLink'] = $InfuseReactLink;
+                $InfuseReact['InfuseReactLink']['Details'] = $InfuseReactDetails;
+                array_push($ReactAssessRecords, $InfuseReact);
+                $jsonRecord['total'] = count($ReactAssessRecords);
+                $jsonRecord['records'] = $ReactAssessRecords;
+                $this->set('jsonRecord', $jsonRecord);
+                $this->set('frameworkErr', null);
+                return;
+            }
+
+
+
+
+
             error_log("Get New GUID - $GUID");
 
             if ($PAT_ID) {
                 $InfuseReactLinkID = $this->_getInfuseReactLink($PAT_ID, $InfuseReactRecordID);
                 if($this->checkForErrors('Get ND_ReactAssess Link Records Failed. ', $InfuseReactLinkID)){
+                    error_log("ReactAssess - ERROR");
                     $this->set('jsonRecord', null);
                     return;
                 }
                 foreach ($InfuseReactLinkID as $InfuseReactLink) {
                     $InfuseReactDetails = $this->_getInfuseReactDetails($InfuseReactLink['id']);
                     if($this->checkForErrors('Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink)){
+                        error_log("ReactAssess Details - ERROR");
                         $this->set('jsonRecord', null);
                         return;
                     }
@@ -1023,24 +1084,12 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
                     $InfuseReact['InfuseReactLink']['Details'] = $InfuseReactDetails;
                     array_push($ReactAssessRecords, $InfuseReact);
                 }
+                $jsonRecord['total'] = count($ReactAssessRecords);
                 $jsonRecord['records'] = $ReactAssessRecords;
                 $this->set('jsonRecord', $jsonRecord);
                 $this->set('frameworkErr', null);
                 return;
             }
-/**
-                foreach ($assessmentID as $assessmentLink) {
-                    $assessmentDetails = $this->_getAssessmentDetails($assessmentLink['id']);
-                    if($this->checkForErrors('Get ND_Assessment Details Records Failed. ', $assessmentLink)){
-                        $this->set('jsonRecord', null);
-                        return;
-                    }
-                    $assessment['assessmentLink'] = $assessmentLink;
-                    $assessment['assessmentLink']['Details'] = $assessmentDetails;
-                    array_push($AssessmentRecords, $assessment);
-                }
-                $jsonRecord['records'] = $AssessmentRecords;
-**/
             $jsonRecord['msg'] = "No Infusion Reaction records to find";
             $this->set('jsonRecord', $jsonRecord);
             $this->set('frameworkErr', null);
@@ -1103,7 +1152,7 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'] . ")";
             $this->set('jsonRecord', $jsonRecord);
             return;
         }
@@ -1176,6 +1225,7 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
         $AEHREcords['Assessments'] = $AssessmentRecords;
         $AEHREcords['ReactAssessments'] = $ReactAssessRecords;
         $jsonRecord['totalEvents'] = $AEHCounter;
+        $jsonRecord['total'] = count($AEHREcords);
         $jsonRecord['records'] = $AEHREcords;
 
         $this->set('jsonRecord', $jsonRecord);
@@ -1203,7 +1253,6 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($records);
-            
             $jsonRecord['records'] = $records;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -1269,7 +1318,6 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($records);
-            
             $jsonRecord['records'] = $records;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -1335,7 +1383,6 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($records);
-            
             $jsonRecord['records'] = $records;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -1395,7 +1442,6 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
             
             $jsonRecord['success'] = 'true';
             $jsonRecord['total'] = count($records);
-            
             $jsonRecord['records'] = $records;
             
             $this->set('jsonRecord', $jsonRecord);
@@ -1421,7 +1467,6 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
             
         $jsonRecord['success'] = 'true';
         $jsonRecord['total'] = count($records);
-
         $jsonRecord['records'] = $records;
 
         $this->set('jsonRecord', $jsonRecord);
@@ -1547,7 +1592,7 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for $ErrMsg Service (expected a GET/POST/PUT got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for $ErrMsg Service (expected a GET/POST/PUT got a " . $_SERVER['REQUEST_METHOD'] . ")";
             $this->set('jsonRecord', $jsonRecord);
             return;
         }
@@ -1598,7 +1643,7 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
         }
         else {
             $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
+            $jsonRecord['msg'] = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'] . ")";
             $this->set('jsonRecord', $jsonRecord);
             return;
         }

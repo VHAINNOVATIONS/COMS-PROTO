@@ -451,8 +451,6 @@ class LookupController extends Controller {
                 return;
             }
 
-
-
             $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
             switch($EmoLevel[0]) {
                 case "Low":
@@ -505,68 +503,30 @@ class LookupController extends Controller {
 
 
             $retVal = $this->LookUp->getHydrations($id, 'pre');
-/* Removed the checks for records because sometimes we do not have all the meds.
-            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
-                $this->set('templatedata', null);
-                return;
-            }
-
-            if (count($retVal) <= 0) {
-                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
-                $this->set('templatedata', null);
-                return;
-            }
-            if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
-                $this->set('templatedata', null);
-               return;
-            }*/
             $prehydrations = $retVal;
             $infusionMap = array();
-
             foreach ($prehydrations as $prehydration) {
                 $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
                 $infusionMap[$prehydration['id']] = $infusions;
             }
-
             $this->set('prehydrations', $prehydrations);
             $this->set('preinfusions', $infusionMap);
 
 
+
+
             $retVal = $this->LookUp->getHydrations($id, 'post');
             $posthydrations = $retVal;
-
-            /*removed checks, sometimes null is ok
-			if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
-                $this->set('templatedata', null);
-                return;
-            }
-            if (count($retVal) <= 0) {
-                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
-                $this->set('templatedata', null);
-                return;
-            }
-            if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
-                $this->set('templatedata', null);
-                return;
-            }
-            */
-            
             $infusionMap = array();
-
             foreach ($posthydrations as $posthydration) {
                 $infusions = $this->LookUp->getMHInfusions($posthydration['id']);
                 $infusionMap[$posthydration['id']] = $infusions;
             }
-
             $this->set('posthydrations', $posthydrations);
             $this->set('postinfusions', $infusionMap);
 
-
             
             $retVal = $this->LookUp->getRegimens($id);
-
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -583,6 +543,22 @@ class LookupController extends Controller {
             }
             $this->set('regimens', $retVal);
 
+
+            $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
+            if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
+                $CumulativeDoseMedsInRegimen = array();
+                if (count($CumulativeDoseMedsList) > 0 ) {
+                    foreach ($retVal as $aDrug) {
+                        $drugID = $aDrug["drugid"];
+                        foreach($CumulativeDoseMedsList as $CDMed) {
+                            if ($CDMed["MedID"] == $drugID) {
+                                $CumulativeDoseMedsInRegimen[] = $CDMed;
+                            }
+                        }
+                    }
+                }
+                $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
+            }
 
         } else {
             $this->set('templatedata', null);
@@ -1778,6 +1754,34 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
 ) ON [PRIMARY]
  ***/
 
+    function _getAllCumulativeDoseMeds($ID) {
+        $query = "Select 
+              CDM.ID,
+              CDM.MedID,
+              CDM.CumulativeDoseAmt,
+              CDM.CumulativeDoseUnits as UnitsID,
+              LU.Name as MedName,
+              LU2.Name as CumulativeDoseUnits
+              from CumulativeDoseMeds CDM
+              join Lookup LU on CDM.MedID = LU.Lookup_ID
+              join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
+        if ($ID) {
+            $query .= "where ID = '$ID' order by LU.Name";
+        }
+        else {
+            $query .= "order by LU.Name";
+        }
+        return $query;
+    }
+
+    function _LookupCumulativeDoseMeds($ID) {
+        $query = $this->_getAllCumulativeDoseMeds($ID);
+        error_log("Got Query - $query");
+        $retVal = $this->LookUp->query($query);
+        return $retVal;
+    }
+
+
     function CumulativeDoseMeds($ID = null) {
         $Msg = "Cumulative Dose Meds";
         $jsonRecord = array();
@@ -1797,26 +1801,11 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
 
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-                $query = "Select 
-                  CDM.ID,
-                  CDM.MedID,
-                  CDM.CumulativeDoseAmt,
-                  CDM.CumulativeDoseUnits as UnitsID,
-                  LU.Name as MedName,
-                  LU2.Name as CumulativeDoseUnits
-                  from CumulativeDoseMeds CDM
-                  join Lookup LU on CDM.MedID = LU.Lookup_ID
-                  join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
-            if ($ID) {
-                $query .= "where ID = '$ID' order by LU.Name";
-            }
-            else {
-                $query .= "order by LU.Name";
-            }
-
+            $query = $this->_getAllCumulativeDoseMeds($ID);
             error_log("$query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
+            $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
 

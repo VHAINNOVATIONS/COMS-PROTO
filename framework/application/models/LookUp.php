@@ -1015,22 +1015,61 @@ class LookUp extends Model {
                 ORDER BY $orderBy
         ";
                 break;
-            default:
-        $query = "
-            SELECT id=Lookup_ID, 
-                type=Lookup_Type, 
-                Name, 
-                Description 
+            case "DRUG":
+                $query = "
+                    SELECT id=Lookup_ID, 
+                        type=Lookup_Type, 
+                        Name, 
+                        Description 
+                        FROM LookUp 
+                        WHERE Lookup_Type = ( 
+                            SELECT 
+                                l.Lookup_Type_ID 
+                                FROM LookUp l 
+                                WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
+                        ORDER BY 'Name'
+                ";
+                break;
+
+
+
+            case "DRUGSINPATIENT":
+                $query = "SELECT 
+                distinct RTRIM(LTRIM(Name)) Name, 
+                Lookup_ID as id,
+                Lookup_Type as type,
+                Description
                 FROM LookUp 
-                WHERE Lookup_Type = ( 
-                    SELECT 
-                        l.Lookup_Type_ID 
-                        FROM LookUp l 
-                        WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
-                ORDER BY $orderBy
-        ";
+                WHERE Lookup_Type = 2 AND upper(Description) = 'INPATIENT'
+                ORDER BY Name";
+                break;
+            case "DRUGSOUTPATIENT":
+                $query = "SELECT 
+                distinct RTRIM(LTRIM(Name)) Name, 
+                Lookup_ID as id,
+                Lookup_Type as type,
+                Description
+                FROM LookUp 
+                WHERE Lookup_Type = 2 AND upper(Description) = 'OUTPATIENT'
+                ORDER BY Name";
+                break;
+            default:
+                $query = "
+                    SELECT id=Lookup_ID, 
+                        type=Lookup_Type, 
+                        Name, 
+                        Description 
+                        FROM LookUp 
+                        WHERE Lookup_Type = ( 
+                            SELECT 
+                                l.Lookup_Type_ID 
+                                FROM LookUp l 
+                                WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
+                        ORDER BY $orderBy
+                ";
                 break;
         }
+        error_log("getDataForJson - $query");
         return $this->query($query);
     }
 

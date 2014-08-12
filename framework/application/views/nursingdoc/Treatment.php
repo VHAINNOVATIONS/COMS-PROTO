@@ -1,3 +1,3 @@
 <?php
-
-echo json_encode($jsonRecord);
+    echo json_encode($jsonRecord);
+?>
