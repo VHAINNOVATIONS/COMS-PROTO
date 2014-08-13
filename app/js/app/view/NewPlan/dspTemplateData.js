@@ -184,7 +184,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						msg += "<tr class=\"TemplateHeader\"><th>Medication Name</th><th>Lifetime Max</th><th>Total / Cycle</th><th>Total / Regimen</th></tr>";
 						for (i = 0; i < len; i++) {
 							cdmir = cdmirList[i];
-							var cdmirUnits = cdmir.CumDosePerCycleUnits;
+							var cdmirUnits = cdmir.CumulativeDoseUnits;
 							var m0 = cdmir.MedName;
 							var m1 = cdmir.CumulativeDoseAmt + " " + cdmirUnits;
 							var m2 = cdmir.CumDosePerCycle + " " + cdmirUnits;
