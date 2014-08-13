@@ -198,9 +198,10 @@ Ext.URLs.DiseaseStage = "/LookUp/DiseaseStage";
 // Example Usage - https://devtest.dbitpro.com/LookUp/DiseaseStage/C884F3AA-0B21-E111-BF57-000C2935B86F
 
 Ext.URLs.Lookups = "/LookUp/viewall";
-
 Ext.URLs.AddLookup = "/LookUp/save"; //KD - 12/20/11 - new URI associated with adding data to the lookup table
-Ext.URLs.DeleteLookup = "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
+Ext.URLs.DeleteLookup = "/LookUp/save";		// "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
+
+
 Ext.URLs.References = "/LookUp/view/References"; // MWB - 12/27/2011 - Moved from local to SQL Data Store
 Ext.URLs.HydrationDrug = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydration drug listing
 //Ext.URLs.Drugs = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
@@ -612,6 +613,7 @@ Ext.require([
 	"COMS.controller.Management.DiseaseStaging",
 	"COMS.controller.Management.IntelligentDataElements",
 	"COMS.controller.Management.Toxicity",
+	"COMS.controller.Management.AddLookups",
 	"COMS.controller.Management.CumulativeDosing",
 
 	"COMS.controller.Messages.MessagesTab",
@@ -1616,6 +1618,7 @@ Ext.application({
 		, "Management.DiseaseStaging"
 		, "Management.IntelligentDataElements"
 		, "Management.Toxicity"
+		, "Management.AddLookups"
 		, "Management.CumulativeDosing"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"

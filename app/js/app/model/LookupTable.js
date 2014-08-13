@@ -1,11 +1,6 @@
 Ext.define('COMS.model.LookupTable', {
 	extend: 'Ext.data.Model',
-	fields: [
-		{ name: 'id', type: 'string'},
-		{ name: 'value', type: 'string'},		// should this sometimes be "name"?
-		{ name: 'description', type: 'string'},
-		{ name: 'lookupid', type:'string'}
-	],
+	fields: [ "id", "value", "description", "lookupid" ],
 	proxy: {
 		type: 'rest',
 		api: {

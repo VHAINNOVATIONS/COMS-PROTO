@@ -80,52 +80,54 @@ class LookupController extends Controller {
     
 
     function save() {
-        if (isset($_POST)) {
-            $id = $_POST["id"];
-            $name = $_POST["value"];
-            $description = $_POST["description"];
-            if (isset($_POST["lookupid"])) {
-                $lookupid = $_POST["lookupid"];
-            }
+        error_log("Lookup Save - ");
+        $Msg = "Generic Save";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $name = $description = $id = $lookupid = "";
+
+        $tmp = json_decode(file_get_contents("php://input"));
+        if(isset($tmp->value)) {
+            $name = $tmp->value;
+            $name = $this->escapeString($name);
+        }
+        if(isset($tmp->description)) {
+            $description = $tmp->description;
+            $description = $this->escapeString($description);
+        }
+        if(isset($tmp->id)) {
+            $id = $tmp->id;
+        }
+        if(isset($tmp->lookupid)) {
+            $lookupid = $tmp->lookupid;
+        }
+
+        if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE LookUp SET Name ='$name', Description = '$description' WHERE Lookup_ID = '$id'";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT into LookUp (Lookup_Type, Name, Description) values ('$lookupid','$name','$description')";
+
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from LookUp WHERE Lookup_ID = '$id'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
         }
         else {
-            $form_data = json_decode(file_get_contents('php://input'));
-            $id = $form_data->{'id'};
-            $name = $form_data->{'value'};
-            $description = $form_data->{'description'};
-            $lookupid = $form_data->{'lookupid'};
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a POST, PUT or DELETE got a " . $_SERVER['REQUEST_METHOD'];
         }
 
-        $this->LookUp->beginTransaction();
-        
-        if (strlen($lookupid) == 0) {
+        error_log("save() = $query");
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)");
 
-            $retVal = $this->LookUp->save($id, $name, $description);
-            
-            if($this->checkForErrors('Insert Lookup Failed. ', $retVal)){
-                $this->LookUp->rollbackTransaction();
-                return;
-            }
-            
-            $lookupid = $retVal[0]['lookupid'];
-            $this->set('lookupid', $retVal);
-            
-            if(null == $lookupid){
-                $this->set('actuallookupid', $retVal[0]['actualLookupId']);
-            }
-
-        } else {
-            $this->set('lookupid', $this->LookUp->update($id, $lookupid, $name, $description));
-        }
-
-        $this->set('savedid', $id);
-        $this->set('savedname', $name);
-        $this->set('savedescription', $description);
-		$this->set('frameworkErr', null);
-		
-		$this->LookUp->endTransaction();
-
-	}
+    }
 
     /*
      *
@@ -1780,6 +1782,7 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
         $retVal = $this->LookUp->query($query);
         return $retVal;
     }
+
 
 
     function CumulativeDoseMeds($ID = null) {

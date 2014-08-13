@@ -797,17 +797,17 @@ class LookUp extends Model {
     }
 
     function update($id, $lookupid, $name, $description) {
-
-        $query = "Select Lookup_ID as lookupid from LookUp where Lookup_Type = '" . $id . "' and Name ='" . $name . "' and Description ='" . $description . "'";
+        $query = "Select Lookup_ID as lookupid from LookUp where Lookup_Type = '$id' and Name ='$name' and Description ='$description'";
         $exists = $this->query($query);
 
         if ($exists) {
-            $query = "Select null as lookupid from LookUp where Lookup_Type = '" . $id . "' and Name ='" . $name . "' and Description ='" . $description . "'";
+            $query = "Select null as lookupid from LookUp where Lookup_Type = '$id' and Name ='$name' and Description ='$description'";
             return $this->query($query);
         }
 
-        $query = "UPDATE LookUp SET Name ='" . $name . "', Description = '" . $description . "' " .
-                "WHERE Lookup_ID = '" . $lookupid . "'";
+        $query = "UPDATE LookUp SET Name ='$name', Description = '$description' WHERE Lookup_ID = '$lookupid'";
+
+        error_log("Update Query = $query");
         $this->query($query);
 
         $query = "Select Lookup_ID as lookupid from LookUp where Lookup_ID = '" . $lookupid . "'";
@@ -816,9 +816,7 @@ class LookUp extends Model {
     }
 
     function delete($lookupid, $name, $description) {
-
-        $query = "DELETE FROM LookUp where Lookup_ID = '" . $lookupid . "'";
-
+        $query = "DELETE FROM LookUp where Lookup_ID = '$lookupid'";
         return $this->query($query);
     }
 
