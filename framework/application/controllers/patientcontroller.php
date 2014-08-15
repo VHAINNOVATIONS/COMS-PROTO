@@ -2198,7 +2198,7 @@ Data:
         $jsonRecord['success'] = true;
         $query = "";
 
-        $DataTable = "Patient_CumulativeDoseHistory_TEST";
+        $DataTable = "Patient_CumulativeDoseHistory";
         $GUID = "";
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
