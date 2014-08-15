@@ -2142,14 +2142,16 @@ INSERT INTO [COMS_TEST_2].[dbo].[LookUp]
            (0, 60, 'Cumulative Dosing Meds', 'Medication ID')
 
 
-// 7/1/2014 - MWB - Cumulative Dose Tracking SQL Table
-USE [COMS_TEST_2]
-CREATE TABLE [dbo].[Patient_CumulativeDoseHistory](
-      [ID] [uniqueidentifier] NOT NULL,
+// 8/14/2014 - MWB - Cumulative Dose Tracking SQL Table
+USE [COMS_TEST_5]
+CREATE TABLE [dbo].[Patient_CumulativeDoseHistory_TEST](
+      [ID] [uniqueidentifier] DEFAULT (newsequentialid()),
       [Patient_ID] [uniqueidentifier] NOT NULL,
       [MedID] [uniqueidentifier] NOT NULL,
       [CumulativeDoseAmt] [varchar](30) NOT NULL,
-      [CumulativeDoseUnits] [varchar](30) NOT NULL,
+      [CumulativeDoseUnits] [uniqueidentifier] NOT NULL,
+      [Source] [varchar](max),
+      [AdministeredByCOMS] [bit] DEFAULT 0,
       [Date_Changed] [datetime] DEFAULT (getdate()),
       [Author] [varchar](30) NULL
 ) ON [PRIMARY]
@@ -2196,7 +2198,7 @@ Data:
         $jsonRecord['success'] = true;
         $query = "";
 
-        $DataTable = "Patient_CumulativeDoseHistory";
+        $DataTable = "Patient_CumulativeDoseHistory_TEST";
         $GUID = "";
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
@@ -2218,6 +2220,7 @@ Data:
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
 error_log("CumulativeDoseTracking - GET");
             if ($PatientID) {
+/**
                 $partialQuery = "SELECT 
                    dt.CumulativeDoseAmt, 
                    dt.CumulativeDoseUnits, 
@@ -2231,16 +2234,87 @@ error_log("CumulativeDoseTracking - GET");
                    join LookUp lu1 on lu1.Lookup_ID = dt.MedID
                    join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
                    where Patient_ID = '$PatientID'";
+ **/
+$partialQuery = "SELECT 
+    dt.CumulativeDoseAmt, 
+    dt.CumulativeDoseUnits, 
+    dt.Source,
+    dt.MedID,
+    dt.Author,
+    lu1.Name as MedName,
+    lu2.Name as Units,
+    cdm.CumulativeDoseAmt as MaxCDA,
+    lu3.name as CDAUnits,
+    CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
+    from $DataTable dt
+    join LookUp lu1 on lu1.Lookup_ID = dt.MedID
+    join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
+    join CumulativeDoseMeds cdm on cdm.MedID = dt.MedID
+    join LookUp lu3 on lu3.Lookup_ID = cdm.CumulativeDoseUnits
+    where Patient_ID = '$PatientID'";
+
                 if ($cdhRecordID) {
-                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by Name asc";
+                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by MedName asc, AdministeredByCOMS asc";
                 }
                 else {
-                    $query =  $partialQuery;
+                    $query =  $partialQuery . " order by MedName asc, AdministeredByCOMS asc";
                 }
             }
             error_log("CumulativeDoseTracking Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";
+
+
+
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->Patient->rollbackTransaction();
+            }
+            else {
+                $CumDoseMedList = array();
+                $CumDoseMedInfo = array();
+                $CurCumDoseList = array();
+                $CurCumDoseMed = "";
+                foreach ($retVal as $MedEntry) {
+                    // echo $MedEntry["MedID"] . "<br>";
+                    if ($MedEntry["MedID"] !== $CurCumDoseMed) {
+                        if ("" !== $CurCumDoseMed) {
+                            $CumDoseMedInfo["CurCumDoseAmt"] = $CurCumDoseAmt;
+                            // echo json_encode($CumDoseMedInfo) . "<br>";
+                            $CumDoseMedList[] = $CumDoseMedInfo;
+                        }
+                        $CurCumDoseMed = $MedEntry["MedID"];
+                        $CurCumDoseAmt = 0;
+                        $CumDoseMedInfo = array( "MedName" => $MedEntry["MedName"],"MedMaxDose" => $MedEntry["MaxCDA"], "MedMaxDoseUnits" => $MedEntry["CDAUnits"], "CurCumDoseList" => array());
+                    }
+                    $CurCumDoseAmt += $MedEntry["CumulativeDoseAmt"];
+                    $CumDoseMedInfo["CurCumDoseAmt"] = $CurCumDoseAmt;
+                    $CumDoseMedInfo["CurCumDoseList"][] = array(
+                        "CumulativeDoseAmt" => $MedEntry["CumulativeDoseAmt"], 
+                        "Units" => $MedEntry["Units"], 
+                        "Source" => $MedEntry["Source"]
+                        );
+                }
+                $CumDoseMedList[] = $CumDoseMedInfo;
+                // echo json_encode($CumDoseMedList) . "<br>";
+                // echo "<br><br><br>";
+
+
+
+                $jsonRecord['success'] = 'true';
+                if (count($CumDoseMedList) > 0) {
+                    unset($jsonRecord['msg']);
+                    $jsonRecord['total'] = count($CumDoseMedList);
+                    $jsonRecord['records'] = $CumDoseMedList;
+                }
+            }
+            $query = "";
+
+
+
+
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
 error_log("CumulativeDoseTracking - POST");

@@ -775,5 +775,16 @@ table.FlowsheetTable {
 	font-size: 100%;
 	font-weight: bold!important;
 	color: red;
-	text-align: center!important;
+	text-align: left!important;
+}
+
+.HighlightedInfoTable {
+	border: thick solid blue!important;
+	margin-top: 1em!important;
+	margin-bottom: 1em!important;
+}
+
+.cdtEm {
+	font-weight: bold;
+	color: red;
 }

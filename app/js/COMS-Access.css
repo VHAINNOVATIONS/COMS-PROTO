@@ -812,5 +812,15 @@ table.FlowsheetTable {
 .smlTCDWarning {
 	font-size: 100%;
 	font-weight: bold!important;
-	text-align: center!important;
+	text-align: left!important;
+}
+
+.HighlightedInfoTable {
+	border: thick solid!important; 
+	margin-top: 1em!important; 
+	margin-bottom: 1em!important;
+}
+
+.cdtEm {
+	font-weight: bold;
 }

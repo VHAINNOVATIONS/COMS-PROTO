@@ -4,6 +4,11 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	stores : [ "DiseaseType", "DiseaseStage" ],
 	views : [ "Common.selDisease", "Common.selDiseaseStage" ],
 
+	refs: [
+		{ "ref" : "HistoricalDoseUnits",				selector: "puWinAddCumDose component[name=\"HistoricalDoseUnits\"]" },
+		{ "ref" : "MedMaxAllowable",					selector: "puWinAddCumDose component[name=\"MedMaxAllowable\"]" }
+	],
+
 	init: function() {
 		this.control({
 			"puWinAddCumDose button[text=\"Cancel\"]" : {
@@ -11,63 +16,73 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			},
 			"puWinAddCumDose button[text=\"Save\"]" : {
 				click: this.Save
-			}
+			},
+			"puWinAddCumDose combobox[name=\"value\"]" : {
+				"change" : this.ChangeSelection
+			} 
 		});
 	},
 
-	addNewRecord : function(fields) {
-		var len = fields.length;
-		var i, v1, v2, fld;
-		var newRecord = {};
-		for (i = 0; i < len; i++) {
-			fld = fields.getAt(i);
-			v1 = "";
-			v2 = "";
-			if ("combobox" === fld.xtype) {
-				v1 = fld.getValue();
-				v2 = fld.getRawValue();
-				if ("value" == fld.name) {
-					newRecord.MedName = v2;
-					newRecord.MedID = v1;
-				}
-				else if ("Units" == fld.name) {
-					newRecord.Units = v2;
-					newRecord.CumulativeDoseUnits = v1;
-				}
-			}
-			else {
-				v1 = fld.getValue();
-				if ("LifetimeDose" === fld.name) {
-					newRecord.CumulativeDoseAmt = v1;
-				}
-				else if ("Source" === fld.name) {
-					newRecord.Source = v1;
-				}
-			}
-		}
-		if (this.application.Patient.CumulativeDoseTracking) {
-			this.application.Patient.CumulativeDoseTracking.push(newRecord);
-		}
-		else {
-			this.application.Patient.CumulativeDoseTracking = [];
-			this.application.Patient.CumulativeDoseTracking.push(newRecord);
-		}
 
+	ChangeSelection : function(combo, nvalue) {
+		var theStore = combo.getStore();
+		var theRecord = theStore.findRecord("MedID", nvalue);
+		if (theRecord) {
+			this.theData = theRecord.getData();
+			var theUnits = this.theData.CumulativeDoseUnits;
+			var theAmt = this.theData.CumulativeDoseAmt;
+			var theField = this.getHistoricalDoseUnits();
+			var theInfo = this.getMedMaxAllowable();
+			if (theField) {
+				theField.update("&nbsp; in " + theUnits);
+			}
+			if (theInfo) {
+				theInfo.update("Max Allowable Lifetime Cumulative Dosage is " + theAmt + " " + theUnits);
+			}
+		}
 	},
+
 
 	_submitForm : function(form) {
 		form.url += "/" + this.application.Patient.id;
-		this.addNewRecord(form.getFields());
+		form.setValues({
+			"Units" : this.theData.UnitsID,
+			"CumulativeDoseUnits" : this.theData.CumulativeDoseUnits
+		});
 		form.submit(
 			{
 				scope : this,
 				success: function(form, action) {
-					form.owner.up("window").hide();
+					var theInfo = this.getMedMaxAllowable();
+					if (theInfo) {
+						theInfo.update("");
+					}
+					var theField = this.getHistoricalDoseUnits();
+					if (theField) {
+						theField.update("");
+					}
+
+					form.owner.up("window").close();		// hide();
 					form.reset();
-					
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var thePITable = thisCtl.getPatientInfoTableInformation();
-					thePITable.update( this.application.Patient );
+					// Refresh the patient info table with latest data from DB
+					Ext.Ajax.request({
+						scope : this,
+						url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+						success: function( response, opts ){
+							var text = response.responseText;
+							var resp = Ext.JSON.decode( text );
+							if (resp.success) {
+								var recs;
+								if (resp.records) {
+									recs = resp.records; 
+									this.application.Patient.CumulativeDoseTracking = recs;
+									var thisCtl = this.getController("NewPlan.NewPlanTab");
+									var thePITable = thisCtl.getPatientInfoTableInformation();
+									thePITable.update( this.application.Patient );
+								}
+							}
+						}
+					});
 				},
 				failure: function(form, action) {
 					switch (action.failureType) {
@@ -90,6 +105,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	Save : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
+			this._submitForm(theForm);
+/*** Dup check no longer works as the returning data from the call has changed, but we no longer need to do a dup check - MWB 8/14/2014
 			Ext.Ajax.request({
 				scope : this,
 				pForm : theForm,
@@ -123,6 +140,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 					alert("ERROR: Saving Patient Cumulative Medication Dosing History");
 				}
 			});
+***/
 		}
 	},
 	Cancel : function(btn) {

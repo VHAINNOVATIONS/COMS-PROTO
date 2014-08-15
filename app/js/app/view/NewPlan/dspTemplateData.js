@@ -34,9 +34,6 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				"</tpl></table>",
 			"</td></tr>",
 
-
-"<tr><th>Cumulative Medications:</th><td>{[this.CumDoseMeds( values, parent )]}</td></tr>",
-
 		"</table>",
 
 		"<table border=\"1\" class=\"InformationTable\">",
@@ -57,10 +54,13 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
 					"<td>{Infusion1}{[this.optionalData(values.Infusion2, \"\")]}</td>",
 					"<td>{Day}</td>",
-					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>over {NumAdminDays} Admin Days per Cycle <br> resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", */
+					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>
+					   over {NumAdminDays} Admin Days per Cycle <br> 
+					   resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", 
+					 */
 				"</tr>",
 				"<tr>",
-					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{FluidType1} {FluidVol}</td>",
+					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{[this.dspInfusionFluid(values)]}</td>",
 					"<th class=\"NoBorder\">Infusion Time: </th><td class=\"NoBorder\">{InfusionTime1}</td>",
 				"</tr>",
 				"<tpl if=\"''!== Instructions\">",
@@ -70,14 +70,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 		"</table>",
 
 
-
-
-
-
-
-
-
-		"<table border=\"1\" class=\"InformationTable\" style=\"border: thick solid blue; margin-top: 1em; margin-bottom: 1em;\">",
+		"<table border=\"1\" class=\"InformationTable HighlightedInfoTable\">",
 			"<tr><th colspan=\"5\" style=\"text-align: left; border: none !important;\"><h2 style=\"text-align: left;\">Therapy</h2></th><tr>",
 			"<tr><th colspan=\"5\" style=\"text-align: left; border: none !important; font-weight: normal;\">Instructions: {RegimenInstruction}</th><tr>",
 
@@ -97,10 +90,13 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					"<td>{Amt} {Units}</td>",
 					"<td>{Route}</td>",
 					"<td>{Day}</td>",
-					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>over {NumAdminDays} Admin Days per Cycle <br> resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", */
+					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>
+					   over {NumAdminDays} Admin Days per Cycle <br> 
+					   resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", 
+					 */
 				"</tr>",
 				"<tr>",
-					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{FluidType} {FluidVol}</td>",
+					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{[this.dspInfusionFluid(values)]}</td>",
 					"<th class=\"NoBorder\">Infusion Time: </th><td class=\"NoBorder\">{InfusionTime}</td>",
 				"</tr>",
 				"<tpl if=\"''!== Instructions\">",
@@ -142,7 +138,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>over {NumAdminDays} Admin Days per Cycle <br> resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", */
 				"</tr>",
 				"<tr>",
-					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{FluidType1} {FluidVol}</td>",
+					"<th class=\"NoBorder\">Fluid/Volume: </th><td class=\"NoBorder\">{[this.dspInfusionFluid(values)]}</td>",
 					"<th class=\"NoBorder\">Infusion Time: </th><td class=\"NoBorder\">{InfusionTime1}</td>",
 				"</tr>",
 				"<tpl if=\"''!== Instructions\">",
@@ -151,73 +147,84 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"</tpl>",
 		"</table>",
 
+"<table border=\"1\" class=\"InformationTable HighlightedInfoTable\">",
+"<tr><th>Cumulative Medications:</th><td>{[this.CumDoseMeds( values, parent )]}</td></tr>",
+"</table>",
 
 		{
-					// XTemplate Configuration
-				disableFormats: true,
-				debuggerFcn : function ( current, prev ) {
-					// debugger;
-				},
-				optionalData: function (data, data2) {
-					if ("" !== data) {
-						return ("<br /><em>" + data + " " + data2 + "</em>");
+				// XTemplate Configuration
+			disableFormats: true,
+			debuggerFcn : function ( current, prev ) {
+				// debugger;
+			},
+			optionalData: function (data, data2) {
+				if ("" !== data) {
+					return ("<br /><em>" + data + " " + data2 + "</em>");
+				}
+				return ("");
+			},
+			dspInfusionFluid : function( data ) {
+				if (data.FluidType && "" !== data.FluidType) {
+					return data.FluidType + " " + data.FluidVol + " ml";
+				}
+				else if (data.FluidType1 && "" !== data.FluidType1) {
+					return data.FluidType1 + " " + data.FluidVol1 + " ml";
+				}
+			},
+			CumDoseMeds : function ( current, prev ) {
+				// debugger;
+				var i, msg, medStr, cdmir, cdmirList = current.CumulativeDoseMedsInRegimen, len = cdmirList.length;
+				msg = "No Cumulative Dose Tracked Medications in this Regimen";
+
+				if (len > 0) {
+					if (1 === len) {
+						msg = "There is";
+						medStr = "Medication";
 					}
-					return ("");
-				},
-				CumDoseMeds : function ( current, prev ) {
-					// debugger;
-					var i, msg, medStr, cdmir, cdmirList = current.CumulativeDoseMedsInRegimen, len = cdmirList.length;
-					msg = "No Cumulative Dose Tracked Medications in this Regimen";
+					else {
+						msg = "There are";
+						medStr = "Medications";
+					}
 
-					if (len > 0) {
-						if (1 === len) {
-							msg = "There is";
-							medStr = "Medication";
-						}
-						else {
-							msg = "There are";
-							medStr = "Medications";
-						}
+					msg = " " + len + " Cumulative Dose Tracked " + medStr + " in this Regimen";
+					msg += "<table class=\"InformationTable\">";
+					msg += "<tr class=\"TemplateHeader\"><th>Medication Name</th><th>Lifetime Max</th><th>Total / Cycle</th><th>Total / Regimen</th></tr>";
+					for (i = 0; i < len; i++) {
+						cdmir = cdmirList[i];
+						var cdmirUnits = cdmir.CumulativeDoseUnits;
+						var m0 = cdmir.MedName;
+						var m1 = cdmir.CumulativeDoseAmt + " " + cdmirUnits;
+						var m2 = cdmir.CumDosePerCycle + " " + cdmirUnits;
+						var m3 = cdmir.CumDosePerRegimen + " " + cdmirUnits;
 
-						msg = " " + len + " Cumulative Dose Tracked " + medStr + " in this Regimen";
-						msg += "<table class=\"InformationTable\">";
-						msg += "<tr class=\"TemplateHeader\"><th>Medication Name</th><th>Lifetime Max</th><th>Total / Cycle</th><th>Total / Regimen</th></tr>";
-						for (i = 0; i < len; i++) {
-							cdmir = cdmirList[i];
-							var cdmirUnits = cdmir.CumulativeDoseUnits;
-							var m0 = cdmir.MedName;
-							var m1 = cdmir.CumulativeDoseAmt + " " + cdmirUnits;
-							var m2 = cdmir.CumDosePerCycle + " " + cdmirUnits;
-							var m3 = cdmir.CumDosePerRegimen + " " + cdmirUnits;
-
-							msg += "<tr>";
-							msg += "<td>" + m0 + "</td>";
-							msg += "<td>" + m1 + "</td>";
-							msg += "<td>" + m2 + "</td>";
-							msg += "<td>" + m3 + "</td>";
-							msg += "</tr>";
-							var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
-							if (cdtLen > 0) {
-								var i, cdt, cdtMed, exceeds, xxx;
-								for (i = 0; i < cdtLen; i++) {
-									cdt = COMS.Patient.CumulativeDoseTracking[i];
-									cdtMed = cdt.MedID;
-									if (cdtMed === cdmir.MedID) {
-										exceeds = (1 * cdt.CumulativeDoseAmt) + (1 * cdmir.CumDosePerRegimen);
-										if (exceeds > (1 * cdmir.CumulativeDoseAmt)) {
-											var xeedsByAmt = (exceeds - (1 * cdmir.CumulativeDoseAmt));
-											msg += "<tr><td colspan=\"4\" class=\"smlTCDWarning\">";
-											msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + xeedsByAmt + " " + cdmirUnits;
-											msg += "</td></tr>";
-										}
+						msg += "<tr>";
+						msg += "<td>" + m0 + "</td>";
+						msg += "<td>" + m1 + "</td>";
+						msg += "<td>" + m2 + "</td>";
+						msg += "<td>" + m3 + "</td>";
+						msg += "</tr>";
+						var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
+						if (cdtLen > 0) {
+							var i, cdt, cdtMed, exceeds, xxx;
+							for (i = 0; i < cdtLen; i++) {
+								cdt = COMS.Patient.CumulativeDoseTracking[i];
+								cdtMed = cdt.MedID;
+								if (cdtMed === cdmir.MedID) {
+									exceeds = (1 * cdt.CumulativeDoseAmt) + (1 * cdmir.CumDosePerRegimen);
+									if (exceeds > (1 * cdmir.CumulativeDoseAmt)) {
+										var xeedsByAmt = (exceeds - (1 * cdmir.CumulativeDoseAmt));
+										msg += "<tr><td colspan=\"4\" class=\"smlTCDWarning\">";
+										msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + xeedsByAmt + " " + cdmirUnits;
+										msg += "</td></tr>";
 									}
 								}
 							}
 						}
-						msg += "</table>";
 					}
-					return msg;
+					msg += "</table>";
 				}
+				return msg;
+			}
 		}
 	),
 
