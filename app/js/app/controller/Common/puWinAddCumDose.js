@@ -23,6 +23,25 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		});
 	},
 
+	// Used by internal COMS operations to save info on Administered Medications.
+	SaveNewCumDoseInfo : function( Info ) {
+		//Info : { MedID, UnitsID, Source, AdministeredDose }
+		Ext.Ajax.request({
+			"scope" : this,
+			"url" : Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+			"method" :"POST",
+			"params" : {
+				"Source" : "Administered and tracked via COMS on " + Ext.Date.format(new Date(), "d/m/Y"),
+				"value" : Info.MedID,
+				"LifetimeDose" : Info.AdministeredDose,
+				"Units" : Info.UnitsID,
+				"CumulativeDoseUnits" : Info.UnitsID,
+				"AdministeredByCOMS" : 1
+			},
+			"success" : this.RefreshPatientInfoDetails
+		});
+	},
+
 
 	ChangeSelection : function(combo, nvalue) {
 		var theStore = combo.getStore();
@@ -42,6 +61,58 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		}
 	},
 
+	RefreshPatientInfoDetails : function() {
+		Ext.Ajax.request({
+			scope : this,
+			url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (resp.success) {
+					var recs;
+					if (resp.records) {
+						recs = resp.records; 
+						this.application.Patient.CumulativeDoseTracking = recs;
+						var thisCtl = this.getController("NewPlan.NewPlanTab");
+						var thePITable = thisCtl.getPatientInfoTableInformation();
+						thePITable.update( this.application.Patient );
+					}
+				}
+			}
+		});
+	},
+
+	FormSubmitGood : function(form) {
+		var theInfo = this.getMedMaxAllowable();
+		if (theInfo) {
+			theInfo.update("");
+		}
+		var theField = this.getHistoricalDoseUnits();
+		if (theField) {
+			theField.update("");
+		}
+		if (form.owner.up("window")) {
+			form.owner.up("window").close();		// hide();
+		}
+		form.reset();
+		// Refresh the patient info table with latest data from DB
+		this.RefreshPatientInfoDetails();
+
+	},
+	FormSubmitBad : function(form, action) {
+		switch (action.failureType) {
+			case Ext.form.action.Action.CLIENT_INVALID:
+				Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+				break;
+			case Ext.form.action.Action.CONNECT_FAILURE:
+				Ext.Msg.alert('Failure', 'Ajax communication failed');
+				break;
+			case Ext.form.action.Action.SERVER_INVALID:
+			   Ext.Msg.alert('Failure', action.result.msg);
+		}
+		form.owner.up("window").hide();
+		form.reset();
+	},
 
 	_submitForm : function(form) {
 		form.url += "/" + this.application.Patient.id;
@@ -52,95 +123,30 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		form.submit(
 			{
 				scope : this,
-				success: function(form, action) {
-					var theInfo = this.getMedMaxAllowable();
-					if (theInfo) {
-						theInfo.update("");
-					}
-					var theField = this.getHistoricalDoseUnits();
-					if (theField) {
-						theField.update("");
-					}
-
-					form.owner.up("window").close();		// hide();
-					form.reset();
-					// Refresh the patient info table with latest data from DB
-					Ext.Ajax.request({
-						scope : this,
-						url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
-						success: function( response, opts ){
-							var text = response.responseText;
-							var resp = Ext.JSON.decode( text );
-							if (resp.success) {
-								var recs;
-								if (resp.records) {
-									recs = resp.records; 
-									this.application.Patient.CumulativeDoseTracking = recs;
-									var thisCtl = this.getController("NewPlan.NewPlanTab");
-									var thePITable = thisCtl.getPatientInfoTableInformation();
-									thePITable.update( this.application.Patient );
-								}
-							}
-						}
-					});
+				success: function(form) {
+					this.FormSubmitGood(form);
 				},
 				failure: function(form, action) {
-					switch (action.failureType) {
-						case Ext.form.action.Action.CLIENT_INVALID:
-							Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
-							break;
-						case Ext.form.action.Action.CONNECT_FAILURE:
-							Ext.Msg.alert('Failure', 'Ajax communication failed');
-							break;
-						case Ext.form.action.Action.SERVER_INVALID:
-						   Ext.Msg.alert('Failure', action.result.msg);
-				   }
-					form.owner.up("window").hide();
-					form.reset();
+					this.FormSubmitBad(form, action);
 				}
 			}
 		);
 	},
 
 	Save : function(btn) {
+/**
+		Info = { 
+			MedID : "7D95474E-A99F-E111-903E-000C2935B86F", 
+			UnitsID : "AB85F3AA-0B21-E111-BF57-000C2935B86F", 
+			AdministeredDose : 2468
+		};
+		this.SaveNewCumDoseInfo ( Info );
+		return;
+ **/
+
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			this._submitForm(theForm);
-/*** Dup check no longer works as the returning data from the call has changed, but we no longer need to do a dup check - MWB 8/14/2014
-			Ext.Ajax.request({
-				scope : this,
-				pForm : theForm,
-				url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
-				success: function( response, opts ){
-					var selectedMedID = opts.pForm.getValues().value;
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					if (resp.success) {
-						var i, dupMed = false, recs, len;
-						if (resp.records) {
-							recs = resp.records; 
-							len = recs.length;
-							for (i = 0; i < len; i++) {
-								if (recs[i].MedID === selectedMedID) {
-									alert("Duplicate Medication selected. Please select another");
-									dupMed = true;
-									break;
-								}
-							}
-						}
-						if (!dupMed) {
-							this._submitForm(theForm);
-						}
-					}
-					else {
-						alert("ERROR - Saving Patient Cumulative Medication Dosing History");
-					}
-				},
-				failure : function( response, opts ) {
-					alert("ERROR: Saving Patient Cumulative Medication Dosing History");
-				}
-			});
-***/
 		}
 	},
 	Cancel : function(btn) {

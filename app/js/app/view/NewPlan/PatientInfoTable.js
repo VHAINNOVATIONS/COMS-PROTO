@@ -150,17 +150,23 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					buildCumDoseMedInfo : function ( data ) {
 						var CurCumDoseList = data.CurCumDoseList;
 						var len = CurCumDoseList.length;
+						var MedMaxDose = Ext.util.Format.number(("" + data.MedMaxDose).replace(",", ""), "0,0");
+						var CurCumDoseAmt = Ext.util.Format.number(("" + data.CurCumDoseAmt).replace(",", ""), "0,0");
+
 						var buf = "";
 							buf += "<tr>";
-							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + " Maximum<div class=\"cdtEm\"> " + data.MedMaxDose + " " + data.MedMaxDoseUnits + "</div></td>";
-							buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + len + "\">" + data.CurCumDoseAmt + " " + data.MedMaxDoseUnits + "</td>";
+							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + " Maximum<div class=\"cdtEm\"> " + 
+								MedMaxDose + " " + data.MedMaxDoseUnits + "</div></td>";
+							buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + len + "\">" + 
+								CurCumDoseAmt + " " + data.MedMaxDoseUnits + "</td>";
 
 						var i;
 						for (i = 0; i < len; i++) {
 							if (i > 0) {
 								buf += "<tr>";
 							}
-							buf += "<td style=\"vertical-align: top; text-align: right;\">" + CurCumDoseList[i].CumulativeDoseAmt + " " + CurCumDoseList[i].Units + "</td>";
+							var CumulativeDoseAmt = Ext.util.Format.number(("" + CurCumDoseList[i].CumulativeDoseAmt).replace(",", ""), "0,0");
+							buf += "<td style=\"vertical-align: top; text-align: right;\">" + CumulativeDoseAmt + " " + CurCumDoseList[i].Units + "</td>";
 							buf += "<td style=\"vertical-align: top;\">" + CurCumDoseList[i].Source + "</td>";
 							buf += "</tr>";
 						}

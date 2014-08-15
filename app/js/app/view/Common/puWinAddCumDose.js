@@ -40,7 +40,7 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 						"emptyText" : "Enter Historical dose"
 					},
 					{ "xtype" : "component", "name" : "HistoricalDoseUnits", "margin" : "4 0 0 0", "autoEl" : { "tag" : "span", "html" : "" }},
-					{ "xtype" : "textfield", "name" : "Units", "value" : "Something Strange", "hidden" : true },
+					{ "xtype" : "textfield", "name" : "Units", "hidden" : true },
 					{ "xtype" : "textfield", "name" : "CumulativeDoseUnits", "hidden" : true }
 				]},
 				{ 

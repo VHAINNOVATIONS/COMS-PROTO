@@ -10,6 +10,8 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 		{ "xtype" : "button", "text" : "Debugger" },
 		{ "xtype" : "button", "text" : "Load Treatment Data" },
 		{ "xtype" : "button", "text" : "FS Optional Ques" },
-		{ "xtype" : "button", "text" : "Infusion Reactions" }
+		{ "xtype" : "button", "text" : "Infusion Reactions" },
+		{ "xtype" : "button", "text" : "Refresh Cumulative Dosing" },
+		{ "xtype" : "button", "text" : "Add Cumulative Dosing" }
 	]
 });

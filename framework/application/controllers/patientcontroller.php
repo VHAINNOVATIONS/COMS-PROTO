@@ -858,7 +858,7 @@ class PatientController extends Controller
 	function genOEMData($id) {
 
                 $MicroTime_ST = microtime(true);
-                error_log("genOEMData Entry Point - (Timestamp in MS = $MicroTime_ST)");
+// error_log("genOEMData Entry Point - (Timestamp in MS = $MicroTime_ST)");
 
 
 
@@ -875,7 +875,7 @@ class PatientController extends Controller
 
                 $MicroTime_ST1 = microtime(true);
                 $TimeDiff = $MicroTime_ST1 - $MicroTime_ST;
-                error_log("genOEMData BP1 - (Timestamp in MS = $MicroTime_ST1 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData BP1 - (Timestamp in MS = $MicroTime_ST1 - TimeDiff = $TimeDiff)");
 
 		if (0 == count($templateId)) {
 			$this->set('oemsaved', null);
@@ -896,7 +896,7 @@ class PatientController extends Controller
 
                 $MicroTime_ST2 = microtime(true);
                 $TimeDiff = $MicroTime_ST2 - $MicroTime_ST1;
-                error_log("genOEMData BP2 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData BP2 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
 
 
 		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
@@ -910,7 +910,7 @@ class PatientController extends Controller
 
                 $MicroTime_ST3 = microtime(true);
                 $TimeDiff = $MicroTime_ST3 - $MicroTime_ST2;
-                error_log("genOEMData BP3 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData BP3 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
 
 
 		$masterRecord[0]['DiseaseRecord'] = $Disease;
@@ -929,14 +929,14 @@ class PatientController extends Controller
 
                 $MicroTime_ST4 = microtime(true);
                 $TimeDiff = $MicroTime_ST4 - $MicroTime_ST3;
-                error_log("genOEMData BP4 - (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData BP4 - (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff)");
 
 
         /**
          * Here is the big 32 second bottleneck
          **/
-error_log("..");
-error_log("Looping through records to get all the Pre/Post/Therapy Med Record Information");
+// error_log("..");
+// error_log("Looping through records to get all the Pre/Post/Therapy Med Record Information");
 		$oemMap = array();
         $loopCount4Display = 0;
 		foreach ($oemrecords as $oemrecord) {
@@ -946,7 +946,7 @@ error_log("Looping through records to get all the Pre/Post/Therapy Med Record In
 
                 if (0 == $loopCount4Display) {
                     $MicroTime_ST_Hdr1 = microtime(true);
-                    error_log("genOEMData Pre Hydrations Start (Timestamp in MS = $MicroTime_ST_Hdr1)");
+// error_log("genOEMData Pre Hydrations Start (Timestamp in MS = $MicroTime_ST_Hdr1)");
                 }
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
@@ -960,7 +960,7 @@ error_log("Looping through records to get all the Pre/Post/Therapy Med Record In
 if (0 == $loopCount4Display) {
                 $MicroTime_ST_Hdr2 = microtime(true);
                 $TimeDiff = $MicroTime_ST_Hdr2 - $MicroTime_ST_Hdr1;
-                error_log("genOEMData Pre Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr2 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData Pre Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr2 - TimeDiff = $TimeDiff)");
 }
 
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
@@ -975,7 +975,7 @@ if (0 == $loopCount4Display) {
 if (0 == $loopCount4Display) {
                 $MicroTime_ST_Hdr3 = microtime(true);
                 $TimeDiff = $MicroTime_ST_Hdr3 - $MicroTime_ST_Hdr2;
-                error_log("genOEMData Post Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData Post Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
 }
 
             $retVal = $this->Regimens($oemrecord['TemplateID']);
@@ -990,15 +990,15 @@ if (0 == $loopCount4Display) {
  if (0 == $loopCount4Display) {
                 $MicroTime_ST_Hdr4 = microtime(true);
                 $TimeDiff = $MicroTime_ST_Hdr4 - $MicroTime_ST_Hdr3;
-                error_log("genOEMData Therapy End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
+// error_log("genOEMData Therapy End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
  }
 $loopCount4Display++;
 		}
-error_log("..");
+// error_log("..");
 
                 $MicroTime_ST5 = microtime(true);
                 $TimeDiff = $MicroTime_ST5 - $MicroTime_ST4;
-                error_log("genOEMData BP5 - in patientcontroller.php (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff) for " . count($oemrecords) . " records");
+// error_log("genOEMData BP5 - in patientcontroller.php (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff) for " . count($oemrecords) . " records");
 
 		$this->set('oemMap', $oemMap);
 		$this->set('oemsaved', null);
@@ -1247,11 +1247,11 @@ function buildJsonObj4Output() {
         if ($id != NULL) {  // This assumes command is a GET, ignores PUT/DELETE
             if ("GET" == $_SERVER['REQUEST_METHOD']) {
                 $MicroTime_ST = microtime(true);
-                error_log("Get OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST)");
+// error_log("Get OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST)");
                 $this->genOEMData($id);
                 $MicroTime_END = microtime(true);
                 $TimeDiff = $MicroTime_END - $MicroTime_ST;
-                error_log("GOT OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST (Diff = $TimeDiff))");
+// error_log("GOT OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST (Diff = $TimeDiff))");
             }
         }
         else if ($form_data) {
@@ -1313,11 +1313,11 @@ function buildJsonObj4Output() {
 
 
         $MicroTime_ST2 = microtime(true);
-        error_log("Build JSON Data for output in Patient Controller - (Timestamp in MS = $MicroTime_ST2)");
+// error_log("Build JSON Data for output in Patient Controller - (Timestamp in MS = $MicroTime_ST2)");
         $this->buildJsonObj4Output();
         $MicroTime_END2 = microtime(true);
         $TimeDiff = $MicroTime_END2 - $MicroTime_ST2;
-        error_log("JSON Data for output in (Timestamp in MS = $MicroTime_END2 (Diff = $TimeDiff))");
+// error_log("JSON Data for output in (Timestamp in MS = $MicroTime_END2 (Diff = $TimeDiff))");
     }
 
     function Regimens($id = null)
@@ -1854,7 +1854,7 @@ function buildJsonObj4Output() {
                         FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
                 }
             }
-            error_log("DischargeInstructions Query - $query");
+// error_log("DischargeInstructions Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";
         }
@@ -2006,8 +2006,8 @@ function buildJsonObj4Output() {
                         $jsonRecord['msg'] = "Patient Information Unavailable - " . $this->get('frameworkErr');
                     }
                     else {
-                        error_log("$patInfoQuery");
-                        error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
+// error_log("$patInfoQuery");
+// error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
                         /* Parse data into Proper Form Input structure */
                         if (count($retVal) > 0) {
                             $data = array();
@@ -2203,6 +2203,11 @@ Data:
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
         parse_str(file_get_contents("php://input"),$post_vars);
+
+
+        $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = $Source = "";
+        $AdministeredByCOMS = 0;
+
         if (isset($post_vars["value"])) {
             $MedID = $post_vars["value"];
         }
@@ -2215,10 +2220,13 @@ Data:
         if (isset($post_vars["Source"])) {
             $Source = $post_vars["Source"];
         }
+        if (isset($post_vars["AdministeredByCOMS"])) {
+            $AdministeredByCOMS = $post_vars["AdministeredByCOMS"];
+        }
 
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-error_log("CumulativeDoseTracking - GET");
+// error_log("CumulativeDoseTracking - GET");
             if ($PatientID) {
 /**
                 $partialQuery = "SELECT 
@@ -2260,7 +2268,7 @@ $partialQuery = "SELECT
                     $query =  $partialQuery . " order by MedName asc, AdministeredByCOMS asc";
                 }
             }
-            error_log("CumulativeDoseTracking Query - $query");
+// error_log("CumulativeDoseTracking Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";
 
@@ -2289,7 +2297,10 @@ $partialQuery = "SELECT
                         $CurCumDoseAmt = 0;
                         $CumDoseMedInfo = array( "MedName" => $MedEntry["MedName"],"MedMaxDose" => $MedEntry["MaxCDA"], "MedMaxDoseUnits" => $MedEntry["CDAUnits"], "CurCumDoseList" => array());
                     }
-                    $CurCumDoseAmt += $MedEntry["CumulativeDoseAmt"];
+                    $CDA_Num = str_replace(',', '', $MedEntry["CumulativeDoseAmt"]);
+error_log("CumulativeDoseTracking CurCumDoseAmt - $CurCumDoseAmt - $CDA_Num");
+
+                    $CurCumDoseAmt += $CDA_Num;
                     $CumDoseMedInfo["CurCumDoseAmt"] = $CurCumDoseAmt;
                     $CumDoseMedInfo["CurCumDoseList"][] = array(
                         "CumulativeDoseAmt" => $MedEntry["CumulativeDoseAmt"], 
@@ -2330,14 +2341,15 @@ error_log("CumulativeDoseTracking - POST");
  *********************************************************************************/
             $GUID =  $this->Patient->newGUID();
 
-            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source)
+            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source, AdministeredByCOMS)
             VALUES (
                 '$GUID',
                 '$PatientID',
                 '$MedID',
                 '$CumulativeDoseAmt',
                 '$CumulativeDoseUnits',
-                '$Source'
+                '$Source',
+                $AdministeredByCOMS
             )";
 
 error_log($query);
