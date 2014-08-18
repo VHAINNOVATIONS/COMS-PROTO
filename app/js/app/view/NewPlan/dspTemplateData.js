@@ -193,9 +193,10 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						cdmir = cdmirList[i];
 						var cdmirUnits = cdmir.CumulativeDoseUnits;
 						var m0 = cdmir.MedName;
-						var m1 = cdmir.CumulativeDoseAmt + " " + cdmirUnits;
-						var m2 = cdmir.CumDosePerCycle + " " + cdmirUnits;
-						var m3 = cdmir.CumDosePerRegimen + " " + cdmirUnits;
+
+						var m1 = Ext.util.Format.number(("" + cdmir.CumulativeDoseAmt).replace(",", ""), "0,0") + " " + cdmirUnits;
+						var m2 = Ext.util.Format.number(("" + cdmir.CumDosePerCycle).replace(",", ""), "0,0") + " " + cdmirUnits;
+						var m3 = Ext.util.Format.number(("" + cdmir.CumDosePerRegimen).replace(",", ""), "0,0") + " " + cdmirUnits;
 
 						msg += "<tr>";
 						msg += "<td>" + m0 + "</td>";

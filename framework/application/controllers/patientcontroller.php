@@ -2200,13 +2200,37 @@ Data:
 
         $DataTable = "Patient_CumulativeDoseHistory";
         $GUID = "";
+        $ErrMsg = "";
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
         parse_str(file_get_contents("php://input"),$post_vars);
 
-
-        $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = $Source = "";
+        $UnitName = $MedName = $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = $Source = "";
         $AdministeredByCOMS = 0;
+
+        if (isset($post_vars["MedName"])) {
+            $MedName = $post_vars["MedName"];
+        }
+
+        if (isset($post_vars["UnitName"])) {
+            $UnitName = $post_vars["UnitName"];
+        }
+
+        /**
+         * If we have MedName and UnitName then we're posting from a Medication Administration and don't have ID's
+         * So use the following query to get the MedID:
+         *
+         *      use COMS_TEST_5 
+         *      select * from lookup lu
+         *      left join CumulativeDoseMeds cdm on lu.Lookup_ID = cdm.MedID
+         *      where lu.Lookup_Type = 2 and lu.Name = 'ACYCLOVIR INJ   ' and cdm.MedID is not null
+         *
+         *      And this query to get the UnitID from the Unit Name
+         *      use COMS_TEST_5 
+         *      select * from lookup lu
+         *      where lu.Lookup_Type = 11 and lu.Name = 'mg'
+         *
+         **/
 
         if (isset($post_vars["value"])) {
             $MedID = $post_vars["value"];
@@ -2224,25 +2248,49 @@ Data:
             $AdministeredByCOMS = $post_vars["AdministeredByCOMS"];
         }
 
-        $ErrMsg = "";
+        if ("" !== $MedName && "" == $MedID) {
+            $query = "select * from lookup lu
+            left join CumulativeDoseMeds cdm on lu.Lookup_ID = cdm.MedID
+            where lu.Lookup_Type = 2 and lu.Name = '$MedName' and cdm.MedID is not null";
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors("Retrieving MedID from Name", $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->Patient->rollbackTransaction();
+                $this->Patient->endTransaction();
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            else {
+                if (count($retVal) > 0) {
+                    $MedID = $retVal[0]["MedID"];
+                }
+            }
+        }
+
+        if ("" !== $UnitName && "" == $CumulativeDoseUnits) {
+            $query = "select * from lookup lu
+            where lu.Lookup_Type = 11 and lu.Name = '$UnitName'";
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors("Retrieving MedID from Name", $retVal)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->Patient->rollbackTransaction();
+                $this->Patient->endTransaction();
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            else {
+                $CumulativeDoseUnits = $retVal[0]["Lookup_ID"];
+            }
+        }
+
+error_log("Patient Cumulative Dosing - Med Info - $MedName, $MedID, Units Info - $UnitName, $CumulativeDoseUnits");
+
+
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-// error_log("CumulativeDoseTracking - GET");
             if ($PatientID) {
-/**
-                $partialQuery = "SELECT 
-                   dt.CumulativeDoseAmt, 
-                   dt.CumulativeDoseUnits, 
-                   dt.Source,
-                   dt.MedID,
-                   dt.Author,
-                   lu1.Name as MedName,
-                   lu2.Name as Units,
-                   CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
-                   from Patient_CumulativeDoseHistory dt
-                   join LookUp lu1 on lu1.Lookup_ID = dt.MedID
-                   join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
-                   where Patient_ID = '$PatientID'";
- **/
+
 $partialQuery = "SELECT 
     dt.CumulativeDoseAmt, 
     dt.CumulativeDoseUnits, 
@@ -2329,6 +2377,10 @@ error_log("CumulativeDoseTracking CurCumDoseAmt - $CurCumDoseAmt - $CDA_Num");
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
 error_log("CumulativeDoseTracking - POST");
+        if ("" == $MedID) {
+error_log("CumulativeDoseTracking - POST - No Med ID, Post is NOT for tracked Med");
+        }
+        else {
 /*********************************************************************************
             Sample POST
             URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
@@ -2339,27 +2391,28 @@ error_log("CumulativeDoseTracking - POST");
             Data Collection Method: parse_str(file_get_contents("php://input"),$post_vars);
             Field Access Method: $MedID = $post_vars["value"];
  *********************************************************************************/
-            $GUID =  $this->Patient->newGUID();
+                $GUID =  $this->Patient->newGUID();
 
-            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source, AdministeredByCOMS)
-            VALUES (
-                '$GUID',
-                '$PatientID',
-                '$MedID',
-                '$CumulativeDoseAmt',
-                '$CumulativeDoseUnits',
-                '$Source',
-                $AdministeredByCOMS
-            )";
+                $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source, AdministeredByCOMS)
+                VALUES (
+                    '$GUID',
+                    '$PatientID',
+                    '$MedID',
+                    '$CumulativeDoseAmt',
+                    '$CumulativeDoseUnits',
+                    '$Source',
+                    $AdministeredByCOMS
+                )";
 
-error_log($query);
-            $retVal = $this->Patient->query($query);
-            if ($this->checkForErrors($ErrMsg, $retVal)) {
-                $this->Patient->rollbackTransaction();
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-                $this->set('jsonRecord', $jsonRecord);
-                return;
+                error_log($query);
+                $retVal = $this->Patient->query($query);
+                if ($this->checkForErrors($ErrMsg, $retVal)) {
+                    $this->Patient->rollbackTransaction();
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                    return;
+                }
             }
             $query = "";    /* Reset query so we don't run it again in the final step */
         }

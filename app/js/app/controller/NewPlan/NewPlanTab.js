@@ -2039,6 +2039,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		if ("Update BSA" === Loaded) {
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
+			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl.UpdateCumDoseInfo( );
+
 			// console.log("Update BSA process complete, assign button handlers in 2 sec");
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 			return;
@@ -2119,6 +2122,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				// Allergies
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
+			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl.UpdateCumDoseInfo( );
+
 
 			var HTML = piTableInfo.tpl.apply(Patient);
 

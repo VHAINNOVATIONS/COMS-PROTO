@@ -71,20 +71,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			},
 			"FlowSheet OtherInfoPanel" : {
 				afterrender : Ext.togglePanelOnTitleBarClick
-			},
-
-			"FlowSheet ToxicitySideEffectsPanel" : {
 			}
 		});
 	},
 
-	"ComboSelect" : function(theCombo, newValue, oldValue, eOpts) {
+	"ComboSelect" : function(theCombo) {
 		this.application.loadMask("Showing Cycles");
 		var grid = theCombo.up("grid");
 		var comboStore = theCombo.getStore();
 		var theRecord = comboStore.findRecord("label", theCombo.rawValue);
 		var data, start, end;
-		var i, col, cols, colID;
+		
 		data = theRecord.getData();
 		start = data.StartIdx;
 		end = data.EndIdx;
@@ -92,13 +89,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		this.application.unMask();
 	},
 
-	EditOptionalQuestions : function(btn) {
-		var OptQues = Ext.widget("FlowSheetOptionalQues");
+	EditOptionalQuestions : function() {
+		Ext.widget("FlowSheetOptionalQues");
 	},
 
-	clickNamedAnchor : function (grid, record, row, column, eOpts) {
+	clickNamedAnchor : function (grid, record) {
+		var theGrid = grid;
 		var theData = record.getData();
-		var theLabel = theData["label"];
+		var theLabel = theData.label;
 		var theColumnValue = theData[Object.keys(theData)[column+1]];
 
 		if ("Date" == theLabel || "Weight" == theLabel) {
@@ -134,7 +132,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	buildCycleList : function (data) {
-		var startDay, endDay, days, hold, key, curCycle, cyc_day, attrName, cycleNum, cycleDay, part, aDate, startDate, endDate;
+		var hold, key, curCycle, cyc_day, cycleNum, cycleDay, aDate;
 		var comboRec = {}, dayIdx = 0, CycleRecords = [], aRec = data;
 		for(key in aRec){
 			if (aRec.hasOwnProperty(key)) {

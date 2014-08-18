@@ -824,3 +824,17 @@ table.FlowsheetTable {
 .cdtEm {
 	font-weight: bold;
 }
+
+.TCDWarning table {
+	font-size: 70%;
+	margin: 0 auto;
+}
+
+.TCDWarning th, .TCDWarning td {
+	text-align: center;
+	font-weight: bold;
+	padding: 0 0.25em;
+}
+.TCDWarning td {
+	text-align: right;
+}

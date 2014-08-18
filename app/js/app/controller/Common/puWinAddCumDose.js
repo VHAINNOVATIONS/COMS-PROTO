@@ -6,7 +6,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 
 	refs: [
 		{ "ref" : "HistoricalDoseUnits",				selector: "puWinAddCumDose component[name=\"HistoricalDoseUnits\"]" },
-		{ "ref" : "MedMaxAllowable",					selector: "puWinAddCumDose component[name=\"MedMaxAllowable\"]" }
+		{ "ref" : "MedMaxAllowable",					selector: "puWinAddCumDose component[name=\"MedMaxAllowable\"]" },
+		{ "ref" : "NewPlanTab",							selector: "NewPlanTab"}
 	],
 
 	init: function() {
@@ -23,6 +24,38 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		});
 	},
 
+	UpdateCumDoseInfo : function() {
+		var cdInfo = this.application.Patient.CumulativeDoseTracking;
+		var i, rec, len = cdInfo.length, cur, max, WarningLimit, ExceedsWarningLimit, WarningMsgBuf = "";
+
+		for (i = 0; i < len; i++) {
+			rec = cdInfo[i];
+			cur = rec.CurCumDoseAmt;
+			max = (rec.MedMaxDose * 1);		// rec is string
+			ExceedsWarningLimit = (cur / max) * 100;
+			WarningLimit = 0.75 * max;
+			if (ExceedsWarningLimit > 75) {
+				exceeds = cur - WarningLimit;
+				var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
+				var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
+				var CurDose = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
+				WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
+					"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
+					"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td></tr>";
+			}
+		}
+		var tmpBuf = "Warning! <br>The following Medication" + (len > 1 ? "s have " : " has ") + "exceeded the recommended maximum dose<table border=\"1\">"
+		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Current Dosage</th></tr>";
+		tmpBuf += WarningMsgBuf + "</table>";
+
+		var parent = this.getNewPlanTab();
+		var msgSection = Ext.ComponentQuery.query("NewPlanTab")[0].query("[name=\"CumulativeDosingWarning\"]")[0];
+		if (msgSection) {
+			msgSection.update(tmpBuf);
+			msgSection.show();
+		}
+	},
+
 	// Used by internal COMS operations to save info on Administered Medications.
 	SaveNewCumDoseInfo : function( Info ) {
 		//Info : { MedID, UnitsID, Source, AdministeredDose }
@@ -31,6 +64,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			"url" : Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
 			"method" :"POST",
 			"params" : {
+				"MedName" : Info.MedName,
+				"UnitName" : Info.UnitName,
 				"Source" : "Administered and tracked via COMS on " + Ext.Date.format(new Date(), "d/m/Y"),
 				"value" : Info.MedID,
 				"LifetimeDose" : Info.AdministeredDose,
@@ -76,6 +111,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						var thisCtl = this.getController("NewPlan.NewPlanTab");
 						var thePITable = thisCtl.getPatientInfoTableInformation();
 						thePITable.update( this.application.Patient );
+						this.UpdateCumDoseInfo();
 					}
 				}
 			}
