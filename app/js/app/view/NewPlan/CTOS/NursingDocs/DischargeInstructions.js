@@ -11,6 +11,34 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 		{ "xtype" : "form", "id" : "DischargeInstructionsForm", "submitEmptyText" : false, "trackResetOnLoad" : true, "margin" : "0 10 0 10", "items" : [
 			{ "xtype" : "hidden", "name" : "Applied_Template" },
 			// { "xtype" : "hidden", "name" : "MedList" },
+
+			{
+				"xtype": "fieldset",
+				"title": "Clinic Information",
+				"name": "ClinicInformation",
+				"margin": "10 20 10 10",
+				"defaults": { "labelAlign": "right", "labelWidth": 200, "labelClsExtra": "NursingDocs-label" },
+				"items": [
+					{
+						"xtype": "CheckCombo",
+						// "noDataText" : "",
+						"value" : "",		// If a CheckCombo is not initialized with a value of "" the form shows up as Dirty
+						"fieldLabel": "Select Clinic Information",
+						"name": "ND_E_SelectClinicInfo",
+						"width": 450,
+						"margin" : "5 0 10 0",
+						"store" : "ClinicInfo",
+						"displayField": "Label",
+						"valueField": "ID"
+					}, 
+
+					{
+						"xtype": "ClinicInfoDisplay"
+					}
+				]
+			},
+			
+			
 			{
 				"xtype": "fieldset",
 				"title": "Patient Education",

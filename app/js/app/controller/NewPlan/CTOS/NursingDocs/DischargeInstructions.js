@@ -94,7 +94,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				}
 			},
 
-			"PatientEducationDetails [name=\"ND_E_SelectClinicInfo\"]" : {
+			"DischargeInstructions [name=\"ND_E_SelectClinicInfo\"]" : {
 				"change" : this.ClinicInfoSelected
 			},
 			"PatientEducationDetails [name=\"ND_E_SelectDischargeInstr\"]" : {
