@@ -765,7 +765,7 @@ table.FlowsheetTable {
 
 
 .TCDWarning {
-	font-size: 200%;
+	font-size: 150%;
 	font-weight: bold!important;
 	color: red;
 	text-align: center!important;
@@ -790,7 +790,7 @@ table.FlowsheetTable {
 }
 
 .TCDWarning table {
-	font-size: 70%;
+	font-size: 85%;
 	margin: 0 auto;
 }
 

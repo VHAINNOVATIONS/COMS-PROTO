@@ -24,6 +24,14 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		});
 	},
 
+	ClearWarning : function() {
+		var msgSection = Ext.ComponentQuery.query("NewPlanTab")[0].query("[name=\"CumulativeDosingWarning\"]")[0];
+		if (msgSection) {
+			msgSection.update("");
+			msgSection.hide();
+		}
+	},
+
 	UpdateCumDoseInfo : function() {
 		var cdInfo = this.application.Patient.CumulativeDoseTracking;
 		var i, rec, exceedsCount = 0, len = cdInfo.length, cur, max, WarningLimit, ExceedsWarningLimit, WarningMsgBuf = "";
@@ -47,14 +55,20 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			}
 		}
 		var tmpBuf = "Warning! <br>The following Medication" + (exceedsCount > 1 ? "s have " : " has ") + "exceeded 75% of the recommended maximum dose<table border=\"1\">"
-		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Current Dosage</th></tr>";
+		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Dosage</th></tr>";
 		tmpBuf += WarningMsgBuf + "</table>";
 
 		var parent = this.getNewPlanTab();
 		var msgSection = Ext.ComponentQuery.query("NewPlanTab")[0].query("[name=\"CumulativeDosingWarning\"]")[0];
 		if (msgSection) {
-			msgSection.update(tmpBuf);
-			msgSection.show();
+			if (exceedsCount > 0) {
+				msgSection.update(tmpBuf);
+				msgSection.show();
+			}
+			else {
+				msgSection.update("");
+				msgSection.hide();
+			}
 		}
 	},
 
@@ -68,7 +82,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			"params" : {
 				"MedName" : Info.MedName,
 				"UnitName" : Info.UnitName,
-				"Source" : "Administered and tracked via COMS on " + Ext.Date.format(new Date(), "d/m/Y"),
+				"Source" : "Administered and tracked via COMS on " + Ext.Date.format(new Date(), "m/d/Y"),
 				"value" : Info.MedID,
 				"LifetimeDose" : Info.AdministeredDose,
 				"Units" : Info.UnitsID,

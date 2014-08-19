@@ -95,7 +95,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<td colspan=5>",
 							"<table class=\"DataTable\">",
 								"<tr>",
-									"<th>&nbsp;</th>",
+									"<th>Medication / Maximum</th>",
 									"<th>Lifetime Total</th>",
 									"<th>Received</th>",
 									"<th>Source</th>",
@@ -155,7 +155,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 						var buf = "";
 							buf += "<tr>";
-							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + " Maximum<div class=\"cdtEm\"> " + 
+							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + "<div class=\"cdtEm\"> " + 
 								MedMaxDose + " " + data.MedMaxDoseUnits + "</div></td>";
 							buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + len + "\">" + 
 								CurCumDoseAmt + " " + data.MedMaxDoseUnits + "</td>";

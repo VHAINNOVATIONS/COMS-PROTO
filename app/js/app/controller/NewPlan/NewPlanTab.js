@@ -1230,6 +1230,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		thisCtl.getPatientInfo().hide();
+		var puWinAddCumDoseCtl = this.getController("Common.puWinAddCumDose");
+		puWinAddCumDoseCtl.ClearWarning();
 
 
 		var CPRS_QueryString = Ext.ComponentQuery.query("NewPlanTab PatientSelection [name=\"CPRS_QueryString\"]")[0];
