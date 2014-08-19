@@ -49,13 +49,16 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 				var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
 				var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
 				var CurDose = Ext.util.Format.number(("" + cur).replace(",", ""), "0,0");
+				var pct = ((cur/max)*100);
+				pct = Ext.util.Format.number(pct, "0,0.0");
 				WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
 					"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
-					"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td></tr>";
+					"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
+					"<td>" + pct + "%</td></tr>";
 			}
 		}
 		var tmpBuf = "Warning! <br>The following medication" + (exceedsCount > 1 ? "s have " : " has ") + "exceeded 75% of the recommended maximum dose<table border=\"1\">"
-		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Total</th></tr>";
+		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Total</th><th>Percentage</th></tr>";
 		tmpBuf += WarningMsgBuf + "</table>";
 
 		var parent = this.getNewPlanTab();
