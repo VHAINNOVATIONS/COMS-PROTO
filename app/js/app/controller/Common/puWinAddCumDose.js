@@ -54,8 +54,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 					"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td></tr>";
 			}
 		}
-		var tmpBuf = "Warning! <br>The following Medication" + (exceedsCount > 1 ? "s have " : " has ") + "exceeded 75% of the recommended maximum dose<table border=\"1\">"
-		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Dosage</th></tr>";
+		var tmpBuf = "Warning! <br>The following medication" + (exceedsCount > 1 ? "s have " : " has ") + "exceeded 75% of the recommended maximum dose<table border=\"1\">"
+		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Total</th></tr>";
 		tmpBuf += WarningMsgBuf + "</table>";
 
 		var parent = this.getNewPlanTab();
@@ -186,16 +186,6 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	},
 
 	Save : function(btn) {
-/**
-		Info = { 
-			MedID : "7D95474E-A99F-E111-903E-000C2935B86F", 
-			UnitsID : "AB85F3AA-0B21-E111-BF57-000C2935B86F", 
-			AdministeredDose : 2468
-		};
-		this.SaveNewCumDoseInfo ( Info );
-		return;
- **/
-
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			this._submitForm(theForm);
