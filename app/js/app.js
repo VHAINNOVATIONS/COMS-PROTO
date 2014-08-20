@@ -1,5 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
+/*********** Search for - LIST OF CONTROLLERS 
+ **** Controllers ~ 591 & 1583
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -242,8 +244,8 @@ Ext.URLs.AddND_Treatment = "/Orders/Orders";
 // (see app\controller\NewPlan\CTOS\NursingDocs\TreatmentTab.js)
 
 
-Ext.URLs.FlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
-Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.FlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
+Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
 Ext.URLs.FlowSheetOptionalInfo = "/Flowsheet/Optional"; // "Flowsheet Optional questions
 
 // OLD DATA ---> Param = Flowsheet Record GUID - This is the ID for the Flowsheet which is an array of FlowsheetAdminDay records
@@ -585,7 +587,7 @@ Ext.require([
 
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
-
+/*********** LIST OF CONTROLLERS *********************/
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
@@ -620,6 +622,7 @@ Ext.require([
 	"COMS.controller.NewPlan.ViewEndTreatmentSummary",
 	"COMS.controller.NewPlan.TreatmentDetails",
 	"COMS.controller.NewPlan.AmputationSelection",
+//	"COMS.controller.NewPlan.PatientHistory",
 
 	"COMS.controller.NewPlan.CTOS.ChronologyTab",
 	"COMS.controller.NewPlan.CTOS.FlowSheetTab",
@@ -641,6 +644,7 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy"
+//	, "COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 ]);
 
 /*************************************************************
@@ -1579,6 +1583,7 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 Ext.application({
 	name: "COMS",
 
+	/******************** LIST OF CONTROLLERS *****************/
 	controllers: [
 		// Include all controllers used in this app here
 		// Each controller must include all the views used by that controller
@@ -1596,6 +1601,7 @@ Ext.application({
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
 		, "NewPlan.AmputationSelection"
+//		, "NewPlan.PatientHistory"
 		, "Orders.OrdersTab"
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
@@ -1624,6 +1630,7 @@ Ext.application({
 		, "NewPlan.CTOS.NursingDocs.React_AssessTab"
 		, "NewPlan.CTOS.NursingDocs.EducationTab"
 		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
+//		, "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 		, "Messages.MessagesTab"
 		, "NewPlan.EndTreatmentSummary"
 		, "NewPlan.ViewEndTreatmentSummary"

@@ -39,7 +39,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	},
 
 	Save : function(btn) {
-		var PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F", Cycle = "", Day = "";
+		this.application.loadMask("Saving Information");
+		var PAT_ID = "", Cycle = "", Day = "";
 		if (this.application && this.application.Patient) {
 			PAT_ID = this.application.Patient.PAT_ID;
 			if (this.application.Patient.ThisAdminDay) {
@@ -51,7 +52,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		var theForm = btn.up("form");
 		theForm.getForm().submit({
 			clientValidation: true,
-			"url" : Ext.URLs.FlowSheetOptionalInfo,
+			scope : this,
+			"url" : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
 			params : {
 				"PAT_ID" : PAT_ID,
 				"Cycle" : Cycle,
@@ -60,6 +62,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			success: function(form, action) {
 			   Ext.Msg.alert('Success', "General Information has been successfully saved");
 			   theForm.up("window").close();
+			   var theCtrlr = this.getController("NewPlan.CTOS.FlowSheetTab");
+			   theCtrlr.updateFlowsheetPanel();
 			},
 			failure: function(form, action) {
 				switch (action.failureType) {
@@ -72,6 +76,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 					case Ext.form.action.Action.SERVER_INVALID:
 					   Ext.Msg.alert('Failure', action.result.msg);
 			   }
+			   this.application.unMask();
 			}
 		});
 	}

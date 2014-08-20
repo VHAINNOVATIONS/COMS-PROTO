@@ -53,6 +53,31 @@ class FlowsheetController extends Controller
         return false;
     }
 
+    function getGeneralInfo($PAT_ID) {
+        if ($PAT_ID) {       /* Get Specific Info */
+            $query = "select
+                pn.FS_ID, 
+                pn.Disease_Response, 
+                pn.ToxicityLU_ID, 
+                pn.Other, 
+                pn.Cycle, 
+                pn.Day, 
+                pn.Toxicity, 
+                case when pn.ToxicityLU_ID is not null then sci.Details else '' end as ToxicityDetails,
+                case when pn.ToxicityLU_ID is not null then sci.Label else '' end as ToxicityInstr,
+                CONVERT(VARCHAR(10), pn.AdminDate, 101) as AdminDate
+                from Flowsheet_ProviderNotes pn 
+                left join SiteCommonInformation sci on sci.ID = pn.ToxicityLU_ID
+                WHERE pn.PAT_ID = '$PAT_ID' 
+                order by AdminDate desc";
+        }
+        else {       /* Get ALL Info */
+            $query = "select * from $TableName";
+        }
+        // error_log("GET Request - $query");
+        return $this->Flowsheet->query($query);
+    }
+
 
     public function Optional($PAT_ID = null) {
         /*************
@@ -75,8 +100,6 @@ class FlowsheetController extends Controller
        This will use the $_POST var to store the data
          *************/
 
-error_log("Optional Entry Point");
-
         $Msg = "Flowsheet Optional Information";
         $TableName = "Flowsheet_ProviderNotes";
         $GUID =  $this->Flowsheet->newGUID();
@@ -86,11 +109,12 @@ error_log("Optional Entry Point");
         $jsonRecord['success'] = true;
         $query = "";
         $ErrMsg = "";
-        if (null == $PAT_ID) {
+        if (null == $PAT_ID || "PAT_ID" == $PAT_ID) {
             $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
         }
-        $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
+        // $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
         $AdminDate = date("m/d/Y");
+        // error_log("PAT_ID for General Flow Sheet Information = $PAT_ID");
 
 
         // Retrieve Data if Request is a PUT
@@ -116,28 +140,7 @@ error_log("Optional Entry Point");
 
         $this->Flowsheet->beginTransaction();
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-            if ($PAT_ID) {       /* Get Specific Info */
-                $query = "select
-                    pn.FS_ID, 
-                    pn.Disease_Response, 
-                    pn.ToxicityLU_ID, 
-                    pn.Other, 
-                    pn.Cycle, 
-                    pn.Day, 
-                    pn.Toxicity, 
-                    case when pn.ToxicityLU_ID is not null then sci.Details else '' end as ToxicityDetails,
-                    case when pn.ToxicityLU_ID is not null then sci.Label else '' end as ToxicityInstr,
-                    CONVERT(VARCHAR(10), pn.AdminDate, 101) as AdminDate
-                    from Flowsheet_ProviderNotes pn 
-                    left join SiteCommonInformation sci on sci.ID = pn.ToxicityLU_ID
-                    WHERE pn.PAT_ID = '$PAT_ID' 
-                    order by AdminDate desc";
-            }
-            else {       /* Get ALL Info */
-                $query = "select * from $TableName";
-            }
-            error_log("GET Request - $query");
-            $records = $this->Flowsheet->query($query);
+            $records = $this->getGeneralInfo($PAT_ID);
 
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
@@ -215,226 +218,244 @@ error_log("Optional Entry Point");
      * @return null
      */
     public function FS($id = null) {
-
-error_log("FS Entry Point");
-
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $retVal = array();
-
-
-
-$aRec = array(
-      "-" => "01 General",
-      "label" => "Date",
-           "Cycle 1, Day 1" => "07/07/2014",
-           "Cycle 1, Day 2" => "07/08/2014",
-           "Cycle 1, Day 3" => "07/09/2014",
-           "Cycle 1, Day 4" => "07/10/2014",
-           "Cycle 1, Day 5" => "07/11/2014",
-
-           "Cycle 2, Day 1"  => "07/12/2014",
-           "Cycle 2, Day 2"  => "07/13/2014",
-           "Cycle 2, Day 3"  => "07/14/2014",
-           "Cycle 2, Day 4"  => "07/15/2014",
-           "Cycle 2, Day 5"  => "07/16/2014",
-
-           "Cycle 3, Day 1"  => "07/17/2014", 
-           "Cycle 3, Day 2"  => "07/18/2014", 
-           "Cycle 3, Day 3"  => "07/19/2014", 
-           "Cycle 3, Day 4"  => "07/20/2014", 
-           "Cycle 3, Day 5"  => "07/21/2014", 
-
-           "Cycle 4, Day 1"  => "07/22/2014", 
-           "Cycle 4, Day 2"  => "07/23/2014", 
-           "Cycle 4, Day 3"  => "07/24/2014", 
-           "Cycle 4, Day 4"  => "07/25/2014", 
-           "Cycle 4, Day 5"  => "07/26/2014", 
-                           
-           "Cycle 5, Day 1"  => "07/27/2014", 
-           "Cycle 5, Day 2"  => "07/28/2014", 
-           "Cycle 5, Day 3"  => "07/29/2014", 
-           "Cycle 5, Day 4"  => "07/30/2014", 
-           "Cycle 5, Day 5"  => "07/31/2014"
-
-);
-
-array_push($retVal, $aRec);
-
-error_log("Result - " . $this->varDumpToString($retVal));
-
-$aRec = array(
-      "-" => "01 General",
-      "label" => "Toxicity",
-      "Cycle 1, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 1, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 1, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 1, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 1, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-
-      "Cycle 2, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 2, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 2, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 2, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 2, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-
-      "Cycle 3, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 3, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 3, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 3, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 3, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-
-      "Cycle 4, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 4, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 4, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 4, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 4, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-
-      "Cycle 5, Day 1" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 5, Day 2" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 5, Day 3" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 5, Day 4" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>",
-      "Cycle 5, Day 5" => "&lt;u>&lt;a href=\"#XXXXX\" class=\"ToxView\">View&lt;a>&lt;/u>"
-);
-array_push($retVal, $aRec);
-
-$aRec = array(
-      "-" => "01 General",
-      "label" => "Disease Response",
-      "Cycle 1, Day 1" =>  " ",
-      "Cycle 1, Day 2" =>  " ",
-      "Cycle 1, Day 3" =>  " ",
-      "Cycle 1, Day 4" =>  " ",
-      "Cycle 1, Day 5" =>  " ",
-
-      "Cycle 2, Day 1" =>  " ",
-      "Cycle 2, Day 2" =>  " ",
-      "Cycle 2, Day 3" =>  " ",
-      "Cycle 2, Day 4" =>  " ",
-      "Cycle 2, Day 5" =>  " ",
-
-      "Cycle 3, Day 1" =>  " ",
-      "Cycle 3, Day 2" =>  " ",
-      "Cycle 3, Day 3" =>  " ",
-      "Cycle 3, Day 4" =>  " ",
-      "Cycle 3, Day 5" =>  " ",
-
-      "Cycle 4, Day 1" =>  " ",
-      "Cycle 4, Day 2" =>  " ",
-      "Cycle 4, Day 3" =>  " ",
-      "Cycle 4, Day 4" =>  " ",
-      "Cycle 4, Day 5" =>  " ",
-
-      "Cycle 5, Day 1" =>  " ",
-      "Cycle 5, Day 2" =>  " ",
-      "Cycle 5, Day 3" =>  " ",
-      "Cycle 5, Day 4" =>  " ",
-      "Cycle 5, Day 5" =>  " "
-);
-array_push($retVal, $aRec);
-
-$aRec = array(
-      "-" => "01 General",
-      "label" => "Weight",
-      "Cycle 1, Day 1" =>  " ",
-      "Cycle 1, Day 2" =>  " ",
-      "Cycle 1, Day 3" =>  " ",
-      "Cycle 1, Day 4" =>  " ",
-      "Cycle 1, Day 5" =>  " ",
-
-      "Cycle 2, Day 1" =>  " ",
-      "Cycle 2, Day 2" =>  " ",
-      "Cycle 2, Day 3" =>  " ",
-      "Cycle 2, Day 4" =>  " ",
-      "Cycle 2, Day 5" =>  " ",
-
-      "Cycle 3, Day 1" =>  " ",
-      "Cycle 3, Day 2" =>  " ",
-      "Cycle 3, Day 3" =>  " ",
-      "Cycle 3, Day 4" =>  " ",
-      "Cycle 3, Day 5" =>  " ",
-
-      "Cycle 4, Day 1" =>  " ",
-      "Cycle 4, Day 2" =>  " ",
-      "Cycle 4, Day 3" =>  " ",
-      "Cycle 4, Day 4" =>  " ",
-      "Cycle 4, Day 5" =>  " ",
-
-      "Cycle 5, Day 1" =>  " ",
-      "Cycle 5, Day 2" =>  " ",
-      "Cycle 5, Day 3" =>  " ",
-      "Cycle 5, Day 4" =>  " ",
-      "Cycle 5, Day 5" =>  " "
-);
-array_push($retVal, $aRec);
-
-            $this->set('jsonRecord', 
-                array(
-                    'success' => true,
-                    'total' => count($retVal),
-                    'records' => $retVal,
-                    'Foo' => "Bar1"
-                ));
-
-
-
-/******************************************
-        $requestData = json_decode(file_get_contents('php://input'));
-        if (! empty($requestData)) {
-            $this->Flowsheet->beginTransaction();
-            $returnVal = $this->Flowsheet->saveFlowsheet($requestData);
-            if ($this->_checkForErrors('Update Flowsheet Notes Values Failed. ', $returnVal)) {
-                $this->Flowsheet->rollbackTransaction();
-                $this->set('jsonRecord', 
-                    array(
-                        'success' => false,
-                        'msg' => $this->get('frameworkErr')
-                    ));
-                return;
-            }
-            $this->Flowsheet->endTransaction();
-            $this->set('jsonRecord', 
-                array(
-                    'success' => true,
-                    'total' => 1,
-                    'records' => array(
-                        'FS_ID' => $this->Flowsheet->getFlowsheetId()
-                    )
-                ));
-        } else {
-            error_log("FS GET - ");
-            $records = $this->Flowsheet->getFlowsheet($id);
-            if (empty($records)) {
-                $records['error'] = 'No Records Found';
-            }
-            else {
-                error_log("FS GOT RECORDS - ");
-            }
-            if ($this->_checkForErrors('Get Flowsheet Failed. ', $records)) {
-                $this->set('jsonRecord', 
-                    array(
-                        'success' => false,
-                        'msg' => $this->get('frameworkErr') . $records['error']
-                    ));
-                return;
-            }
-            $this->set('jsonRecord', 
-                array(
-                    'success' => true,
-                    'total' => count($records),
-                    'records' => $records
-                ));
-        }
-***************************/
+        $this->set('jsonRecord', array('success' => true, 'total' => count($retVal), 'records' => $retVal));
     }
-    public function FS2($id = null) {
 
-error_log("FS Entry Point");
+
+
+
+
+
+
+public function FSDataConvert($id = null, $PAT_ID = null, $PreT, $Therapy, $PostT) {
+
+    $GeneralInfoRecords = $this->getGeneralInfo($PAT_ID);
+    $GIRDates = array();
+    foreach ($GeneralInfoRecords as $giRec) {
+        $GIRDates += array($giRec["AdminDate"] => $giRec);
+    }
+
+/**
+error_log("GIRec - 07/29/2014 - " . $this->varDumpToString($GIRDates["07/29/2014"]));
+error_log("GIRec - 07/28/2014 - " . $this->varDumpToString($GIRDates["07/28/2014"]));
+error_log("GIRec - 07/25/2014 - " . $this->varDumpToString($GIRDates["07/25/2014"]));
+error_log("GIRec - 07/24/2014 - " . $this->varDumpToString($GIRDates["07/24/2014"]));
+**/
+
+
+
+
+
+
+    $ControllerClass = "PatientController";
+    $model = "Patient";
+    $controller = "patient";
+    $action = null;
+
+    $pc = new $ControllerClass($model, $controller, $action);
+    $pc->OEM($id);
+    $OEMData = $pc->get('jsonRecord');
+
+
+
+
+$Status = $OEMData["success"];
+// error_log("Flow Sheet Status - $Status");
+// $oemRecords = $OEMData["records"][0]["OEMRecords"];
+$oemRecords = $OEMData["records"][0]["OEMRecords"];
+// error_log("Flow Sheet All Records - " . $this->varDumpToString($oemRecords));
+//return;
+
+// error_log("--------------------------------------------");
+
+$PreTherapy = array();
+$Therapy = array();
+$PostTherapy = array();
+
+
+$DateRow = array();
+$DateRow += array("-"=>"01 General");
+$DateRow += array("label"=>"Date");
+
+$PSRow = array();
+$PSRow += array("-"=>"01 General");
+$PSRow += array("label"=>"Performance Status");
+
+$DRRow = array();
+$DRRow += array("-"=>"01 General");
+$DRRow += array("label"=>"Disease Response");
+
+$ToxicityRow = array();
+$ToxicityRow += array("-"=>"01 General");
+$ToxicityRow += array("label"=>"Toxicity");
+
+$OtherRow = array();
+$OtherRow += array("-"=>"01 General");
+$OtherRow += array("label"=>"Other");
+
+
+foreach($oemRecords as $aRecord) {
+    // error_log("Flow Sheet All Records - " . $this->varDumpToString($aRecord));
+
+    $Cycle = $aRecord["Cycle"];
+    $Day = $aRecord["Day"];
+    $AdminDate = $aRecord["AdminDate"];
+    $CycleColLabel = "Cycle $Cycle, Day $Day";
+    $DateRow += array($CycleColLabel=>$AdminDate);
+
+    // error_log("AdminDate - $AdminDate");
+
+    if (array_key_exists($AdminDate, $GIRDates)) {
+        $giRec = $GIRDates[$AdminDate];
+        // error_log("GIRec - " . $this->varDumpToString($giRec));
+
+        if ($giRec["Disease_Response"] == "") {
+            $DRRow += array($CycleColLabel=>"");
+        }
+        else {
+            $DRRow += array($CycleColLabel=>"<a href=\"#\" recid=\"DRPanel-$AdminDate-\">View</a>");
+        }
+
+        if ($giRec["ToxicityLU_ID"] == "") {
+            $ToxicityRow += array($CycleColLabel=>"");
+        }
+        else {
+            $ToxicityRow += array($CycleColLabel=>"<a href=\"#\" recid=\"ToxPanelPanel-$AdminDate-\">View</a>");
+        }
+
+        if ($giRec["Other"] == "") {
+            $OtherRow += array($CycleColLabel=>"");
+        }
+        else {
+            $OtherRow += array($CycleColLabel=>"<a href=\"#\" recid=\"OIPanel-$AdminDate-\">View</a>");
+        }
+    }
+    $PSRow += array($CycleColLabel=>"");
+
+
+
+
+
+    $PreMeds = $aRecord["PreTherapy"];
+    foreach($PreMeds as $Med) {
+        $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
+        if (!isset($PreTherapy[$MedName])) {
+            $PreTherapy[$MedName] = array();
+            $PreTherapy[$MedName] += array("-"=>"02 Pre Therapy");
+            $PreTherapy[$MedName] += array("label"=>$MedName);
+        }
+        $MedData = "";
+        if (array_key_exists($Key, $PreT)) {
+            $aTempRec = $PreT[$Key];
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+        }
+        // error_log("Pre Therapy - $Key - $MedData");
+        $PreTherapy[$MedName] += array($CycleColLabel => $MedData);
+    }
+
+    $Meds = $aRecord["Therapy"];
+    foreach($Meds as $Med) {
+        $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
+        if (!isset($Therapy[$MedName])) {
+            $Therapy[$MedName] = array();
+            $Therapy[$MedName] += array("-"=>"03 Therapy");
+            $Therapy[$MedName] += array("label"=>$MedName);
+        }
+        $MedData = "";
+        if (array_key_exists($Key, $Therapy)) {
+            $aTempRec = $Therapy[$Key];
+            error_log("Therapy Check - " . count($aTempRec));
+            if(count($aTempRec) > 1) {
+                $aTempRec = $aTempRec[0];
+            }
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+            error_log("Therapy - ($Key) - ($MedData)");
+        }
+        else {
+            error_log("No Matching Record in Therapy for $Key");
+        }
+        
+        $Therapy[$MedName] += array($CycleColLabel => $MedData);
+    }
+
+    $PostMeds = $aRecord["PostTherapy"];
+    foreach($PostMeds as $Med) {
+        $MedName = $Med["Med"];
+        $Key = "$AdminDate-$MedName";
+        if (!isset($PostTherapy[$MedName])) {
+            $PostTherapy[$MedName] = array();
+            $PostTherapy[$MedName] += array("-"=>"04 Post Therapy");
+            $PostTherapy[$MedName] += array("label"=>$MedName);
+        }
+        $MedData = "";
+        if (array_key_exists($Key, $PostT)) {
+            $aTempRec = $PostT[$Key];
+            $MedData = 
+                $aTempRec["Dose"] . " " . 
+                $aTempRec["Unit"] . " " . 
+                $aTempRec["Route"] . "<br>From " . 
+                $aTempRec["Start"] . "<br>to " . 
+                $aTempRec["End"];
+        }
+        // error_log("Post Therapy - $Key - $MedData");
+        $PostTherapy[$MedName] += array($CycleColLabel => $MedData);
+    }
+}
+
+
+$records = array();
+$records[] = $DateRow;
+$records[] = $PSRow;
+$records[] = $DRRow;
+$records[] = $ToxicityRow;
+$records[] = $OtherRow;
+
+foreach($PreTherapy as $Med) {
+    $records[] = $Med;
+}
+
+foreach($Therapy as $Med) {
+    $records[] = $Med;
+}
+
+foreach($PostTherapy as $Med) {
+    $records[] = $Med;
+}
+
+//error_log("Flow Sheet Data - " . $this->varDumpToString($records));
+
+
+
+
+
+    $this->set('jsonRecord', array('success' => true, 'total' => count($records), 'records' => $records));
+}
+
+
+
+    public function FS2($id = null, $PAT_ID = null) {
+
+        error_log("FS-II Entry Point");
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $retVal = array();
-
+/****************/
         $requestData = json_decode(file_get_contents('php://input'));
         if (! empty($requestData)) {
             $this->Flowsheet->beginTransaction();
@@ -475,6 +496,87 @@ error_log("FS Entry Point");
                     ));
                 return;
             }
+
+
+
+$PreAdminRecords = array();
+$TherapyAdminRecords = array();
+$PostAdminRecords = array();
+
+$TKeys = array();
+error_log("=================++++++++++++++++++++++++====================");
+foreach ($records as $aRec) {
+    // error_log("Order Record = " . $this->varDumpToString($aRec));
+
+    if (array_key_exists("ndt_Type", $aRec)) {
+        $Type = $aRec["ndt_Type"];
+        $aDate = $aRec["ndt_AdminDate"];
+        $MedName = $aRec["ndt_Drug"];
+        $Key = "$aDate-$MedName";
+        $s1 = explode("T", $aRec["ndt_StartTime"]);
+        $s1 = $s1[1];
+        $e1 = explode("T", $aRec["ndt_EndTime"]);
+        $e1 = $e1[1];
+        $tmpRec = array(
+            "Dose"=>$aRec["ndt_Dose"], 
+            "Unit"=>$aRec["ndt_Unit"], 
+            "Route"=>$aRec["ndt_Route"], 
+            "Start"=>$s1, 
+            "End"=>$e1
+         );
+        $tmpARec = array($Key => $tmpRec);
+
+        
+        if ("Pre Therapy" == $Type) {
+            // error_log("Saving Pre Therapy - $aDate");
+            // $PreAdminRecords += $tmpARec;
+            error_log("Saving PRE Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
+            error_log("Saving PRE Therapy -  - " . $this->varDumpToString($tmpARec));
+            if (!array_key_exists($Key, $PreAdminRecords)) {
+                error_log("Saving PRE Therapy - Key ($Key) does NOT exist so appending new record - ");
+                $PreAdminRecords += $tmpARec;
+            }
+            else {
+                error_log("NOT Saving PRE Therapy - Key ($Key) DOES exist so NOT appending new record - ");
+            }
+
+        }
+        else if ("Post Therapy" == $Type) {
+            // error_log("Saving Post Therapy - $aDate");
+            $PostAdminRecords += $tmpARec;
+        }
+        else if ("Therapy" == $Type) {
+            error_log("Saving Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
+            error_log("Saving Therapy -  - " . $this->varDumpToString($tmpARec));
+            $TKeys[] = $Key;
+            if (!array_key_exists($Key, $TherapyAdminRecords)) {
+                error_log("Saving Therapy - Key ($Key) does NOT exist so appending new record - ");
+                $TherapyAdminRecords += $tmpARec;
+            }
+            else {
+                error_log("NOT Saving Therapy - Key ($Key) DOES exist so NOT appending new record - ");
+            }
+        }
+//        else {
+//            error_log("Saving Unknown Therapy - $aDate");
+//        }
+    }
+//    else {
+//        error_log("ndt_Type key does not exist");
+//    }
+}
+/**
+error_log("================================================");
+$KeysList = array_keys($TKeys);
+error_log("TKeys - " . count($TKeys) . " - " . $this->varDumpToString($KeysList));
+error_log("================================================");
+**/
+
+
+
+
+            $this->set('FS_OrderRecords', $records); 
+
             $this->set('jsonRecord', 
                 array(
                     'success' => true,
@@ -482,5 +584,9 @@ error_log("FS Entry Point");
                     'records' => $records
                 ));
         }
+/***********************/
+
+        $this->FSDataConvert($id, $PAT_ID, $PreAdminRecords, $TherapyAdminRecords, $PostAdminRecords);
+
 	}
 }

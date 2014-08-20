@@ -1,4 +1,7 @@
 <?php	
+$FirstLogin = null;
+$LastLogin = null;
+$AccessCode = null;
 
 $mwbTemp = "Unknown URI";
 if (isset($_GET[ 'url' ])) {
@@ -133,7 +136,10 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 		$_SESSION['role'] = $row['role'];
 		$_SESSION['rid'] = $row['rid'];
 		$_SESSION['sitelist'] = $row['sitelist'];
-		$_SESSION['Email'] = $row['Email'];
+        $_SESSION['Email'] = "";
+        if(array_key_exists('Email', $row)) {
+		    $_SESSION['Email'] = $row['Email'];
+        }
 		$_SESSION['mdws'] = $row['mdws'];
 		$_SESSION['ruser'] = $row['ruser'];
 		}

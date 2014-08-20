@@ -855,7 +855,7 @@ class PatientController extends Controller
  *  Get the disease this patient has
  *  
  **/
-	private function genOEMData($id) {
+	function genOEMData($id) {
 		$lookup = new LookUp();
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {

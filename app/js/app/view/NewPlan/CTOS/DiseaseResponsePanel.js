@@ -13,10 +13,16 @@ Ext.define("COMS.view.NewPlan.CTOS.DiseaseResponsePanel" ,{
 		"<tpl for=\"records\">",
 			"<tpl if=\"Disease_Response != ''\">",
 				"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"DRPanel-{AdminDate}-{xindex}\">",
-				"	<thead><tr><th><a name=\"DR_{AdminDate}\">Disease Response for date - {AdminDate}</a></th></tr></thead>",
+				"	<thead><tr><th><a name=\"DR_{AdminDate}\" id=\"DR_{AdminDate}\">Disease Response for date - {AdminDate}</a></th></tr></thead>",
 				"	<tr><td>{Disease_Response}</td></tr>",
 				"</table>",
 			"</tpl>",
-		"</tpl>"
+		"</tpl>",
+		{
+			disableFormats: true,
+			formatData : function(data) {
+				return Ext.util.Format.htmlDecode(data);
+			}
+		}
 	)
 });
