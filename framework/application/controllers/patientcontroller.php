@@ -2285,12 +2285,8 @@ Data:
             }
         }
 
-error_log("Patient Cumulative Dosing - Med Info - $MedName, $MedID, Units Info - $UnitName, $CumulativeDoseUnits");
-
-
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             if ($PatientID) {
-
 $partialQuery = "SELECT 
     dt.CumulativeDoseAmt, 
     dt.CumulativeDoseUnits, 

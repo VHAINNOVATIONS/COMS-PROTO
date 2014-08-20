@@ -195,9 +195,7 @@
         $_SESSION[ 'sessionStatus' ] = 0;
         
         if ( $compname === $ipcheck ) {
-            mwbEcho( "CompName = IPCheck = $compname<br>" );
-            
-            $tsql    = "SELECT role,DisplayName,rid,Email,TemplateAuthoring,Role_ID FROM Roles WHERE username = '$AccessCode'";
+			$tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID FROM COMS_Sessions   WHERE compname = '$ipcheck' and Role_ID != ''";
             $getrole = sqlsrv_query( $conn, $tsql );
             $flag    = false;
             mwbEcho( "Get Role Info = $tsql<br>" );
@@ -247,7 +245,7 @@
             $ruser    = $_SESSION[ 'ruser' ];
             $sitelist = $_SESSION[ 'sitelist' ];
             $Email    = $_SESSION[ 'Email' ];
-            // Former Line 180            mwbEcho( "		var SessionTemplateAuthoring = '$TemplateAuthoring';\n");
+			$TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
             
             include_once "workflow.php";
             include_once "template.php";
@@ -281,12 +279,25 @@
                 $point      = "Logged In";
                 //		PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,3,$_SESSION['sessionid']);
                 // Adjust the if statement below when new classes are added to the framework
-                if ( "Patient" === $urlArray[ 0 ] || "LookUp" === $urlArray[ 0 ] || "NursingDoc" === $urlArray[ 0 ] || "Mymdws" === $urlArray[ 0 ] || "Messages" === $urlArray[ 0 ] || "Workflow" === $urlArray[ 0 ] || "Admin" === $urlArray[ 0 ] || "Session" === $urlArray[ 0 ] || "Orders" === $urlArray[ 0 ] || "EndTreatmentSummary" === $urlArray[ 0 ] || "Flowsheet" === $urlArray[ 0 ] || "Git" === $urlArray[ 0 ] || "Search" === $urlArray[ 0 ] ) {
+            if ( "Patient" === $urlArray[ 0 ] || 
+                "LookUp" === $urlArray[ 0 ] || 
+                "NursingDoc" === $urlArray[ 0 ] || 
+                "Mymdws" === $urlArray[ 0 ] || 
+                "Messages" === $urlArray[ 0 ] || 
+                "Workflow" === $urlArray[ 0 ] || 
+                "Admin" === $urlArray[ 0 ] || 
+                "Session" === $urlArray[ 0 ] || 
+                "Orders" === $urlArray[ 0 ] || 
+                "EndTreatmentSummary" === $urlArray[ 0 ] || 
+                "Flowsheet" === $urlArray[ 0 ] || 
+                "Git" === $urlArray[ 0 ] || 
+                "Search" === $urlArray[ 0 ] ) {
                     $point = "urlArray Matched";
                     PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 4, $_SESSION[ 'sessionid' ] );
                     $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
                     require_once $bootstrap_path;
-                } else {
+            }		
+            else {
                     $point             = "No urlArray Matched";
                     //	PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,5,$_SESSION['sessionid']);
                     $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
@@ -295,7 +306,8 @@
                     $page2Open         = $urlArray[ 0 ];
                     include_once "main.php";
                 }
-            } else {
+		}
+		else {
                 $point             = "No Url Called";
                 //PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,6,$_SESSION['sessionid']);
                 //session_destroy();
