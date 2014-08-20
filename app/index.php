@@ -86,7 +86,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 
 
     $TimeOutMax = 300;
-    $TimeOutMax = 5000;
+    //$TimeOutMax = 5000;
     $LastLogin1 = $TimeOutMax;
 
 
@@ -147,7 +147,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 	$_SESSION['sessionStatus'] = 0;
 	
 	if ($compname === $ipcheck){
-			$tsql = "SELECT role,DisplayName,rid,Email,TemplateAuthoring,Role_ID FROM Roles WHERE username = '$AccessCode'";
+			$tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID FROM COMS_Sessions   WHERE compname = '$ipcheck' and Role_ID != ''";
 			$getrole = sqlsrv_query($conn, $tsql);
 				while($row = sqlsrv_fetch_array($getrole, SQLSRV_FETCH_ASSOC)) {
 					$_SESSION['role']= $row['role'];
