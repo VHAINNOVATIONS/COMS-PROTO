@@ -228,14 +228,13 @@ if (!is_null($templatedata)) {
 
 
             $List = "";
-            echo "\t\"CumulativeDoseMedsInRegimen\" : [\n";
             foreach($TempCDMIR as $CDMIR) {
                 if ("" != $List) {
-                    echo ", ";
+                    $List .= ", ";
                 }
-                echo "\n\t" . json_encode($CDMIR);
+                $List .= "\n\t" . json_encode($CDMIR);
             }
-            echo "\t],\n";
+            echo "\t\"CumulativeDoseMedsInRegimen\" : [\n$List\t],\n";
 
 
 
