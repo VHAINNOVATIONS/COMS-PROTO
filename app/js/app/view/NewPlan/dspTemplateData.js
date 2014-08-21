@@ -188,7 +188,23 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 
 					msg = " " + len + " Cumulative Dose Tracked " + medStr + " in this Regimen";
 					msg += "<table class=\"InformationTable\">";
-					msg += "<tr class=\"TemplateHeader\"><th>Medication Name</th><th>Lifetime Max</th><th>Total / Cycle</th><th>Total / Regimen</th></tr>";
+					// msg += "<tr class=\"TemplateHeader\"><th>Medication Name</th><th>Lifetime Max</th><th>Total / Cycle</th><th>Total / Regimen</th></tr>";
+					msg += "<tr class=\"TemplateHeader\">";
+					msg +=		"<th rowspan=\"2\">Medication Name</th>";
+					msg +=		"<th rowspan=\"2\">Lifetime Max</th>";
+					msg +=		"<th colspan=\"2\">For This Regimen</th>";
+					msg +=		"<th colspan=\"2\">For This Patient</th>";
+					msg += "</tr>";
+					msg += "<tr class=\"TemplateHeader\">";
+					
+					msg +=		"<th>Total / Cycle</th>";
+					msg +=		"<th>Total / Regimen</th>";
+					msg +=		"<th>Lifetime Total</th>";
+					msg +=		"<th>Exceeds Max</th>";
+					msg +=	"</tr>";
+
+					
+					// debugger;
 					for (i = 0; i < len; i++) {
 						cdmir = cdmirList[i];
 						var cdmirUnits = cdmir.CumulativeDoseUnits;
@@ -203,22 +219,52 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						msg += "<td>" + m1 + "</td>";
 						msg += "<td>" + m2 + "</td>";
 						msg += "<td>" + m3 + "</td>";
-						msg += "</tr>";
+						
+						
 						var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
 						if (cdtLen > 0) {
 							var i, cdt, cdtMed, exceeds, xxx;
 							for (i = 0; i < cdtLen; i++) {
 								cdt = COMS.Patient.CumulativeDoseTracking[i];
-								cdtMed = cdt.MedID;
-								if (cdtMed === cdmir.MedID) {
-									exceeds = (1 * cdt.CumulativeDoseAmt) + (1 * cdmir.CumDosePerRegimen);
-									if (exceeds > (1 * cdmir.CumulativeDoseAmt)) {
-										var xeedsByAmt = (exceeds - (1 * cdmir.CumulativeDoseAmt));
-										msg += "<tr><td colspan=\"4\" class=\"smlTCDWarning\">";
-										msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + xeedsByAmt + " " + cdmirUnits;
+								cdtMed = cdt.MedName;
+								if (cdtMed === cdmir.MedName) {
+									
+									if ("string" == typeof cdt.CurCumDoseAmt) {
+										var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
+									}
+									else {
+										var cdtAmt = cdt.CurCumDoseAmt;
+									}
+									msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
+									
+
+									if ("string" == typeof cdmir.CumulativeDoseAmt) {
+										var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
+									}
+									else {
+										var cdmirAmt = cdmir.CumulativeDoseAmt;
+									}
+
+									exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);
+									if (exceeds > (1 * cdmirAmt)) {
+										var xeedsByAmt = (exceeds - (1 * cdmirAmt));
+										var xceedsByPct = (xeedsByAmt / (1 * cdmirAmt)) * 100;
+										msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
+										msg += "</tr><tr><td colspan=\"6\" class=\"smlTCDWarning\">";
+										msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
 										msg += "</td></tr>";
 									}
+									else {
+										msg += "</tr>";
+									}
 								}
+								/**
+								else {
+									msg += "<td>" + "&nbsp;" + "</td>";
+									msg += "<td>" + "&nbsp;" + "</td>";
+									msg += "</tr>";
+								}
+								**/
 							}
 						}
 					}
