@@ -195,7 +195,8 @@
         $_SESSION[ 'sessionStatus' ] = 0;
         
         if ( $compname === $ipcheck ) {
-			$tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID FROM COMS_Sessions   WHERE compname = '$ipcheck' and Role_ID != ''";
+
+            $tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID FROM COMS_Sessions WHERE compname = '$ipcheck' and Role_ID != '' and dname != ''";
             $getrole = sqlsrv_query( $conn, $tsql );
             $flag    = false;
             mwbEcho( "Get Role Info = $tsql<br>" );
