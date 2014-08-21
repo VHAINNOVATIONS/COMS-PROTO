@@ -203,7 +203,10 @@
             while ( $row = sqlsrv_fetch_array( $getrole, SQLSRV_FETCH_ASSOC ) ) {
                 $flag                            = true;
                 $_SESSION[ 'role' ]              = $row[ 'role' ];
-                $_SESSION[ 'dname' ]             = $row[ 'DisplayName' ];
+                $_SESSION[ 'dname' ]             = "";
+                if ( array_key_exists( 'DisplayName', $row ) ) {
+                    $_SESSION[ 'dname' ]             = $row[ 'DisplayName' ];
+                }
                 $_SESSION[ 'rid' ]               = $row[ 'rid' ];
                 $_SESSION[ 'Email' ]             = $row[ 'Email' ];
                 $_SESSION[ 'TemplateAuthoring' ] = $row[ 'TemplateAuthoring' ];
