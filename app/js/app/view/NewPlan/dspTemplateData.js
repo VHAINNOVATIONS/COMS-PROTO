@@ -205,8 +205,8 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 
 					
 					// debugger;
-					for (i = 0; i < len; i++) {
-						cdmir = cdmirList[i];
+					for (i0 = 0; i0 < len; i0++) {
+						cdmir = cdmirList[i0];
 						var cdmirUnits = cdmir.CumulativeDoseUnits;
 						var m0 = cdmir.MedName;
 
@@ -222,12 +222,14 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						
 						
 						var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
+						var MedNotTracked = true;
 						if (cdtLen > 0) {
 							var i, cdt, cdtMed, exceeds, xxx;
 							for (i = 0; i < cdtLen; i++) {
 								cdt = COMS.Patient.CumulativeDoseTracking[i];
 								cdtMed = cdt.MedName;
 								if (cdtMed === cdmir.MedName) {
+									MedNotTracked = false;
 									
 									if ("string" == typeof cdt.CurCumDoseAmt) {
 										var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
@@ -255,17 +257,22 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 										msg += "</td></tr>";
 									}
 									else {
+										msg += "<td>&nbsp;.</td>";
+										msg += "<td>&nbsp;.</td>";
 										msg += "</tr>";
 									}
 								}
-								/**
-								else {
-									msg += "<td>" + "&nbsp;" + "</td>";
-									msg += "<td>" + "&nbsp;" + "</td>";
-									msg += "</tr>";
-								}
-								**/
+								//else {
+								//	msg += "<td>" + "D" + "</td>";
+								//	msg += "<td>" + "E" + "</td>";
+								//	msg += "</tr>";
+								//}
 							}
+						}
+						if (MedNotTracked) {
+							msg += "<td>N/A</td>";
+							msg += "<td>N/A</td>";
+							msg += "</tr>";
 						}
 					}
 					msg += "</table>";

@@ -33,14 +33,18 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	},
 
 	UpdateCumDoseInfo : function() {
-		var cdInfo = this.application.Patient.CumulativeDoseTracking,
-			len = cdInfo.length, 
-			curTemplateCumDoseTrackingMeds = this.application.Patient.AppliedTemplate.CumulativeDoseMedsInRegimen,
-			med2ckLen = curTemplateCumDoseTrackingMeds.length, 
-			exceedsCount = 0, 
-			WarningMsgBuf = "",
-			i, j, med2Ck, med2ckFlg, rec, cur, max, WarningLimit, ExceedsWarningLimit;
-
+		if (!this.application.Patient.AppliedTemplate) {
+			return;	// Template is not applied so no need to try for a warning msg
+		}
+		cdInfo = this.application.Patient.CumulativeDoseTracking,
+		appliedTemplate = this.application.Patient.AppliedTemplate,
+		len = cdInfo.length, 
+		med2ckLen = curTemplateCumDoseTrackingMeds.length, 
+		exceedsCount = 0, 
+		WarningMsgBuf = "",
+		curTemplateCumDoseTrackingMeds,
+		i, j, med2Ck, med2ckFlg, rec, cur, max, WarningLimit, ExceedsWarningLimit;
+		curTemplateCumDoseTrackingMeds = this.application.Patient.AppliedTemplate.CumulativeDoseMedsInRegimen;
 
 		for (i = 0; i < len; i++) {
 			rec = cdInfo[i];
