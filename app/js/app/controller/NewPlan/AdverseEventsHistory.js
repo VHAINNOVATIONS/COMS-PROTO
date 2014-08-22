@@ -50,6 +50,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 			else {
 				y.Reaction = x.Link;
 			}
+			data.push(y);
 		}
 		else if (y.date == x.date) {
 			if (x.type == "Assessment") {
