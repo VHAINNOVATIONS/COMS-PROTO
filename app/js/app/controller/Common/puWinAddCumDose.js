@@ -4,6 +4,12 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	stores : [ "DiseaseType", "DiseaseStage" ],
 	views : [ "Common.selDisease", "Common.selDiseaseStage" ],
 
+	refs: [
+		{ "ref" : "HistoricalDoseUnits",				selector: "puWinAddCumDose component[name=\"HistoricalDoseUnits\"]" },
+		{ "ref" : "MedMaxAllowable",					selector: "puWinAddCumDose component[name=\"MedMaxAllowable\"]" },
+		{ "ref" : "NewPlanTab",							selector: "NewPlanTab"}
+	],
+
 	init: function() {
 		this.control({
 			"puWinAddCumDose button[text=\"Cancel\"]" : {
@@ -11,77 +17,195 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			},
 			"puWinAddCumDose button[text=\"Save\"]" : {
 				click: this.Save
+			},
+			"puWinAddCumDose combobox[name=\"value\"]" : {
+				"change" : this.ChangeSelection
+			} 
+		});
+	},
+
+	ClearWarning : function() {
+		var msgSection = Ext.ComponentQuery.query("NewPlanTab")[0].query("[name=\"CumulativeDosingWarning\"]")[0];
+		if (msgSection) {
+			msgSection.update("");
+			msgSection.hide();
+		}
+	},
+
+	UpdateCumDoseInfo : function() {
+		var cdInfo, appliedTemplate, len = 0, med2ckLen,  exceedsCount, WarningMsgBuf, curTemplateCumDoseTrackingMeds, i, j, med2Ck, med2ckFlg, rec, cur, max, WarningLimit, ExceedsWarningLimit;
+		if (!this.application.Patient.AppliedTemplate || !this.application.Patient.CumulativeDoseTracking) {
+			return;	// Template is not applied so no need to try for a warning msg
+		}
+
+		cdInfo = this.application.Patient.CumulativeDoseTracking;
+		if (cdInfo) {
+			len = cdInfo.length;
+		}
+		appliedTemplate = this.application.Patient.AppliedTemplate;
+		curTemplateCumDoseTrackingMeds = appliedTemplate.CumulativeDoseMedsInRegimen;
+		med2ckLen = curTemplateCumDoseTrackingMeds.length;
+
+		exceedsCount = 0;
+		WarningMsgBuf = "";
+
+		for (i = 0; i < len; i++) {
+			rec = cdInfo[i];
+			med2ckFlg = false;
+			for (j = 0; j < med2ckLen; j++) {
+				med2Ck = curTemplateCumDoseTrackingMeds[j];
+				if (med2Ck.MedName === rec.MedName) {
+					med2ckFlg = true;
+
+					cur = rec.CurCumDoseAmt;
+					max = rec.MedMaxDose.replace(",", "") * 1;		// rec.MedMaxDose is string which may contain thousands separator
+					ExceedsWarningLimit = (cur / max) * 100;
+					WarningLimit = 0.75 * max;
+					if (ExceedsWarningLimit > 75) {
+						exceedsCount++;
+						exceeds = cur - WarningLimit;
+						var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
+						var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
+						var CurDose = Ext.util.Format.number(("" + cur).replace(",", ""), "0,0");
+						var pct = ((cur/max)*100);
+						pct = Ext.util.Format.number(pct, "0,0.0");
+						WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
+							"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
+							"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
+							"<td>" + pct + "%</td></tr>";
+					}
+
+				}
+			}
+
+		}
+		var plural = (exceedsCount > 1 ? "s " : " ");
+		var tmpBuf = "Warning! <br>Regimen Medication" + plural + "Approaching or Exceeding Recommended Maximum Dose" + plural + "<table border=\"1\">"
+		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Total</th><th>Percentage</th></tr>";
+		tmpBuf += WarningMsgBuf + "</table>";
+
+		var parent = this.getNewPlanTab();
+		var msgSection = Ext.ComponentQuery.query("NewPlanTab")[0].query("[name=\"CumulativeDosingWarning\"]")[0];
+		if (msgSection) {
+			if (exceedsCount > 0) {
+				msgSection.update(tmpBuf);
+				msgSection.show();
+			}
+			else {
+				msgSection.update("");
+				msgSection.hide();
+			}
+		}
+	},
+
+	// Used by internal COMS operations to save info on Administered Medications.
+	SaveNewCumDoseInfo : function( Info ) {
+		//Info : { MedID, UnitsID, Source, AdministeredDose }
+		Ext.Ajax.request({
+			"scope" : this,
+			"url" : Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+			"method" :"POST",
+			"params" : {
+				"MedName" : Info.MedName,
+				"UnitName" : Info.UnitName,
+				"Source" : "Administered and tracked via COMS on " + Ext.Date.format(new Date(), "m/d/Y"),
+				"value" : Info.MedID,
+				"LifetimeDose" : Info.AdministeredDose,
+				"Units" : Info.UnitsID,
+				"CumulativeDoseUnits" : Info.UnitsID,
+				"AdministeredByCOMS" : 1
+			},
+			"success" : this.RefreshPatientInfoDetails
+		});
+	},
+
+
+	ChangeSelection : function(combo, nvalue) {
+		var theStore = combo.getStore();
+		var theRecord = theStore.findRecord("MedID", nvalue);
+		if (theRecord) {
+			this.theData = theRecord.getData();
+			var theUnits = this.theData.CumulativeDoseUnits;
+			var theAmt = this.theData.CumulativeDoseAmt;
+			var theField = this.getHistoricalDoseUnits();
+			var theInfo = this.getMedMaxAllowable();
+			if (theField) {
+				theField.update("&nbsp; in " + theUnits);
+			}
+			if (theInfo) {
+				theInfo.update("Max Allowable Lifetime Cumulative Dosage is " + theAmt + " " + theUnits);
+			}
+		}
+	},
+
+	RefreshPatientInfoDetails : function() {
+		Ext.Ajax.request({
+			scope : this,
+			url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (resp.success) {
+					var recs;
+					if (resp.records) {
+						recs = resp.records; 
+						this.application.Patient.CumulativeDoseTracking = recs;
+						var thisCtl = this.getController("NewPlan.NewPlanTab");
+						var thePITable = thisCtl.getPatientInfoTableInformation();
+						thePITable.update( this.application.Patient );
+						this.UpdateCumDoseInfo();
+					}
+				}
 			}
 		});
 	},
 
-	addNewRecord : function(fields) {
-		var len = fields.length;
-		var i, v1, v2, fld;
-		var newRecord = {};
-		for (i = 0; i < len; i++) {
-			fld = fields.getAt(i);
-			v1 = "";
-			v2 = "";
-			if ("combobox" === fld.xtype) {
-				v1 = fld.getValue();
-				v2 = fld.getRawValue();
-				if ("value" == fld.name) {
-					newRecord.MedName = v2;
-					newRecord.MedID = v1;
-				}
-				else if ("Units" == fld.name) {
-					newRecord.Units = v2;
-					newRecord.CumulativeDoseUnits = v1;
-				}
-			}
-			else {
-				v1 = fld.getValue();
-				if ("LifetimeDose" === fld.name) {
-					newRecord.CumulativeDoseAmt = v1;
-				}
-				else if ("Source" === fld.name) {
-					newRecord.Source = v1;
-				}
-			}
+	FormSubmitGood : function(form) {
+		var theInfo = this.getMedMaxAllowable();
+		if (theInfo) {
+			theInfo.update("");
 		}
-		if (this.application.Patient.CumulativeDoseTracking) {
-			this.application.Patient.CumulativeDoseTracking.push(newRecord);
+		var theField = this.getHistoricalDoseUnits();
+		if (theField) {
+			theField.update("");
 		}
-		else {
-			this.application.Patient.CumulativeDoseTracking = [];
-			this.application.Patient.CumulativeDoseTracking.push(newRecord);
+		if (form.owner.up("window")) {
+			form.owner.up("window").close();		// hide();
 		}
+		form.reset();
+		// Refresh the patient info table with latest data from DB
+		this.RefreshPatientInfoDetails();
 
+	},
+	FormSubmitBad : function(form, action) {
+		switch (action.failureType) {
+			case Ext.form.action.Action.CLIENT_INVALID:
+				Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+				break;
+			case Ext.form.action.Action.CONNECT_FAILURE:
+				Ext.Msg.alert('Failure', 'Ajax communication failed');
+				break;
+			case Ext.form.action.Action.SERVER_INVALID:
+			   Ext.Msg.alert('Failure', action.result.msg);
+		}
+		form.owner.up("window").hide();
+		form.reset();
 	},
 
 	_submitForm : function(form) {
 		form.url += "/" + this.application.Patient.id;
-		this.addNewRecord(form.getFields());
+		form.setValues({
+			"Units" : this.theData.UnitsID,
+			"CumulativeDoseUnits" : this.theData.CumulativeDoseUnits
+		});
 		form.submit(
 			{
 				scope : this,
-				success: function(form, action) {
-					form.owner.up("window").hide();
-					form.reset();
-					
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var thePITable = thisCtl.getPatientInfoTableInformation();
-					thePITable.update( this.application.Patient );
+				success: function(form) {
+					this.FormSubmitGood(form);
 				},
 				failure: function(form, action) {
-					switch (action.failureType) {
-						case Ext.form.action.Action.CLIENT_INVALID:
-							Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
-							break;
-						case Ext.form.action.Action.CONNECT_FAILURE:
-							Ext.Msg.alert('Failure', 'Ajax communication failed');
-							break;
-						case Ext.form.action.Action.SERVER_INVALID:
-						   Ext.Msg.alert('Failure', action.result.msg);
-				   }
-					form.owner.up("window").hide();
-					form.reset();
+					this.FormSubmitBad(form, action);
 				}
 			}
 		);
@@ -90,39 +214,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	Save : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
-			Ext.Ajax.request({
-				scope : this,
-				pForm : theForm,
-				url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
-				success: function( response, opts ){
-					var selectedMedID = opts.pForm.getValues().value;
-					var text = response.responseText;
-					var resp = Ext.JSON.decode( text );
-					if (resp.success) {
-						var i, dupMed = false, recs, len;
-						if (resp.records) {
-							recs = resp.records; 
-							len = recs.length;
-							for (i = 0; i < len; i++) {
-								if (recs[i].MedID === selectedMedID) {
-									alert("Duplicate Medication selected. Please select another");
-									dupMed = true;
-									break;
-								}
-							}
-						}
-						if (!dupMed) {
-							this._submitForm(theForm);
-						}
-					}
-					else {
-						alert("ERROR - Saving Patient Cumulative Medication Dosing History");
-					}
-				},
-				failure : function( response, opts ) {
-					alert("ERROR: Saving Patient Cumulative Medication Dosing History");
-				}
-			});
+			this._submitForm(theForm);
 		}
 	},
 	Cancel : function(btn) {

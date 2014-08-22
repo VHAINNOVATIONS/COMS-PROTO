@@ -9,10 +9,9 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 			"ref" : "Orders",
 			"selector" : "OrdersTab"
 		}
-    ],
+	],
 
 	"init" : function () {
-		wccConsoleLog("Initialized Orders Tab Panel Navigation Controller!");
 		this.control({
 			"OrdersTab": {
 				collapse: this.collapseCombo,
@@ -27,20 +26,40 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 			},
 			"OrdersTab button[text=\"Update Records\"]": {
 				click: function () {
-					var ResponseAlert = function(status, data, record, op) {
-						if (status) {
-							Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-						}
-						else {
-							Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+					this.PostedRecsFailed = [];
+					this.PostedRecs = [];
+
+					var HandleResponse = function(record, status, theScope) {
+						theScope.PostedRecs.pop();
+						if (theScope.PostedRecs.length <= 0) {
+							if (theScope.PostedRecsFailed.length <= 0) {
+								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
+								theScope.getController("Orders.OrdersTab").LoadOrdersStore();
+							}
+							else {
+								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+							}
 						}
 					};
+					var ResponseAlertFail = function(record) {
+						//debugger;
+						this.PostedRecsFailed.push(record);
+						HandleResponse(record, false, this);
+					};
+					var ResponseAlertGood = function(record) {
+						//debugger;
+						HandleResponse(record, true, this);
+					};
+
 					var theStore = Ext.getStore("OrdersStore");
 					var DirtyRecords = theStore.getUpdatedRecords();
-					if (DirtyRecords.length > 0) {
+					var drLen = DirtyRecords.length;
+					this.NumRecords = drLen;
+					if (drLen > 0) {
 						// Run Update Process for each record.
 						var i, rec;
-						for (i = 0; i < DirtyRecords.length; i++) {
+						for (i = 0; i < drLen; i++) {
+							this.CurRecIdx = i;
 							rec = DirtyRecords[i];
 							var orderStatus = rec.get("orderstatus");
 							if (null == orderStatus || "" == orderStatus) {
@@ -57,10 +76,11 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 								orderid: rec.get("orderid"),
 								Last_Name: rec.get("Last_Name")
 							});
+							this.PostedRecs.push(order);
 							order.save({
 								scope: this,
-								success: ResponseAlert(true),
-								failure: ResponseAlert(false)
+								success: ResponseAlertGood,
+								failure: ResponseAlertFail
 							});
 						}
 					}

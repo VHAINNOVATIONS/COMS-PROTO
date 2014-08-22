@@ -1,7 +1,7 @@
 Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinAddCumDose",
-	"title" : "Lifetime Cumulative Medication Dose Tracking",
+	"title" : "Historical Cumulative Medication Dose Entry",
 	"closeAction" : "hide",
 	"width" : 820,
 	"height" : 220,
@@ -30,26 +30,18 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 					"allowBlank" : false,
 					"store" : "CumulativeDosingMeds"
 				},
+				{ "xtype" : "component", "name" : "MedMaxAllowable", "margin" : "0 0 0 140", "autoEl" : { "tag" : "div",  }},
 				{ "xtype" : "container", "layout" : "hbox", "margin" : "5 0", "defaults" : { "labelAlign" : "right", "labelStyle" : 'font-weight:bold' }, "items" : [
 					{ 
 						"xtype" : "textfield", 
 						"name" : "LifetimeDose", 
-						"fieldLabel" : "Lifetime Dose <em>*</em>", 
+						"fieldLabel" : "Historical Dose <em>*</em>", 
 						"labelWidth" : 140,
-						"emptyText" : "Enter lifetime dose"
+						"emptyText" : "Enter Historical dose"
 					},
-					{
-						"xtype" : "combobox",
-						"fieldLabel" : "Units <em>*</em>",
-						"width" : 150,
-						"labelWidth" : 60,
-						
-						"store" : "DrugUnitsStore2",
-						"displayField" : "name",
-						"valueField" : "id",
-						"allowBlank" : false,
-						"name" : "Units"
-					}
+					{ "xtype" : "component", "name" : "HistoricalDoseUnits", "margin" : "4 0 0 0", "autoEl" : { "tag" : "span", "html" : "" }},
+					{ "xtype" : "textfield", "name" : "Units", "hidden" : true },
+					{ "xtype" : "textfield", "name" : "CumulativeDoseUnits", "hidden" : true }
 				]},
 				{ 
 					"xtype" : "textfield", 

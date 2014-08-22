@@ -198,13 +198,16 @@ Ext.URLs.DiseaseStage = "/LookUp/DiseaseStage";
 // Example Usage - https://devtest.dbitpro.com/LookUp/DiseaseStage/C884F3AA-0B21-E111-BF57-000C2935B86F
 
 Ext.URLs.Lookups = "/LookUp/viewall";
-
 Ext.URLs.AddLookup = "/LookUp/save"; //KD - 12/20/11 - new URI associated with adding data to the lookup table
-Ext.URLs.DeleteLookup = "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
+Ext.URLs.DeleteLookup = "/LookUp/save";		// "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
+
+
 Ext.URLs.References = "/LookUp/view/References"; // MWB - 12/27/2011 - Moved from local to SQL Data Store
 Ext.URLs.HydrationDrug = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydration drug listing
 //Ext.URLs.Drugs = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
 Ext.URLs.Drugs = "/LookUp/view/Drug"; //KD - 05/17/12 - Will Append 'InPatient' or 'OutPatient' in Controller
+Ext.URLs.DrugsInPatient = "/LookUp/view/DrugsInPatient";
+Ext.URLs.DrugsOutPatient = "/LookUp/view/DrugsOutPatient";
 Ext.URLs.DrugUnits = "/LookUp/view/Unit/Drug"; // MWB - 12/29/2011 - Added drug units listing
 Ext.URLs.Units = "/LookUp/view/Unit"; // MWB - 12/29/2011 - Added drug units listing
 Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug Regimen
@@ -456,6 +459,7 @@ Ext.COMSModels.Allergies = "COMS.model.Allergies";
 Ext.COMSModels.ChemoHistory = "COMS.model.ChemoHistory";
 Ext.COMSModels.CTOS = "COMS.model.CTOS";
 Ext.COMSModels.CTOS_References = "COMS.model.CTOS_References";
+Ext.COMSModels.CumulativeDoseMedsInRegimen = "COMS.model.CumulativeDoseMedsInRegimen";
 Ext.COMSModels.CycleLengthMax = "COMS.model.LookupTable_CycleLengthMax";
 Ext.COMSModels.CycleLengthStore = "COMS.model.LookupTable_CycleLengthStore";
 Ext.COMSModels.DiseaseType = "COMS.model.LookupTable_DiseaseType";
@@ -556,6 +560,7 @@ Ext.require([
 	Ext.COMSModels.DrugRegimen,
 	Ext.COMSModels.Infusion,
 	Ext.COMSModels.CTOS_References,
+	Ext.COMSModels.CumulativeDoseMedsInRegimen,
 	Ext.COMSModels.Med,
 	Ext.COMSModels.MHMedInfusion,
 	Ext.COMSModels.MHMed,
@@ -608,6 +613,7 @@ Ext.require([
 	"COMS.controller.Management.DiseaseStaging",
 	"COMS.controller.Management.IntelligentDataElements",
 	"COMS.controller.Management.Toxicity",
+	"COMS.controller.Management.AddLookups",
 	"COMS.controller.Management.CumulativeDosing",
 
 	"COMS.controller.Messages.MessagesTab",
@@ -643,7 +649,8 @@ Ext.require([
 	"COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab",
 	"COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab",
-	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy"
+	"COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy",
+	"COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 //	, "COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 ]);
 
@@ -1611,6 +1618,7 @@ Ext.application({
 		, "Management.DiseaseStaging"
 		, "Management.IntelligentDataElements"
 		, "Management.Toxicity"
+		, "Management.AddLookups"
 		, "Management.CumulativeDosing"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
@@ -1631,6 +1639,7 @@ Ext.application({
 		, "NewPlan.CTOS.NursingDocs.EducationTab"
 		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
 //		, "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
+		, "NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 		, "Messages.MessagesTab"
 		, "NewPlan.EndTreatmentSummary"
 		, "NewPlan.ViewEndTreatmentSummary"

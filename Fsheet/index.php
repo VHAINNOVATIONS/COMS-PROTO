@@ -1,4 +1,11 @@
 <!doctype html>
+<!-- 
+Sample URL - http://coms-mwb.dbitpro.com:355/Fsheet/?PID= E362EFA5-7E19-E411-BAD9-000C2935B86F&PName=PATIENT%20%20ONEHUNDREDTHIRTY
+Patient_ID = 3D33A5FE-9A16-E411-BAD9-000C2935B86F
+PAT_ID = E362EFA5-7E19-E411-BAD9-000C2935B86F
+-->
+
+
 <!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
@@ -41,7 +48,7 @@ else { ?>
 
 <div id="GridPanel" style="width:98%; margin: 10px auto;"></div>
 <script type="text/javascript" src="/libs/ExtJS_4.1.0/ext-all-debug.js"></script>
-<script type="text/javascript" src="fsheet_3.js"></script>
+<script type="text/javascript" src="fsheet_5.js"></script>
 
 
 </body>

@@ -136,6 +136,20 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					this.curTreatmentRecord.save({
 						scope : this,
 						callback : function(record, operation) {
+
+
+						var theData = record.getData();
+						if ("Therapy" === theData.type) {
+									var thisCtl = this.getController("Common.puWinAddCumDose");
+									// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
+									var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
+									thisCtl.SaveNewCumDoseInfo( Info );
+						}
+
+
+
+
+
 							this.application.unMask();
 							if (!operation.success) {
 								Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
@@ -221,7 +235,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	LoadPreviousTreatmentData : function() {
 		var Patient = this.application.Patient;
 		var PAT_ID = Patient.PAT_ID;
-		
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.ReadND_Treatment + "/" + PAT_ID,
