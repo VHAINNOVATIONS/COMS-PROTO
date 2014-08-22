@@ -250,7 +250,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 									exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);
 									if (exceeds > (1 * cdmirAmt)) {
 										var xeedsByAmt = (exceeds - (1 * cdmirAmt));
-										var xceedsByPct = (xeedsByAmt / (1 * cdmirAmt)) * 100;
+										var xceedsByPct = ((xeedsByAmt / (1 * cdmirAmt)) * 100) + 100;
 										msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
 										msg += "</tr><tr><td colspan=\"6\" class=\"smlTCDWarning\">";
 										msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
