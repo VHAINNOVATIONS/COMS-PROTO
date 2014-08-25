@@ -48,7 +48,7 @@ else { ?>
 
 <div id="GridPanel" style="width:98%; margin: 10px auto;"></div>
 <script type="text/javascript" src="/libs/ExtJS_4.1.0/ext-all-debug.js"></script>
-<script type="text/javascript" src="fsheet_5.js"></script>
+<script type="text/javascript" src="fsheet_6.js"></script>
 
 
 </body>

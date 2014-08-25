@@ -437,6 +437,90 @@ class LookupController extends Controller {
 		$this->TemplateData($templateId);
 	}
 
+    function EFNR($PAT_ID = NULL) {     // PAT_ID - link into Patient Assigned Templates;
+
+
+        $query = "Select Template_ID from Patient_Assigned_Templates WHERE PAT_ID = '$PAT_ID'";
+        $retVal = $this->LookUp->query($query);
+
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+error_log("Result - " . $this->varDumpToString($retVal));
+        $TemplateID = $retVal[0]["Template_ID"];
+
+
+        $Msg = "Emesis / Febrile Neutropenia Risk Detail Info";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($TemplateID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+        $Regimen_ID = $retVal[0]["Regimen_ID"];
+        $retVal = $this->LookUp->getTopLevelTemplateDataById($TemplateID, $Regimen_ID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+
+        $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
+        switch($EmoLevel[0]) {
+            case "Low":
+                $Label = "Emesis-1";
+                break;
+            case "Medium":
+                $Label = "Emesis-2";
+                break;
+            case "Moderate":
+                $Label = "Emesis-3";
+                break;
+            case "High":
+                $Label = "Emesis-4";
+                break;
+            case "Very High":
+                $Label = "Emesis-5";
+                break;
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $EmesisVal = $this->LookUp->query($query);
+        $retVal[0]["emoLevel"] = $EmoLevel[0];
+        $retVal[0]["emoDetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
+
+        $FNRisk = $retVal[0]["fnRisk"];
+
+        if ($FNRisk < 10) { // Low
+            $FNRLevel = "Low";
+            $Label = "Neutropenia-1";
+        }
+        else if ($FNRisk <= 20) {   // Intermediate
+            $FNRLevel = "Intermediate";
+            $Label = "Neutropenia-2";
+        }
+        else {  // High
+            $FNRLevel = "High";
+            $Label = "Neutropenia-3";
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $FNRVal = $this->LookUp->query($query);
+        $retVal[0]["fnrLevel"] = $FNRisk . "% (" . $FNRLevel . " Risk)";
+        $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
+
+        $this->set('frameworkErr', null);
+        $this->set('frameworkErrCodes', null);
+
+        if (count($retVal) > 0) {
+            unset($jsonRecord['msg']);
+            $jsonRecord['total'] = count($retVal);
+            $jsonRecord['records'] = $retVal;
+        }
+
+       $this->set('jsonRecord', $jsonRecord);
+    }
+
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
@@ -491,6 +575,17 @@ class LookupController extends Controller {
             $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
 
             $this->set('templatedata', $retVal);
+
+
+
+
+
+
+
+
+
+
+
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){

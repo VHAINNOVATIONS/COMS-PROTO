@@ -17,19 +17,46 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 
 
 MergeAssessmentAndReactionLists : function(assessments, reactions) {
-	var i, len = assessments.length;
+	var i, j, dlLen, len;
 	var list = [];
 	var x, y, data = [], obj;
+	var PushData, link, DetailsList;
 
+	len = assessments.length
 	for (i = 0; i < len; i++) {
-		obj = { "type" : "Assessment", "date" : assessments[i].assessmentLink.date, "Link" : assessments[i].assessmentLink };
-		list.push(obj);
+		link = assessments[i].assessmentLink;
+		DetailsList = link.Details;
+		dlLen = DetailsList.length;
+		PushData = true;
+		if (0 == dlLen) {
+			PushData = false;
+		}
+		for (j = 0; j < dlLen; j++) {
+			if ("No Adverse Reaction" == DetailsList[j].fieldLabel) {
+				PushData = false;
+			}
+		}
+		if (PushData) {
+			obj = { "type" : "Assessment", "date" : link.date, "Link" : link };
+			list.push(obj);
+		}
 	}
 
 	len = reactions.length;
 	for (i = 0; i < len; i++) {
-		obj = { "type" : "Reaction", "date" : reactions[i].InfuseReactLink.date, "Link" : reactions[i].InfuseReactLink };
-		list.push(obj);
+		link = reactions[i].InfuseReactLink;
+		DetailsList = link.Details;
+		dlLen = DetailsList.length;
+		PushData = true;
+		for (j = 0; j < dlLen; j++) {
+			if ("No Adverse Reaction" == DetailsList[j].fieldLabel) {
+				PushData = false;
+			}
+		}
+		if (PushData) {
+			obj = { "type" : "Reaction", "date" : link.date, "Link" : link };
+			list.push(obj);
+		}
 	}
 
 	list.sort(function(a, b) {
@@ -103,6 +130,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 						this.application.Patient.TotalAdverseEvents = resp.totalEvents;
 						var data = this.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
 						var j, dLen, Details, numAlert = 0, alertText = "";
+						var totalEvents2Record = 0;
 						len = resp.records.Assessments.length;
 						for (i = 0; i < len; i++) {
 							rec = resp.records.Assessments[i].assessmentLink.date;
@@ -113,12 +141,14 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 							Details = resp.records.Assessments[i].assessmentLink.Details;
 							dLen = Details.length;
 							for (j = 0; j < dLen; j++) {
+								if ("No Adverse Reaction" !== Details[j].fieldLabel) {
+									totalEvents2Record++;
+								}
 								numAlert += Details[j].alertEvent;
 							}
-
-
-
 						}
+
+
 						len = resp.records.ReactAssessments.length;
 						for (i = 0; i < len; i++) {
 							rec = resp.records.ReactAssessments[i].InfuseReactLink.date;
@@ -129,6 +159,9 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 							Details = resp.records.ReactAssessments[i].InfuseReactLink.Details;
 							dLen = Details.length;
 							for (j = 0; j < dLen; j++) {
+								if ("No Adverse Reaction" !== Details[j].fieldLabel) {
+									totalEvents2Record++;
+								}
 								numAlert += Details[j].alertEvent;
 							}
 
@@ -138,7 +171,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 						if (numAlert > 0) {
 							alertText = " - <span style=\"color:red;\">" + numAlert + " flagged to trigger an Alert</span>";
 						}
-						theModule.setTitle("Adverse Events History - (" + resp.totalEvents + " Adverse Events Recorded" + alertText + ")");
+						theModule.setTitle("Adverse Events History - (" + totalEvents2Record + " Adverse Events Recorded" + alertText + ")");
 					}
 				}
 				else {
