@@ -162,7 +162,7 @@ class LookupController extends Controller {
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
-		while(null == $templatelookupid[0]["lookupid"]){
+        while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
@@ -191,7 +191,7 @@ class LookupController extends Controller {
          */
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
-		if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
+        if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
             $this->LookUp->rollbackTransaction();
             return;
         }
@@ -404,9 +404,47 @@ class LookupController extends Controller {
 
     // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
     // but it would be in the "FIELD" position, not the "ID"
+    // If field and id are NOT null then get Templates by either Cancer ID, Patient ID, Location ID
+    // e.g Service call can be one of the following:
+    //  LookUp/Templates/Cancer/CancerID
+    //  LookUp/Templates/Patient/PatientID
+    //  LookUp/Templates/Location/LocationID
     function Templates($field = NULL, $id = NULL) {
         if ($field == NULL && $id == NULL) {
-            $this->set('templates', $this->LookUp->getTemplates(null));
+            $TemplateList = $this->LookUp->getTemplates(null);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $Patients = array();
+                    $TemplateID = $templateRecord['id'];
+                    $query = "select 
+    pat.Patient_ID,
+    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
+    mt.Template_ID,
+    p.First_Name,
+    p.Last_Name,
+    p.Match as SSID
+    from Patient_Assigned_Templates pat
+    join Master_Template mt on mt.Template_ID = pat.Template_ID
+    join Patient p on p.Patient_ID = pat.Patient_ID
+    where pat.Template_ID = '$TemplateID'
+    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
+                    $retVal = $this->LookUp->query($query);
+                    if (null !== $retVal) {
+                        foreach ($retVal as $Patient) {
+                            $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
+                            $Patients[] = $Patient;
+                        }
+                    }
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+
+
+            // $this->set('templates', $this->LookUp->getTemplates(null));
+            $this->set('templates', $Templates);
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
             $this->set('templates', $this->LookUp->getTemplates($field));
@@ -525,7 +563,7 @@ error_log("Result - " . $this->varDumpToString($retVal));
     function TemplateData($id = NULL) {
         if ($id != NULL) {
 
-		$retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
+            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;

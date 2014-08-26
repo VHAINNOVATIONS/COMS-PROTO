@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 591 & 1583
+ **** Controllers ~ 595 & 1595
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -604,6 +604,7 @@ Ext.require([
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
+	"COMS.controller.TemplateList.puWinListPatients",
 
 	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.Authoring.DrugRegimen",
@@ -1612,6 +1613,7 @@ Ext.application({
 		, "Orders.OrdersTab"
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
+		, "TemplateList.puWinListPatients"
 		, "Authoring.DrugRegimen"
 		, "Authoring.Hydration"
 		, "Management.AdminTab"

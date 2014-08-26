@@ -19,17 +19,44 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 
 	init: function () {
 		this.control({
-			// Handlers for the contents within the tab panel itself
+			"scope" : this,
+
 			"TemplateListTab" : {
-				beforerender: this.renderPanel
-			}
-			, "TemplateListTab selTemplateByStages selTemplateType": {
-				select: this.TemplateTypeChange
-			}
-			, "TemplateListTab selTemplateByStages button": {
-				click: this.ShowAllTemplates
+				"beforerender" : this.renderPanel
+			},
+			"TemplateListTab selTemplateByStages selTemplateType": {
+				"select" : this.TemplateTypeChange
+			},
+			"TemplateListTab selTemplateByStages button": {
+				"click" : this.ShowAllTemplates
+			},
+			"TemplateListTab grid" : {
+				"cellclick" : this.clickCell
 			}
 		});
+	},
+
+	clickCell : function(grid,td,cellIndex,record,tr,rowIndex,e,eOpts) {
+		var columnIndex;
+		columnIndex = this.getColumnIndex(grid, "PatientCount");     
+		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    
+			var theData = record.getData();
+			this.application.TemplateListPatients = theData.Patients;
+			Ext.widget("puWinListPatients");
+		}
+		columnIndex = this.getColumnIndex(grid, "id");     
+		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    
+			// Print/View
+		}
+	}, 
+
+	getColumnIndex: function (grid, dataIndex) {   
+		var gridColumns = grid.headerCt.getGridColumns();   
+		for (var i = 0; i < gridColumns.length; i++) {
+			if (gridColumns[i].dataIndex == dataIndex) {
+				return i;
+			}
+		}
 	},
 
 	renderPanel: function (panel) {

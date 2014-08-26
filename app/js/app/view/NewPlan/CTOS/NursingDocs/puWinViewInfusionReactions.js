@@ -7,7 +7,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
 	"height" : 220,
 	"minHeight" : 220,
 	"autoShow" : true,
-	// "layout" : "fit",
 	"resizable" : true,
 	"modal" : true,
 	"items" : [ { "xtype" : "selInfusionReaction" } ]
