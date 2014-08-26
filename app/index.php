@@ -153,7 +153,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 	$_SESSION['sessionStatus'] = 0;
 	
 	if ($compname === $ipcheck){
-			$tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID FROM COMS_Sessions WHERE compname = '$ipcheck' and Role_ID != '' and dname != ''";
+			$tsql = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID,AC,VC FROM COMS_Sessions WHERE compname = '$ipcheck' and Role_ID != '' and dname != '' and AC != ''";
 			$getrole = sqlsrv_query($conn, $tsql);
 				while($row = sqlsrv_fetch_array($getrole, SQLSRV_FETCH_ASSOC)) {
 					$_SESSION['role']= $row['role'];
@@ -162,8 +162,10 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 					$_SESSION['Email']= $row['Email'];
 					$_SESSION['TemplateAuthoring']= $row['TemplateAuthoring'];
 					$_SESSION['Role_ID']= $row['Role_ID'];
-					$_SESSION['AC']= $AccessCode;
-					$_SESSION['VC']= $VerifyCode;
+					//$_SESSION['AC']= $AccessCode;
+					//$_SESSION['VC']= $VerifyCode;
+					$_SESSION['AC']= $row['AC'];
+					$_SESSION['VC']= $row['VC'];
 				}
 			$globalsq = "SELECT * FROM Globals";
 			$getglobals = sqlsrv_query($conn, $globalsq);
