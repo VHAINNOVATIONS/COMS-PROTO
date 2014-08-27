@@ -31,7 +31,7 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 			},
 			"ProgrammerBtns button[text=\"Patients List\"]" : {
 				"click" : this.ClickPatientsList
-			},
+			}
 		});
 	},
 

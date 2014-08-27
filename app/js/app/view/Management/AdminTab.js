@@ -1,15 +1,14 @@
 Ext.define("COMS.view.Management.AdminTab" ,{
-	extend: "Ext.tab.Panel",
-	alias : "widget.AdminTab",
-	name : "Admin Tab",
-	autoEl : { tag : "nav" },
-	padding : "10 10 5 10",
-	plain : true,
-	//activeTab: 7,
-	"defaults": { padding : "10 10 5 10", plain : true, "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
-	items : [
-		{ xtype : "tabpanel", title: "Documentation Lists and Contents",			defaults: {
-				padding : "10 10 5 10"
+	"extend" : "Ext.tab.Panel",
+	"alias" : "widget.AdminTab",
+	"name" : "Admin Tab",
+	"autoEl" : { "tag" : "nav" },
+	"padding" : "10 10 5 10",
+	"plain" : true,
+	"defaults" : { "padding" : "10 10 5 10", "plain" : true, "labelAlign" : "right", "labelClsExtra" : "NursingDocs-label" },
+	"items" : [
+		{ "xtype" : "tabpanel", "title" : "Documentation Lists and Contents", "defaults" : {
+				"padding" : "10 10 5 10"
 			},
 			items : [
 				{ xtype : "ClinicInfo", title: "Clinic Information"},
@@ -24,10 +23,10 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				padding : "10 10 5 10"
 			},
 			items : [
-				{ xtype : "DeleteTemplate", title: "Delete Template"},
-				{ xtype : "DiseaseStaging", title: "Disease Staging" },
-				{ xtype : "MedRisks", title: "Neutropenia / Emesis Risks"},
-				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" },
+				{ "xtype" : "DeleteTemplate", "title" : "Delete Template"},
+				{ "xtype" : "DiseaseStaging", "title" : "Disease Staging" },
+				{ "xtype" : "MedRisks", "title" : "Neutropenia / Emesis Risks"},
+				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		},
 		{ xtype : "Globals", title: "Global Variables"},

@@ -7,7 +7,6 @@ Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 	],
 
 	init: function () {
-		console.log("puWinListPatients - Initialized");
 		this.control({
 			"scope" : this,
 			"puWinListPatients" : {
@@ -27,7 +26,6 @@ Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 
 
 	renderPanel: function (panel) {
-		console.log("puWinListPatients - rendering...");
 		if (this.application.TemplateListPatients) {
 			var theGrid = this.getTheGrid();
 			theGrid.getStore().loadData(this.application.TemplateListPatients);

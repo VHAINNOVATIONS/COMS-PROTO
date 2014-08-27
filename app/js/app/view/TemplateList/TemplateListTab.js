@@ -22,7 +22,7 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 				{ "text" : "Disease Type", dataIndex: "DiseaseName", hidden: true },
 				{ "text" : "# of Patients", "name" : "NumPatients", dataIndex: "PatientCount", "renderer" : 
 					function(value) {
-						var buf = "<span class=\"textAnchor\">" + value + "</span>";
+						var buf = "<div class=\"textAnchor\" style=\"text-align: center;\">" + value + "</div>";
 						return buf;
 					}
 				},

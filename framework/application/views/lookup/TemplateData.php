@@ -43,6 +43,12 @@ if (!is_null($templatedata)) {
 
 
 
+            $PatientList = $this->get('PatientList');
+            echo "\t\"PatientList\" : \n" . json_encode($PatientList) . "\t,\n";
+            echo "\t\"PatientListCount\" : \n" . count($PatientList) . "\t,\n";
+
+
+
 
 
             // References
@@ -235,19 +241,6 @@ if (!is_null($templatedata)) {
                 $List .= "\n\t" . json_encode($CDMIR);
             }
             echo "\t\"CumulativeDoseMedsInRegimen\" : [\n$List\t],\n";
-
-
-
-
-
-
-
-
-
-
-
-
-
 
             //  Post Medication Hydration Instrustions
             echo "\t\"PostMHInstructions\" : \"" . $oemrecord['postMHInstruct'] . "\", \n";

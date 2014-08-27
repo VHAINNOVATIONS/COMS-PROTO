@@ -482,6 +482,7 @@ Ext.COMSModels.MHMed = "COMS.model.MHMed";
 Ext.COMSModels.PatientHistory = "COMS.model.PatientHistory";
 Ext.COMSModels.PatientInfo = "COMS.model.PatientInfo";
 Ext.COMSModels.PatientInfoMDWS = "COMS.model.PatientInfoMDWS";
+// Ext.COMSModels.PatientList = "COMS.model.PatientList";
 Ext.COMSModels.TemplateList = "COMS.model.TemplateList";
 Ext.COMSModels.TemperatureLocation = "COMS.model.TemperatureLocation";
 Ext.COMSModels.DeliveryMechanism = "COMS.model.DeliveryMechanism";

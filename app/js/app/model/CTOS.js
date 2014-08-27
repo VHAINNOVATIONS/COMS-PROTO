@@ -29,10 +29,13 @@ Ext.define('COMS.model.CTOS', {
 
             'PreMHMeds',		// Array of PreMHMeds data, uses the 'hasMany' object below
             'Meds',		// Array of Meds data, uses the 'hasMany' object below
-            'PostMHMeds'		// Array of PostMHMeds data, uses the 'hasMany' object below
+            'PostMHMeds',		// Array of PostMHMeds data, uses the 'hasMany' object below
+			'PatientList',
+			'PatientListCount'
 
     ],
     hasMany : [
+			{ model : 'COMS.model.TemplateListPatients', name : 'PatientList' },
             { model : 'COMS.model.CTOS_References', name : 'References' },		// Added - MWB 2 Jan 2012
 			{ model : 'COMS.model.CumulativeDoseMedsInRegimen', name : 'CumulativeDoseMedsInRegimen' },
             { model : 'COMS.model.MHMed', name : 'PreMHMeds' },

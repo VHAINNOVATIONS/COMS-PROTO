@@ -36,13 +36,19 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 		});
 	},
 
+	showPatientListWidget : function(thePatients, theTemplateDesc) {
+		this.application.TemplateListPatients = thePatients;
+		var theWidget = Ext.widget("puWinListPatients");
+		var theTitle = "Patients Currently Undergoing Treatment - " + theTemplateDesc;
+		theWidget.setTitle( theTitle );
+	},
+
 	clickCell : function(grid,td,cellIndex,record,tr,rowIndex,e,eOpts) {
 		var columnIndex;
 		columnIndex = this.getColumnIndex(grid, "PatientCount");     
 		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    
 			var theData = record.getData();
-			this.application.TemplateListPatients = theData.Patients;
-			Ext.widget("puWinListPatients");
+			this.showPatientListWidget( theData.Patients, theData.description );
 		}
 		columnIndex = this.getColumnIndex(grid, "id");     
 		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    

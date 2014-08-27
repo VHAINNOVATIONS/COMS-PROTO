@@ -402,6 +402,35 @@ class LookupController extends Controller {
         }
     }
 
+    function getPatients4Template( $templateID = null ) {
+        $Patients = array();
+
+        $query = "select 
+    pat.Patient_ID,
+    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
+    CONVERT(VARCHAR(10), pat.Date_Ended, 101) as Est_End_Date,
+    mt.Template_ID,
+    p.First_Name,
+    p.Last_Name,
+    p.Match as SSID
+    from Patient_Assigned_Templates pat
+    join Master_Template mt on mt.Template_ID = pat.Template_ID
+    join Patient p on p.Patient_ID = pat.Patient_ID
+    where pat.Template_ID = '$templateID'
+    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
+
+    error_log("Patients4Template - $query");
+
+        $retVal = $this->LookUp->query($query);
+        if (null !== $retVal) {
+            foreach ($retVal as $Patient) {
+                $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
+                $Patients[] = $Patient;
+            }
+        }
+        return $Patients;
+    }
+
     // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
     // but it would be in the "FIELD" position, not the "ID"
     // If field and id are NOT null then get Templates by either Cancer ID, Patient ID, Location ID
@@ -415,27 +444,8 @@ class LookupController extends Controller {
             if (null !== $TemplateList) {
                 $Templates = array();
                 foreach($TemplateList as $templateRecord) {
-                    $Patients = array();
                     $TemplateID = $templateRecord['id'];
-                    $query = "select 
-    pat.Patient_ID,
-    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
-    mt.Template_ID,
-    p.First_Name,
-    p.Last_Name,
-    p.Match as SSID
-    from Patient_Assigned_Templates pat
-    join Master_Template mt on mt.Template_ID = pat.Template_ID
-    join Patient p on p.Patient_ID = pat.Patient_ID
-    where pat.Template_ID = '$TemplateID'
-    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
-                    $retVal = $this->LookUp->query($query);
-                    if (null !== $retVal) {
-                        foreach ($retVal as $Patient) {
-                            $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
-                            $Patients[] = $Patient;
-                        }
-                    }
+                    $Patients = $this->getPatients4Template( $TemplateID );
                     $templateRecord["Patients"] = $Patients;
                     $templateRecord["PatientCount"] = count($Patients);
                     $Templates[] = $templateRecord;
@@ -447,7 +457,22 @@ class LookupController extends Controller {
             $this->set('templates', $Templates);
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
-            $this->set('templates', $this->LookUp->getTemplates($field));
+
+error_log("Get Patients for specific Template - $field");
+            $TemplateList = $this->LookUp->getTemplates($field);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $Patients = array();
+                    $TemplateID = $templateRecord['id'];
+                    $Patients = $this->getPatients4Template( $TemplateID );
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+            // $this->set('templates', $this->LookUp->getTemplates($field));
+            $this->set('templates', $Templates);
         } else {
             $retVal = $this->LookUp->getTemplatesByType($field, $id);
             if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
@@ -679,6 +704,10 @@ error_log("Result - " . $this->varDumpToString($retVal));
             $this->set('regimens', $retVal);
 
 
+
+
+
+
             $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
             if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
                 $CumulativeDoseMedsInRegimen = array();
@@ -694,6 +723,11 @@ error_log("Result - " . $this->varDumpToString($retVal));
                 }
                 $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
             }
+
+
+            $Patients = $this->getPatients4Template( $id );
+            $this->set("PatientList", $Patients);
+
 
         } else {
             $this->set('templatedata', null);
