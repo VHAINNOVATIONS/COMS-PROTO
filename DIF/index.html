@@ -6,9 +6,9 @@
 	<head>
 		<meta charset="utf-8">
 		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
-		<title>Discharge Instructions for Chemotherapy Order Management System (COMS)</title>
+		<title>Follow Up Appointment for Chemotherapy Order Management System (COMS)</title>
 
-		<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1RC1/resources/css/ext-all.css">
+		<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
 		<link rel="stylesheet" type="text/css" href="COMS.css">
 		<script src="/libs/modernizr-2.0.6.js"></script>
 		<style>
@@ -55,10 +55,6 @@ Ext.define("CkBoxTArea", {
 	"margin": "5 0 5 0",
 	"defaults": commonDefaults,
 	"items": [
-//	{
-//		"xtype": "checkbox",
-//		flex: 0
-//	}, 
 	{
 		"xtype": "textarea",
 		"rows": 5,
@@ -69,10 +65,8 @@ Ext.define("CkBoxTArea", {
 	}],
 	listeners: {
 		"afterrender": function (cbta, options) {
-//			var theCkBox = cbta.down("checkbox");
 			var theTArea = cbta.down("textarea");
 			theTArea.setFieldLabel(cbta.fieldLabel);
-//			theCkBox.name = cbta.name + "_Ck";
 			theTArea.name = cbta.name + "_Comment";
 		}
 	}
@@ -366,51 +360,12 @@ var DischargeMtls = {
 				"fieldLabel": "Other",
 				"hidden" : true
 			},
-/****************
-			{
-				"xtype": "box",
-				"name": "ClinicInfoHeader",
-				"html": "<h2>Clinic Information:</h2>",
-				"style": {
-					"textAlign": "right"
-				},
-				"width": 200,
-				"componentCls": "NursingDocs-label"
-			}, {
-				"xtype": "ClinicInfoDisplay"
-			},
-**************/
-/****************
-			{
-				"xtype": "box",
-				"name": "SpclInstrHeader",
-				"html": "<h2>Discharge Instructions:</h2>",
-				"style": {
-					"textAlign": "right"
-				},
-				"width": 200,
-				"componentCls": "NursingDocs-label"
-			}, 
-**************/
 			{
 				"xtype": "SpclInstrDisplay"
 			},
-/****************
-			{
-				"xtype": "box",
-				"name": "MedSpecificInfoHeader",
-				"html": "<h2>Medication Information:</h2>",
-				"style": {
-					"textAlign": "right"
-				},
-				"width": 200,
-				"componentCls": "NursingDocs-label"
-			}, 
-**************/
 			{
 				"xtype": "MedSpecificInfoDisplay"
 			},
-
 			{
 				"xtype": "container",
 				"layout": "fit",
@@ -727,7 +682,8 @@ function LoadMedInfo(TemplateID) {
 
 Ext.onReady(function () {
 	var thePanel = Ext.create('Ext.form.Panel', {
-		"title": "Discharge Instructions",
+		"title": "Followup Appointment",
+		"name": "MainPanel",
 		"renderTo": Ext.getBody(),
 
 		"url": Ext.URLs.PatientDischarge,
@@ -737,10 +693,9 @@ Ext.onReady(function () {
 			"labelWidth": 200,
 			"labelClsExtra": "NursingDocs-label"
 		},
-		"items": [{
-				"xtype": "PatientEducationDetails"
-			}
-			// , { "xtype": "FollowupDetails" }
+		"items": [
+			{ "xtype": "PatientEducationDetails" }
+			// { "xtype": "FollowupDetails" }
 		]
 	});
 
@@ -752,12 +707,23 @@ Ext.onReady(function () {
 	if ("" !== qs) {
 		var qsParams = Ext.Object.fromQueryString(qs);
 		var URL = Ext.URLs.PatientDischarge;
+
+
+
+		var paramCount = 0;
 		if (qsParams.pat_id) {
 			URL += "/" + qsParams.pat_id;
+			paramCount++;
 		}
 		if (qsParams.di_id) {
 			URL += "/" + qsParams.di_id;
+			paramCount++;
 		}
+		if (2 !== paramCount) {
+			Ext.Msg.alert("Load failed", "Insufficient parameters to process request");
+			return;
+		}
+
 		form.load({
 			url: URL,
 			method: "GET",
@@ -766,110 +732,6 @@ Ext.onReady(function () {
 				// process input to show sections of the form
 				var theData = action.result.data;
 				var theSection;
-				/**
-				if ("on" == theData.Teaching_Krames) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Krames\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-				if ("on" == theData.Teaching_HealtheVet) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_HealtheVet\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("" !== theData.DischargeInstructions_Materials) {
-					theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Materials\"]");
-					if (theSection) {
-						theSection[0].show();
-						theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Materials_Comment\"]");
-						theSection[0].setValue(theData.DischargeInstructions_Materials);
-					}
-				}
-
-
-				if ("on" == theData.Teaching_InfoSheets_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_InfoSheets\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("on" == theData.Teaching_VABrochure_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_VABrochure\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("on" == theData.Teaching_OtherWritten_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_OtherWritten\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("on" == theData.Teaching_Mailed_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Mailed\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("on" == theData.Teaching_Video_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Video\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("on" == theData.Teaching_Other_Ck) {
-					theSection = Ext.ComponentQuery.query("[name=\"Teaching_Other\"]");
-					if (theSection) {
-						theSection[0].show();
-					}
-				}
-
-				if ("" !== theData.DischargeInstructions_Comments) {
-					theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Comments\"]");
-					if (theSection) {
-						theSection[0].show();
-						theSection = Ext.ComponentQuery.query("[name=\"DischargeInstructions_Comments_Comment\"]");
-						theSection[0].setValue(theData.DischargeInstructions_Comments);
-
-					}
-				}
-				*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-				if ("1" == theData.PE_Taught) {
-					theSection = Ext.getCmp("PatientEducationDetails");
-					if (theSection) {
-						theSection.show();
-					}
-				}
-				if ("1" == theData.DischargeInstructions_Given) {
-					theSection = Ext.getCmp("DischargeInstructionsDetails");
-					if (theSection) {
-						theSection.show();
-					}
-				}
-*/				
 				if ("1" == theData.FollowUp_Type) {
 					theSection = Ext.getCmp("FollowupDetails");
 					if (theSection) {

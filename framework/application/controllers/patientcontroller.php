@@ -1854,6 +1854,8 @@ function buildJsonObj4Output() {
                         FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
                 }
             }
+            error_log("DI 1 - Retrieving Records - $query");
+
 // error_log("DischargeInstructions Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";

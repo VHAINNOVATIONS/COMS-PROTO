@@ -105,6 +105,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplate"
 	},
 
+
+
+		{ ref: "DiseaseAndStage",				selector: "AuthoringTab selDiseaseAndStage[name=\"4ExistingTemplate\"]"},
+		{ ref: "AllTemplatesShownMsg",			selector: "AuthoringTab [name=\"AllTemplatesShownMsg\"]"},
+
+
 		{
 		ref: "ResetButton",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]"
@@ -363,15 +369,28 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 	resetTemplateFilter: function (button) {
-
+debugger;
 		if (null != this.application.Template) {
 			this.getTemplate().setRawValue(this.application.Template.description);
 		}
 
-		this.application.ResetClicked = true;
-		this.loadCombo(this.getTemplate());
-		this.loadCombo(this.getDisease());
-		Ext.MessageBox.alert('Success', 'Template filters have been removed. All available Templates and Cancer Types will be displayed. ');
+
+//		this.application.ResetClicked = true;
+//		this.loadCombo(this.getTemplate());
+//		this.loadCombo(this.getDisease());
+// 		Ext.MessageBox.alert('Success', 'Template filters have been removed. All available Templates and Cancer Types will be displayed. ');
+
+        this.application.ResetClicked=true;
+        this.loadCombo(this.getTemplate());
+        this.loadCombo(this.getDisease(),"Refresh");
+
+
+
+		this.getDiseaseAndStage().hide();
+        this.getTemplate().show();
+		button.hide();
+		this.getAllTemplatesShownMsg().show();
+
 
 	},
 

@@ -91,7 +91,8 @@ Ext.define('COMS.view.Authoring.AuthoringTab' ,{
 				},
 
                 {
-                    xtype : 'selDiseaseAndStage'
+                    xtype : 'selDiseaseAndStage', 
+					name : "4ExistingTemplate", 
                 },
                 { 
                     xtype: 'container',
