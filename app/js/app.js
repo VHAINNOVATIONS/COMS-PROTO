@@ -597,12 +597,12 @@ Ext.require([
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
-	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
 	"COMS.controller.Common.puWinAddCumDose",
 	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
+	"COMS.controller.Common.selCTOSTemplate",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.TemplateList.puWinListPatients",
@@ -1606,6 +1606,7 @@ Ext.application({
 		, "Common.puWinSelCancer"
 		, "Common.puWinAddCumDose"
 		, "Common.puWinSelBSA"
+		, "Common.selCTOSTemplate"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"

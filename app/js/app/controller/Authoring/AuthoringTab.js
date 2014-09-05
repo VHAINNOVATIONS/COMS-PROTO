@@ -39,7 +39,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		, 'Common.Search4Template'
 		, "Common.selCTOSTemplate"
-		, "Common.selTemplateType"
+		// , "Common.selXXXTemplateXXXType"
 		, "Common.selDiseaseAndStage"
 		, "Common.selDisease"
 		, "Common.selDiseaseStage"
@@ -50,169 +50,168 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 	refs: [
-		{
-		ref: "NewTemplate",
-		selector: "AuthoringTab CreateNewTemplate"
-	},
 
 		{
-		ref: "ExistingTemplate",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"]"
-	},
+			ref: "ReqInstr",
+			selector: "AuthoringTab RequiredInstr"
+		},
+
+		{
+			ref: "NewTemplate",
+			selector: "AuthoringTab CreateNewTemplate"
+		},
+
+		{
+			ref: "ExistingTemplate",
+			selector: "AuthoringTab selCTOSTemplate"
+		},
 
 
 		{
 		ref: "TemplateDiseaseAndStage",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage"
-	},
+		},
 
 		{
 		ref: "NewTemplateDiseaseAndStage",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"]"
-	},
+		},
 
 
 		{
 		ref: "DiseaseStage",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"] selDiseaseStage"
-	},
+		},
 
 		{
 		ref: "Disease",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"] selDisease"
-	},
-
-
+		},
 		{
 		ref: "ExistingDiseaseStage",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage selDiseaseStage"
-	},
+		},
 
 		{
 		ref: "ExistingDisease",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage selDisease"
-	},
+		},
 
-
-		{
-		ref: "TemplateSource",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplateType"
-	},
-
+//		{
+//		ref: "TemplateSource",
+//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selXXXTemplateXXXType"
+//		},
 
 		{
 		ref: "Template",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplate"
-	},
-
-
+		},
 
 		{ ref: "DiseaseAndStage",				selector: "AuthoringTab selDiseaseAndStage[name=\"4ExistingTemplate\"]"},
 		{ ref: "AllTemplatesShownMsg",			selector: "AuthoringTab [name=\"AllTemplatesShownMsg\"]"},
 
-
 		{
 		ref: "ResetButton",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]"
-	},
+		},
 
 		{
 		ref: 'NewPlanTemplate',
 		selector: 'NewPlanTab PatientInfo CTOS selCTOSTemplate selTemplate'
-	},
+		},
 
 		{
 		ref: "PatientNameField",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] textfield[name=\"PatientName\"]"
-	},
-
+		},
 
 		{
 		ref: "ExistingCourseInfo",
 		selector: "AuthoringTab container[name=\"courseInfo\"]"
-	},
-
+		},
 
 		// Reference Buttons
 	{
 		ref: "RemoveReference",
 		selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
-	}, {
+	}, 
+
+	{
 		ref: 'EditReference',
 		selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
 	},
-
 
 		// Reference Fields
 	{
 		ref: 'ReferenceName',
 		selector: 'AddReference textfield[name="Reference"]'
-	}, {
+	}, 
+	{
 		ref: 'ReferenceLink',
 		selector: 'AddReference textfield[name="ReferenceLink"]'
-	}, {
+	}, 
+	{
 		ref: 'ReferenceCombo',
 		selector: 'AddReference combo[name="SelReference"]'
 	},
-		{
+	{
 		ref: "CourseNum",
 		selector: "AuthoringTab textfield[name=\"CourseNum\"]"
 	},
-		{
+	{
 		ref: "CourseNumMax",
 		selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
 	},
-
 		// Basic Fields (CycleLength, Regimen Name, Emotegenic Level, Febrile Neutropenia Risk)
 	{
 		ref: "CycleLength",
 		selector: "AuthoringTab combo[name=\"CycleLength\"]"
 	},
-		{
+	{
 		ref: "CycleLengthUnit",
 		selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
 	},
-		{
+	{
 		ref: "RegimenName",
 		selector: "AuthoringTab textfield[name=\"RegimenName\"]"
 	},
-		{
+	{
 		ref: "TemplateAlias",
 		selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
 	},
-		{
+	{
 		ref: "EmotegenicLevel",
 		selector: "AuthoringTab combo[name=\"EmotegenicLevel\"]"
-	},
+		},
 		{
 		ref: "FebrileNeutropeniaRisk",
 		selector: "AuthoringTab textfield[name=\"FebrileNeutropeniaRisk\"]"
-	},
+		},
 		{
 		ref: "PreHydrationInstructions",
 		selector: "TemplateHydration[title=\"Pre Therapy\"] textfield[name=\"HydrationInstructions\"]"
-	},
+		},
 		{
 		ref: "PreHydrationGrid",
 		selector: "TemplateHydration[title=\"Pre Therapy\"] grid"
-	},
+		},
 
 		{
 		ref: "PostHydrationInstructions",
 		selector: "TemplateHydration[title=\"Post Therapy\"] textfield[name=\"HydrationInstructions\"]"
-	},
+		},
 		{
 		ref: "PostHydrationGrid",
 		selector: "TemplateHydration[title=\"Post Therapy\"] grid"
-	},
+		},
 		{
 		ref: "RegimenGrid",
 		selector: "TemplateDrugRegimen grid"
-	},
+		},
 		{
 		ref: "RegimenInstruction",
 		selector: "TemplateDrugRegimen textfield[name=\"RegimenInstructions\"]"
-	},
+		},
 		{
 		ref: "ReferencesGrid",
 		selector: "TemplateReferences"
@@ -220,7 +219,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		{
 		ref: "Active",
 		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
-	}
+		}
 
 
 
@@ -234,8 +233,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
 				change: this.AuthorTypeSelected
-			},
-
+			}
+/**************
 			'AuthoringTab TemplateReferences': { // The References Grid Control
 				itemclick: this.clickUpdateReference
 			},
@@ -269,7 +268,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			'AuthoringTab CreateNewTemplate button[action="clear"]': {
 				click: this.clearTemplate
 			},
-			"AuthoringTab selTemplateType": {
+			"AuthoringTab selXXXTemplateXXXType": {
 				select: this.onTemplateTypeChange
 			},
 			"AuthoringTab selDisease": {
@@ -277,9 +276,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				collapse: this.collapseCombo,
 				expand: this.loadCombo
 			},
-			//KD - 01/23/2012 - Added collapse and expand handlers for disease stage combo
-			//This was done to handle the loading issues when going back and forth between
-			//CTOS and Template Authoring and random Loading issues.
+
 			"AuthoringTab selDiseaseStage": {
 				select: this.onDiseaseStageChange,
 				collapse: this.collapseCombo,
@@ -298,11 +295,76 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			"AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]": {
 				click: this.resetTemplateFilter
 			}
+****/
 		});
 	},
 
-	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo    
+
+
+	// User has selected what they want to do...
+	AuthorTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
+		wccConsoleLog("User has selected what to do");
+		var theController = this.getController("Common.selCTOSTemplate");
+		var radioType = rbtn.inputValue;
+
+		var topObj = this.getExistingTemplate();
+		var lblReqFields = this.getReqInstr();
+		lblReqFields.show();
+		
+
+		if (0 == radioType && newValue) {
+			topObj.show();
+			theController.showInitialSelector(topObj);
+			theController.resetTemplateSrc(topObj);
+			// theController.showTemplateTypeSelector(topObj);
+			// theController.showHideShowAllClickedSection(topObj, false);
+		}
+		else if (1 == radioType && newValue) {
+			topObj.hide();
+			theController.hideInitialAndFilterSelector(topObj);
+			// theController.showHideButtonAndDSCombos(topObj, true);
+			// theController.showHideShowAllClickedSection(topObj, true);
+		}
+
+
+
+
+/**
+		var NewTemplateObj = this.getNewTemplate();
+		var ExistingTemplateObj = this.getExistingTemplate();
+		var selDiseaseAndStageObj = this.getNewTemplateDiseaseAndStage();
+**/
+		var What2Do = rbtn.inputValue;
+
+		if (newValue) {
+			if (0 === What2Do) { // Select an Existing Template
+				// ------------------------------- this.clearTemplate(rbtn);
+//				ExistingTemplateObj.show();
+//				selDiseaseAndStageObj.hide();
+//				NewTemplateObj.hide();
+			} else { // Create a New Template
+//				this.application.loadMask();
+//				this.clearTemplate(rbtn);
+//				this.loadCombo(this.getDisease());
+//				ExistingTemplateObj.hide();
+				// MWB 5 Jan 2012
+				// Note: need to add some code in here to clear out all the fields if an existing template was selected first.
+				// Also need to alert the user that any unsaved data in their existing template will be lost and prompt them to save it first.
+//				this.getExistingCourseInfo().show();
+				// selDiseaseAndStageObj.show();
+//				NewTemplateObj.show();
+//				this.application.unMask();
+			}
+		}
+	},
+
+
+
+
+
+	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
 	loadCombo: function (picker, eOpts) {
+		/**
 		var originalHiddenVal = null;
 		picker.hiddenValue = picker.getRawValue();
 		picker.clearValue();
@@ -331,16 +393,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                         URI = Ext.URLs.DiseaseType;
                         id = '';
                     }
-                    
-                    /*
-                    if(eOpts.length && "Refresh" === eOpts){
-                        URI = Ext.URLs.DiseaseType;
-                        this.application.TemplateType.id = null;
-                        id = '';
-                    }else if(null != this.application.TemplateType && null != this.application.TemplateType.id){
-			URI = Ext.URLs.DiseaseType + "/Source/";
-			id = this.application.TemplateType.id;
-                    }*/
                 }
 
 		picker.getStore().load({
@@ -356,7 +408,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				}
 			}
 		});
-
+		**/
 	},
 
 	collapseCombo: function (picker, eOpts) {
@@ -364,33 +416,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		if (picker.getValue() == null && picker.hiddenValue != null) {
 			picker.setRawValue(picker.hiddenValue);
 		}
-
-	},
-
-
-	resetTemplateFilter: function (button) {
-debugger;
-		if (null != this.application.Template) {
-			this.getTemplate().setRawValue(this.application.Template.description);
-		}
-
-
-//		this.application.ResetClicked = true;
-//		this.loadCombo(this.getTemplate());
-//		this.loadCombo(this.getDisease());
-// 		Ext.MessageBox.alert('Success', 'Template filters have been removed. All available Templates and Cancer Types will be displayed. ');
-
-        this.application.ResetClicked=true;
-        this.loadCombo(this.getTemplate());
-        this.loadCombo(this.getDisease(),"Refresh");
-
-
-
-		this.getDiseaseAndStage().hide();
-        this.getTemplate().show();
-		button.hide();
-		this.getAllTemplatesShownMsg().show();
-
 
 	},
 
@@ -744,8 +769,8 @@ debugger;
 				this.getNewPlanTemplate().getStore().removeAll(true);
 				this.getNewPlanTemplate().getStore().load();
 
-				this.getTemplate().getStore().removeAll(true);
-				this.getTemplate().getStore().load();
+				// this.getTemplate().getStore().removeAll(true);
+				// this.getTemplate().getStore().load();
 
 				this.clearTemplate(button);
 				Ext.MessageBox.alert('Success', 'Template saved with name: ' + data.data.RegimenName);
@@ -773,38 +798,16 @@ debugger;
 		var existingDiseaseAndStageObj = this.getTemplateDiseaseAndStage();
 		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
 		var newTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[1];
+		var courseNum = this.getCourseNum();
+		var courseNumMax = this.getCourseNumMax();
 
 		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
 
 		if (this.getExistingCourseInfo().hidden == false) {
 			this.getExistingCourseInfo().hide();
-			this.clearValue(this.getCourseNum());
-			this.clearValue(this.getCourseNumMax());
+			this.clearValue(courseNum);
+			this.clearValue(courseNumMax);
 		}
-
-		if (this.getPatientNameField().hidden == false) {
-			this.getPatientNameField().hide();
-		}
-
-		if (templateCombo.hidden == false) {
-			this.getTemplate().hide();
-		}
-
-		if (ExistingTemplateObj.hidden == false) {
-			ExistingTemplateObj.hide();
-			this.getResetButton().hide();
-		}
-		if (NewTemplateObj.hidden == false) {
-			NewTemplateObj.hide();
-		}
-		if (selDiseaseAndStageObj.hidden == false) {
-			selDiseaseAndStageObj.hide();
-		}
-		if (existingDiseaseAndStageObj.hidden == false) {
-			existingDiseaseAndStageObj.hide();
-		}
-
-
 		if (button != null && (button.action == 'save' || button.action == 'clear')) {
 			existingTemplate.setValue(false);
 			newTemplate.setValue(false);
@@ -815,8 +818,6 @@ debugger;
 
 		}
 
-		this.clearValue(this.getTemplate());
-		this.getTemplate().hiddenValue = null;
 
 		this.clearValue(this.getDisease());
 		this.clearValue(this.getEmotegenicLevel());
@@ -833,11 +834,6 @@ debugger;
 		this.clearValue(this.getPostHydrationInstructions());
 		this.clearValue(this.getRegimenInstruction());
 
-		this.getTemplateSource().setValue('');
-
-		//            this.getNewPlanDisease().setValue('');
-		//            this.getNewPlanDiseaseStage().setValue('');
-		//var templatesource = Ext.ComponentQuery.query('AuthoringTab selTemplateType')[0];
 		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
 		var refstore = refgrid.getStore();
 		refstore.removeAll(true);
@@ -857,11 +853,10 @@ debugger;
 		var postMhStore = postMHgrid.getStore();
 		postMhStore.removeAll(true);
 		postMHgrid.getView().refresh(true);
-
 	},
 
 	clearValue: function (field) {
-		if (field.getValue() || field.getRawValue()) {
+		if (field && (field.getValue() || field.getRawValue())) {
 			field.reset();
 		}
 	},
@@ -892,43 +887,6 @@ debugger;
 		};
 	},
 
-
-	// User has selected what they want to do...
-	AuthorTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
-		wccConsoleLog("User has selected what to do");
-
-		var NewTemplateObj = this.getNewTemplate();
-		var ExistingTemplateObj = this.getExistingTemplate();
-		var selDiseaseAndStageObj = this.getNewTemplateDiseaseAndStage();
-
-		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
-
-		lblReqFields.show();
-		var What2Do = rbtn.inputValue;
-
-		if (newValue) {
-			if (0 === What2Do) { // Select an Existing Template
-				this.clearTemplate(rbtn);
-				ExistingTemplateObj.show();
-				selDiseaseAndStageObj.hide();
-				NewTemplateObj.hide();
-			} else { // Create a New Template
-				this.application.loadMask();
-				this.clearTemplate(rbtn);
-                                this.loadCombo(this.getDisease());
-				ExistingTemplateObj.hide();
-				// MWB 5 Jan 2012
-				// Note: need to add some code in here to clear out all the fields if an existing template was selected first.
-				// Also need to alert the user that any unsaved data in their existing template will be lost and prompt them to save it first.
-				this.getExistingCourseInfo().show();
-				selDiseaseAndStageObj.show();
-				NewTemplateObj.show();
-				this.application.unMask();
-
-			}
-		}
-
-	},
 
 	//-------------------------------------------------------------------------
 	//

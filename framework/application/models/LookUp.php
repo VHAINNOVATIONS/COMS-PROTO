@@ -1472,6 +1472,7 @@ class LookUp extends Model {
 /* Select Templates by their Location ID in the Lookup Table (e.g. My/Local/National Templates) */
     function selectByNameDescId($id){
         $source = null;
+/*******************
         if(null != $id){
             $query = "SELECT Name FROM LookUp WHERE Lookup_ID = '".$id."'";
             $source = $this->query($query);
@@ -1480,11 +1481,27 @@ class LookUp extends Model {
             }
             $source = $source[0];
         }
-        
+ *****************/
+
         $query = "SELECT lu.Lookup_ID as id, lu.Lookup_Type as type, lu.Name, lu.Description ".
                  "FROM Template_Availability ta ".
                  "INNER JOIN Master_Template mt ON mt.Template_ID = ta.TemplateID ".
                  "INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Cancer_ID ";
+
+        if ("National Templates" === $id){
+            $query .= "WHERE ta.NationalLevel = 'Yes'";
+        } else if("Local Templates" === $id){
+            $query .= "WHERE ta.NationalLevel = 'No'";
+        }else if("My Templates" === $id){
+            $username = get_current_user();
+            $mdws = new Mymdws();
+            $roles = $mdws->getRoleInfo($username);
+            $rid = $_SESSION['rid'];
+            $query .= "WHERE ta.TemplateOwner = '".$rid."'";
+        }
+ 
+
+/****
         if (null != $source && 'National Templates' === $source['Name']){
             $query .= "WHERE ta.NationalLevel = 'Yes'";
         }else if(null != $source && 'Local Templates' === $source['Name']){
@@ -1496,6 +1513,7 @@ class LookUp extends Model {
             $rid = $_SESSION['rid'];
             $query .= "WHERE ta.TemplateOwner = '".$rid."'";
         }
+ ****/
         $query .= " ORDER BY lu.Name";
         return $this->query($query);
     }

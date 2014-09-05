@@ -42,7 +42,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     ,'Common.Search4Template'
     ,"Common.selCTOSTemplate"
-    ,"Common.selTemplateType"
+    ,"Common.selTemplateSrc"
     ,"Common.selDiseaseAndStage"
     ,"Common.selDisease"
     ,"Common.selDiseaseStage"
@@ -70,7 +70,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 		{ ref: "PatientInfo",					selector: "NewPlanTab PatientInfo"},
-		{ ref: "ResetButton",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]"},
 
 		{ ref: "PatientInfoTable",				selector: "NewPlanTab PatientInfo PatientInfoTable"},
 		{ ref: "PatientInfoTableInformation",	selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"PatientInfoTable\"]"},
@@ -80,14 +79,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
 		{ ref: "LaboratoryInfo",				selector: "NewPlanTab PatientInfo LabInfo"},
 
-		{ ref: "selTemplateType",				selector: "NewPlanTab PatientInfo CTOS selTemplateType"},
-		{ ref: "DiseaseAndStage",				selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage"},
-		{ ref: "AllTemplatesShownMsg",			selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
-
-		{ ref: "Disease",						selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDisease"},
-		{ ref: "DiseaseStage",					selector: "NewPlanTab PatientInfo CTOS selCTOSTemplate selDiseaseAndStage selDiseaseStage"},
-		{ ref: "Template",						selector: "NewPlanTab PatientInfo CTOS selTemplate[name=\"AllTemplates\"]"},
-		{ ref: "MyTemplates",					selector: "NewPlanTab PatientInfo CTOS selTemplate[name=\"MyTemplates\"]"},
 		{ ref: "CTOSDataDsp",					selector: "NewPlanTab PatientInfo CTOS dspTemplateData"},
 
 		{ ref: "VitalSigns",					selector: "NewPlanTab PatientHistory VitalSignsHistory"},
@@ -143,35 +134,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 select : this.PatientSelected
             },
 
-            "NewPlanTab PatientInfo CTOS selTemplateType" : {
-                select : this.onTemplateTypeChange
-            },
-            "NewPlanTab PatientInfo CTOS selDisease" : {
-                select : this.DiseaseSelected,
-                collapse: this.collapseCombo,
-                expand: this.loadCombo
-            },
-            //KD - 01/23/2012 - Added collapse and expand handlers for disease stage combo
-            //This was done to handle the loading issues when going back and forth between
-            //CTOS and Template Authoring and random Loading issues.
-            "NewPlanTab PatientInfo CTOS selDiseaseStage" : {
-                select : this.onDiseaseStageChange,
-                collapse: this.collapseCombo,
-                expand : this.loadCombo
-            },
-            "NewPlanTab PatientInfo CTOS selTemplate" : {
-                select : this.selTemplateChange,
-                collapse: this.collapseCombo,
-                expand : this.loadCombo
-            },
             "NewPlanTab CTOS button[name=\"Apply\"]" : {
                 click: this.applyTemplateToPatient
             },
             "NewPlanTab CTOS button[name=\"Edit\"]" : {
                 click: this.editTemplate
-            },
-            "NewPlanTab PatientInfo CTOS selCTOSTemplate button[title=\"ResetFilter\"]" : {
-                click: this.resetTemplateFilter
             },
             "NewPlanTab PatientSelection" : {
                 afterrender: this.handlePatientSelectionRender
@@ -261,19 +228,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         Ext.togglePanelOnTitleBarClick(panel);
     },
 
-/***
-    togglePanelOnTitleBarClick : function(panel) {
-        panel.header.el.on('click', function() {
-            if (panel.collapsed) {
-                panel.expand();
-            }
-            else {
-                panel.collapse();
-            }
-        });
-    },
-***/
-/**/
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
 		PatientInformationPanel.collapse();
@@ -334,6 +288,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.resetVitalsPanel(thisCtl, numVitals);
 		this.resetLabInfoPanelPanel(thisCtl, numLabResults);
 		this.resetCTOSPanel(thisCtl);
+		this.getWhat2DoBtns().hide();
 	},
 
 
@@ -358,13 +313,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.Patient.TD_Type = "Show";
 
 				Ext.widget("TreatmentDetails");
-
-//				templateName = element.getAttribute("templatename");
-//				templateID = element.getAttribute("templateid");
-//				this.CTOS_DataLoad2(templateID);
-//				CTOSTabs = this.getCTOS();
-//				CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
-
 				fncName = "";
 				break;
 			case "GenerateEoTS":
@@ -422,17 +370,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-/*
-    doBSASelection : function() {
-		this.puWinBSA = Ext.widget("puWinSelBSA");
-		this.puWinBSA.show();
-    },
-
-	doCancerSelection : function() {
-		this.puWinCancer = Ext.widget("puWinSelCancer");
-		this.puWinCancer.show();
-	},
-*/
 /**
  * Amputation information is stored in the Lookup table in the following manner:
  *  Lookup_Type = 30
@@ -650,17 +587,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			CTOSTabs = this.getCTOS();
 	        CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
 		} 
-		
-/*
-		else if ("AddEditAmputation" === tab2switch2) {
-            this.doAmputationSelection();
-		} else if ("AddEditBSA" === tab2switch2) {
-			this.doBSASelection();
-		} else if ("AddEditCancer" === tab2switch2) {
-            this.doCancerSelection();
-		} 
-		
-*/
 		else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
 		} else {
@@ -673,25 +599,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     //KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
     loadCombo : function(picker, eOpts){
+		debugger;
         var originalHiddenVal=null;
         picker.hiddenValue = picker.getRawValue();
         picker.clearValue();
 
         var URI,id;
 
-        if("MyTemplates" == picker.name){
-            URI = Ext.URLs.Templates + "/Patient/";
-            id = this.application.Patient.id;
-        }else if("AllTemplates" == picker.name){
-            if(this.application.ResetClicked){
-                URI = Ext.URLs.Templates;
-                id = null;
-                originalHiddenVal = picker.hiddenValue;
-            }else{
-                URI = Ext.URLs.Templates + "/Cancer/";
-                id = this.application.Patient.Disease.id;
-            }
-        }else if("Select Disease Stage Control" == picker.name){
+        if("Select Disease Stage Control" == picker.name){
             URI = Ext.URLs.DiseaseStage + "/";
             if(eOpts && eOpts.length && eOpts.length > 0){
                 id = eOpts;
@@ -745,9 +660,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         this.getTemplate().show();
 		button.hide();
 		this.getAllTemplatesShownMsg().show();
-
-//        Ext.MessageBox.alert('Success', 'Template filters have been removed. <br />All available Templates will be displayed. ');
-
     },
 
 
@@ -785,8 +697,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }else {
             this.afterFindDisease(diseaseRecord);
         }
-
-
     },
 
     afterFindDisease : function(diseaseRecord){
@@ -991,37 +901,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 this.getApplyTemplateBtn().hide();
                 this.getEditTemplateBtn().hide();
             }
-            this.getDiseaseAndStage().hide();
-            this.getResetButton().hide();
-            this.getDisease().setValue('');
-            this.getDiseaseStage().setValue('');
+
+			var theController = this.getController("Common.selCTOSTemplate");
+			theController.resetTemplateSrc(selCTOSTemplateObj);
+
             this.application.selTemplate=null;
-            this.getMyTemplates().hiddenValue=null;
-            this.getTemplate().hiddenValue=null;
-            this.getDiseaseStage().hiddenValue=null;
 
             if(!button){
                 Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
                 Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-                this.getTemplate().hide();
-                this.getMyTemplates().hide();
-                this.getTemplate().setValue('');
-                this.getMyTemplates().setValue('');
-                this.getSelCTOSTemplate().hide();
-            }else if("0" === button){
-                this.getTemplate().hide();
-                this.getTemplate().setValue('');
-            }else if("1" === button){
-                this.getMyTemplates().setValue('');
-                this.getMyTemplates().hide();
             }else if("2" === button){
                 Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
                 Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-                this.getTemplate().hide();
-                this.getMyTemplates().hide();
-                this.getTemplate().setValue('');
-                this.getMyTemplates().setValue('');
-                this.getSelCTOSTemplate().hide();
                 if(this.getPatientInfo().hidden == false){
                     this.getLaboratoryInfo().hide();
                     this.getPatientHistory().hide();
@@ -1034,15 +925,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                     this.getCTOS().hide();
                 }
             }
-
         }
-
     },
 
 	TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
 		wccConsoleLog("What to do has been selected");
-		// var set0 = this.getMyTemplates();
-		var set1 = this.getSelCTOSTemplate();
+		var selCTOSTemplateObj = this.getSelCTOSTemplate();
 		this.application.Patient.AppliedTemplateID = null;
 		var i;
 
@@ -1056,20 +944,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 				
 				this.clearCTOS(What2Do);
-				// set0.show();
-				set1.hide();
+				selCTOSTemplateObj.hide();
 			}
 			else {
 				this.clearCTOS(What2Do);
-				// set0.hide();
-				this.getSelTemplateType().setValue('');
-				set1.show();
-			}
-		}
-		var SelectATemplateCombo = Ext.ComponentQuery.query('NewPlanTab selTemplate');
-		if (SelectATemplateCombo) {
-			for (i = 0; i < SelectATemplateCombo.length; i++) {
-				SelectATemplateCombo[i].hide();
+
+				var theController = this.getController("Common.selCTOSTemplate");
+				theController.resetTemplateSrc(selCTOSTemplateObj);
+				selCTOSTemplateObj.show();
 			}
 		}
 	},
@@ -2022,8 +1904,7 @@ fieldContainerWalk : function(item, y, z) {
 		var current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
 		var label;
 		if (current) {
-			label = "Select " + current[0].TemplateDescription;
-			label = "Select <span class=\"em\">\"" + current[0].TemplateDescription + "\"</span> template";
+			label = "Select <span class=\"em\">\"" + current[0].TemplateDescription + "\"</span> template (as currently appled to patient)";
 		}
 		else {
 			label = "No Template currently applied to this patient";
@@ -2055,6 +1936,7 @@ fieldContainerWalk : function(item, y, z) {
                 this.application.Patient.AppliedTemplate.Description = current.TemplateDescription;
 
 var scratch = this.getWhat2DoBtns();
+scratch.show();
 scratch.items.each(this.fieldContainerWalk,this);
 
 
@@ -2551,19 +2433,7 @@ scratch.items.each(this.fieldContainerWalk,this);
 
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
                 CTOSData.update( CTOSTemplateData.data );
-
-                this.getDisease().setValue(CTOSTemplateData.data.Disease);
-
-                if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
-                    this.loadCombo(this.getDiseaseStage(),CTOSTemplateData.data.Disease);
-                }
-
-                if(this.getDiseaseStage().getStore().count()==0){
-                    this.loadCombo(this.getDiseaseStage(),this.getDisease().getValue());
-                }
-
-                this.getDiseaseStage().setValue(CTOSTemplateData.data.DiseaseStage[0].name);
-                if(CTOSData.hidden==true){
+                if(CTOSData.hidden){
                     CTOSData.show();
                 }
 
@@ -2616,12 +2486,17 @@ scratch.items.each(this.fieldContainerWalk,this);
 	        });
 	},
 
-	selTemplateChange : function(combo, recs, eOpts) {
-		wccConsoleLog("Template has been selected");
-		this.application.Patient.Template = recs[0].data;
+
+	ShowSelectedTemplate : function(theTemplate) {
+		this.application.Patient.Template = theTemplate;
 		combo.hiddenValue = this.application.Patient.Template.description;
 		this.CTOS_DataLoad(this.application.Patient.Template.id);
+	},
 
+	selTemplateChange : function(combo, recs, eOpts) {
+		wccConsoleLog("Template has been selected");
+		var theTemplate = recs[0].data;
+		this.ShowSelectedTemplate(theTemplate);
 	},
 
 

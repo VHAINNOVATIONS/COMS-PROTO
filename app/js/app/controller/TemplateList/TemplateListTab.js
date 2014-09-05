@@ -6,14 +6,14 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
     ],
     views: [
         'TemplateList.TemplateListTab',
-        'Common.selTemplateByStages'
+		"Common.selCTOSTemplate"
     ],
 
     refs: [
         { ref: "theGrid", selector: "TemplateListTab grid"},
         {
             ref: "TemplateType",
-            selector: "TemplateListTab selTemplateByStages selTemplateType"
+            selector: "TemplateListTab selCTOSTemplate selTemplateType"
         }
     ],
 
@@ -24,10 +24,10 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 			"TemplateListTab" : {
 				"beforerender" : this.renderPanel
 			},
-			"TemplateListTab selTemplateByStages selTemplateType": {
+			"TemplateListTab selCTOSTemplate selTemplateType": {
 				"select" : this.TemplateTypeChange
 			},
-			"TemplateListTab selTemplateByStages button": {
+			"TemplateListTab selCTOSTemplate button": {
 				"click" : this.ShowAllTemplates
 			},
 			"TemplateListTab grid" : {
