@@ -24,6 +24,6 @@ Ext.define("COMS.view.Common.selCTOSTemplate", {
 			"html" : "All templates now available for selection", "hidden" : true 
 		},
 		{ "xtype" : "selDiseaseAndStage", "margin" : "5 0 5 0" },
-        { "xtype" : "selTemplate", "name" :"AllTemplates"}
+		{ "xtype" : "selTemplate", "name" :"AllTemplates"}
 	]
 });

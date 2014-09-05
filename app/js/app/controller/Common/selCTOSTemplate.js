@@ -4,16 +4,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 		"Common.selCTOSTemplate"
 	],
 	"refs" : [
-		{ ref: "selCTOSTemplate",				selector: "selCTOSTemplate"},
-		{ ref: "ResetButton",					selector: "selCTOSTemplate button[title=\"ResetFilter\"]"},
-		{ ref: "DiseaseAndStage",				selector: "selCTOSTemplate selDiseaseAndStage"},
-		{ ref: "AllTemplatesShownMsg",			selector: "selCTOSTemplate [name=\"AllTemplatesShownMsg\"]"},
-		{ ref: "Template",						selector: "selCTOSTemplate selTemplate[name=\"AllTemplates\"]"},
-		{ ref: "Disease",						selector: "selCTOSTemplate selDiseaseAndStage selDisease"},
-		{ ref: "DiseaseStage",					selector: "selCTOSTemplate selDiseaseAndStage selDiseaseStage"},
-		{ ref: "selTemplateSrc",				selector: "selCTOSTemplate selTemplateSrc"}
-
-
+		{ ref: "selCTOSTemplate",				selector: "selCTOSTemplate"}
 	],
 	init: function() {
 		this.control({
@@ -54,10 +45,15 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 		var selTemplateCombo = queryEvent.combo;
 		var selCTOSTemplateObj = selTemplateCombo.up("selCTOSTemplate");
 		delete queryEvent.combo.lastQuery;
-		debugger;
 		var selDiseaseCombo = this.getDiseaseObj(selCTOSTemplateObj);
 		var theProxy = selTemplateCombo.getStore().proxy;
-		theProxy.api.read = Ext.URLs.Templates + "/Cancer/" + selDiseaseCombo.getValue();
+		var DiseaseType = selDiseaseCombo.getValue();
+		if (DiseaseType) {
+			theProxy.api.read = Ext.URLs.Templates + "/Cancer/" + selDiseaseCombo.getValue();
+		}
+		else {
+			theProxy.api.read = Ext.URLs.Templates;
+		}
 	},
 
 	clearSelDiseaseComboStore : function(queryEvent) {
@@ -93,7 +89,20 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	getDiseaseAndStageObj : function(selCTOSTemplateObj) {
 		return selCTOSTemplateObj.down("selDiseaseAndStage");
 	},
+	getMsg : function(selCTOSTemplateObj) {
+		return selCTOSTemplateObj.down("[name=\"AllTemplatesShownMsg\"]");
+	},
 
+	resetCombos : function(selCTOSTemplateObj) {
+		var i, rLen, aCombo, Combos = Ext.ComponentQuery.query("combobox", selCTOSTemplateObj);
+		rLen = Combos.length;
+		for (i = 0; i < rLen; i++) {
+			aCombo = Combos[i];
+			aCombo.clearValue();
+			aCombo.applyEmptyText();
+			aCombo.getPicker().getSelectionModel().doMultiSelect([], false);
+		}
+	},
 
 	resetTemplateSrc : function(selCTOSTemplateObj) {
 		var TemplateSrcRadios = selCTOSTemplateObj.down("selTemplateSrc");
@@ -104,14 +113,8 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 			theRadios[i].setValue(false);
 		}
 
-		var aCombo, Combos = Ext.ComponentQuery.query("combobox", selCTOSTemplateObj);
-		rLen = Combos.length;
-		for (i = 0; i < rLen; i++) {
-			aCombo = Combos[i];
-			aCombo.clearValue();
-			aCombo.applyEmptyText();
-			aCombo.getPicker().getSelectionModel().doMultiSelect([], false);
-		}
+		this.resetCombos(selCTOSTemplateObj);
+
 		this.hideFilterSelector(selCTOSTemplateObj);
 	},
 
@@ -131,9 +134,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	onTemplateSrcChange : function(rbtn, newValue, oldValue, eOpts) {
 		var selCTOSTemplateObj = rbtn.up("selCTOSTemplate");
 		this.showFilterSelector(selCTOSTemplateObj);
-		// this.showHideShowAllClickedSection(selCTOSTemplateObj, false);
 
-			// Why do we need to set Patient.TemplateType ???
 		if (this.application.Patient) {
 			this.application.Patient.TemplateType = this.getTemplateSrc(selCTOSTemplateObj);
 		}
@@ -186,6 +187,8 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	resetTemplateFilter : function(button){
 		var selCTOSTemplateObj = button.up("selCTOSTemplate");
 		this.hideFilterSelector(selCTOSTemplateObj);
+		this.getMsg(selCTOSTemplateObj).show();
+		this.resetCombos(selCTOSTemplateObj);
 		this.getSelTemplateCombo(selCTOSTemplateObj).show();
 	},
 
@@ -196,6 +199,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 
 	showFilterSelector : function (selCTOSTemplateObj) {
 		this.getResetFilterBtn(selCTOSTemplateObj).show();
+		this.getMsg(selCTOSTemplateObj).hide();
 		this.getDiseaseAndStageObj(selCTOSTemplateObj).show();
 		this.getSelTemplateCombo(selCTOSTemplateObj).hide();
 	},
@@ -209,56 +213,6 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	hideInitialAndFilterSelector : function (selCTOSTemplateObj) {
 		this.getTemplateSrcObj(selCTOSTemplateObj).hide();
 		this.hideFilterSelector(selCTOSTemplateObj);
-	},
-
-	showTemplateSrcSelector : function(selCTOSTemplateObj) {
-		this.getTemplateSrcObj(selCTOSTemplateObj).show();
-		this.showHideButtonAndDSCombos(selCTOSTemplateObj, false);
-		this.showHideShowAllClickedSection(selCTOSTemplateObj, true);
-	},
-
-	showHideButtonAndDSCombos : function(selCTOSTemplateObj, showState) {
-		var ShowAllButton = this.getResetFilterBtn(selCTOSTemplateObj);
-		var theDiseaseAndStageCombos = this.getDiseaseAndStageObj(selCTOSTemplateObj);
-		var selTemplateSrcCombo = this.getTemplateSrcObj(selCTOSTemplateObj);
-
-		if (showState) {
-			selTemplateSrcCombo.show();
-			ShowAllButton.show();
-			theDiseaseAndStageCombos.show();
-		} 
-		else {
-			selTemplateSrcCombo.show();
-			ShowAllButton.hide();
-			theDiseaseAndStageCombos.hide();
-		}
-	},
-
-	showHideShowAllClickedSection : function(selCTOSTemplateObj, showState) {
-		var theTemplateCombo = this.getSelTemplateCombo(selCTOSTemplateObj);
-		var theDiseaseAndStageCombos = selCTOSTemplateObj.down("selDiseaseAndStage");
-		var theDiseaseCombo = selCTOSTemplateObj.down("selDiseaseAndStage selDisease");
-		var AllTemplatesShownMsg = selCTOSTemplateObj.down("[name=\"AllTemplatesShownMsg\"]");
-		var ShowAllButton = selCTOSTemplateObj.down("button[title=\"ResetFilter\"]");
-
-		if(this.application.Patient && this.application.Patient.Template){
-			theTemplateCombo.setRawValue(this.application.Patient.Template.description);
-		}
-
-		if (showState) {
-			this.application.ResetClicked = true;
-			theDiseaseAndStageCombos.hide();
-			theTemplateCombo.show();
-			ShowAllButton.hide();
-			AllTemplatesShownMsg.show();
-		}
-		else {
-			this.application.ResetClicked = false;
-			theDiseaseAndStageCombos.show();
-			theTemplateCombo.hide();
-			ShowAllButton.show();
-			AllTemplatesShownMsg.hide();
-		}
 	}
 
 });

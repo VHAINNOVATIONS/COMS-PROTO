@@ -903,6 +903,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             }
 
 			var theController = this.getController("Common.selCTOSTemplate");
+			var selCTOSTemplateObj = button.up("selCTOSTemplate");
 			theController.resetTemplateSrc(selCTOSTemplateObj);
 
             this.application.selTemplate=null;

@@ -316,14 +316,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			topObj.show();
 			theController.showInitialSelector(topObj);
 			theController.resetTemplateSrc(topObj);
-			// theController.showTemplateTypeSelector(topObj);
-			// theController.showHideShowAllClickedSection(topObj, false);
 		}
 		else if (1 == radioType && newValue) {
 			topObj.hide();
 			theController.hideInitialAndFilterSelector(topObj);
-			// theController.showHideButtonAndDSCombos(topObj, true);
-			// theController.showHideShowAllClickedSection(topObj, true);
 		}
 
 
