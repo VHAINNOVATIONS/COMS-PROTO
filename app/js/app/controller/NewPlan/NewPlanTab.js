@@ -901,11 +901,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 this.getApplyTemplateBtn().hide();
                 this.getEditTemplateBtn().hide();
             }
-
-			var theController = this.getController("Common.selCTOSTemplate");
-			var selCTOSTemplateObj = button.up("selCTOSTemplate");
-			theController.resetTemplateSrc(selCTOSTemplateObj);
-
             this.application.selTemplate=null;
 
             if(!button){
@@ -953,8 +948,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var theController = this.getController("Common.selCTOSTemplate");
 				theController.resetTemplateSrc(selCTOSTemplateObj);
 				selCTOSTemplateObj.show();
+
+				// var theController = this.getController("Common.selCTOSTemplate");
+				// var selCTOSTemplateObj = rbtn.up("selCTOSTemplate");
+				// theController.resetTemplateSrc(selCTOSTemplateObj);
+			
 			}
 		}
+
+
+
 	},
 
 
