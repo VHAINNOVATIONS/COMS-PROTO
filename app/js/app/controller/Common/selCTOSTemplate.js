@@ -93,6 +93,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 		return selCTOSTemplateObj.down("[name=\"AllTemplatesShownMsg\"]");
 	},
 
+
 	resetCombos : function(selCTOSTemplateObj) {
 		var i, rLen, aCombo, Combos = Ext.ComponentQuery.query("combobox", selCTOSTemplateObj);
 		rLen = Combos.length;
@@ -164,6 +165,8 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 		parent = combo.up("AuthoringTab");
 		if (parent) {
 			parentName = "AuthoringTab";
+				theController = this.getController("Authoring.AuthoringTab");
+				theController.ShowSelectedTemplateForm(theTemplate);
 		}
 		else {
 			parent = combo.up("NewPlanTab");

@@ -43,12 +43,12 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		return true;
 	},
 
-	ClickDebugger : function(theBtn) {
+	ClickDebugger : function() {
 		debugger;
 	},
 
 
-	ClickPatientsList : function(theBtn) {
+	ClickPatientsList : function() {
 		if (!this.application.TemplateListPatients) {
 			this.application.TemplateListPatients = [
 				{
@@ -92,7 +92,7 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		Ext.widget("puWinListPatients");
 	},
 
-	ClickAddCumulativeDosing : function(theBtn) {
+	ClickAddCumulativeDosing : function() {
 		if (this.PatientCheck()) {
 			var thisCtl = this.getController("Common.puWinAddCumDose");
 			var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
@@ -100,24 +100,26 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		}
 	},
 
-	ClickRefreshCumulativeDosing : function(theBtn) {
+	ClickRefreshCumulativeDosing : function() {
 		if (this.PatientCheck()) {
 			var thisCtl = this.getController("Common.puWinAddCumDose");
 			thisCtl.RefreshPatientInfoDetails();
 		}
 	},
 
-	ClickShowInfusionReactions : function(theBtn) {
+	ClickShowInfusionReactions : function() {
 		if (this.PatientCheck()) {
 			var InfusionReactions = Ext.widget("puWinViewInfusionReactions");
+			InfusionReactions = InfusionReactions;
 		}
 	},
 
-	ClickShowFSOptionalQues : function(theBtn) {
+	ClickShowFSOptionalQues : function() {
 		var OptQues = Ext.widget("FlowSheetOptionalQues");
+		OptQues = OptQues;
 	},
 
-	ClickLoadTreatmentData : function(theBtn) {
+	ClickLoadTreatmentData : function() {
 		if (this.PatientCheck()) {
 			// var theStore = Ext.getStore("ND_Treatment");
 			// this.application.Patient.TreatmentStore = theStore;

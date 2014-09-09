@@ -46,88 +46,8 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 					]
 				},
 
-				{"xtype" : "RequiredInstr", "hidden" : true },
-
-				// { "xtype" : "selTemplate", "name" : "MyTemplates", "hidden" : false },
+				{ "xtype" : "RequiredInstr", "hidden" : true },
 				{ "xtype" : "selCTOSTemplate", "hidden" : true },
-
-							
-							
-							
-							
-	/************************
-					
-					
-					{
-					xtype : "container",  
-					name : "selCTOSTemplate", 
-					hidden : true, 
-					autoEl : {
-						tag : "section"
-					}, 
-					margin: "0", 
-					items : [
-
-					{ 
-						xtype : "textfield", 
-						name : "PatientName", 
-						fieldLabel: "Patient Name", 
-						labelAlign : "right", 
-						width : 500, 
-						labelWidth: 150,
-						hidden : true,
-						readOnly: true, 
-						disabled: true 
-					},
-					{
-						xtype : "Search4Template"
-					},
-					
-					{ xtype : "container" , layout : "hbox", items : [
-							{
-								xtype : "selXXXTemplateXXXType9/4/2014"
-							},
-							{ 
-								xtype : "button", 
-								title : "ResetFilter",
-								text : "Show All Templates", 
-								margin: "5 0 0 5",
-								hidden: true
-							}
-						]
-					},
-
-					{
-						xtype : "selDiseaseAndStage", 
-						name : "4ExistingTemplate", 
-					},
-					{ 
-						xtype: "container",
-						layout : "hbox",
-						items : [
-						{
-							xtype : "selTemplate", 
-							name:"FilteredTemplates"
-						}
-						]
-
-					}
-					]
-				},
-
-
-				{
-					xtype : "selDiseaseAndStage", 
-					name : "4CreateNewTemplate", 
-					hidden : true
-				},
-
-
-	********************/
-
-
-
-
 
 				{
 					xtype : "container", 
@@ -159,7 +79,7 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 				{
 					xtype : "CreateNewTemplate", 
 					hidden : true
-				}	// Does NOT have a "selDiseaseAndStage" component in it
+				}
 			]
 		}
 	],
