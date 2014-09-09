@@ -19,7 +19,7 @@ Ext.define("COMS.view.TemplateList.puWinListPatients", {
 			"columns" : [
 				{ "text" : "Name", "dataIndex" : "Name", "flex" : 3 },
 				{ "text" : "Regimen Start Date", "dataIndex" : "Date_Started", "flex" : 1 },
-				{ "text" : "Regimen End Date", "dataIndex" : "Est_End_Date", "flex" : 1 },
+				{ "text" : "Projected End Date", "dataIndex" : "Est_End_Date", "flex" : 1 },
 
 				{ "text" : "SSID", "dataIndex" : "SSID", "flex" : 1 }
 			]
