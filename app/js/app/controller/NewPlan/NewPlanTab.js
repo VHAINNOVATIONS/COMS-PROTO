@@ -1904,7 +1904,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 fieldContainerWalk : function(item, y, z) {
-	if ("0" == item.inputValue) {
+	if (this.application.Patient.AllTemplatesApplied2Patient && "0" == item.inputValue) {
 		var current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
 		var label;
 		if (current) {
@@ -1938,17 +1938,9 @@ fieldContainerWalk : function(item, y, z) {
                 }
                 this.application.Patient.AppliedTemplate.id = current.TemplateID; 
                 this.application.Patient.AppliedTemplate.Description = current.TemplateDescription;
-
-var scratch = this.getWhat2DoBtns();
-scratch.show();
-scratch.items.each(this.fieldContainerWalk,this);
-
-
-
-
-
-
-
+				var scratch = this.getWhat2DoBtns();
+				scratch.show();
+				scratch.items.each(this.fieldContainerWalk,this);
 
                 this.application.Patient.AppliedTemplate.Name = current.TemplateName;
 
@@ -1962,6 +1954,12 @@ scratch.items.each(this.fieldContainerWalk,this);
             patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
 			COMS.Patient = this.application.Patient;
         }
+		if ("No Current Template Applied to patient to load" === Loaded) {
+				var selCTOSTemplateObj = this.getSelCTOSTemplate();
+				var theController = this.getController("Common.selCTOSTemplate");
+				theController.resetTemplateSrc(selCTOSTemplateObj);
+				selCTOSTemplateObj.show();
+		}
 
 
 
