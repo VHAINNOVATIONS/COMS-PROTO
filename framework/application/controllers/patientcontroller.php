@@ -2306,12 +2306,11 @@ $partialQuery = "SELECT
     join CumulativeDoseMeds cdm on cdm.MedID = dt.MedID
     join LookUp lu3 on lu3.Lookup_ID = cdm.CumulativeDoseUnits
     where Patient_ID = '$PatientID'";
-
                 if ($cdhRecordID) {
-                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by MedName asc, AdministeredByCOMS asc";
+                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by MedName asc, Cast (REPLACE(dt.CumulativeDoseAmt, ',', '') as int) asc";
                 }
                 else {
-                    $query =  $partialQuery . " order by MedName asc, AdministeredByCOMS asc";
+                    $query =  $partialQuery . " order by MedName asc, Cast (REPLACE(dt.CumulativeDoseAmt, ',', '') as int) asc";
                 }
             }
 // error_log("CumulativeDoseTracking Query - $query");

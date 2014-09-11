@@ -12,6 +12,9 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 
 	init: function() {
 		this.control({
+			"puWinAddCumDose" : {
+				"show" : function() {this.Saving=false;}
+			},
 			"puWinAddCumDose button[text=\"Cancel\"]" : {
 				click: this.Cancel
 			},
@@ -74,7 +77,6 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 							"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
 							"<td>" + pct + "%</td></tr>";
 					}
-
 				}
 			}
 
@@ -169,10 +171,11 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		if (theField) {
 			theField.update("");
 		}
-		if (form.owner.up("window")) {
-			form.owner.up("window").close();		// hide();
-		}
 		form.reset();
+		if (form.owner.up("window")) {
+			form.owner.up("window").close();
+		}
+
 		// Refresh the patient info table with latest data from DB
 		this.RefreshPatientInfoDetails();
 
@@ -188,8 +191,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			case Ext.form.action.Action.SERVER_INVALID:
 			   Ext.Msg.alert('Failure', action.result.msg);
 		}
-		form.owner.up("window").hide();
-		form.reset();
+		// form.owner.up("window").close();
+		// form.reset();
 	},
 
 	_submitForm : function(form) {
@@ -212,13 +215,17 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	},
 
 	Save : function(btn) {
-		var theForm = btn.up('form').getForm();
-		if (theForm.isValid()) {
-			this._submitForm(theForm);
+		if (!this.Saving) {		// Prevents multiple saves by clicking the "Save" button more than once
+			var theForm = btn.up('form').getForm();
+			if (theForm.isValid()) {
+				this.Saving = true;
+				this._submitForm(theForm);
+			}
 		}
 	},
+
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
-		btn.up('window').hide();
+		btn.up('window').close();
 	}
 });
