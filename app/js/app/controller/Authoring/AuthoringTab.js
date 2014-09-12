@@ -352,9 +352,9 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}
 		else if (1 == radioType && newValue) {	// Create New Template
 			selCTOSTemplate.hide();
-			theController.hideInitialAndFilterSelector(selCTOSTemplate);
 			this.clearTemplate(null);
 			this.ShowSelectedTemplateForm(null);
+			theController.hideInitialAndFilterSelector(selCTOSTemplate);
 		}
 	},
 

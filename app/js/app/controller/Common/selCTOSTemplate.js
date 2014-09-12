@@ -152,7 +152,11 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 			selDiseaseStage.reset();
 		}
 		this.application.Cancer = recs[0].data;
-		this.getSelTemplateCombo(selCTOSTemplateObj).show();
+
+		var parent = combo.up("AuthoringTab");
+		if (!parent) {
+			this.getSelTemplateCombo(selCTOSTemplateObj).show();
+		}
 	},
 
 	onDiseaseStageChange : function(a, b, c) {
@@ -187,6 +191,11 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 		}
 	},
 
+	showSelCTOSGroup : function (selCTOSTemplateObj) {
+		selCTOSTemplateObj.show();
+		this.getDiseaseAndStageObj(selCTOSTemplateObj).show();
+	},
+
 	resetTemplateFilter : function(button){
 		var selCTOSTemplateObj = button.up("selCTOSTemplate");
 		this.hideFilterSelector(selCTOSTemplateObj);
@@ -216,6 +225,8 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	hideInitialAndFilterSelector : function (selCTOSTemplateObj) {
 		this.getTemplateSrcObj(selCTOSTemplateObj).hide();
 		this.hideFilterSelector(selCTOSTemplateObj);
+								this.getDiseaseAndStageObj(selCTOSTemplateObj).show();
+								this.showSelCTOSGroup(selCTOSTemplateObj);
 	}
 
 });
