@@ -448,40 +448,105 @@ class PatientController extends Controller
      *
      * @todo Move this into a model
      */
-    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
+    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap, $templateIdMT)
     {
+	//echo "|||formData||| ";
+	//var_dump($formData);
 	//echo "|||preHydrationRecord||| ";
 	//var_dump($preHydrationRecord);
 	//echo "|||infusionMap||| ";
 	//var_dump($infusionMap);
+	//var_dump($templateIdMT);
+
+	$iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($templateIdMT));
+	foreach($iterator as $key => $value) {
+		$templateIdMT = $value;
+		$queryTIDMT = "SELECT Template_ID
+					,Admin_Day
+					,Admin_Date
+					,Patient_ID
+					,Date_Entered
+				FROM Master_Template
+				WHERE Template_ID = '$templateIdMT'";
+				$GetMT = $this->Patient->query($queryTIDMT);
+				foreach($GetMT as $row){
+					$Admin_Date2 =  $row['Admin_Date'];
+				}
+				
+		}
 	
-	//$amt = $infusionMap['amt'];
-	/*if (empty($infusionMap['type'])){
-	$route = $preHydrationRecord['route'];
-	}
-	else{
-	$route = $infusionMap['type'];
-	}
+		$Admin_Date = $Admin_Date2->format('Ymd');
 	
-	if (empty($infusionMap['amt'])){
-	$amt = 1;
-	}
-	else{
-	$amt = $infusionMap['amt'];
-	}
-*/
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
-        $AdminDay = $preHydrationRecord['AdminDay'];
-        $DrugID = $preHydrationRecord['id'];
+        $phid = $preHydrationRecord['id'];
+		$AdminDay = $preHydrationRecord['adminDay'];
+        $Sequence = $preHydrationRecord['Sequence'];
+				
+		$amt = $preHydrationRecord['regdose'];
+		$iamt = $infusionMap[$phid][0]->data['amt'];
+		if (empty($amt)){
+			$pamt = $iamt;
+			}
+		else{
+			$pamt = $amt;
+			}
+			
+		$route = $preHydrationRecord['route'];
+        $iroute = $infusionMap[$phid][0]->data['type'];
+		if (empty($route)){
+			$proute = $iroute;
+			}
+		else{
+			$proute = $route;
+			}
+
+		$unit = $preHydrationRecord['regdoseunit'];
+        $iunit = $infusionMap[$phid][0]->data['unit'];
+		if (empty($route)){
+			$punit = $iunit;
+			}
+		else{
+			$punit = $unit;
+			}
+
+		$flowRate = $preHydrationRecord['flowRate'];
+        $iflowRate = $infusionMap[$phid][0]->data['flowRate'];
+		if (empty($flowRate)){
+			$pflowRate = $iflowRate;
+			}
+		else{
+			$pflowRate = $flowRate;
+			}
+			
+		$flvol = $preHydrationRecord['flvol'];
+        $iflvol = $infusionMap[$phid][0]->data['fluidVol'];
+		if (empty($flvol)){
+			$pflvol = $iflvol;
+			}
+		else{
+			$pflvol = $flvol;
+			}
+			
+		$DrugID = $preHydrationRecord['id'];
+		$RegDosePct = $preHydrationRecord['regdosepct'];
+		$RegReason = $preHydrationRecord['regreason'];
+		$PatientDose = $preHydrationRecord['patientdose'];
+		$PatientDoseUnit = $preHydrationRecord['patientdoseunit'];
+		$flunit = $preHydrationRecord['flunit'];
+		$infusion = $preHydrationRecord['infusion'];
+		$bsaDose = $preHydrationRecord['bsaDose'];
+		$Reason = $preHydrationRecord['Reason'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
 		$Notes = "Line 467, PatientController";
+		
         
         $query = "
             INSERT INTO Order_Status (
                 Template_ID, 
+                Template_IDMT, 
                 Order_Status,
 				Order_ID,				
                 Drug_Name,
@@ -490,10 +555,25 @@ class PatientController extends Controller
                 Patient_ID,
 				Notes,
 				Amt,
+				iAmt,
+				Sequence,
 				Route,
-				AdminDay
+				AdminDay,
+				Unit,
+				RegDosePct,
+				FlowRate,
+				flvol,
+				RegReason,
+				PatientDoseUnit,
+				PatientDose,
+				flunit,
+				infusion,
+				bsaDose,
+				Reason,
+				Admin_Date
             ) VALUES (
                 '$templateId',
+                '$templateIdMT',
                 '$orderStatus',
                 '$GUID',
                 '$drugName',
@@ -501,11 +581,26 @@ class PatientController extends Controller
                 '$orderType',
                 '$patientid',
                 '$Notes',
-                '$amt',
-                '$route',
-                '$AdminDay'
+                '$pamt',
+                '$iamt',
+				'$Sequence',
+                '$proute',
+                '$AdminDay',
+				'$punit',
+				'$RegDosePct',
+				'$pflowRate',
+				'$pflvol',
+				'$RegReason',
+				'$PatientDoseUnit',
+				'$PatientDose',
+				'$flunit',
+				'$infusion',
+				'$bsaDose',
+				'$Reason',
+				'$Admin_Date'
             )
-        ";
+         ";
+		 //echo $query;
         $this->Patient->query($query);
         /*removed for Order ID Bug
         $mssqlLimit = null;
@@ -639,7 +734,7 @@ class PatientController extends Controller
                     $query = "SELECT NEWID()";
 					$GUID = $this->Patient->query($query);
 					$GUID = $GUID[0][""];
-                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID, $infusionMap);
+                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID, $infusionMap, $templateId);
                     
                     if (! empty($infusionMap)) {
                         $this->_insertHydrations($therapy, $infusionMap, 
@@ -906,6 +1001,7 @@ class PatientController extends Controller
 		$oemMap = array();
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
+			//echo "ARRAY:".var_dump($oemDetails)."";
             $oemRecordTemplateID = $oemrecord['TemplateID'];
 
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);

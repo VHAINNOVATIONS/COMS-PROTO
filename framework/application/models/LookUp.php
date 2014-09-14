@@ -437,6 +437,7 @@ class LookUp extends Model {
 
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
+        //$Ret[0] = $Template_ID;
 
         return $Ret;
     }
@@ -570,8 +571,8 @@ class LookUp extends Model {
                     '$Reason'
                 )
             ";
-
-            $retVal = $this->query($query);
+			$retVal = $this->query($query);
+			//$this->OrderX($xx);
 
             if (!empty($retVal['error'])) {
                 return $retVal;
@@ -617,11 +618,11 @@ class LookUp extends Model {
      * @return array
      */
     public function saveHydrations($hydrations, $type, $templateId, $orderId)
-    {
+	{
         foreach ($hydrations as $hydrationObject) {
             
             $hydration = $hydrationObject->data;
-            
+            //var_dump($hydration);
             $drugName = (empty($hydration->drugid)) ? null : $hydration->drugid;
             
             if ($drugName) {
@@ -653,7 +654,11 @@ class LookUp extends Model {
             $sequenceNumber = $hydration->sequence;
             $adminTime = $hydration->adminTime;
             $description = str_replace("'", "''", $hydration->description);
-            
+            $fluidVol = $hydration->fluidVol;
+            $flowRate = $hydration->flowRate;
+            $infusionTime = $hydration->infusionTime;
+            			
+			
             $query = "
                 INSERT INTO Medication_Hydration (
                     Drug_ID, 
@@ -675,10 +680,10 @@ class LookUp extends Model {
                     '$orderId'
                 )
             ";
-            
-            $retVal = $this->query($query);
-
-            
+			$retVal = $this->query($query);
+			
+			//$this->OrderX($hydration);
+			            
             if (!empty($retVal['error'])) {
                 return $retVal;
             }
@@ -1629,5 +1634,95 @@ class LookUp extends Model {
         $query = "SELECT * FROM LookUp WHERE Lookup_Type = 50 OR Lookup_Type = 51";
         $resp = $this->query($query); 
         return $resp;
+    }
+	
+	function OrderX($hydration) {
+	//var_dump($hydration);
+	$Drug_Name = $hydration->drugid;
+	$adminDay = $hydration->adminDay;
+	$sequence = $hydration->sequence;
+	//echo "DN: ".$Drug_Name."";
+	$infusions = $hydration->infusions;      
+        foreach ($infusions as $infusion) { 
+            $infusionData = $infusion->data;
+			}
+		$amt = $infusionData['amt'];
+		$Route = $infusionData['type'];
+		$unit = $infusionData['unit'];
+		$flowRate = $infusionData['flowRate'];
+		$fluidVol = $infusionData['fluidVol'];
+		$fluidType = $infusionData['fluidType'];
+		$infusionTime = $infusionData['infusionTime'];
+
+        $query = "INSERT INTO Order_Status
+           (Order_Status
+           ,Drug_Name
+           ,Order_Type
+           ,Template_ID
+           ,Patient_ID
+           ,Order_ID
+           ,Drug_ID
+           ,Date_Modified
+           ,Date_Entered
+           ,Notes
+           ,FluidType
+           ,FluidVol
+           ,FlowRate
+           ,AdminDay
+           ,Sequence
+           ,InfusionTime
+           ,AdminTime
+           ,Amt
+           ,iAmt
+           ,Unit
+           ,Type
+           ,RegNum
+           ,RegDose
+           ,RegDoseUnit
+           ,RegDosePct
+           ,RegReason
+           ,PatientDose
+           ,PatientDoseUnit
+           ,Route
+           ,flvol
+           ,flunit
+           ,infusion)
+     VALUES
+           ('Ordered'
+           ,'$Drug_Name'
+           ,'test1'
+           ,'00000000-0000-0000-0000-000000000001'
+           ,'00000000-0000-0000-0000-000000000001'
+           ,'00000000-0000-0000-0000-000000000001'
+           ,'00000000-0000-0000-0000-000000000001'
+           ,'20140707'
+           ,'20140707'
+           ,'test1'
+           ,'test1'
+           ,'test1'
+           ,'$flowRate'
+           ,'$adminDay'
+           ,'$sequence'
+           ,'$amt'
+           ,'$amt'
+           ,'$amt'
+           ,'$amt'
+           ,'$unit'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'test'
+           ,'$Route'
+           ,'test'
+           ,'test'
+           ,'test')
+		   ";
+		   //echo $query;
+		   $this->query($query); 
+        
     }
 }
