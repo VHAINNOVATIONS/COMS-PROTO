@@ -574,7 +574,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if (aDate < today) {
 						return ("");	// No Edit link if the Admin Date is before today
 					}
-					var buf = "";
+					var buf = "AdminDate=\"" + AdminDate + "\"";
 					return " - <button class=\"anchor ChangeOEM_AdminDate\" " + buf + ">Change Admin Date</button>";
 				}
 			}

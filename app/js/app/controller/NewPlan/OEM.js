@@ -335,7 +335,10 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 
 
 	HandleChangeAdminDateButtons : function( event, element ) {
-		alert("Function not yet available");
+		var ChangeAdminDate = Ext.widget("puWinChangeAdminDate");
+		var AdminDate = element.getAttribute("admindate");
+		var thisCtl = this.getController("Common.puWinChangeAdminDate");
+		thisCtl.initializeCurAdminDate(AdminDate);
 	},
 
 

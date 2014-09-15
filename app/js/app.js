@@ -183,6 +183,7 @@ Ext.URLs.TempLoc = "/LookUp/view/TempLoc";
 Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 
+
 Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
 Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
 Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
@@ -238,14 +239,14 @@ Ext.URLs.Orders = "/Orders/Orders";
 Ext.URLs.ReadND_Treatment = "/NursingDoc/Treatment"; // Param = PAT_ID to obtain all treatments for the current ID. Used mostly in Flowsheet
 Ext.URLs.ND_Treatment = "/Orders/Orders"; // This URI is called to obtain the initial Treatment Record from the Orders generated.
 Ext.URLs.AddND_Treatment = "/Orders/Orders";
-
-
-
 // Param = none
 // Returns all the orders for all patients for the next 3 days.
 // The ND_Treatment store has a filter to grab ONLY the orders for the current patient for the current day.
 // (see app\controller\NewPlan\CTOS\NursingDocs\TreatmentTab.js)
 
+
+
+Ext.URLs.ChangeAdminDate = "";
 
 Ext.URLs.FlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
 Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
@@ -602,6 +603,7 @@ Ext.require([
 	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
+	"COMS.controller.Common.puWinChangeAdminDate",
 	"COMS.controller.Common.selCTOSTemplate",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
@@ -1607,6 +1609,7 @@ Ext.application({
 		, "Common.puWinAddCumDose"
 		, "Common.puWinSelBSA"
 		, "Common.selCTOSTemplate"
+		, "Common.puWinChangeAdminDate"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"

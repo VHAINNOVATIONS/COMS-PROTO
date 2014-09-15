@@ -19,7 +19,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : 2 }, 
 			items : [
 				{ "xtype" : "button", "text" : "Patients List" },
-				{ "xtype" : "button", "text" : " " },
+				{ "xtype" : "button", "text" : "Change Admin Date" },
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : " " },
