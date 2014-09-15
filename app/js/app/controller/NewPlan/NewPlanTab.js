@@ -1594,8 +1594,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				/* For some reason the text is double encoded (e.g. &lt; == &amp;lt;) */
 				resp = Ext.util.Format.htmlDecode(resp);
 				resp = Ext.util.Format.htmlDecode(resp);
-				this.application.Patient.OEMRecords.NeutropeniaRecommendation = resp;
-				this.application.Patient.OEMRecords.FNRiskDetails = resp;
+				if (this.application.Patient) {
+					if (this.application.Patient.OEMRecords) {
+						this.application.Patient.OEMRecords.NeutropeniaRecommendation = resp;
+						this.application.Patient.OEMRecords.FNRiskDetails = resp;
+					}
+				}
+
 				this.application.unMask();
 			},
 			failure : function( response, opts ) {
@@ -1641,7 +1646,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				resp = Ext.util.Format.htmlDecode(resp);
 				resp = Ext.util.Format.htmlDecode(resp);
 				this.application.unMask();
-				this.application.Patient.OEMRecords.ELevelRecommendation = resp;
+				if (this.application.Patient) {
+					if (this.application.Patient.OEMRecords) {
+						this.application.Patient.OEMRecords.ELevelRecommendation = resp;
+					}
+				}
 			},
 			failure : function( response, opts ) {
 				var text = response.responseText;
