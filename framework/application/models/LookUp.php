@@ -530,8 +530,8 @@ class LookUp extends Model {
             $flowRate = $regimen->FlowRate;
             $sequence = $regimen->Sequence;
             $adminTime = $regimen->AdminTime;
-            $fluidType = str_replace("'", "''",$regimen->FluidType);
-            $instruction = str_replace("'", "''", $regimen->Instructions);
+            $fluidType = $this->escapeString($regimen->FluidType);
+            $instruction = $this->escapeString($regimen->Instructions);
             $Reason = 0;
             
             $query = "
@@ -765,6 +765,8 @@ class LookUp extends Model {
                         $fluidType = $infusionData->fluidType;
                         $infusionTime = $infusionData->infusionTime;
                     }
+
+                    $fluidType = $this->escapeString($fluidType);
 
                     $query = "
                         INSERT INTO MH_Infusion (

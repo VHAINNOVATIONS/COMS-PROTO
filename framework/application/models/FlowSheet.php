@@ -444,6 +444,8 @@ AND Patient_History.Weight != ''";
 		
 		$result = $this->query($query);
 
+		//echo "Query1: ".$query."<BR>";
+		
 	$query2 = "SELECT TOP 1 Performance_ID as ph_Performance_ID
 		,Patient_History.Weight as ph_Weight,
 		Date_taken 
@@ -453,81 +455,20 @@ AND Patient_History.Weight != ''";
 		
 		$result2 = $this->query($query2);
 
-		$query3 = "SELECT Template_ID
-  FROM Patient_Assigned_Templates
+		//echo "Query2: ".$query2."<BR>";
+		
+		$query3 = "SELECT Template_ID, Order_ID, Order_Status, Drug_Name, Order_Type, FlowRate, AdminDay, Admin_Date, AdminTime, Amt, InfusionTime, Sequence, FluidVol, Reason, Date_Entered
+,RegNum, RegDose, RegDoseUnit, RegDosePct, RegReason, PatientDose, PatientDoseUnit, Route, flvol, flunit, infusion, bsaDose, Reason
+  FROM Order_Status
   WHERE Patient_ID = '$patientID'";
 		
-		$tq = $this->query($query3);
-error_log("Flowsheet - $query3");
-
-		foreach($tq as $row){
-		$TemplateID = $row['Template_ID'];
+		$result3 = $this->query($query3);
 		
-		}
+		//echo "Query3: ".$query3."<BR>";
 		
-		$query4 = "SELECT MH_ID
-      ,Drug_ID
-      ,Template_ID
-      ,Pre_Or_Post
-      ,Description
-      ,Flow_Rate
-      ,Admin_Day
-      ,Infusion_Time
-      ,Sequence_Number
-      ,Fluid_Vol
-      ,Admin_Time
-      ,Order_ID
-      ,Status
-      ,Reason
-      ,Date_Entered
-  FROM Medication_Hydration
-  WHERE Template_ID = '$TemplateID'";
 
-        
-error_log("Flowsheet - $query4");
-
-		$result3 = $this->query($query4);
-
-		$query5 = "SELECT Patient_Regimen_ID
-      ,Template_ID
-      ,Drug_ID
-      ,Regimen_Number
-      ,Regimen_Dose
-      ,Regimen_Dose_Unit_ID
-      ,Regimen_Dose_Pct
-      ,Regimen_Reason
-      ,Patient_Dose
-      ,Patient_Dose_Unit_ID
-      ,Route_ID
-      ,Admin_Day
-      ,Infusion_Time
-      ,Fl_Vol_Unit_ID
-      ,Fl_Vol_Description
-      ,Date_Created
-      ,Created_By
-      ,Date_Modified
-      ,Modified_By
-      ,Flow_Rate
-      ,Instructions
-      ,Fluid_Vol
-      ,Sequence_Number
-      ,Admin_Time
-      ,BSA_Dose
-      ,Fluid_Type
-      ,T_Type
-      ,Order_ID
-      ,Status
-      ,Reason
-      ,Date_Entered
-  FROM Template_Regimen
-  WHERE Template_ID = '$TemplateID'";
-
-        
-
-error_log("Flowsheet - $query5");
-
-		$result4 = $this->query($query5);
-		$arr = array_merge ((array)$result,(array)$result2,(array)$result3,(array)$result4);
+		$arr = array_merge ((array)$result,(array)$result2,(array)$result3);
+		//var_dump($arr);
         return ($arr);
     }
 }
