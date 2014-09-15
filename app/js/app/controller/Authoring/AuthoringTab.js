@@ -919,8 +919,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			scope: this,
 			success: function (data) {
 				wccConsoleLog("Saved Template ");
-				this.getNewPlanTemplate().getStore().removeAll(true);
-				this.getNewPlanTemplate().getStore().load();
+				// this.getNewPlanTemplate().getStore().removeAll(true);
+				// this.getNewPlanTemplate().getStore().load();
 
 				// this.getTemplate().getStore().removeAll(true);
 				// this.getTemplate().getStore().load();
