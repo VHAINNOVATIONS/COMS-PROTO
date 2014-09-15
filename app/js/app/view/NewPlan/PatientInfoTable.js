@@ -148,7 +148,6 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return false;
 					},
 					buildCumDoseMedInfo : function ( data ) {
-						debugger;
 						var CurCumDoseList = data.CurCumDoseList;
 						var len = CurCumDoseList.length;
 						var MedMaxDoseNum =("" + data.MedMaxDose).replace(",", "");
