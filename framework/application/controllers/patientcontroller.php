@@ -448,40 +448,105 @@ class PatientController extends Controller
      *
      * @todo Move this into a model
      */
-    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap)
+    private function _insertOrderStatus($formData, $preHydrationRecord, $GUID, $infusionMap, $templateIdMT)
     {
+	//echo "|||formData||| ";
+	//var_dump($formData);
 	//echo "|||preHydrationRecord||| ";
 	//var_dump($preHydrationRecord);
 	//echo "|||infusionMap||| ";
 	//var_dump($infusionMap);
+	//var_dump($templateIdMT);
+
+	$iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($templateIdMT));
+	foreach($iterator as $key => $value) {
+		$templateIdMT = $value;
+		$queryTIDMT = "SELECT Template_ID
+					,Admin_Day
+					,Admin_Date
+					,Patient_ID
+					,Date_Entered
+				FROM Master_Template
+				WHERE Template_ID = '$templateIdMT'";
+				$GetMT = $this->Patient->query($queryTIDMT);
+				foreach($GetMT as $row){
+					$Admin_Date2 =  $row['Admin_Date'];
+				}
+				
+		}
 	
-	//$amt = $infusionMap['amt'];
-	/*if (empty($infusionMap['type'])){
-	$route = $preHydrationRecord['route'];
-	}
-	else{
-	$route = $infusionMap['type'];
-	}
+		$Admin_Date = $Admin_Date2->format('Ymd');
 	
-	if (empty($infusionMap['amt'])){
-	$amt = 1;
-	}
-	else{
-	$amt = $infusionMap['amt'];
-	}
-*/
         $templateId = $formData->TemplateID;
         $patientid = $formData->PatientID;
         $drugName = $preHydrationRecord['drug'];
-        $AdminDay = $preHydrationRecord['AdminDay'];
-        $DrugID = $preHydrationRecord['id'];
+        $phid = $preHydrationRecord['id'];
+		$AdminDay = $preHydrationRecord['adminDay'];
+        $Sequence = $preHydrationRecord['Sequence'];
+				
+		$amt = $preHydrationRecord['regdose'];
+		$iamt = $infusionMap[$phid][0]->data['amt'];
+		if (empty($amt)){
+			$pamt = $iamt;
+			}
+		else{
+			$pamt = $amt;
+			}
+			
+		$route = $preHydrationRecord['route'];
+        $iroute = $infusionMap[$phid][0]->data['type'];
+		if (empty($route)){
+			$proute = $iroute;
+			}
+		else{
+			$proute = $route;
+			}
+
+		$unit = $preHydrationRecord['regdoseunit'];
+        $iunit = $infusionMap[$phid][0]->data['unit'];
+		if (empty($route)){
+			$punit = $iunit;
+			}
+		else{
+			$punit = $unit;
+			}
+
+		$flowRate = $preHydrationRecord['flowRate'];
+        $iflowRate = $infusionMap[$phid][0]->data['flowRate'];
+		if (empty($flowRate)){
+			$pflowRate = $iflowRate;
+			}
+		else{
+			$pflowRate = $flowRate;
+			}
+			
+		$flvol = $preHydrationRecord['flvol'];
+        $iflvol = $infusionMap[$phid][0]->data['fluidVol'];
+		if (empty($flvol)){
+			$pflvol = $iflvol;
+			}
+		else{
+			$pflvol = $flvol;
+			}
+			
+		$DrugID = $preHydrationRecord['id'];
+		$RegDosePct = $preHydrationRecord['regdosepct'];
+		$RegReason = $preHydrationRecord['regreason'];
+		$PatientDose = $preHydrationRecord['patientdose'];
+		$PatientDoseUnit = $preHydrationRecord['patientdoseunit'];
+		$flunit = $preHydrationRecord['flunit'];
+		$infusion = $preHydrationRecord['infusion'];
+		$bsaDose = $preHydrationRecord['bsaDose'];
+		$Reason = $preHydrationRecord['Reason'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
 		$Notes = "Line 467, PatientController";
+		
         
         $query = "
             INSERT INTO Order_Status (
                 Template_ID, 
+                Template_IDMT, 
                 Order_Status,
 				Order_ID,				
                 Drug_Name,
@@ -490,10 +555,25 @@ class PatientController extends Controller
                 Patient_ID,
 				Notes,
 				Amt,
+				iAmt,
+				Sequence,
 				Route,
-				AdminDay
+				AdminDay,
+				Unit,
+				RegDosePct,
+				FlowRate,
+				flvol,
+				RegReason,
+				PatientDoseUnit,
+				PatientDose,
+				flunit,
+				infusion,
+				bsaDose,
+				Reason,
+				Admin_Date
             ) VALUES (
                 '$templateId',
+                '$templateIdMT',
                 '$orderStatus',
                 '$GUID',
                 '$drugName',
@@ -501,11 +581,26 @@ class PatientController extends Controller
                 '$orderType',
                 '$patientid',
                 '$Notes',
-                '$amt',
-                '$route',
-                '$AdminDay'
+                '$pamt',
+                '$iamt',
+				'$Sequence',
+                '$proute',
+                '$AdminDay',
+				'$punit',
+				'$RegDosePct',
+				'$pflowRate',
+				'$pflvol',
+				'$RegReason',
+				'$PatientDoseUnit',
+				'$PatientDose',
+				'$flunit',
+				'$infusion',
+				'$bsaDose',
+				'$Reason',
+				'$Admin_Date'
             )
-        ";
+         ";
+		 //echo $query;
         $this->Patient->query($query);
         /*removed for Order ID Bug
         $mssqlLimit = null;
@@ -639,7 +734,7 @@ class PatientController extends Controller
                     $query = "SELECT NEWID()";
 					$GUID = $this->Patient->query($query);
 					$GUID = $GUID[0][""];
-                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID, $infusionMap);
+                    $orderId = $this->_insertOrderStatus($formData, $therapy, $GUID, $infusionMap, $templateId);
                     
                     if (! empty($infusionMap)) {
                         $this->_insertHydrations($therapy, $infusionMap, 
@@ -856,15 +951,6 @@ class PatientController extends Controller
  *  
  **/
 	function genOEMData($id) {
-
-                $MicroTime_ST = microtime(true);
-// error_log("genOEMData Entry Point - (Timestamp in MS = $MicroTime_ST)");
-
-
-
-
-
-
 		$lookup = new LookUp();
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
@@ -872,10 +958,6 @@ class PatientController extends Controller
             // error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
 			return;
 		}
-
-                $MicroTime_ST1 = microtime(true);
-                $TimeDiff = $MicroTime_ST1 - $MicroTime_ST;
-// error_log("genOEMData BP1 - (Timestamp in MS = $MicroTime_ST1 - TimeDiff = $TimeDiff)");
 
 		if (0 == count($templateId)) {
 			$this->set('oemsaved', null);
@@ -894,11 +976,6 @@ class PatientController extends Controller
 			return;
 		}
 
-                $MicroTime_ST2 = microtime(true);
-                $TimeDiff = $MicroTime_ST2 - $MicroTime_ST1;
-// error_log("genOEMData BP2 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
-
-
 		// Add Disease Info record for use in PrintOrders - MWB - 12/23/2013
 		$lookup = new LookUp();
 		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
@@ -907,12 +984,6 @@ class PatientController extends Controller
             // error_log("Get Disease Info Failed. $Disease");
 			return;
 		}
-
-                $MicroTime_ST3 = microtime(true);
-                $TimeDiff = $MicroTime_ST3 - $MicroTime_ST2;
-// error_log("genOEMData BP3 - (Timestamp in MS = $MicroTime_ST2 - TimeDiff = $TimeDiff)");
-
-
 		$masterRecord[0]['DiseaseRecord'] = $Disease;
 		$this->set('masterRecord', $masterRecord);
 
@@ -927,27 +998,12 @@ class PatientController extends Controller
 		}
 		$this->set('oemrecords', $oemrecords);
 
-                $MicroTime_ST4 = microtime(true);
-                $TimeDiff = $MicroTime_ST4 - $MicroTime_ST3;
-// error_log("genOEMData BP4 - (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff)");
-
-
-        /**
-         * Here is the big 32 second bottleneck
-         **/
-// error_log("..");
-// error_log("Looping through records to get all the Pre/Post/Therapy Med Record Information");
 		$oemMap = array();
-        $loopCount4Display = 0;
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = array();
+			//echo "ARRAY:".var_dump($oemDetails)."";
             $oemRecordTemplateID = $oemrecord['TemplateID'];
 
-
-                if (0 == $loopCount4Display) {
-                    $MicroTime_ST_Hdr1 = microtime(true);
-// error_log("genOEMData Pre Hydrations Start (Timestamp in MS = $MicroTime_ST_Hdr1)");
-                }
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -957,11 +1013,6 @@ class PatientController extends Controller
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
 			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
 
-if (0 == $loopCount4Display) {
-                $MicroTime_ST_Hdr2 = microtime(true);
-                $TimeDiff = $MicroTime_ST_Hdr2 - $MicroTime_ST_Hdr1;
-// error_log("genOEMData Pre Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr2 - TimeDiff = $TimeDiff)");
-}
 
 			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
@@ -972,12 +1023,6 @@ if (0 == $loopCount4Display) {
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
 			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
 
-if (0 == $loopCount4Display) {
-                $MicroTime_ST_Hdr3 = microtime(true);
-                $TimeDiff = $MicroTime_ST_Hdr3 - $MicroTime_ST_Hdr2;
-// error_log("genOEMData Post Hydrations End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
-}
-
             $retVal = $this->Regimens($oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
@@ -986,19 +1031,7 @@ if (0 == $loopCount4Display) {
 			}
 			$oemDetails['Therapy'] = $this->get('regimens');
 			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
-
- if (0 == $loopCount4Display) {
-                $MicroTime_ST_Hdr4 = microtime(true);
-                $TimeDiff = $MicroTime_ST_Hdr4 - $MicroTime_ST_Hdr3;
-// error_log("genOEMData Therapy End (Timestamp in MS = $MicroTime_ST_Hdr3 - TimeDiff = $TimeDiff)");
- }
-$loopCount4Display++;
 		}
-// error_log("..");
-
-                $MicroTime_ST5 = microtime(true);
-                $TimeDiff = $MicroTime_ST5 - $MicroTime_ST4;
-// error_log("genOEMData BP5 - in patientcontroller.php (Timestamp in MS = $MicroTime_ST3 - TimeDiff = $TimeDiff) for " . count($oemrecords) . " records");
 
 		$this->set('oemMap', $oemMap);
 		$this->set('oemsaved', null);
@@ -1246,12 +1279,7 @@ function buildJsonObj4Output() {
         
         if ($id != NULL) {  // This assumes command is a GET, ignores PUT/DELETE
             if ("GET" == $_SERVER['REQUEST_METHOD']) {
-                $MicroTime_ST = microtime(true);
-// error_log("Get OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST)");
                 $this->genOEMData($id);
-                $MicroTime_END = microtime(true);
-                $TimeDiff = $MicroTime_END - $MicroTime_ST;
-// error_log("GOT OEM Data Records in Patient Controller - (Timestamp in MS = $MicroTime_ST (Diff = $TimeDiff))");
             }
         }
         else if ($form_data) {
@@ -1311,13 +1339,7 @@ function buildJsonObj4Output() {
             $this->set('frameworkErr', 'No Template ID provided.');
         }
 
-
-        $MicroTime_ST2 = microtime(true);
-// error_log("Build JSON Data for output in Patient Controller - (Timestamp in MS = $MicroTime_ST2)");
         $this->buildJsonObj4Output();
-        $MicroTime_END2 = microtime(true);
-        $TimeDiff = $MicroTime_END2 - $MicroTime_ST2;
-// error_log("JSON Data for output in (Timestamp in MS = $MicroTime_END2 (Diff = $TimeDiff))");
     }
 
     function Regimens($id = null)
@@ -1433,19 +1455,27 @@ function buildJsonObj4Output() {
     function Hydrations($type = null, $id = null)
     {
         $lookup = new LookUp();
+        
         $hydrations = $lookup->getHydrations($id, $type);
+       
         if (null != $hydrations && array_key_exists('error', $hydrations)) {
             return $hydrations;
         }
+        
         $infusionMap = array();
         $origInfusionMap = array();
+        
         foreach ($hydrations as $hydration) {
+            
             $infusions = $lookup->getMHInfusions($hydration['id']);
             if (null != $infusions && array_key_exists('error', $infusions)) {
                 return $infusions;
             }
+            
             $myinfusions = array();
+            
             $origInfusionMap[$hydration['id']] = $infusions;
+            
             for ($i = 0; $i < count($infusions); $i ++) {
                 $myinfusion = array();
                 $myinfusion['amt'] = $infusions[$i]['amt'];
@@ -1464,8 +1494,10 @@ function buildJsonObj4Output() {
                 }
                 $myinfusions[$i]->{'data'} = $myinfusion;
             }
+            
             $infusionMap[$hydration['id']] = $myinfusions;
         }
+        
         $this->set($type . 'hydrations', $hydrations);
         $this->set($type . 'infusions', $infusionMap);
         $this->set($type . 'origInfusions', $origInfusionMap);
@@ -1854,9 +1886,7 @@ function buildJsonObj4Output() {
                         FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
                 }
             }
-            error_log("DI 1 - Retrieving Records - $query");
-
-// error_log("DischargeInstructions Query - $query");
+            error_log("DischargeInstructions Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";
         }
@@ -2008,8 +2038,8 @@ function buildJsonObj4Output() {
                         $jsonRecord['msg'] = "Patient Information Unavailable - " . $this->get('frameworkErr');
                     }
                     else {
-// error_log("$patInfoQuery");
-// error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
+                        error_log("$patInfoQuery");
+                        error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
                         /* Parse data into Proper Form Input structure */
                         if (count($retVal) > 0) {
                             $data = array();
@@ -2144,16 +2174,14 @@ INSERT INTO [COMS_TEST_2].[dbo].[LookUp]
            (0, 60, 'Cumulative Dosing Meds', 'Medication ID')
 
 
-// 8/14/2014 - MWB - Cumulative Dose Tracking SQL Table
-USE [COMS_TEST_5]
-CREATE TABLE [dbo].[Patient_CumulativeDoseHistory_TEST](
-      [ID] [uniqueidentifier] DEFAULT (newsequentialid()),
+// 7/1/2014 - MWB - Cumulative Dose Tracking SQL Table
+USE [COMS_TEST_2]
+CREATE TABLE [dbo].[Patient_CumulativeDoseHistory](
+      [ID] [uniqueidentifier] NOT NULL,
       [Patient_ID] [uniqueidentifier] NOT NULL,
       [MedID] [uniqueidentifier] NOT NULL,
       [CumulativeDoseAmt] [varchar](30) NOT NULL,
-      [CumulativeDoseUnits] [uniqueidentifier] NOT NULL,
-      [Source] [varchar](max),
-      [AdministeredByCOMS] [bit] DEFAULT 0,
+      [CumulativeDoseUnits] [varchar](30) NOT NULL,
       [Date_Changed] [datetime] DEFAULT (getdate()),
       [Author] [varchar](30) NULL
 ) ON [PRIMARY]
@@ -2202,38 +2230,9 @@ Data:
 
         $DataTable = "Patient_CumulativeDoseHistory";
         $GUID = "";
-        $ErrMsg = "";
         $this->Patient->beginTransaction();
         $Date2 = date("F j, Y");
         parse_str(file_get_contents("php://input"),$post_vars);
-
-        $UnitName = $MedName = $MedID = $CumulativeDoseAmt = $CumulativeDoseUnits = $Source = "";
-        $AdministeredByCOMS = 0;
-
-        if (isset($post_vars["MedName"])) {
-            $MedName = $post_vars["MedName"];
-        }
-
-        if (isset($post_vars["UnitName"])) {
-            $UnitName = $post_vars["UnitName"];
-        }
-
-        /**
-         * If we have MedName and UnitName then we're posting from a Medication Administration and don't have ID's
-         * So use the following query to get the MedID:
-         *
-         *      use COMS_TEST_5 
-         *      select * from lookup lu
-         *      left join CumulativeDoseMeds cdm on lu.Lookup_ID = cdm.MedID
-         *      where lu.Lookup_Type = 2 and lu.Name = 'ACYCLOVIR INJ   ' and cdm.MedID is not null
-         *
-         *      And this query to get the UnitID from the Unit Name
-         *      use COMS_TEST_5 
-         *      select * from lookup lu
-         *      where lu.Lookup_Type = 11 and lu.Name = 'mg'
-         *
-         **/
-
         if (isset($post_vars["value"])) {
             $MedID = $post_vars["value"];
         }
@@ -2246,138 +2245,37 @@ Data:
         if (isset($post_vars["Source"])) {
             $Source = $post_vars["Source"];
         }
-        if (isset($post_vars["AdministeredByCOMS"])) {
-            $AdministeredByCOMS = $post_vars["AdministeredByCOMS"];
-        }
 
-        if ("" !== $MedName && "" == $MedID) {
-            $query = "select * from lookup lu
-            left join CumulativeDoseMeds cdm on lu.Lookup_ID = cdm.MedID
-            where lu.Lookup_Type = 2 and lu.Name = '$MedName' and cdm.MedID is not null";
-            $retVal = $this->Patient->query($query);
-            if ($this->checkForErrors("Retrieving MedID from Name", $retVal)) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-                $this->Patient->rollbackTransaction();
-                $this->Patient->endTransaction();
-                $this->set('jsonRecord', $jsonRecord);
-                return;
-            }
-            else {
-                if (count($retVal) > 0) {
-                    $MedID = $retVal[0]["MedID"];
-                }
-            }
-        }
-
-        if ("" !== $UnitName && "" == $CumulativeDoseUnits) {
-            $query = "select * from lookup lu
-            where lu.Lookup_Type = 11 and lu.Name = '$UnitName'";
-            $retVal = $this->Patient->query($query);
-            if ($this->checkForErrors("Retrieving MedID from Name", $retVal)) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-                $this->Patient->rollbackTransaction();
-                $this->Patient->endTransaction();
-                $this->set('jsonRecord', $jsonRecord);
-                return;
-            }
-            else {
-                $CumulativeDoseUnits = $retVal[0]["Lookup_ID"];
-            }
-        }
-
+        $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
+error_log("CumulativeDoseTracking - GET");
             if ($PatientID) {
-$partialQuery = "SELECT 
-    dt.CumulativeDoseAmt, 
-    dt.CumulativeDoseUnits, 
-    dt.Source,
-    dt.MedID,
-    dt.Author,
-    lu1.Name as MedName,
-    lu2.Name as Units,
-    cdm.CumulativeDoseAmt as MaxCDA,
-    lu3.name as CDAUnits,
-    CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
-    from $DataTable dt
-    join LookUp lu1 on lu1.Lookup_ID = dt.MedID
-    join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
-    join CumulativeDoseMeds cdm on cdm.MedID = dt.MedID
-    join LookUp lu3 on lu3.Lookup_ID = cdm.CumulativeDoseUnits
-    where Patient_ID = '$PatientID'";
+                $partialQuery = "SELECT 
+                   dt.CumulativeDoseAmt, 
+                   dt.CumulativeDoseUnits, 
+                   dt.Source,
+                   dt.MedID,
+                   dt.Author,
+                   lu1.Name as MedName,
+                   lu2.Name as Units,
+                   CONVERT(varchar,dt.Date_Changed,101) as Date_Changed
+                   from Patient_CumulativeDoseHistory dt
+                   join LookUp lu1 on lu1.Lookup_ID = dt.MedID
+                   join LookUp lu2 on lu2.Lookup_ID = dt.CumulativeDoseUnits
+                   where Patient_ID = '$PatientID'";
                 if ($cdhRecordID) {
-                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by MedName asc, Cast (REPLACE(dt.CumulativeDoseAmt, ',', '') as int) asc";
+                    $query = $partialQuery . " and dt.ID = '$cdhRecordID' order by Name asc";
                 }
                 else {
-                    $query =  $partialQuery . " order by MedName asc, Cast (REPLACE(dt.CumulativeDoseAmt, ',', '') as int) asc";
+                    $query =  $partialQuery;
                 }
             }
-// error_log("CumulativeDoseTracking Query - $query");
+            error_log("CumulativeDoseTracking Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving Records";
-
-
-
-            $retVal = $this->Patient->query($query);
-            if ($this->checkForErrors($ErrMsg, $retVal)) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = $this->get('frameworkErr');
-                $this->Patient->rollbackTransaction();
-            }
-            else {
-                $CumDoseMedList = array();
-                $CumDoseMedInfo = array();
-                $CurCumDoseList = array();
-                $CurCumDoseMed = "";
-                foreach ($retVal as $MedEntry) {
-                    // echo $MedEntry["MedID"] . "<br>";
-                    if ($MedEntry["MedID"] !== $CurCumDoseMed) {
-                        if ("" !== $CurCumDoseMed) {
-                            $CumDoseMedInfo["CurCumDoseAmt"] = $CurCumDoseAmt;
-                            // echo json_encode($CumDoseMedInfo) . "<br>";
-                            $CumDoseMedList[] = $CumDoseMedInfo;
-                        }
-                        $CurCumDoseMed = $MedEntry["MedID"];
-                        $CurCumDoseAmt = 0;
-                        $CumDoseMedInfo = array( "MedName" => $MedEntry["MedName"],"MedMaxDose" => $MedEntry["MaxCDA"], "MedMaxDoseUnits" => $MedEntry["CDAUnits"], "CurCumDoseList" => array());
-                    }
-                    $CDA_Num = str_replace(',', '', $MedEntry["CumulativeDoseAmt"]);
-error_log("CumulativeDoseTracking CurCumDoseAmt - $CurCumDoseAmt - $CDA_Num");
-
-                    $CurCumDoseAmt += $CDA_Num;
-                    $CumDoseMedInfo["CurCumDoseAmt"] = $CurCumDoseAmt;
-                    $CumDoseMedInfo["CurCumDoseList"][] = array(
-                        "CumulativeDoseAmt" => $MedEntry["CumulativeDoseAmt"], 
-                        "Units" => $MedEntry["Units"], 
-                        "Source" => $MedEntry["Source"]
-                        );
-                }
-                $CumDoseMedList[] = $CumDoseMedInfo;
-                // echo json_encode($CumDoseMedList) . "<br>";
-                // echo "<br><br><br>";
-
-
-
-                $jsonRecord['success'] = 'true';
-                if (count($CumDoseMedList) > 0) {
-                    unset($jsonRecord['msg']);
-                    $jsonRecord['total'] = count($CumDoseMedList);
-                    $jsonRecord['records'] = $CumDoseMedList;
-                }
-            }
-            $query = "";
-
-
-
-
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
 error_log("CumulativeDoseTracking - POST");
-        if ("" == $MedID) {
-error_log("CumulativeDoseTracking - POST - No Med ID, Post is NOT for tracked Med");
-        }
-        else {
 /*********************************************************************************
             Sample POST
             URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
@@ -2388,28 +2286,26 @@ error_log("CumulativeDoseTracking - POST - No Med ID, Post is NOT for tracked Me
             Data Collection Method: parse_str(file_get_contents("php://input"),$post_vars);
             Field Access Method: $MedID = $post_vars["value"];
  *********************************************************************************/
-                $GUID =  $this->Patient->newGUID();
+            $GUID =  $this->Patient->newGUID();
 
-                $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source, AdministeredByCOMS)
-                VALUES (
-                    '$GUID',
-                    '$PatientID',
-                    '$MedID',
-                    '$CumulativeDoseAmt',
-                    '$CumulativeDoseUnits',
-                    '$Source',
-                    $AdministeredByCOMS
-                )";
+            $query = "INSERT INTO $DataTable (ID, Patient_ID, MedID, CumulativeDoseAmt, CumulativeDoseUnits, Source)
+            VALUES (
+                '$GUID',
+                '$PatientID',
+                '$MedID',
+                '$CumulativeDoseAmt',
+                '$CumulativeDoseUnits',
+                '$Source'
+            )";
 
-                error_log($query);
-                $retVal = $this->Patient->query($query);
-                if ($this->checkForErrors($ErrMsg, $retVal)) {
-                    $this->Patient->rollbackTransaction();
-                    $jsonRecord['success'] = false;
-                    $jsonRecord['msg'] = $this->get('frameworkErr');
-                    $this->set('jsonRecord', $jsonRecord);
-                    return;
-                }
+error_log($query);
+            $retVal = $this->Patient->query($query);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->Patient->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
             }
             $query = "";    /* Reset query so we don't run it again in the final step */
         }
@@ -2480,5 +2376,30 @@ error_log("CumulativeDoseTracking - POST - No Med ID, Post is NOT for tracked Me
         $this->Patient->endTransaction();
         $this->set('jsonRecord', $jsonRecord);
         return;
+    }
+	
+	function UpdateAdminDate($Template_ID,$Admin_Date){
+        
+        $jsonRecord = array();
+        
+		
+
+        $records = $this->Patient->UpdateAdminDateMT($Template_ID,$Admin_Date);
+
+		
+        if ($this->checkForErrors('Update Admin Date Failed. ', $records)) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        } 
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
     }
 }

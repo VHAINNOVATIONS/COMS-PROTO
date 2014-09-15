@@ -458,7 +458,8 @@ AND Patient_History.Weight != ''";
   WHERE Patient_ID = '$patientID'";
 		
 		$tq = $this->query($query3);
-		
+error_log("Flowsheet - $query3");
+
 		foreach($tq as $row){
 		$TemplateID = $row['Template_ID'];
 		
@@ -481,7 +482,10 @@ AND Patient_History.Weight != ''";
       ,Date_Entered
   FROM Medication_Hydration
   WHERE Template_ID = '$TemplateID'";
-		
+
+        
+error_log("Flowsheet - $query4");
+
 		$result3 = $this->query($query4);
 
 		$query5 = "SELECT Patient_Regimen_ID
@@ -517,7 +521,11 @@ AND Patient_History.Weight != ''";
       ,Date_Entered
   FROM Template_Regimen
   WHERE Template_ID = '$TemplateID'";
-		
+
+        
+
+error_log("Flowsheet - $query5");
+
 		$result4 = $this->query($query5);
 		$arr = array_merge ((array)$result,(array)$result2,(array)$result3,(array)$result4);
         return ($arr);
