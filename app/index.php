@@ -59,6 +59,8 @@ $notset = "Not Set";
 PostTrack($_SESSION['ruser'],$notset,$point,0,$_SESSION['sessionid']);
 }
 
+if ($_SESSION['NWLogin'] === 355){
+
 $ipcheck = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 $sessionid = $_SESSION['sessionid'];
 $queryLastLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogin
@@ -70,7 +72,7 @@ $queryLastLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogin
 	$ChkLastLogin = sqlsrv_query($conn, $queryLastLogin);
 	while($row = sqlsrv_fetch_array($ChkLastLogin, SQLSRV_FETCH_ASSOC)) {
 		$LastLogin =  $row['LastLogin'];
-		}
+		}		
 $LastLogin1 = $LastLogin-($LastLogin * 2);
 
 if ($LastLogin === NULL){
@@ -260,5 +262,7 @@ $queryFirstLogin = "SELECT TOP 1 DATEDIFF (ss,getdate(),DateEntered) as LastLogi
 
 }
 }
-
+}else{
+include "login.php";
+}
 ?>
