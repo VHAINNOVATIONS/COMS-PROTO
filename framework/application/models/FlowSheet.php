@@ -424,7 +424,8 @@ class Flowsheet extends Model
 
 ///newfunction
 function FS($patientID){
-        
+
+
 
 $query = "SELECT 
 Performance_ID as ph_Performance_ID ,Patient_History.Weight as ph_Weight ,Treatment_ID as ndt_TreatmentID 
@@ -444,8 +445,9 @@ AND Patient_History.Weight != ''";
 		
 		$result = $this->query($query);
 
-		//echo "Query1: ".$query."<BR>";
-		
+error_log("FS Function - First Query Result");
+error_log(json_encode($result));
+
 	$query2 = "SELECT TOP 1 Performance_ID as ph_Performance_ID
 		,Patient_History.Weight as ph_Weight,
 		Date_taken 
@@ -454,21 +456,24 @@ AND Patient_History.Weight != ''";
 		AND Weight != ''";
 		
 		$result2 = $this->query($query2);
-
-		//echo "Query2: ".$query2."<BR>";
 		
+error_log("FS Function - Second Query Result");
+error_log(json_encode($result2));
+
+
+
 		$query3 = "SELECT Template_ID, Order_ID, Order_Status, Drug_Name, Order_Type, FlowRate, AdminDay, Admin_Date, AdminTime, Amt, InfusionTime, Sequence, FluidVol, Reason, Date_Entered
 ,RegNum, RegDose, RegDoseUnit, RegDosePct, RegReason, PatientDose, PatientDoseUnit, Route, flvol, flunit, infusion, bsaDose, Reason
   FROM Order_Status
   WHERE Patient_ID = '$patientID'";
 		
 		$result3 = $this->query($query3);
-		
-		//echo "Query3: ".$query3."<BR>";
-		
+
+
+error_log("FS Function - Third Query Result");
+error_log(json_encode($result3));
 
 		$arr = array_merge ((array)$result,(array)$result2,(array)$result3);
-		//var_dump($arr);
-        return ($arr);
-    }
+		return ($arr);
+	}
 }

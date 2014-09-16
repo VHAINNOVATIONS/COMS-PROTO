@@ -19,6 +19,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			"FlowSheetOptionalQues button[text=\"Save\"]" : {
 				click: this.Save
 			},
+			"FlowSheetOptionalQues button[text=\"Cancel\"]" : {
+				click: this.Cancel
+			},
 			"FlowSheetOptionalQues combobox[name=\"ToxInstr\"]" : {
 				"change" : this.SelectToxInstr
 			}
@@ -79,5 +82,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			   this.application.unMask();
 			}
 		});
+	},
+
+	Cancel : function(btn) {
+		btn.up('form').getForm().reset();
+		btn.up('window').close();
 	}
 });

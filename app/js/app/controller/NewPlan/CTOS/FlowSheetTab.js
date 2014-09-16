@@ -93,18 +93,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		Ext.widget("FlowSheetOptionalQues");
 	},
 
-	clickNamedAnchor : function (grid, record) {
+	clickNamedAnchor : function (grid, record, rowIdx, colIdx) {
+
 		var theGrid = grid;
 		var theData = record.getData();
 		var theLabel = theData.label;
-		var theColumnValue = theData[Object.keys(theData)[column+1]];
+		var theColumnValue = theData[Object.keys(theData)[colIdx+1]];
 
-		if ("Date" == theLabel || "Weight" == theLabel) {
+		if (theLabel !== "Disease Response" && theLabel !== "Toxicity" && theLabel !== "Other") {
 			return;
 		}
 		var thePanel = null;
-		var theElID = theColumnValue.substring(theColumnValue.indexOf("\"")+1, theColumnValue.indexOf(">")-1);
-		var theEl = Ext.get(theElID);
 		if ("Disease Response" == theLabel) {
 			thePanel = this.getDiseaseResponsePanel();
 		}
@@ -114,10 +113,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		else if ("Other" == theLabel) {
 			thePanel = this.getOtherInfoPanel();
 		}
-		if (thePanel && "" != theElID) {
+
+		//var theElID = theColumnValue.substring(theColumnValue.indexOf("\"")+1, theColumnValue.indexOf(">")-1);
+		var theEl;	//  = Ext.get(theElID);
+		if (thePanel) {
 			thePanel.expand();
 			theEl = thePanel.getEl();
-			theEl.scrollIntoView(document.body);
+			var top = theEl.getTop();
+			window.scroll(top);
+			// theEl.scrollIntoView(document.body);
 			theEl.focus(100);
 		}
 
