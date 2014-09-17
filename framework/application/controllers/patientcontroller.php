@@ -1655,12 +1655,12 @@ function buildJsonObj4Output() {
                             $retVal = $this->Patient->query($query);
 							
 							$query2 = "SELECT Order_ID FROM $table WHERE $key = '$id'";
-							$result = $this->Patient->query($query2);
-							foreach($result as $row){
+							$resultq = $this->Patient->query($query2);
+							foreach($resultq as $row){
 								$Order_ID = $row['Order_ID'];
 								}
 							$query3 = "UPDATE Order_Status SET Order_Status = '$status' WHERE Order_ID = '$Order_ID'";
-							$result = $this->Patient->query($query3);
+							$this->Patient->query($query3);
 							
                             if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $retVal)) {
                                 $jsonRecord['success'] = 'false';
