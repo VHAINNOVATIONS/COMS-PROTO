@@ -184,7 +184,6 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				return "<button class=\"anchor PatientList\">" + current.PatientListCount + "</button>";
 			},
 			CumDoseMeds : function ( current, prev ) {
-				// debugger;
 				var i, msg, medStr, cdmir, cdmirList = current.CumulativeDoseMedsInRegimen, len = cdmirList.length;
 				msg = "No Cumulative Dose Tracked Medications in this Regimen";
 
@@ -232,53 +231,49 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						msg += "<td>" + m2 + "</td>";
 						msg += "<td>" + m3 + "</td>";
 						
-						
-						var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
 						var MedNotTracked = true;
-						if (cdtLen > 0) {
-							var i, cdt, cdtMed, exceeds, xxx;
-							for (i = 0; i < cdtLen; i++) {
-								cdt = COMS.Patient.CumulativeDoseTracking[i];
-								cdtMed = cdt.MedName;
-								if (cdtMed === cdmir.MedName) {
-									MedNotTracked = false;
-									
-									if ("string" == typeof cdt.CurCumDoseAmt) {
-										var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
-									}
-									else {
-										var cdtAmt = cdt.CurCumDoseAmt;
-									}
-									msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
-									
+						if (COMS.Patient.CumulativeDoseTracking) {
+							var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
+							if (cdtLen > 0) {
+								var i, cdt, cdtMed, exceeds, xxx;
+								for (i = 0; i < cdtLen; i++) {
+									cdt = COMS.Patient.CumulativeDoseTracking[i];
+									cdtMed = cdt.MedName;
+									if (cdtMed === cdmir.MedName) {
+										MedNotTracked = false;
+										
+										if ("string" == typeof cdt.CurCumDoseAmt) {
+											var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
+										}
+										else {
+											var cdtAmt = cdt.CurCumDoseAmt;
+										}
+										msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
+										
 
-									if ("string" == typeof cdmir.CumulativeDoseAmt) {
-										var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
-									}
-									else {
-										var cdmirAmt = cdmir.CumulativeDoseAmt;
-									}
+										if ("string" == typeof cdmir.CumulativeDoseAmt) {
+											var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
+										}
+										else {
+											var cdmirAmt = cdmir.CumulativeDoseAmt;
+										}
 
-									exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);
-									if (exceeds > (1 * cdmirAmt)) {
-										var xeedsByAmt = (exceeds - (1 * cdmirAmt));
-										var xceedsByPct = ((xeedsByAmt / (1 * cdmirAmt)) * 100) + 100;
-										msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
-										msg += "</tr><tr><td colspan=\"6\" class=\"smlTCDWarning\">";
-										msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
-										msg += "</td></tr>";
-									}
-									else {
-										msg += "<td>&nbsp;.</td>";
-										msg += "<td>&nbsp;.</td>";
-										msg += "</tr>";
+										exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);
+										if (exceeds > (1 * cdmirAmt)) {
+											var xeedsByAmt = (exceeds - (1 * cdmirAmt));
+											var xceedsByPct = ((xeedsByAmt / (1 * cdmirAmt)) * 100) + 100;
+											msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
+											msg += "</tr><tr><td colspan=\"6\" class=\"smlTCDWarning\">";
+											msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
+											msg += "</td></tr>";
+										}
+										else {
+											msg += "<td>&nbsp;.</td>";
+											msg += "<td>&nbsp;.</td>";
+											msg += "</tr>";
+										}
 									}
 								}
-								//else {
-								//	msg += "<td>" + "D" + "</td>";
-								//	msg += "<td>" + "E" + "</td>";
-								//	msg += "</tr>";
-								//}
 							}
 						}
 						if (MedNotTracked) {

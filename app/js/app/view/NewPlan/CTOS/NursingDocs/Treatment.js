@@ -45,47 +45,43 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
         { header : "Route", dataIndex : "route", width : 50},
         { header : "Start Time", dataIndex : "StartTime",
             renderer: function(v) {
-                if ("" !== v) {
-                    var v1, v2, v3;
-                    try {
-						v1 = new Date(v.split("T").join(" "));
-                        v2 = Ext.Date.format(v1, "h:i A");
-                    }
-                    catch (err1) {
-                        try {
-                            v1 = Ext.Date.parse(v, "c");
-                            v2 = Ext.Date.format(v1, "h:i A");
-                        }
-                        catch (err2) {
-                            wccConsoleLog("Error in time renderer");
-                        }
-                    }
-                    return v2;
-                }
-                return v;
+				if ("" !== v) {
+					var v1, v2, v3;
+					if ("string" == typeof v) {
+						v1 = v.split("T");
+						if (v1.length > 0) {
+							v1 = v1.join(" ");
+						}
+						v1 = new Date(v1);
+					}
+					else {
+						v1 = new Date(v);
+					}
+					v2 = Ext.Date.format(v1, "h:i A");
+					return v2;
+				}
+				return v;
             },
             editor : startTimeField
         },
         { header : "End Time", dataIndex : "EndTime",
             renderer: function(v) {
-                if ("" !== v) {
-                    var v1, v2, v3;
-                    try {
-						v1 = new Date(v.split("T").join(" "));
-                        v2 = Ext.Date.format(v1, "h:i A");
-                    }
-                    catch (err3) {
-                        try {
-                            v1 = Ext.Date.parse(v, "c");
-                            v2 = Ext.Date.format(v1, "h:i A");
-                        }
-                        catch (err4) {
-                            wccConsoleLog("Error in time renderer");
-                        }
-                    }
-                    return v2;
-                }
-                return v;
+				if ("" !== v) {
+					var v1, v2, v3;
+					if ("string" == typeof v) {
+						v1 = v.split("T");
+						if (v1.length > 0) {
+							v1 = v1.join(" ");
+						}
+						v1 = new Date(v1);
+					}
+					else {
+						v1 = new Date(v);
+					}
+					v2 = Ext.Date.format(v1, "h:i A");
+					return v2;
+				}
+				return v;
             },
             editor : endTimeField
         },
