@@ -419,6 +419,10 @@ foreach ($Meds as $Med) {
 
             $returnVal = $this->NursingDoc->updateTreatment($form_data);
             
+			$patientID = $form_data->patientID;
+			$drug = $form_data->drug;
+			$this->NursingDoc->UpdateOrder($patientID,$drug);
+			
             if ($this->checkForErrors('Update Nursing Doc Treatment Values Failed. ', $returnVal)) {
                 $this->NursingDoc->rollbackTransaction();
                 $jsonRecord['success'] = 'false';

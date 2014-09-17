@@ -597,4 +597,12 @@ class NursingDoc extends Model {
         }
         
     }
+function UpdateOrder($patientID,$drug) {
+		
+		$query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug'";
+		$result = $this->query($query);
+		echo $query;
+		return $result;
+		
+	}
 }
