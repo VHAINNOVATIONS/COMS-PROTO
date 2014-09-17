@@ -813,7 +813,7 @@ handleOEM_RecordMedHold : function( event, element) {
             if ("Pre" === type) {
                 DrugSection = record.PreTherapy;
             }
-            else if ("Pos" === type) {
+            else if ("Post" === type) {
                 DrugSection = record.PostTherapy;
             }
             else {
