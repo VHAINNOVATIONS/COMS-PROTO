@@ -126,7 +126,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				this.application.unMask();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-				if (resp.success && "Not a Valid Access Code" !== response.records) {
+				if (resp.success && "Failed" !== resp.records) {
 					this.curTreatmentRecord.set("Treatment_User", this.curTreatmentRecord.get("AccessCode"));
 					this.curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
 

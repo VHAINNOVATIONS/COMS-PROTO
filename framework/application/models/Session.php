@@ -83,7 +83,23 @@ class Session extends Model {
 		
 	}
 	
-
+function checkAV($AccessCode,$VerifyCode) {
+		
+		$query = "SELECT * FROM Roles WHERE username = '$AccessCode' AND vcode = '$VerifyCode'";
+		$result = $this->query($query);
+		foreach($result as $row){
+			$DisplayName= $row['DisplayName'];
+		}
+		$this->query($query);
+		
+		if ($DisplayName === null){
+		$checkstatus = "Failed";
+		}else{
+		$checkstatus = "Success";
+		}
+		return $checkstatus;
+		
+	}
 	
 }
 

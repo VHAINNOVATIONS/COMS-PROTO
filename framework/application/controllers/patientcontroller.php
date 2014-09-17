@@ -478,7 +478,16 @@ class PatientController extends Controller
 		$Admin_Date = $Admin_Date2->format('Ymd');
 	
         $templateId = $formData->TemplateID;
+        $DateApplied = $formData->DateApplied;
+        $DateStarted = $formData->DateStarted;
+        $DateEnded = $formData->DateEnded;
+        $DateEndedActual = $formData->DateEndedActual;
         $patientid = $formData->PatientID;
+        $Goal = $formData->Goal;
+        $ClinicalTrial = $formData->ClinicalTrial;
+        $PerformanceStatus = $formData->PerformanceStatus;
+        $WeightFormula = $formData->WeightFormula;
+        $BSAFormula = $formData->BSAFormula;
         $drugName = $preHydrationRecord['drug'];
         $phid = $preHydrationRecord['id'];
 		$AdminDay = $preHydrationRecord['adminDay'];
@@ -570,7 +579,16 @@ class PatientController extends Controller
 				infusion,
 				bsaDose,
 				Reason,
-				Admin_Date
+				Admin_Date,
+				DateApplied,
+				DateStarted,
+				DateEnded,
+				DateEndedActual,
+				Goal,
+				ClinicalTrial,
+				PerformanceStatus,
+				WeightFormula,
+				BSAFormula
             ) VALUES (
                 '$templateId',
                 '$templateIdMT',
@@ -597,7 +615,16 @@ class PatientController extends Controller
 				'$infusion',
 				'$bsaDose',
 				'$Reason',
-				'$Admin_Date'
+				'$Admin_Date',
+				'$DateApplied',
+				'$DateStarted',
+				'$DateEnded',
+				'$DateEndedActual',
+				'$Goal',
+				'$ClinicalTrial',
+				'$PerformanceStatus',
+				'$WeightFormula',
+				'$BSAFormula'
             )
          ";
 		 //echo $query;

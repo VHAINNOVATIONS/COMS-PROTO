@@ -120,8 +120,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			thePanel.expand();
 			theEl = thePanel.getEl();
 			var top = theEl.getTop();
-			window.scroll(top);
-			// theEl.scrollIntoView(document.body);
+			window.scroll(0, top);
 			theEl.focus(100);
 		}
 
