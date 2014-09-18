@@ -123,6 +123,8 @@ class NursingDoc extends Model {
         $query = "SELECT NEWID()";
         $GUID = $this->query($query);
         $GUID = $GUID[0][""];
+		
+		//var_dump($data);
 
         $this->_treatmentId = trim($GUID, '{}');
         $Patient_ID = $data->patientID;
@@ -597,9 +599,9 @@ class NursingDoc extends Model {
         }
         
     }
-function UpdateOrder($patientID,$drug) {
+function UpdateOrder($patientID,$drug,$adminDate) {
 		
-		$query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug'";
+		$query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
 		$result = $this->query($query);
 		echo $query;
 		return $result;
