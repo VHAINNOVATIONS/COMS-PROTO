@@ -127,8 +127,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success && "Failed" !== resp.records) {
+					var tData = this.curTreatmentRecord.getData();
 					this.curTreatmentRecord.set("Treatment_User", this.curTreatmentRecord.get("AccessCode"));
 					this.curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
+					this.curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
+					this.curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
 
 					win.close();
 			        this.application.loadMask("Saving record of changes");
@@ -136,23 +139,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					this.curTreatmentRecord.save({
 						scope : this,
 						callback : function(record, operation) {
-
-
-						var theData = record.getData();
-						if ("Therapy" === theData.type) {
-									var thisCtl = this.getController("Common.puWinAddCumDose");
-									// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
-									var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
-									thisCtl.SaveNewCumDoseInfo( Info );
-						}
-
-
-
-
+							var theData = record.getData();
+							if ("Therapy" === theData.type) {
+										var thisCtl = this.getController("Common.puWinAddCumDose");
+										// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
+										var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
+										thisCtl.SaveNewCumDoseInfo( Info );
+							}
 
 							this.application.unMask();
 							if (!operation.success) {
-								Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
+									Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
 							}
 						}
 					});
@@ -306,7 +303,19 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			,{property: "orderstatus", value: reDispensed}
 		]);
 
+this.PatientID = Patient.id;
+this.AdminDate = today;
+
+		/***
+		 *	Instead of a filter (which still loads all the data down to the client), set the proxy of the store with parameters to the Orders service call
+		 *
+		 *	theStore.proxy.api.read = Ext.URLs.ND_Treatment + PatientID + "/" + AdminDate + "/" + OrderStatus;
+		 *
+		 ***/
+
 		this.application.loadMask("Loading Treatment Administration Information");
+//		theStore.proxy.api.read = "Orders/AdminOrders/" + Patient.id + "/" + Patient.TemplateID + "/" + today;
+
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){

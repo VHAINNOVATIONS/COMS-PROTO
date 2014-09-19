@@ -15,7 +15,7 @@ Ext.define("COMS.view.NewPlan.CTOS.OtherInfoPanel" ,{
 				"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"OIPanel-{AdminDate}-{xindex}\">",
 				"	<thead><tr><th><a name=\"OI_{AdminDate}\" id=\"OI_{AdminDate}\">Other Information for date - {AdminDate}</a></th></tr></thead>",
 				"	<tr><td>{[this.formatData(values.Other, xindex)]}</td></tr>",
-				"	<tr><td>{Other}</td></tr>",
+				// "	<tr><td>{Other}</td></tr>",
 				"</table>",
 			"</tpl>",
 		"</tpl>",

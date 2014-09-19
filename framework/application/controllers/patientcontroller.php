@@ -1620,6 +1620,7 @@ function buildJsonObj4Output() {
             $this->set('jsonRecord', $jsonRecord);
             return;
         }
+
         if ("Pre" === $type || "Post" === $type || "Therapy" === $type) {
             if ("Hold" === $status || "Cancel" === $status || "Clear" === $status || null === $status) {
                 if (null === $status || "Clear" === $status) {
@@ -1652,6 +1653,15 @@ function buildJsonObj4Output() {
                         else {
                             $query = "update $table set Status = '$status' where $key = '$id'";
                             $retVal = $this->Patient->query($query);
+
+                            $query2 = "SELECT Order_ID FROM $table WHERE $key = '$id'";
+                            $resultq = $this->Patient->query($query2);
+                            foreach($resultq as $row){
+                                $Order_ID = $row['Order_ID'];
+                            }
+                            $query3 = "UPDATE Order_Status SET Order_Status = '$status' WHERE Order_ID = '$Order_ID'";
+                            $this->Patient->query($query3);
+
                             if ($this->checkForErrors('Set Hold/Cancel Status FAILED ', $retVal)) {
                                 $jsonRecord['success'] = 'false';
                                 $jsonRecord['msg'] = $frameworkErr;

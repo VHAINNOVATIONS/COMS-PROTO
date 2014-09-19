@@ -423,7 +423,7 @@ class Flowsheet extends Model
     }
 
 ///newfunction
-function FS($patientID){
+function FS($PatientID, $TemplateID){
         
 	$query = "SELECT Order_Status
       ,Drug_Name
@@ -434,7 +434,7 @@ function FS($patientID){
       ,Order_ID
       ,Drug_ID
       ,Date_Modified
-      ,Date_Entered
+      ,CONVERT(VARCHAR(10), Date_Entered, 101) as Date_Entered
       ,Notes
       ,FluidType
       ,FluidVol
@@ -460,7 +460,7 @@ function FS($patientID){
       ,infusion
       ,bsaDose
       ,Reason
-      ,Admin_Date
+      ,CONVERT(VARCHAR(10), Admin_Date, 101) as Admin_Date
       ,DateApplied
       ,DateEndedActual
       ,DateEnded
@@ -470,8 +470,83 @@ function FS($patientID){
       ,WeightFormula
       ,BSAFormula
   FROM Order_Status
-  WHERE Patient_ID = '$patientID'";
+  WHERE Patient_ID = '$PatientID'";
+
+
+
+$query = "SELECT 
+      os.Order_Status
+      ,os.Drug_Name
+      ,os.Order_Type
+      ,os.Template_ID
+      ,os.Template_IDMT
+      ,os.Patient_ID
+      ,os.Order_ID
+      ,os.Drug_ID
+      ,os.Date_Modified
+      ,CONVERT(VARCHAR(10), os.Date_Entered, 101) as Date_Entered
+      ,os.Notes
+      ,os.FluidType
+      ,os.FluidVol
+      ,os.FlowRate
+      ,os.AdminDay
+      ,os.InfusionTime
+      ,os.AdminTime
+      ,os.Sequence
+      ,os.Amt
+      ,os.iAmt
+      ,os.Unit
+      ,os.Type
+      ,os.RegNum
+      ,os.RegDose
+      ,os.RegDoseUnit
+      ,os.RegDosePct
+      ,os.RegReason
+      ,os.PatientDose
+      ,os.PatientDoseUnit
+      ,os.Route
+      ,os.flvol
+      ,os.flunit
+      ,os.infusion
+      ,os.bsaDose
+      ,os.Reason
+      ,CONVERT(VARCHAR(10), os.Admin_Date, 101) as Admin_Date
+      ,os.DateApplied
+      ,os.DateStarted
+      ,os.DateEnded
+      ,os.DateEndedActual
+      ,os.Goal
+      ,os.ClinicalTrial
+      ,os.PerformanceStatus
+      ,os.WeightFormula
+      ,os.BSAFormula
+      ,ndt.Treatment_ID
+      ,ndt.Patient_ID
+      ,ndt.Template_ID
+      ,ndt.PAT_ID
+      ,ndt.Cycle
+      ,ndt.AdminDay
+      ,CONVERT(VARCHAR(10), ndt.AdminDate, 101) as AdminDate
+      ,ndt.Type
+      ,ndt.Drug
+      ,ndt.Dose
+      ,ndt.Unit
+      ,ndt.Route
+      ,substring(ndt.StartTime, 12, 30) as StartTime
+      ,substring(ndt.EndTime, 12, 30) as EndTime
+      ,ndt.Comments
+      ,ndt.Treatment_User
+      ,ndt.Treatment_Date
+      ,ndt.Drug_OriginalValue
+      ,ndt.Dose_OriginalValue
+      ,ndt.Unit_OriginalValue
+      ,ndt.Route_OriginalValue
+  FROM Order_Status os
+  join ND_Treatment ndt on ndt.AdminDate = os.Admin_Date and ndt.Patient_ID = os.Patient_ID and os.Drug_Name = ndt.Drug
+  where ndt.Patient_ID = '$PatientID' and os.Order_Status = 'Administered' or os.Order_Status = 'Hold' and os.Template_ID = '$TemplateID'";
 		
+
+// echo "======================================================<br>$query ================================================================<br><br><br>";
 		$result = $this->query($query);
 		//var_dump($result);
 		//$arr = array_merge ((array)$result,(array)$result2,(array)$result3);

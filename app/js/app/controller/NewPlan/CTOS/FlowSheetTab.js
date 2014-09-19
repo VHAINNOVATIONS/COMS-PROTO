@@ -40,9 +40,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 		this.control({
 			"scope" : this,
-			"FlowSheet FlowSheetGrid" : {
+//			"FlowSheet FlowSheetGrid" : {
 				// render : this.TabRendered
-			},
+//			},
 			"FlowSheet" : {
 				activate : this.updateFlowsheetPanel
 			},
@@ -307,6 +307,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		this.application.loadMask("Saving Information");
 		Ext.suspendLayouts(); 
 		var theGrid = this.getFlowSheetGrid();
+		this.loading = 0;
 		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
 		this.getOptionalInfoData(this.application.Patient.PAT_ID);
 
@@ -315,7 +316,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 //			this.ShowSelectedCycles(theGrid, CurCycle.StartIdx, CurCycle.EndIdx);
 //		}
 		Ext.resumeLayouts(true);
-		this.application.unMask();
+		if (this.loading <= 0) {
+			this.application.unMask();
+		}
 	},
 
 
@@ -395,12 +398,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	getFlowSheetData : function(PatientID, PAT_ID, theGrid) {
+		this.loading++;
 		this.application.loadMask("Loading Flow Sheet Information");
 
 		Ext.Ajax.request({
 			scope : this,
 			url : Ext.URLs.FlowSheetRecords + "/" + PatientID + "/" + PAT_ID,
 			success : function( response) {
+				this.loading--;
 				var obj = Ext.decode(response.responseText);
 				this.application.Patient.FlowsheetData = obj.records;
 				var theStore = this.createStore(obj.records);
@@ -409,7 +414,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				var comboStore = Ext.getStore("FlowSheetCombo");
 				comboStore.loadData(colsRecords);
 				theGrid.reconfigure(theStore, theCols);
-				this.application.unMask();
+				if (this.loading <= 0) {
+					this.application.unMask();
+				}
 			},
 
 			failure : function( ) {
@@ -420,11 +427,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	getOptionalInfoData : function(PAT_ID) {
+		this.loading++;
 		this.application.loadMask("Loading Flow Sheet Information");
 		Ext.Ajax.request({
 			scope : this,
 			url : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
 			success : function( response) {
+				this.loading--;
 				var obj = Ext.decode(response.responseText);
 				var Panel = this.getDiseaseResponsePanel();
 				Panel.update(obj);
@@ -432,7 +441,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				Panel.update(obj);
 				Panel = this.getOtherInfoPanel();
 				Panel.update(obj);
-				this.application.unMask();
+				if (this.loading <= 0) {
+					this.application.unMask();
+				}
+
 			},
 
 			failure : function( ) {
@@ -492,9 +504,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 
-	TabRendered : function ( component, eOpts ) {
-		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, component);
-	},
+//	TabRendered : function ( component, eOpts ) {
+//		this.loading = 0;
+//		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, component);
+//		this.getOptionalInfoData(this.application.Patient.PAT_ID);
+//	},
 
 	PatientSelected: function (combo, recs, eOpts) {
 	}
