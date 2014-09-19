@@ -635,7 +635,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
                 if ("Pre" === type) {
                     DrugSection = record.PreTherapy;
                 }
-                else if ("Pos" === type) {
+                else if ("Pos" === type || "Post" === type) {
                     DrugSection = record.PostTherapy;
                 }
                 else {
@@ -789,7 +789,7 @@ handleOEM_RecordMedHold : function( event, element) {
             if ("Pre" === type) {
                 DrugSection = record.PreTherapy;
             }
-            else if ("Post" === type) {
+            else if ("Post" === type || "Pos" === type) {
                 DrugSection = record.PostTherapy;
             }
             else {

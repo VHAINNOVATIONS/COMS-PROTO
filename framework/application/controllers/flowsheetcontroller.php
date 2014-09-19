@@ -268,7 +268,7 @@
       ,CONVERT(VARCHAR(10), Admin_Date, 101) as Admin_Date
   FROM Master_Template mt 
   where mt.Patient_ID = '$PatientID'
-  order by Admin_Date";
+  order by Course_Number, Admin_Day";
             return $this->Flowsheet->query( $query );
         }
         
@@ -393,8 +393,6 @@
     FROM ND_Treatment ndt 
     where ndt.PAT_ID = '$PAT_ID' and ndt.AdminDate = '$AdminDate' and ndt.Drug = '$DrugName'";
             $retVal = $this->Flowsheet->query( $query );
-
-            echo $query;
             return $retVal;
         }
         

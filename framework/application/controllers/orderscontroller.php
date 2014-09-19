@@ -605,7 +605,7 @@ echo "<br>-------------------------------------------------<br>";
                 }
 
 
-
+/************************************
 		"patientID",			// GUID for the Patient
 		"templateID",			// GUID for the Template
 		"PAT_ID",				// GUID for the Treatment record
@@ -632,7 +632,7 @@ echo "<br>-------------------------------------------------<br>";
 		"unit_originalValue",
 		"route_originalValue",
 		"orderstatus"
-
+****************************/
 
 
 

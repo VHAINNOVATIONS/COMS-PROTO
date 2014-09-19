@@ -53,6 +53,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 							v1 = v1.join(" ");
 						}
 						v1 = new Date(v1);
+						if (isNaN(v1)) {
+							return v;
+						}
 					}
 					else {
 						v1 = new Date(v);
@@ -74,6 +77,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 							v1 = v1.join(" ");
 						}
 						v1 = new Date(v1);
+						if (isNaN(v1)) {
+							return v;
+						}
 					}
 					else {
 						v1 = new Date(v);
