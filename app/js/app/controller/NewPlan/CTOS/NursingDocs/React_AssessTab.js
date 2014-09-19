@@ -259,7 +259,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 						ReactAssesFormValue = "";		// 0;
 					}
 				}
-				if (ReactAssesFormComments) {		//  && ReactAssesFormComments[0]) {
+				if (ReactAssesFormComments && ReactAssesFormComments.length > 0) {		//  && ReactAssesFormComments[0]) {
 					ReactAssesFormCommentsValue = ReactAssesFormComments[0].getValue();
 				}
 				var sectionTitle = ReactAssesFormCheck.up("fieldset").title;
