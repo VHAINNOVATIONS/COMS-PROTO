@@ -45,6 +45,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<th>Regimen Start Date:</th><td>{TreatmentStart}</td>",
 						"<th>Regimen End Date:</th><td>{TreatmentEnd}</td>",
 					"</tr>",
+
 					"<tr>",
 						"<th>",
 						"{[this.AddEditBtns(\"Cancer\", values, parent)]}",
@@ -55,72 +56,65 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							"</tpl>",
 						"</td>",
 					"</tr>",
+
 					"<tr>",
 						"<th>Allergies: </th>",
 						"<td colspan=5>",
-
-
-	"<tpl if=\"this.Allergies(values)\">",
-							"<table class=\"DataTable\">",
-								"<tr>",
-									"<th>Name</th>",
-									"<th>Type</th>",
-									"<th>Comment</th>",
-								"</tr>",
-								"<tpl for=\"Allergies\">",
-									"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
-								"</tpl>",
-							"</table>",
-	"</tpl>",
-	"<tpl if=\"this.Allergies(values) == false\">",
-							"No Known Allergies",
-	"</tpl>",
-
+							"<tpl if=\"this.Allergies(values)\">",
+								"<table class=\"DataTable\">",
+									"<tr>",
+										"<th>Name</th>",
+										"<th>Type</th>",
+										"<th>Comment</th>",
+									"</tr>",
+									"<tpl for=\"Allergies\">",
+										"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
+									"</tpl>",
+								"</table>",
+							"</tpl>",
+							"<tpl if=\"this.Allergies(values) == false\">",
+								"No Known Allergies",
+							"</tpl>",
 						"</td>",
 					"</tr>",
 
-						
-						
-						
-						
-						
-					"<tr>",
-						"<th>Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
-						"<td colspan=5>",
 
-					"<table class=\"DataTable\">",
-						"<tr>",
-							"<th>Medication</th>",
-							"<th>Total Lifetime Dose</th>",
-							"<th>Source</th>",
-						"</tr>",
-						"<tpl for=\"CumulativeDoseTracking\">",
-							"<tr><td>{MedName}</td><td>{CumulativeDoseAmt} {Units}</td><td>{Source}</td></tr>",
-						"</tpl>",
-						"</table>",
-
-						"</td>",
-					"</tr>",
-
-						
-						
-						
-						
-						
-						
-						
-						
-						
 					"<tr>",
 						"<th>Clinical Trial: </th>",
 						"<td colspan=5>",
 							"{[this.clinicalTrial(values)]}",
 						"</td>",
 					"</tr>",
+
+
+
+
+
+					"<tr>",
+						"<th style=\"vertical-align: top;\">Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
+						"<td colspan=5>",
+							"<table class=\"DataTable\">",
+								"<tr>",
+									"<th>Medication / Maximum</th>",
+									"<th>Lifetime Total / %</th>",
+									"<th>Received / %</th>",
+									"<th>Source</th>",
+								"</tr>",
+								"<tpl for=\"CumulativeDoseTracking\">",
+									"{[this.buildCumDoseMedInfo(values)]}",
+								"</tpl>",
+							"</table>",
+						"</td>",
+					"</tr>",
+
+
 				"</table>",
 				{
 					// XTemplate Configuration
 					disableFormats: true,
+					DebuggerFcn : function ( values ) {
+						// debugger;
+					},
 
 					clinicalTrial : function ( values ) {
 						if ("" === values.TemplateID) {
@@ -153,9 +147,45 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						}
 						return false;
 					},
+					buildCumDoseMedInfo : function ( data ) {
+						var CurCumDoseList = data.CurCumDoseList;
+						var len = CurCumDoseList.length;
+						var MedMaxDoseNum =("" + data.MedMaxDose).replace(",", "");
+						var CurCumDoseAmtNum =("" + data.CurCumDoseAmt).replace(",", "");
 
-					DebuggerFcn : function ( values ) {
-						// debugger;
+						var MedMaxDose = Ext.util.Format.number(MedMaxDoseNum, "0,0");
+						var CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
+						var Pct2, Pct1 = ((CurCumDoseAmtNum / MedMaxDoseNum ) * 100);
+						Pct1 = Ext.util.Format.number(Pct1, "0,0.0");
+
+						var buf = "";
+							buf += "<tr>";
+							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + "<div class=\"cdtEm\"> " + 
+								MedMaxDose + " " + data.MedMaxDoseUnits + "</div></td>";
+							buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + len + "\">" + 
+								CurCumDoseAmt + " " + data.MedMaxDoseUnits + 
+								" / " + Pct1 + "%" + 
+								"</td>";
+
+						var i;
+						for (i = 0; i < len; i++) {
+							if (i > 0) {
+								buf += "<tr>";
+							}
+							CurCumDoseAmtNum = ("" + CurCumDoseList[i].CumulativeDoseAmt).replace(",", "");
+							CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
+							Pct2 = (( CurCumDoseAmt / MedMaxDoseNum ) * 100);
+							Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+
+							var CumulativeDoseAmt = Ext.util.Format.number(("" + CurCumDoseList[i].CumulativeDoseAmt).replace(",", ""), "0,0");
+							buf += "<td style=\"vertical-align: top; text-align: right;\">" + CumulativeDoseAmt + " " + CurCumDoseList[i].Units + " / " + Pct2 + "% </td>";
+//							buf += "<td style=\"vertical-align: top; text-align: right;\">" + 
+//								 + "%" + "</td>";
+
+							buf += "<td style=\"vertical-align: top;\">" + CurCumDoseList[i].Source + "</td>";
+							buf += "</tr>";
+						}
+						return buf;
 					},
 
 					hasData : function (data) {

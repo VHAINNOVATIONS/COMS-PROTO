@@ -413,7 +413,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 					success: function( response, opts ){
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
-						if (resp.success) {
+						if (resp.success && "Failed" !== resp.records) {
 							win.close();
 							SigField.setValue(values.AccessCode);
 						}

@@ -626,7 +626,7 @@ abbr {
 /* We use buttons which look like anchors, in place of anchor tags, to perform actions (like opening a window) */
 /* Using an anchor to perform an action is not compliant w/ HTML Specs and requires extra effort to prevent scrolling to the top of the page */
 /* A button is the proper way to perform actions but sometimes we want buttons to look like links */
-button.anchor, .anchor button {
+button.anchor, .anchor button, .textAnchor {
 	background : none;
 	border : 0 none;
 	color: blue;
@@ -752,3 +752,59 @@ table.FlowsheetTable {
 .FlowsheetTable a {
 	color: black;
 }
+
+.x-column-header-text div {
+	font-weight: bold;
+	text-align: center;
+	padding-top: 0.5em;
+}
+
+.x-column-header-text div.multiLine {
+	padding-top: 0!important;
+}
+
+
+.TCDWarning {
+	font-size: 150%;
+	font-weight: bold!important;
+	color: red;
+	text-align: center!important;
+}
+
+.smlTCDWarning {
+	font-size: 100%;
+	font-weight: bold!important;
+	color: red;
+	text-align: left!important;
+}
+
+.HighlightedInfoTable {
+	border: thick solid blue!important;
+	margin-top: 1em!important;
+	margin-bottom: 1em!important;
+}
+
+.cdtEm {
+	font-weight: bold;
+	color: red;
+}
+
+.TCDWarning table {
+	font-size: 85%;
+	margin: 0 auto;
+}
+
+.TCDWarning th, .TCDWarning td {
+	text-align: center;
+	font-weight: bold;
+	padding: 0 0.25em;
+}
+.TCDWarning td {
+	text-align: right;
+}
+
+.em {
+	font-style : italic;
+	font-weight: bold;
+}
+	

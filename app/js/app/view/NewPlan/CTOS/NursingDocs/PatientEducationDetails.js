@@ -45,7 +45,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
-		"<h2>Clinic Information:</h2><section>",
+		"<h2>Clinic --- Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
 			"<p><h3>{Label}</h3>",
@@ -328,11 +328,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"name": "Teaching_Other",
 							"fieldLabel": "Other"
 						},
-
+/*************
 						{
 							"xtype": "CheckCombo",
 							// "noDataText" : "",
-							"value" : "",		/* If a CheckCombo is not initialized with a value of "" the form shows up as Dirty */
+							"value" : "",		// If a CheckCombo is not initialized with a value of "" the form shows up as Dirty
 							"fieldLabel": "Select Clinic Information",
 							"name": "ND_E_SelectClinicInfo",
 							"width": 450,
@@ -341,9 +341,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"displayField": "Label",
 							"valueField": "ID"
 						}, 
+
 						{
 							"xtype": "ClinicInfoDisplay"
 						},
+************/
 						{
 							"xtype": "CheckCombo",
 							// "noDataText" : "",

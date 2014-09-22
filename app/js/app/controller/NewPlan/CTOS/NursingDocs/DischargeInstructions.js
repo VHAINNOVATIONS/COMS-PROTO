@@ -79,22 +79,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	init: function () {
 		this.application.on( { DischargeInstructionSelected : this.DischargeInstrSelected, scope : this } );
 		this.control({
+			"scope" : this,
 			"DischargeInstructions [id=\"PrintDischargeInstructions\"]" : {
 				"click" : function() {
 					var PAT_ID = this.application.Patient.PAT_ID;
-					var DI_ID = this.application.Patient.DischargeInfoID;
-					window.open("/DI?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
+					if (this.application.Patient.DischargeInfoID) {
+						var DI_ID = this.application.Patient.DischargeInfoID;
+						window.open("/DI?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
+					}
+					else {
+						Ext.Msg.alert("Discharge Instructions Not Available", "There are no discharge instructions listed for this patient");
+					}
 				}
 			},
 			"DischargeInstructions [id=\"PrintFollowupApt\"]" : {
 				"click" : function() {
 					var PAT_ID = this.application.Patient.PAT_ID;
 					var DI_ID = this.application.Patient.DischargeInfoID;
-					window.open("/DIF?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
+					if (this.application.Patient.DischargeInfoID) {
+						var DI_ID = this.application.Patient.DischargeInfoID;
+						window.open("/DIF?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
+					}
+					else {
+						Ext.Msg.alert("Followup Appointments Not Available", "There are no followup appointments listed for this patient");
+					}
 				}
 			},
 
-			"PatientEducationDetails [name=\"ND_E_SelectClinicInfo\"]" : {
+			"DischargeInstructions [name=\"ND_E_SelectClinicInfo\"]" : {
 				"change" : this.ClinicInfoSelected
 			},
 			"PatientEducationDetails [name=\"ND_E_SelectDischargeInstr\"]" : {

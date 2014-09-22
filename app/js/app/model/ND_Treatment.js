@@ -11,8 +11,10 @@ Ext.define("COMS.model.ND_Treatment", {
 		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
 		"typeOrder",	// Used to display therapy type in grid in sorted order (Pre = 1, Therapy = 2, Post = 3)
 		"drug",
+		"MedID",
 		"dose",
 		"unit",
+		"UnitID",
 		"route",
 		"StartTime",
 		"EndTime",

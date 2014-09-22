@@ -21,7 +21,11 @@ Ext.define("COMS.model.OEMRecordsTherapy", {
 		"FluidType",
 		"FluidVol",
 		"FlowRate",
-		"InfusionTime"
+		"InfusionTime",
+		"NumAdminDays",
+		"CumDosePerCycle",
+		"CumDosePerCycleUnits"
+
 	],
 	belongsTo : "COMS.model.OEMRecord"
 });
@@ -57,7 +61,10 @@ Ext.define("COMS.model.OEMRecordsPrePostTherapy", {
 			"FluidType2",
 			"FluidVol2",
 			"FlowRate2",
-			"InfusionTime2"
+			"InfusionTime2",
+			"NumAdminDays",
+			"CumDosePerCycle",
+			"CumDosePerCycleUnits"
 	],
 	belongsTo : "COMS.model.OEMRecord"
 });

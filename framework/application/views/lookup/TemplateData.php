@@ -1,5 +1,18 @@
 <?php
-
+function calcNumAdminDays($ListOfAdminDays) {
+    $NumAdminDays = 0;
+    $adBreakdown1 = explode(",", $ListOfAdminDays);
+    foreach($adBreakdown1 as $DayPeriod) {
+        $adBreakdown2 = explode("-", $DayPeriod);
+        if (2 == count($adBreakdown2)) {
+            $NumAdminDays += $adBreakdown2[1] - $adBreakdown2[0] + 1;
+        }
+        else {
+            $NumAdminDays += 1;
+        }
+    }
+    return $NumAdminDays;
+};
 if (!is_null($templatedata)) {
     $numtemplates = count($templatedata);
     if ($numtemplates) {
@@ -27,6 +40,15 @@ if (!is_null($templatedata)) {
             echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\", \"details\":" . json_encode( $oemrecord['emodetails']) . "}], \n";
             echo "\t\"FNRisk\" : \"" . $oemrecord['fnRisk'] . "\", \n";
             echo "\t\"FNRiskDetails\" : " . json_encode($oemrecord['fnrDetails']) . ", \n";
+
+
+
+            $PatientList = $this->get('PatientList');
+            echo "\t\"PatientList\" : \n" . json_encode($PatientList) . "\t,\n";
+            echo "\t\"PatientListCount\" : \n" . count($PatientList) . "\t,\n";
+
+
+
 
 
             // References
@@ -61,6 +83,9 @@ if (!is_null($templatedata)) {
 
                 //display the results 
                 foreach ($prehydrations as $prehydration) {
+                    $NumAdminDays = calcNumAdminDays($prehydration["adminDay"]);
+                    $CumDosePerCycle = 0;
+
                     echo " {
                         \"id\":\"" . $prehydration["id"] . "\", 
                         \"Instructions\":\"" . $prehydration["description"]  . "\", 
@@ -69,14 +94,12 @@ if (!is_null($templatedata)) {
                         \"Sequence\":\"" . $prehydration["Sequence"] . "\", 
                         \"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
 
-
-
-
-
                     $myinfusions = $preinfusions[$prehydration['id']];
                     $numInfusions = count($myinfusions);
 
                     if ($numInfusions == 1) {
+                        $CumDosePerCycle += ($myinfusions[0]['amt'] * $NumAdminDays);
+                        $CumDosePerCycleUnits = $myinfusions[0]['unit'];
                         echo "
                         \"Amt1\":\"" . $myinfusions[0]['amt'] . "\", 
                         \"Units1\":\"" . $myinfusions[0]['unit'] . "\", 
@@ -96,6 +119,8 @@ if (!is_null($templatedata)) {
                     } else {
                         $infusionCount = 1;
                         foreach ($myinfusions as $infusion) {
+                            $CumDosePerCycle += ($infusion['amt'] * $NumAdminDays);
+                            $CumDosePerCycleUnits = $infusion['unit'];
                             echo "
                             \"Amt" . $infusionCount . "\":\"" . $infusion['amt'] . "\", 
                             \"Units" . $infusionCount . "\":\"" . $infusion['unit'] . "\", 
@@ -112,11 +137,9 @@ if (!is_null($templatedata)) {
                         }
                     }
 
-
-
-
-
-
+                    echo ", \"NumAdminDays\" : " . $NumAdminDays . ", ";
+                    echo "\"CumDosePerCycle\" : " . $CumDosePerCycle . ", \"CumDosePerCycleUnits\" : \"" . $CumDosePerCycleUnits . "\", ";
+                    echo "\"CumDosePerRegimen\" : " . $CumDosePerCycle * $oemrecord['CourseNumMax'];
 
                     echo "}";
 
@@ -143,16 +166,27 @@ if (!is_null($templatedata)) {
 
 
 
+            $CumulativeDoseMedsInRegimen = $this->get('CumulativeDoseMedsInRegimen');
+
+
+
+
 
             echo "\t\"RegimenInstruction\" : \"" . $oemrecord['regimenInstruction'] . "\", \n";
 
             // Regimen Meds
             echo "\t\"Meds\" : [\n";
+            $TempCDMIR = array();
 
             $numregimens = count($regimens);
             $regimenCount = 1;
             if ($numregimens) {
                 foreach ($regimens as $regimen) {
+                    $NumAdminDays = calcNumAdminDays($regimen["adminDay"]);
+                    $CumDosePerCycle = 0;
+                    $CumDosePerCycle += ($regimen["regdose"] * $NumAdminDays);
+                    $CumDosePerCycleUnits = $regimen["regdoseunit"];
+
                     // MWB, 3 Jan 2012 - added the $regimen["id"] to be returned as well
                     echo "\t\t{\"id\" : \"" . $regimen["id"] . "\", \"Drug\" : \"" . $regimen["drug"] . "\", \"Amt\" : \"" . $regimen["regdose"] .
                     "\", \"Units\":\"" . $regimen["regdoseunit"] .
@@ -169,17 +203,44 @@ if (!is_null($templatedata)) {
 //							echo "\"greater than " . $regimen["flmin"] . " " .$regimen["flunit"] . " ";
 //							echo "less than " . $regimen["flmax"] . " ".$regimen["flunit"] . "\",";
 //						}
-                    echo "\"InfusionTime\" : \"" . $regimen["infusion"] . "\"}";
+                    echo "\"InfusionTime\" : \"" . $regimen["infusion"] . "\", \"NumAdminDays\" : " . $NumAdminDays . ", 
+                    \"CumDosePerCycle\" : " . $CumDosePerCycle . ", \"CumDosePerCycleUnits\" : \"" . $CumDosePerCycleUnits . "\", 
+                    \"CumDosePerRegimen\" : " . $CumDosePerCycle * $oemrecord['CourseNumMax'] . "
+                    }";
+
                     if ($regimenCount < $numregimens) {
                         echo ",\n";
                     } else {
                         echo "\n";
                     }
                     $regimenCount++;
+
+
+                    foreach($CumulativeDoseMedsInRegimen as $CDMIR) {
+                        // error_log("Processing Regimen Additions to CDMIR - " . $CDMIR["MedID"] . " - " . $regimen["drugid"]);
+                        if ($CDMIR["MedID"] == $regimen["drugid"]) {
+                            $CDMIR["CumDosePerCycle"] = $CumDosePerCycle;
+                            $CDMIR["CumDosePerCycleUnits"] = $CumDosePerCycleUnits;
+                            $CDMIR["CumDosePerRegimen"] = ($CumDosePerCycle * $oemrecord['CourseNumMax']);
+                            // error_log("Processing - " . json_encode($CDMIR));
+                            $TempCDMIR[] = $CDMIR;
+                        }
+                    }
                 }
             }
             echo "\t],\n";
 
+
+
+
+            $List = "";
+            foreach($TempCDMIR as $CDMIR) {
+                if ("" != $List) {
+                    $List .= ", ";
+                }
+                $List .= "\n\t" . json_encode($CDMIR);
+            }
+            echo "\t\"CumulativeDoseMedsInRegimen\" : [\n$List\t],\n";
 
             //  Post Medication Hydration Instrustions
             echo "\t\"PostMHInstructions\" : \"" . $oemrecord['postMHInstruct'] . "\", \n";
@@ -192,6 +253,9 @@ if (!is_null($templatedata)) {
 
                 //display the results 
                 foreach ($posthydrations as $posthydration) {
+                    $NumAdminDays = calcNumAdminDays($prehydration["adminDay"]);
+                    $CumDosePerCycle = 0;
+
                     echo " {\"id\":\"" . $posthydration["id"] . "\", \"Instructions\":\"" . $posthydration["description"] .
                     "\", \"Drug\":\"" . $posthydration["drug"] . 
                     "\", \"Day\":\"" . $posthydration["adminDay"] . "\", \"Sequence\":\"" . $posthydration["Sequence"] . 
@@ -201,6 +265,9 @@ if (!is_null($templatedata)) {
                     $numInfusions = count($myinfusions);
 
                     if ($numInfusions == 1) {
+                        $CumDosePerCycle += ($myinfusions[0]['amt'] * $NumAdminDays);
+                        $CumDosePerCycleUnits = $myinfusions[0]['unit'];
+
                         echo "\"Amt1\":\"" . $myinfusions[0]['amt'] . "\", \"Units1\":\"" . $myinfusions[0]['unit'] .
                         "\", \"Infusion1\":\"" . $myinfusions[0]['type'] . "\", \"FluidVol1\":\"" . $myinfusions[0]["fluidVol"] .
                         "\", \"FlowRate1\":\"" . $myinfusions[0]["flowRate"] . "\", \"InfusionTime1\":\"" . $myinfusions[0]["infusionTime"] .   
@@ -212,6 +279,8 @@ if (!is_null($templatedata)) {
                         $infusionCount = 1;
 
                         foreach ($myinfusions as $infusion) {
+                            $CumDosePerCycle += ($infusion['amt'] * $NumAdminDays);
+                            $CumDosePerCycleUnits = $infusion['unit'];
 
                             echo "\"Amt" . $infusionCount . "\":\"" . $infusion['amt'] . "\", \"Units" . $infusionCount . "\":\"" . $infusion['unit'] .
                             "\", \"Infusion" . $infusionCount . "\":\"" . $infusion['type'] . "\", \"FluidVol" .$infusionCount . "\":\"" .$infusion['fluidVol'].
@@ -227,7 +296,9 @@ if (!is_null($templatedata)) {
                         }
                     }
 
-
+                    echo ", \"NumAdminDays\" : " . $NumAdminDays . ", ";
+                    echo "\"CumDosePerCycle\" : " . $CumDosePerCycle . ", \"CumDosePerCycleUnits\" : \"" . $CumDosePerCycleUnits . "\", ";
+                    echo "\"CumDosePerRegimen\" : " . $CumDosePerCycle * $oemrecord['CourseNumMax'];
                     echo "}";
 
                     if ($posthydrationCount < $numpostmhmeds) {

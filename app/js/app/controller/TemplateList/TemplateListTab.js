@@ -6,30 +6,63 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
     ],
     views: [
         'TemplateList.TemplateListTab',
-        'Common.selTemplateByStages'
+		"Common.selCTOSTemplate"
     ],
 
     refs: [
         { ref: "theGrid", selector: "TemplateListTab grid"},
         {
             ref: "TemplateType",
-            selector: "TemplateListTab selTemplateByStages selTemplateType"
+            selector: "TemplateListTab selCTOSTemplate selTemplateType"
         }
     ],
 
 	init: function () {
 		this.control({
-			// Handlers for the contents within the tab panel itself
+			"scope" : this,
+
 			"TemplateListTab" : {
-				beforerender: this.renderPanel
-			}
-			, "TemplateListTab selTemplateByStages selTemplateType": {
-				select: this.TemplateTypeChange
-			}
-			, "TemplateListTab selTemplateByStages button": {
-				click: this.ShowAllTemplates
+				"beforerender" : this.renderPanel
+			},
+			"TemplateListTab selCTOSTemplate selTemplateType": {
+				"select" : this.TemplateTypeChange
+			},
+			"TemplateListTab selCTOSTemplate button": {
+				"click" : this.ShowAllTemplates
+			},
+			"TemplateListTab grid" : {
+				"cellclick" : this.clickCell
 			}
 		});
+	},
+
+	showPatientListWidget : function(thePatients, theTemplateDesc) {
+		this.application.TemplateListPatients = thePatients;
+		var theWidget = Ext.widget("puWinListPatients");
+		var theTitle = "Patients Currently Undergoing Treatment - " + theTemplateDesc;
+		theWidget.setTitle( theTitle );
+	},
+
+	clickCell : function(grid,td,cellIndex,record,tr,rowIndex,e,eOpts) {
+		var columnIndex;
+		columnIndex = this.getColumnIndex(grid, "PatientCount");     
+		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    
+			var theData = record.getData();
+			this.showPatientListWidget( theData.Patients, theData.description );
+		}
+		columnIndex = this.getColumnIndex(grid, "id");     
+		if (cellIndex == columnIndex) {       //you have a match...do your popup code here    
+			// Print/View
+		}
+	}, 
+
+	getColumnIndex: function (grid, dataIndex) {   
+		var gridColumns = grid.headerCt.getGridColumns();   
+		for (var i = 0; i < gridColumns.length; i++) {
+			if (gridColumns[i].dataIndex == dataIndex) {
+				return i;
+			}
+		}
 	},
 
 	renderPanel: function (panel) {

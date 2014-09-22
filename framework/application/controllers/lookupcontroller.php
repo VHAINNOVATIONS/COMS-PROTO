@@ -80,52 +80,54 @@ class LookupController extends Controller {
     
 
     function save() {
-        if (isset($_POST)) {
-            $id = $_POST["id"];
-            $name = $_POST["value"];
-            $description = $_POST["description"];
-            if (isset($_POST["lookupid"])) {
-                $lookupid = $_POST["lookupid"];
-            }
+        error_log("Lookup Save - ");
+        $Msg = "Generic Save";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $name = $description = $id = $lookupid = "";
+
+        $tmp = json_decode(file_get_contents("php://input"));
+        if(isset($tmp->value)) {
+            $name = $tmp->value;
+            $name = $this->escapeString($name);
+        }
+        if(isset($tmp->description)) {
+            $description = $tmp->description;
+            $description = $this->escapeString($description);
+        }
+        if(isset($tmp->id)) {
+            $id = $tmp->id;
+        }
+        if(isset($tmp->lookupid)) {
+            $lookupid = $tmp->lookupid;
+        }
+
+        if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $query = "UPDATE LookUp SET Name ='$name', Description = '$description' WHERE Lookup_ID = '$id'";
+            $jsonRecord['msg'] = "$Msg Record Updated";
+            $ErrMsg = "Updating $Msg  Record";
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $query = "INSERT into LookUp (Lookup_Type, Name, Description) values ('$lookupid','$name','$description')";
+
+            $jsonRecord['msg'] = "$Msg Record Created";
+            $ErrMsg = "Creating $Msg Record";
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $query = "DELETE from LookUp WHERE Lookup_ID = '$id'";
+            $jsonRecord['msg'] = "$Msg Records Deleted";
+            $ErrMsg = "Deleting $Msg Records";
         }
         else {
-            $form_data = json_decode(file_get_contents('php://input'));
-            $id = $form_data->{'id'};
-            $name = $form_data->{'value'};
-            $description = $form_data->{'description'};
-            $lookupid = $form_data->{'lookupid'};
+            $jsonRecord['success'] = false;
+            $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a POST, PUT or DELETE got a " . $_SERVER['REQUEST_METHOD'];
         }
 
-        $this->LookUp->beginTransaction();
-        
-        if (strlen($lookupid) == 0) {
+        error_log("save() = $query");
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)");
 
-            $retVal = $this->LookUp->save($id, $name, $description);
-            
-            if($this->checkForErrors('Insert Lookup Failed. ', $retVal)){
-                $this->LookUp->rollbackTransaction();
-                return;
-            }
-            
-            $lookupid = $retVal[0]['lookupid'];
-            $this->set('lookupid', $retVal);
-            
-            if(null == $lookupid){
-                $this->set('actuallookupid', $retVal[0]['actualLookupId']);
-            }
-
-        } else {
-            $this->set('lookupid', $this->LookUp->update($id, $lookupid, $name, $description));
-        }
-
-        $this->set('savedid', $id);
-        $this->set('savedname', $name);
-        $this->set('savedescription', $description);
-		$this->set('frameworkErr', null);
-		
-		$this->LookUp->endTransaction();
-
-	}
+    }
 
     /*
      *
@@ -160,7 +162,7 @@ class LookupController extends Controller {
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
-		while(null == $templatelookupid[0]["lookupid"]){
+        while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
@@ -189,7 +191,7 @@ class LookupController extends Controller {
          */
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
-		if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
+        if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
             $this->LookUp->rollbackTransaction();
             return;
         }
@@ -401,14 +403,77 @@ class LookupController extends Controller {
         }
     }
 
+    function getPatients4Template( $templateID = null ) {
+        $Patients = array();
+
+        $query = "select 
+    pat.Patient_ID,
+    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
+    CONVERT(VARCHAR(10), pat.Date_Ended, 101) as Est_End_Date,
+    mt.Template_ID,
+    p.First_Name,
+    p.Last_Name,
+    p.Match as SSID
+    from Patient_Assigned_Templates pat
+    join Master_Template mt on mt.Template_ID = pat.Template_ID
+    join Patient p on p.Patient_ID = pat.Patient_ID
+    where pat.Template_ID = '$templateID'
+    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
+
+    error_log("Patients4Template - $query");
+
+        $retVal = $this->LookUp->query($query);
+        if (null !== $retVal) {
+            foreach ($retVal as $Patient) {
+                $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
+                $Patients[] = $Patient;
+            }
+        }
+        return $Patients;
+    }
+
     // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
     // but it would be in the "FIELD" position, not the "ID"
+    // If field and id are NOT null then get Templates by either Cancer ID, Patient ID, Location ID
+    // e.g Service call can be one of the following:
+    //  LookUp/Templates/Cancer/CancerID
+    //  LookUp/Templates/Patient/PatientID
+    //  LookUp/Templates/Location/LocationID
     function Templates($field = NULL, $id = NULL) {
         if ($field == NULL && $id == NULL) {
-            $this->set('templates', $this->LookUp->getTemplates(null));
+            $TemplateList = $this->LookUp->getTemplates(null);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $TemplateID = $templateRecord['id'];
+                    $Patients = $this->getPatients4Template( $TemplateID );
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+
+
+            // $this->set('templates', $this->LookUp->getTemplates(null));
+            $this->set('templates', $Templates);
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
-            $this->set('templates', $this->LookUp->getTemplates($field));
+
+error_log("Get Patients for specific Template - $field");
+            $TemplateList = $this->LookUp->getTemplates($field);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $Patients = array();
+                    $TemplateID = $templateRecord['id'];
+                    $Patients = $this->getPatients4Template( $TemplateID );
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+            // $this->set('templates', $this->LookUp->getTemplates($field));
+            $this->set('templates', $Templates);
         } else {
             $retVal = $this->LookUp->getTemplatesByType($field, $id);
             if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
@@ -436,11 +501,95 @@ class LookupController extends Controller {
 		$this->TemplateData($templateId);
 	}
 
+    function EFNR($PAT_ID = NULL) {     // PAT_ID - link into Patient Assigned Templates;
+
+
+        $query = "Select Template_ID from Patient_Assigned_Templates WHERE PAT_ID = '$PAT_ID'";
+        $retVal = $this->LookUp->query($query);
+
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+error_log("Result - " . $this->varDumpToString($retVal));
+        $TemplateID = $retVal[0]["Template_ID"];
+
+
+        $Msg = "Emesis / Febrile Neutropenia Risk Detail Info";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($TemplateID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+        $Regimen_ID = $retVal[0]["Regimen_ID"];
+        $retVal = $this->LookUp->getTopLevelTemplateDataById($TemplateID, $Regimen_ID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+
+        $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
+        switch($EmoLevel[0]) {
+            case "Low":
+                $Label = "Emesis-1";
+                break;
+            case "Medium":
+                $Label = "Emesis-2";
+                break;
+            case "Moderate":
+                $Label = "Emesis-3";
+                break;
+            case "High":
+                $Label = "Emesis-4";
+                break;
+            case "Very High":
+                $Label = "Emesis-5";
+                break;
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $EmesisVal = $this->LookUp->query($query);
+        $retVal[0]["emoLevel"] = $EmoLevel[0];
+        $retVal[0]["emoDetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
+
+        $FNRisk = $retVal[0]["fnRisk"];
+
+        if ($FNRisk < 10) { // Low
+            $FNRLevel = "Low";
+            $Label = "Neutropenia-1";
+        }
+        else if ($FNRisk <= 20) {   // Intermediate
+            $FNRLevel = "Intermediate";
+            $Label = "Neutropenia-2";
+        }
+        else {  // High
+            $FNRLevel = "High";
+            $Label = "Neutropenia-3";
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $FNRVal = $this->LookUp->query($query);
+        $retVal[0]["fnrLevel"] = $FNRisk . "% (" . $FNRLevel . " Risk)";
+        $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
+
+        $this->set('frameworkErr', null);
+        $this->set('frameworkErrCodes', null);
+
+        if (count($retVal) > 0) {
+            unset($jsonRecord['msg']);
+            $jsonRecord['total'] = count($retVal);
+            $jsonRecord['records'] = $retVal;
+        }
+
+       $this->set('jsonRecord', $jsonRecord);
+    }
+
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
 
-		$retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
+            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -451,8 +600,6 @@ class LookupController extends Controller {
                 $this->set('templatedata', null);
                 return;
             }
-
-
 
             $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
             switch($EmoLevel[0]) {
@@ -492,6 +639,17 @@ class LookupController extends Controller {
             $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
 
             $this->set('templatedata', $retVal);
+
+
+
+
+
+
+
+
+
+
+
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
@@ -506,68 +664,30 @@ class LookupController extends Controller {
 
 
             $retVal = $this->LookUp->getHydrations($id, 'pre');
-/* Removed the checks for records because sometimes we do not have all the meds.
-            if($this->checkForErrors('Get Pre Medication_Hydration Failed. 1', $retVal)){
-                $this->set('templatedata', null);
-                return;
-            }
-
-            if (count($retVal) <= 0) {
-                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 2');
-                $this->set('templatedata', null);
-                return;
-            }
-            if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Pre Medication_Hydration Failed. 3');
-                $this->set('templatedata', null);
-               return;
-            }*/
             $prehydrations = $retVal;
             $infusionMap = array();
-
             foreach ($prehydrations as $prehydration) {
                 $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
                 $infusionMap[$prehydration['id']] = $infusions;
             }
-
             $this->set('prehydrations', $prehydrations);
             $this->set('preinfusions', $infusionMap);
 
 
+
+
             $retVal = $this->LookUp->getHydrations($id, 'post');
             $posthydrations = $retVal;
-
-            /*removed checks, sometimes null is ok
-			if($this->checkForErrors('Get Post Medication_Hydration Failed. ', $retVal)){
-                $this->set('templatedata', null);
-                return;
-            }
-            if (count($retVal) <= 0) {
-                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
-                $this->set('templatedata', null);
-                return;
-            }
-            if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Post Medication_Hydration Failed. ');
-                $this->set('templatedata', null);
-                return;
-            }
-            */
-            
             $infusionMap = array();
-
             foreach ($posthydrations as $posthydration) {
                 $infusions = $this->LookUp->getMHInfusions($posthydration['id']);
                 $infusionMap[$posthydration['id']] = $infusions;
             }
-
             $this->set('posthydrations', $posthydrations);
             $this->set('postinfusions', $infusionMap);
 
-
             
             $retVal = $this->LookUp->getRegimens($id);
-
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -583,6 +703,31 @@ class LookupController extends Controller {
                 return;
             }
             $this->set('regimens', $retVal);
+
+
+
+
+
+
+            $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
+            if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
+                $CumulativeDoseMedsInRegimen = array();
+                if (count($CumulativeDoseMedsList) > 0 ) {
+                    foreach ($retVal as $aDrug) {
+                        $drugID = $aDrug["drugid"];
+                        foreach($CumulativeDoseMedsList as $CDMed) {
+                            if ($CDMed["MedID"] == $drugID) {
+                                $CumulativeDoseMedsInRegimen[] = $CDMed;
+                            }
+                        }
+                    }
+                }
+                $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
+            }
+
+
+            $Patients = $this->getPatients4Template( $id );
+            $this->set("PatientList", $Patients);
 
 
         } else {
@@ -1779,6 +1924,35 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
 ) ON [PRIMARY]
  ***/
 
+    function _getAllCumulativeDoseMeds($ID) {
+        $query = "Select 
+              CDM.ID,
+              CDM.MedID,
+              CDM.CumulativeDoseAmt,
+              CDM.CumulativeDoseUnits as UnitsID,
+              LU.Name as MedName,
+              LU2.Name as CumulativeDoseUnits
+              from CumulativeDoseMeds CDM
+              join Lookup LU on CDM.MedID = LU.Lookup_ID
+              join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
+        if ($ID) {
+            $query .= "where ID = '$ID' order by LU.Name";
+        }
+        else {
+            $query .= "order by LU.Name";
+        }
+        return $query;
+    }
+
+    function _LookupCumulativeDoseMeds($ID) {
+        $query = $this->_getAllCumulativeDoseMeds($ID);
+        error_log("Got Query - $query");
+        $retVal = $this->LookUp->query($query);
+        return $retVal;
+    }
+
+
+
     function CumulativeDoseMeds($ID = null) {
         $Msg = "Cumulative Dose Meds";
         $jsonRecord = array();
@@ -1798,26 +1972,11 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
 
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-                $query = "Select 
-                  CDM.ID,
-                  CDM.MedID,
-                  CDM.CumulativeDoseAmt,
-                  CDM.CumulativeDoseUnits as UnitsID,
-                  LU.Name as MedName,
-                  LU2.Name as CumulativeDoseUnits
-                  from CumulativeDoseMeds CDM
-                  join Lookup LU on CDM.MedID = LU.Lookup_ID
-                  join Lookup LU2 on CDM.CumulativeDoseUnits = LU2.Lookup_ID ";
-            if ($ID) {
-                $query .= "where ID = '$ID' order by LU.Name";
-            }
-            else {
-                $query .= "order by LU.Name";
-            }
-
+            $query = $this->_getAllCumulativeDoseMeds($ID);
             error_log("$query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
+            $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
 

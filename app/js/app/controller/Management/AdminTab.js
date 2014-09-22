@@ -3,7 +3,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
     stores : [ 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging'],
     views : [ 
 		'Management.AdminTab',
-		'Management.AddLookups',
+		// 'Management.AddLookups',
 		'Management.SelectLookups',
 		'Management.EditLookup',
 		'Management.DeleteTemplate', 
@@ -165,24 +165,26 @@ Ext.define('COMS.controller.Management.AdminTab', {
     init: function() {
         wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
         this.control({
+
             'form[title=\"Rounding Rules\"]' : {
                 beforeshow : this.RoundingRulesFormRenderSetValues
             },
             'form[title=\"Medication Holds\"]' : {
                 beforeshow : this.MedHoldFormRenderSetValues
             },
-            'AddLookups SelectLookups' : {
-                select : this.LookupSelected
-            },
+
+//            'AddLookups SelectLookups' : {
+//                select : this.LookupSelected
+//            },
             'DeleteTemplate selDisease' : {
                 select : this.TemplateSelected
             },
-            'AddLookups button[action=save]' :{
-                click : this.updateLookup
-            },
-            'AdminTab AddLookups grid' : {
-                itemclick: this.enableEditLookup
-            },
+//            'AddLookups button[action=save]' :{
+//                click : this.updateLookup
+//            },
+//            'AdminTab AddLookups grid' : {
+//                itemclick: this.enableEditLookup
+//            },
             'AdminTab Globals grid' : {
                 itemclick: this.enableEditGlobal
             },
@@ -195,18 +197,18 @@ Ext.define('COMS.controller.Management.AdminTab', {
             'AdminTab DeleteTemplate button[title=\"AllTemplates"]': {
                 click: this.showAllTemplates
             },
-            'AdminTab AddLookups button[title=\"RemoveLookup\"]': {
-                click: this.removeLookup
-            },
-            'AdminTab AddLookups button[title=\"EditLookup\"]': {
-                click: this.editLookup
-            },
-            'EditLookup button[action="save"]': {
-                click: this.clickSaveLookup
-            },
-            'EditLookup button[action="cancel"]': {
-                click: this.clickCancelLookup
-            },
+//            'AdminTab AddLookups button[title=\"RemoveLookup\"]': {
+//                click: this.removeLookup
+//            },
+//            'AdminTab AddLookups button[title=\"EditLookup\"]': {
+//                click: this.editLookup
+//            },
+//            'EditLookup button[action="save"]': {
+//                click: this.clickSaveLookup
+//            },
+//            'EditLookup button[action="cancel"]': {
+//                click: this.clickCancelLookup
+//            },
 
             "form[title=\"Medication Holds\"] button[text=\"Save\"]" : {
                 click: this.clickMedHoldSave
@@ -221,8 +223,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
             "form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
                 click: this.clickRoundingRuleCancel
             },
-
-
 			"form [name=\"IV_FluidTypesList\"]" : {
 				select: this.selectIVFluidTypeGridRow
 			},
@@ -235,6 +235,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
 				click: this.clickFluidTypeSave
 			},
+
 
 /* Medication Documentation */
 			"MedicationDocumentation " : {
@@ -706,6 +707,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				}
 			}
 	},
+
+
 	clickMedDocCancel : function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
@@ -996,12 +999,12 @@ Ext.define('COMS.controller.Management.AdminTab', {
         };
     },
 
-        
+/**        
     enableEditLookup : function(grid, record){
         this.getRemoveLookup().enable();
         this.getEditLookup().enable();
     },
-
+**/
     enableGlobalLookup : function(grid, record){
         this.getRemoveLookup().enable();
         this.getEditLookup().enable();
@@ -1011,6 +1014,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
         this.getRemoveTemplate().enable();
     },
         
+/**
     removeLookup : function(button){
         var ckRec = this.getSelectedRecord(false, 'AdminTab AddLookups grid');
         if (ckRec.hasRecord) {
@@ -1032,8 +1036,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
         } else {
             Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
         }
-            
     },
+**/
     removeTemplate : function(button){
         var ckRec = this.getSelectedRecord(false, 'AdminTab DeleteTemplate grid');
 		var mytemplate;
@@ -1130,8 +1134,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
             }
         });
         
-    },
-        
+    }
+
+/*************
     editLookup : function(button){
         var ckRec = this.getSelectedRecord(false, 'AdminTab grid');
         if (ckRec.hasRecord) {
@@ -1142,7 +1147,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
             Ext.MessageBox.alert('Invalid', 'Please select a Row in the Lookup Grid.');
         }
     },
-    // Load the grid's store to see all the values for the selected type
+
+
+	// Load the grid's store to see all the values for the selected type
     LookupSelected : function ( combo, recs, eOpts ) {
         wccConsoleLog('Admin Tab, Lookup Selected');
         var theData = recs[0].data.value;
@@ -1188,6 +1195,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
                 var addLookups = thisCtl.getLookup();
                 addLookups.form.findField('value').setValue('');
                 addLookups.form.findField('id').setValue('');
+
                 addLookups.form.findField('description').setValue('');
             },
             failure: function(err){
@@ -1196,4 +1204,5 @@ Ext.define('COMS.controller.Management.AdminTab', {
         });
             
     }
+***************/
 });

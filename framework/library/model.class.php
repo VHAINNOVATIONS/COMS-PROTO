@@ -33,7 +33,15 @@ class Model extends SQLQuery {
         $GUID = $GUID[0][""];
         return $GUID;
     }
-        
+
+    function escapeString($string) {
+        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
+            return str_replace("'", "''", $string);
+        } else if (DB_TYPE == 'mysql') {
+            return mysql_real_escape_string($string);  	
+        }
+        return $string;
+    }
 }
 
 ?>

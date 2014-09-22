@@ -9,13 +9,14 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 		// { "xtype" : "hiddenfield", "name" : "description" },					/* This field will hold the Max Dosage and Units as a combined object in the lookup table */
 		{ 
 			"xtype" : "combobox", "name" : "MedName", "fieldLabel" : "Medication",  "labelWidth" : 200,  "labelAlign" : "right", "width" : 922, 
+			"typeAhead" : true,
 			"displayField" : "name", "valueField" : "id", "allowBlank" : false,
 			"store" : Ext.create('Ext.data.Store', {
 				"model" : 'COMS.model.GenericLookupModel',
 				"proxy" : {
 					"type" : 'rest',
 					"api" : {
-						"read" : Ext.URLs.Drugs
+						"read" : Ext.URLs.DrugsInPatient
 					},
 					"reader" : {
 						"type" : 'json',

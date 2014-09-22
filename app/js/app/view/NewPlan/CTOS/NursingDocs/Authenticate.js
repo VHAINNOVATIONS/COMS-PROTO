@@ -1,4 +1,3 @@
-/* "use strict"; // EXTJS bombs when strict mode is used */
 Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
     extend: 'Ext.window.Window',
     alias : 'widget.Authenticate',

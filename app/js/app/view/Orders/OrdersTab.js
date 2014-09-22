@@ -52,6 +52,9 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		forceFit: true
 	},
 	store: "OrdersStore", // Since this is now a Grid, we need to get the name of our store
+	features: [{
+		ftype: "grouping", startCollapsed : true
+	}],
 
 	plugins: [
 		Ext.create("Ext.grid.plugin.CellEditing", {
@@ -65,101 +68,102 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		header: "Name",
 		dataIndex: "Last_Name",
 		// width: 180,
-		flex: 1,
+		flex: 3,
 		sortable: true,
-		align: "center"
+		align: "left",
+		hidden: true
 	}, {
-		header: "Patient",
+		header: "<div>Patient</div>",
 		dataIndex: "patientID",
 		width: 60,
 		sortable: true,
-		align: "center",
+		align: "left",
 		hidden: true
 	}, {
-		header: "Template",
+		header: "<div>Template</div>",
 		dataIndex: "templateID",
 		width: 80,
 		sortable: false,
-		align: "center",
+		align: "left",
 		editor: new Ext.form.TextField(),
 		hidden: true
 	}, {
-		header: "OrderID",
+		header: "<div>OrderID</div>",
 		dataIndex: "orderid",
 		width: 80,
 		sortable: false,
-		align: "center",
+		align: "left",
 		editor: new Ext.form.TextField(),
 		hidden: true
 	}, {
-		header: "Admin<br/>Day",
+		header: "<div class=\"multiLine\">Admin<br/>Day</div>",
 		dataIndex: "adminDay",
-		width: 40,
+		width: 45,
 		sortable: true,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Admin Date",
+		header: "<div>Admin Date</div>",
 		dataIndex: "adminDate",
 		width: 70,
 		sortable: true,
-		align: "center",
+		align: "left",
 		hidden: true
 	}, {
-		header: "Type",
+		header: "<div>Type</div>",
 		dataIndex: "type",
 		// width: 75,
-			flex: 3,
+			flex: 2,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Drug",
+		header: "<div>Drug</div>",
 		dataIndex: "drug",
 		// width: 100,
-		flex: 2,
+		flex: 3,
 		sortable: true,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Dosage",
+		header: "<div>Dosage</div>",
 		dataIndex: "dose",
 		width: 50,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Units",
+		header: "<div>Units</div>",
 		dataIndex: "unit",
 		width: 50,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Route",
+		header: "<div>Route</div>",
 		dataIndex: "route",
 		width: 50,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Fluid/<br/>Volume",
+		header: "<div class=\"multiLine\">Fluid/<br/>Volume</div>",
 		dataIndex: "fluidVol",
 		width: 50,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Flow<br/>Rate",
+		header: "<div class=\"multiLine\">Flow<br/>Rate</div>",
 		dataIndex: "flowRate",
 		width: 40,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Instructions",
+		header: "<div>Instructions</div>",
 		dataIndex: "instructions",
 		width: 120,
 		sortable: false,
-		align: "center"
+		align: "left"
 	}, {
-		header: "Order Status",
+		header: "<div>Order Status</div>",
 		dataIndex: "orderstatus",
 		width: 90,
 		sortable: true,
-		align: "center",
+		align: "left",
 		editor: combo
 	}
 	],

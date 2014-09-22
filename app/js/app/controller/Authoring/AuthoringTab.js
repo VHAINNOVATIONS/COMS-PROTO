@@ -39,7 +39,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		, 'Common.Search4Template'
 		, "Common.selCTOSTemplate"
-		, "Common.selTemplateType"
 		, "Common.selDiseaseAndStage"
 		, "Common.selDisease"
 		, "Common.selDiseaseStage"
@@ -51,162 +50,171 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	refs: [
 		{
-		ref: "NewTemplate",
-		selector: "AuthoringTab CreateNewTemplate"
-	},
+			ref: "AuthoringTab",
+			selector: "AuthoringTab"
+		},
 
 		{
-		ref: "ExistingTemplate",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"]"
-	},
+			ref: "ReqInstr",
+			selector: "AuthoringTab RequiredInstr"
+		},
+
+		{
+			ref: "NewTemplate",
+			selector: "AuthoringTab CreateNewTemplate"
+		},
+
+		{
+			ref: "CTOSTemplateSelection",
+			selector: "AuthoringTab selCTOSTemplate"
+		},
 
 
 		{
 		ref: "TemplateDiseaseAndStage",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage"
-	},
+		},
 
 		{
 		ref: "NewTemplateDiseaseAndStage",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"]"
-	},
+		},
 
 
 		{
 		ref: "DiseaseStage",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"] selDiseaseStage"
-	},
+		},
 
 		{
 		ref: "Disease",
 		selector: "AuthoringTab selDiseaseAndStage[name=\"4CreateNewTemplate\"] selDisease"
-	},
-
-
+		},
 		{
 		ref: "ExistingDiseaseStage",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage selDiseaseStage"
-	},
+		},
 
 		{
 		ref: "ExistingDisease",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage selDisease"
-	},
+		},
 
+//		{
+//		ref: "TemplateSource",
+//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selXXXTemplateXXXType"
+//		},
 
-		{
-		ref: "TemplateSource",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplateType"
-	},
+//		{
+//		ref: "Template",
+//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplate"
+//		},
 
+//		{ ref: "DiseaseAndStage",				selector: "AuthoringTab selDiseaseAndStage[name=\"4ExistingTemplate\"]"},
+//		{ ref: "AllTemplatesShownMsg",			selector: "AuthoringTab [name=\"AllTemplatesShownMsg\"]"},
 
-		{
-		ref: "Template",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplate"
-	},
+//		{
+//		ref: "ResetButton",
+//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]"
+//		},
 
-		{
-		ref: "ResetButton",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]"
-	},
+//		{
+//		ref: 'NewPlanTemplate',
+//		selector: 'NewPlanTab PatientInfo CTOS selCTOSTemplate selTemplate'
+//		},
 
-		{
-		ref: 'NewPlanTemplate',
-		selector: 'NewPlanTab PatientInfo CTOS selCTOSTemplate selTemplate'
-	},
-
-		{
-		ref: "PatientNameField",
-		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] textfield[name=\"PatientName\"]"
-	},
-
+//		{
+//		ref: "PatientNameField",
+//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] textfield[name=\"PatientName\"]"
+//		},
 
 		{
 		ref: "ExistingCourseInfo",
 		selector: "AuthoringTab container[name=\"courseInfo\"]"
-	},
-
+		},
 
 		// Reference Buttons
 	{
 		ref: "RemoveReference",
 		selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
-	}, {
+	}, 
+
+	{
 		ref: 'EditReference',
 		selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
 	},
-
 
 		// Reference Fields
 	{
 		ref: 'ReferenceName',
 		selector: 'AddReference textfield[name="Reference"]'
-	}, {
+	}, 
+	{
 		ref: 'ReferenceLink',
 		selector: 'AddReference textfield[name="ReferenceLink"]'
-	}, {
+	}, 
+	{
 		ref: 'ReferenceCombo',
 		selector: 'AddReference combo[name="SelReference"]'
 	},
-		{
+	{
 		ref: "CourseNum",
 		selector: "AuthoringTab textfield[name=\"CourseNum\"]"
 	},
-		{
+	{
 		ref: "CourseNumMax",
 		selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
 	},
-
 		// Basic Fields (CycleLength, Regimen Name, Emotegenic Level, Febrile Neutropenia Risk)
 	{
 		ref: "CycleLength",
 		selector: "AuthoringTab combo[name=\"CycleLength\"]"
 	},
-		{
+	{
 		ref: "CycleLengthUnit",
 		selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
 	},
-		{
+	{
 		ref: "RegimenName",
 		selector: "AuthoringTab textfield[name=\"RegimenName\"]"
 	},
-		{
+	{
 		ref: "TemplateAlias",
 		selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
 	},
-		{
+	{
 		ref: "EmotegenicLevel",
 		selector: "AuthoringTab combo[name=\"EmotegenicLevel\"]"
-	},
+		},
 		{
 		ref: "FebrileNeutropeniaRisk",
 		selector: "AuthoringTab textfield[name=\"FebrileNeutropeniaRisk\"]"
-	},
+		},
 		{
 		ref: "PreHydrationInstructions",
 		selector: "TemplateHydration[title=\"Pre Therapy\"] textfield[name=\"HydrationInstructions\"]"
-	},
+		},
 		{
 		ref: "PreHydrationGrid",
 		selector: "TemplateHydration[title=\"Pre Therapy\"] grid"
-	},
+		},
 
 		{
 		ref: "PostHydrationInstructions",
 		selector: "TemplateHydration[title=\"Post Therapy\"] textfield[name=\"HydrationInstructions\"]"
-	},
+		},
 		{
 		ref: "PostHydrationGrid",
 		selector: "TemplateHydration[title=\"Post Therapy\"] grid"
-	},
+		},
 		{
 		ref: "RegimenGrid",
 		selector: "TemplateDrugRegimen grid"
-	},
+		},
 		{
 		ref: "RegimenInstruction",
 		selector: "TemplateDrugRegimen textfield[name=\"RegimenInstructions\"]"
-	},
+		},
 		{
 		ref: "ReferencesGrid",
 		selector: "TemplateReferences"
@@ -214,10 +222,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		{
 		ref: "Active",
 		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
+		},
+	{
+		ref: "PatientListCount",
+		selector: "AuthoringTab displayfield[name=\"PatientListCount\"]"
 	}
-
-
-
 	],
 
 	// Ext.ComponentQuery.query("AddReference combo[name=\"CycleLength\"]")[0].el.dom
@@ -227,9 +236,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
-				change: this.AuthorTypeSelected
+				change: this.TemplateTypeSelected
 			},
-
 			'AuthoringTab TemplateReferences': { // The References Grid Control
 				itemclick: this.clickUpdateReference
 			},
@@ -241,6 +249,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			},
 			'AuthoringTab TemplateReferences button[title="EditReference"]': {
 				click: this.editReference
+			},
+			"AuthoringTab displayfield[name=\"PatientListCount\"]" : {
+				render : function(c) {
+					c.getEl().on('click', function(){ this.fireEvent('click', c); }, c);
+				},
+				click: this.ShowPatientListInfo
 			},
 
 
@@ -262,118 +276,306 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			},
 			'AuthoringTab CreateNewTemplate button[action="clear"]': {
 				click: this.clearTemplate
-			},
-			"AuthoringTab selTemplateType": {
-				select: this.onTemplateTypeChange
-			},
-			"AuthoringTab selDisease": {
-				select: this.DiseaseSelected,
-				collapse: this.collapseCombo,
-				expand: this.loadCombo
-			},
-			//KD - 01/23/2012 - Added collapse and expand handlers for disease stage combo
-			//This was done to handle the loading issues when going back and forth between
-			//CTOS and Template Authoring and random Loading issues.
-			"AuthoringTab selDiseaseStage": {
-				select: this.onDiseaseStageChange,
-				collapse: this.collapseCombo,
-				expand: this.loadCombo,
-				beforequery : function(qe) {
-					delete qe.combo.lastQuery;
-					qe.combo.store.removeAll();
-				}
-
-			},
-			"AuthoringTab selTemplate": {
-				select: this.selTemplateChange,
-				collapse: this.collapseCombo,
-				expand: this.loadCombo
-			},
-			"AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]": {
-				click: this.resetTemplateFilter
 			}
 		});
 	},
 
-	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo    
-	loadCombo: function (picker, eOpts) {
-		var originalHiddenVal = null;
-		picker.hiddenValue = picker.getRawValue();
-		picker.clearValue();
+	getCourseInfo : function( thisTab ) {
+		return thisTab.down("[name=\"courseInfo\"]");
+	},
+	getNewTemplateForm : function( thisTab ) {
+		return thisTab.down("CreateNewTemplate");
+	},
 
-		var URI, id;
 
-		if (picker.name == "FilteredTemplates") {
-			if (this.application.ResetClicked) {
-				URI = Ext.URLs.Templates;
-				id = null;
-				originalHiddenVal = picker.hiddenValue;
-			} else {
-				URI = Ext.URLs.Templates + "/Cancer/";
-				id = this.application.Cancer.id;
-			}
+	HideSelectedTemplateForm : function() {
+		var thisTab = this.getAuthoringTab();
+		this.getCourseInfo(thisTab).hide();
+		this.getNewTemplateForm(thisTab).hide();
+		// this.selTemplateChange(theTemplate);
+	},
 
-		} else if (picker.name == "Select Disease Stage Control") {
-			URI = Ext.URLs.DiseaseStage + "/";
-			id = this.application.Cancer.id;
-		} else if (picker.name == "selDisease"){
-                    if(null != this.application.TemplateType && null != this.application.TemplateType.id){
-			URI = Ext.URLs.DiseaseType + "/Source/";
-			id = this.application.TemplateType.id;
-                        this.application.TemplateType.id = null;
-                    }else{
-                        URI = Ext.URLs.DiseaseType;
-                        id = '';
-                    }
-                    
-                    /*
-                    if(eOpts.length && "Refresh" === eOpts){
-                        URI = Ext.URLs.DiseaseType;
-                        this.application.TemplateType.id = null;
-                        id = '';
-                    }else if(null != this.application.TemplateType && null != this.application.TemplateType.id){
-			URI = Ext.URLs.DiseaseType + "/Source/";
-			id = this.application.TemplateType.id;
-                    }*/
-                }
+	ShowSelectedTemplateForm : function(theTemplate) {
+		var thisTab = this.getAuthoringTab();
+		this.getCourseInfo(thisTab).show();
+		this.getNewTemplateForm(thisTab).show();
+		if (theTemplate) {
+			this.selTemplateChange(theTemplate);
+		}
+	},
 
-		picker.getStore().load({
+
+
+
+	selTemplateChange : function (theTemplate) {
+		// var CTOSModelParam = theTemplate.id;
+		this.application.Template = theTemplate;
+		// combo.hiddenValue = this.application.Template.description;
+		this.application.loadMask();
+		var mytemplate;
+		var authoringCtl = this.getController("Authoring.AuthoringTab");
+
+		this.getStore('CTOS').load({
 			params: {
-				URL: URI,
-				ID: id
+				URL: Ext.URLs.CTOS,
+				id: theTemplate.id
 			},
 			callback: function (records, operation, success) {
 				if (success) {
-					if (null != originalHiddenVal) {
-						picker.setRawValue(originalHiddenVal);
-					}
+					mytemplate = this.getAt(0);
+					authoringCtl.afterCTOSLoaded(mytemplate);
+				} else {
+					authoringCtl.application.unMask();
+					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData.frameworkErr);
 				}
 			}
 		});
-
 	},
 
-	collapseCombo: function (picker, eOpts) {
 
-		if (picker.getValue() == null && picker.hiddenValue != null) {
-			picker.setRawValue(picker.hiddenValue);
+	// User has selected what they want to do...
+	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
+		wccConsoleLog("User has selected what to do");
+		var theController = this.getController("Common.selCTOSTemplate");
+		var radioType = rbtn.inputValue;
+
+		var selCTOSTemplate = this.getCTOSTemplateSelection();
+		var lblReqFields = this.getReqInstr();
+		lblReqFields.show();
+
+		if (0 == radioType && newValue) {		// Select Existing Template
+			selCTOSTemplate.show();
+			theController.showInitialSelector(selCTOSTemplate);
+			theController.resetTemplateSrc(selCTOSTemplate);
+			this.clearTemplate(null);
+			this.HideSelectedTemplateForm();
 		}
-
-	},
-
-
-	resetTemplateFilter: function (button) {
-
-		if (null != this.application.Template) {
-			this.getTemplate().setRawValue(this.application.Template.description);
+		else if (1 == radioType && newValue) {	// Create New Template
+			selCTOSTemplate.hide();
+			this.clearTemplate(null);
+			this.ShowSelectedTemplateForm(null);
+			theController.hideInitialAndFilterSelector(selCTOSTemplate);
 		}
-
-		this.application.ResetClicked = true;
-		this.loadCombo(this.getTemplate());
-		this.loadCombo(this.getDisease());
-		Ext.MessageBox.alert('Success', 'Template filters have been removed. All available Templates and Cancer Types will be displayed. ');
-
 	},
+
+
+
+	clearTemplate: function (button) {
+
+		// var NewTemplateObj = this.getNewTemplate();
+		// var CTOSTemplateSelectionObj = this.getCTOSTemplateSelection();
+		var courseNum = this.getCourseNum();
+		var courseNumMax = this.getCourseNumMax();
+
+		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
+
+		if (this.getExistingCourseInfo().hidden == false) {
+			this.getExistingCourseInfo().hide();
+			this.clearValue(courseNum);
+			this.clearValue(courseNumMax);
+		}
+		lblReqFields.hide();
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		thisCtl.clearCTOS();
+
+		thisCtl = this.getController("Common.selCTOSTemplate");
+		var CTOSTemplate = this.getCTOSTemplateSelection();
+		thisCtl.resetTemplateSrc(CTOSTemplate);
+
+
+		this.clearValue(this.getDisease());
+		this.clearValue(this.getEmotegenicLevel());
+		this.clearValue(this.getExistingDisease());
+		this.clearValue(this.getDiseaseStage());
+		this.clearValue(this.getExistingDiseaseStage());
+		this.clearValue(this.getCycleLength());
+		this.clearValue(this.getCycleLengthUnit());
+		this.clearValue(this.getRegimenName());
+		this.clearValue(this.getTemplateAlias());
+		this.clearValue(this.getEmotegenicLevel());
+		this.clearValue(this.getFebrileNeutropeniaRisk());
+		this.clearValue(this.getPreHydrationInstructions());
+		this.clearValue(this.getPostHydrationInstructions());
+		this.clearValue(this.getRegimenInstruction());
+		this.clearValue(this.getPatientListCount());
+
+		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
+		var refstore = refgrid.getStore();
+		refstore.removeAll(true);
+		refgrid.getView().refresh(true);
+
+		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
+		var drugstore = druggrid.getStore();
+		drugstore.removeAll(true);
+		druggrid.getView().refresh(true);
+
+		var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
+		var preMhStore = preMHgrid.getStore();
+		preMhStore.removeAll(true);
+		preMHgrid.getView().refresh(true);
+
+		var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
+		var postMhStore = postMHgrid.getStore();
+		postMhStore.removeAll(true);
+		postMHgrid.getView().refresh(true);
+	},
+
+	clearValue: function (field) {
+		if (field && (field.getValue() || field.getRawValue())) {
+			field.reset();
+		}
+	},
+
+	// Used in both the Hydration and Refernce Grids
+	getSelectedRecord: function (destroy, query) {
+		var theGrid, theView, theSelModel, HasSelection = false,
+			selRows, theRecord, theStore, theIndex;
+
+		theGrid = Ext.ComponentQuery.query(query)[0];
+		theView = theGrid.getView();
+		theSelModel = theView.getSelectionModel();
+		HasSelection = theSelModel.hasSelection();
+		if (HasSelection) {
+			selRows = theSelModel.getSelection();
+			theRecord = selRows[0];
+			theStore = theView.getStore();
+			theIndex = theStore.indexOf(theRecord);
+			if (destroy) {
+				theStore.removeAt(theIndex);
+				return {};
+			}
+		}
+		return {
+			hasRecord: HasSelection,
+			record: theRecord,
+			rowNum: theIndex
+		};
+	},
+
+
+	ShowPatientListInfo: function () {
+		var Temp = this.SelectedTemplate;
+		var thePatients = Temp.getData().PatientList;
+		var theTemplateDesc = Temp.getData().Description;
+		var theController = this.getController("TemplateList.TemplateListTab");
+		theController.showPatientListWidget(thePatients, theTemplateDesc);
+	},
+
+	afterCTOSLoaded: function (template) {
+		wccConsoleLog("CTOS Loaded - Processing");
+		this.SelectedTemplate = template;
+
+		this.getExistingCourseInfo().show();
+		this.getNewTemplate().show();
+		var disease = this.getExistingDisease();
+		var diseaseRecord = disease.getStore().getById(template.data.Disease);
+		if(null === diseaseRecord){
+			var authorCtl = this.getController("Authoring.AuthoringTab");
+			disease.getStore().load({
+				params: {
+						URL: Ext.URLs.DiseaseType + "/",
+						ID: disease.getValue()
+				},
+				callback: function (records, operation, success) {
+						if (success) {
+							diseaseRecord = disease.getStore().getById(disease.getValue());
+							authorCtl.LoadFormWithExistingData(template);
+						}else{
+							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
+						}
+				}
+			});
+		}
+		else {
+			this.LoadFormWithExistingData(template);
+		}
+	},
+
+	/* Load Form with existing data */
+	LoadFormWithExistingData : function (template){
+		// 
+		// var UserDefinedAlias = template.data.Description;
+		this.getTemplateAlias().setValue(template.data.Description);
+		this.getExistingDisease().setValue(template.data.Disease);
+		this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
+		this.getCourseNum().setValue(template.data.CourseNum);
+		this.getCourseNumMax().setValue(template.data.CourseNumMax);
+		this.getCycleLength().setValue(template.data.CycleLength);
+		this.getCycleLengthUnit().setValue(template.data.CycleLengthUnit[0].name);
+		this.getRegimenName().setValue(template.data.RegimenName);
+		this.getEmotegenicLevel().setValue(template.data.ELevel[0].name);
+		this.getFebrileNeutropeniaRisk().setValue(template.data.FNRisk);
+		this.getPreHydrationInstructions().setValue(template.data.PreMHInstructions);
+		this.getPostHydrationInstructions().setValue(template.data.PostMHInstructions);
+		this.getRegimenInstruction().setValue(template.data.RegimenInstruction);
+		this.getPatientListCount().setValue(template.data.PatientListCount);
+
+
+		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
+		var refstore = refgrid.getStore();
+		refstore.removeAll();
+		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
+		var drugstore = druggrid.getStore();
+		drugstore.removeAll();
+		var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
+		var preMhStore = preMHgrid.getStore();
+		preMhStore.removeAll();
+		var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
+		var postMhStore = postMHgrid.getStore();
+		postMhStore.removeAll();
+		preMhStore.add(template.data.PreMHMeds);
+		refstore.add(template.data.References);
+		drugstore.add(template.data.Meds);
+		postMhStore.add(template.data.PostMHMeds);
+		this.application.unMask();
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	saveTemplateAs: function (button) {
 		alert("Saving Template with new name...");
@@ -381,8 +583,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.SaveTemplate2DB(Template, button);
 	},
 
-
-    
     isDuplicateDescription: function(description, alias) {
         if (description === alias) {
             return true;
@@ -450,9 +650,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                         }
                     }, this);
                 }
-
-
-
 				else {
                             this.application.loadMask("Please wait; Saving Template");
                             Template = this.PrepareTemplate2Save(true);
@@ -697,7 +894,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			Meds: drugArray,
 			Disease: diseaseId,
 			DiseaseStage: diseaseStageId,
-            KeepAlive: KeepAlive
+			KeepAlive: KeepAlive
 		});
 
 		var errors = template.validate();
@@ -722,11 +919,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			scope: this,
 			success: function (data) {
 				wccConsoleLog("Saved Template ");
-				this.getNewPlanTemplate().getStore().removeAll(true);
-				this.getNewPlanTemplate().getStore().load();
+				// this.getNewPlanTemplate().getStore().removeAll(true);
+				// this.getNewPlanTemplate().getStore().load();
 
-				this.getTemplate().getStore().removeAll(true);
-				this.getTemplate().getStore().load();
+				// this.getTemplate().getStore().removeAll(true);
+				// this.getTemplate().getStore().load();
 
 				this.clearTemplate(button);
 				Ext.MessageBox.alert('Success', 'Template saved with name: ' + data.data.RegimenName);
@@ -745,341 +942,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		});
 	},
 
-	clearTemplate: function (button) {
-
-		var NewTemplateObj = this.getNewTemplate();
-		var ExistingTemplateObj = this.getExistingTemplate();
-		var templateCombo = this.getTemplate();
-		var selDiseaseAndStageObj = this.getNewTemplateDiseaseAndStage();
-		var existingDiseaseAndStageObj = this.getTemplateDiseaseAndStage();
-		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
-		var newTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[1];
-
-		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
-
-		if (this.getExistingCourseInfo().hidden == false) {
-			this.getExistingCourseInfo().hide();
-			this.clearValue(this.getCourseNum());
-			this.clearValue(this.getCourseNumMax());
-		}
-
-		if (this.getPatientNameField().hidden == false) {
-			this.getPatientNameField().hide();
-		}
-
-		if (templateCombo.hidden == false) {
-			this.getTemplate().hide();
-		}
-
-		if (ExistingTemplateObj.hidden == false) {
-			ExistingTemplateObj.hide();
-			this.getResetButton().hide();
-		}
-		if (NewTemplateObj.hidden == false) {
-			NewTemplateObj.hide();
-		}
-		if (selDiseaseAndStageObj.hidden == false) {
-			selDiseaseAndStageObj.hide();
-		}
-		if (existingDiseaseAndStageObj.hidden == false) {
-			existingDiseaseAndStageObj.hide();
-		}
-
-
-		if (button != null && (button.action == 'save' || button.action == 'clear')) {
-			existingTemplate.setValue(false);
-			newTemplate.setValue(false);
-			lblReqFields.hide();
-
-			var thisCtl = this.getController("NewPlan.NewPlanTab");
-			thisCtl.clearCTOS();
-
-		}
-
-		this.clearValue(this.getTemplate());
-		this.getTemplate().hiddenValue = null;
-
-		this.clearValue(this.getDisease());
-		this.clearValue(this.getEmotegenicLevel());
-		this.clearValue(this.getExistingDisease());
-		this.clearValue(this.getDiseaseStage());
-		this.clearValue(this.getExistingDiseaseStage());
-		this.clearValue(this.getCycleLength());
-		this.clearValue(this.getCycleLengthUnit());
-		this.clearValue(this.getRegimenName());
-		this.clearValue(this.getTemplateAlias());
-		this.clearValue(this.getEmotegenicLevel());
-		this.clearValue(this.getFebrileNeutropeniaRisk());
-		this.clearValue(this.getPreHydrationInstructions());
-		this.clearValue(this.getPostHydrationInstructions());
-		this.clearValue(this.getRegimenInstruction());
-
-		this.getTemplateSource().setValue('');
-
-		//            this.getNewPlanDisease().setValue('');
-		//            this.getNewPlanDiseaseStage().setValue('');
-		//var templatesource = Ext.ComponentQuery.query('AuthoringTab selTemplateType')[0];
-		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-		var refstore = refgrid.getStore();
-		refstore.removeAll(true);
-		refgrid.getView().refresh(true);
-
-		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
-		var drugstore = druggrid.getStore();
-		drugstore.removeAll(true);
-		druggrid.getView().refresh(true);
-
-		var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
-		var preMhStore = preMHgrid.getStore();
-		preMhStore.removeAll(true);
-		preMHgrid.getView().refresh(true);
-
-		var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
-		var postMhStore = postMHgrid.getStore();
-		postMhStore.removeAll(true);
-		postMHgrid.getView().refresh(true);
-
-	},
-
-	clearValue: function (field) {
-		if (field.getValue() || field.getRawValue()) {
-			field.reset();
-		}
-	},
-
-	// Used in both the Hydration and Refernce Grids
-	getSelectedRecord: function (destroy, query) {
-		var theGrid, theView, theSelModel, HasSelection = false,
-			selRows, theRecord, theStore, theIndex;
-
-		theGrid = Ext.ComponentQuery.query(query)[0];
-		theView = theGrid.getView();
-		theSelModel = theView.getSelectionModel();
-		HasSelection = theSelModel.hasSelection();
-		if (HasSelection) {
-			selRows = theSelModel.getSelection();
-			theRecord = selRows[0];
-			theStore = theView.getStore();
-			theIndex = theStore.indexOf(theRecord);
-			if (destroy) {
-				theStore.removeAt(theIndex);
-				return {};
-			}
-		}
-		return {
-			hasRecord: HasSelection,
-			record: theRecord,
-			rowNum: theIndex
-		};
-	},
-
-
-	// User has selected what they want to do...
-	AuthorTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
-		wccConsoleLog("User has selected what to do");
-
-		var NewTemplateObj = this.getNewTemplate();
-		var ExistingTemplateObj = this.getExistingTemplate();
-		var selDiseaseAndStageObj = this.getNewTemplateDiseaseAndStage();
-
-		var lblReqFields = Ext.ComponentQuery.query("AuthoringTab RequiredInstr")[0];
-
-		lblReqFields.show();
-		var What2Do = rbtn.inputValue;
-
-		if (newValue) {
-			if (0 === What2Do) { // Select an Existing Template
-				this.clearTemplate(rbtn);
-				ExistingTemplateObj.show();
-				selDiseaseAndStageObj.hide();
-				NewTemplateObj.hide();
-			} else { // Create a New Template
-				this.application.loadMask();
-				this.clearTemplate(rbtn);
-                                this.loadCombo(this.getDisease());
-				ExistingTemplateObj.hide();
-				// MWB 5 Jan 2012
-				// Note: need to add some code in here to clear out all the fields if an existing template was selected first.
-				// Also need to alert the user that any unsaved data in their existing template will be lost and prompt them to save it first.
-				this.getExistingCourseInfo().show();
-				selDiseaseAndStageObj.show();
-				NewTemplateObj.show();
-				this.application.unMask();
-
-			}
-		}
-
-	},
-
-	//-------------------------------------------------------------------------
-	//
-	//	Template Source (National/Local/Personal) Selected - Phase 1 of the CTOS Tab
-	//
-	//
-	onTemplateTypeChange: function (combo, recs, eOpts) {
-		wccConsoleLog("Select Template Type");
-		if (null !== recs[0]) {
-		this.application.TemplateType = recs[0].data;
-		}
-		var obj = this.getTemplateDiseaseAndStage();
-		obj.show();
-
-		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
-		if (existingTemplate.getValue()) {
-			this.getResetButton().show();
-		}
-
-	},
-	//
-	//
-	//	END Template Source Selected
-	//
-	//-------------------------------------------------------------------------
-
-	//-------------------------------------------------------------------------
-	//
-	//	Disease Type Selected - Phase 2 of the CTOS Tab
-	//
-	//
-	DiseaseSelected: function (combo, recs, eOpts) {
-		wccConsoleLog('Disease Type has been selected');
-		if (this.application.Cancer != recs[0].data) {
-			this.application.ResetClicked = false;
-			var selDiseaseStage = this.getDiseaseStage();
-			selDiseaseStage.reset();
-		}
-		this.application.Cancer = recs[0].data;
-		this.getTemplate().show();
-	},
 
 
 
-	//-------------------------------------------------------------------------
-	//
-	//	Disease Stage Selected - Phase 2 of the CTOS Tab
-	//
-	//
-	onDiseaseStageChange: function (combo, recs, eOpts) {
-		wccConsoleLog("Disease Type and Stage has been selected");
-		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
-		this.application.Cancer.Stage = recs[0].data;
-
-		combo.hiddenValue = recs[0].data.name;
-
-		this.getTemplate().show();
-
-		if (existingTemplate.getValue()) {
-			this.getResetButton().show();
-		}
 
 
-	},
-
-	afterCTOSLoaded: function (template) {
-		wccConsoleLog("CTOS Loaded - Processing");
-
-		this.getExistingCourseInfo().show();
-		this.getNewTemplate().show();
-
-                var disease = this.getExistingDisease();
-
-                var diseaseRecord = disease.getStore().getById(template.data.Disease);
-
-                if(null === diseaseRecord){
-                    var authorCtl = this.getController("Authoring.AuthoringTab");
-                    disease.getStore().load({
-                        params: {
-                                URL: Ext.URLs.DiseaseType + "/",
-                                ID: disease.getValue()
-                        },
-                        callback: function (records, operation, success) {
-                                if (success) {
-                                    var diseaseRecord = disease.getStore().getById(disease.getValue());
-                                    authorCtl.afterFindDisease(template);
-                                }else{
-                                    Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
-                                }
-                        }
-                    });
-
-                }else {
-                    this.afterFindDisease(template);
-                }
-        },
-
-        /* Load Form with existing data */
-        afterFindDisease: function (template){
-            // 
-            // var UserDefinedAlias = template.data.Description;
-            this.getTemplateAlias().setValue(template.data.Description);
-            this.getExistingDisease().setValue(template.data.Disease);
-            this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
-            this.getCourseNum().setValue(template.data.CourseNum);
-            this.getCourseNumMax().setValue(template.data.CourseNumMax);
-            this.getCycleLength().setValue(template.data.CycleLength);
-            this.getCycleLengthUnit().setValue(template.data.CycleLengthUnit[0].name);
-            this.getRegimenName().setValue(template.data.RegimenName);
-            this.getEmotegenicLevel().setValue(template.data.ELevel[0].name);
-            this.getFebrileNeutropeniaRisk().setValue(template.data.FNRisk);
-            this.getPreHydrationInstructions().setValue(template.data.PreMHInstructions);
-            this.getPostHydrationInstructions().setValue(template.data.PostMHInstructions);
-            this.getRegimenInstruction().setValue(template.data.RegimenInstruction);
-            var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-            var refstore = refgrid.getStore();
-            refstore.removeAll();
-            var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
-            var drugstore = druggrid.getStore();
-            drugstore.removeAll();
-            var preMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Pre Therapy"] grid')[0];
-            var preMhStore = preMHgrid.getStore();
-            preMhStore.removeAll();
-            var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
-            var postMhStore = postMHgrid.getStore();
-            postMhStore.removeAll();
-            preMhStore.add(template.data.PreMHMeds);
-            refstore.add(template.data.References);
-            drugstore.add(template.data.Meds);
-            postMhStore.add(template.data.PostMHMeds);
-            this.application.unMask();
-        },
-
-	selTemplateChange: function (combo, recs, eOpts) {
-		wccConsoleLog("Template has been selected");
-
-		var CTOSModelParam = recs[0].data.id;
-
-		wccConsoleLog("Template Params = " + CTOSModelParam);
-
-		//this.getTemplate().hiddenValue = recs[0].data.description;
-		this.application.Template = recs[0].data;
-
-		combo.hiddenValue = this.application.Template.description;
-
-		this.application.loadMask();
-
-
-		var mytemplate;
-		var authoringCtl = this.getController("Authoring.AuthoringTab");
-
-		//KD - 01/23/2012 - Modified the way the CTOS object gets loaded. This should help with performance.
-		this.getStore('CTOS').load({
-			params: {
-				URL: Ext.URLs.CTOS,
-				id: this.application.Template.id
-			},
-			callback: function (records, operation, success) {
-				if (success) {
-					mytemplate = this.getAt(0);
-					authoringCtl.afterCTOSLoaded(mytemplate);
-				} else {
-					authoringCtl.application.unMask();
-					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData.frameworkErr);
-
-				}
-			}
-		});
-
-	},
 
 
 

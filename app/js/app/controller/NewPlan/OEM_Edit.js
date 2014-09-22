@@ -1,15 +1,7 @@
 Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	extend: "Ext.app.Controller",
-
-	stores: [
-            "ReasonStore", "FluidType", "DrugStore", "DrugUnitsStore", "InfusionStore"
-	],
-
-
-	views: [
-		"NewPlan.CTOS.OEM_Edit"
-	],
-
+	stores: [ "ReasonStore", "FluidType", "DrugStore", "DrugUnitsStore", "InfusionStore" ],
+	views: [ "NewPlan.CTOS.OEM_Edit" ],
 	refs: [
 		{
 			ref: "theForm",
@@ -359,7 +351,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			this.toggleFluidInfo(true);
 		}
 
-        MedRecord.State = "";
+		MedRecord.State = "";
 		var EditRecordModel = this.getModel(Ext.COMSModels.Edit_OEMRecord);
 		var aRecord = COMS.model.OEMEditRecord.create(MedRecord);
 

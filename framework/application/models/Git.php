@@ -17,7 +17,7 @@ class Git extends Model {
                 'Accept-Language: en-US,en;q=0.8',
                 'Accept-Charset: utf-8',
                 'Connection: Close',
-                'Authorization: token 50688565c26b2e0dd929b4c20674681815292a7f'
+                'Authorization: token 5ec2967f1c2dc9364736f3ec35f6ed4f9fe4dc4c'
             ),
             CURLOPT_VERBOSE => TRUE,
             CURLOPT_STDERR => $verbose = fopen('php://temp', 'rw+')

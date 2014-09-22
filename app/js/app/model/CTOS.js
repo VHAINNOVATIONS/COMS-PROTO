@@ -14,6 +14,7 @@ Ext.define('COMS.model.CTOS', {
             'CourseNumMax',
             'CycleLength',			// raw data
             'CycleLengthUnit',
+			"CumulativeDoseMedsInRegimen",
             'ELevel',				// via lookup into Lookup Table for ELevel Data Type (this is a 1 element array containing the following elements: id, name, details)
             'FNRisk',				// raw data
 			'FNRiskDetails',
@@ -28,11 +29,15 @@ Ext.define('COMS.model.CTOS', {
 
             'PreMHMeds',		// Array of PreMHMeds data, uses the 'hasMany' object below
             'Meds',		// Array of Meds data, uses the 'hasMany' object below
-            'PostMHMeds'		// Array of PostMHMeds data, uses the 'hasMany' object below
+            'PostMHMeds',		// Array of PostMHMeds data, uses the 'hasMany' object below
+			'PatientList',
+			'PatientListCount'
 
     ],
     hasMany : [
+			{ model : 'COMS.model.TemplateListPatients', name : 'PatientList' },
             { model : 'COMS.model.CTOS_References', name : 'References' },		// Added - MWB 2 Jan 2012
+			{ model : 'COMS.model.CumulativeDoseMedsInRegimen', name : 'CumulativeDoseMedsInRegimen' },
             { model : 'COMS.model.MHMed', name : 'PreMHMeds' },
             { model : 'COMS.model.Med', name : 'Meds' },
             { model : 'COMS.model.MHMed', name : 'PostMHMeds' }

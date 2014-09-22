@@ -4,7 +4,7 @@ h1 {
 		font-size: 150%;
 	}
 
-        a, button.anchor, .anchor button {
+a, button.anchor, .anchor button, .textAnchor {
 	background : none;
 	border : 0 none;
 	color: white;
@@ -770,4 +770,76 @@ table.OEMRecord_Element tr {
 .BSACalcTable label {
 	font-weight: bold!important;
 	margin-right: 0.5em;
+}
+
+
+table.FlowsheetTable {
+	margin-bottom: 1em;
+}
+
+.FlowsheetTable thead th {
+	text-align: left;
+	font-weight: bold;
+	font-size: 110%;
+	/* background-color: #c5c5c5; */
+	padding-left: 0.5em;
+}
+.FlowsheetTable td {
+	padding: 0.25em;
+}
+
+.FlowsheetTable a {
+	color: white;
+}
+
+.x-column-header-text div {
+	font-weight: bold;
+	text-align: center;
+	padding-top: 0.5em;
+}
+
+.x-column-header-text div.multiLine {
+	padding-top: 0!important;
+}
+
+
+.TCDWarning {
+	font-size: 200%;
+	font-weight: bold!important;
+	text-align: center!important;
+}
+
+.smlTCDWarning {
+	font-size: 100%;
+	font-weight: bold!important;
+	text-align: left!important;
+}
+
+.HighlightedInfoTable {
+	border: thick solid!important; 
+	margin-top: 1em!important; 
+	margin-bottom: 1em!important;
+}
+
+.cdtEm {
+	font-weight: bold;
+}
+
+.TCDWarning table {
+	font-size: 85%;
+	margin: 0 auto;
+}
+
+.TCDWarning th, .TCDWarning td {
+	text-align: center;
+	font-weight: bold;
+	padding: 0 0.25em;
+}
+.TCDWarning td {
+	text-align: right;
+}
+
+.em {
+	font-style : italic;
+	font-weight: bold;
 }

@@ -530,8 +530,8 @@ class LookUp extends Model {
             $flowRate = $regimen->FlowRate;
             $sequence = $regimen->Sequence;
             $adminTime = $regimen->AdminTime;
-            $fluidType = str_replace("'", "''",$regimen->FluidType);
-            $instruction = str_replace("'", "''", $regimen->Instructions);
+            $fluidType = $this->escapeString($regimen->FluidType);
+            $instruction = $this->escapeString($regimen->Instructions);
             $Reason = 0;
             
             $query = "
@@ -756,17 +756,17 @@ class LookUp extends Model {
                         $amt = $infusionData['amt'];
                         $fluidVol = $infusionData['fluidVol'];
                         $flowRate = $infusionData['flowRate'];
-                        //$fluidType = $infusionData['fluidType'];
-						$fluidType = str_replace("'", "''",$infusionData->fluidType);
+                        $fluidType = $infusionData['fluidType'];
                         $infusionTime = $infusionData['infusionTime'];
                     }else{
                         $amt = $infusionData->amt;
                         $fluidVol = $infusionData->fluidVol;
                         $flowRate = $infusionData->flowRate;
-                       // $fluidType = $infusionData->fluidType;
-						$fluidType = str_replace("'", "''",$infusionData->fluidType);
+                        $fluidType = $infusionData->fluidType;
                         $infusionTime = $infusionData->infusionTime;
                     }
+
+                    $fluidType = $this->escapeString($fluidType);
 
                     $query = "
                         INSERT INTO MH_Infusion (
@@ -804,8 +804,8 @@ class LookUp extends Model {
     }
 
     function update($id, $lookupid, $name, $description) {
-		
-		$query = "Select Lookup_ID as lookupid from LookUp where Lookup_Type = '" . $id . "' and Name ='" . $name . "' and Description ='" . $description . "'";
+
+        $query = "Select Lookup_ID as lookupid from LookUp where Lookup_Type = '" . $id . "' and Name ='" . $name . "' and Description ='" . $description . "'";
         $exists = $this->query($query);
 
         if ($exists) {
@@ -1653,8 +1653,7 @@ class LookUp extends Model {
 		$unit = $infusionData['unit'];
 		$flowRate = $infusionData['flowRate'];
 		$fluidVol = $infusionData['fluidVol'];
-		$fluidType2 = $infusionData['fluidType'];
-		$fluidType = str_replace("'", "''",$fluidType2);
+		$fluidType = $infusionData['fluidType'];
 		$infusionTime = $infusionData['infusionTime'];
 
         $query = "INSERT INTO Order_Status
