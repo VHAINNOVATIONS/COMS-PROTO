@@ -589,4 +589,23 @@ error_log("================================================");
         $this->FSDataConvert($id, $PAT_ID, $PreAdminRecords, $TherapyAdminRecords, $PostAdminRecords);
 
 	}
+	
+	function FS3($patientID){
+        
+        $jsonRecord = array();
+
+        $records = $this->FlowSheet->FS($patientID);
+		
+
+            return;
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
+    }
+	
 }

@@ -201,6 +201,7 @@ class LookupController extends Controller {
             $Order_IDR = $form_data->{'Order_IDR'};
             $prehydrations = $form_data->{'PreMHMeds'};
             if ($prehydrations) {
+                //$this->LookUp->OrderX();
                 $retVal = $this->LookUp->saveHydrations($prehydrations, 'Pre', $templateid, $Order_IDR);
                 if($this->checkForErrors('Insert Pre Therapy Failed. ', $retVal)){
                     $this->LookUp->rollbackTransaction();

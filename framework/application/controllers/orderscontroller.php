@@ -230,7 +230,7 @@ class OrdersController extends Controller {
  * $status = Status to set - "Hold", "Cancel", "Clear"
  **/
     function HoldCancel($patient_id = null, $template_id = null, $type = null, $status = null) {
-        // error_log("HoldCancel - $template_id, $type, $status");
+		// error_log("HoldCancel - $template_id, $type, $status");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         
