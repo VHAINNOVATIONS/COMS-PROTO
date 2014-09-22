@@ -1493,4 +1493,17 @@ function convertReason2ID($Reason) {
     
     // order check end of else
     // }
+	
+function UpdateAdminDateMT ($Template_ID,$Admin_Date)
+    {
+    
+       $query = "
+            UPDATE Master_Template SET 
+            Admin_Date = '$Admin_Date'
+            WHERE Template_ID = '$Template_ID'
+                ";
+		   
+		$result = $this->query($query);
+        
+    }
 }

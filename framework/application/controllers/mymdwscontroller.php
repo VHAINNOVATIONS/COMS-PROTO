@@ -261,28 +261,28 @@ class MymdwsController extends Controller
 				$client = $this->mdwsBase->MDWS_Setup($roles);
 				}
 
-				//$allergiesJson = $this->Allergies($value,$client);
-				//$vitalsJson = $this->AllVitals($value,$client);
-				//$LabInfoJson = $this->LabInfoResults($value,$client);
+				$allergiesJson = $this->Allergies($value,$client);
+				$vitalsJson = $this->AllVitals($value,$client);
+				$LabInfoJson = $this->LabInfoResults($value,$client);
 
 				$GoodMsg = 'Mega call completed succesfully with: ';
-				//$GoodMsg .= $allergiesJson['message'] . '; ';
-				//$GoodMsg .= $vitalsJson['message'] . '; ';
-				//$GoodMsg .= $LabInfoJson['message'] . '; ';
+				$GoodMsg .= $allergiesJson['message'] . '; ';
+				$GoodMsg .= $vitalsJson['message'] . '; ';
+				$GoodMsg .= $LabInfoJson['message'] . '; ';
 
 				$jsonRecord = array();
 
-				//if(false === $allergiesJson['success']){
-					//$jsonRecord = $allergiesJson;
-				//}else if(false === $vitalsJson['success']){
-					//$jsonRecord = $vitalsJson;
-				//}else if(false === $LabInfoJson['success']){
-					//$jsonRecord = $LabInfoJson;
-				//}else {
+				if(false === $allergiesJson['success']){
+					$jsonRecord = $allergiesJson;
+				}else if(false === $vitalsJson['success']){
+					$jsonRecord = $vitalsJson;
+				}else if(false === $LabInfoJson['success']){
+					$jsonRecord = $LabInfoJson;
+				}else {
 					$jsonRecord['success'] = true;
 					$jsonRecord['message'] = $GoodMsg;
 					$jsonRecord['records'] = '';
-				//}
+				}
 
                 $this->mdwsBase->MDWS_Disconnect($client);
 
