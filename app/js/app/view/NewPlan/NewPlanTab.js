@@ -9,8 +9,6 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 
 	items : [
 		{ xtype : "PatientSelection" },
-<<<<<<< HEAD
-=======
 /*
 		{ xtype : "container", hidden : true, name : "UpdateMDWSDataContainer", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from MDWS" },
 		{ xtype : "container", hidden : true, name : "DisplayMDWSDataContainer", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
@@ -27,7 +25,6 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 },
 
 		{ "xtype" : "ProgrammerBtns" },
->>>>>>> 984a5be79bc342f7bf276b2588650df862e5d01c
 		{ xtype : "PatientInfo" }
 	],
 	initComponent: function() {
