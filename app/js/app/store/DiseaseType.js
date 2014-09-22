@@ -9,16 +9,17 @@ Ext.define('COMS.store.DiseaseType', {
      * If no options are provided the default is to retrieve all Cancer types.
      */
     listeners: {
-        'beforeload' : function(store, options){
-            
-            if(options.params){
-              if(options.params.ID!=null){
-                  store.proxy.url = options.params.URL + options.params.ID;
-              }
-            }
-        }
-        
-    },
-
-    model : Ext.COMSModels.DiseaseType
+		'beforeload' : function(store, options){
+			store.proxy.url = Ext.URLs.DiseaseType;
+			if(options.params){
+				if (options.params.URL) {
+					store.proxy.url = options.params.URL;
+					if(options.params.ID != null){
+						store.proxy.url += options.params.ID;
+					}
+				}
+			}
+		}
+	},
+	model : Ext.COMSModels.DiseaseType
 });

@@ -12,6 +12,9 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 
 	init: function() {
 		this.control({
+			"puWinAddCumDose" : {
+				"show" : function() {this.Saving=false;}
+			},
 			"puWinAddCumDose button[text=\"Cancel\"]" : {
 				click: this.Cancel
 			},
@@ -58,23 +61,24 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 					med2ckFlg = true;
 
 					cur = rec.CurCumDoseAmt;
-					max = rec.MedMaxDose.replace(",", "") * 1;		// rec.MedMaxDose is string which may contain thousands separator
-					ExceedsWarningLimit = (cur / max) * 100;
-					WarningLimit = 0.75 * max;
-					if (ExceedsWarningLimit > 75) {
-						exceedsCount++;
-						exceeds = cur - WarningLimit;
-						var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
-						var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
-						var CurDose = Ext.util.Format.number(("" + cur).replace(",", ""), "0,0");
-						var pct = ((cur/max)*100);
-						pct = Ext.util.Format.number(pct, "0,0.0");
-						WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
-							"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
-							"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
-							"<td>" + pct + "%</td></tr>";
+					if (rec.MedMaxDose) {
+						max = rec.MedMaxDose.replace(",", "") * 1;		// rec.MedMaxDose is string which may contain thousands separator
+						ExceedsWarningLimit = (cur / max) * 100;
+						WarningLimit = 0.75 * max;
+						if (ExceedsWarningLimit > 75) {
+							exceedsCount++;
+							exceeds = cur - WarningLimit;
+							var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
+							var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
+							var CurDose = Ext.util.Format.number(("" + cur).replace(",", ""), "0,0");
+							var pct = ((cur/max)*100);
+							pct = Ext.util.Format.number(pct, "0,0.0");
+							WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
+								"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
+								"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
+								"<td>" + pct + "%</td></tr>";
+						}
 					}
-
 				}
 			}
 
@@ -169,10 +173,11 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		if (theField) {
 			theField.update("");
 		}
-		if (form.owner.up("window")) {
-			form.owner.up("window").close();		// hide();
-		}
 		form.reset();
+		if (form.owner.up("window")) {
+			form.owner.up("window").close();
+		}
+
 		// Refresh the patient info table with latest data from DB
 		this.RefreshPatientInfoDetails();
 
@@ -188,8 +193,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 			case Ext.form.action.Action.SERVER_INVALID:
 			   Ext.Msg.alert('Failure', action.result.msg);
 		}
-		form.owner.up("window").hide();
-		form.reset();
+		// form.owner.up("window").close();
+		// form.reset();
 	},
 
 	_submitForm : function(form) {
@@ -212,13 +217,17 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	},
 
 	Save : function(btn) {
-		var theForm = btn.up('form').getForm();
-		if (theForm.isValid()) {
-			this._submitForm(theForm);
+		if (!this.Saving) {		// Prevents multiple saves by clicking the "Save" button more than once
+			var theForm = btn.up('form').getForm();
+			if (theForm.isValid()) {
+				this.Saving = true;
+				this._submitForm(theForm);
+			}
 		}
 	},
+
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
-		btn.up('window').hide();
+		btn.up('window').close();
 	}
 });

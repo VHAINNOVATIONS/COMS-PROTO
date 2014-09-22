@@ -29,18 +29,19 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 		{ xtype : 'TemplateReferences',height : 130 },
 
 
-                { xtype : "container", layout : "hbox", margin : "5 5 0 0", items : [ 
-                        { xtype : 'textfield', name : "RegimenName", fieldLabel: 'Chemotherapy Regimen Name', labelAlign : "right", width : 700, labelWidth: 200, readOnly: true, disabled: true },
-                        { xtype : "container", margin: "2 0 0 5", html : "<span style=\"color: blue;\">Generated</span>" }
-                ]},
-            
-                { xtype : "container", layout : "hbox", margin : "5 5 0 0", items : [ 
-                        { xtype : "textfield", name : "TemplateAlias", fieldLabel : "Template Name", labelAlign : "right", width : 700 },
-                        { xtype : "container", margin: "2 0 0 5", html : "<span style=\"color: blue;\">Optional</span>" }
-                ]},
-                { xtype : "textfield", name : "KeepActive", hidden: true, value:"1" },
+		{ xtype : "container", layout : "hbox", margin : "5 5 0 0", items : [ 
+				{ xtype : 'textfield', name : "RegimenName", fieldLabel: 'Chemotherapy Regimen Name', labelAlign : "right", width : 700, labelWidth: 200, readOnly: true, disabled: true },
+				{ xtype : "container", margin: "2 0 0 5", html : "<span style=\"color: blue;\">Generated</span>" }
+			]
+		},
 
-
+		{ xtype : "container", layout : "hbox", margin : "5 5 0 0", items : [ 
+				{ xtype : "textfield", name : "TemplateAlias", fieldLabel : "Template Name", labelAlign : "right", width : 700 },
+				{ xtype : "container", margin: "2 0 0 5", html : "<span style=\"color: blue;\">Optional</span>" }
+			]
+		},
+		{ xtype : "textfield", name : "KeepActive", hidden: true, value:"1" },
+		{ xtype: "displayfield", fieldCls: "textAnchor", fieldLabel: "Patients Currently Undergoing This Regimen", labelWidth: 300, name: "PatientListCount" },
 		{
 			layout: 'hbox', 
 			margin: '0 0 10 300',	// style: 'margin-left: 300px;',

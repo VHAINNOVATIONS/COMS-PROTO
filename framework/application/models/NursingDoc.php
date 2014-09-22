@@ -587,14 +587,16 @@ class NursingDoc extends Model {
 
             $query = "INSERT INTO ND_Assessment_Details (Asmnt_ID,Sequence,Field_Label,Choice,Comments,Level_Chosen) values(".
                         "'".$asmntId."',".$sequence.",'".$fieldLabel."',".$choice.",'".$comments."',".$levelChosen.")";
-            
             $retVal = $this->query($query);
-            
             if (null != $retVal && isset($retVal['error'])) {
                 return $retVal;
-            }            
-            
+            }
         }
-        
+    }
+
+    function UpdateOrder($patientID,$drug,$adminDate) {
+        $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
+        $result = $this->query($query);
+        return $result;
     }
 }

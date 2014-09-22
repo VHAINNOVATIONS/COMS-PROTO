@@ -423,103 +423,133 @@ class Flowsheet extends Model
     }
 
 ///newfunction
-function FS($patientID){
+function FS($PatientID, $TemplateID){
         
+	$query = "SELECT Order_Status
+      ,Drug_Name
+      ,Order_Type
+      ,Template_ID
+      ,Template_IDMT
+      ,Patient_ID
+      ,Order_ID
+      ,Drug_ID
+      ,Date_Modified
+      ,CONVERT(VARCHAR(10), Date_Entered, 101) as Date_Entered
+      ,Notes
+      ,FluidType
+      ,FluidVol
+      ,FlowRate
+      ,AdminDay
+      ,InfusionTime
+      ,AdminTime
+      ,Sequence
+      ,Amt
+      ,iAmt
+      ,Unit
+      ,Type
+      ,RegNum
+      ,RegDose
+      ,RegDoseUnit
+      ,RegDosePct
+      ,RegReason
+      ,PatientDose
+      ,PatientDoseUnit
+      ,Route
+      ,flvol
+      ,flunit
+      ,infusion
+      ,bsaDose
+      ,Reason
+      ,CONVERT(VARCHAR(10), Admin_Date, 101) as Admin_Date
+      ,DateApplied
+      ,DateEndedActual
+      ,DateEnded
+      ,Goal
+      ,ClinicalTrial
+      ,PerformanceStatus
+      ,WeightFormula
+      ,BSAFormula
+  FROM Order_Status
+  WHERE Patient_ID = '$PatientID'";
+
+
 
 $query = "SELECT 
-Performance_ID as ph_Performance_ID ,Patient_History.Weight as ph_Weight ,Treatment_ID as ndt_TreatmentID 
-,ndt.Patient_ID as ndt_Patient_ID ,ndt.Template_ID as ndt_Template_ID ,ndt.PAT_ID as ndt_PATID 
-,fspn.PAT_ID as fs_PATID ,ndt.Cycle as ndt_Cycle ,AdminDay as ndt_AdminDay ,ndt.AdminDate as ndt_AdminDate 
-,Type as ndt_Type ,Drug as ndt_Drug ,Dose as ndt_Dose ,Unit as ndt_Unit ,Route as ndt_Route 
-,StartTime as ndt_StartTime ,EndTime as ndt_EndTime ,Comments as ndt_Comments ,Treatment_User as ndt_TreatmentUser 
-,Treatment_Date as ndt_TreatmentDate ,Drug_OriginalValue as ndt_DrugOriginalValue 
-,Dose_OriginalValue as ndt_DoseOriginalValue ,Unit_OriginalValue as ndt_UnitOriginalValue 
-,Route_OriginalValue as ndt_RouteOriginalValue 
-FROM ND_Treatment ndt 
-CROSS JOIN Patient_History
- LEFT JOIN FlowSheet_ProviderNotes fspn ON fspn.PAT_ID = ndt.PAT_ID 
- AND ndt.Patient_ID = '$patientID'
-WHERE Patient_History.Weight IS NOT NULL
-AND Patient_History.Weight != ''";  
+      os.Order_Status
+      ,os.Drug_Name
+      ,os.Order_Type
+      ,os.Template_ID
+      ,os.Template_IDMT
+      ,os.Patient_ID
+      ,os.Order_ID
+      ,os.Drug_ID
+      ,os.Date_Modified
+      ,CONVERT(VARCHAR(10), os.Date_Entered, 101) as Date_Entered
+      ,os.Notes
+      ,os.FluidType
+      ,os.FluidVol
+      ,os.FlowRate
+      ,os.AdminDay
+      ,os.InfusionTime
+      ,os.AdminTime
+      ,os.Sequence
+      ,os.Amt
+      ,os.iAmt
+      ,os.Unit
+      ,os.Type
+      ,os.RegNum
+      ,os.RegDose
+      ,os.RegDoseUnit
+      ,os.RegDosePct
+      ,os.RegReason
+      ,os.PatientDose
+      ,os.PatientDoseUnit
+      ,os.Route
+      ,os.flvol
+      ,os.flunit
+      ,os.infusion
+      ,os.bsaDose
+      ,os.Reason
+      ,CONVERT(VARCHAR(10), os.Admin_Date, 101) as Admin_Date
+      ,os.DateApplied
+      ,os.DateStarted
+      ,os.DateEnded
+      ,os.DateEndedActual
+      ,os.Goal
+      ,os.ClinicalTrial
+      ,os.PerformanceStatus
+      ,os.WeightFormula
+      ,os.BSAFormula
+      ,ndt.Treatment_ID
+      ,ndt.Patient_ID
+      ,ndt.Template_ID
+      ,ndt.PAT_ID
+      ,ndt.Cycle
+      ,ndt.AdminDay
+      ,CONVERT(VARCHAR(10), ndt.AdminDate, 101) as AdminDate
+      ,ndt.Type
+      ,ndt.Drug
+      ,ndt.Dose
+      ,ndt.Unit
+      ,ndt.Route
+      ,substring(ndt.StartTime, 12, 30) as StartTime
+      ,substring(ndt.EndTime, 12, 30) as EndTime
+      ,ndt.Comments
+      ,ndt.Treatment_User
+      ,ndt.Treatment_Date
+      ,ndt.Drug_OriginalValue
+      ,ndt.Dose_OriginalValue
+      ,ndt.Unit_OriginalValue
+      ,ndt.Route_OriginalValue
+  FROM Order_Status os
+  join ND_Treatment ndt on ndt.AdminDate = os.Admin_Date and ndt.Patient_ID = os.Patient_ID and os.Drug_Name = ndt.Drug
+  where ndt.Patient_ID = '$PatientID' and os.Order_Status = 'Administered' or os.Order_Status = 'Hold' and os.Template_ID = '$TemplateID'";
 		
+
+// echo "======================================================<br>$query ================================================================<br><br><br>";
 		$result = $this->query($query);
-
-	$query2 = "SELECT TOP 1 Performance_ID as ph_Performance_ID
-		,Patient_History.Weight as ph_Weight,
-		Date_taken 
-		FROM Patient_History
-		Where Patient_ID = '$patientID'
-		AND Weight != ''";
-		
-		$result2 = $this->query($query2);
-
-		$query3 = "SELECT Template_ID
-  FROM Patient_Assigned_Templates
-  WHERE Patient_ID = '$patientID'";
-		
-		$tq = $this->query($query3);
-		
-		foreach($tq as $row){
-		$TemplateID = $row['Template_ID'];
-		
-		}
-		
-		$query4 = "SELECT MH_ID
-      ,Drug_ID
-      ,Template_ID
-      ,Pre_Or_Post
-      ,Description
-      ,Flow_Rate
-      ,Admin_Day
-      ,Infusion_Time
-      ,Sequence_Number
-      ,Fluid_Vol
-      ,Admin_Time
-      ,Order_ID
-      ,Status
-      ,Reason
-      ,Date_Entered
-  FROM Medication_Hydration
-  WHERE Template_ID = '$TemplateID'";
-		
-		$result3 = $this->query($query4);
-
-		$query5 = "SELECT Patient_Regimen_ID
-      ,Template_ID
-      ,Drug_ID
-      ,Regimen_Number
-      ,Regimen_Dose
-      ,Regimen_Dose_Unit_ID
-      ,Regimen_Dose_Pct
-      ,Regimen_Reason
-      ,Patient_Dose
-      ,Patient_Dose_Unit_ID
-      ,Route_ID
-      ,Admin_Day
-      ,Infusion_Time
-      ,Fl_Vol_Unit_ID
-      ,Fl_Vol_Description
-      ,Date_Created
-      ,Created_By
-      ,Date_Modified
-      ,Modified_By
-      ,Flow_Rate
-      ,Instructions
-      ,Fluid_Vol
-      ,Sequence_Number
-      ,Admin_Time
-      ,BSA_Dose
-      ,Fluid_Type
-      ,T_Type
-      ,Order_ID
-      ,Status
-      ,Reason
-      ,Date_Entered
-  FROM Template_Regimen
-  WHERE Template_ID = '$TemplateID'";
-		
-		$result4 = $this->query($query5);
-		$arr = array_merge ((array)$result,(array)$result2,(array)$result3,(array)$result4);
-        return ($arr);
+		//var_dump($result);
+		//$arr = array_merge ((array)$result,(array)$result2,(array)$result3);
+        return ($result);
     }
 }

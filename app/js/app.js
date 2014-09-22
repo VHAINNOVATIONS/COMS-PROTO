@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 591 & 1583
+ **** Controllers ~ 595 & 1595
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -183,6 +183,7 @@ Ext.URLs.TempLoc = "/LookUp/view/TempLoc";
 Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 
+
 Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
 Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
 Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
@@ -238,14 +239,14 @@ Ext.URLs.Orders = "/Orders/Orders";
 Ext.URLs.ReadND_Treatment = "/NursingDoc/Treatment"; // Param = PAT_ID to obtain all treatments for the current ID. Used mostly in Flowsheet
 Ext.URLs.ND_Treatment = "/Orders/Orders"; // This URI is called to obtain the initial Treatment Record from the Orders generated.
 Ext.URLs.AddND_Treatment = "/Orders/Orders";
-
-
-
 // Param = none
 // Returns all the orders for all patients for the next 3 days.
 // The ND_Treatment store has a filter to grab ONLY the orders for the current patient for the current day.
 // (see app\controller\NewPlan\CTOS\NursingDocs\TreatmentTab.js)
 
+
+
+Ext.URLs.ChangeAdminDate = "";
 
 Ext.URLs.FlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
 Ext.URLs.AddFlowSheetRecords = "/Flowsheet/FS2"; // "Flowsheet/Data";		// Used in Flowsheet Model
@@ -482,6 +483,7 @@ Ext.COMSModels.MHMed = "COMS.model.MHMed";
 Ext.COMSModels.PatientHistory = "COMS.model.PatientHistory";
 Ext.COMSModels.PatientInfo = "COMS.model.PatientInfo";
 Ext.COMSModels.PatientInfoMDWS = "COMS.model.PatientInfoMDWS";
+// Ext.COMSModels.PatientList = "COMS.model.PatientList";
 Ext.COMSModels.TemplateList = "COMS.model.TemplateList";
 Ext.COMSModels.TemperatureLocation = "COMS.model.TemperatureLocation";
 Ext.COMSModels.DeliveryMechanism = "COMS.model.DeliveryMechanism";
@@ -596,14 +598,16 @@ Ext.require([
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
-	// "COMS.controller.Common.selTemplateByStages",
 	"COMS.controller.Common.puWinSelCancer",
 	"COMS.controller.Common.puWinAddCumDose",
 	"COMS.controller.Common.puWinSelBSA",
 	"COMS.controller.Common.puWinSelAmputation",
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
+	"COMS.controller.Common.puWinChangeAdminDate",
+	"COMS.controller.Common.selCTOSTemplate",
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
+	"COMS.controller.TemplateList.puWinListPatients",
 
 	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.Authoring.DrugRegimen",
@@ -1604,6 +1608,8 @@ Ext.application({
 		, "Common.puWinSelCancer"
 		, "Common.puWinAddCumDose"
 		, "Common.puWinSelBSA"
+		, "Common.selCTOSTemplate"
+		, "Common.puWinChangeAdminDate"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
@@ -1612,6 +1618,7 @@ Ext.application({
 		, "Orders.OrdersTab"
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
+		, "TemplateList.puWinListPatients"
 		, "Authoring.DrugRegimen"
 		, "Authoring.Hydration"
 		, "Management.AdminTab"

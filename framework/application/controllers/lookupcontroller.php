@@ -162,7 +162,7 @@ class LookupController extends Controller {
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
-		while(null == $templatelookupid[0]["lookupid"]){
+        while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
             $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
@@ -191,7 +191,7 @@ class LookupController extends Controller {
          */
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
-		if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
+        if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
             $this->LookUp->rollbackTransaction();
             return;
         }
@@ -402,14 +402,77 @@ class LookupController extends Controller {
         }
     }
 
+    function getPatients4Template( $templateID = null ) {
+        $Patients = array();
+
+        $query = "select 
+    pat.Patient_ID,
+    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
+    CONVERT(VARCHAR(10), pat.Date_Ended, 101) as Est_End_Date,
+    mt.Template_ID,
+    p.First_Name,
+    p.Last_Name,
+    p.Match as SSID
+    from Patient_Assigned_Templates pat
+    join Master_Template mt on mt.Template_ID = pat.Template_ID
+    join Patient p on p.Patient_ID = pat.Patient_ID
+    where pat.Template_ID = '$templateID'
+    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
+
+    error_log("Patients4Template - $query");
+
+        $retVal = $this->LookUp->query($query);
+        if (null !== $retVal) {
+            foreach ($retVal as $Patient) {
+                $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
+                $Patients[] = $Patient;
+            }
+        }
+        return $Patients;
+    }
+
     // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
     // but it would be in the "FIELD" position, not the "ID"
+    // If field and id are NOT null then get Templates by either Cancer ID, Patient ID, Location ID
+    // e.g Service call can be one of the following:
+    //  LookUp/Templates/Cancer/CancerID
+    //  LookUp/Templates/Patient/PatientID
+    //  LookUp/Templates/Location/LocationID
     function Templates($field = NULL, $id = NULL) {
         if ($field == NULL && $id == NULL) {
-            $this->set('templates', $this->LookUp->getTemplates(null));
+            $TemplateList = $this->LookUp->getTemplates(null);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $TemplateID = $templateRecord['id'];
+                    $Patients = $this->getPatients4Template( $TemplateID );
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+
+
+            // $this->set('templates', $this->LookUp->getTemplates(null));
+            $this->set('templates', $Templates);
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
-            $this->set('templates', $this->LookUp->getTemplates($field));
+
+error_log("Get Patients for specific Template - $field");
+            $TemplateList = $this->LookUp->getTemplates($field);
+            if (null !== $TemplateList) {
+                $Templates = array();
+                foreach($TemplateList as $templateRecord) {
+                    $Patients = array();
+                    $TemplateID = $templateRecord['id'];
+                    $Patients = $this->getPatients4Template( $TemplateID );
+                    $templateRecord["Patients"] = $Patients;
+                    $templateRecord["PatientCount"] = count($Patients);
+                    $Templates[] = $templateRecord;
+                }
+            }
+            // $this->set('templates', $this->LookUp->getTemplates($field));
+            $this->set('templates', $Templates);
         } else {
             $retVal = $this->LookUp->getTemplatesByType($field, $id);
             if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
@@ -437,11 +500,95 @@ class LookupController extends Controller {
 		$this->TemplateData($templateId);
 	}
 
+    function EFNR($PAT_ID = NULL) {     // PAT_ID - link into Patient Assigned Templates;
+
+
+        $query = "Select Template_ID from Patient_Assigned_Templates WHERE PAT_ID = '$PAT_ID'";
+        $retVal = $this->LookUp->query($query);
+
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+error_log("Result - " . $this->varDumpToString($retVal));
+        $TemplateID = $retVal[0]["Template_ID"];
+
+
+        $Msg = "Emesis / Febrile Neutropenia Risk Detail Info";
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+
+        $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($TemplateID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+        $Regimen_ID = $retVal[0]["Regimen_ID"];
+        $retVal = $this->LookUp->getTopLevelTemplateDataById($TemplateID, $Regimen_ID);
+        if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+            $this->set('templatedata', null);
+            return;
+        }
+
+        $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
+        switch($EmoLevel[0]) {
+            case "Low":
+                $Label = "Emesis-1";
+                break;
+            case "Medium":
+                $Label = "Emesis-2";
+                break;
+            case "Moderate":
+                $Label = "Emesis-3";
+                break;
+            case "High":
+                $Label = "Emesis-4";
+                break;
+            case "Very High":
+                $Label = "Emesis-5";
+                break;
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $EmesisVal = $this->LookUp->query($query);
+        $retVal[0]["emoLevel"] = $EmoLevel[0];
+        $retVal[0]["emoDetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
+
+        $FNRisk = $retVal[0]["fnRisk"];
+
+        if ($FNRisk < 10) { // Low
+            $FNRLevel = "Low";
+            $Label = "Neutropenia-1";
+        }
+        else if ($FNRisk <= 20) {   // Intermediate
+            $FNRLevel = "Intermediate";
+            $Label = "Neutropenia-2";
+        }
+        else {  // High
+            $FNRLevel = "High";
+            $Label = "Neutropenia-3";
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $FNRVal = $this->LookUp->query($query);
+        $retVal[0]["fnrLevel"] = $FNRisk . "% (" . $FNRLevel . " Risk)";
+        $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
+
+        $this->set('frameworkErr', null);
+        $this->set('frameworkErrCodes', null);
+
+        if (count($retVal) > 0) {
+            unset($jsonRecord['msg']);
+            $jsonRecord['total'] = count($retVal);
+            $jsonRecord['records'] = $retVal;
+        }
+
+       $this->set('jsonRecord', $jsonRecord);
+    }
+
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
 
-		$retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
+            $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
@@ -491,6 +638,17 @@ class LookupController extends Controller {
             $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
 
             $this->set('templatedata', $retVal);
+
+
+
+
+
+
+
+
+
+
+
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
@@ -546,6 +704,10 @@ class LookupController extends Controller {
             $this->set('regimens', $retVal);
 
 
+
+
+
+
             $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
             if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
                 $CumulativeDoseMedsInRegimen = array();
@@ -561,6 +723,11 @@ class LookupController extends Controller {
                 }
                 $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
             }
+
+
+            $Patients = $this->getPatients4Template( $id );
+            $this->set("PatientList", $Patients);
+
 
         } else {
             $this->set('templatedata', null);

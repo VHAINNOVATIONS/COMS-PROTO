@@ -335,7 +335,10 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 
 
 	HandleChangeAdminDateButtons : function( event, element ) {
-		alert("Function not yet available");
+		var ChangeAdminDate = Ext.widget("puWinChangeAdminDate");
+		var AdminDate = element.getAttribute("admindate");
+		var thisCtl = this.getController("Common.puWinChangeAdminDate");
+		thisCtl.initializeCurAdminDate(AdminDate);
 	},
 
 
@@ -632,7 +635,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
                 if ("Pre" === type) {
                     DrugSection = record.PreTherapy;
                 }
-                else if ("Pos" === type) {
+                else if ("Pos" === type || "Post" === type) {
                     DrugSection = record.PostTherapy;
                 }
                 else {
@@ -683,7 +686,7 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
     if ("Pre" === type) {
         Type = "Pre";
     }
-    else if ("Pos" === type) {
+    else if ("Pos" === type || "Post" === type) {
         Type = "Post";
     }
     var URL = Ext.URLs.HoldCancel + "/" + TherapyID + "/" + Type + "/" + nStatus;
@@ -696,68 +699,43 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
 			var text = response.responseText;
 			var resp = Ext.JSON.decode( text );
 			if (resp.success) {
-
-
-
-                Ext.Ajax.request({
-                    scope : this,
-                    url: URL2,
-                    method: "PUT",
-                    success: function( response, opts ){
-                        this.application.unMask();
-                        var text = response.responseText;
-                        var resp = Ext.JSON.decode( text );
-                        if (resp.success) {
-                            /* Update on screen display */
-                            var btnID, btnStatus, aBtn, PostBtnID = type + "_" + record.Cycle + "_" + record.Day + "_" + medIdx;
-                            if ("Hold" === nStatus) {
-                                btnStatus = "Release from Hold";
-                                btnID = "Hold_" + PostBtnID;
-                                aBtn = Ext.select("#" + btnID);
-                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
-                                }
-                            }
-                            else if ("Cancel" === nStatus) {
-                                btnStatus = "";
-                                btnID = "Edit_" + PostBtnID;
-                                aBtn = Ext.select("#" + btnID);
-                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
-                                }
-                                btnID = "Hold_" + PostBtnID;
-                                aBtn = Ext.select("#" + btnID);
-                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
-                                }
-                                btnID = "Cancel_" + PostBtnID;
-                                aBtn = Ext.select("#" + btnID);
-                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
-                                }
-                            }
-                            else {
-                                btnStatus = "Hold";
-                                btnID = "Hold_" + PostBtnID;
-                                aBtn = Ext.select("#" + btnID);
-                                if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
-                                    aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
-                                }
-                            }
-
-                        }
-                        else {
-                            alert("load EoTS - Error");
-                        }
-                    },
-                    failure : function( response, opts ) {
-                        this.application.unMask();
-                        alert("EoTS Data Load Failed...");
-                    }
-                });
-			}
-			else {
-				alert("load EoTS - Error");
+				this.application.unMask();
+				/* Update on screen display */
+				var btnID, btnStatus, aBtn, PostBtnID = type + "_" + record.Cycle + "_" + record.Day + "_" + medIdx;
+				if ("Hold" === nStatus) {
+					btnStatus = "Release from Hold";
+					btnID = "Hold_" + PostBtnID;
+					aBtn = Ext.select("#" + btnID);
+					if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+						aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+					}
+				}
+				else if ("Cancel" === nStatus) {
+					btnStatus = "";
+					btnID = "Edit_" + PostBtnID;
+					aBtn = Ext.select("#" + btnID);
+					if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+						aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+					}
+					btnID = "Hold_" + PostBtnID;
+					aBtn = Ext.select("#" + btnID);
+					if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+						aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+					}
+					btnID = "Cancel_" + PostBtnID;
+					aBtn = Ext.select("#" + btnID);
+					if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+						aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+					}
+				}
+				else {
+					btnStatus = "Hold";
+					btnID = "Hold_" + PostBtnID;
+					aBtn = Ext.select("#" + btnID);
+					if (aBtn && aBtn.elements && aBtn.elements[0] && aBtn.elements[0].childNodes) {
+						aBtn.elements[0].childNodes[0].nodeValue = btnStatus;
+					}
+				}
 			}
 		},
 		failure : function( response, opts ) {
@@ -765,6 +743,7 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
 			alert("EoTS Data Load Failed...");
 		}
 	});
+
 },
 
 
@@ -810,7 +789,7 @@ handleOEM_RecordMedHold : function( event, element) {
             if ("Pre" === type) {
                 DrugSection = record.PreTherapy;
             }
-            else if ("Pos" === type) {
+            else if ("Post" === type || "Pos" === type) {
                 DrugSection = record.PostTherapy;
             }
             else {

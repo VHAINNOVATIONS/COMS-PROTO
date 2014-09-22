@@ -10,7 +10,7 @@ Ext.define('COMS.view.Common.Search4Template' ,{
 			margin: '5 0 0 0', 
 			width: 500, 
 			size : 50, 
-			labelWidth: 150, 
+			labelWidth: 160, 
 			fieldLabel: 'Search', 
 			labelAlign: 'right' 
 		},

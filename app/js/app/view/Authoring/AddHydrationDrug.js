@@ -69,27 +69,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							valueField: 'name'
 						}]
 					},
-					{
-						xtype: 'container',
-						layout: 'hbox',
-						defaults: {
-							labelAlign: 'right',
-							margin: '0 5 5 0'
-						},
-						items: [{
-							xtype: 'selSequence'
-						}, {
-							xtype: 'textfield',
-							//maskRe: /[0-9\.]/,
-							maskRe: /^[-,0-9 ]+$/,
-							name: 'Day',
-							fieldLabel: 'Administration Day(s) <em>*</em>',
-							width: 270,
-							labelWidth: 150,
-							allowBlank: false,
-							margin: '0 5 5 0'
-						}]
-					},
+
 					{
 						'xtype' : 'container',
 						'layout' : 'hbox',
@@ -97,13 +77,15 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'labelAlign' : 'right',
 							'margin' : '5 5 5 0'
 						},
-						'items' : [{
+						'items' : [
+						{
 							'xtype' : 'container',
 							'width' : 10,
 							'name' : 'dosespacer',
 							'html' : "<span style='margin-left: 15px; font-weight: bold;'>&nbsp;</span>",
 							'hidden' : false
-						}, {
+						}, 
+						{
 							'xtype' : 'textfield',
 							'fieldLabel' : 'Administration Time',
 							'width' : 220,
@@ -111,15 +93,17 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'labelWidth' : 130,
 							// 'allowBlank' : false,
 							'name' : 'AdminTime'
-						}, {
+						}, 
+						{
 							'xtype' : 'textfield',
 							'maskRe' : /[0-9\.]/,
 							'fieldLabel' : 'Dosage Amount <em>*</em>',
 							'width' : 180,
-							'labelWidth' : 100,
+							'labelWidth' : 120,
 							'allowBlank' : false,
 							'name' : 'Amt1'
-						}, {
+						}, 
+						{
 							'xtype' : 'combo',
 							'fieldLabel' : 'Units <em>*</em>',
 							'width' : 150,
@@ -129,7 +113,8 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'valueField' : 'name',
 							'allowBlank' : false,
 							'name' : 'Units1'
-						}, {
+						}, 
+						{
 							'xtype' : 'combo',
 							'fieldLabel' : 'Route <em>*</em>',
 							'width' : 180,
@@ -139,7 +124,8 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'valueField' : 'name' ,
 							'allowBlank' : false,
 							'name' : 'Infusion1'
-						}]
+						}
+						]
 					},
 					{
 						xtype: 'container',
@@ -204,7 +190,29 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							}
 						]
 					},
-
+					{
+						xtype: 'container',
+						layout: 'hbox',
+						defaults: {
+							labelAlign: 'right',
+							margin: '0 5 5 0'
+						},
+						items: [
+						{
+							xtype: 'textfield',
+							maskRe: /^[-,0-9 ]+$/,
+							name: 'Day',
+							fieldLabel: 'Administration Day(s) <em>*</em>',
+							width: 270,
+							labelWidth: 150,
+							allowBlank: false,
+							margin: '0 5 5 0'
+						},
+						{
+							xtype: 'selSequence'
+						}
+						]
+					},
 					{
 						xtype: 'textfield',
 						labelAlign: 'right',

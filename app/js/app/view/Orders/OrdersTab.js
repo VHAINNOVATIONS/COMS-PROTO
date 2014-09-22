@@ -52,6 +52,9 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		forceFit: true
 	},
 	store: "OrdersStore", // Since this is now a Grid, we need to get the name of our store
+	features: [{
+		ftype: "grouping", startCollapsed : true
+	}],
 
 	plugins: [
 		Ext.create("Ext.grid.plugin.CellEditing", {
@@ -62,12 +65,13 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	selType: "cellmodel",
 
 	columns: [{
-		header: "<div>Name</div>",
+		header: "Name",
 		dataIndex: "Last_Name",
 		// width: 180,
 		flex: 3,
 		sortable: true,
-		align: "left"
+		align: "left",
+		hidden: true
 	}, {
 		header: "<div>Patient</div>",
 		dataIndex: "patientID",

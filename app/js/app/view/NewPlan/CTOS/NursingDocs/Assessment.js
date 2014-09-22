@@ -322,7 +322,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PretreatmentAssesment" ,{
 			xtype : "NursingDocs_RATextarea", hidden : true,
 			name : "ND_Ass_OtherComments",
 			fieldLabel : " Comments"
-		}
+		},
+
+		{ xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-boxLabel", inputValue : true, name : "ND_Ass_None", boxLabel : "No Adverse Reaction since Last Treatment" },
+		{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
 	]
 });
 
@@ -334,7 +337,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PretreatmentAssesment" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Assessment" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_Assessment",
 	name : "Nursing Documentation Assessment Tab",
 	title: "Assessment",
@@ -342,8 +345,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Assessment" ,{
 		{ xtype : "fieldset",
 			padding : "10",
 			items : [
-				{ xtype : "NursingDocs_PretreatmentAssesment"},
-				{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
+				{ xtype : "NursingDocs_PretreatmentAssesment"}
 			]
 		}
 	]

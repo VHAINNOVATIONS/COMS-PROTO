@@ -220,10 +220,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 						this.puWinCancer.show();
 						break;
 					case "anchor AddCumulativeMedication" :
-						if (!this.puWinCumDose) {
-							this.puWinCumDose = Ext.widget("puWinAddCumDose");
-						}
-						this.puWinCumDose.show();
+						this.puWinCumDose = Ext.widget("puWinAddCumDose");
 						break;
 				}
 			},

@@ -626,7 +626,7 @@ abbr {
 /* We use buttons which look like anchors, in place of anchor tags, to perform actions (like opening a window) */
 /* Using an anchor to perform an action is not compliant w/ HTML Specs and requires extra effort to prevent scrolling to the top of the page */
 /* A button is the proper way to perform actions but sometimes we want buttons to look like links */
-button.anchor, .anchor button {
+button.anchor, .anchor button, .textAnchor {
 	background : none;
 	border : 0 none;
 	color: blue;
@@ -802,3 +802,9 @@ table.FlowsheetTable {
 .TCDWarning td {
 	text-align: right;
 }
+
+.em {
+	font-style : italic;
+	font-weight: bold;
+}
+	

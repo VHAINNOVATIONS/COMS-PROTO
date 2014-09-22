@@ -50,7 +50,7 @@
             return false;
         }
         
-        function getGeneralInfo( $PAT_ID ) {
+        function getGeneralInfo( $PAT_ID, $TableName = null ) {
             if ( $PAT_ID ) {
                 /* Get Specific Info */
                 $query = "select
@@ -118,11 +118,11 @@
             // Retrieve Data if Request is a PUT
             parse_str( file_get_contents( "php://input" ), $requestData );
             if ( !empty( $requestData ) ) {
-                error_log( "Optional Data - via INPUT - " . $this->varDumpToString( $requestData ) );
+                // error_log( "Optional Data - via INPUT - " . $this->varDumpToString( $requestData ) );
             } else if ( !empty( $_POST ) ) {
                 // Retrieve Data if Request is a POST
-                error_log( "No INPUT Data Received, Checking POST" );
-                error_log( "Optional Data - via POST - " . $this->varDumpToString( $_POST ) ); // This works...
+                // error_log( "No INPUT Data Received, Checking POST" );
+                // error_log( "Optional Data - via POST - " . $this->varDumpToString( $_POST ) ); // This works...
                 $requestData = $_POST;
             }
             
@@ -137,7 +137,7 @@
             
             $this->Flowsheet->beginTransaction();
             if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-                $records = $this->getGeneralInfo( $PAT_ID );
+                $records = $this->getGeneralInfo( $PAT_ID, $TableName );
                 
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving $Msg Records";
@@ -154,16 +154,16 @@
                        VALUES
                        ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
                     }
-                    error_log( "POST Request - $query" );
+                    // error_log( "POST Request - $query" );
                     
                     $jsonRecord[ 'msg' ] = "$Msg Record Created";
                     $ErrMsg              = "Creating $Msg Record";
                     $records             = $this->Flowsheet->query( $query );
                 }
             } else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-                error_log( "PUT Request - NYA" );
+                // error_log( "PUT Request - NYA" );
             } else if ( "DELETE" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-                error_log( "DELETE Request - NYA" );
+                // error_log( "DELETE Request - NYA" );
             }
             
             
@@ -188,7 +188,7 @@
         
         
         public function Optional2( $PAT_ID = null ) {
-            error_log( "Optional Entry Point" );
+            // error_log( "Optional Entry Point" );
             $Msg       = "Flowsheet Optional Information";
             $TableName = "Flowsheet_ProviderNotes";
             
@@ -201,278 +201,263 @@
         
         
         
-        
-        /**
-         * 
-         * @param String $id
-         * @return null
-         */
-        public function FS( $id = null ) {
-            $jsonRecord              = array( );
-            $jsonRecord[ 'success' ] = true;
-            $retVal                  = array( );
-            $this->set( 'jsonRecord', array(
-                 'success' => true,
-                'total' => count( $retVal ),
-                'records' => $retVal 
-            ) );
-        }
-        
-        
-        
-        
-        
-        
-        /**
-         * 
-         * 
-         *
-         *          *
-         *
-         * @param string    $id the ID of the Patient
-         * @param string    $PAT_ID the ID for a specific record in the Patient Assigned Templates table which uniquely identifies the a specific template/Treatment Regimen process for a specific patient 
-         * @param array     $PreT - Array of Pre Therapy medications Administered in this Treatment Regimen
-         * @param array     $Therapy - Array of Therapy medications
-         * @param array     $PostT - Array of Post Therapy 
-         *
-         * @return          Nothing, return data is placed into the following global variables
-         *                  jsonRecord      - Data to be returned by the service call
-         *                  FS_OrderRecords - 
-         *                  frameworkErr    - Framework error information
-         *
-         * @access public
-         * @static
-         *
-         **/
-        public function FSDataConvert( $id = null, $PAT_ID = null, $PreT, $Therapy, $PostT ) {
-            error_log("FSDataConvert function ENTRY POINT");
-
-            $MicroTime_ST = microtime(true);
-            error_log("Get all General Information Records for Flow Sheet - (Timestamp in MS = $MicroTime_ST)");
-
-            $GeneralInfoRecords = $this->getGeneralInfo( $PAT_ID );
-            $GIRDates           = array( );
-            foreach ( $GeneralInfoRecords as $giRec ) {
-                $GIRDates += array( $giRec[ "AdminDate" ] => $giRec );
-            }
-
-            $MicroTime_END = microtime(true);
-            $TimeDiff = $MicroTime_END - $MicroTime_ST;
-            error_log("GOT all General Information Records for Flow Sheet - (" . count ( $GIRDates ) . " records) - (Timestamp in MS = $MicroTime_END (Diff = $TimeDiff))");
-
-
-
-            $MicroTime_ST2 = microtime(true);
-            error_log("Get all OEM Data Records to calculate Admin Days - (Timestamp in MS = $MicroTime_ST2)");
-
-            $ControllerClass = "PatientController";
-            $model           = "Patient";
-            $controller      = "patient";
-            $action          = null;
-            
-            $pc = new $ControllerClass( $model, $controller, $action );
-            $pc->OEM( $id );
-            $OEMData = $pc->get( 'jsonRecord' );
-
-            $Status     = $OEMData[ "success" ];
-            $oemRecords = $OEMData[ "records" ][ 0 ][ "OEMRecords" ];
-
-            $MicroTime_END = microtime(true);
-            $TimeDiff = $MicroTime_END - $MicroTime_ST2;
-            error_log("GOT all OEM Data Records to calculate Admin Days - (" . count ( $oemRecords ) . " records, which is the # of Admin Days in this Treatment Regimen) - (Timestamp in MS = $MicroTime_END (Diff = $TimeDiff))");
-
-
-
-
-            $PreTherapy  = array( );
-            $Therapy     = array( );
-            $PostTherapy = array( );
-            
-            $DateRow = array( );
-            $DateRow += array("-" => "01 General" );
-            $DateRow += array("label" => "Date" );
-            
-            $PSRow = array( );
-            $PSRow += array("-" => "01 General" );
-            $PSRow += array("label" => "Performance Status" );
-            
-            $DRRow = array( );
-            $DRRow += array("-" => "01 General" );
-            $DRRow += array("label" => "Disease Response" );
-            
-            $ToxicityRow = array( );
-            $ToxicityRow += array("-" => "01 General" );
-            $ToxicityRow += array("label" => "Toxicity");
-            
-            $OtherRow = array( );
-            $OtherRow += array("-" => "01 General" );
-            $OtherRow += array("label" => "Other" );
-            
-            
-            foreach ( $oemRecords as $aRecord ) {
-                // error_log("Flow Sheet All Records - " . $this->varDumpToString($aRecord));
-                
-                $Cycle         = $aRecord[ "Cycle" ];
-                $Day           = $aRecord[ "Day" ];
-                $AdminDate     = $aRecord[ "AdminDate" ];
-                $CycleColLabel = "Cycle $Cycle, Day $Day";
-                $DateRow += array(
-                     $CycleColLabel => $AdminDate 
-                );
-                
-                // error_log("AdminDate - $AdminDate");
-                
-                if ( array_key_exists( $AdminDate, $GIRDates ) ) {
-                    $giRec = $GIRDates[ $AdminDate ];
-                    // error_log("GIRec - " . $this->varDumpToString($giRec));
-                    
-                    if ( $giRec[ "Disease_Response" ] == "" ) {
-                        $DRRow += array(
-                             $CycleColLabel => "" 
-                        );
-                    } else {
-                        $DRRow += array(
-                             $CycleColLabel => "<a href=\"#\" recid=\"DRPanel-$AdminDate-\">View</a>" 
-                        );
-                    }
-                    
-                    if ( $giRec[ "ToxicityLU_ID" ] == "" ) {
-                        $ToxicityRow += array(
-                             $CycleColLabel => "" 
-                        );
-                    } else {
-                        $ToxicityRow += array(
-                             $CycleColLabel => "<a href=\"#\" recid=\"ToxPanelPanel-$AdminDate-\">View</a>" 
-                        );
-                    }
-                    
-                    if ( $giRec[ "Other" ] == "" ) {
-                        $OtherRow += array(
-                             $CycleColLabel => "" 
-                        );
-                    } else {
-                        $OtherRow += array(
-                             $CycleColLabel => "<a href=\"#\" recid=\"OIPanel-$AdminDate-\">View</a>" 
-                        );
-                    }
-                }
-                $PSRow += array(
+        public function getNewDRRowCol( $DRRow, $giRec, $CycleColLabel, $AdminDate ) {
+            if ( $giRec[ "Disease_Response" ] == "" ) {
+                $DRRow += array(
                      $CycleColLabel => "" 
                 );
-                
-                
-                
-                
-                
-                $PreMeds = $aRecord[ "PreTherapy" ];
-                foreach ( $PreMeds as $Med ) {
-                    $MedName = $Med[ "Med" ];
-                    $Key     = "$AdminDate-$MedName";
-                    if ( !isset( $PreTherapy[ $MedName ] ) ) {
-                        $PreTherapy[ $MedName ] = array( );
-                        $PreTherapy[ $MedName ] += array(
-                             "-" => "02 Pre Therapy" 
-                        );
-                        $PreTherapy[ $MedName ] += array(
-                             "label" => $MedName 
-                        );
-                    }
-                    $MedData = "";
-                    if ( array_key_exists( $Key, $PreT ) ) {
-                        $aTempRec = $PreT[ $Key ];
-                        $MedData  = $aTempRec[ "Dose" ] . " " . $aTempRec[ "Unit" ] . " " . $aTempRec[ "Route" ] . "<br>From " . $aTempRec[ "Start" ] . "<br>to " . $aTempRec[ "End" ];
-                    }
-                    // error_log("Pre Therapy - $Key - $MedData");
-                    $PreTherapy[ $MedName ] += array(
-                         $CycleColLabel => $MedData 
-                    );
-                }
-                
-                $Meds = $aRecord[ "Therapy" ];
-                foreach ( $Meds as $Med ) {
-                    $MedName = $Med[ "Med" ];
-                    $Key     = "$AdminDate-$MedName";
-                    if ( !isset( $Therapy[ $MedName ] ) ) {
-                        $Therapy[ $MedName ] = array( );
-                        $Therapy[ $MedName ] += array(
-                             "-" => "03 Therapy" 
-                        );
-                        $Therapy[ $MedName ] += array(
-                             "label" => $MedName 
-                        );
-                    }
-                    $MedData = "";
-                    if ( array_key_exists( $Key, $Therapy ) ) {
-                        $aTempRec = $Therapy[ $Key ];
-                        // error_log( "Therapy Check - " . count( $aTempRec ) );
-                        if ( count( $aTempRec ) > 1 ) {
-                            $aTempRec = $aTempRec[ 0 ];
-                        }
-                        $MedData = $aTempRec[ "Dose" ] . " " . $aTempRec[ "Unit" ] . " " . $aTempRec[ "Route" ] . "<br>From " . $aTempRec[ "Start" ] . "<br>to " . $aTempRec[ "End" ];
-                        // error_log( "Therapy - ($Key) - ($MedData)" );
-                    } else {
-                        // error_log( "No Matching Record in Therapy for $Key" );
-                    }
-                    
-                    $Therapy[ $MedName ] += array(
-                         $CycleColLabel => $MedData 
-                    );
-                }
-                
-                $PostMeds = $aRecord[ "PostTherapy" ];
-                foreach ( $PostMeds as $Med ) {
-                    $MedName = $Med[ "Med" ];
-                    $Key     = "$AdminDate-$MedName";
-                    if ( !isset( $PostTherapy[ $MedName ] ) ) {
-                        $PostTherapy[ $MedName ] = array( );
-                        $PostTherapy[ $MedName ] += array(
-                             "-" => "04 Post Therapy" 
-                        );
-                        $PostTherapy[ $MedName ] += array(
-                             "label" => $MedName 
-                        );
-                    }
-                    $MedData = "";
-                    if ( array_key_exists( $Key, $PostT ) ) {
-                        $aTempRec = $PostT[ $Key ];
-                        $MedData  = $aTempRec[ "Dose" ] . " " . $aTempRec[ "Unit" ] . " " . $aTempRec[ "Route" ] . "<br>From " . $aTempRec[ "Start" ] . "<br>to " . $aTempRec[ "End" ];
-                    }
-                    // error_log("Post Therapy - $Key - $MedData");
-                    $PostTherapy[ $MedName ] += array(
-                         $CycleColLabel => $MedData 
-                    );
-                }
+            } else {
+                $DRRow += array(
+                     $CycleColLabel => "<a href='#' recid='DRPanel-$AdminDate-'>View" 
+                );
             }
-            
-            
-            $records    = array( );
-            $records[ ] = $DateRow;
-            $records[ ] = $PSRow;
-            $records[ ] = $DRRow;
-            $records[ ] = $ToxicityRow;
-            $records[ ] = $OtherRow;
-            
-            foreach ( $PreTherapy as $Med ) {
-                $records[ ] = $Med;
-            }
-            
-            foreach ( $Therapy as $Med ) {
-                $records[ ] = $Med;
-            }
-            
-            foreach ( $PostTherapy as $Med ) {
-                $records[ ] = $Med;
-            }
-            
-            //error_log("Flow Sheet Data - " . $this->varDumpToString($records));
-            
-            
-            
-            
-            
-            $this->set( 'jsonRecord', array( 'success' => true, 'total' => count( $records ), 'records' => $records ) );
+            return $DRRow;
         }
         
+        public function getNewToxicityRowCol( $ToxicityRow, $giRec, $CycleColLabel, $AdminDate ) {
+            if ( $giRec[ "Toxicity" ] == "" ) {
+                $ToxicityRow += array(
+                     $CycleColLabel => "" 
+                );
+            } else {
+                $ToxicityRow += array(
+                     $CycleColLabel => "<a href='#' recid='ToxPanelPanel-$AdminDate-'>View" 
+                );
+            }
+            return $ToxicityRow;
+        }
+        
+        public function getNewOtherRowCol( $OtherRow, $giRec, $CycleColLabel, $AdminDate ) {
+            if ( $giRec[ "Other" ] == "" ) {
+                $OtherRow += array(
+                     $CycleColLabel => "" 
+                );
+            } else {
+                $OtherRow += array(
+                     $CycleColLabel => "<a href='#' recid='OIPanel-$AdminDate-'>View" 
+                );
+            }
+            return $OtherRow;
+        }
+        
+        
+        /*********
+        public function getNewPerformanceStatusRowCol ($CycleColLabel, $AdminDate) {
+        return array($CycleColLabel => "" );
+        }
+        
+        public function HaveMedInfo4AdminDate ($Key, $MedArray) {
+        return array_key_exists( $Key, $MedArray );
+        }
+        
+        
+        public function getTreatmentInfo($AdminDate, $Patient_ID, $Drug) {
+        $query = "select * from ND_Treatment where AdminDate = '$AdminDate' and Patient_ID = '$Patient_ID' and Drug = '$Drug'";
+        return $this->Flowsheet->query( $query );
+        }
+        *******************/
+        
+        
+        
+        
+        
+        private function getListOfAdminDatesFromDB( $TemplateID, $PatientID ) {
+            $query = "SELECT 
+      mt.Course_Number
+      ,mt.Admin_Day
+      ,CONVERT(VARCHAR(10), Admin_Date, 101) as Admin_Date
+  FROM Master_Template mt 
+  where mt.Patient_ID = '$PatientID'
+  order by Course_Number, Admin_Day";
+            return $this->Flowsheet->query( $query );
+        }
+        
+        private function getOptionalInfoFromDB( $PAT_ID ) {
+            $query = "SELECT 
+        Weight
+        ,Disease_Response
+        ,Toxicity
+        ,Other
+        ,PAT_ID
+        ,AdminDate
+        FROM Flowsheet_ProviderNotes
+        where PAT_ID = '$PAT_ID'";
+            return $this->Flowsheet->query( $query );
+        }
+        
+        
+        
+        
+        
+        private function getMedRowsInfoFromDB( $TemplateID, $PatientID ) {
+            $query = "SELECT distinct os.Drug_Name,os.Order_Type, os.Sequence
+    FROM Order_Status os
+    where os.Template_ID = '$TemplateID' and os.Patient_ID = '$PatientID'
+    order by Order_Type, os.Sequence";
+            return $this->Flowsheet->query( $query );
+        }
+        
+        private function getTemplateIDFromDB( $PAT_ID ) {
+            $query = "select Template_ID, Patient_ID 
+    from Patient_Assigned_Templates where PAT_ID = '$PAT_ID'";
+            return $this->Flowsheet->query( $query );
+        }
+        
+        private function BuildDateRow( $AdminDateList, &$DRRow, &$PS_Row, &$ToxRow, &$OtherRow, $PAT_ID ) {
+            $GeneralInfoRecords = $this->getOptionalInfoFromDB( $PAT_ID );
+            $DateRow            = array( );
+            $DateRow += array(
+                 "-" => "01 General" 
+            );
+            $DateRow += array(
+                 "label" => "Date" 
+            );
+            
+            $PS_Row += array(
+                 "-" => "01 General" 
+            );
+            $PS_Row += array(
+                 "label" => "Performance Status" 
+            );
+            
+            $DRRow += array(
+                 "-" => "01 General" 
+            );
+            $DRRow += array(
+                 "label" => "Disease Response" 
+            );
+            
+            $ToxRow += array(
+                 "-" => "01 General" 
+            );
+            $ToxRow += array(
+                 "label" => "Toxicity" 
+            );
+            
+            $OtherRow += array(
+                 "-" => "01 General" 
+            );
+            $OtherRow += array(
+                 "label" => "Other" 
+            );
+            
+            foreach ( $AdminDateList as $AnAdminDay ) {
+                $AdminDate = $AnAdminDay[ "Admin_Date" ];
+                $xx        = "Cycle " . $AnAdminDay[ "Course_Number" ] . ", Day " . $AnAdminDay[ "Admin_Day" ];
+                $DateRow += array(
+                     $xx => $AdminDate 
+                );
+                $HaveGIRec = false;
+                foreach ( $GeneralInfoRecords as $GIR ) {
+                    if ( $GIR[ "AdminDate" ] === $AdminDate ) {
+                        $HaveGIRec = true;
+                        $PS_Row += array(
+                             $xx => "" 
+                        );
+                        $DRRow    = $this->getNewDRRowCol( $DRRow, $GIR, $xx, $AdminDate );
+                        $ToxRow   = $this->getNewToxicityRowCol( $ToxRow, $GIR, $xx, $AdminDate );
+                        $OtherRow = $this->getNewOtherRowCol( $OtherRow, $GIR, $xx, $AdminDate );
+                        break;
+                    }
+                }
+                if ( !$HaveGIRec ) {
+                    $PS_Row += array(
+                         $xx => "" 
+                    );
+                    $DRRow += array(
+                         $xx => "" 
+                    );
+                    $ToxRow += array(
+                         $xx => "" 
+                    );
+                    $OtherRow += array(
+                         $xx => "" 
+                    );
+                }
+            }
+            return $DateRow;
+        }
+        
+        
+        public function getOrders4AdminDate( $PatientID, $AdminDate ) {
+            $query  = "select 
+    Order_Status, 
+    Drug_Name 
+    from Order_Status os where os.Patient_ID = '$PatientID' and os.Admin_Date = '$AdminDate'";
+            $retVal = $this->Flowsheet->query( $query );
+            return $retVal;
+        }
+        
+        public function getAdminDetails4AdminDate( $PAT_ID, $AdminDate, $DrugName ) {
+            $query  = "SELECT ndt.Dose, ndt.Unit, ndt.StartTime, ndt.EndTime
+    FROM ND_Treatment ndt 
+    where ndt.PAT_ID = '$PAT_ID' and ndt.AdminDate = '$AdminDate' and ndt.Drug = '$DrugName'";
+            $retVal = $this->Flowsheet->query( $query );
+            return $retVal;
+        }
+        
+        private function Add_AdminDays2MedRows( $AdminDateList, $AdminRecords, $DrugName, $PatientID, $PAT_ID ) {
+            $Temp = array( );
+            foreach ( $AdminDateList as $AnAdminDay ) {
+                $AdminDate = $AnAdminDay[ "Admin_Date" ];
+                $xx        = "Cycle " . $AnAdminDay[ "Course_Number" ] . ", Day " . $AnAdminDay[ "Admin_Day" ];
+                $Orders    = $this->getOrders4AdminDate( $PatientID, $AdminDate );
+                foreach ( $Orders as $anOrder ) {
+                    if ( $DrugName == $anOrder[ "Drug_Name" ] ) {
+                        $OrderStatus = $anOrder[ "Order_Status" ];
+                        $nArray      = array(
+                             $xx => "" 
+                        );
+                        if ( "Administered" == $OrderStatus ) {
+                            $AdminRec = $this->getAdminDetails4AdminDate( $PAT_ID, $AdminDate, $DrugName );
+                            if ( count( $AdminRec ) > 0 ) {
+                                $AdminRec = $AdminRec[ 0 ];
+                                $nArray   = array(
+                                     $xx => number_format( floatval( $AdminRec[ "Dose" ] ) ) . " " . $AdminRec[ "Unit" ] . " ( " . $AdminRec[ "StartTime" ] . " - " . $AdminRec[ "EndTime" ] . " )" 
+                                );
+                            }
+                        } else if ( "Hold" == $OrderStatus || "Cancelled" == $OrderStatus ) {
+                            $nArray = array(
+                                 $xx => $OrderStatus 
+                            );
+                        }
+                        $Temp += $nArray;
+                        break;
+                    }
+                }
+            }
+            $AdminRecords[ $DrugName ] += $Temp;
+            return $AdminRecords;
+        }
+        
+        
+        public function GenRowStart4Med( $NewMedRec, $RowLabel, $MedName, $Sequence ) {
+            if ( $Sequence == "" ) {
+                $Sequence = "N/A";
+            }
+            $NewMedRec[ $MedName ] = array( );
+            $NewMedRec[ $MedName ] += array(
+                 "-" => $RowLabel 
+            );
+            $NewMedRec[ $MedName ] += array(
+                 "label" => $Sequence . " - " . $MedName 
+            );
+            return $NewMedRec;
+        }
+        
+        public function DateIsPastOrToday( $aDate ) {
+            $Today     = date_create( 'today' );
+            $datetime2 = new DateTime( $aDate );
+            $interval  = $Today->diff( $datetime2 );
+            if ( 0 === $interval->days ) {
+                return true; // It's today
+            } else {
+                if ( 0 !== $interval->invert ) {
+                    return true; // It's in the past
+                }
+            }
+            return false; // It's in the future
+        }
         
         /**
          * An idempotent service call which generates all the Flow Sheet Information and returns it in the form of an Ext-JS Grid Data Store
@@ -494,116 +479,73 @@
          *
          **/
         public function FS2( $id = null, $PAT_ID = null ) {
-            
-            error_log( "FS-II Entry Point - " . microtime(true));
-            
             $jsonRecord              = array( );
-            $jsonRecord[ 'success' ] = true;
+            $jsonRecord[ 'success' ] = false;
             $retVal                  = array( );
-
+            
             if ( "GET" != $_SERVER[ 'REQUEST_METHOD' ] ) {
-                $jsonRecord['success'] = false;
-                $jsonRecord['msg'] = "Incorrect method called for Flow Sheet Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'] . ")";
-                $this->set('jsonRecord', $jsonRecord);
+                $jsonRecord[ 'success' ] = false;
+                $jsonRecord[ 'msg' ]     = "Incorrect method called for Flow Sheet Service (expected a GET got a " . $_SERVER[ 'REQUEST_METHOD' ] . ")";
+                $this->set( 'jsonRecord', $jsonRecord );
                 return;
             }
+            $retVal     = $this->getTemplateIDFromDB( $PAT_ID );
+            $TemplateID = $retVal[ 0 ][ "Template_ID" ];
+            $PatientID  = $id;
             
+            $retVal        = $this->getListOfAdminDatesFromDB( $TemplateID, $PatientID, $PAT_ID );
+            $AdminDateList = $retVal;
             
-            /**
-             * Sean's original service call to get all the Flow Sheet Data. This only returns records for Admin Days that have information in them (e.g. PAST Admin Dates)
-             **/
-            $MicroTime_ST = microtime(true);
-            error_log("Get Flow Sheet Data for all previous Administration Dates where a med has been administered - (Timestamp in MS = $MicroTime_ST)");
-            $records = $this->Flowsheet->FS( $id );
-            if ( empty( $records ) ) {
-                $records[ 'error' ] = 'No Records Found';
-            } else {
-                error_log( "FS GOT RECORDS - " );
-            }
-            if ( $this->_checkForErrors( 'Get Flowsheet Failed. ', $records ) ) {
-                $this->set( 'jsonRecord', array(
-                     'success' => false,
-                    'msg' => $this->get( 'frameworkErr' ) . $records[ 'error' ] 
-                ) );
-                return;
-            }
-            $MicroTime_END = microtime(true);
-            $TimeDiff = $MicroTime_END - $MicroTime_ST;
-            error_log("GOT all previous Admin Date Info (" . count ( $records ) . " records) - (Timestamp in MS = $MicroTime_END (Diff = $TimeDiff))");
-
-            /**
-             * Initialize arrays for three of the classes of records we should be returning 
-             * (General Information Category Data is handled differently)
-             **/
-
+            $PS_Row   = array( );
+            $ToxRow   = array( );
+            $OtherRow = array( );
+            $DRRow    = array( );
+            
+            $DateRow             = $this->BuildDateRow( $AdminDateList, $DRRow, $PS_Row, $ToxRow, $OtherRow, $PAT_ID );
+            $retVal              = $this->getMedRowsInfoFromDB( $TemplateID, $PatientID );
+            $MedList             = $retVal;
             $PreAdminRecords     = array( );
             $TherapyAdminRecords = array( );
             $PostAdminRecords    = array( );
             
-            foreach ( $records as $aRec ) {
-                /**
-                 * Breakout a Flow Sheet record into it's various elements
-                 **/
-                if ( array_key_exists( "ndt_Type", $aRec ) ) {
-                    $Type    = $aRec[ "ndt_Type" ];
-                    $aDate   = $aRec[ "ndt_AdminDate" ];
-                    $MedName = $aRec[ "ndt_Drug" ];
-                    $Key     = "$aDate-$MedName";
-
-                    // Just get the Admin Time (field format = "01/01/2014T03:42:56")
-                    $s1      = explode( "T", $aRec[ "ndt_StartTime" ] );
-                    $s1      = $s1[ 1 ];
-                    $e1      = explode( "T", $aRec[ "ndt_EndTime" ] );
-                    $e1      = $e1[ 1 ];
-
-                    $tmpRec  = array(
-                        "Dose" => $aRec[ "ndt_Dose" ],
-                        "Unit" => $aRec[ "ndt_Unit" ],
-                        "Route" => $aRec[ "ndt_Route" ],
-                        "Start" => $s1,
-                        "End" => $e1 
-                    );
-                    $tmpARec = array( $Key => $tmpRec );
-                    
-                         /* Only add a record to the Pre/Post/Therapy Admin Records list if it doesn't already exist */
-                    if ( "Pre Therapy" == $Type ) {
-                        if ( !array_key_exists( $Key, $PreAdminRecords ) ) {
-                            $PreAdminRecords += $tmpARec;
-                        }
-                    } else if ( "Post Therapy" == $Type ) {
-                        if ( !array_key_exists( $Key, $PostAdminRecords ) ) {
-                            $PostAdminRecords += $tmpARec;
-                        }
-                    } else if ( "Therapy" == $Type ) {
-                        if ( !array_key_exists( $Key, $TherapyAdminRecords ) ) {
-                            $TherapyAdminRecords += $tmpARec;
-                        }
-                    }
+            
+            foreach ( $MedList as $Med ) {
+                $DrugName = $Med[ "Drug_Name" ];
+                $Sequence = $Med[ "Sequence" ];
+                if ( $Med[ "Order_Type" ] == "Pre" ) {
+                    $PreAdminRecords = $this->GenRowStart4Med( $PreAdminRecords, "02 Pre Therapy", $DrugName, $Sequence );
+                    $PreAdminRecords = $this->Add_AdminDays2MedRows( $AdminDateList, $PreAdminRecords, $DrugName, $PatientID, $PAT_ID );
+                }
+                if ( $Med[ "Order_Type" ] == "Therapy" ) {
+                    $TherapyAdminRecords = $this->GenRowStart4Med( $TherapyAdminRecords, "03 Therapy", $DrugName, $Sequence );
+                    $TherapyAdminRecords = $this->Add_AdminDays2MedRows( $AdminDateList, $TherapyAdminRecords, $DrugName, $PatientID, $PAT_ID );
+                }
+                if ( $Med[ "Order_Type" ] == "Post" ) {
+                    $PostAdminRecords = $this->GenRowStart4Med( $PostAdminRecords, "04 Post Therapy", $DrugName, $Sequence );
+                    $PostAdminRecords = $this->Add_AdminDays2MedRows( $AdminDateList, $PostAdminRecords, $DrugName, $PatientID, $PAT_ID );
                 }
             }
             
-            $MicroTime_END2 = microtime(true);
-            $TimeDiff = $MicroTime_END2 - $MicroTime_END;
-            error_log("Finished Parsing all previous Admin Date Info (" . count ( $records ) . " records) - (Timestamp in MS = $MicroTime_END2 (Diff = $TimeDiff))");
-
-            $this->set( 'FS_OrderRecords', $records );
-            $this->set( 'jsonRecord', array( 'success' => true, 'total' => count( $records ), 'records' => $records  ) );
-
-
-            /**
-             * Now that we have records for all administered meds...
-             * we need to get records for ALL the Admin Dates in the specified Treatment Regimen
-             **/
-            $MicroTime_ST2 = microtime(true);
-            error_log("Converting all previous Admin Date Info into Flow Sheet Format (" . count ( $records ) . " records) - (Timestamp in MS = $MicroTime_ST2)");
-
-            $this->FSDataConvert( $id, $PAT_ID, $PreAdminRecords, $TherapyAdminRecords, $PostAdminRecords );
-
-            $MicroTime_END = microtime(true);
-            $TimeDiff = $MicroTime_END - $MicroTime_ST2;
-            $jr = $this->get( 'jsonRecord' );
-            $Foo = $jr["total"];
-            error_log("Finished converting all previous Admin Date Info into Flow Sheet Format (" . $Foo . " records) - (Timestamp in MS = $MicroTime_END (Diff = $TimeDiff))");
+            $Records    = array( );
+            $Records[ ] = $DateRow;
+            $Records[ ] = $PS_Row;
+            $Records[ ] = $DRRow;
+            $Records[ ] = $ToxRow;
+            $Records[ ] = $OtherRow;
+            foreach ( $PreAdminRecords as $Med ) {
+                $Records[ ] = $Med;
+            }
+            foreach ( $TherapyAdminRecords as $Med ) {
+                $Records[ ] = $Med;
+            }
+            foreach ( $PostAdminRecords as $Med ) {
+                $Records[ ] = $Med;
+            }
+            $this->set( 'jsonRecord', array(
+                 'success' => true,
+                'total' => count( $Records ),
+                'records' => $Records 
+            ) );
         }
     }
 ?>

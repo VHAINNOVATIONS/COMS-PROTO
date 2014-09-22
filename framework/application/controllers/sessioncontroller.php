@@ -79,7 +79,8 @@ class SessionController extends Controller {
 		
         $jsonRecord = array();
         
-        $records = $this->Session->checkmdwsconnect($AccessCode,$VerifyCode);
+        //$records = $this->Session->checkmdwsconnect($AccessCode,$VerifyCode);
+        $records = $this->Session->checkAV($AccessCode,$VerifyCode);
                
         $jsonRecord['success'] = 'true';            
         $jsonRecord['total'] = count($records);

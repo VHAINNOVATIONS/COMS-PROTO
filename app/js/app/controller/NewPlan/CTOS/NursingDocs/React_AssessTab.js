@@ -36,11 +36,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			},
             "NursingDocs_React_Assess button[action=\"save\"]": {
                 click: this.SaveReact_Assess
-            },
+            }
+/*				
+				,
 
 			"NursingDocs_React_Assess" : {
 				afterrender : this.TabRendered
 			}
+*/
 		});
 	},
 
@@ -52,8 +55,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 	ClickNoneCheckbox : function(btn, newValue, oldValue, eOpts) {
 		var i, len, btn_i, AdverseReactionChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
 		var hasPrev = this.application.Patient.Reactions.length;
-		if (newValue && (hasPrev > 0)) {
-			Ext.MessageBox.alert("Previous Adverse Reactions Alert", "This patient has had previous adverse reactions to this regimen. Please confirm your response of no adverse reactions for today." );
+		if (newValue) {
+			if (hasPrev > 0) {
+				Ext.MessageBox.alert("Previous Adverse Reactions Alert", "This patient has had previous adverse reactions to this regimen. Please confirm your response of no adverse reactions for today." );
+			}
 			len = AdverseReactionChecks.length;
 			for (i = 0; i < len; i++) {
 				btn_i = AdverseReactionChecks[i];
@@ -142,7 +147,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		if ("" !== fldName ) {
 			txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + fldName + "\"]")[0];
 			if (btn.value) {
-				txtField.show();
+				if (txtField) {
+					txtField.show();
+				}
 				if ("ND_RA_HorA_HypotensionBP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Systolic\"]")[0];
 				}
@@ -152,10 +159,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				else if ("ND_RA_CRS_TachycardiaPulse" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Pulse\"]")[0];
 				}
-				txtField.focus(true, true);
+				if (txtField) {
+					txtField.focus(true, true);
+				}
 			}
 			else {
-				txtField.hide();
+				if (txtField) {
+					txtField.hide();
+				}
 				if ("ND_RA_HorA_HypotensionBP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Diastolic\"]")[0];
 					txtField.setValue("");
@@ -175,50 +186,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		}
 	},
 
+/*
 	TabRendered : function ( component, eOpts ) {
 		wccConsoleLog("React / Assess Tab Rendered");
 		var Patient = this.application.Patient;
 		var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.React_AssessTab");
 	},
-
-
-
-/**
-	SelectAdverseReactionAlerts : function ( records ) {
-		{ 
-			xtype: "CheckCombo", 
-			name: "IV_FluidTypeMulti", 
-			fieldLabel : "Select IV Fluid Type (one or more)", labelAlign: "right", labelWidth: 200,  width: 450, 
-			displayField : "name", valueField : "id",
-			store : Ext.create('Ext.data.Store', {
-				model : 'COMS.model.GenericLookupModel',
-				proxy: {
-					type: 'rest',
-					api: {
-						read: Ext.URLs.FluidType
-					},
-					reader: {
-						type: 'json',
-						root : 'records',
-						successProperty : 'success'
-					}
-				}
-			})
-		},
-	},
-**/
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 	InfuseReactPost : function(records, Patient, theApp) {
 		var params = Ext.encode(records);
@@ -259,7 +233,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 	SaveReact_Assess : function(btn) {
-		var theForm = btn.up("form").getForm();
+		// var theForm = btn.up("form").getForm();
 		var Patient = this.application.Patient;
 
 		var ReactAssesFormChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
@@ -279,18 +253,25 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				ReactAssesFormValue = 0;
 				ReactAssesFormCommentsValue = "";
 
-				if (ReactAssesFormOption && ReactAssesFormOption[0]) {
+				if (ReactAssesFormOption && ReactAssesFormOption.length > 0) {		// ReactAssesFormOption[0]) {
 					ReactAssesFormValue = ReactAssesFormOption[0].getValue();
 					if (null === ReactAssesFormValue) {
-						ReactAssesFormValue = 0;
+						ReactAssesFormValue = "";		// 0;
 					}
 				}
-				if (ReactAssesFormComments && ReactAssesFormComments[0]) {
+				if (ReactAssesFormComments && ReactAssesFormComments.length > 0) {		//  && ReactAssesFormComments[0]) {
 					ReactAssesFormCommentsValue = ReactAssesFormComments[0].getValue();
 				}
 				var sectionTitle = ReactAssesFormCheck.up("fieldset").title;
 
-				records.Details[ReactAssesessmentsCount++] = { "sequence" : i, "fieldLabel" : ReactAssesFormCheck.boxLabel, "choice" : true, "comments" : ReactAssesFormCommentsValue, "levelChosen" : ReactAssesFormValue, "sectionTitle" : sectionTitle};
+				records.Details[ReactAssesessmentsCount++] = { 
+					"sequence" : i, 
+					"fieldLabel" : ReactAssesFormCheck.boxLabel, 
+					"choice" : true, 
+					"comments" : ReactAssesFormCommentsValue, 
+					"levelChosen" : ReactAssesFormValue, 
+					"sectionTitle" : sectionTitle
+				};
 			}
 		}
 		if (haveChecks) {
@@ -302,6 +283,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				var view = Ext.widget("SelectAdverseReactionAlerts", { "PAT_ID" : PAT_ID, "type" : "Infusion Reactions", "records" : records, "scope" : this, "fnc" : this.InfuseReactPost });
 			}
 		}
+		else {
+				Ext.MessageBox.alert("Saving Error", "If there are no Adverse Events then you must check the \"No Adverse Reaction since Last Treatment\" checkbox" );
+			}
+
 	}
 
 });

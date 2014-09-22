@@ -10,7 +10,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
     enableColumnHide : false,
     enableColumnMove : false,
     features: [{ftype:'grouping'}],
-
+    viewConfig:{ markDirty: false },
     selType: "cellmodel",
     plugins: [
         // Event handler for this is assigned to the "beforeedit" event and calls the "CellEdit()" function in the TreatmentTab controller
@@ -41,61 +41,53 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
         },
         { header : "Medication", dataIndex : "drug", width : 120 },
         { header : "Dose", dataIndex : "dose", width : 50, editor: { allowBlank: false } },
-        { header : "Units", dataIndex : "unit", width : 70, editor : {
-                xtype: "combo",
-                store: "DrugUnitsStore",
-                displayField: "name",
-                valueField: "name"
-            }
-        },
-        { header : "Route", dataIndex : "route", width : 50, editor : {
-                xtype: "combo",
-                store: "InfusionStore",
-                displayField: "name",
-                valueField: "name"
-            }
-        },
+        { header : "Units", dataIndex : "unit", width : 70},
+        { header : "Route", dataIndex : "route", width : 50},
         { header : "Start Time", dataIndex : "StartTime",
             renderer: function(v) {
-                if ("" !== v) {
-                    var v1, v2, v3;
-                    try {
-                        v2 = Ext.Date.format(v, "h:i A");
-                    }
-                    catch (err1) {
-                        try {
-                            v1 = Ext.Date.parse(v, "c");
-                            v2 = Ext.Date.format(v1, "h:i A");
-                        }
-                        catch (err2) {
-                            wccConsoleLog("Error in time renderer");
-                        }
-                    }
-                    return v2;
-                }
-                return v;
+				if ("" !== v) {
+					var v1, v2, v3;
+					if ("string" == typeof v) {
+						v1 = v.split("T");
+						if (v1.length > 0) {
+							v1 = v1.join(" ");
+						}
+						v1 = new Date(v1);
+						if (isNaN(v1)) {
+							return v;
+						}
+					}
+					else {
+						v1 = new Date(v);
+					}
+					v2 = Ext.Date.format(v1, "h:i A");
+					return v2;
+				}
+				return v;
             },
             editor : startTimeField
         },
         { header : "End Time", dataIndex : "EndTime",
             renderer: function(v) {
-                if ("" !== v) {
-                    var v1, v2, v3;
-                    try {
-                        v2 = Ext.Date.format(v, "h:i A");
-                    }
-                    catch (err3) {
-                        try {
-                            v1 = Ext.Date.parse(v, "c");
-                            v2 = Ext.Date.format(v1, "h:i A");
-                        }
-                        catch (err4) {
-                            wccConsoleLog("Error in time renderer");
-                        }
-                    }
-                    return v2;
-                }
-                return v;
+				if ("" !== v) {
+					var v1, v2, v3;
+					if ("string" == typeof v) {
+						v1 = v.split("T");
+						if (v1.length > 0) {
+							v1 = v1.join(" ");
+						}
+						v1 = new Date(v1);
+						if (isNaN(v1)) {
+							return v;
+						}
+					}
+					else {
+						v1 = new Date(v);
+					}
+					v2 = Ext.Date.format(v1, "h:i A");
+					return v2;
+				}
+				return v;
             },
             editor : endTimeField
         },
