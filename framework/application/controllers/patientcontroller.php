@@ -456,6 +456,7 @@ class PatientController extends Controller
 	//var_dump($preHydrationRecord);
 	//echo "|||infusionMap||| ";
 	//var_dump($infusionMap);
+	//echo "|||templateIdMT||| ";
 	//var_dump($templateIdMT);
 
 	$iterator = new RecursiveIteratorIterator(new RecursiveArrayIterator($templateIdMT));
@@ -492,7 +493,15 @@ class PatientController extends Controller
         $phid = $preHydrationRecord['id'];
 		$AdminDay = $preHydrationRecord['adminDay'];
         $Sequence = $preHydrationRecord['Sequence'];
-				
+        $iSequence = $preHydrationRecord['sequence'];
+		if (empty($Sequence)){
+			$pSequence = $iSequence;
+			}
+		else{
+			$pSequence = $Sequence;
+			}
+		
+		
 		$amt = $preHydrationRecord['regdose'];
 		$iamt = $infusionMap[$phid][0]->data['amt'];
 		if (empty($amt)){
@@ -549,7 +558,7 @@ class PatientController extends Controller
 		$Reason = $preHydrationRecord['Reason'];
         $orderType = (empty($preHydrationRecord['type'])) ? 'Therapy' : $preHydrationRecord['type'];
         $orderStatus = "Ordered";
-		$Notes = "Line 467, PatientController";
+		$Notes = "Line 552, PatientController";
 		
         
         $query = "
@@ -601,7 +610,7 @@ class PatientController extends Controller
                 '$Notes',
                 '$pamt',
                 '$iamt',
-				'$Sequence',
+				'$pSequence',
                 '$proute',
                 '$AdminDay',
 				'$punit',
