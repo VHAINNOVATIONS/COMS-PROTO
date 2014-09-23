@@ -125,7 +125,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
-							"</th>",
+						"</th>",
 						"<td>",
 
 							"<table class=\"OEMRecord_Element InformationTable\">",
@@ -137,23 +137,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr class=\"header\">",
 									"<th>Drug</th>",
 									"<th>Dose</th>",
-									"<th>",
-										"<tpl if=\"this.hasData(BSA_Dose1)\">",
-											"<abbr title=\"Body Surface Area\">BSA</abbr> Dose",
-										"</tpl>",
-									"</th>",
+									"<th>Calculated Dose </th>",
 									"<th>Administration</th>",
 								"</tr>",
 
 								"<tr>",
 									"<td>{Med}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<tpl if=\"this.hasData(BSA_Dose1)\">",
-										"<td>{BSA_Dose1} {DoseUnits1}</td>",
-									"</tpl>",
-									"<tpl if=\"this.hasNOData(BSA_Dose1)\">",
-										"<td>&nbsp;</td>",
-									"</tpl>",
+									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									"<td>{AdminMethod1}</td>",
 								"</tr>",
 
@@ -214,14 +205,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr class=\"header\">",
 									"<th>Drug</th>",
 									"<th>Dose</th>",
-									"<th>{[this.calculatedDose(values)]}</th>",
+									"<th>Calculated Dose </th>",
 									"<th>Administration</th>",
 								"</tr>",
 
 								"<tr>",
 									"<td>{Med}</td>",
 									"<td>{Dose} {DoseUnits}</td>",
-									"<td>{[this.calculateDose(values, parent)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
 									"</td>",
 									"<td>{AdminMethod}</td>",
 								"</tr>",
@@ -265,7 +256,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
 							"{Med} ({Dose1} {DoseUnits1})",
-
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
@@ -273,7 +263,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 
 						"</th>",
 						"<td>",
-
 							"<table class=\"OEMRecord_Element InformationTable\">",
 								"<colgroup width=30%></colgroup>",
 								"<colgroup width=20%></colgroup>",
@@ -283,23 +272,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr class=\"header\">",
 									"<th>Drug</th>",
 									"<th>Dose</th>",
-									"<th>",
-										"<tpl if=\"this.hasData(BSA_Dose1)\">",
-											"<abbr title=\"Body Surface Area\">BSA</abbr> Dose",
-										"</tpl>",
-									"</th>",
+									"<th>Calculated Dose </th>",
 									"<th>Administration</th>",
 								"</tr>",
 
 								"<tr>",
 									"<td>{Med}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<tpl if=\"this.hasData(BSA_Dose1)\">",
-										"<td>{BSA_Dose1} {DoseUnits1}</td>",
-									"</tpl>",
-									"<tpl if=\"this.hasNOData(BSA_Dose1)\">",
-										"<td>&nbsp;</td>",
-									"</tpl>",
+									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									"<td>{AdminMethod1}</td>",
 								"</tr>",
 
@@ -348,100 +328,62 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                     return "";
                 },
 
-				calculatedDose : function ( values ) {
-					var du = values.DoseUnits.toUpperCase();
-					var ret = "";
-					var r1 = du.search("M2");
-					var r2 = du.search("KG");
-					var r3 = du.search("AUC");
-					if (r1 > 0 || r2 > 0 || r3 >= 0 ) {
-						ret = "Calculated Dose";
+
+				HasBSADose : function(units) {
+									var du = units.toUpperCase();
+									var r1 = du.search("M2");
+									var r2 = du.search("KG");
+									var r3 = du.search("AUC");
+									if (r1 > 0 || r2 > 0 || r3 >= 0 ) {
+										return true;
+									}
+									return false;
+				},
+
+				CalculateBSA_Dosing : function (values, therapy) {
+					var du, duuc, calcDose, BSA_Dose, dspCalcDose, Dose, Units, ret = "N/A";
+					if (therapy) {
+						du = values.DoseUnits;
+						Dose = values.Dose;
+						BSA_Dose = values.BSA_Dose;
+					}
+					else {
+						du = values.DoseUnits1;
+						Dose = values.Dose1;
+						BSA_Dose = values.BSA_Dose1;
+					}
+					if (!BSA_Dose) {
+						BSA_Dose = "";
+					}
+					duuc = du.toUpperCase();
+					calcDose = du.substr(0, du.search("/"));
+					if (duuc.search("M2") > 0) {
+						BSA_Dose = Dose * this.Patient.BSA;
+						BSA_Dose = Ext.FormatNumber("" + BSA_Dose);
+						dspCalcDose = BSA_Dose + " " + calcDose;
+					}
+					else if (duuc.search("KG") > 0) {
+						BSA_Dose = Dose * this.Patient.BSA_Weight;		// Get most recent Vitals Weight
+						BSA_Dose = Ext.FormatNumber("" + BSA_Dose);
+						dspCalcDose = BSA_Dose + " " + calcDose;
+					}
+					else if (duuc.search("AUC") >= 0) {
+						BSA_Dose = Ext.CalcAUCDose(this.Patient, Dose);
+						dspCalcDose = BSA_Dose;
+					}
+
+					if ("" !== BSA_Dose || calcDose) {
+						ret = "<button class=\"anchor dspOEMDoseCalcs\" " +
+							"dose=\"" + Dose + "\" " + 
+							"doseUnits=\"" + du + "\" " + 
+							"units=\"" + Units + "\" " + 
+							"calcDose=\"" + BSA_Dose + "\" " +
+							"name=\"dspOEMDoseCalcs\" " + 
+							"title=\"Show Dosage Calculation\">" + dspCalcDose + "</button>";
 					}
 					return (ret);
 				},
-				calculateDose : function ( values, parent ) {
-					try {
-					if ("" !== this.calculatedDose(values)) {
-						var Dose = "", Units, ret, du = values.DoseUnits.toUpperCase();
-						if (values.BSA_Dose) {
-							if ("" === values.BSA_Dose) {
-								if (du.search("M2") > 0) {
-									Dose = values.Dose * this.Patient.BSA;
-									Units = values.DoseUnits.substr(0, du.search("/"));
-									values.BSA_Dose = Dose + " " + Units;
-								}
-								else if (du.search("KG") > 0) {
-									Dose = values.Dose * this.Patient.BSA_Weight;
-									Units = values.DoseUnits.substr(0, du.search("/"));
-									values.BSA_Dose = Dose + " " + Units;
-								}
-								else if (du.search("AUC") >= 0) {
-									Dose = Ext.CalcAUCDose(this.Patient, this.Patient.Dose);
-									values.BSA_Dose = Dose;
-								}
-								if ("" !== Dose) {
-									ret = "<button class=\"anchor dspOEMDoseCalcs\" " + 
-										"dose=\"" + values.Dose + "\" " + 
-										"doseUnits=\"" + values.DoseUnits + "\" " + 
-										"units=\"" + Units + "\" " + 
-										"calcDose=\"" + Dose + "\" " +
-										"name=\"dspOEMDoseCalcs\" " + 
-										"title=\"Show Dosage Calculation\">" + Dose + " " + Units + "</button>";
-								}
-							}
-							else {
-								Units = values.DoseUnits.substr(0, du.search("/"));
 
-								ret = "<button class=\"anchor dspOEMDoseCalcs\" " + 
-									"dose=\"" + values.Dose + "\" " + 
-									"doseUnits=\"" + values.DoseUnits + "\" " + 
-									"units=\"" + Units + "\" " + 
-									"calcDose=\"" + values.BSA_Dose + "\" " +
-									"name=\"dspOEMDoseCalcs\" " + 
-									"title=\"Show Dosage Calculation\">" + values.BSA_Dose + "</button>";
-							}
-						}
-						else {
-							if (du.search("M2") > 0) {
-								Dose = values.Dose * this.Patient.BSA;
-								Units = values.DoseUnits.substr(0, du.search("/"));
-								values.BSA_Dose = Dose + " " + Units;
-							}
-							else if (du.search("KG") > 0) {
-								Dose = values.Dose * this.Patient.BSA_Weight;
-								Units = values.DoseUnits.substr(0, du.search("/"));
-								values.BSA_Dose = Dose + " " + Units;
-							}
-							else if (du.search("AUC") >= 0) {
-									Dose = Ext.CalcAUCDose(this.Patient, this.Patient.Dose);
-									values.BSA_Dose = Dose;
-							}
-							if ("" !== Dose) {
-								ret = "<button class=\"anchor dspOEMDoseCalcs\" " + 
-									"dose=\"" + values.Dose + "\" " + 
-									"doseUnits=\"" + values.DoseUnits + "\" " + 
-									"units=\"" + Units + "\" " + 
-									"calcDose=\"" + Dose + "\" " +
-									"name=\"dspOEMDoseCalcs\" " + 
-									"title=\"Show Dosage Calculation\">" + Dose + " " + Units + "</button>";
-							}
-						}
-						return (ret);
-					}						
-					}
-					catch (ee) {
-						var ErrorObj = ee;
-						var errMsg = "";
-						var o;
-						for (o in ee) {
-							if (ee.hasOwnProperty(o)) {
-								errMsg += o + "\n";
-							}
-						}
-						alert("Error - Saving updated OEM Record in OEM View - " + ee.message + "\n" + errMsg );
-					}
-					return("");
-				}, 
 
 				hasData: function (instr) {
 					return ("" !== instr);
@@ -471,6 +413,10 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				ShowFluid : function(AdminMethod, FluidType, FluidVol, FlowRate) {
 					var lineNo = 0;
 					var a2, flg = true;
+					a2 = FluidType;		// + FluidVol + FlowRate;
+					flg = ("" !== a2.trim());
+					return flg;
+
 					try {
 						if ("" === AdminMethod) {
 							return false;

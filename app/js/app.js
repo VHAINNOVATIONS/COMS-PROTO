@@ -886,7 +886,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				if ("F" === gender) {
 					GFR = GFR * 0.85;
 				}
-				GFR = Ext.GeneralRounding2Digits(GFR / (72 * sc));
+				GFR = 1 * Ext.GeneralRounding2Digits(GFR / (72 * sc));
 				var Dose = (GFR + 25) * AUC;
 				Dose = Ext.GeneralRounding2Digits(Dose);
 
@@ -1404,6 +1404,7 @@ Ext.CalcAUCDose = function (Patient, AUC) {
 	GFR = GFR / (72 * sc);
 	var Dose = (GFR + 25) * AUC;
 	Dose = Ext.GeneralRounding2Digits(Dose);
+	Dose = Ext.FormatNumber("" + Dose);
 	return Dose + " mg";
 };
 
@@ -1696,6 +1697,14 @@ Ext.application({
 				var n1 = parseFloat(number);
 				var n2 = n1.toFixed(parseInt(decimals, 10));
 				return n2;
+			},
+				// Note this function DOES fail if num = "123.000"
+			FormatNumber : function(num) {		// Formats number with the "Always Lead, Never Follow" format (e.g. 123,456 and 0.567 not 123,456.00 or .678)
+				 var n1 = parseInt(num, 10);
+				 if (n1 == num) {
+					 return Ext.util.Format.number(num, "0,000");
+				 }
+				 return Ext.util.Format.number(num, "0,000.00")
 			},
 
 			in2cm: function (height) { // Inches to Centimeters; rounded to 2 decimal places

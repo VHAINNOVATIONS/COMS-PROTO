@@ -40,6 +40,15 @@ class Controller {
         }
         return $string;
     }
+    function numberFormater($n = null) {
+        if ($n) {
+            if (intval($n) == $n) {
+                return number_format($n);
+            }
+            return number_format($n, 2);
+        }
+        return "";
+    }
 }
 
 ?>
