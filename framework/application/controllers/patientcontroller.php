@@ -2448,4 +2448,28 @@ error_log($query);
         $this->set('jsonRecord', $jsonRecord);
         
     }
+	
+	function MedReminders($MR_ID,$form_data){
+        
+        $jsonRecord = array();
+
+        $records = $this->Patient->MedReminders($MR_ID,$form_data);
+
+        if ($this->checkForErrors('Med Reminders Failed. ', $records)) {
+            $jsonRecord['success'] = 'false';
+            $jsonRecord['msg'] = $this->get('frameworkErr');
+            $this->set('jsonRecord', $jsonRecord);
+            return;
+        } 
+        
+        $jsonRecord['success'] = true;            
+        $jsonRecord['total'] = count($records);
+
+        $jsonRecord['records'] = $records;
+
+        $this->set('jsonRecord', $jsonRecord);
+        
+    }
+	
+	
 }
