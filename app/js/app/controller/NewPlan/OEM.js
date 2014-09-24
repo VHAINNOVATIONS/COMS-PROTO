@@ -106,7 +106,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 
-	tabRendered : function( theTab, eOpts ) {
+	tabRendered : function( theTab ) {
+		// console.log("OEM tabRendered 0 Adding Event Handlers");
 		var a1 = theTab.el.select("button.EditOEM_Record");
 		a1.on("click", this.handleEditOEM_Record, this);
 
@@ -152,13 +153,13 @@ Ext.define("COMS.controller.NewPlan.OEM", {
  *
  *
  ***********************************************************************************/
-	displayOEM_Record_Data : function( PatientInfo, fromEdit) {
+	displayOEM_Record_Data : function( PatientInfo ) {
 
 		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
 		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData, AdminDay2ViewCombo;
 
 		if (PatientInfo.OEMDataRendered) {
-		    return;
+			return;
 		}
 			// display the overall data for the template
         theData.TreatmentStart = PatientInfo.TreatmentStart;

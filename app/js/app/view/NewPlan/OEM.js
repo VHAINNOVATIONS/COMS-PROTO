@@ -464,7 +464,8 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if ("Cancelled" == current.Order_Status || 
 						"Cancel" == current.Order_Status || 
 						"Dispensed" == current.Order_Status || 
-						"Finalized" == current.Order_Status ) {
+						"Finalized" == current.Order_Status || 
+						"Administered" == current.Order_Status ) {
 						return "";	// No links if Order has been dispensed or Finalized
 					}
 

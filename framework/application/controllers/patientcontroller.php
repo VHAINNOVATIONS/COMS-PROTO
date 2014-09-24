@@ -2453,27 +2453,17 @@ Data:
     }
 	
 	function UpdateAdminDate($Template_ID,$Admin_Date){
-        
         $jsonRecord = array();
-        
-		
-
         $records = $this->Patient->UpdateAdminDateMT($Template_ID,$Admin_Date);
-
-		
         if ($this->checkForErrors('Update Admin Date Failed. ', $records)) {
             $jsonRecord['success'] = 'false';
             $jsonRecord['msg'] = $this->get('frameworkErr');
             $this->set('jsonRecord', $jsonRecord);
             return;
         } 
-        
         $jsonRecord['success'] = true;            
         $jsonRecord['total'] = count($records);
-
         $jsonRecord['records'] = $records;
-
         $this->set('jsonRecord', $jsonRecord);
-        
     }
 }
