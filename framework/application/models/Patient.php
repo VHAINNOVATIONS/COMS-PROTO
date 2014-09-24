@@ -1506,4 +1506,43 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
 		$result = $this->query($query);
         
     }
+
+	
+function MedReminders($MR_ID,$form_data)
+    {
+
+    if (empty($MR_ID)){
+       $query = "SELECT MR_ID
+      ,Order_ID
+      ,Patient_ID
+      ,Title
+      ,Description
+      ,Date_Reminder
+      ,Date_ReminderDue
+      ,Date_Entered
+      ,Date_Modified
+      ,Status
+		FROM Med_Reminders";
+		$result = $this->query($query);
+		return $result;
+		
+		}else{
+		
+		//$MR_ID = $form_data->MR_ID;
+		$Title = $form_data->Title;
+		$Description = $form_data->Description;
+		
+		$query = "UPDATE Med_Reminders 
+		SET Title = '$Title',
+		Description = '$Description'
+		FROM Med_Reminders
+		WHERE MR_ID = '$MR_ID'";
+		$result = $this->query($query);
+		$result1 = 'updated';
+		return $result1;
+		}
+        
+    }
+
+	
 }
