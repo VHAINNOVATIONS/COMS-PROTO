@@ -1,0 +1,40 @@
+12:37:13.137 [INFO ] :: In Start of LoginLogout() method 
+12:37:13.137 [INFO ] **********Start open application************ 
+12:37:14.957 [DEBUG] Executing: get [4c228fbc-d69f-491a-b5a6-3993b1692e12, get {url=https://www.myhealth.va.gov/mhv-portal-web/	}] 
+12:37:23.562 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, get {url=https://www.myhealth.va.gov/mhv-portal-web/	}] 
+12:37:24.867 [INFO ] ::getting the URL from the properties file :: The URL is ::https://www.myhealth.va.gov/mhv-portal-web/	 
+12:37:39.870 [DEBUG] Executing: findElements [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElements {using=xpath, value=//div[@class='bea-portal-login-window-content']/div/h2}] 
+12:37:39.930 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElements {using=xpath, value=//div[@class='bea-portal-login-window-content']/div/h2}] 
+12:37:39.932 [DEBUG] Executing: getElementText [4c228fbc-d69f-491a-b5a6-3993b1692e12, getElementText {id={c6756009-7074-4f88-b81d-4e35e230b14b}}] 
+12:37:39.960 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, getElementText {id={c6756009-7074-4f88-b81d-4e35e230b14b}}] 
+12:37:39.961 [INFO ] Test -- Verify the Member Login header text- expected: Member Login -- PASS 
+12:37:40.962 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.userName}}] 
+12:37:41.006 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.userName}}] 
+12:37:41.007 [DEBUG] Executing: clearElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, clearElement {id={64891e3c-d14f-4acb-adb3-1eff274f5213}}] 
+12:37:41.045 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, clearElement {id={64891e3c-d14f-4acb-adb3-1eff274f5213}}] 
+12:37:41.046 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.userName}}] 
+12:37:41.059 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.userName}}] 
+12:37:41.059 [DEBUG] Executing: sendKeysToElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, sendKeysToElement {id={64891e3c-d14f-4acb-adb3-1eff274f5213}, value=[Ljava.lang.CharSequence;@2b66def7}] 
+12:37:41.102 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, sendKeysToElement {id={64891e3c-d14f-4acb-adb3-1eff274f5213}, value=[Ljava.lang.CharSequence;@2b66def7}] 
+12:37:41.102 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.password}}] 
+12:37:41.127 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.password}}] 
+12:37:41.128 [DEBUG] Executing: clearElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, clearElement {id={aaafdd98-494c-4349-a220-f3ece6241eeb}}] 
+12:37:41.164 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, clearElement {id={aaafdd98-494c-4349-a220-f3ece6241eeb}}] 
+12:37:41.165 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.password}}] 
+12:37:41.179 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=name, value=loginPortlet_homepage{actionForm.password}}] 
+12:37:41.179 [DEBUG] Executing: sendKeysToElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, sendKeysToElement {id={aaafdd98-494c-4349-a220-f3ece6241eeb}, value=[Ljava.lang.CharSequence;@74064c7b}] 
+12:37:41.221 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, sendKeysToElement {id={aaafdd98-494c-4349-a220-f3ece6241eeb}, value=[Ljava.lang.CharSequence;@74064c7b}] 
+12:37:41.222 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=css selector, value=input.mhv-input-button}] 
+12:37:41.234 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=css selector, value=input.mhv-input-button}] 
+12:37:41.234 [DEBUG] Executing: clickElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, clickElement {id={a5a73c79-dcfc-4535-8206-ef34ace8b7e6}}] 
+12:37:43.257 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, clickElement {id={a5a73c79-dcfc-4535-8206-ef34ace8b7e6}}] 
+12:37:43.258 [INFO ] ::Logged in successful:: 
+12:37:53.259 [INFO ] ::End of LoginLogout() method :: 
+12:37:53.260 [DEBUG] Executing: findElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=link text, value=Logout}] 
+12:37:53.648 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, findElement {using=link text, value=Logout}] 
+12:37:53.649 [DEBUG] Executing: clickElement [4c228fbc-d69f-491a-b5a6-3993b1692e12, clickElement {id={4e54d51a-535c-45a2-aa84-cdec15df8118}}] 
+12:37:53.758 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, clickElement {id={4e54d51a-535c-45a2-aa84-cdec15df8118}}] 
+12:37:53.758 [INFO ] ::The Logout button was clicked:: 
+12:37:53.758 [DEBUG] Executing: quit [4c228fbc-d69f-491a-b5a6-3993b1692e12, quit {}] 
+12:37:53.767 [DEBUG] Executed: [4c228fbc-d69f-491a-b5a6-3993b1692e12, quit {}] 
+12:37:54.034 [INFO ] Test execution time: 40 secs 

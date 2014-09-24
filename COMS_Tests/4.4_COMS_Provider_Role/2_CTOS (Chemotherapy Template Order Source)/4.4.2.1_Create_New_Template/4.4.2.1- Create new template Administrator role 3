@@ -1,0 +1,95 @@
+package com.example.tests;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class CreateNewTemplatePart3 {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+    baseUrl = "https://coms.vacloud.us/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testCreateNewTemplatePart3() throws Exception {
+    driver.get(baseUrl + "/index.php");
+    driver.findElement(By.id("button-1635-btnEl")).click();
+    driver.findElement(By.id("radiofield-2440-inputEl")).click();
+    driver.findElement(By.id("ext-gen6207")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2464-listEl']/ul/li[700]")).click();
+    driver.findElement(By.id("ext-gen6210")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2466-listEl']/ul/li")).click();
+    driver.findElement(By.id("textfield-2445-inputEl")).click();
+    driver.findElement(By.id("textfield-2445-inputEl")).clear();
+    driver.findElement(By.id("textfield-2445-inputEl")).sendKeys("1");
+    driver.findElement(By.id("textfield-2449-inputEl")).clear();
+    driver.findElement(By.id("textfield-2449-inputEl")).sendKeys("10");
+    driver.findElement(By.id("ext-gen6213")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2468-listEl']/ul/li[7]")).click();
+    driver.findElement(By.id("ext-gen6216")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2470-listEl']/ul/li[3]")).click();
+    driver.findElement(By.id("button-2461-btnEl")).click();
+    driver.findElement(By.id("button-1644-btnEl")).click();
+    driver.findElement(By.id("ext-gen6247")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2482-listEl']/ul/li[3]")).click();
+    driver.findElement(By.id("button-2479-btnEl")).click();
+    driver.findElement(By.id("textfield-1651-inputEl")).clear();
+    driver.findElement(By.id("textfield-1651-inputEl")).sendKeys("Patient 400 template");
+    driver.findElement(By.id("button-1655-btnEl")).click();
+    driver.findElement(By.id("button-1005-btnEl")).click();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    driver.quit();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+message(STATUS "Running tests... ")
+execute_process(COMMAND "C:/Program Files/Java/jdk1.7.0_09/bin/java.exe" -Xms64m -Xmx1024m -jar "C:/projects/Web-Automation-Testing-Framework/binC/WEB_ATF.jar" ERROR_VARIABLE FunctionalError)
+if(FunctionalError)
+  message(FATAL_ERROR "${FunctionalError}")
+endif()

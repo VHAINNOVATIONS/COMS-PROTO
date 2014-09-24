@@ -1,0 +1,80 @@
+package com.example.tests;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class EditIntelligentDataElementConfiguration456 {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+    baseUrl = "https://coms.vacloud.us/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testEditIntelligentDataElementConfiguration456() throws Exception {
+    driver.get(baseUrl + "/index.php");
+    driver.findElement(By.id("tab-2014-btnEl")).click();
+    driver.findElement(By.id("tab-2006-btnEl")).click();
+    driver.findElement(By.id("ext-gen3091")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2049-listEl']/ul/li[2]")).click();
+    driver.findElement(By.id("textfield-1756-inputEl")).click();
+    driver.findElement(By.id("textfield-1756-inputEl")).clear();
+    driver.findElement(By.id("textfield-1756-inputEl")).sendKeys("91");
+    driver.findElement(By.id("button-1771-btnEl")).click();
+    driver.findElement(By.id("button-1006-btnEl")).click();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    driver.quit();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+}

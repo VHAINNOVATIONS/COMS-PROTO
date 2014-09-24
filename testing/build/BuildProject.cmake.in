@@ -1,0 +1,370 @@
+#---------------------------------------------------------------------------
+# Copyright 2013
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#---------------------------------------------------------------------------
+
+
+macro(CheckResult Result Message)
+  if(NOT "${Result}" EQUAL 0)
+    message(FATAL_ERROR  "ERROR: ${Message}")
+  endif()
+endmacro()
+
+macro(append name item) 
+	set(${name} "${${name}} ${item}") 
+endmacro()
+
+#add all project java source files
+macro(add_sources)
+	message(STATUS "Adding sources... ")
+	file (GLOB_RECURSE java_files @CMAKE_SOURCE_DIR@/src/*.java)
+	foreach(java_file ${java_files})
+		file(RELATIVE_PATH full_path "@CMAKE_SOURCE_DIR@" ${java_file})
+		list (APPEND SRC "${full_path}")
+		message(STATUS "${full_path}")
+	endforeach()
+endmacro()
+
+#add all external jar files
+macro(add_jars)
+	message(STATUS "Adding Jars... ")
+	file (GLOB_RECURSE jars @CMAKE_SOURCE_DIR@/lib/*.jar)
+	foreach(jar ${jars})
+		file(RELATIVE_PATH full_path "@CMAKE_SOURCE_DIR@" ${jar})
+		list (APPEND JARS "${full_path}")
+		list (APPEND MASTER_FILES_LIST "${full_path}")
+		message(STATUS "${full_path}")
+	endforeach()
+endmacro()
+
+#add all project resource files
+macro(add_resources)
+	message(STATUS "Adding Resources... ")
+	file (GLOB_RECURSE resources @CMAKE_SOURCE_DIR@/src/*.properties)
+	foreach(resource ${resources})
+		file(RELATIVE_PATH full_path "@CMAKE_SOURCE_DIR@" ${resource})
+		# remove "src/" from path
+		STRING(REGEX REPLACE "src/" "" replaced_string "${full_path}")
+		list (APPEND RCS_BUILD "${replaced_string}")
+		list (APPEND RCS "${full_path}")
+		list (APPEND MASTER_FILES_LIST "${full_path}")
+		message(STATUS "${full_path}")
+	endforeach()
+endmacro()
+
+macro(java_class_file_list)
+	if (CMAKE_JAVA_CLASS_OUTPUT_PATH)
+		if (EXISTS "${CMAKE_JAVA_CLASS_OUTPUT_PATH}")
+
+			set(_JAVA_GLOBBED_FILES)
+			if (CMAKE_JAR_CLASSES_PREFIX)
+				foreach(JAR_CLASS_PREFIX ${CMAKE_JAR_CLASSES_PREFIX})
+					message(STATUS "JAR_CLASS_PREFIX: ${JAR_CLASS_PREFIX}")
+
+					file(GLOB_RECURSE _JAVA_GLOBBED_TMP_FILES "${CMAKE_JAVA_CLASS_OUTPUT_PATH}/${JAR_CLASS_PREFIX}/*.class")
+					if (_JAVA_GLOBBED_TMP_FILES)
+						list(APPEND _JAVA_GLOBBED_FILES ${_JAVA_GLOBBED_TMP_FILES})
+					endif ()
+				endforeach()
+			else()
+				set(expression
+					"${CMAKE_JAVA_CLASS_OUTPUT_PATH}/*.class"
+					"${CMAKE_JAVA_CLASS_OUTPUT_PATH}/*.properties"
+				)
+				file(GLOB_RECURSE _JAVA_GLOBBED_FILES ${expression})
+			endif ()
+
+			set(_JAVA_CLASS_FILES)
+			# file(GLOB_RECURSE foo RELATIVE) is broken so we need this.
+			foreach(_JAVA_GLOBBED_FILE ${_JAVA_GLOBBED_FILES})
+				file(RELATIVE_PATH _JAVA_CLASS_FILE ${CMAKE_JAVA_CLASS_OUTPUT_PATH} ${_JAVA_GLOBBED_FILE})
+				set(_JAVA_CLASS_FILES ${_JAVA_CLASS_FILES}${_JAVA_CLASS_FILE}\n)
+			endforeach()
+
+			# write to file
+			file(WRITE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/java_class_filelist ${_JAVA_CLASS_FILES})
+
+		else ()
+			message(SEND_ERROR "FATAL: Java class output path doesn't exist")
+		endif ()
+else ()
+    message(SEND_ERROR "FATAL: Can't find CMAKE_JAVA_CLASS_OUTPUT_PATH")
+endif ()
+endmacro()
+
+function (copy_file src dest)
+	file(COPY ${src} DESTINATION ${dest})	
+endfunction ()
+
+function(compile_package _TARGET_NAME)
+	#set(_JAVA_CLASS_FILELIST_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/UseJavaClassFilelist.cmake)
+	#set(_JAVA_SYMLINK_SCRIPT ${CMAKE_CURRENT_LIST_DIR}/UseJavaSymlinks.cmake)
+	
+	set(_JAVA_SOURCE_FILES ${ARGN})
+
+    if (NOT DEFINED CMAKE_JAVA_TARGET_OUTPUT_DIR)
+      set(CMAKE_JAVA_TARGET_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+
+    if (CMAKE_JAVA_JAR_ENTRY_POINT)
+      set(_ENTRY_POINT_OPTION e)
+      set(_ENTRY_POINT_VALUE ${CMAKE_JAVA_JAR_ENTRY_POINT})
+    endif ()
+
+    if (LIBRARY_OUTPUT_PATH)
+        set(CMAKE_JAVA_LIBRARY_OUTPUT_PATH ${LIBRARY_OUTPUT_PATH})
+    else ()
+        set(CMAKE_JAVA_LIBRARY_OUTPUT_PATH ${CMAKE_JAVA_TARGET_OUTPUT_DIR})
+    endif ()
+
+    set(CMAKE_JAVA_INCLUDE_PATH
+        ${CMAKE_JAVA_INCLUDE_PATH}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+		${CMAKE_SOURCE_DIR}
+        ${CMAKE_JAVA_OBJECT_OUTPUT_PATH}
+        ${CMAKE_JAVA_LIBRARY_OUTPUT_PATH}
+		"@CMAKE_SOURCE_DIR@/lib/*"
+    )
+
+    if (WIN32 AND NOT CYGWIN)
+        set(CMAKE_JAVA_INCLUDE_FLAG_SEP ";")
+    else ()
+        set(CMAKE_JAVA_INCLUDE_FLAG_SEP ":")
+    endif()
+
+    foreach (JAVA_INCLUDE_DIR ${CMAKE_JAVA_INCLUDE_PATH})
+       set(CMAKE_JAVA_INCLUDE_PATH_FINAL "${CMAKE_JAVA_INCLUDE_PATH_FINAL}${CMAKE_JAVA_INCLUDE_FLAG_SEP}${JAVA_INCLUDE_DIR}")
+    endforeach()
+
+	set(CMAKE_JAVA_CLASS_OUTPUT_PATH "${CMAKE_JAVA_TARGET_OUTPUT_DIR}/${_TARGET_NAME}_DIR")
+
+    set(_JAVA_TARGET_OUTPUT_NAME "${_TARGET_NAME}.jar")
+    if (CMAKE_JAVA_TARGET_OUTPUT_NAME AND CMAKE_JAVA_TARGET_VERSION)
+        set(_JAVA_TARGET_OUTPUT_NAME "${CMAKE_JAVA_TARGET_OUTPUT_NAME}-${CMAKE_JAVA_TARGET_VERSION}.jar")
+        set(_JAVA_TARGET_OUTPUT_LINK "${CMAKE_JAVA_TARGET_OUTPUT_NAME}.jar")
+    elseif (CMAKE_JAVA_TARGET_VERSION)
+        set(_JAVA_TARGET_OUTPUT_NAME "${_TARGET_NAME}-${CMAKE_JAVA_TARGET_VERSION}.jar")
+        set(_JAVA_TARGET_OUTPUT_LINK "${_TARGET_NAME}.jar")
+    elseif (CMAKE_JAVA_TARGET_OUTPUT_NAME)
+        set(_JAVA_TARGET_OUTPUT_NAME "${CMAKE_JAVA_TARGET_OUTPUT_NAME}.jar")
+    endif ()
+    # reset
+    set(CMAKE_JAVA_TARGET_OUTPUT_NAME)
+
+    set(_JAVA_CLASS_FILES)
+    set(_JAVA_COMPILE_FILES)
+    set(_JAVA_DEPENDS)
+    set(_JAVA_RESOURCE_FILES)
+    foreach(_JAVA_SOURCE_FILE ${_JAVA_SOURCE_FILES})
+        get_filename_component(_JAVA_EXT ${_JAVA_SOURCE_FILE} EXT)
+        get_filename_component(_JAVA_FILE ${_JAVA_SOURCE_FILE} NAME_WE)
+        get_filename_component(_JAVA_PATH ${_JAVA_SOURCE_FILE} PATH)
+        get_filename_component(_JAVA_FULL ${_JAVA_SOURCE_FILE} ABSOLUTE)
+
+        file(RELATIVE_PATH _JAVA_REL_BINARY_PATH ${CMAKE_JAVA_TARGET_OUTPUT_DIR} ${_JAVA_FULL})
+        file(RELATIVE_PATH _JAVA_REL_SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${_JAVA_FULL})
+        string(LENGTH ${_JAVA_REL_BINARY_PATH} _BIN_LEN)
+        string(LENGTH ${_JAVA_REL_SOURCE_PATH} _SRC_LEN)
+        if (${_BIN_LEN} LESS ${_SRC_LEN})
+            set(_JAVA_REL_PATH ${_JAVA_REL_BINARY_PATH})
+        else ()
+            set(_JAVA_REL_PATH ${_JAVA_REL_SOURCE_PATH})
+        endif ()
+        get_filename_component(_JAVA_REL_PATH ${_JAVA_REL_PATH} PATH)
+
+        if (_JAVA_EXT MATCHES ".java")
+            list(APPEND _JAVA_COMPILE_FILES ${_JAVA_SOURCE_FILE})
+            set(_JAVA_CLASS_FILE "${CMAKE_JAVA_CLASS_OUTPUT_PATH}/${_JAVA_REL_PATH}/${_JAVA_FILE}.class")
+            set(_JAVA_CLASS_FILES ${_JAVA_CLASS_FILES} ${_JAVA_CLASS_FILE})
+
+        elseif (_JAVA_EXT MATCHES ".jar"
+                OR _JAVA_EXT MATCHES ".war"
+                OR _JAVA_EXT MATCHES ".ear"
+                OR _JAVA_EXT MATCHES ".sar"
+				OR _JAVA_EXT MATCHES ".properties")				
+            list(APPEND CMAKE_JAVA_INCLUDE_PATH ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/${_JAVA_SOURCE_FILE})
+
+        elseif (_JAVA_EXT STREQUAL "")
+            list(APPEND CMAKE_JAVA_INCLUDE_PATH ${JAVA_JAR_TARGET_${_JAVA_SOURCE_FILE}} ${JAVA_JAR_TARGET_${_JAVA_SOURCE_FILE}_CLASSPATH})
+            list(APPEND _JAVA_DEPENDS ${JAVA_JAR_TARGET_${_JAVA_SOURCE_FILE}})
+
+        else ()
+        #    __java_copy_file(${CMAKE_CURRENT_SOURCE_DIR}/${_JAVA_SOURCE_FILE}
+        #                     ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/${_JAVA_SOURCE_FILE}
+        #                     "Copying ${_JAVA_SOURCE_FILE} to the build directory")
+        #    list(APPEND _JAVA_RESOURCE_FILES ${_JAVA_SOURCE_FILE})
+        endif ()
+    endforeach()
+	
+	
+    # create an empty java_class_filelist
+    if (NOT EXISTS ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/java_class_filelist)
+        file(WRITE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/java_class_filelist "")
+    endif()
+	copy_file(@CMAKE_SOURCE_DIR@/lib 
+		${CMAKE_JAVA_CLASS_OUTPUT_PATH})
+		
+	file(WRITE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/compile.log)
+    if (_JAVA_COMPILE_FILES)
+        # Compile the java files and create a list of class files
+		message(STATUS "Building Java objects for ${_TARGET_NAME}.jar")
+		execute_process(
+            COMMAND ${Java_JAVAC_EXECUTABLE}
+                ${CMAKE_JAVA_COMPILE_FLAGS}
+                -classpath "${CMAKE_JAVA_INCLUDE_PATH_FINAL}"
+                -d ${CMAKE_JAVA_CLASS_OUTPUT_PATH}
+                ${_JAVA_COMPILE_FILES}			
+            COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/java_compiled_${_TARGET_NAME}
+            WORKING_DIRECTORY "@CMAKE_SOURCE_DIR@"
+			OUTPUT_FILE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/compile.log
+        )
+		add_properties(${CMAKE_JAVA_CLASS_OUTPUT_PATH})
+		java_class_file_list()
+    endif ()
+	
+	
+	list (APPEND _JAVA_RESOURCE_FILES ${MASTER_FILES_LIST})
+	# create the jar file
+    set(_JAVA_JAR_OUTPUT_PATH
+      ${CMAKE_JAVA_TARGET_OUTPUT_DIR}/${_JAVA_TARGET_OUTPUT_NAME})
+    if (CMAKE_JNI_TARGET)
+		message(STATUS "Creating Java archive ${_JAVA_TARGET_OUTPUT_NAME}")
+        execute_process(
+            COMMAND ${Java_JAR_EXECUTABLE}
+                -cvf${_ENTRY_POINT_OPTION} ${_JAVA_JAR_OUTPUT_PATH} ${_ENTRY_POINT_VALUE}
+                ${_JAVA_RESOURCE_FILES} @java_class_filelist
+            COMMAND ${CMAKE_COMMAND}
+                -D_JAVA_TARGET_DIR=${CMAKE_JAVA_TARGET_OUTPUT_DIR}
+                -D_JAVA_TARGET_OUTPUT_NAME=${_JAVA_TARGET_OUTPUT_NAME}
+                -D_JAVA_TARGET_OUTPUT_LINK=${_JAVA_TARGET_OUTPUT_LINK}
+                -P ${_JAVA_SYMLINK_SCRIPT}
+            COMMAND ${CMAKE_COMMAND}
+                -D_JAVA_TARGET_DIR=${CMAKE_JAVA_TARGET_OUTPUT_DIR}
+                -D_JAVA_TARGET_OUTPUT_NAME=${_JAVA_JAR_OUTPUT_PATH}
+                -D_JAVA_TARGET_OUTPUT_LINK=${_JAVA_TARGET_OUTPUT_LINK}
+                -P ${_JAVA_SYMLINK_SCRIPT}
+            WORKING_DIRECTORY ${CMAKE_JAVA_CLASS_OUTPUT_PATH}
+			OUTPUT_FILE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/compile.log
+        )
+    else ()
+		message(STATUS "Creating Java archive ${_JAVA_TARGET_OUTPUT_NAME}")
+        execute_process(
+            COMMAND ${Java_JAR_EXECUTABLE}
+                -cvf${_ENTRY_POINT_OPTION} ${_JAVA_JAR_OUTPUT_PATH} ${_ENTRY_POINT_VALUE}
+                ${_JAVA_RESOURCE_FILES} @java_class_filelist
+            COMMAND ${CMAKE_COMMAND}
+                -D_JAVA_TARGET_DIR=${CMAKE_JAVA_TARGET_OUTPUT_DIR}
+                -D_JAVA_TARGET_OUTPUT_NAME=${_JAVA_TARGET_OUTPUT_NAME}
+                -D_JAVA_TARGET_OUTPUT_LINK=${_JAVA_TARGET_OUTPUT_LINK}
+                -P ${_JAVA_SYMLINK_SCRIPT}
+            WORKING_DIRECTORY ${CMAKE_JAVA_CLASS_OUTPUT_PATH}
+			OUTPUT_FILE ${CMAKE_JAVA_CLASS_OUTPUT_PATH}/compile.log
+        )
+    endif ()	
+endfunction()
+
+macro(build_code)
+	#set jars
+	set(CMAKE_JAVA_INCLUDE_PATH ${JARS})
+
+	#set main entry point for project
+	set(CMAKE_JAVA_JAR_ENTRY_POINT org.automatedtesting.controller.AllTestSuites)
+	
+	#delete project build files
+	clean_project()
+	
+	compile_package(${project_name} ${SRC} ${RCS})
+	
+	setup_one_jar()
+	message(STATUS "Building of ${project_name}.jar is complete!")
+endmacro()
+
+macro(add_properties java_class_ouput_dir)
+	foreach(resource ${RCS})
+		STRING(REGEX REPLACE "src/" "" replaced_string "${resource}")
+		copy_file(@CMAKE_SOURCE_DIR@/${resource} 
+			${java_class_ouput_dir}/${replaced_string}/..)
+	endforeach()
+endmacro()
+
+macro(setup_one_jar)
+	#First make project_jar directory with main and lib subdirectories
+	set(directories
+		"@CMAKE_BINARY_DIR@/${project_name}/main"
+		"@CMAKE_BINARY_DIR@/${project_name}/lib"
+	)
+	file(MAKE_DIRECTORY ${directories})
+	
+	#Copy project_jar into main and all libs into new lib folder
+	file (GLOB_RECURSE jars @CMAKE_BINARY_DIR@/${project_name}_DIR/lib/*)
+	file (GLOB_RECURSE project_jar @CMAKE_BINARY_DIR@/${project_name}*.jar)
+	copy_file("${jars}"
+			"@CMAKE_BINARY_DIR@/${project_name}/lib")
+	file (RENAME ${project_jar} "@CMAKE_BINARY_DIR@/${project_name}/main/${project_name}.jar")
+	
+	#Unjar the one-jar-boot-0.97.jar file into the root directory, and delete the "src" tree
+	file (GLOB_RECURSE one_jar @CMAKE_BINARY_DIR@/${project_name}/lib/one-jar*.jar)
+	execute_process(
+		COMMAND "@Java_JAR_EXECUTABLE@" xf ${one_jar}
+		WORKING_DIRECTORY "@CMAKE_BINARY_DIR@/${project_name}"
+		ERROR_VARIABLE FunctionalError
+	)
+	if(FunctionalError)
+		message(FATAL_ERROR "${FunctionalError}")
+	endif()	
+	file (REMOVE_RECURSE "@CMAKE_BINARY_DIR@/${project_name}/src")
+	
+	#Edit the boot-manifest.mf file and add a new line: One-Jar-Main-Class: your-main-class
+	file(APPEND "@CMAKE_BINARY_DIR@/${project_name}/boot-manifest.mf" "One-Jar-Main-Class: ${CMAKE_JAVA_JAR_ENTRY_POINT}")
+	
+	#build new jar eg: jar -cvfm ../one-jar.jar boot-manifest.mf .
+	execute_process(
+		COMMAND "@Java_JAR_EXECUTABLE@" -cvfm ../${project_name}.jar boot-manifest.mf .
+		WORKING_DIRECTORY "@CMAKE_BINARY_DIR@/${project_name}"
+		ERROR_VARIABLE FunctionalError
+	)
+	if(FunctionalError)
+		message(FATAL_ERROR "${FunctionalError}")
+	endif()
+endmacro()
+
+macro(clean_project)
+#remove project name related files including build and jars
+file (REMOVE_RECURSE "@CMAKE_BINARY_DIR@/${project_name}")
+file (REMOVE_RECURSE "@CMAKE_BINARY_DIR@/${project_name}_DIR")
+file (REMOVE_RECURSE "@CMAKE_BINARY_DIR@/${project_name}.jar")
+
+endmacro()
+
+macro(test_build)
+	message(STATUS "Running tests... @CMAKE_BINARY_DIR@/${project_name}.jar")
+	execute_process(COMMAND "@Java_JAVA_EXECUTABLE@" -jar "@CMAKE_BINARY_DIR@/${project_name}.jar" ERROR_VARIABLE FunctionalError)
+	if(FunctionalError)
+		message(FATAL_ERROR "${FunctionalError}")
+	endif()
+endmacro()                 
+
+cmake_minimum_required(VERSION 2.8.6)
+find_package(Java)
+include(UseJava)
+
+
+set(project_name "@PROJECT_NAME@")
+message(STATUS "ProjectName: ${project_name}")
+set(MASTER_FILES_LIST)
+#add all sources, resources, and jars
+add_sources()
+add_resources()
+add_jars()
+build_code()

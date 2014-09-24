@@ -1,0 +1,91 @@
+package org.automatedtesting.examples;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import java.awt.Robot;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class PrintOrders {
+  private WebDriver driver;
+  public Robot r;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+    baseUrl = "https://coms.vacloud.us/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testPrintOrders() throws Exception {
+    driver.get(baseUrl + "/");
+    driver.findElement(By.name("AccessCode")).clear();
+    driver.findElement(By.name("AccessCode")).sendKeys("COMS1234");
+    driver.findElement(By.name("VerifyCode")).clear();
+    driver.findElement(By.name("VerifyCode")).sendKeys("COMS4321!");
+    driver.findElement(By.cssSelector("input[type=\"submit\"]")).click();
+    driver.findElement(By.id("textfield-1023-inputEl")).clear();
+    driver.findElement(By.id("textfield-1023-inputEl")).sendKeys("F0400");
+    driver.findElement(By.id("ext-gen2666")).click();
+    r.delay(15000);
+    driver.findElement(By.id("ext-gen2716")).click();
+    driver.manage().timeouts().implicitlyWait(45, TimeUnit.SECONDS);
+    driver.findElement(By.id("tab-1512-btnEl")).click();
+    driver.findElement(By.linkText("Print")).click();
+  }
+
+  private void SetTimeout(int i) {
+	// TODO Auto-generated method stub
+	
+}
+
+@After
+  public void tearDown() throws Exception {
+    driver.quit();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+}

@@ -1,0 +1,107 @@
+package com.example.tests;
+
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
+
+public class CreateNewTemplate4421AdminRole {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+    baseUrl = "https://coms.vacloud.us/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
+
+  @Test
+  public void testCreateNewTemplate4421AdminRole() throws Exception {
+    driver.get(baseUrl + "/index.php");
+    driver.findElement(By.id("tab-2011-btnEl")).click();
+    driver.findElement(By.id("radiofield-1545-inputEl")).click();
+    driver.findElement(By.id("ext-gen2956")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2198-listEl']/ul/li[105]")).click();
+    driver.findElement(By.id("ext-gen2959")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2200-listEl']/ul/li[2]")).click();
+    driver.findElement(By.id("textfield-1565-inputEl")).click();
+    driver.findElement(By.id("textfield-1565-inputEl")).clear();
+    driver.findElement(By.id("textfield-1565-inputEl")).sendKeys("4");
+    driver.findElement(By.id("ext-gen2962")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2202-listEl']/ul/li[3]")).click();
+    driver.findElement(By.id("ext-gen2965")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2204-listEl']/ul/li[2]")).click();
+    driver.findElement(By.id("ext-gen2968")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2206-listEl']/ul/li[2]")).click();
+    driver.findElement(By.id("textfield-1572-inputEl")).click();
+    driver.findElement(By.id("textfield-1572-inputEl")).clear();
+    driver.findElement(By.id("textfield-1572-inputEl")).sendKeys("5");
+    driver.findElement(By.id("textfield-1575-inputEl")).clear();
+    driver.findElement(By.id("textfield-1575-inputEl")).sendKeys("Take one every hour as needed.");
+    driver.findElement(By.id("button-1592")).click();
+    driver.findElement(By.id("radiofield-2214-inputEl")).click();
+    driver.findElement(By.id("ext-gen5781")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2238-listEl']/ul/li[825]")).click();
+    driver.findElement(By.id("ext-gen5784")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2240-listEl']/ul/li")).click();
+    driver.findElement(By.id("textfield-2219-inputEl")).click();
+    driver.findElement(By.id("textfield-2219-inputEl")).clear();
+    driver.findElement(By.id("textfield-2219-inputEl")).sendKeys("4");
+    driver.findElement(By.id("textfield-2223-inputEl")).clear();
+    driver.findElement(By.id("textfield-2223-inputEl")).sendKeys("20");
+    driver.findElement(By.id("ext-gen5787")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2242-listEl']/ul/li[7]")).click();
+    driver.findElement(By.id("ext-gen5790")).click();
+    driver.findElement(By.xpath("//div[@id='boundlist-2244-listEl']/ul/li[3]")).click();
+    driver.findElement(By.id("button-2235-btnEl")).click();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    driver.quit();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+}
