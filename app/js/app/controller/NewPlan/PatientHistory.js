@@ -19,11 +19,9 @@ Ext.define("COMS.controller.NewPlan.PatientHistory", {
 	},
 
 	RenderPanel : function (panel) {
-		debugger;
 	},
 
 	ShowHideVitals : function (btn) {
-		debugger;
 		var thePanel = this.getAddVitalsPanel();
 		if (thePanel.hidden) {
 			thePanel.show();

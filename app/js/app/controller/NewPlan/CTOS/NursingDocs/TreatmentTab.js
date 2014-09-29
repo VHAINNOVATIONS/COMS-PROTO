@@ -118,6 +118,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		this.curTreatmentRecord.set("User", values.AccessCode);
 		this.curTreatmentRecord.set("VerifyCode", values.VerifyCode);
 		this.curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
+		this.curTreatmentRecord.set("templateID", this.application.Patient.AppliedTemplateID);
+
 
 		Ext.Ajax.request({
 			scope : this,
@@ -128,6 +130,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				var resp = Ext.JSON.decode( text );
 				if (resp.success && "Failed" !== resp.records) {
 					var tData = this.curTreatmentRecord.getData();
+					var drug = this.curTreatmentRecord.get("drug");
+					var res = drug.replace(/^\d+\. /, "");
+					this.curTreatmentRecord.set("drug", drug);
+
+
+/*
+ *
+ alert("Correct Drug being sent by stripping off leading # and '. '");
+ */
+
 					this.curTreatmentRecord.set("Treatment_User", this.curTreatmentRecord.get("AccessCode"));
 					this.curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
 					this.curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
@@ -293,16 +305,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 		var re = new RegExp(Patient.id);
 		var today = Ext.Date.format( new Date(), "m/d/Y");
+		var today4URL = Ext.Date.format( new Date(), "Y-m-d");
 		var reDate = new RegExp(today);
 		var reDispensed = new RegExp("Dispensed");
-
+/*****
 		theStore.clearFilter(true);
 		theStore.filter([
 			{property: "patientID", value: re}
 			,{property: "adminDate", value: reDate}
 			,{property: "orderstatus", value: reDispensed}
 		]);
-
+*****/
 this.PatientID = Patient.id;
 this.AdminDate = today;
 
@@ -314,16 +327,15 @@ this.AdminDate = today;
 		 ***/
 
 		this.application.loadMask("Loading Treatment Administration Information");
-//		theStore.proxy.api.read = "Orders/AdminOrders/" + Patient.id + "/" + Patient.TemplateID + "/" + today;
-
+		theStore.proxy.api.read = "/Orders/Orders/" + Patient.id + "/" + today4URL;
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){
 				this.application.unMask();
 				if(success){
-					var theStore = Ext.getStore("ND_Treatment");
-					this.application.Patient.TreatmentStore = theStore;	// The store containing all the records for today's treatment
-					this.LoadPreviousTreatmentData();
+//					var theStore = Ext.getStore("ND_Treatment");
+//					this.application.Patient.TreatmentStore = theStore;	// The store containing all the records for today's treatment
+//					this.LoadPreviousTreatmentData();
 				}
 				else {
 					Ext.MessageBox.alert("Error", "Administration Grid store failed to load");
@@ -449,3 +461,46 @@ this.AdminDate = today;
 		});
 	}
 });
+
+Ext.ND_TreatmentTimeRenderer = function(v) {
+	if ("" !== v) {
+		var v1, v2, v3;
+		if ("string" == typeof v) {
+			v1 = v.split("T");
+			if (v1.length > 0) {
+				v1 = v1.join(" ");
+			}
+			v1 = new Date(v1);
+			if (isNaN(v1)) {
+				return v;
+			}
+		}
+		else {
+			v1 = new Date(v);
+		}
+		v2 = Ext.Date.format(v1, "h:i A");
+		return v2;
+	}
+	return v;
+};
+
+Ext.ND_TreatmentTypeOrderRenderer = function(v) {
+	switch (v) {
+		case 1:
+			return "Pre Therapy";
+		case 2:
+			return "Therapy";
+		case 3:
+			return "Post Therapy";
+	}
+};
+
+Ext.ND_TreatmentSignature = function(v, metadata, record, rowIndex, colIndex, store, view) {
+	var aStyle = "style=\"text-decoration:underline; color: navy;\" ";
+	var dspValue = "Sign to Verify";
+	if (v) {
+		aStyle = "";
+		dspValue = (v + " - " + record.get("Treatment_Date"));
+	}
+	return Ext.String.format("<span class=\"anchor TreatmentSigner\" {0}row={1} col={2}>{3}</span>", aStyle, rowIndex, colIndex, dspValue);
+};

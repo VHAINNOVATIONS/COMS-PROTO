@@ -452,6 +452,44 @@ class LookUp extends Model {
         }
     }
 
+    function getEmoData( $key = "Low" ) {
+        switch($key) {
+            case "Low":
+                $Label = "Emesis-1";
+                break;
+            case "Medium":
+                $Label = "Emesis-2";
+                break;
+            case "Moderate":
+                $Label = "Emesis-3";
+                break;
+            case "High":
+                $Label = "Emesis-4";
+                break;
+            case "Very High":
+                $Label = "Emesis-5";
+                break;
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $EmesisVal = $this->query($query);
+        return htmlspecialchars($EmesisVal[0]["Details"]);
+    }
+
+    function getNeutroData( $FNRisk = 1 ) {
+        if ($FNRisk < 10) {
+            $Label = "Neutropenia-1";
+        }
+        else if ($FNRisk <= 20) {
+            $Label = "Neutropenia-2";
+        }
+        else {
+            $Label = "Neutropenia-3";
+        }
+        $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+        $FNRVal = $this->query($query);
+        return htmlspecialchars($FNRVal[0]["Details"]);
+    }
+
     /**
      * 
      * @param array $regimens

@@ -25,7 +25,7 @@ class OrdersController extends Controller {
 
 
 
-   function grabOrders() {
+   function grabOrders($patientID, $AdminDate) {
 
         $form_data = json_decode(file_get_contents('php://input'));
         $jsonRecord = array();
@@ -52,6 +52,108 @@ class OrdersController extends Controller {
             $this->set('jsonRecord', $jsonRecord);
             
         } else {
+            if ($patientID && $AdminDate) {
+                $query = "SELECT
+       os.Order_Status as orderstatus
+      ,os.Drug_Name as drug
+      ,os.Order_Type as type
+      ,os.Patient_ID as patientID
+      ,os.Order_ID
+      ,os.Drug_ID
+      ,os.FlowRate
+      ,os.Sequence
+      ,os.Amt as dose
+      ,os.Unit as unit
+      ,os.Route as route
+      ,os.flvol
+      ,os.infusion
+      ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
+      FROM Order_Status os 
+      where Patient_ID = '$patientID' and Admin_Date='$AdminDate'";
+
+
+
+
+
+                $TreatmentData = $this->Orders->query($query);
+                if ($this->checkForErrors('Get Patient Templates Failed. ', $TreatmentData)) {
+                    $jsonRecord['success'] = 'false';
+                    $jsonRecord['msg'] = $this->get('frameworkErr');
+                    $this->set('jsonRecord', $jsonRecord);
+                }
+                else {
+                    $retData = array();
+                    foreach ($TreatmentData as $rec) {
+                        $type = $rec["type"];
+                        if ("Therapy" != $type) {
+                            $type .= " Therapy";
+                        }
+                        $pid = $rec["patientID"];
+                        $aDate = $rec["adminDate"];
+                        $DrugName = $rec["drug"];
+                        $query= "SELECT
+       Drug
+      ,Dose
+      ,Unit
+      ,Route
+      ,StartTime
+      ,EndTime
+      ,Comments
+      ,Treatment_User
+      ,Treatment_Date
+      ,Dose_OriginalValue
+      ,PAT_ID
+      ,Template_ID as templateID
+      ,Patient_ID as patientID
+      ,Drug_OriginalValue as drug_originalValue
+      ,Unit_OriginalValue as unit_originalValue
+      ,Route_OriginalValue as route_originalValue
+      from ND_Treatment
+      where Patient_ID = '$pid' and
+      AdminDate = '$aDate' and
+      Drug = '$DrugName' and
+      Type = '$type'";
+                        $tData = $this->Orders->query($query);
+                        if ($this->checkForErrors('Get Patient Templates Failed. ', $tData)) {
+                            $jsonRecord['success'] = 'false';
+                            $jsonRecord['msg'] = $this->get('frameworkErr');
+                            $this->set('jsonRecord', $jsonRecord);
+                        }
+                        else {
+                            if (count($tData) > 0) {
+                                $rec["StartTime"] = $this->SelectedTimeConvert($tData[0]["StartTime"]);
+                                $rec["EndTime"] = $this->SelectedTimeConvert($tData[0]["EndTime"]);
+                                $rec["Comments"] = $tData[0]["Comments"];
+                                $rec["Treatment_User"] = $tData[0]["Treatment_User"];
+                                $rec["Treatment_Date"] = $tData[0]["Treatment_Date"];
+                                $rec["Dose_OriginalValue"] = $tData[0]["Dose_OriginalValue"];
+                                $rec["PAT_ID"] = $tData[0]["PAT_ID"];
+                                $rec["Template_ID"] = $tData[0]["Template_ID"];
+                                $rec["Patient_ID"] = $tData[0]["Patient_ID"];
+                                $rec["Drug_OriginalValue"] = $tData[0]["Drug_OriginalValue"];
+                                $rec["Unit_OriginalValue"] = $tData[0]["Unit_OriginalValue"];
+                                $rec["Route_OriginalValue"] = $tData[0]["Route_OriginalValue"];
+                            }
+                        }
+                        $rec["dose"] = $this->numberFormater($rec["dose"]);
+                        $rec["drug"] = $rec["Sequence"] . ". " . $rec["drug"];
+                        $rec["typeOrder"] = 3;
+                        if ($type == "Pre Therapy") {
+                            $rec["typeOrder"] = 1;
+                        } else if ($type == "Therapy") {
+                            $rec["typeOrder"] = 2;
+                        }
+                        $retData[] = $rec;
+                        // echo json_encode($rec) . "<br>";
+                    }
+                }
+                $jsonRecord['success'] = 'true';
+                $jsonRecord['msg'] = "";
+                $this->set('jsonRecord', $retData);
+                return;
+            }
+
+
             $finalOrders = array();
             $patientTemplates = $this->Orders->getPatientsWithActiveTemplates();
 
@@ -210,8 +312,8 @@ class OrdersController extends Controller {
         }
    }
    
-   function Orders() {
-	   $this->grabOrders();
+   function Orders($patientID = null, $AdminDate = null) {
+	   $this->grabOrders($patientID, $AdminDate);
     }
 
    function OrdersHold($TID,$Drug_Name, $Order_Type, $PID) {
@@ -516,214 +618,6 @@ else if ("Cancel" === $status) {
         $query = "select PAT_ID from Patient_Assigned_Templates where Patient_ID = '$PatientID' and Template_ID = '$TemplateID' and Is_Active=1";
         $retVal = $this->Orders->query($query);
         return $retVal[0]["PAT_ID"];
-    }
-
-    function AdminOrders($PatientID=null, $TemplateID=null, $AdminMon=null, $AdminDay=null, $AdminYr=null) {
-            $AdminDate = $AdminMon . "/" . $AdminDay . "/" . $AdminYr;
-            $AdminDate = "09/18/2014";
-            $PAT_ID = $this->getPAT_ID($PatientID, $TemplateID);
-            
-//            $controller = 'FlowsheetController';
-//            $FlowsheetController = new $controller('Flowsheet', 'flowsheet', null);
-//            $Records = $FlowsheetController->getOrders4AdminDate($PatientID, $AdminDate);
-
-$query = "SELECT 
-        Order_Status
-            ,Drug_Name as drug
-            ,Order_Type as type
-            ,os.Template_ID as templateID
-            ,Patient_ID as patientID
-            ,os.Order_ID as Order_ID
-            ,os.Drug_ID
-            ,Notes
-            ,FluidType
-            ,FluidVol as fluidVol
-            ,FlowRate as flowRate
-            ,AdminDay as adminDay
-            ,InfusionTime
-            ,AdminTime
-            ,Sequence
-            ,Amt as dose
-            ,Unit as unit
-            ,Route as route
-            ,flvol as fluidVol
-            ,flunit
-            ,infusion
-            ,CONVERT(VARCHAR(10), Admin_Date, 101) as adminDate
-            FROM Order_Status os
-            where os.Patient_ID = '$PatientID' and os.Template_ID = '$TemplateID' and os.Admin_Date = '$AdminDate'
-        order by os.Order_Type, os.Drug_Name";
-        echo $query;
-
-$Records = $this->Orders->query($query);
-
-            echo json_encode($Records);
-
-
-echo "<br>-------------------------------------------------<br>";
-// http://coms-mwb.dbitpro.com:355/Orders/AdminOrders/D5167CA7-EB5E-4D4A-9966-6C33626A22A7/DD3B95BC-67E3-430E-A133-B1E71CA45CDF/09/19/2014
-
-            foreach ($Records as $Order) {
-                $DrugName = $Order["drug"];
-                $Status = $Order["Order_Status"];
-                if ("Administered" == $Status) {
-                    $query = "SELECT Type, Dose, Unit, StartTime, EndTime, Treatment_User, Treatment_Date FROM ND_Treatment ndt where ndt.PAT_ID = '$PAT_ID' and ndt.Drug = '$DrugName'";
-                    $AdminDetails = $this->Orders->query($query);
-                    echo "$DrugName --- $AdminDate --- " . json_encode($AdminDetails) . "<br>";
-                    array(
-                        "patientID" => "$PatientID", 
-                        "templateID" => "$TemplateID", 
-                        "PAT_ID" => "$PAT_ID", 
-                        "Cycle" => "", 
-                        "CourseNum" => "", 
-                        "adminDay" => "", 
-                        "adminDate" => "", 
-                        "type" => "", 
-                        "typeOrder" => "", 
-                        "drug" => "", 
-                        "MedID" => "", 
-                        "dose" => "", 
-                        "unit" => "", 
-                        "UnitID" => "", 
-                        "route" => "", 
-                        "StartTime" => "", 
-                        "EndTime" => "", 
-                        "Comments" => "", 
-                        "User" => "", 
-                        "Treatment_User" => "", 
-                        "Treatment_Date" => "", 
-                        "drug_originalValue" => "", 
-                        "dose_originalValue" => "", 
-                        "unit_originalValue" => "", 
-                        "route_originalValue" => "", 
-                        "orderstatus" => ""
-                    );
-
-                }
-                else {
-                    echo "$DrugName --- $AdminDate --- " . json_encode($Order) . "<br><br>";
-                }
-
-
-/************************************
-		"patientID",			// GUID for the Patient
-		"templateID",			// GUID for the Template
-		"PAT_ID",				// GUID for the Treatment record
-		"Cycle",
-		"CourseNum",			// MWB - 6/17/2012 - This is really the "Cycle"
-		"adminDay",
-		"adminDate",
-		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
-		"typeOrder",	// Used to display therapy type in grid in sorted order (Pre = 1, Therapy = 2, Post = 3)
-		"drug",
-		"MedID",
-		"dose",
-		"unit",
-		"UnitID",
-		"route",
-		"StartTime",
-		"EndTime",
-		"Comments",
-		"User",
-		"Treatment_User",
-		"Treatment_Date",		// Time/Date stamp of when the treatment was recorded
-		"drug_originalValue",
-		"dose_originalValue",
-		"unit_originalValue",
-		"route_originalValue",
-		"orderstatus"
-****************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            }
-
-
-echo "<br>-------------------------------------------------<br>";
-
-            
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        $jsonRecord = array();
-        if (!$PatientID || !$TemplateID || !$AdminMon || !$AdminDay || !$AdminYr) {
-            $jsonRecord['success'] = false;
-            $jsonRecord['msg'] = "Insufficient parameters passed";
-            $this->set('jsonRecord', $jsonRecord);
-            error_log("Faiuled");
-            return;
-        }
-//  and Admin_Date = '$AdminMon/AdminDay/AdminYr'
-        $query="SELECT 
-        Order_Status as orderstatus
-            ,Drug_Name as drug
-            ,Order_Type as type
-            ,os.Template_ID as templateID
-            ,Patient_ID as patientID
-            ,os.Order_ID as Order_ID
-            ,os.Drug_ID
-            ,Notes
-            ,FluidType
-            ,FluidVol as fluidVol
-            ,FlowRate as flowRate
-            ,AdminDay as adminDay
-            ,InfusionTime
-            ,AdminTime
-            ,Sequence
-            ,Amt as dose
-            ,Unit as unit
-            ,Route as route
-            ,flvol as fluidVol
-            ,flunit
-            ,infusion
-            ,CONVERT(VARCHAR(10), Admin_Date, 101) as adminDate
-            FROM Order_Status os
-            where os.Patient_ID = '$PatientID' and os.Template_ID = '$TemplateID' and os.Admin_Date = '$AdminMon/$AdminDay/$AdminYr'
-        order by os.Order_Type, os.Drug_Name";
-        error_log($query);
-        $retVal = $this->Orders->query($query);
-        $jsonRecord['success'] = true;
-        $jsonRecord['total'] = count($retVal);
-        $jsonRecord['records'] = $retVal;
-        $this->set('jsonRecord', $jsonRecord);
     }
 }
 

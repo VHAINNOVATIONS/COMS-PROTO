@@ -208,7 +208,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	
 		PatientInfo = this.application.Patient;
 		PatientInfo.OEMDataRendered = false;
-		this.application.fireEvent("DisplayOEMData", PatientInfo, "fromEdit");
+		this.application.fireEvent("DisplayOEMData", PatientInfo);
 	},
 	
 	SaveChanges : function(button, event, eOpts) {

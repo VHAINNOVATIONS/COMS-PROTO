@@ -19,7 +19,6 @@ CREATE TABLE [dbo].[Flowsheet_ProviderNotes ](
     [AdminDate] [nvarchar](max) NULL
 ) ON [PRIMARY]
 
-Mike Barlow
  */
 class FlowsheetController extends Controller
 {
@@ -53,6 +52,8 @@ class FlowsheetController extends Controller
         return false;
     }
 
+
+
     function getGeneralInfo($PAT_ID) {
         if ($PAT_ID) {       /* Get Specific Info */
             $query = "select
@@ -74,7 +75,6 @@ class FlowsheetController extends Controller
         else {       /* Get ALL Info */
             $query = "select * from $TableName";
         }
-        // error_log("GET Request - $query");
         return $this->Flowsheet->query($query);
     }
 
@@ -112,9 +112,8 @@ class FlowsheetController extends Controller
         if (null == $PAT_ID || "PAT_ID" == $PAT_ID) {
             $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
         }
-        // $PAT_ID = "C8DD3E0F-07F3-E311-AC08-000C2935B86F";
         $AdminDate = date("m/d/Y");
-        // error_log("PAT_ID for General Flow Sheet Information = $PAT_ID");
+
 
 
         // Retrieve Data if Request is a PUT
@@ -159,7 +158,6 @@ class FlowsheetController extends Controller
                        VALUES
                        ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
                 }
-                error_log("POST Request - $query");
 
                 $jsonRecord['msg'] = "$Msg Record Created";
                 $ErrMsg = "Creating $Msg Record";
@@ -198,7 +196,6 @@ class FlowsheetController extends Controller
 
 
     public function Optional2($PAT_ID = null) {
-error_log("Optional Entry Point");
         $Msg = "Flowsheet Optional Information";
         $TableName = "Flowsheet_ProviderNotes";
 
@@ -237,19 +234,6 @@ public function FSDataConvert($id = null, $PAT_ID = null, $PreT, $Therapy, $Post
     foreach ($GeneralInfoRecords as $giRec) {
         $GIRDates += array($giRec["AdminDate"] => $giRec);
     }
-
-/**
-error_log("GIRec - 07/29/2014 - " . $this->varDumpToString($GIRDates["07/29/2014"]));
-error_log("GIRec - 07/28/2014 - " . $this->varDumpToString($GIRDates["07/28/2014"]));
-error_log("GIRec - 07/25/2014 - " . $this->varDumpToString($GIRDates["07/25/2014"]));
-error_log("GIRec - 07/24/2014 - " . $this->varDumpToString($GIRDates["07/24/2014"]));
-**/
-
-
-
-
-
-
     $ControllerClass = "PatientController";
     $model = "Patient";
     $controller = "patient";
@@ -263,14 +247,7 @@ error_log("GIRec - 07/24/2014 - " . $this->varDumpToString($GIRDates["07/24/2014
 
 
 $Status = $OEMData["success"];
-// error_log("Flow Sheet Status - $Status");
-// $oemRecords = $OEMData["records"][0]["OEMRecords"];
 $oemRecords = $OEMData["records"][0]["OEMRecords"];
-// error_log("Flow Sheet All Records - " . $this->varDumpToString($oemRecords));
-//return;
-
-// error_log("--------------------------------------------");
-
 $PreTherapy = array();
 $Therapy = array();
 $PostTherapy = array();
@@ -306,11 +283,8 @@ foreach($oemRecords as $aRecord) {
     $CycleColLabel = "Cycle $Cycle, Day $Day";
     $DateRow += array($CycleColLabel=>$AdminDate);
 
-    // error_log("AdminDate - $AdminDate");
-
     if (array_key_exists($AdminDate, $GIRDates)) {
         $giRec = $GIRDates[$AdminDate];
-        // error_log("GIRec - " . $this->varDumpToString($giRec));
 
         if ($giRec["Disease_Response"] == "") {
             $DRRow += array($CycleColLabel=>"");
@@ -358,7 +332,6 @@ foreach($oemRecords as $aRecord) {
                 $aTempRec["Start"] . "<br>to " . 
                 $aTempRec["End"];
         }
-        // error_log("Pre Therapy - $Key - $MedData");
         $PreTherapy[$MedName] += array($CycleColLabel => $MedData);
     }
 
@@ -374,7 +347,6 @@ foreach($oemRecords as $aRecord) {
         $MedData = "";
         if (array_key_exists($Key, $Therapy)) {
             $aTempRec = $Therapy[$Key];
-            error_log("Therapy Check - " . count($aTempRec));
             if(count($aTempRec) > 1) {
                 $aTempRec = $aTempRec[0];
             }
@@ -384,7 +356,6 @@ foreach($oemRecords as $aRecord) {
                 $aTempRec["Route"] . "<br>From " . 
                 $aTempRec["Start"] . "<br>to " . 
                 $aTempRec["End"];
-            error_log("Therapy - ($Key) - ($MedData)");
         }
         else {
             error_log("No Matching Record in Therapy for $Key");
@@ -412,7 +383,6 @@ foreach($oemRecords as $aRecord) {
                 $aTempRec["Start"] . "<br>to " . 
                 $aTempRec["End"];
         }
-        // error_log("Post Therapy - $Key - $MedData");
         $PostTherapy[$MedName] += array($CycleColLabel => $MedData);
     }
 }
@@ -437,21 +407,14 @@ foreach($PostTherapy as $Med) {
     $records[] = $Med;
 }
 
-//error_log("Flow Sheet Data - " . $this->varDumpToString($records));
-
-
-
-
-
     $this->set('jsonRecord', array('success' => true, 'total' => count($records), 'records' => $records));
 }
 
 
-
+/*
+ * Passing Patient_ID and PAT_ID
+ */
     public function FS2($id = null, $PAT_ID = null) {
-
-        error_log("FS-II Entry Point");
-
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $retVal = array();
@@ -479,9 +442,8 @@ foreach($PostTherapy as $Med) {
                     )
                 ));
         } else {
-            error_log("FS GET - ");
-            //$records = $this->Flowsheet->getFlowsheet($id);
-            $records = $this->Flowsheet->FS($id);
+            $Template_ID = $this->Flowsheet->getTemplateID($PAT_ID);
+            $records = $this->Flowsheet->FS($id, $Template_ID);
             if (empty($records)) {
                 $records['error'] = 'No Records Found';
             }
@@ -504,7 +466,6 @@ $TherapyAdminRecords = array();
 $PostAdminRecords = array();
 
 $TKeys = array();
-error_log("=================++++++++++++++++++++++++====================");
 foreach ($records as $aRec) {
     // error_log("Order Record = " . $this->varDumpToString($aRec));
 
@@ -590,22 +551,16 @@ error_log("================================================");
 
 	}
 	
+/***************
 	function FS3($patientID){
-        
         $jsonRecord = array();
-
         $records = $this->FlowSheet->FS($patientID);
-		
-
-            return;
+        return;
         
-        $jsonRecord['success'] = true;            
+        $jsonRecord['success'] = true;
         $jsonRecord['total'] = count($records);
-
         $jsonRecord['records'] = $records;
-
         $this->set('jsonRecord', $jsonRecord);
-        
     }
-	
+*************/
 }

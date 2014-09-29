@@ -991,7 +991,6 @@ class PatientController extends Controller
 		$templateId = $this->Patient->getTemplateIdByPatientID($id);
 		if ($this->checkForErrors('Template ID not available in Patient_Assigned_Templates. ', $templateId)) {
 			$this->set('masterRecord', null);
-            // error_log("Template ID not available in Patient_Assigned_Templates - $templateId");
 			return;
 		}
 
@@ -1006,9 +1005,14 @@ class PatientController extends Controller
 		}
 
 		$masterRecord = $this->Patient->getTopLevelPatientTemplateDataById($id, $templateId[0]['id']);
+
+        $lookup = new LookUp();
+        $masterRecord[0]["emodetails"] = $lookup->getEmoData( $masterRecord[0]["emoLevel"] );
+        $masterRecord[0]["fnrDetails"] = $lookup->getNeutroData($masterRecord[0]["fnRisk"]);
+
 		if ($this->checkForErrors('Get Top Level Template Data Failed. ', $masterRecord)) {
 			$this->set('masterRecord', null);
-            // error_log("Get Top Level Template Data Failed. $masterRecord");
+            error_log("Get Top Level Template Data Failed. $masterRecord");
 			return;
 		}
 
@@ -1017,19 +1021,16 @@ class PatientController extends Controller
 		$Disease = $lookup->selectByNameAndDesc('DiseaseType', $masterRecord[0]['Disease']);
 		if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
 			$this->set('templatedata', null);
-            // error_log("Get Disease Info Failed. $Disease");
+            error_log("Get Disease Info Failed. $Disease");
 			return;
 		}
 		$masterRecord[0]['DiseaseRecord'] = $Disease;
 		$this->set('masterRecord', $masterRecord);
 
-
-
-
 		$oemrecords = $this->Patient->getTopLevelOEMRecords($id, $templateId[0]['id']);
 		if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {
 			$this->set('oemrecords', null);
-            // error_log("Get Top Level OEM Data Failed. $oemrecords");
+            error_log("Get Top Level OEM Data Failed. $oemrecords");
 			return;
 		}
 		$this->set('oemrecords', $oemrecords);
@@ -1042,24 +1043,19 @@ class PatientController extends Controller
             $retVal = $this->Hydrations('pre', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Pre Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
-                // error_log("Get Pre Therapy Failed. - $retVal");
+                error_log("Get Pre Therapy Failed. - $retVal");
 				return;
 			}
 			$oemDetails['PreTherapy'] = $this->get('prehydrations');
-
-// error_log("genOEMData() - PreTherapy oemDetails - " . json_encode($oemDetails['PreTherapy']));
-// error_log("-----------------------------");
-
-
 			$oemDetails['PreTherapyInfusions'] = $this->get('preorigInfusions');
 
-
-			$retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
+            $retVal = $this->Hydrations('post', $oemrecord['TemplateID']);
 			if ($this->checkForErrors('Get Post Therapy Failed. ', $retVal)) {
 				$this->set('oemrecords', null);
                 // error_log("Get Post Therapy Failed. - $retVal");
 				return;
 			}
+
 			$oemDetails['PostTherapy'] = $this->get('posthydrations');
 			$oemDetails['PostTherapyInfusions'] = $this->get('postorigInfusions');
 
@@ -1069,7 +1065,8 @@ class PatientController extends Controller
                 // error_log("Get Therapy Failed. - $retVal");
 				return;
 			}
-			$oemDetails['Therapy'] = $this->get('regimens');
+
+            $oemDetails['Therapy'] = $this->get('regimens');
 			$oemMap[$oemrecord['TemplateID']] = $oemDetails;
 			// echo "ARRAY:<br>" . json_encode($oemDetails) . "<br><br><br>";
         }
@@ -1240,12 +1237,15 @@ function buildJsonObj4Output() {
 
             $preRecord = array();
             $preRecord["id"] = $masterRecord[0]["id"];
+
+
             $preRecord["FNRisk"] = $masterRecord[0]["fnRisk"];
-            $preRecord["NeutropeniaRecommendation"] = "XX";
+            $preRecord["NeutropeniaRecommendation"] = $masterRecord[0]["fnrDetails"];
             $preRecord["ELevelID"] = $masterRecord[0]["emoID"];
             $preRecord["ELevelName"] = $masterRecord[0]["emoLevel"];
-            $preRecord["ELevelRecommendationASCO"] = "XX";
-            $preRecord["ELevelRecommendationNCCN"] = "XX";
+            $preRecord["ELevelRecommendationASCO"] = $masterRecord[0]["emodetails"];
+            $preRecord["ELevelRecommendationNCCN"] = "Unknown";
+
             $preRecord["numCycles"] = $masterRecord[0]["CourseNumMax"];
             $preRecord["Goal"] = $masterRecord[0]["Goal"];
             $preRecord["ClinicalTrial"] = $masterRecord[0]["ClinicalTrial"];

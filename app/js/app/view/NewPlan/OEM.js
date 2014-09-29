@@ -24,7 +24,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 	cls : "Tab", 
 	tpl : new Ext.XTemplate(
 		"<tpl for=\"Patient\">",
-//			"{[this.debuggerFcn( values, parent )]}",
+			"{[this.debuggerFcn( values, parent )]}",
 			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders (opens new window)&nbsp;",
 			"<a href=\"Fsheet/?PID={id}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
 		"</tpl>",
@@ -44,7 +44,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 		"		<th>Febrile Neutropenia&nbsp;Risk:</th>",
 		"		<td>{FNRisk}%</td>",
 		"		<th>Recommendation:</th>",
-		"		<td>{FNRiskDetails}</td>",
+		"		<td>{NeutropeniaRecommendation}</td>",
 		"	</tr>",
 		"	<tr class=\"MultiLineRow\">",
 		"		<th>Emesis Risk:</th>",

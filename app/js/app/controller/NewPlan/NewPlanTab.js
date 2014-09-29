@@ -100,6 +100,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     init: function() {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
+		this.application.on({ LoadOEMData : this.LoadOEM_OrderData, scope : this });
+
 		this.application.on({ UpdateBSAWeightHeight : function(opts, tab2Switch2) {
 			var weight = opts.weight;
 			var height = opts.height;
@@ -599,7 +601,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     //KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
     loadCombo : function(picker, eOpts){
-		debugger;
         var originalHiddenVal=null;
         picker.hiddenValue = picker.getRawValue();
         picker.clearValue();
@@ -1662,11 +1663,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 	loadOrderRecords : function( ) {
 		var PatientID = this.application.Patient.id;
-		var CTOSModel = this.getModel("OEMRecords");		// MWB 21 Feb 2012 - Loading new model for retrieving the records direct from the DB rather than generating them
-		CTOSModel.load( PatientID, {
+		var OEMRecordsModel = this.getModel("OEMRecords");
+		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
-// wccConsoleLog("OEMRecords Model - Load Complete");
 				try {
 					wccConsoleLog("Template Data Loaded - Processing");
 					var theData = TemplateData.data;
@@ -1674,18 +1674,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.RegimenName = this.application.Patient.TemplateName;
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
 
-					// theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
-					// theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
-
-					theData.ELevelRecommendationASCO = "NOT from Site Config";
-					theData.ELevelRecommendationNCCN = "";
-
-
 					this.application.Patient.OEMRecords = theData;
 					this.getEmoLevelInfo(theData.ELevelName);
 					this.getFNRiskInfo(theData.FNRisk);
-
-
 
 				}
 				catch (err) {
@@ -1695,9 +1686,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					wccConsoleLog(err.message + " @ Line# " + err.lineNo);
 				}
 
-					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
 				this.DataLoadCountDecrement("loadOrderRecords PASS");
 				this.PatientDataLoadComplete("OEM Records");
+
+				if (this.application.DataLoadCount <= 0) {
+					PatientInfo = this.application.Patient;
+					PatientInfo.OEMDataRendered = false;
+					this.application.fireEvent("DisplayOEMData", PatientInfo);
+				}
 
 
 			},
@@ -2378,7 +2374,6 @@ fieldContainerWalk : function(item, y, z) {
 
 			this.clearCTOS();
 
-
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
@@ -2567,23 +2562,6 @@ fieldContainerWalk : function(item, y, z) {
 		record.SPO2 = "";
 		record.Temperature = "";
 		record.PatientID = Patient.id;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		var params = Ext.encode(record);
 
 		Ext.Ajax.request({
@@ -2605,14 +2583,16 @@ fieldContainerWalk : function(item, y, z) {
 			}
 		});
 		return (true);
+	},
+
+	LoadOEM_OrderData : function() {
+		console.log("Loading OEM Data");
+		if (this.application.Patient) {
+			this.application.DataLoadCount = 1;
+			this.loadOrderRecords();
+		}
 	}
 
-
-	/**************************************************
-	 *
-	 *	MWB 30 Jan 2012 - End of changes
-	 *
-	 **************************************************/
 
 });
 
