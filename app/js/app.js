@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
 Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 
@@ -605,6 +606,8 @@ Ext.require([
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Common.puWinChangeAdminDate",
 	"COMS.controller.Common.selCTOSTemplate",
+	"COMS.controller.Common.MedRemindersForm",
+
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.TemplateList.puWinListPatients",
@@ -1611,6 +1614,7 @@ Ext.application({
 		, "Common.puWinSelBSA"
 		, "Common.selCTOSTemplate"
 		, "Common.puWinChangeAdminDate"
+		, "Common.MedRemindersForm"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"

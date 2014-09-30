@@ -1,0 +1,253 @@
+/* http://alvinalexander.com/javascript/sencha-touch-extjs-json-encode-post-examples */
+Ext.define("COMS.controller.Common.MedRemindersForm", {
+	extend: "Ext.app.Controller",
+	views : [ "Common.MedRemindersForm" ],
+	refs: [
+		{ ref: "MedRemindersForm",			selector: "MedReminders"},
+		{ ref: "MedRemindersForm button[text=\"Save\"]",			selector: "SaveForm"}
+	],
+
+	init: function() {
+		this.application.on(
+			{ LoadOEMData : this.scratch, scope : this }
+		);
+		this.control({
+			"MedRemindersForm button[text=\"Save\"]" : {
+				click : this.SaveForm
+			}
+		});
+	},
+	
+	scratch : function() {
+	},
+
+	SaveForm : function(btn) {
+		debugger;
+		var form = btn.up("form");
+		form.save();
+	},
+
+
+
+
+
+	clickCancel : function(theBtn, theEvent, eOpts) {
+		theBtn.up('form').getForm().reset();
+		//this.getTheGrid().getSelectionModel().deselectAll();
+	},
+
+
+
+	_formSubmit : function(form, URL, CMD) {
+		var theData = form.getValues();
+		theData = Ext.JSON.encode(theData);
+		form.submit({
+			headers: { "Content-Type": "application/json;charset=utf-8" },
+			// params: theData,
+			scope : this,
+			clientValidation: true,
+			url: URL,
+			method : CMD,
+			success: function(form, action) {
+				debugger;
+				//this.RefreshPanel();
+			},
+			failure: function(form, action) {
+				debugger;
+				var SaveTitle = "Saving Medication Reminder FAILED";
+				//this.RefreshPanel();
+				switch (action.failureType) {
+					case Ext.form.action.Action.CLIENT_INVALID:
+						Ext.Msg.alert(SaveTitle, 'Form fields may not be submitted with invalid values');
+						break;
+					case Ext.form.action.Action.CONNECT_FAILURE:
+						Ext.Msg.alert(SaveTitle, 'Server communication failed');
+						break;
+					case Ext.form.action.Action.SERVER_INVALID:
+						Ext.Msg.alert(SaveTitle, action.result.msg);
+				}
+			}
+		});
+	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		/* Cumulative Dosing Medications are stored in the Lookup Table with a Lookup_Type = "50" */
+	SaveForm : function(theBtn, theEvent, eOpts) {
+		debugger;
+		var MR_ID, theKey, theRecord, theStore, 
+			PatientInfo = this.application.Patient,
+			PatientID = "3853AE7C-9756-4080-B6B3-3A4C2288FAC2",
+			Med_Reminder_ID = "E0CC46CD-21CB-4501-8A28-2C721FED6124",
+			Order_ID = "80A29F99-BF1C-4C57-AA1F-CE1466883681",
+			form = theBtn.up('form').getForm(),
+			URL = Ext.URLs.MedReminders + "/" + PatientID + "/" + Med_Reminder_ID,
+			CMD = "POST";
+
+
+//		theStore = this.getTheGrid().store;
+		theKey = form.getValues().MR_ID;
+		form.setValue("Order_ID", Order_ID);
+
+//		if ("" !== theKey && theStore) {
+//			theRecord = theStore.findRecord("MR_ID", theKey);
+//		}
+
+		if (theRecord) {
+			var quesAnswer = Ext.Msg.show({
+				"title" : "Duplicate Record", 
+				"msg" : "A record already exsists for that reminder, do you wish to overwrite the existing record?", 
+				"buttons" : Ext.Msg.YESNO, 
+				"icon" : Ext.Msg.QUESTION,
+				"scope" : this,
+				"fn" : function( btnID, txt, opt) {
+					if ("yes" === btnID) {
+						debugger;
+						CMD = "PUT";
+						URL += "/" + theKey;
+						this._formSubmit(form, URL, CMD);
+					}
+				}
+			});
+		}
+		else {
+			this._formSubmit(form, URL, CMD);
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************
+	RefreshPanel : function() {
+		this.application.loadMask("Please wait; Loading Panel Information");
+		var theGrid = this.getTheGrid();
+		var theStore = theGrid.getStore();
+		theStore.load();
+		theGrid.getSelectionModel().deselectAll();
+		var MedField = this.getMedication();
+		MedField.getStore().load();
+		var UnitsField = this.getUnits();
+		UnitsField.getStore().load();
+
+		var delBtn = this.getDeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
+		this.application.unMask();
+	},
+
+
+
+
+	deSelectGridRow : function(theRowModel, record, index, eOpts) {
+	},
+	
+	selectGridRow : function(theRowModel, record, index, eOpts) {
+		var records = theRowModel.getSelection();
+		var delBtn = this.getDeleteBtn();
+		if (records.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
+		var theForm = this.getThePanel();
+
+		var MedField = this.getMedication();
+		MedField.setRawValue(record.getData().MedName);
+		MedField.setValue(record.getData().MedID);
+
+		var DoseField = this.getDose();
+		DoseField.setValue(record.getData().CumulativeDoseAmt);
+
+		var UnitsField = this.getUnits();
+		UnitsField.setValue(record.getData().UnitsID);
+		UnitsField.setRawValue(record.getData().CumulativeDoseUnits);
+
+		// theForm.loadRecord(record);
+	},
+
+
+
+
+	deleteRecord : function(theRecords) {
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.get("ID");
+			var CMD = "DELETE";
+			var URL = Ext.URLs.CumulativeDosingMeds + "/" + rID;
+				Ext.Ajax.request({
+					url: URL,
+					method : CMD,
+					scope: this,
+					records : theRecords,
+					success: function( response, opts ){
+						this.deleteRecord(opts.records);
+					},
+					failure : function( response, opts ) {
+						var text = response.responseText;
+						var resp = Ext.JSON.decode( text );
+						Ext.MessageBox.alert("Delete Error", "Delete Error", "Cumulative Dose Medication - Delete Record, Error - <br />" + resp.msg );
+					}
+				});
+		}
+		else {
+			this.application.unMask();
+			this.RefreshPanel();
+		}
+	},
+
+	DeleteSelectedRecords : function() {
+		var theGrid = this.getTheGrid();
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected records?", function(btn) {
+			if ("yes" === btn) {
+				this.application.loadMask("Please wait; Deleting Selected Records");
+				this.deleteRecord(theRecords);
+			}
+		}, this);
+	}
+
+*******************/
+
+});

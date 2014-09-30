@@ -25,6 +25,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : " " }
 			]
-		}
+		},
+		{ xtype : "MedRemindersForm" }
 	]
 })
