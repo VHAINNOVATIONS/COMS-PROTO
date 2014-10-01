@@ -21,7 +21,8 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 				"beforerender" : this.setMinDate
 			},
 			"puWinChangeAdminDate [name=\"NewAdminDate\"]" : {
-				"change" : this.updateNewDate
+				"change" : this.updateNewDate,
+				"expand" : this.InitNewDatePicker
 			},
 			"puWinChangeAdminDate combobox" : {
 				"change" : this.Dates2Change
@@ -70,9 +71,15 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		var cur = this.getCurAdminDate();
 		cur.setValue(AdminDate);
 	},
+	"InitNewDatePicker" : function(fld) {
+		var cur = this.getCurAdminDate();
+		var AdminDate = cur.getValue();
+		fld.setValue(AdminDate);
+	},
 
 	"getMinDate" : function() {
-		var newDate = Ext.Date.add(new Date(), Ext.Date.DAY, -5);
+		// var newDate = Ext.Date.add(new Date(), Ext.Date.DAY, -5);
+		var newDate = new Date();
 		return newDate;
 	},
 
@@ -89,13 +96,20 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		return dt1;
 	},
 
-	"Dates2Change" : function(fld, nRange) {
-		var NextCycleIdx,
+	"Dates2ChangeHandler" : function() {
+		var nRange,
+			NextCycleIdx,
 			LastDayOfCycleRec,
 			NewLastDateOfCycle,
 			StartOfNextCycle,
 			NewDateInList, 
-			list, CurDate, CurAdminDayIdx;
+			list, 
+			CurDate, 
+			CurAdminDayIdx;
+		nRange = this.nRange;
+		if (!nRange) {
+			return;
+		}
 		this.AcceptableChangeMsg = "";
 		this.Range2Change = [];
 		list = this.getOEMRecords();
@@ -105,6 +119,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 
 		NewDateInList = this.getIdx4AdminDate(this.newDate);
 		// nRange == "This", "Cycle", "All"
+		
 		if ("This" == nRange) {
 			if (NewDateInList) {
 				this.AcceptableChangeMsg = "There is another administration day on this date";
@@ -157,6 +172,10 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		}
 	},
 
+	"Dates2Change" : function(fld, nRange) {
+		this.nRange = nRange;
+		this.Dates2ChangeHandler();
+	},
 
 	"updateNewDate" : function(fld, nDate) {
 		var CurDate = new Date(this.getCurAdminDate().getValue());
@@ -168,7 +187,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 			var StartDateConverted = Date.UTC(CurDate.getFullYear(), CurDate.getMonth(), CurDate.getDate());
 			var nDays = ( EndDateConverted - StartDateConverted) / 86400000;
 
-			var dt = Ext.Date.add(MinDate, Ext.Date.MILLI, nDays);
+			var dt = Ext.Date.add(MinDate, Ext.Date.DAY, nDays);
 			var dt1 = Ext.Date.format(dt, "m/d/Y");
 			var m1 = "days";
 			if (1 === nDays) {
@@ -178,6 +197,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 			this.newDate = Ext.Date.format(nDate, "m/d/Y");
 			this.offsetDays = nDays;
 		}
+		this.Dates2ChangeHandler();
 	},
 
 	"setMinDate" : function() {
