@@ -2476,9 +2476,6 @@ Data:
 	function MedReminders($TemplateID = null, $MR_ID = null){
         $inputData = file_get_contents('php://input');
         $post_vars = json_decode($inputData);
-        if (!$MR_ID) {
-            $MR_ID = $this->Patient->newGUID();
-        }
         $jsonRecord = array();
         $jsonRecord["success"] = true;
         $tmpRecords = array();
@@ -2489,6 +2486,9 @@ Data:
             $tmpRecords = $records;
         }
         else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+            if (!$MR_ID) {
+                $MR_ID = $this->Patient->newGUID();
+            }
             $records = $this->Patient->setMedReminders($TemplateID, $MR_ID, $post_vars);
             $msg = "Create";
             $MRRec = array();
@@ -2496,11 +2496,13 @@ Data:
             $tmpRecords[] = $MRRec;
         }
         else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
-            $records = $this->Patient->updateMedReminders($TemplateID, $MR_ID, $post_vars);
-            $msg = "Update";
-            $MRRec = array();
-            $MRRec["MR_ID"] = $MR_ID;
-            $tmpRecords[] = $MRRec;
+            if ($MR_ID) {
+                $records = $this->Patient->updateMedReminders($TemplateID, $MR_ID, $post_vars);
+                $msg = "Update";
+                $MRRec = array();
+                $MRRec["MR_ID"] = $MR_ID;
+                $tmpRecords[] = $MRRec;
+            }
         }
         else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
         }

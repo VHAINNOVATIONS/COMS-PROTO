@@ -119,50 +119,6 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 			AuthoringTabCtl.AddMedReminder2GridStore(MedReminder);
 			form.reset();
 		}
-
-return;
-
-		var MR_ID, theKey, theRecord, theStore, 
-			PatientInfo = this.application.Patient,
-			// PatientID = "3853AE7C-9756-4080-B6B3-3A4C2288FAC2",
-			TemplateID = "00000000-0000-0000-0000-000000000000",
-			// Med_Reminder_ID = "E0CC46CD-21CB-4501-8A28-2C721FED6124",
-			// Order_ID = "80A29F99-BF1C-4C57-AA1F-CE1466883681",
-			form = theBtn.up('form').getForm(),
-			URL = Ext.URLs.MedReminders + "/" + TemplateID,
-			CMD = "POST";
-
-//		theStore = this.getTheGrid().store;
-//		theKey = form.getValues().MR_ID;
-//		form.setValue("Order_ID", Order_ID);
-
-//		if ("" !== theKey && theStore) {
-//			theRecord = theStore.findRecord("MR_ID", theKey);
-//		}
-
-/*
-		if (theRecord) {
-			var quesAnswer = Ext.Msg.show({
-				"title" : "Duplicate Record", 
-				"msg" : "A record already exsists for that reminder, do you wish to overwrite the existing record?", 
-				"buttons" : Ext.Msg.YESNO, 
-				"icon" : Ext.Msg.QUESTION,
-				"scope" : this,
-				"fn" : function( btnID, txt, opt) {
-					if ("yes" === btnID) {
-						debugger;
-						CMD = "PUT";
-						URL += "/" + theKey;
-						this._formSubmit(form, URL, CMD);
-					}
-				}
-			});
-		}
-		else {
-			this._formSubmit(form, URL, CMD);
-		}
-*/
-this._formSubmit(form, URL, CMD);
 	}
 
 

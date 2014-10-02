@@ -1574,6 +1574,7 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
             $buf = " where " . $buf;
         }
         $query = "SELECT * FROM Med_Reminders" . $buf;
+        error_log($query);
         return $this->query($query);
     }
 

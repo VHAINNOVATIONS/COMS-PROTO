@@ -63,6 +63,12 @@ Ext.define("COMS.view.Common.MedRemindersForm", {
 			fieldLabel: "Description",
 			name: 'Description'
 		},
+
+
+
+		{ xtype: 'hiddenfield', name: 'TemplateID' },
+		{ xtype: 'hiddenfield', name: 'MR_ID' },
+
 		{
 			xtype: 'container',
 			layout: 'hbox',

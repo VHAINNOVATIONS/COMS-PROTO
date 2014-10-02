@@ -5,6 +5,7 @@ Ext.define('COMS.view.Authoring.References' ,{
 	title : 'References',
 	store: 'ReferencesStore',
 	viewConfig: { stripeRows: true },
+	plugins: [ Ext.create("Ext.grid.plugin.CellEditing", { clicksToEdit: 1 }) ],
 
 	columns : [
 			{header: 'Reference',  dataIndex: 'Reference',  flex: 1},
@@ -13,14 +14,14 @@ Ext.define('COMS.view.Authoring.References' ,{
 	buttons: [
 		{ text: 'Add Reference', title: 'AddReference' },
 		{ text: 'Remove Reference', title: 'RemoveReference', disabled: true },
-                { text: 'Edit Reference', title: 'EditReference', disabled: true}
+		{ text: 'Edit Reference', title: 'EditReference', disabled: true}
 	],
-	buttonAlign: 'left',
-	initComponent: function() {
-		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
-		this.plugins = [cellEditing];
-		this.callParent(arguments);
-	}
+	buttonAlign: 'left'
+//	initComponent: function() {
+//		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
+//		this.plugins = [cellEditing];
+//		this.callParent(arguments);
+//	}
 });
 
 

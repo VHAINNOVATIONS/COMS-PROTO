@@ -8,7 +8,7 @@ Ext.define('COMS.view.Authoring.MedReminder' ,{
 			xtype : "grid",
 			store: "MedReminders",
 			viewConfig: { stripeRows: true },
-
+			plugins: [ Ext.create("Ext.grid.plugin.CellEditing", { clicksToEdit: 1 }) ],
 			columns : [
 				{header: 'When',  dataIndex: 'ReminderWhenCycle',  flex: 1},
 				{header: '',  dataIndex: 'ReminderWhenPeriod',  flex: 1},
@@ -16,8 +16,7 @@ Ext.define('COMS.view.Authoring.MedReminder' ,{
 			],
 			buttons: [
 				{ text: 'Add Reminder', title: 'AddReminder'},
-				{ text: 'Remove Reminder', title: 'RemoveReminder', disabled: true },
-				{ text: 'Edit Reminder', title: 'EditReminder', disabled: true}
+				{ text: 'Remove Reminder', title: 'RemoveReminder', disabled: true }
 			],
 			buttonAlign: 'left'
 		},

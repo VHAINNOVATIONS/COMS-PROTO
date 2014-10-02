@@ -59,6 +59,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		{ ref : "MedRemindersForm", selector : "AuthoringTab MedReminder MedRemindersForm" },
 		{ ref : "MedRemindersGrid", selector : "AuthoringTab MedReminder grid" },
+		{ ref : "RemoveReminderBtn", selector : "AuthoringTab MedReminder button[title=\"RemoveReminder\"]" },
+		{ ref : "EditReminderBtn", selector : "AuthoringTab MedReminder button[title=\"EditReminder\"]" },
 
 
 // AuthoringTab TemplateReferences
@@ -108,34 +110,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		ref: "ExistingDisease",
 		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selDiseaseAndStage selDisease"
 		},
-
-//		{
-//		ref: "TemplateSource",
-//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selXXXTemplateXXXType"
-//		},
-
-//		{
-//		ref: "Template",
-//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] selTemplate"
-//		},
-
-//		{ ref: "DiseaseAndStage",				selector: "AuthoringTab selDiseaseAndStage[name=\"4ExistingTemplate\"]"},
-//		{ ref: "AllTemplatesShownMsg",			selector: "AuthoringTab [name=\"AllTemplatesShownMsg\"]"},
-
-//		{
-//		ref: "ResetButton",
-//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] button[title=\"ResetFilter\"]"
-//		},
-
-//		{
-//		ref: 'NewPlanTemplate',
-//		selector: 'NewPlanTab PatientInfo CTOS selCTOSTemplate selTemplate'
-//		},
-
-//		{
-//		ref: "PatientNameField",
-//		selector: "AuthoringTab container[name=\"selCTOSTemplate\"] textfield[name=\"PatientName\"]"
-//		},
 
 		{
 		ref: "ExistingCourseInfo",
@@ -247,14 +221,28 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
 				click: this.ShowAddReminder
 			},
-/*
-			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
-				click: this.ShowAddReminder
+
+			"AuthoringTab MedReminder button[title=\"RemoveReminder\"]" : {
+				click: this.RemoveSelectedReminder
 			},
-			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
-				click: this.ShowAddReminder
+			"AuthoringTab MedReminder button[title=\"EditReminder\"]" : {
+				click: this.EditSelectedReminder
 			},
-*/
+			"AuthoringTab MedReminder grid" : {
+				// itemclick: this.clickMedReminderGridCell,
+				select: this.selectMedReminderGridRow,
+				deselect: this.deSelectMedReminderGridRow
+			},
+
+
+
+
+
+
+
+
+
+
 
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
@@ -309,18 +297,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
-	ShowAddReminder : function (theBtn) {
-		var theForm = this.getMedRemindersForm();
-		if (theForm.isVisible()) {
-			theForm.hide();
-			theBtn.setText("Add Reminder");
-		}
-		else {
-			theForm.show();
-			theBtn.setText("Hide Reminder Form");
-		}
-
-	},
 
 	getCourseInfo : function( thisTab ) {
 		return thisTab.down("[name=\"courseInfo\"]");
@@ -501,10 +477,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		theController.showPatientListWidget(thePatients, theTemplateDesc);
 	},
 
+
 	afterCTOSLoaded: function (template) {
 		wccConsoleLog("CTOS Loaded - Processing");
 		this.SelectedTemplate = template;
-
+		this.getAnyMedReminders4Template( template.internalId );
 		this.getExistingCourseInfo().show();
 		this.getNewTemplate().show();
 		var disease = this.getExistingDisease();
@@ -1000,49 +977,141 @@ return template;
 	//--------------------------------------------------------------------------------
 	//	Med Reminders Grid Handlers
 	//
+	ShowAddReminder : function (theBtn) {
+		var theForm = this.getMedRemindersForm();
+		if (theForm.isVisible()) {
+			theForm.hide();
+			theBtn.setText("Add Reminder");
+		}
+		else {
+			theForm.show();
+			theBtn.setText("Hide Reminder Form");
+		}
+
+	},
+
+	selectMedReminderGridRow : function(theRowModel, record, index, eOpts) {
+		var records = theRowModel.getSelection();
+		var theForm = this.getMedRemindersForm();
+		if (!theForm.isVisible()) {
+			theForm.show();
+		}
+		var theData = record.getData();
+		var aForm = theForm.getForm();
+		aForm.setValues({
+			"ReminderWhenCycle" : theData.ReminderWhenCycle, 
+			"ReminderWhenPeriod" : theData.ReminderWhenPeriod,
+			"Title" : theData.Title,
+			"Description" : theData.Description,
+			"MR_ID" : theData.MR_ID,
+			"TemplateID" : theData.TemplateID
+		});
+
+		var delBtn = this.getRemoveReminderBtn();
+		if (records.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
+	},
+
+	deSelectMedReminderGridRow : function(theRowModel, record, index, eOpts) {
+	},
+
+
+
+	deleteRecord : function(theRecords) {
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.get("ID");
+			var CMD = "DELETE";
+			var URL = Ext.URLs.MedReminders + "/" + rID;
+/**
+			Ext.Ajax.request({
+				url: URL,
+				method : CMD,
+				scope: this,
+				records : theRecords,
+				success: function( response, opts ){
+					this.deleteRecord(opts.records);
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Delete Toxicity Record, Save Error - <br />" + resp.msg );
+				}
+			});
+**/
+		}
+
+		else {
+			this.application.unMask();
+			//this.RefreshPanel();
+			//this.CancelForm();
+		}
+	},
+
+	RemoveSelectedReminder : function(arg1, arg2, arg3) {
+	},
 	
+	EditSelectedReminder : function(arg1, arg2, arg3) {
+	},
+
+	getAnyMedReminders4Template : function(TemplateID) {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		MedRemindersStore.proxy.url = Ext.URLs.MedReminders + "/" + TemplateID;
+		MedRemindersStore.load();
+	},
+
 	RefreshMedRemindersGrid : function() {
-			var MedRemindersGrid = this.getMedRemindersGrid();
-			var MedRemindersStore = MedRemindersGrid.getStore();
-			MedRemindersStore.removeAll(true);
-			MedRemindersGrid.getView().refresh(true);
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll(true);
+		MedRemindersGrid.getView().refresh(true);
 	},
 
 	AddMedReminders2Store : function(MedReminders) {
-			var MedRemindersGrid = this.getMedRemindersGrid();
-			var MedRemindersStore = MedRemindersGrid.getStore();
-			MedRemindersStore.removeAll();
-			MedRemindersStore.add(MedReminders);
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		MedRemindersStore.add(MedReminders);
 	},
 	AddMedReminder2GridStore : function(MedReminderRec) {
-			var MedRemindersGrid = this.getMedRemindersGrid();
-			var MedRemindersStore = MedRemindersGrid.getStore();
-			MedRemindersStore.add(MedReminderRec);
-			MedRemindersGrid.getView().refresh();
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		var theData = MedReminderRec.getData();
+		var ExistingRecIndex = MedRemindersStore.findExact("MR_ID", theData.MR_ID);
+		if (ExistingRecIndex >= 0) {
+			MedRemindersStore.removeAt(ExistingRecIndex);
+		}
+		MedRemindersStore.add(MedReminderRec);
+		MedRemindersGrid.getView().refresh();
 	},
 
 
 	getMedRemindersInArray : function() {
-			var MedRemindersGrid = this.getMedRemindersGrid();
-			var MedRemindersStore = MedRemindersGrid.getStore();
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
 
-			var MedRemindersArray = [], MedRemindersRec, limitCount = MedRemindersStore.count(), i, MedRemindersModel;
-			for (i = 0; i < limitCount; i++) {
-				MedRemindersModel = MedRemindersStore.getAt(i);
-				MedRemindersRec = Ext.create(Ext.COMSModels.MedReminder, {
-					"MR_ID" : MedRemindersModel.data.MR_ID,
-					"TemplateID" : MedRemindersModel.data.TemplateID, 
-					"Title" : MedRemindersModel.data.Title,
-					"Description" : MedRemindersModel.data.Description,
-					"ReminderWhenCycle" : MedRemindersModel.data.ReminderWhenCycle,
-					"ReminderWhenPeriod" : MedRemindersModel.data.ReminderWhenPeriod
-				});
-				MedRemindersArray.push(MedRemindersRec);
-			}
-			return MedRemindersArray;
+		var MedRemindersArray = [], MedRemindersRec, limitCount = MedRemindersStore.count(), i, MedRemindersModel;
+		for (i = 0; i < limitCount; i++) {
+			MedRemindersModel = MedRemindersStore.getAt(i);
+			MedRemindersRec = Ext.create(Ext.COMSModels.MedReminder, {
+				"MR_ID" : MedRemindersModel.data.MR_ID,
+				"TemplateID" : MedRemindersModel.data.TemplateID, 
+				"Title" : MedRemindersModel.data.Title,
+				"Description" : MedRemindersModel.data.Description,
+				"ReminderWhenCycle" : MedRemindersModel.data.ReminderWhenCycle,
+				"ReminderWhenPeriod" : MedRemindersModel.data.ReminderWhenPeriod
+			});
+			MedRemindersArray.push(MedRemindersRec);
+		}
+		return MedRemindersArray;
 	},
 	saveAllMedReminders : function(TemplateID) {
-		debugger;
 		var MedReminders = this.getMedRemindersInArray();
 		var rec, i, len = MedReminders.length;
 		this.application.unMask();
@@ -1053,10 +1122,9 @@ return template;
 				scope : this,
 				waitMsg: 'Saving Data...',
 				success: function (data) {
-							debugger;
 				},
 				failure: function (data) {
-							debugger;
+					alert("Failure to save Med Reminder");
 				}
 			});
 		}
@@ -1193,7 +1261,7 @@ return template;
 			//KD - 12/28/11 - Check to ensure a record is not being edited but is selected from drop down
 		} else if (!record && existingRecord) {
 			reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',
+				id: '9',	// "9" is a "Magic Number" for the type of record being stored in the Lookup Table
 				value: this.getReferenceName().getValue(),
 				description: this.getReferenceLink().getValue()
 			});
@@ -1201,7 +1269,7 @@ return template;
 			//KD - 12/28/11 - Record is being edited
 		} else {
 			reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',
+				id: '9',	// "9" is a "Magic Number" for the type of record being stored in the Lookup Table
 				value: values.Reference,
 				description: values.ReferenceLink,
 				lookupid: record.get('id')
