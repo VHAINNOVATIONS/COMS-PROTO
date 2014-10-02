@@ -28,9 +28,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, 'DrugUnitsStore'
 		, 'InfusionStore'
 		, 'CTOS'
+		, 'MedReminders'
 		],
 	views: [
 		'Authoring.References'
+		, 'Authoring.MedReminder'
 		, 'Authoring.Hydration'
 		, 'Authoring.DrugRegimen'
 		, 'Authoring.AddReference'
@@ -44,6 +46,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, "Common.selDiseaseStage"
 		, "Common.selTemplate"
 		, "Common.selSequence"
+		, "Common.MedRemindersForm"
 
 		],
 
@@ -53,6 +56,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			ref: "AuthoringTab",
 			selector: "AuthoringTab"
 		},
+
+		{ ref : "MedRemindersForm", selector : "AuthoringTab MedReminder MedRemindersForm" },
+		{ ref : "MedRemindersGrid", selector : "AuthoringTab MedReminder grid" },
+
+
+// AuthoringTab TemplateReferences
 
 		{
 			ref: "ReqInstr",
@@ -217,8 +226,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		},
 		{
 		ref: "ReferencesGrid",
-		selector: "TemplateReferences"
-	},
+		selector: "AuthoringTab TemplateReferences"
+		},
 		{
 		ref: "Active",
 		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
@@ -234,10 +243,26 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 		this.control({
 
+
+			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
+				click: this.ShowAddReminder
+			},
+/*
+			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
+				click: this.ShowAddReminder
+			},
+			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
+				click: this.ShowAddReminder
+			},
+*/
+
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
 				change: this.TemplateTypeSelected
 			},
+
+
+
 			'AuthoringTab TemplateReferences': { // The References Grid Control
 				itemclick: this.clickUpdateReference
 			},
@@ -250,6 +275,9 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			'AuthoringTab TemplateReferences button[title="EditReference"]': {
 				click: this.editReference
 			},
+
+
+
 			"AuthoringTab displayfield[name=\"PatientListCount\"]" : {
 				render : function(c) {
 					c.getEl().on('click', function(){ this.fireEvent('click', c); }, c);
@@ -278,6 +306,20 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				click: this.clearTemplate
 			}
 		});
+	},
+
+
+	ShowAddReminder : function (theBtn) {
+		var theForm = this.getMedRemindersForm();
+		if (theForm.isVisible()) {
+			theForm.hide();
+			theBtn.setText("Add Reminder");
+		}
+		else {
+			theForm.show();
+			theBtn.setText("Hide Reminder Form");
+		}
+
 	},
 
 	getCourseInfo : function( thisTab ) {
@@ -399,10 +441,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.clearValue(this.getRegimenInstruction());
 		this.clearValue(this.getPatientListCount());
 
-		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-		var refstore = refgrid.getStore();
-		refstore.removeAll(true);
-		refgrid.getView().refresh(true);
+		this.RefreshReferencesGrid();
+		this.RefreshMedRemindersGrid();
 
 		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
 		var drugstore = druggrid.getStore();
@@ -511,9 +551,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.getPatientListCount().setValue(template.data.PatientListCount);
 
 
-		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-		var refstore = refgrid.getStore();
-		refstore.removeAll();
+		this.AddReferences2Store(template.data.References);
+		// this.AddMedReminders2Store(template.data.MedReminders);
+
+
+
+
 		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
 		var drugstore = druggrid.getStore();
 		drugstore.removeAll();
@@ -524,7 +567,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var postMhStore = postMHgrid.getStore();
 		postMhStore.removeAll();
 		preMhStore.add(template.data.PreMHMeds);
-		refstore.add(template.data.References);
+		
 		drugstore.add(template.data.Meds);
 		postMhStore.add(template.data.PostMHMeds);
 		this.application.unMask();
@@ -638,14 +681,17 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
                             this.application.loadMask("Please wait; Saving Template");
                             Template = this.PrepareTemplate2Save(true);
-                            this.SaveTemplate2DB(Template, button);
-
+							if (Template) {
+								this.SaveTemplate2DB(Template, button);
+							}
                         }
                         else {
                             Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
                             this.application.loadMask("Please wait; Saving Template");
                             Template = this.PrepareTemplate2Save(true);
-                            this.SaveTemplate2DB(Template, button);
+							if (Template) {
+								this.SaveTemplate2DB(Template, button);
+							}
                             this.flagTemplateInactive(record2Flag.name);
                         }
                     }, this);
@@ -653,7 +699,9 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				else {
                             this.application.loadMask("Please wait; Saving Template");
                             Template = this.PrepareTemplate2Save(true);
-                            this.SaveTemplate2DB(Template, button);
+							if (Template) {
+								this.SaveTemplate2DB(Template, button);
+							}
 				}
 
             },
@@ -731,8 +779,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var postMhInstructions = this.getPostHydrationInstructions().getValue();
 		var therapyInstructions = this.getRegimenInstruction().getValue();
 
-		var refgrid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0];
-		var refstore = refgrid.getStore();
 
 		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
 		var drugstore = druggrid.getStore();
@@ -743,17 +789,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var postMHgrid = Ext.ComponentQuery.query('AuthoringTab TemplateHydration[title="Post Therapy"] grid')[0];
 		var postMhStore = postMHgrid.getStore();
 
-		var referencesArray = [], ref, limitCount = refstore.count(), i, referenceModel;
-
-		for (i = 0; i < refstore.count(); i++) {
-			referenceModel = refstore.getAt(i);
-			ref = Ext.create(Ext.COMSModels.CTOS_References, {
-				RefID: referenceModel.data.id,
-				Ref: referenceModel.data.Reference,
-				RefURI: referenceModel.data.ReferenceLink
-			});
-			referencesArray.push(ref);
-		}
 
 		var drugArray = [], drug, drugModel;
 		limitCount = drugstore.count();
@@ -885,7 +920,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			CycleLengthUnit: cycleLengthUnit,
 			ELevel: emotegenicLevel,
 			FNRisk: fnRisk,
-			References: referencesArray,
+			References: this.getReferencesInArray(),
 			PreMHInstructions: preMhInstructions,
 			PostMHInstructions: postMhInstructions,
 			RegimenInstruction: therapyInstructions,
@@ -896,7 +931,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			DiseaseStage: diseaseStageId,
 			KeepAlive: KeepAlive
 		});
-
+return template;
 		var errors = template.validate();
 
 		if (errors.length > 0) {
@@ -925,6 +960,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				// this.getTemplate().getStore().removeAll(true);
 				// this.getTemplate().getStore().load();
 
+				this.saveAllMedReminders(data.data.id);
+
 				this.clearTemplate(button);
 				Ext.MessageBox.alert('Success', 'Template saved with name: ' + data.data.RegimenName);
 				this.application.unMask();
@@ -951,9 +988,120 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 
+
+
+
+
+
+
+
+
+
+	//--------------------------------------------------------------------------------
+	//	Med Reminders Grid Handlers
+	//
+	
+	RefreshMedRemindersGrid : function() {
+			var MedRemindersGrid = this.getMedRemindersGrid();
+			var MedRemindersStore = MedRemindersGrid.getStore();
+			MedRemindersStore.removeAll(true);
+			MedRemindersGrid.getView().refresh(true);
+	},
+
+	AddMedReminders2Store : function(MedReminders) {
+			var MedRemindersGrid = this.getMedRemindersGrid();
+			var MedRemindersStore = MedRemindersGrid.getStore();
+			MedRemindersStore.removeAll();
+			MedRemindersStore.add(MedReminders);
+	},
+	AddMedReminder2GridStore : function(MedReminderRec) {
+			var MedRemindersGrid = this.getMedRemindersGrid();
+			var MedRemindersStore = MedRemindersGrid.getStore();
+			MedRemindersStore.add(MedReminderRec);
+			MedRemindersGrid.getView().refresh();
+	},
+
+
+	getMedRemindersInArray : function() {
+			var MedRemindersGrid = this.getMedRemindersGrid();
+			var MedRemindersStore = MedRemindersGrid.getStore();
+
+			var MedRemindersArray = [], MedRemindersRec, limitCount = MedRemindersStore.count(), i, MedRemindersModel;
+			for (i = 0; i < limitCount; i++) {
+				MedRemindersModel = MedRemindersStore.getAt(i);
+				MedRemindersRec = Ext.create(Ext.COMSModels.MedReminder, {
+					"MR_ID" : MedRemindersModel.data.MR_ID,
+					"TemplateID" : MedRemindersModel.data.TemplateID, 
+					"Title" : MedRemindersModel.data.Title,
+					"Description" : MedRemindersModel.data.Description,
+					"ReminderWhenCycle" : MedRemindersModel.data.ReminderWhenCycle,
+					"ReminderWhenPeriod" : MedRemindersModel.data.ReminderWhenPeriod
+				});
+				MedRemindersArray.push(MedRemindersRec);
+			}
+			return MedRemindersArray;
+	},
+	saveAllMedReminders : function(TemplateID) {
+		debugger;
+		var MedReminders = this.getMedRemindersInArray();
+		var rec, i, len = MedReminders.length;
+		this.application.unMask();
+		for (i = 0; i < len; i++)  {
+			rec = MedReminders[i];
+			rec.proxy.url = Ext.URLs.MedReminders + "/" + TemplateID;
+			rec.save({
+				scope : this,
+				waitMsg: 'Saving Data...',
+				success: function (data) {
+							debugger;
+				},
+				failure: function (data) {
+							debugger;
+				}
+			});
+		}
+	},
+
+
+
+
+
 	//--------------------------------------------------------------------------------
 	//	Reference Grid Handlers
 	//
+	RefreshReferencesGrid : function() {
+			var refgrid = this.getReferencesGrid();
+			var refstore = refgrid.getStore();
+			refstore.removeAll(true);
+			refgrid.getView().refresh(true);
+	},
+
+	AddReferences2Store : function(References) {
+		// template.data.References
+			var refgrid = this.getReferencesGrid();
+			var refstore = refgrid.getStore();
+			refstore.removeAll();
+			refstore.add(References);
+	},
+
+
+	getReferencesInArray : function() {
+			var refgrid = this.getReferencesGrid();
+			var refstore = refgrid.getStore();
+
+			var referencesArray = [], ref, limitCount = refstore.count(), i, referenceModel;
+			for (i = 0; i < limitCount; i++) {
+				referenceModel = refstore.getAt(i);
+				ref = Ext.create(Ext.COMSModels.CTOS_References, {
+					RefID: referenceModel.data.id,
+					Ref: referenceModel.data.Reference,
+					RefURI: referenceModel.data.ReferenceLink
+				});
+				referencesArray.push(ref);
+			}
+			return referencesArray;
+	},
+
 	ReferenceSelected: function (combo, recs, eOpts) {
 		wccConsoleLog('Reference Selected - ' + recs[0].data.name);
 		var piData = recs[0].data;
@@ -1017,6 +1165,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 	clickSaveReference: function (button) {
+		// Click on the "Save" button in the Reference PopUp window.
 		// var grid = Ext.widget('TemplateReferences');		// Note: this gets a new instance of a particular widget by it's xtype, NOT an existing instance
 		var grid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
 		var store = grid.getStore();
@@ -1094,7 +1243,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				var thisCtl = this.getController('Authoring.AuthoringTab');
 				var comboStore = this.getReferenceCombo().getStore();
 
-				//KD - 12/28/11 - Check to ensure the duplicate record is in the combo store
 				var recordIndex = comboStore.findBy(
 
 				function (record, id) {
@@ -1125,9 +1273,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					catch (e) {
 					}
 				}
-
-
-				//KD - 12/28/11 - If the record does not exist in the grid store then add it to the grid
 				if (-1 === existingRowNum) {
 					store.insert(0, ref);
 					this.getRemoveReference().disable();

@@ -2473,31 +2473,34 @@ Data:
 
 
 
-	function MedReminders($Patient_ID = null, $MR_ID = null){
-error_log("MedReminders - Patient_ID = $Patient_ID; MR_ID = $MR_ID;");
-error_log("--------------------------------------------------------");
-error_log("Form Input File Data = " . file_get_contents('php://input'));
-parse_str(file_get_contents("php://input"),$post_vars);
-error_log("Form Data = " . json_encode($post_vars));
-error_log("--------------------------------------------------------");
-
-
-
+	function MedReminders($TemplateID = null, $MR_ID = null){
+        $inputData = file_get_contents('php://input');
+        $post_vars = json_decode($inputData);
+        if (!$MR_ID) {
+            $MR_ID = $this->Patient->newGUID();
+        }
         $jsonRecord = array();
         $jsonRecord["success"] = true;
+        $tmpRecords = array();
 
         if ("GET" == $_SERVER["REQUEST_METHOD"]) {
-            $records = $this->Patient->getMedReminders($Patient_ID, $MR_ID);
+            $records = $this->Patient->getMedReminders($TemplateID, $MR_ID);
             $msg = "Get";
+            $tmpRecords = $records;
         }
         else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
-            $records = $this->Patient->setMedReminders($Patient_ID, $MR_ID, $post_vars);
+            $records = $this->Patient->setMedReminders($TemplateID, $MR_ID, $post_vars);
             $msg = "Create";
+            $MRRec = array();
+            $MRRec["MR_ID"] = $MR_ID;
+            $tmpRecords[] = $MRRec;
         }
         else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
-            $records = $this->Patient->updateMedReminders($Patient_ID, $MR_ID, $post_vars);
+            $records = $this->Patient->updateMedReminders($TemplateID, $MR_ID, $post_vars);
             $msg = "Update";
-
+            $MRRec = array();
+            $MRRec["MR_ID"] = $MR_ID;
+            $tmpRecords[] = $MRRec;
         }
         else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
         }
@@ -2508,8 +2511,8 @@ error_log("--------------------------------------------------------");
             $this->set("jsonRecord", $jsonRecord);
             return;
         } 
-        $jsonRecord["total"] = count($records);
-        $jsonRecord["records"] = $records;
+        $jsonRecord["total"] = count($tmpRecords);
+        $jsonRecord["records"] = $tmpRecords;
         $this->set("jsonRecord", $jsonRecord);
     }
 }

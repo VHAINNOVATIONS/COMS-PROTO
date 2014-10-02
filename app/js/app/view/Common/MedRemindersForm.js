@@ -1,7 +1,9 @@
 Ext.define("COMS.view.Common.MedRemindersForm", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.MedRemindersForm",
-	"title": "Medication Reminders",
+	"header": false,
+	"margin": 10,
+	"bodyPadding": "5 5 0",
 
 	/*** SQL Field Definitions for this form
 	[MR_ID] [uniqueidentifier] NOT NULL,
@@ -16,78 +18,51 @@ Ext.define("COMS.view.Common.MedRemindersForm", {
 	[Status] [nvarchar](max) NULL
 	***/
 
-	collapsible: true,
-	bodyPadding: '5 5 0',
 	defaultType: 'textfield',
-	
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "labelWidth": 85, margin: "5 10 5 0" },
 	layout: 'anchor',
 	items: [
-		{
-			fieldLabel: 'Title',
-			name: 'Title',
-			anchor: '95%',
+		{ xtype : "container", layout : "hbox", 
+			"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "labelWidth": 85, margin: "5 10 5 0" },
+			items : [
+				{
+					xtype: 'combo',
+					name: 'ReminderWhenCycle',
+					labelAlign: "right",
+					fieldLabel: 'When <em>*</em>',
+					labelWidth: 75,
+					margin: "5 10 0 0",
+					queryMode: 'local',
+					store : ["Before", "After"]
+				},
 
+				{
+					xtype: 'combo',
+					name: 'ReminderWhenPeriod',
+					margin: "5 10 0 0",
+					queryMode: 'local',
+					store : ["Cycle", "Administration Day"]
+				}
+			]
+		},
+		{ xtype : "textfield", 
+			labelAlign: 'right',
+			margin: '5 5 5 0',
+			labelWidth: 75,
+			anchor: '95%',
+			fieldLabel: "Title <em>*</em>",
+			name: 'Title'
 		},
 		{
-			fieldLabel: 'Description',
-			name: 'Description',
-
 			xtype: 'textareafield',
 			grow: true,
+			labelAlign: 'right',
+			margin: '5 5 5 0',
+			labelWidth: 75,
 			anchor: '95%',
+			fieldLabel: "Description",
+			name: 'Description'
 		},
-		{
-			xtype: 'container',
-			layout: 'hbox',
-			"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "labelWidth": 85, margin: "5 10 5 0" },
-			items: [
-				{
-					fieldLabel: 'Reminder',
-					name: 'Date_Reminder',
-					format: 'm/d/Y',
-					minValue : new Date(),
-					xtype: 'datefield'
-				},
-				{
-					fieldLabel: 'Date Entered',
-					name: 'Date_Entered',
-					format: 'm/d/Y',
-					minValue : new Date(),
-					value: new Date(),
-					xtype: 'datefield',
-					readOnly: true
-				}
-			]
-		},
-		{
-			xtype: 'container',
-			layout: 'hbox',
-			"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "labelWidth": 85, margin: "5 10 5 0" },
-			items: [
-				{
-					fieldLabel: 'ReminderDue',
-					name: 'Date_ReminderDue',
-					format: 'm/d/Y',
-					minValue : new Date(),
-					xtype: 'datefield'
-				},
-				{
-					fieldLabel: 'Date Edited',
-					name: 'Date_Modified',
-					format: 'm/d/Y',
-					value: new Date(),
-					xtype: 'datefield',
-					readOnly: true
-				},
-				{
-					fieldLabel: 'Status',
-					name: 'Status',
-					xtype : 'textfield'
-				}
-			]
-		},
-
 		{
 			xtype: 'container',
 			layout: 'hbox',

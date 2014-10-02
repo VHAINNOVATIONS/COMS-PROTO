@@ -28,6 +28,7 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 		{ xtype : 'TemplateHydration', title : 'Post Therapy', type : 'Post' },
 		{ xtype : 'TemplateReferences',height : 130 },
 
+		{ xtype : 'MedReminder' },
 
 		{ xtype : "container", layout : "hbox", margin : "5 5 0 0", items : [ 
 				{ xtype : 'textfield', name : "RegimenName", fieldLabel: 'Chemotherapy Regimen Name', labelAlign : "right", width : 700, labelWidth: 200, readOnly: true, disabled: true },
@@ -41,6 +42,10 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			]
 		},
 		{ xtype : "textfield", name : "KeepActive", hidden: true, value:"1" },
+
+
+
+
 		{ xtype: "displayfield", fieldCls: "textAnchor", fieldLabel: "Patients Currently Undergoing This Regimen", labelWidth: 300, name: "PatientListCount" },
 		{
 			layout: 'hbox', 

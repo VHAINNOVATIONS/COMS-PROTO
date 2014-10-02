@@ -523,6 +523,7 @@ Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
+Ext.COMSModels.MedReminder = "COMS.model.MedReminder";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -592,6 +593,7 @@ Ext.require([
 	Ext.COMSModels.Flowsheet,
 	Ext.COMSModels.FluidType,
 	Ext.COMSModels.IDEntry,
+	Ext.COMSModels.MedReminder,
 
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 

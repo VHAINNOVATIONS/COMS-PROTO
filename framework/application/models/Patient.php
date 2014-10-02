@@ -1508,58 +1508,34 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
     }
 
 
-    function doMedRemindersData($fcn, $Patient_ID, $MR_ID, $_POST) {
+    function doMedRemindersData($fcn, $TemplateID, $MR_ID, $InputData) {
         $InsertBuf1 = array();;
         $InsertBuf2 = array();;
         $UpdateBuf = "";
 
-        if (isset($_POST["Order_ID"])) {
-            $Order_ID = $_POST["Order_ID"];
-            $InsertBuf1[] = "Order_ID";
-            $InsertBuf2[] = "'$Order_ID'";
-            $UpdateBuf .= "Order_ID = '$Order_ID'";
-        }
-        if (isset($_POST["Title"])) {
-            $Title = $_POST["Title"];
+        if (isset($InputData->Title)) {
+            $Title = $this->escapeString($InputData->Title);
             $InsertBuf1[] = "Title";
             $InsertBuf2[] = "'$Title'";
             $UpdateBuf .= "Title = '$Title'";
         }
-        if (isset($_POST["Description"])) {
-            $Description = $_POST["Description"];
+        if (isset($InputData->Description)) {
+            $Description = $this->escapeString($InputData->Description);
             $InsertBuf1[] = "Description";
             $InsertBuf2[] = "'$Description'";
             $UpdateBuf .= "Description = '$Description'";
         }
-        if (isset($_POST["Date_Reminder"])) {
-            $Date_Reminder = $_POST["Date_Reminder"];
-            $InsertBuf1[] = "Date_Reminder";
-            $InsertBuf2[] = "'$Date_Reminder'";
-            $UpdateBuf .= "Date_Reminder = '$Date_Reminder'";
+        if (isset($InputData->ReminderWhenCycle)) {
+            $ReminderWhenCycle = $InputData->ReminderWhenCycle;
+            $InsertBuf1[] = "ReminderWhenCycle";
+            $InsertBuf2[] = "'$ReminderWhenCycle'";
+            $UpdateBuf .= "ReminderWhenCycle = '$ReminderWhenCycle'";
         }
-        if (isset($_POST["Date_ReminderDue"])) {
-            $Date_ReminderDue = $_POST["Date_ReminderDue"];
-            $InsertBuf1[] = "Date_ReminderDue";
-            $InsertBuf2[] = "'$Date_ReminderDue'";
-            $UpdateBuf .= "Date_ReminderDue = '$Date_ReminderDue'";
-        }
-        if (isset($_POST["Date_Entered"])) {
-            $Date_Entered = $_POST["Date_Entered"];
-            $InsertBuf1[] = "Date_Entered";
-            $InsertBuf2[] = "'$Date_Entered'";
-            $UpdateBuf .= "Date_Entered = '$Date_Entered'";
-        }
-        if (isset($_POST["Date_Modified"])) {
-            $Date_Modified = $_POST["Date_Modified"];
-            $InsertBuf1[] = "Date_Modified";
-            $InsertBuf2[] = "'$Date_Modified'";
-            $UpdateBuf .= "Date_Modified = '$Date_Modified'";
-        }
-        if (isset($_POST["Status"])) {
-            $Status = $_POST["Status"];
-            $InsertBuf1[] = "Status";
-            $InsertBuf2[] = "'$Status'";
-            $UpdateBuf .= "Status = '$Status'";
+        if (isset($InputData->ReminderWhenPeriod)) {
+            $ReminderWhenPeriod = $InputData->ReminderWhenPeriod;
+            $InsertBuf1[] = "ReminderWhenPeriod";
+            $InsertBuf2[] = "'$ReminderWhenPeriod'";
+            $UpdateBuf .= "ReminderWhenPeriod = '$ReminderWhenPeriod'";
         }
 
         if ("update" == $fcn) {
@@ -1567,37 +1543,26 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
         }
         else {
             $InsertBuf1[] = "MR_ID";
-            $InsertBuf2[] = "'" . $this->newGUID() . "'";
-            $InsertBuf1[] = "Patient_ID";
-            $InsertBuf2[] = "'$Patient_ID'";
-
+            $InsertBuf2[] = "'" . $MR_ID . "'";
+            $InsertBuf1[] = "TemplateID";
+            $InsertBuf2[] = "'$TemplateID'";
             $query = "INSERT into Med_Reminders (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
         }
-
-error_log("doMedRemindersData - Patient_ID = $Patient_ID; MR_ID = $MR_ID");
-error_log("doMedRemindersData - " . json_encode($_POST));
-error_log("doMedRemindersData - Query = $query");
-
-
-            return $this->query($query);
+        return $this->query($query);
     }
 
-    function setMedReminders($Patient_ID, $MR_ID, $_POST) {
-        error_log("setMedReminders - Patient_ID = $Patient_ID; MR_ID = $MR_ID");
-        return $this->doMedRemindersData("insert", $Patient_ID, $MR_ID, $_POST);
+    function setMedReminders($TemplateID, $MR_ID, $_POST) {
+        return $this->doMedRemindersData("insert", $TemplateID, $MR_ID, $_POST);
     }
 
-    function updateMedReminders($Patient_ID, $MR_ID, $_POST) {
-        error_log("updateMedReminders - Patient_ID = $Patient_ID; MR_ID = $MR_ID");
-        return $this->doMedRemindersData("update", $Patient_ID, $MR_ID, $_POST);
+    function updateMedReminders($TemplateID, $MR_ID, $_POST) {
+        return $this->doMedRemindersData("update", $TemplateID, $MR_ID, $_POST);
     }
 
-    function getMedReminders($Patient_ID, $MR_ID) {
-        error_log("getMedReminders - Patient_ID = $Patient_ID; MR_ID = $MR_ID");
-
+    function getMedReminders($TemplateID, $MR_ID) {
         $buf = "";
-        if ($Patient_ID) {
-            $buf = "Patient_ID = '$Patient_ID'";
+        if ($TemplateID) {
+            $buf = "TemplateID = '$TemplateID'";
         }
         if ($MR_ID) {
             if ($buf) {
@@ -1608,9 +1573,7 @@ error_log("doMedRemindersData - Query = $query");
         if ($buf) {
             $buf = " where " . $buf;
         }
-
         $query = "SELECT * FROM Med_Reminders" . $buf;
-        error_log("MedReminders Query = $query");
         return $this->query($query);
     }
 

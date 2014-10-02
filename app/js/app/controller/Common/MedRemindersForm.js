@@ -3,32 +3,34 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 	extend: "Ext.app.Controller",
 	views : [ "Common.MedRemindersForm" ],
 	refs: [
-		{ ref: "MedRemindersForm",			selector: "MedReminders"},
-		{ ref: "MedRemindersForm button[text=\"Save\"]",			selector: "SaveForm"}
+		{ ref : "MedRemindersForm", selector : "MedReminder MedRemindersForm" },
+		{ ref : "MedRemindersGrid", selector : "MedReminder grid" }
+
 	],
 
 	init: function() {
+		/*
 		this.application.on(
 			{ LoadOEMData : this.scratch, scope : this }
 		);
+		*/
 		this.control({
 			"MedRemindersForm button[text=\"Save\"]" : {
 				click : this.SaveForm
 			}
 		});
 	},
-	
+
+	/*
 	scratch : function() {
 	},
+	*/
 
-	SaveForm : function(btn) {
+	xxxxxSaveForm : function(btn) {
 		debugger;
 		var form = btn.up("form");
 		form.save();
 	},
-
-
-
 
 
 	clickCancel : function(theBtn, theEvent, eOpts) {
@@ -50,6 +52,15 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 			method : CMD,
 			success: function(form, action) {
 				debugger;
+				var MR_ID, results = Ext.JSON.decode(action.response.responseText);
+				if (results.success) {
+					MR_ID = results.records[0].MR_ID;
+					if (!this.application.MedReminders) {
+						this.application.MedReminders = [];
+					}
+					this.application.MedReminders.push(MR_ID);
+					form.reset();
+				}
 				//this.RefreshPanel();
 			},
 			failure: function(form, action) {
@@ -90,25 +101,46 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 
 		/* Cumulative Dosing Medications are stored in the Lookup Table with a Lookup_Type = "50" */
 	SaveForm : function(theBtn, theEvent, eOpts) {
-		debugger;
+		var theGrid = this.getMedRemindersGrid();
+		var theGridStore = theGrid.getStore();
+		
+		var AuthoringTabCtl = this.getController("Authoring.AuthoringTab");
+		var form = theBtn.up('form').getForm();
+		if (form.isValid()) {
+			var theData = theBtn.up('form').getForm().getValues();
+			var MedReminder = Ext.create(Ext.COMSModels.MedReminder, {
+				"MR_ID" : theData.MR_ID,
+				"TemplateID" : theData.TemplateID, 
+				"Title" : theData.Title,
+				"Description" : theData.Description,
+				"ReminderWhenCycle" : theData.ReminderWhenCycle,
+				"ReminderWhenPeriod" : theData.ReminderWhenPeriod
+			});
+			AuthoringTabCtl.AddMedReminder2GridStore(MedReminder);
+			form.reset();
+		}
+
+return;
+
 		var MR_ID, theKey, theRecord, theStore, 
 			PatientInfo = this.application.Patient,
-			PatientID = "3853AE7C-9756-4080-B6B3-3A4C2288FAC2",
-			Med_Reminder_ID = "E0CC46CD-21CB-4501-8A28-2C721FED6124",
-			Order_ID = "80A29F99-BF1C-4C57-AA1F-CE1466883681",
+			// PatientID = "3853AE7C-9756-4080-B6B3-3A4C2288FAC2",
+			TemplateID = "00000000-0000-0000-0000-000000000000",
+			// Med_Reminder_ID = "E0CC46CD-21CB-4501-8A28-2C721FED6124",
+			// Order_ID = "80A29F99-BF1C-4C57-AA1F-CE1466883681",
 			form = theBtn.up('form').getForm(),
-			URL = Ext.URLs.MedReminders + "/" + PatientID + "/" + Med_Reminder_ID,
+			URL = Ext.URLs.MedReminders + "/" + TemplateID,
 			CMD = "POST";
 
-
 //		theStore = this.getTheGrid().store;
-		theKey = form.getValues().MR_ID;
-		form.setValue("Order_ID", Order_ID);
+//		theKey = form.getValues().MR_ID;
+//		form.setValue("Order_ID", Order_ID);
 
 //		if ("" !== theKey && theStore) {
 //			theRecord = theStore.findRecord("MR_ID", theKey);
 //		}
 
+/*
 		if (theRecord) {
 			var quesAnswer = Ext.Msg.show({
 				"title" : "Duplicate Record", 
@@ -129,7 +161,10 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 		else {
 			this._formSubmit(form, URL, CMD);
 		}
+*/
+this._formSubmit(form, URL, CMD);
 	}
+
 
 
 
