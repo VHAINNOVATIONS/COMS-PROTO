@@ -16,48 +16,54 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "TemperatureLocation"
     , "DeliveryMechanism"
 	, "IDEntry"
+	, 'MedReminders'
     ],
 
 
 
-	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry"],
+	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry", Ext.COMSModels.MedReminder],
 
-    views : [
-    "NewPlan.NewPlanTab"
-	,"NewPlan.PatientSelection"
-	,"NewPlan.SelectPatient"
-    ,"NewPlan.PatientInfo"
-    ,"NewPlan.PatientInfoTable"
-    ,"NewPlan.PatientTemplates"
-    ,"NewPlan.PatientHistory"
-    ,"NewPlan.LabInfo"
-    ,"NewPlan.OEM"
-    ,"NewPlan.AdverseEventsHistory"
+	views : [
+		"NewPlan.NewPlanTab"
+		,"NewPlan.MedRemindersPanel"
+		,"NewPlan.PatientSelection"
+		,"NewPlan.SelectPatient"
+		,"NewPlan.PatientInfo"
+		,"NewPlan.PatientInfoTable"
+		,"NewPlan.PatientTemplates"
+		,"NewPlan.PatientHistory"
+		,"NewPlan.LabInfo"
+		,"NewPlan.OEM"
+		,"NewPlan.AdverseEventsHistory"
 
-	,"NewPlan.CTOS"
-    ,"NewPlan.CTOS.PatientSummary"
-    ,"NewPlan.CTOS.NursingDocs"
-    ,"NewPlan.CTOS.KnowledgeBase"
+		,"NewPlan.CTOS"
+		,"NewPlan.CTOS.PatientSummary"
+		,"NewPlan.CTOS.NursingDocs"
+		,"NewPlan.CTOS.KnowledgeBase"
 
 
-    ,'Common.Search4Template'
-    ,"Common.selCTOSTemplate"
-    ,"Common.selTemplateSrc"
-    ,"Common.selDiseaseAndStage"
-    ,"Common.selDisease"
-    ,"Common.selDiseaseStage"
-    ,"Common.selTemplate"
-	,"Common.VitalSignsHistory"
-	,"Common.puWinSelCancer"
-	,"Common.puWinAddCumDose"
-	,"Common.puWinSelBSA"
-	,"Common.puWinSelAmputation"
-    ,"NewPlan.dspTemplateData"
-    ,"NewPlan.AskQues2ApplyTemplate"
-    ,"NewPlan.AmputationSelection"
-    ,"NewPlan.BSASelection"
-	,"NewPlan.EndTreatmentSummary"
-    ],
+		,'Common.Search4Template'
+		,"Common.selCTOSTemplate"
+		,"Common.selTemplateSrc"
+		,"Common.selDiseaseAndStage"
+		,"Common.selDisease"
+		,"Common.selDiseaseStage"
+		,"Common.selTemplate"
+		,"Common.VitalSignsHistory"
+		,"Common.puWinSelCancer"
+		,"Common.puWinAddCumDose"
+		,"Common.puWinSelBSA"
+		,"Common.puWinSelAmputation"
+		,"Common.MedRemindersForm"
+		,"Common.MedRemindersGrid"
+		,"Authoring.MedReminder"
+
+		,"NewPlan.dspTemplateData"
+		,"NewPlan.AskQues2ApplyTemplate"
+		,"NewPlan.AmputationSelection"
+		,"NewPlan.BSASelection"
+		,"NewPlan.EndTreatmentSummary"
+	],
 
     refs: [
 		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
@@ -74,6 +80,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientInfoTable",				selector: "NewPlanTab PatientInfo PatientInfoTable"},
 		{ ref: "PatientInfoTableInformation",	selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableBSACalcs",		selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"]"},
+
+		{ ref: "PatientInfoMedReminders",		selector: "NewPlanTab PatientInfo MedRemindersPanel"},
+		{ ref: "MedRemindersGrid",	selector: "NewPlanTab PatientInfo MedRemindersPanel grid"},
+		{ ref: "MedRemindersForm",		selector: "NewPlanTab PatientInfo MedRemindersPanel MedRemindersForm"},
+		{ ref: "PatientInfoMedRemindersTitle",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Title\"]"},
+		{ ref: "PatientInfoMedRemindersDescription",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Description\"]"},
+		{ ref: "PatientInfoMedRemindersWhenCycle",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenCycle\"]"},
+		{ ref: "PatientInfoMedRemindersWhenPeriod",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenPeriod\"]"},
+
+
 
 		{ ref: "PatientTemplates",				selector: "NewPlanTab PatientInfo PatientTemplates"},
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
@@ -121,6 +137,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}, scope : this });
 
         this.control({
+			"NewPlanTab PatientInfo MedRemindersPanel grid" : {
+				select: this.selectMedReminderGridRow
+			},
+
+
 			"NewPlanTab PatientInfo CTOS dspTemplateData" : {
 				afterrender : this.tabRendered,
 				itemtap : this.clickTemplateData
@@ -142,6 +163,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab CTOS button[name=\"Edit\"]" : {
                 click: this.editTemplate
             },
+			"NewPlanTab MedRemindersPanel" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
+
             "NewPlanTab PatientSelection" : {
                 afterrender: this.handlePatientSelectionRender
             },
@@ -1751,6 +1776,21 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].show();
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
 
+		var theMedRemindersPanel = this.getPatientInfoMedReminders();
+		var theBtns = Ext.ComponentQuery.query("NewPlanTab PatientInfo MedRemindersPanel button");
+		for (i = 0; i < theBtns.length; i++) {
+			theBtns[i].hide();
+		}
+		this.getPatientInfoMedRemindersTitle().setReadOnly(true);
+		this.getPatientInfoMedRemindersDescription().setReadOnly(true);
+		this.getPatientInfoMedRemindersWhenCycle().setReadOnly(true);
+		this.getPatientInfoMedRemindersWhenPeriod().setReadOnly(true);
+		var theTemplateID = this.application.Patient.TemplateID;
+		this.getAnyMedReminders4Template(theTemplateID);
+
+
+
+
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
 		var piTable = thisCtl.getPatientInfoTable();
         piTable.update("");
@@ -2591,8 +2631,75 @@ fieldContainerWalk : function(item, y, z) {
 			this.application.DataLoadCount = 1;
 			this.loadOrderRecords();
 		}
-	}
+	},
 
+
+
+
+	selectMedReminderGridRow : function(theRowModel, record, index, eOpts) {
+		var records = theRowModel.getSelection();
+		var theForm = this.getMedRemindersForm();
+		if (!theForm.isVisible()) {
+			theForm.show();
+		}
+		var theData = record.getData();
+		var aForm = theForm.getForm();
+		aForm.setValues({
+			"ReminderWhenCycle" : theData.ReminderWhenCycle, 
+			"ReminderWhenPeriod" : theData.ReminderWhenPeriod,
+			"Title" : theData.Title,
+			"Description" : theData.Description,
+			"MR_ID" : theData.MR_ID,
+			"TemplateID" : theData.TemplateID
+		});
+	},
+
+
+
+	getAnyMedReminders4Template : function(TemplateID) {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		if ("" !== TemplateID) {
+			MedRemindersStore.proxy.url = Ext.URLs.MedReminders + "/" + TemplateID;
+			MedRemindersStore.load();
+		}
+	},
+
+	RefreshMedRemindersGrid : function() {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll(true);
+		MedRemindersGrid.getView().refresh(true);
+	},
+
+	AddMedReminders2Store : function(MedReminders) {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		MedRemindersStore.add(MedReminders);
+	},
+
+
+	getMedRemindersInArray : function() {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+
+		var MedRemindersArray = [], MedRemindersRec, limitCount = MedRemindersStore.count(), i, MedRemindersModel;
+		for (i = 0; i < limitCount; i++) {
+			MedRemindersModel = MedRemindersStore.getAt(i);
+			MedRemindersRec = Ext.create(Ext.COMSModels.MedReminder, {
+				"MR_ID" : MedRemindersModel.data.MR_ID,
+				"TemplateID" : MedRemindersModel.data.TemplateID, 
+				"Title" : MedRemindersModel.data.Title,
+				"Description" : MedRemindersModel.data.Description,
+				"ReminderWhenCycle" : MedRemindersModel.data.ReminderWhenCycle,
+				"ReminderWhenPeriod" : MedRemindersModel.data.ReminderWhenPeriod
+			});
+			MedRemindersArray.push(MedRemindersRec);
+		}
+		return MedRemindersArray;
+	}
 
 });
 

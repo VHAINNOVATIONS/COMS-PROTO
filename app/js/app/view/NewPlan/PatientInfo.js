@@ -24,6 +24,8 @@ Ext.define("COMS.view.NewPlan.PatientInfo" ,{
 		{ xtype : "container", hidden : true, name : "DisplayMDWSDataContainer", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
 		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from MDWS" },
 		{ xtype : "PatientInfoTable" },
+
+		{ xtype : "MedRemindersPanel" },
 		{ xtype : "AdverseEventsHistory" },
 		{ xtype : "PatientTemplates" },
 		{ xtype : "PatientHistory" },		// Panel Title = "Patient Vitals"

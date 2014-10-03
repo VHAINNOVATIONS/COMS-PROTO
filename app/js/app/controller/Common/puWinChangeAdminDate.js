@@ -260,7 +260,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 						var PatientInfo = this.application.Patient;
 						PatientInfo.OEMDataRendered = false;
 						var theController = this.getController("NewPlan.OEM");
-						theController.displayOEM_Record_Data(PatientInfo);
+						theController.DisplayOEMRecordData(PatientInfo);
 						var theTab = theController.getOEMTab();
 						theController.tabRendered(theTab);
 					}

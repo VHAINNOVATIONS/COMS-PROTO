@@ -59,6 +59,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		{ ref : "MedRemindersForm", selector : "AuthoringTab MedReminder MedRemindersForm" },
 		{ ref : "MedRemindersGrid", selector : "AuthoringTab MedReminder grid" },
+	 	{ ref : "AddReminderBtn", selector : "AuthoringTab MedReminder button[title=\"AddReminder\"]" },
 		{ ref : "RemoveReminderBtn", selector : "AuthoringTab MedReminder button[title=\"RemoveReminder\"]" },
 		{ ref : "EditReminderBtn", selector : "AuthoringTab MedReminder button[title=\"EditReminder\"]" },
 
@@ -995,6 +996,7 @@ return template;
 		var theForm = this.getMedRemindersForm();
 		if (!theForm.isVisible()) {
 			theForm.show();
+			this.getAddReminderBtn().setText("Hide Reminder Form");
 		}
 		var theData = record.getData();
 		var aForm = theForm.getForm();
@@ -1083,9 +1085,11 @@ return template;
 		var MedRemindersGrid = this.getMedRemindersGrid();
 		var MedRemindersStore = MedRemindersGrid.getStore();
 		var theData = MedReminderRec.getData();
-		var ExistingRecIndex = MedRemindersStore.findExact("MR_ID", theData.MR_ID);
-		if (ExistingRecIndex >= 0) {
-			MedRemindersStore.removeAt(ExistingRecIndex);
+		if ("" !== theData.MR_ID) {
+			var ExistingRecIndex = MedRemindersStore.findExact("MR_ID", theData.MR_ID);
+			if (ExistingRecIndex >= 0) {
+				MedRemindersStore.removeAt(ExistingRecIndex);
+			}
 		}
 		MedRemindersStore.add(MedReminderRec);
 		MedRemindersGrid.getView().refresh();
