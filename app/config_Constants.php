@@ -16,7 +16,7 @@ if (defined('Local')) {
 
 
 else if (defined('VASandboxTest')) {
-	define('DB_NAME', 'COMS');
+	define('DB_NAME', 'COMS_3');
 	define('DB_TYPE', 'sqlsrv');
 	define('DB_HOST', 'VAPHS355SQL');
 	define('DB_USER', 'coms_db_user');
