@@ -59,7 +59,7 @@ Ext.define('COMS.controller.Navigation', {
 
 		if ("Orders" === newCard.title) {
 			var Orders = this.getController("Orders.OrdersTab");
-			Orders.LoadOrdersStore();
+			Orders.LoadOrdersStore(false);
 		}
 
 		if (!editTemplate && "Template Authoring" == newCard.title && "Start New Plan" == oldCard.title) {

@@ -1493,4 +1493,89 @@ function convertReason2ID($Reason) {
     
     // order check end of else
     // }
+	
+function UpdateAdminDateMT ($Template_ID,$Admin_Date)
+    {
+    
+       $query = "
+            UPDATE Master_Template SET 
+            Admin_Date = '$Admin_Date'
+            WHERE Template_ID = '$Template_ID'
+                ";
+		   
+		$result = $this->query($query);
+        
+    }
+
+
+    function doMedRemindersData($fcn, $TemplateID, $MR_ID, $InputData) {
+        $InsertBuf1 = array();;
+        $InsertBuf2 = array();;
+        $UpdateBuf = "";
+
+        if (isset($InputData->Title)) {
+            $Title = $this->escapeString($InputData->Title);
+            $InsertBuf1[] = "Title";
+            $InsertBuf2[] = "'$Title'";
+            $UpdateBuf .= "Title = '$Title'";
+        }
+        if (isset($InputData->Description)) {
+            $Description = $this->escapeString($InputData->Description);
+            $InsertBuf1[] = "Description";
+            $InsertBuf2[] = "'$Description'";
+            $UpdateBuf .= "Description = '$Description'";
+        }
+        if (isset($InputData->ReminderWhenCycle)) {
+            $ReminderWhenCycle = $InputData->ReminderWhenCycle;
+            $InsertBuf1[] = "ReminderWhenCycle";
+            $InsertBuf2[] = "'$ReminderWhenCycle'";
+            $UpdateBuf .= "ReminderWhenCycle = '$ReminderWhenCycle'";
+        }
+        if (isset($InputData->ReminderWhenPeriod)) {
+            $ReminderWhenPeriod = $InputData->ReminderWhenPeriod;
+            $InsertBuf1[] = "ReminderWhenPeriod";
+            $InsertBuf2[] = "'$ReminderWhenPeriod'";
+            $UpdateBuf .= "ReminderWhenPeriod = '$ReminderWhenPeriod'";
+        }
+
+        if ("update" == $fcn) {
+            $query = "UPDATE Med_Reminders SET " . implode(", ", $UpdateBuf) . " where MR_IR = '$MR_ID'";
+        }
+        else {
+            $InsertBuf1[] = "MR_ID";
+            $InsertBuf2[] = "'" . $MR_ID . "'";
+            $InsertBuf1[] = "TemplateID";
+            $InsertBuf2[] = "'$TemplateID'";
+            $query = "INSERT into Med_Reminders (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
+        }
+        return $this->query($query);
+    }
+
+    function setMedReminders($TemplateID, $MR_ID, $_POST) {
+        return $this->doMedRemindersData("insert", $TemplateID, $MR_ID, $_POST);
+    }
+
+    function updateMedReminders($TemplateID, $MR_ID, $_POST) {
+        return $this->doMedRemindersData("update", $TemplateID, $MR_ID, $_POST);
+    }
+
+    function getMedReminders($TemplateID, $MR_ID) {
+        $buf = "";
+        if ($TemplateID) {
+            $buf = "TemplateID = '$TemplateID'";
+        }
+        if ($MR_ID) {
+            if ($buf) {
+                $buf .= " and ";
+            }
+            $buf .= " MR_ID = '$MR_ID'";
+        }
+        if ($buf) {
+            $buf = " where " . $buf;
+        }
+        $query = "SELECT * FROM Med_Reminders" . $buf;
+        error_log($query);
+        return $this->query($query);
+    }
+
 }

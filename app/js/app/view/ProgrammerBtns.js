@@ -6,6 +6,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	"hidden" : true,
 	
 	"items" : [
+		/**
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : 2 }, 
 			items : [
 				{ "xtype" : "button", "text" : "Debugger" },
@@ -26,5 +27,6 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 				{ "xtype" : "button", "text" : " " }
 			]
 		}
+		**/
 	]
 })

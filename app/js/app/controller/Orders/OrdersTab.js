@@ -34,7 +34,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 						if (theScope.PostedRecs.length <= 0) {
 							if (theScope.PostedRecsFailed.length <= 0) {
 								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-								theScope.getController("Orders.OrdersTab").LoadOrdersStore();
+								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true);
 							}
 							else {
 								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
@@ -42,12 +42,10 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 						}
 					};
 					var ResponseAlertFail = function(record) {
-						//debugger;
 						this.PostedRecsFailed.push(record);
 						HandleResponse(record, false, this);
 					};
 					var ResponseAlertGood = function(record) {
-						//debugger;
 						HandleResponse(record, true, this);
 					};
 
@@ -90,25 +88,29 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 	},
 
 	PanelReady : function (thePanel, eOpts) {
-		// debugger;
 	},
 
 	"HandleRefresh" : function (button, evt, eOpts) {
-		this.LoadOrdersStore();
+		this.LoadOrdersStore(false);
 	},
 
-	"LoadOrdersStore" : function () {
-		try {
-			var theStore = Ext.getStore("OrdersStore");
-			if (theStore) {
-				// theStore.removeAll(true);		By default is to remove the Store's existing records first.
-				// theStore.groupField = "Patient_ID";
-				theStore.load();
-			}
-		}
-		catch (e) {
-			alert("Store Load Error in Navigation.js");
-		}
+	"LoadOrdersStore" : function (LoadAndRenderOEMTab) {
+		var PatientInfo, theStore;
+		theStore = Ext.getStore("OrdersStore");
+		if (theStore) {
+			theStore.load({
+				scope: this,
+				callback: function() {
+					if (false !== LoadAndRenderOEMTab) {
+						if (this.application.Patient) {
+							PatientInfo = this.application.Patient;
+							PatientInfo.OEMDataRendered = false;
 
+							this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
+						}
+					}
+				}
+			});
+		}
 	}
 });

@@ -100,14 +100,14 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		dataIndex: "adminDay",
 		width: 45,
 		sortable: true,
-		align: "left"
+		align: "left",
+		hidden: true
 	}, {
 		header: "<div>Admin Date</div>",
 		dataIndex: "adminDate",
-		width: 70,
+		width: 80,
 		sortable: true,
-		align: "left",
-		hidden: true
+		align: "left"
 	}, {
 		header: "<div>Type</div>",
 		dataIndex: "type",

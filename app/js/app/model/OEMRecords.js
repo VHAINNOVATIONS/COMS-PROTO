@@ -98,6 +98,7 @@ Ext.define("COMS.model.OEMRecords", {
 		"id",							// ID of this particular OEM Record
 
         "FNRisk",						// Febrile Neutropenia Risk (%)
+		"FNRiskDetails",
         "NeutropeniaRecommendation",	// Recommendation for now can be blank
 
         "ELevelName",					// Emotegenic Level string (e.g. Low (10% - 30%)), taken from Lookup Table

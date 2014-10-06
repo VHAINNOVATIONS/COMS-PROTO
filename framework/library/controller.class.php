@@ -40,6 +40,41 @@ class Controller {
         }
         return $string;
     }
+    function numberFormater($n = null) {
+        if ($n) {
+            if (intval($n) == $n) {
+                return number_format($n);
+            }
+            return number_format($n, 2);
+        }
+        return "";
+    }
+    function SelectedTimeConvert($x = null) {
+        if ($x) {
+            $a = explode("T", $x );
+            if (2 == count($a)) {
+                $b = explode(":", $a[1]);
+                if ($b[0] > 12) {
+                    return $b[0]-12 . ":" . $b[1] . " pm";
+                }
+                else if ($b[0] == 0) {
+                    return "12:" . $b[1] . " am";
+                }
+                else {
+                    return $b[0] . ":" . $b[1] . " am";
+                }
+                return $a[1];
+            }
+            else {
+                return $x;
+            }
+        }
+    }
+
+    function NTD_StripLeadingFromDrugName($s = null) {
+        $pattern = '/^\d+\. /';
+        return preg_replace($pattern, "", $s);
+    }
 }
 
 ?>

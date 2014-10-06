@@ -15,9 +15,9 @@
     $ProjType = "Proof of Concept, 0.12, July 11, 2014";
     $ProjType = "Proof of Concept, 0.13, August 1, 2014";
     $ProjType = "Proof of Concept, 0.14, August 22, 2014";
-    */
     $ProjType = "Proof of Concept, 0.15, September 19, 2014";
-    
+    */
+    $ProjType = "Proof of Concept, 0.16, October 3, 2014";
 ?>
 
 <!doctype html>

@@ -177,13 +177,13 @@ function getAllMeds2Administer($records) {
         if (isset($returnVal)) {
             if ($returnVal["success"]) {
                 $today = date('m/d/Y');
-error_log("GenOEMData - Records");
-error_log(json_encode($returnVal));
-error_log("----------------------------");
+//error_log("GenOEMData - Records");
+//error_log(json_encode($returnVal));
+//error_log("----------------------------");
                 $OEM = $returnVal["records"][0];
                 $records = $OEM["OEMRecords"];
-error_log(json_encode($records));
-error_log("----------------------------");
+//error_log(json_encode($records));
+//error_log("----------------------------");
 
 
                 $colIdx = 0;
@@ -199,8 +199,8 @@ $medRows = $this->getAllMeds2Administer($records);
 
 
 $PreTherapy = $medRows["preMeds"];
-error_log("---------- PRE THERAPY ------------------");
-error_log(json_encode($PreTherapy));
+//error_log("---------- PRE THERAPY ------------------");
+//error_log(json_encode($PreTherapy));
 //error_log("----------------------------");
 //foreach ($PreTherapy as $Med) {
 //error_log(json_encode($Med));
@@ -208,7 +208,7 @@ error_log(json_encode($PreTherapy));
 //    $Med["-"] = "03 Pre Therapy Meds";
 //error_log(json_encode($Med));
 //}
-error_log("--------- END PRE THERAPY ---------------");
+//error_log("--------- END PRE THERAPY ---------------");
 
 
 
@@ -227,9 +227,9 @@ $PostTherapy = $medRows["postMeds"];
 foreach ($PostTherapy as $Med) {
     $Med = array("label" => "Post Therapy Med", "-" => "05 Post Therapy Meds");
 }
-error_log("All PreTherapy Info");
-error_log(json_encode($PreTherapy));
-error_log("----------------------------");
+//error_log("All PreTherapy Info");
+//error_log(json_encode($PreTherapy));
+//error_log("----------------------------");
 
 
 
@@ -282,7 +282,7 @@ error_log("----------------------------");
 
 $Meds = $record["PreTherapy"];
 foreach ($Meds as $Med) {
-    error_log("Walking Records - " . $Med["Med"] . $Med["Dose1"] . " " . $Med["DoseUnits1"]);
+//    error_log("Walking Records - " . $Med["Med"] . $Med["Dose1"] . " " . $Med["DoseUnits1"]);
     $PreTherapy[$Med["Med"]][$hdr] = $Med["Dose1"] . " " . $Med["DoseUnits1"];
 }
 
@@ -608,7 +608,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
             if ($assessmentRecordID) {
                 $query .= " AND Assmnt_ID = '$assessmentRecordID'";
             }
-            error_log("_getAssessmentLink Query - $query");
+            // error_log("_getAssessmentLink Query - $query");
             return $this->NursingDoc->query($query);
     }
     function _getAssessmentDetails($assessmentRecordID) {
@@ -620,7 +620,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
             case when (Choice = 1) then CAST(1 AS BIT) else CAST(0 AS BIT) end as choice,
             case when (alertEvent = 1) then CAST(1 AS BIT) else CAST(0 AS BIT) end as alertEvent
             from ND_Assessment_Details where Asmnt_ID = '$assessmentRecordID'";
-            error_log("_getAssessmentDetails Query - $query");
+            // error_log("_getAssessmentDetails Query - $query");
             $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
@@ -641,7 +641,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
                 '$currDate',
                 'author'
             )";
-            error_log("_InsertAssessmentLink Query - $query");
+            // error_log("_InsertAssessmentLink Query - $query");
             $retVal = $this->NursingDoc->query($query);
             return $retVal;
     }
@@ -671,7 +671,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
                 '$comments',
                 '$levelChosen'
             )";
-        error_log("_InsertAssessmentDetail Query - $query");
+        // error_log("_InsertAssessmentDetail Query - $query");
         $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
@@ -693,7 +693,7 @@ Content-Type:application/json
         $query = "";
 
 
-error_log("Assessment - $PAT_ID");
+// error_log("Assessment - $PAT_ID");
 
 
         $form_data = json_decode(file_get_contents('php://input'));
@@ -705,7 +705,7 @@ error_log("Assessment - $PAT_ID");
         $GUID = $this->NursingDoc->newGUID();
 
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-            error_log("Get New GUID - $GUID");
+            // error_log("Get New GUID - $GUID");
             if ($PAT_ID) {
                 $assessmentID = $this->_getAssessmentLink($PAT_ID, $assessmentRecordID);
                 if($this->checkForErrors('Get ND_Assessment Link Records Failed. ', $assessmentID)){
@@ -740,7 +740,7 @@ error_log("Assessment - $PAT_ID");
 
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $assementDetails = $form_data->{'Details'};
-            error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
+            // error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
 
             $this->NursingDoc->beginTransaction();
             $retVal = $this->_InsertAssessmentLink($GUID, $PAT_ID);
@@ -771,7 +771,7 @@ error_log("Assessment - $PAT_ID");
                 $assementDetails = $form_data->{'Details'};
                 $this->NursingDoc->beginTransaction();
                 foreach ($assementDetails as $detail) {
-    error_log("Inserting Details - " . $this->varDumpToString($detail));
+    // error_log("Inserting Details - " . $this->varDumpToString($detail));
                     $retVal = $this->_InsertAssessmentDetail($assessmentRecordID, $detail);
                     if ($this->checkForErrors($ErrMsg, $retVal)) {
                         $this->NursingDoc->rollbackTransaction();
@@ -902,7 +902,7 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
             if ($InfuseReactRecordID) {
                 $query .= " AND IReact_ID = '$InfuseReactRecordID'";
             }
-            error_log("_getInfuseReactLink Query - $query");
+            // error_log("_getInfuseReactLink Query - $query");
             return $this->NursingDoc->query($query);
     }
     function _getInfuseReactDetails($InfuseReactRecordID) {
@@ -916,7 +916,7 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
             from ND_InfuseReactions_Details where IReact_ID = '$InfuseReactRecordID'
             order by Sequence";
 
-            error_log("_getInfuseReactDetails Query - $query");
+            // error_log("_getInfuseReactDetails Query - $query");
             $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
@@ -937,7 +937,7 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
                 '$currDate',
                 'author'
             )";
-            error_log("_InsertInfuseReactLink Query - $query");
+            // error_log("_InsertInfuseReactLink Query - $query");
             $retVal = $this->NursingDoc->query($query);
             return $retVal;
     }
@@ -967,7 +967,7 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
                 '$comments',
                 '$sectionTitle'
             )";
-        error_log("_InsertInfuseReactDetail Query - $query");
+        // error_log("_InsertInfuseReactDetail Query - $query");
         $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
@@ -979,8 +979,8 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
     }
 
     function ReactAssessList($PAT_ID = null ) {
-        error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
-        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+        // error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
+        // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -1026,8 +1026,8 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
 
 
     function ReactAssess($PAT_ID = null, $InfuseReactRecordID=null ) {
-        error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
-        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+        // error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
+        // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -1046,10 +1046,10 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
 
 
             if("ireact_id" == strtolower($PAT_ID)) {
-                error_log("Get Records by Infusion Reaction Link ID - $InfuseReactRecordID");
+                // error_log("Get Records by Infusion Reaction Link ID - $InfuseReactRecordID");
                 $InfuseReactDetails = $this->_getInfuseReactDetails($InfuseReactRecordID);
                 if($this->checkForErrors('Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink)){
-                    error_log("ReactAssess Details - ERROR");
+                    // error_log("ReactAssess Details - ERROR");
                     $this->set('jsonRecord', null);
                     return;
                 }
@@ -1067,19 +1067,19 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
 
 
 
-            error_log("Get New GUID - $GUID");
+            // error_log("Get New GUID - $GUID");
 
             if ($PAT_ID) {
                 $InfuseReactLinkID = $this->_getInfuseReactLink($PAT_ID, $InfuseReactRecordID);
                 if($this->checkForErrors('Get ND_ReactAssess Link Records Failed. ', $InfuseReactLinkID)){
-                    error_log("ReactAssess - ERROR");
+                    // error_log("ReactAssess - ERROR");
                     $this->set('jsonRecord', null);
                     return;
                 }
                 foreach ($InfuseReactLinkID as $InfuseReactLink) {
                     $InfuseReactDetails = $this->_getInfuseReactDetails($InfuseReactLink['id']);
                     if($this->checkForErrors('Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink)){
-                        error_log("ReactAssess Details - ERROR");
+                        // error_log("ReactAssess Details - ERROR");
                         $this->set('jsonRecord', null);
                         return;
                     }
@@ -1103,8 +1103,8 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
 
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $Details = $form_data->{'Details'};
-            error_log("POST - Inserting Details - " . $this->varDumpToString($Details));
-            error_log("------------------------- Creating Link to Records -------------------------------------------");
+            // error_log("POST - Inserting Details - " . $this->varDumpToString($Details));
+            // error_log("------------------------- Creating Link to Records -------------------------------------------");
             $this->NursingDoc->beginTransaction();
             $retVal = $this->_InsertInfuseReactLink($GUID, $PAT_ID);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
@@ -1114,11 +1114,11 @@ CREATE TABLE [dbo].[ND_InfuseReactions_Details](
                 $this->set('jsonRecord', $jsonRecord);
                 return;
             }
-            error_log("-------------------------- Creating individual Records ------------------------------------------");
+            // error_log("-------------------------- Creating individual Records ------------------------------------------");
 
             foreach ($Details as $detail) {
                 $retVal = $this->_InsertInfuseReactDetail($GUID, $detail);
-                error_log("------------------------ Saved --------------------------------------------");
+                // error_log("------------------------ Saved --------------------------------------------");
 
                 if ($this->checkForErrors($ErrMsg, $retVal)) {
                     $this->NursingDoc->rollbackTransaction();
@@ -1172,8 +1172,8 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
 
 
     function AdverseEventsHistory($PAT_ID = null) {
-        error_log("PAT_ID = $PAT_ID;");
-        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+       //  error_log("PAT_ID = $PAT_ID;");
+        // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -1236,7 +1236,7 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
     }
 
     function ReactAssessXtrav($id = null){
-        error_log("ReactAssessXtrav - Service Call Entry Point - ID = $id");
+        // error_log("ReactAssessXtrav - Service Call Entry Point - ID = $id");
         
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
@@ -1301,7 +1301,7 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
     }
 
     function ReactAssessCRS($id = null){
-        error_log("ReactAssessCRS - Service Call Entry Point - ID = $id");
+        // error_log("ReactAssessCRS - Service Call Entry Point - ID = $id");
 
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
@@ -1366,7 +1366,7 @@ error_log("Inserting Details - " . $this->varDumpToString($assementDetails));
     }
 
     function ReactAssessHorA($id = null){
-        error_log("ReactAssessHorA - Service Call Entry Point - ID = $id");
+        // error_log("ReactAssessHorA - Service Call Entry Point - ID = $id");
 
         $form_data = json_decode(file_get_contents('php://input'));         
         $jsonRecord = array();
@@ -1521,8 +1521,8 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
 ) ON [PRIMARY]
  ***/
     function AdverseEventsAlert($PAT_ID = null, $RecID = null) {
-        error_log("PAT_ID = $PAT_ID; Record ID = $RecID");
-        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+        // error_log("PAT_ID = $PAT_ID; Record ID = $RecID");
+        // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -1562,7 +1562,7 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
                 '$currDate',
                 'author'
             )";
-            error_log("_InsertAdverseEventsAlertLink Query - $query");
+            // error_log("_InsertAdverseEventsAlertLink Query - $query");
             $retVal = $this->NursingDoc->query($query);
 
             if ($this->checkForErrors($ErrMsg, $retVal)) {
@@ -1572,11 +1572,11 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
                 $this->set('jsonRecord', $jsonRecord);
                 return;
             }
-            error_log("-------------------------- Creating individual Records ------------------------------------------");
+            // error_log("-------------------------- Creating individual Records ------------------------------------------");
 
             foreach ($Details as $detail) {
                 $retVal = $this->_InsertInfuseReactDetail($GUID, $detail);
-                error_log("------------------------ Saved --------------------------------------------");
+                // error_log("------------------------ Saved --------------------------------------------");
 
                 if ($this->checkForErrors($ErrMsg, $retVal)) {
                     $this->NursingDoc->rollbackTransaction();
@@ -1608,8 +1608,8 @@ CREATE TABLE [dbo].[AdverseEventsAlertsList](
 
     /** Boilerplate **
     function ReactAssess($PAT_ID = null, $InfuseReactRecordID=null ) {
-        error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
-        error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+        // error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
+        // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
 
         $jsonRecord = array();
         $jsonRecord['success'] = true;

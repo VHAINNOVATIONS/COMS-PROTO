@@ -51,7 +51,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 					aField = { "Choice" : data.Choice, "Comments" : data.Comments, "FieldName" : data.Field_Label, "Alert" : data.alertEvent };
 					category.fields.push(aField);
 				}
-				debugger;
 			}
 		});
 	},

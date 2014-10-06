@@ -123,6 +123,8 @@ class NursingDoc extends Model {
         $query = "SELECT NEWID()";
         $GUID = $this->query($query);
         $GUID = $GUID[0][""];
+		
+		// error_log ("updateTreatment - " . json_encode($data));
 
         $this->_treatmentId = trim($GUID, '{}');
         $Patient_ID = $data->patientID;
@@ -138,7 +140,9 @@ class NursingDoc extends Model {
         $Route = $data->route;
         $StartTime = $data->StartTime;
         $EndTime = $data->EndTime;
-        $Comments = $data->Comments;
+
+        $Comments = $this->escapeString($data->Comments);
+
         $Treatment_User = $data->Treatment_User;
         $Treatment_Date = $data->Treatment_Date;
         $Drug_OriginalValue = $data->drug_originalValue;
@@ -193,8 +197,10 @@ class NursingDoc extends Model {
                 '$Route_OriginalValue'
             ) ";
             
+
+// error_log ("updateTreatment - $query");
         $result = $this->query($query);
-        
+// error_log ("updateTreatment - " . json_encode($result));
         if (!empty($result['error'])) {
             return $result;
         }
@@ -595,8 +601,15 @@ class NursingDoc extends Model {
     }
 
     function UpdateOrder($patientID,$drug,$adminDate) {
+        $drug = $this->NTD_StripLeadingFromDrugName($drug);
+        $ad = explode("/", $adminDate);
+        if (count($ad) > 1) {
+            $adminDate = $ad[2] . "-" . $ad[0] . "-" . $ad[1];
+        }
         $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
+        // error_log("UpdateOrder Query = $query");
         $result = $this->query($query);
+        // error_log("UpdateOrder - " . json_encode($result));
         return $result;
     }
 }

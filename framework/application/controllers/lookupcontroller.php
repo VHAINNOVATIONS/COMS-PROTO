@@ -16,10 +16,10 @@ class LookupController extends Controller {
 
     function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
         if ("" !== $query) {
-            error_log("Got Query - $query");
+            //error_log("Got Query - $query");
             $retVal = $this->LookUp->query($query);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
-                error_log("Error");
+                // error_log("Error");
                 if("Unique" == $this->get('frameworkErrCodes')) {
                     $jsonRecord['msg'] = "Can not have duplicate records $UniqueMsg";
                 }
@@ -29,12 +29,12 @@ class LookupController extends Controller {
                 $jsonRecord['success'] = false;
             }
             else {
-                error_log("No Error");
+                // error_log("No Error");
                 $jsonRecord['success'] = 'true';
                 $this->set('frameworkErr', null);
                 $this->set('frameworkErrCodes', null);
 
-                error_log("Result - " . $this->varDumpToString($retVal));
+                // error_log("Result - " . $this->varDumpToString($retVal));
                 if (count($retVal) > 0) {
                     unset($jsonRecord['msg']);
                     $jsonRecord['total'] = count($retVal);
@@ -43,7 +43,7 @@ class LookupController extends Controller {
             }
         }
        $this->set('jsonRecord', $jsonRecord);
-       error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
+       // error_log("Result - " . $this->varDumpToString($this->get("jsonRecord")));
     }
 
     function checkForErrors($errorMsg,$retVal){
@@ -62,8 +62,8 @@ class LookupController extends Controller {
                         $ErrorCode = "Unique";
                     }
                     else {
-                        error_log("Lookup - $errorMsg");
-                        error_log(json_encode($error));
+                        // error_log("Lookup - $errorMsg");
+                        // error_log(json_encode($error));
                         $finalMsg = explode("]", $error['message']);
                         $finalMsg = $finalMsg[count($finalMsg)-1];
                         $errorMsg .= "<hr>";
@@ -80,7 +80,7 @@ class LookupController extends Controller {
     
 
     function save() {
-        error_log("Lookup Save - ");
+        // error_log("Lookup Save - ");
         $Msg = "Generic Save";
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -124,7 +124,7 @@ class LookupController extends Controller {
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a POST, PUT or DELETE got a " . $_SERVER['REQUEST_METHOD'];
         }
 
-        error_log("save() = $query");
+        // error_log("save() = $query");
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)");
 
     }
@@ -203,6 +203,7 @@ class LookupController extends Controller {
             $Order_IDR = $form_data->{'Order_IDR'};
             $prehydrations = $form_data->{'PreMHMeds'};
             if ($prehydrations) {
+                //$this->LookUp->OrderX();
                 $retVal = $this->LookUp->saveHydrations($prehydrations, 'Pre', $templateid, $Order_IDR);
                 if($this->checkForErrors('Insert Pre Therapy Failed. ', $retVal)){
                     $this->LookUp->rollbackTransaction();
@@ -419,7 +420,7 @@ class LookupController extends Controller {
     where pat.Template_ID = '$templateID'
     and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
 
-    error_log("Patients4Template - $query");
+    // error_log("Patients4Template - $query");
 
         $retVal = $this->LookUp->query($query);
         if (null !== $retVal) {
@@ -458,7 +459,7 @@ class LookupController extends Controller {
         } else if ($field != NULL && $id == NULL) {
             $this->set('templates', null);
 
-error_log("Get Patients for specific Template - $field");
+// error_log("Get Patients for specific Template - $field");
             $TemplateList = $this->LookUp->getTemplates($field);
             if (null !== $TemplateList) {
                 $Templates = array();
@@ -510,7 +511,7 @@ error_log("Get Patients for specific Template - $field");
             $this->set('templatedata', null);
             return;
         }
-error_log("Result - " . $this->varDumpToString($retVal));
+// error_log("Result - " . $this->varDumpToString($retVal));
         $TemplateID = $retVal[0]["Template_ID"];
 
 
@@ -585,6 +586,7 @@ error_log("Result - " . $this->varDumpToString($retVal));
     }
 
 
+
     function TemplateData($id = NULL) {
         if ($id != NULL) {
 
@@ -601,41 +603,10 @@ error_log("Result - " . $this->varDumpToString($retVal));
             }
 
             $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
-            switch($EmoLevel[0]) {
-                case "Low":
-                    $Label = "Emesis-1";
-                    break;
-                case "Medium":
-                    $Label = "Emesis-2";
-                    break;
-                case "Moderate":
-                    $Label = "Emesis-3";
-                    break;
-                case "High":
-                    $Label = "Emesis-4";
-                    break;
-                case "Very High":
-                    $Label = "Emesis-5";
-                    break;
-            }
-            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
-            $EmesisVal = $this->LookUp->query($query);
-            $retVal[0]["emodetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
+            $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
 
             $FNRisk = $retVal[0]["fnRisk"];
-            if ($FNRisk < 10) {
-                $Label = "Neutropenia-1";
-            }
-            else if ($FNRisk <= 20) {
-                $Label = "Neutropenia-2";
-            }
-            else {
-                $Label = "Neutropenia-3";
-            }
-            $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
-            $FNRVal = $this->LookUp->query($query);
-
-            $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
+            $retVal[0]["fnrDetails"] = $this->LookUp->getNeutroData($FNRisk);
 
             $this->set('templatedata', $retVal);
 
@@ -975,18 +946,18 @@ error_log("Result - " . $this->varDumpToString($retVal));
         else {
             $MedRecord = $this->_getFluidTypeRecords4Med($jsonRecord, $Med_ID);
             if ($MedRecord) {
-                error_log("Found Medication Record for $Med_ID");
+                // error_log("Found Medication Record for $Med_ID");
                 // Delete all Med ID Records
                 $query = "DELETE FROM IVFluidTypes where Med_ID = '$Med_ID'";
                 $this->LookUp->query($query);
             }
-            error_log("NO Medication Record for $Med_ID, $FluidType_ID");
+            // error_log("NO Medication Record for $Med_ID, $FluidType_ID");
             if ("" !== $FluidType_ID) {
                 $IVTypes = explode(",", $FluidType_ID);
                 foreach ($IVTypes as $IVType) {
                     $query = "INSERT INTO IVFluidTypes (Med_ID,FluidType_ID) VALUES ('$Med_ID','$IVType')";
-                    error_log("IV FluidType - Query");
-                    error_log($query);
+                    // error_log("IV FluidType - Query");
+                    // error_log($query);
                     $retVal = $this->LookUp->query($query);
                     if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
                         $jsonRecord['success'] = false;
@@ -1069,7 +1040,7 @@ error_log("Result - " . $this->varDumpToString($retVal));
                 where IV.Med_ID = '$Med_ID'
                 order by lu2.name
                 ";
-error_log("_getAllFluidTypes4MedID - $query");
+// error_log("_getAllFluidTypes4MedID - $query");
         $retVal = $this->LookUp->query($query);
         if ($this->checkForErrors("Retrieving Fluid Type Info", $retVal)) {
             $jsonRecord['success'] = false;
@@ -1088,7 +1059,7 @@ error_log("_getAllFluidTypes4MedID - $query");
         $jsonRecord['msg'] = "No records to find";
 
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
-            error_log("Get - IVFluidType4Med - $Med_ID");
+            // error_log("Get - IVFluidType4Med - $Med_ID");
             if ($Med_ID) {
                 $this->_getAllFluidTypes4MedID($jsonRecord, $Med_ID);
                 if (0 == $jsonRecord['total']) {
@@ -1157,7 +1128,7 @@ error_log("_getAllFluidTypes4MedID - $query");
                 where Med_ID = '$Med_ID'
                 order by lu2.name
                 ";
-error_log("_getMedDocs - $query");
+// error_log("_getMedDocs - $query");
         $retVal = $this->LookUp->query($query);
         if ($this->checkForErrors("Retrieving Medication Documentation Info", $retVal)) {
             $jsonRecord['success'] = false;
@@ -1498,7 +1469,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
 
-error_log("SiteCommonInfo");
+// error_log("SiteCommonInfo");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $query = "";
@@ -1520,7 +1491,7 @@ error_log("SiteCommonInfo");
             else {
                 $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label ";
             }
-            error_log("SiteCommonInfo Query - $query");
+            // error_log("SiteCommonInfo Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
         }
@@ -1535,7 +1506,7 @@ error_log("SiteCommonInfo");
                 $query = "INSERT INTO SiteCommonInformation (Label, Details, DataType) VALUES ('$Label' ,'$Details', '$DataType')";
                 $jsonRecord['msg'] = "$Msg Record Created";
                 $ErrMsg = "Creating $Msg Record";
-                error_log($query);
+                // error_log($query);
             }
             else {
                 $query = "";
@@ -1571,9 +1542,9 @@ error_log("SiteCommonInfo");
                 if (count($retVal) > 0) {
                     foreach($retVal as $r) {
                         $r["Details"] = htmlspecialchars($r["Details"]);
-                        error_log($r["Details"]);
+                        // error_log($r["Details"]);
                     }
-                    error_log(json_encode($retVal));
+                    // error_log(json_encode($retVal));
                     unset($jsonRecord['msg']);
                     $jsonRecord['total'] = count($retVal);
                     $jsonRecord['records'] = $retVal;
@@ -1726,13 +1697,13 @@ error_log("SiteCommonInfo");
                         Order By DS.DiseaseID, Stage";
             }
 
-            error_log("$query");
+            // error_log("$query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $query = "INSERT INTO DiseaseStaging (DiseaseID, Stage) VALUES ('$Disease' ,'$Stage')";
-            error_log("POST - $query");
+            // error_log("POST - $query");
             $jsonRecord['msg'] = "$Msg Record Created";
             $ErrMsg = "Creating $Msg Record";
         }
@@ -1795,7 +1766,7 @@ CREATE TABLE [dbo].[IDEntry](
  */
 
     function IDEntry($Vital = null) {
-error_log("IDEntry");
+// error_log("IDEntry");
         $Msg = "Intelligent Data Entry";
         $jsonRecord = array();
         $jsonRecord['success'] = true;
@@ -1814,7 +1785,7 @@ error_log("IDEntry");
                 $query = "select * from $TableName";
             }
 
-            error_log("$query");
+            // error_log("$query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
         }
@@ -1829,7 +1800,7 @@ error_log("IDEntry");
                 array_push($sqlDataList, $Temp);
             }
             $query = "INSERT INTO $TableName(" . implode(", ", $sqlFieldList) . ") VALUES (" . implode(", ", $sqlDataList) . ")";
-            error_log("IDEntry POST - $query");
+            // error_log("IDEntry POST - $query");
             $jsonRecord['msg'] = "$Msg Record Created";
             $ErrMsg = "Creating $Msg Record";
         }
@@ -1854,7 +1825,7 @@ error_log("IDEntry");
             if ($haveFields) {
                 $query .= " where Vital2Check = '$Vital'";
             }
-            error_log("IDEntry PUT - $query");
+            // error_log("IDEntry PUT - $query");
 
 
 
@@ -1945,7 +1916,7 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
 
     function _LookupCumulativeDoseMeds($ID) {
         $query = $this->_getAllCumulativeDoseMeds($ID);
-        error_log("Got Query - $query");
+        // error_log("Got Query - $query");
         $retVal = $this->LookUp->query($query);
         return $retVal;
     }
@@ -1972,7 +1943,7 @@ CREATE TABLE [dbo].[CumulativeDoseMeds](
         $ErrMsg = "";
         if ("GET" == $_SERVER['REQUEST_METHOD']) {
             $query = $this->_getAllCumulativeDoseMeds($ID);
-            error_log("$query");
+            // error_log("$query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
             $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
@@ -2001,7 +1972,7 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
 
  *************************/
             $query = "INSERT INTO CumulativeDoseMeds (MedID, CumulativeDoseAmt, CumulativeDoseUnits) VALUES ('$MedID' ,'$CumulativeDoseAmt', '$CumulativeDoseUnits')";
-            error_log("POST - $query");
+            // error_log("POST - $query");
             $jsonRecord['msg'] = "$Msg Record Created";
             $ErrMsg = "Creating $Msg Record";
         }

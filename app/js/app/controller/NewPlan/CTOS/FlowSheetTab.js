@@ -408,12 +408,18 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				this.loading--;
 				var obj = Ext.decode(response.responseText);
 				this.application.Patient.FlowsheetData = obj.records;
-				var theStore = this.createStore(obj.records);
-				var theCols = this.createColumns(obj.records);
-				var colsRecords = this.buildComboStore(obj.records[0]);
-				var comboStore = Ext.getStore("FlowSheetCombo");
-				comboStore.loadData(colsRecords);
-				theGrid.reconfigure(theStore, theCols);
+				if (obj.records) {
+					var theStore = this.createStore(obj.records);
+					var theCols = this.createColumns(obj.records);
+					var colsRecords = this.buildComboStore(obj.records[0]);
+					var comboStore = Ext.getStore("FlowSheetCombo");
+					comboStore.loadData(colsRecords);
+					theGrid.reconfigure(theStore, theCols);
+					theGrid.setTitle("Flowsheet - No Data Available");
+				}
+				else {
+					theGrid.setTitle("Flowsheet");
+				}
 				if (this.loading <= 0) {
 					this.application.unMask();
 				}

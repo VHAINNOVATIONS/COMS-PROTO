@@ -15,51 +15,23 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	],
 
 	refs: [
-		{
-			ref: "MyTemplates",
-			selector: "NewPlanTab PatientInfo OEM selAppliedTemplate"
-		},
-		{
-			ref: "dspOEMTemplateData",
-			selector: "NewPlanTab PatientInfo OEM dspOEMTemplateData"
-		},
-		{
-			ref: "OEMTab",
-			selector: "NewPlanTab PatientInfo OEM"
-		},
-		{
-			ref: "CTOS_Tabs",
-			selector: "NewPlanTab CTOS"
-		},
-		{
-			ref: "CTOSTab",
-			selector: "NewPlanTab CTOS [title=\"Chemotherapy Template Order Source\"]"
-		},
-		{
-			ref: "OEM_Help",
-			selector: "NewPlanTab OEM [name=\"Help\"]"
-		},
-
-		{
-			ref: "OEM_Level1",
-			selector : "OEM container[name=\"OEM_Level1\"]"
-		},
-
-		{
-			ref: "SelectAdminDay2View",
-			selector : "OEM combo[name=\"SelectAdminDay2View\"]"
-		},
-	{
-			ref : "GoalBtn",
-			selector : "OEM OEM_Level1 [name=\"AddGoal\"]"
-	}
+		{ ref: "MyTemplates",         selector: "NewPlanTab PatientInfo OEM selAppliedTemplate" },
+		{ ref: "dspOEMTemplateData",  selector: "NewPlanTab PatientInfo OEM dspOEMTemplateData" },
+		{ ref: "OEMTab",              selector: "NewPlanTab PatientInfo OEM" },
+		{ ref: "CTOS_Tabs",           selector: "NewPlanTab CTOS" },
+		{ ref: "CTOSTab",             selector: "NewPlanTab CTOS [title=\"Chemotherapy Template Order Source\"]" },
+		{ ref: "OEM_Help",            selector: "NewPlanTab OEM [name=\"Help\"]" },
+		{ ref: "OEM_Level1",          selector : "OEM container[name=\"OEM_Level1\"]" },
+		{ ref: "SelectAdminDay2View", selector : "OEM combo[name=\"SelectAdminDay2View\"]" },
+		{ ref : "GoalBtn",            selector : "OEM OEM_Level1 [name=\"AddGoal\"]" }
 	],
 
 	init: function () {
 		wccConsoleLog("Initialized OEM Tab Controller!");
 
 		this.application.on( { TemplateSelected : this.TemplateSelected, scope : this } );
-		this.application.on( { DisplayOEMData : this.displayOEM_Record_Data, scope : this } );	// Display the OEM Record Data - Pass Record Data
+		this.application.on( { DisplayOEMData : this.displayOEM_Data, scope : this } );	// Display the OEM Data
+		this.application.on( { DisplayOEMRecordData : this.DisplayOEMRecordData, scope : this } );	// Display the OEM Record Data
 		this.application.on( { PatientSelected : this.PatientSelected, scope : this } );
 
 		this.control({
@@ -106,7 +78,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 
-	tabRendered : function( theTab, eOpts ) {
+	tabRendered : function( theTab ) {
+		// console.log("OEM tabRendered 0 Adding Event Handlers");
 		var a1 = theTab.el.select("button.EditOEM_Record");
 		a1.on("click", this.handleEditOEM_Record, this);
 
@@ -146,76 +119,103 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			}
 		}
 	},
-/***********************************************************************************
- *
- *
- *
- *
- ***********************************************************************************/
-	displayOEM_Record_Data : function( PatientInfo, fromEdit) {
 
-		var theData = PatientInfo.OEMRecords;		// MWB - 6/21/2012 - Set, this.application.Patient.OEMRecords.PerformanceStatus <=== new string and "PatientInfo" is the standard this.application.Patient
-		var OEMLevel1, i, j, ComboStore, ComboStoreIndex = 0, Record, dspOEMTemplateData, AdminDay2ViewCombo;
+	DisplayOEMRecordData : function( PatientInfo ) {
+		var PatientID = this.application.Patient.id;
+		var OEMRecordsModel = this.getModel("OEMRecords");
+		this.application.loadMask("Loading OEM Records...");
+		OEMRecordsModel.load( PatientID, {
+			scope: this,
+			success: function (TemplateData, response) {
+				this.application.unMask();
+				var i, vvv = TemplateData.OEMRecordsStore.data.items, vvvLen = vvv.length;
+				var newArray = [];
+				for (i = 0; i < vvvLen; i++) {
+					newArray[i] = vvv[i].getData();
+				}
+				this.application.Patient.OEMRecords.OEMRecords = newArray;
+				this.updateAdminDay2ViewCombo(this.application.Patient.OEMRecords);
+				this.RenderData4EachAdminDay(this.application.Patient.OEMRecords);
+			},
+			failure: function (err) {
+				this.DataLoadCountDecrement("loadOrderRecords FAIL");
+				this.PatientDataLoadComplete("Templates - Failed to load");
+			}
+		});
+		
 
-		if (PatientInfo.OEMDataRendered) {
-		    return;
+//		var theData = this.initTheData(PatientInfo);
+//		if (theData) {
+//			this.updateAdminDay2ViewCombo(theData);
+//			this.RenderData4EachAdminDay(theData);
+//		}
+	},
+
+	displayOEM_Data : function( PatientInfo ) {
+		var theData = this.initTheData(PatientInfo);
+		if (theData) {
+			this.RenderData4TopLevelOEMPage(theData);
+			this.updateAdminDay2ViewCombo(theData);
+			this.RenderData4EachAdminDay(theData);
 		}
-			// display the overall data for the template
-        theData.TreatmentStart = PatientInfo.TreatmentStart;
-        theData.TreatmentEnd = PatientInfo.TreatmentEnd;
+	},
 
-        if (!theData.SiteConfig) {		// Make sure we only add this once.
-            theData.SiteConfig = this.application.SiteConfig;
-        }
+	initTheData : function( PatientInfo ) {
+		var theData = PatientInfo.OEMRecords;
+		if (PatientInfo.OEMDataRendered) {
+			return null;
+		}
+		theData.TreatmentStart = PatientInfo.TreatmentStart;
+		theData.TreatmentEnd = PatientInfo.TreatmentEnd;
 
-        if (!theData.Patient) {		// Make sure we only add this once.
-            // Some date from within the Patient object (e.g. BSA Info and some vitals) are needed for calculating dosages
-            // but since the applications scope from within an xTemplate is not available this is a simple way to get the data there
-            // we should be able to delete the Patient object from theData object at somepoint after the OEM Data has been rendered.
-            theData.Patient = PatientInfo;		// MWB - 5/30/2012 - Does this permanently add the PatientInfo to theData record?
-        }
+		if (!theData.SiteConfig) {
+			theData.SiteConfig = this.application.SiteConfig;
+		}
 
-        OEMLevel1 = this.getOEM_Level1();
-        OEMLevel1.update(theData);
-        OEMLevel1.show();
+		if (!theData.Patient) {
+			theData.Patient = PatientInfo;
+		}
+		return theData;
+	},
 
+	updateAdminDay2ViewCombo : function(theData) {
+		var j, AdminDay2ViewCombo, ComboStore, ComboStoreIndex = 0, Record, DataRecords, dRecordsLen;
 
+		AdminDay2ViewCombo = this.getSelectAdminDay2View();
+		ComboStore = AdminDay2ViewCombo.getStore();
+		ComboStore.removeAll();
 
-        AdminDay2ViewCombo = this.getSelectAdminDay2View();
-        ComboStore = AdminDay2ViewCombo.getStore();
-        ComboStore.removeAll();
-        Record = { date : "Show All", LinkName : "Cycle_0_Day_0" };
-        ComboStore.insert(ComboStoreIndex++, Record);
+		if (theData.OEMRecords) {
+			Record = { date : "Show All", LinkName : "Cycle_0_Day_0" };
+			ComboStore.insert(ComboStoreIndex++, Record);
+			DataRecords = theData.OEMRecords;
+			dRecordsLen = DataRecords.length;
+			for (j = 0; j < dRecordsLen; j++) {
+				Record = { date : DataRecords[j].AdminDate, LinkName : ("Cycle_" + DataRecords[j].Cycle + "_Day_" + (DataRecords[j].Day)) };
+				ComboStore.insert(ComboStoreIndex++, Record);
+			}
+		}
+		else {
+			Record = { date : "No Data Available", LinkName : "None" };
+			ComboStore.insert(ComboStoreIndex++, Record);
+		}
+		AdminDay2ViewCombo.show();
+	},
 
-        if (!theData.OEMRecords) {
-            // Apparently we get here when attempting to save a specific OEM Record.
-            alert("OEM REcords is missing in OEM Controller...");
-        }
+	RenderData4TopLevelOEMPage : function(theData) {
+		var OEMLevel1;
+		OEMLevel1 = this.getOEM_Level1();
+		OEMLevel1.update(theData);
+		OEMLevel1.show();
+	},
 
-        var DataRecords = theData.OEMRecords;
-        var dRecordsLen = DataRecords.length;
-        for (j = 0; j < dRecordsLen; j++) {
-            Record = { date : DataRecords[j].AdminDate, LinkName : ("Cycle_" + DataRecords[j].Cycle + "_Day_" + (DataRecords[j].Day)) };
-            ComboStore.insert(ComboStoreIndex++, Record);
-        }
-        AdminDay2ViewCombo.show();
-
-
-
-			// display the data for each day in each cycle.
+	RenderData4EachAdminDay : function(theData) {
+		var dspOEMTemplateData;
 		dspOEMTemplateData = this.getDspOEMTemplateData();
 		dspOEMTemplateData.update( theData );
 		dspOEMTemplateData.show();
 		this.application.Patient.OEMDataRendered = true;
 	},
-/***********************************************************************************
- *
- *
- *
- *
- ***********************************************************************************/
-
-
 
 
 
@@ -588,7 +588,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 
 		var PatientInfo = this.application.Patient;
 		if (PatientInfo.OEMRecords) {
-			this.displayOEM_Record_Data (PatientInfo);
+			this.displayOEM_Data (PatientInfo);
 		}
 		else {
 			this.application.Patient.Template = TemplateObj;

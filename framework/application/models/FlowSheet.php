@@ -104,106 +104,9 @@ class Flowsheet extends Model
 
     /**
      * Retrieves flowsheets.
-     * A sample response for requested flowsheet:
-     *
-     * {
-     *     "success":true,
-     *     "total":##,
-     *     "records": [
-     *         {
-     *             "AllFlowsheet": [
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Date",
-     *                     "Cycle 1, Day 1": "06/15/2012",
-     *                     "Cycle 1, Day 2": "06/16/2012",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Performance",
-     *                     "Cycle 1, Day 1": "0-Normal Performance",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Weight",
-     *                     "Cycle 1, Day 1": "",
-     *                     "Cycle 1, Day 2": "250",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Disease",
-     *                     "Cycle 1, Day 1": "Some text",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Toxicity",
-     *                     "Cycle 1, Day 1": "Some text",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "01 General",
-     *                     "label": "Other",
-     *                     "Cycle 1, Day 1": "Some text",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "02 Labs",
-     *                     "label": "CBC",
-     *                     "Cycle 1, Day 1": "58 XXX",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "02 Labs",
-     *                     "label": "Electrolytes",
-     *                     "Cycle 1, Day 1": "20 YYY",
-     *                     "Cycle 1, Day 2": "",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "03 Pre Therapy",
-     *                     "label": "Dexamethasone INJ, SOL",
-     *                     "Cycle 1, Day 1": "5 mg",
-     *                     "Cycle 1, Day 2": "5 mg",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "03 Pre Therapy",
-     *                     "label": "Dexamethasone Tab",
-     *                     "Cycle 1, Day 1": "50 mg",
-     *                     "Cycle 1, Day 2": "50 mg",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "04 Therapy",
-     *                     "label": "Dexamethasone Tab",
-     *                     "Cycle 1, Day 1": "50 mg",
-     *                     "Cycle 1, Day 2": "50 mg",
-     *                     ...
-     *                 },
-     *                 {
-     *                     "Type": "05 Post Therapy",
-     *                     "label": "Dexamethasone Tab",
-     *                     "Cycle 1, Day 1": "50 mg",
-     *                     "Cycle 1, Day 2": "50 mg",
-     *                     ...
-     *                 }
-     *             ]
-     *         }
-     *     ]
-     * }
      */
     public function getFlowsheet($id)
     {
-        error_log("Get Flowsheet");
         $query1 = "
             SELECT 
                 ndt.PAT_ID AS patId, 
@@ -420,6 +323,24 @@ class Flowsheet extends Model
         if (! empty($flowsheet)) {
             return $flowsheet;
         }
+    }
+
+    function getTemplateID($PAT_ID = null) {
+        $retVal = null;
+        if ($PAT_ID) {
+            $query = "select Template_ID from Patient_Assigned_Templates where PAT_ID = '$PAT_ID'";
+            $ret = $this->query($query);
+            if (!empty($ret['error'])) {
+                foreach ($ret['error'] as $error) {
+                    $errorMsg .= "SQLSTATE: " . $error['SQLSTATE'] . " code: " . $error['code'] . " message: " . $error['message'];
+                }
+                $this->set('frameworkErr', $errorMsg);
+
+            }
+
+            $retVal = $ret[0]["Template_ID"];
+        }
+        return $retVal;
     }
 
 ///newfunction

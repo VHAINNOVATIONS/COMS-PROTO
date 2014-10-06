@@ -16,48 +16,54 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     , "TemperatureLocation"
     , "DeliveryMechanism"
 	, "IDEntry"
+	, 'MedReminders'
     ],
 
 
 
-	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry"],
+	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry", Ext.COMSModels.MedReminder],
 
-    views : [
-    "NewPlan.NewPlanTab"
-	,"NewPlan.PatientSelection"
-	,"NewPlan.SelectPatient"
-    ,"NewPlan.PatientInfo"
-    ,"NewPlan.PatientInfoTable"
-    ,"NewPlan.PatientTemplates"
-    ,"NewPlan.PatientHistory"
-    ,"NewPlan.LabInfo"
-    ,"NewPlan.OEM"
-    ,"NewPlan.AdverseEventsHistory"
+	views : [
+		"NewPlan.NewPlanTab"
+		,"NewPlan.MedRemindersPanel"
+		,"NewPlan.PatientSelection"
+		,"NewPlan.SelectPatient"
+		,"NewPlan.PatientInfo"
+		,"NewPlan.PatientInfoTable"
+		,"NewPlan.PatientTemplates"
+		,"NewPlan.PatientHistory"
+		,"NewPlan.LabInfo"
+		,"NewPlan.OEM"
+		,"NewPlan.AdverseEventsHistory"
 
-	,"NewPlan.CTOS"
-    ,"NewPlan.CTOS.PatientSummary"
-    ,"NewPlan.CTOS.NursingDocs"
-    ,"NewPlan.CTOS.KnowledgeBase"
+		,"NewPlan.CTOS"
+		,"NewPlan.CTOS.PatientSummary"
+		,"NewPlan.CTOS.NursingDocs"
+		,"NewPlan.CTOS.KnowledgeBase"
 
 
-    ,'Common.Search4Template'
-    ,"Common.selCTOSTemplate"
-    ,"Common.selTemplateSrc"
-    ,"Common.selDiseaseAndStage"
-    ,"Common.selDisease"
-    ,"Common.selDiseaseStage"
-    ,"Common.selTemplate"
-	,"Common.VitalSignsHistory"
-	,"Common.puWinSelCancer"
-	,"Common.puWinAddCumDose"
-	,"Common.puWinSelBSA"
-	,"Common.puWinSelAmputation"
-    ,"NewPlan.dspTemplateData"
-    ,"NewPlan.AskQues2ApplyTemplate"
-    ,"NewPlan.AmputationSelection"
-    ,"NewPlan.BSASelection"
-	,"NewPlan.EndTreatmentSummary"
-    ],
+		,'Common.Search4Template'
+		,"Common.selCTOSTemplate"
+		,"Common.selTemplateSrc"
+		,"Common.selDiseaseAndStage"
+		,"Common.selDisease"
+		,"Common.selDiseaseStage"
+		,"Common.selTemplate"
+		,"Common.VitalSignsHistory"
+		,"Common.puWinSelCancer"
+		,"Common.puWinAddCumDose"
+		,"Common.puWinSelBSA"
+		,"Common.puWinSelAmputation"
+		,"Common.MedRemindersForm"
+		,"Common.MedRemindersGrid"
+		,"Authoring.MedReminder"
+
+		,"NewPlan.dspTemplateData"
+		,"NewPlan.AskQues2ApplyTemplate"
+		,"NewPlan.AmputationSelection"
+		,"NewPlan.BSASelection"
+		,"NewPlan.EndTreatmentSummary"
+	],
 
     refs: [
 		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
@@ -74,6 +80,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientInfoTable",				selector: "NewPlanTab PatientInfo PatientInfoTable"},
 		{ ref: "PatientInfoTableInformation",	selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableBSACalcs",		selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"]"},
+
+		{ ref: "PatientInfoMedReminders",		selector: "NewPlanTab PatientInfo MedRemindersPanel"},
+		{ ref: "MedRemindersGrid",	selector: "NewPlanTab PatientInfo MedRemindersPanel grid"},
+		{ ref: "MedRemindersForm",		selector: "NewPlanTab PatientInfo MedRemindersPanel MedRemindersForm"},
+		{ ref: "PatientInfoMedRemindersTitle",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Title\"]"},
+		{ ref: "PatientInfoMedRemindersDescription",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Description\"]"},
+		{ ref: "PatientInfoMedRemindersWhenCycle",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenCycle\"]"},
+		{ ref: "PatientInfoMedRemindersWhenPeriod",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenPeriod\"]"},
+
+
 
 		{ ref: "PatientTemplates",				selector: "NewPlanTab PatientInfo PatientTemplates"},
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
@@ -100,6 +116,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     init: function() {
         wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
         this.application.btnEditTemplatClicked=false;
+		this.application.on({ LoadOEMData : this.LoadOEM_OrderData, scope : this });
+
 		this.application.on({ UpdateBSAWeightHeight : function(opts, tab2Switch2) {
 			var weight = opts.weight;
 			var height = opts.height;
@@ -119,6 +137,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}, scope : this });
 
         this.control({
+			"NewPlanTab PatientInfo MedRemindersPanel grid" : {
+				select: this.selectMedReminderGridRow
+			},
+
+
 			"NewPlanTab PatientInfo CTOS dspTemplateData" : {
 				afterrender : this.tabRendered,
 				itemtap : this.clickTemplateData
@@ -140,6 +163,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             "NewPlanTab CTOS button[name=\"Edit\"]" : {
                 click: this.editTemplate
             },
+			"NewPlanTab MedRemindersPanel" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
+
             "NewPlanTab PatientSelection" : {
                 afterrender: this.handlePatientSelectionRender
             },
@@ -602,7 +629,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
     //KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
     loadCombo : function(picker, eOpts){
-		debugger;
         var originalHiddenVal=null;
         picker.hiddenValue = picker.getRawValue();
         picker.clearValue();
@@ -1665,11 +1691,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 	loadOrderRecords : function( ) {
 		var PatientID = this.application.Patient.id;
-		var CTOSModel = this.getModel("OEMRecords");		// MWB 21 Feb 2012 - Loading new model for retrieving the records direct from the DB rather than generating them
-		CTOSModel.load( PatientID, {
+		var OEMRecordsModel = this.getModel("OEMRecords");
+		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
-// wccConsoleLog("OEMRecords Model - Load Complete");
 				try {
 					wccConsoleLog("Template Data Loaded - Processing");
 					var theData = TemplateData.data;
@@ -1677,18 +1702,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					theData.RegimenName = this.application.Patient.TemplateName;
 					theData.RegimenDescription = this.application.Patient.TemplateDescription;
 
-					// theData.ELevelRecommendationASCO = EmesisRisk[theData.ELevelID].ASCO;
-					// theData.ELevelRecommendationNCCN = EmesisRisk[theData.ELevelID].NCCN;
-
-					theData.ELevelRecommendationASCO = "NOT from Site Config";
-					theData.ELevelRecommendationNCCN = "";
-
-
 					this.application.Patient.OEMRecords = theData;
 					this.getEmoLevelInfo(theData.ELevelName);
 					this.getFNRiskInfo(theData.FNRisk);
-
-
 
 				}
 				catch (err) {
@@ -1698,9 +1714,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					wccConsoleLog(err.message + " @ Line# " + err.lineNo);
 				}
 
-					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
 				this.DataLoadCountDecrement("loadOrderRecords PASS");
 				this.PatientDataLoadComplete("OEM Records");
+
+				if (this.application.DataLoadCount <= 0) {
+					PatientInfo = this.application.Patient;
+					PatientInfo.OEMDataRendered = false;
+					this.application.fireEvent("DisplayOEMData", PatientInfo);
+				}
 
 
 			},
@@ -1757,6 +1778,21 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         // Display the selected patient's info in the table via it's template
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].show();
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
+
+		var theMedRemindersPanel = this.getPatientInfoMedReminders();
+		var theBtns = Ext.ComponentQuery.query("NewPlanTab PatientInfo MedRemindersPanel button");
+		for (i = 0; i < theBtns.length; i++) {
+			theBtns[i].hide();
+		}
+		this.getPatientInfoMedRemindersTitle().setReadOnly(true);
+		this.getPatientInfoMedRemindersDescription().setReadOnly(true);
+		this.getPatientInfoMedRemindersWhenCycle().setReadOnly(true);
+		this.getPatientInfoMedRemindersWhenPeriod().setReadOnly(true);
+		var theTemplateID = this.application.Patient.TemplateID;
+		this.getAnyMedReminders4Template(theTemplateID);
+
+
+
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
 		var piTable = thisCtl.getPatientInfoTable();
@@ -2381,7 +2417,6 @@ fieldContainerWalk : function(item, y, z) {
 
 			this.clearCTOS();
 
-
 	        CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
@@ -2570,23 +2605,6 @@ fieldContainerWalk : function(item, y, z) {
 		record.SPO2 = "";
 		record.Temperature = "";
 		record.PatientID = Patient.id;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		var params = Ext.encode(record);
 
 		Ext.Ajax.request({
@@ -2608,14 +2626,83 @@ fieldContainerWalk : function(item, y, z) {
 			}
 		});
 		return (true);
+	},
+
+	LoadOEM_OrderData : function() {
+		console.log("Loading OEM Data");
+		if (this.application.Patient) {
+			this.application.DataLoadCount = 1;
+			this.loadOrderRecords();
+		}
+	},
+
+
+
+
+	selectMedReminderGridRow : function(theRowModel, record, index, eOpts) {
+		var records = theRowModel.getSelection();
+		var theForm = this.getMedRemindersForm();
+		if (!theForm.isVisible()) {
+			theForm.show();
+		}
+		var theData = record.getData();
+		var aForm = theForm.getForm();
+		aForm.setValues({
+			"ReminderWhenCycle" : theData.ReminderWhenCycle, 
+			"ReminderWhenPeriod" : theData.ReminderWhenPeriod,
+			"Title" : theData.Title,
+			"Description" : theData.Description,
+			"MR_ID" : theData.MR_ID,
+			"TemplateID" : theData.TemplateID
+		});
+	},
+
+
+
+	getAnyMedReminders4Template : function(TemplateID) {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		if ("" !== TemplateID) {
+			MedRemindersStore.proxy.url = Ext.URLs.MedReminders + "/" + TemplateID;
+			MedRemindersStore.load();
+		}
+	},
+
+	RefreshMedRemindersGrid : function() {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll(true);
+		MedRemindersGrid.getView().refresh(true);
+	},
+
+	AddMedReminders2Store : function(MedReminders) {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+		MedRemindersStore.removeAll();
+		MedRemindersStore.add(MedReminders);
+	},
+
+
+	getMedRemindersInArray : function() {
+		var MedRemindersGrid = this.getMedRemindersGrid();
+		var MedRemindersStore = MedRemindersGrid.getStore();
+
+		var MedRemindersArray = [], MedRemindersRec, limitCount = MedRemindersStore.count(), i, MedRemindersModel;
+		for (i = 0; i < limitCount; i++) {
+			MedRemindersModel = MedRemindersStore.getAt(i);
+			MedRemindersRec = Ext.create(Ext.COMSModels.MedReminder, {
+				"MR_ID" : MedRemindersModel.data.MR_ID,
+				"TemplateID" : MedRemindersModel.data.TemplateID, 
+				"Title" : MedRemindersModel.data.Title,
+				"Description" : MedRemindersModel.data.Description,
+				"ReminderWhenCycle" : MedRemindersModel.data.ReminderWhenCycle,
+				"ReminderWhenPeriod" : MedRemindersModel.data.ReminderWhenPeriod
+			});
+			MedRemindersArray.push(MedRemindersRec);
+		}
+		return MedRemindersArray;
 	}
-
-
-	/**************************************************
-	 *
-	 *	MWB 30 Jan 2012 - End of changes
-	 *
-	 **************************************************/
 
 });
 

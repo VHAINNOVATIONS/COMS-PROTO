@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
 Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 
@@ -522,6 +523,7 @@ Ext.COMSModels.IDEntry = "COMS.model.IDEntry";
 Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
+Ext.COMSModels.MedReminder = "COMS.model.MedReminder";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -591,6 +593,7 @@ Ext.require([
 	Ext.COMSModels.Flowsheet,
 	Ext.COMSModels.FluidType,
 	Ext.COMSModels.IDEntry,
+	Ext.COMSModels.MedReminder,
 
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
@@ -605,6 +608,8 @@ Ext.require([
 	"COMS.controller.Common.SelectAdverseReactionAlerts",
 	"COMS.controller.Common.puWinChangeAdminDate",
 	"COMS.controller.Common.selCTOSTemplate",
+	"COMS.controller.Common.MedRemindersForm",
+
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.TemplateList.puWinListPatients",
@@ -886,7 +891,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				if ("F" === gender) {
 					GFR = GFR * 0.85;
 				}
-				GFR = Ext.GeneralRounding2Digits(GFR / (72 * sc));
+				GFR = 1 * Ext.GeneralRounding2Digits(GFR / (72 * sc));
 				var Dose = (GFR + 25) * AUC;
 				Dose = Ext.GeneralRounding2Digits(Dose);
 
@@ -1404,6 +1409,7 @@ Ext.CalcAUCDose = function (Patient, AUC) {
 	GFR = GFR / (72 * sc);
 	var Dose = (GFR + 25) * AUC;
 	Dose = Ext.GeneralRounding2Digits(Dose);
+	Dose = Ext.FormatNumber("" + Dose);
 	return Dose + " mg";
 };
 
@@ -1610,6 +1616,7 @@ Ext.application({
 		, "Common.puWinSelBSA"
 		, "Common.selCTOSTemplate"
 		, "Common.puWinChangeAdminDate"
+		, "Common.MedRemindersForm"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
@@ -1696,6 +1703,14 @@ Ext.application({
 				var n1 = parseFloat(number);
 				var n2 = n1.toFixed(parseInt(decimals, 10));
 				return n2;
+			},
+				// Note this function DOES fail if num = "123.000"
+			FormatNumber : function(num) {		// Formats number with the "Always Lead, Never Follow" format (e.g. 123,456 and 0.567 not 123,456.00 or .678)
+				 var n1 = parseInt(num, 10);
+				 if (n1 == num) {
+					 return Ext.util.Format.number(num, "0,000");
+				 }
+				 return Ext.util.Format.number(num, "0,000.00")
 			},
 
 			in2cm: function (height) { // Inches to Centimeters; rounded to 2 decimal places

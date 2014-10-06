@@ -5,12 +5,12 @@ Ext.define("COMS.model.ND_Treatment", {
 		"templateID",			// GUID for the Template
 		"PAT_ID",				// GUID for the Treatment record
 		"Cycle",
-		"CourseNum",			// MWB - 6/17/2012 - This is really the "Cycle"
+//		"CourseNum",			// MWB - 6/17/2012 - This is really the "Cycle"
 		"adminDay",
 		"adminDate",
-		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
 		"typeOrder",	// Used to display therapy type in grid in sorted order (Pre = 1, Therapy = 2, Post = 3)
-		"drug",
+		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
+		"drug",		// Includes sequence in the treatment type (e.g. "1. Ibuprofin" in Pre Therapy, "3. Mylanta" in Post Therapy
 		"MedID",
 		"dose",
 		"unit",
