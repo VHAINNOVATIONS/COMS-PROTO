@@ -74,7 +74,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 					return "";
 				},
 				PS : function ( current ) {
-					var buf = current.PerformanceStatus + " <button name=\"EditPerformanceStatus\" class=\"anchor\">Change Performance Status</button>";
+					var buf = current.PerformanceStatus + " <button name=\"EditPerformanceStatus\" class=\"anchor EditPerformanceStatus\">Change Performance Status</button>";
 					return (buf);
 				}
 

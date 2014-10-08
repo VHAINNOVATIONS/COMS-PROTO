@@ -45,8 +45,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			"OEM combo[name=\"SelectAdminDay2View\"]" : {
 				select : this.selAdminDayChange
 			},
-			"OEM dspOEMTemplateData" : {
-				afterrender : this.tabRendered
+			"NewPlanTab OEM" : {
+					afterrender : this.DelegateHandlers
 			}
 		});
 	},
@@ -77,32 +77,44 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		return null;
 	},
 
+	DelegateHandlers : function(theTab, b, c) {
+		theTab.el.on(
+			{
+				"click" : function(e,t, o) { 
+					var classList = Ext.Array.clone(t.classList);
+					if (Ext.Array.contains(classList, "EditOEM_Record")) {
+						return this.handleEditOEM_Record(e, t);
+					}
+					if (Ext.Array.contains(classList, "OEM_RecordMedHold")) {
+						return this.handleOEM_RecordMedHold(e, t);
+					}
+					if (Ext.Array.contains(classList, "OEM_RecordMedCancel")) {
+						return this.handleOEM_RecordMedCancel(e, t);
+					}
+					if (Ext.Array.contains(classList, "ChangeOEM_AdminDate")) {
+						return this.HandleChangeAdminDateButtons(e, t);
+					}
+					if (Ext.Array.contains(classList, "EditPerformanceStatus")) {
+						return this.HandleOEMLevel1Buttons(e, t);
+					}
+					if (Ext.Array.contains(classList, "dspOEMDoseCalcs")) {
+						return this.HandleOEMCalcDoseButtons(e, t);
+					}
+				},
+				scope: this, 
+				delegate: "button.anchor" 
+			}
+		);
+	},
 
-	tabRendered : function( theTab ) {
-		// console.log("OEM tabRendered 0 Adding Event Handlers");
-		var a1 = theTab.el.select("button.EditOEM_Record");
-		a1.on("click", this.handleEditOEM_Record, this);
 
-		a1 = theTab.el.select("button.OEM_RecordMedHold");
-		a1.on("click", this.handleOEM_RecordMedHold, this);
-
-		a1 = theTab.el.select("button.OEM_RecordMedCancel");
-		a1.on("click", this.handleOEM_RecordMedCancel, this);
-
-		a1 = theTab.el.select("button.ChangeOEM_AdminDate");
-		a1.on("click", this.HandleChangeAdminDateButtons, this);
-
-		var OEMLevel1 = this.getOEM_Level1();
-		var OEMLevel1Btns = OEMLevel1.el.select("button");		// MWB - 6/26/2012 - Currently only the "Edit Performance Status" button exists in this section
-		OEMLevel1Btns.on("click", this.HandleOEMLevel1Buttons, this);
-
-		var dspOEMTemplateData = this.getDspOEMTemplateData();
-		var OEMTemplateDataBtns = dspOEMTemplateData.el.select("button.dspOEMDoseCalcs");
-		OEMTemplateDataBtns.on("click", this.HandleOEMCalcDoseButtons, this);
-
-
-		// When rendering the tab, if today is an Admin Day then show today's OEM Records, else show all the OEM Records.
-		var LinkName, Elements, theElement, theID, tmpData = this.IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
+	ShowCurrentOEMRecord : function() {
+		// if today is an Admin Day then show today's OEM Records
+		var LinkName, 
+			Elements, 
+			theElement, 
+			theID, 
+			tmpData = this.IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
 		if (null !== tmpData) {
 			var i;
 			LinkName = "Section_Cycle_" + tmpData.Cycle + "_Day_" + tmpData.Day;
@@ -134,7 +146,6 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 					newArray[i] = vvv[i].getData();
 				}
 				this.application.Patient.OEMRecords.OEMRecords = newArray;
-				this.updateAdminDay2ViewCombo(this.application.Patient.OEMRecords);
 				this.RenderData4EachAdminDay(this.application.Patient.OEMRecords);
 			},
 			failure: function (err) {
@@ -142,20 +153,12 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
-		
-
-//		var theData = this.initTheData(PatientInfo);
-//		if (theData) {
-//			this.updateAdminDay2ViewCombo(theData);
-//			this.RenderData4EachAdminDay(theData);
-//		}
 	},
 
 	displayOEM_Data : function( PatientInfo ) {
 		var theData = this.initTheData(PatientInfo);
 		if (theData) {
 			this.RenderData4TopLevelOEMPage(theData);
-			this.updateAdminDay2ViewCombo(theData);
 			this.RenderData4EachAdminDay(theData);
 		}
 	},
@@ -214,7 +217,9 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		dspOEMTemplateData = this.getDspOEMTemplateData();
 		dspOEMTemplateData.update( theData );
 		dspOEMTemplateData.show();
+		this.updateAdminDay2ViewCombo(theData);
 		this.application.Patient.OEMDataRendered = true;
+		this.ShowCurrentOEMRecord();
 	},
 
 

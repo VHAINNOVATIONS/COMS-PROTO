@@ -82,12 +82,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientInfoTableBSACalcs",		selector: "NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"]"},
 
 		{ ref: "PatientInfoMedReminders",		selector: "NewPlanTab PatientInfo MedRemindersPanel"},
+		{ ref: "PatientInfoMedRemindersTitle",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Title\"]"},
 		{ ref: "MedRemindersGrid",	selector: "NewPlanTab PatientInfo MedRemindersPanel grid"},
 		{ ref: "MedRemindersForm",		selector: "NewPlanTab PatientInfo MedRemindersPanel MedRemindersForm"},
-		{ ref: "PatientInfoMedRemindersTitle",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Title\"]"},
 		{ ref: "PatientInfoMedRemindersDescription",	selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"Description\"]"},
 		{ ref: "PatientInfoMedRemindersWhenCycle",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenCycle\"]"},
 		{ ref: "PatientInfoMedRemindersWhenPeriod",		selector: "NewPlanTab PatientInfo MedRemindersPanel [name=\"ReminderWhenPeriod\"]"},
+
+
+{ ref: "CTOS_MedRemindersGrid",		selector: "NewPlanTab CTOS MedRemindersGrid"},
+{ ref: "CTOS_MedRemindersForm",		selector: "NewPlanTab CTOS MedRemindersForm"},
+{ ref: "CTOS_MedRemindersDescription",	selector: "NewPlanTab CTOS MedRemindersPanel [name=\"Description\"]"},
+{ ref: "CTOS_MedRemindersWhenCycle",		selector: "NewPlanTab CTOS MedRemindersPanel [name=\"ReminderWhenCycle\"]"},
+{ ref: "CTOS_MedRemindersWhenPeriod",		selector: "NewPlanTab CTOS MedRemindersPanel [name=\"ReminderWhenPeriod\"]"},
+
 
 
 
@@ -143,8 +151,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 			"NewPlanTab PatientInfo CTOS dspTemplateData" : {
-				afterrender : this.tabRendered,
-				itemtap : this.clickTemplateData
+				afterrender : this.tabRendered
 			},
             "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
                 change : this.TemplateTypeSelected
@@ -2494,6 +2501,26 @@ fieldContainerWalk : function(item, y, z) {
 					this.getApplyTemplateBtn().show();
 					this.getEditTemplateBtn().show();
                 }
+
+
+
+
+/* Manage the Med Reminders Panel for the CTOS Template Display... */
+var theTemplateID2Pass2MedReminders = CTOSTEmplateData.internalId;
+
+var mrGrid = this.getCTOS_MedRemindersGrid();
+var mrForm = this.getCTOS_MedRemindersForm();
+var mrDescField = this.getCTOS_MedRemindersDescription();
+var mrCycleField = this.getCTOS_MedRemindersWhenCycle();
+var mrPeriodField = this.getCTOS_MedRemindersWhenPeriod();
+
+mrGrid.show();
+mrForm.show();
+
+
+
+
+
 				this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.
 				this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 
