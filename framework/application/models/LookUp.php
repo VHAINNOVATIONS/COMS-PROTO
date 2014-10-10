@@ -1765,4 +1765,103 @@ class LookUp extends Model {
 		   $this->query($query); 
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function doToxicityData($fcn, $ToxID, $InputData) {
+        $InsertBuf1 = array();
+        $InsertBuf2 = array();
+        $UpdateBuf = array();
+        $DataType = "ToxicityInstruction";
+
+        if (isset($InputData->Label)) {
+            $Label = $this->escapeString($InputData->Label);
+            $InsertBuf1[] = "Label";
+            $InsertBuf2[] = "'$Label'";
+            $UpdateBuf[] = "Label = '$Label'";
+        }
+        if (isset($InputData->Details)) {
+            $Details = $this->escapeString($InputData->Details);
+            $InsertBuf1[] = "Details";
+            $InsertBuf2[] = "'$Details'";
+            $UpdateBuf[] = "Details = '$Details'";
+        }
+        if (isset($InputData->Grade_Level)) {
+            $Grade_Level = $InputData->Grade_Level;
+            $InsertBuf1[] = "Grade_Level";
+            $InsertBuf2[] = "'$Grade_Level'";
+            $UpdateBuf[] = "Grade_Level = '$Grade_Level'";
+        }
+
+        if ("update" == $fcn) {
+            $query = "UPDATE SiteCommonInformation SET " . implode(", ", $UpdateBuf) . " where ID = '$ToxID'";
+        }
+        else {
+            $InsertBuf1[] = "ID";
+            $InsertBuf2[] = "'$ToxID'";
+            $InsertBuf1[] = "DataType";
+            $InsertBuf2[] = "'$DataType'";
+
+            $query = "INSERT into SiteCommonInformation (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
+        }
+        return $this->query($query);
+    }
+
+    function setToxicityData($ToxID, $_POST) {
+        return $this->doToxicityData("insert", $ToxID, $_POST);
+    }
+
+    function updateToxicityData($ToxID, $_POST) {
+        return $this->doToxicityData("update", $ToxID, $_POST);
+    }
+
+    function getToxicity($ToxID) {
+        $buf = "";
+        $DataType = "ToxicityInstruction";
+        if ($ToxID) {
+            $buf = "ID = '$ToxID'";
+        }
+        if ($buf) {
+            $buf = " where " . $buf . " and DataType = '$DataType'";
+        }
+        else {
+            $buf = " where DataType = '$DataType'";
+        }
+        $query = "SELECT ID, Label, Details, ISNULL(CAST(Grade_Level as nvarchar(max)),'') 'Grade_Level' FROM SiteCommonInformation" . $buf . " order by Label, Grade_Level";
+        return $this->query($query);
+    }
 }

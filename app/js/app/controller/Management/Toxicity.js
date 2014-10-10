@@ -3,22 +3,11 @@ Ext.define('COMS.controller.Management.Toxicity', {
 	views : [ 'Management.Toxicity' ],
 	stores : [ 'Toxicity'],
 	refs: [
-		{
-			ref : "ToxicityInstructionGrid",
-			selector : "Toxicity grid"
-		},
-		{
-			ref : "ToxicityInstruction_Instruction",
-			selector : "Toxicity [name=\"Label\"]"
-		},
-		{
-			ref : "ToxicityInstruction_Documentation",
-			selector : "Toxicity [name=\"Details\"]"
-		},
-		{
-			ref : "DeleteBtn",
-			selector : "Toxicity button[text=\"Delete\"]"
-		}
+		{ ref : "ToxicityInstructionGrid",           selector : "Toxicity grid" },
+		{ ref : "ToxicityInstruction_Instruction",   selector : "Toxicity [name=\"Label\"]" },
+		{ ref : "ToxicityInstruction_Documentation", selector : "Toxicity [name=\"Details\"]" },
+		{ ref : "ToxicityInstruction_Grade",         selector : "Toxicity [name=\"Grade_Level\"]" },
+		{ ref : "DeleteBtn",                         selector : "Toxicity button[text=\"Delete\"]" }
 
 	],
 
@@ -65,14 +54,20 @@ Ext.define('COMS.controller.Management.Toxicity', {
 		var recID = record.get("ID");
 		var Label = record.get("Label");
 		var Details = record.get("Details");
+		var Grade_Level = record.get("Grade_Level");
+
+		Details = Ext.util.Format.htmlDecode(Details);
 
 		this.CurrentToxicityInstructionRecordID = recID;
 		this.CurrentToxicityInstruction = Label;
 
 		var theInstructionField = this.getToxicityInstruction_Instruction();
 		var theDocsField = this.getToxicityInstruction_Documentation();
+		var theGradeField = this.getToxicityInstruction_Grade();
+
 		theInstructionField.setValue(Label);
 		theDocsField.setValue(Details);
+		theGradeField.setValue(Grade_Level);
 
 		var records = theRowModel.getSelection();
 		var delBtn = this.getDeleteBtn();
@@ -129,7 +124,6 @@ Ext.define('COMS.controller.Management.Toxicity', {
 		}, this);
 	},
 
-
 	CancelForm : function(theBtn, theEvent, eOpts) {
 		theBtn.up('form').getForm().reset();
 	},
@@ -141,30 +135,27 @@ Ext.define('COMS.controller.Management.Toxicity', {
 		if (form.isValid()) {
 			var Label = theData.Label;
 			var Details = Ext.util.Format.htmlEncode(theData.Details);
+			var Grade_Level = theData.Grade_Level;
 			var recID = this.CurrentToxicityInstructionRecordID;
 			var URL = Ext.URLs.ToxicityInstruction;
 			var CMD = "POST";
-			// if ("" !== recID && this.CurrentToxicityInstruction === Label) {
-			if ("" !== recID) {
+			if (recID && "" !== recID) {
 				URL += "/" + recID;
 				CMD = "PUT";
 			}
 
 			Ext.Ajax.request({
 				url: URL,
-				method : CMD,
-				jsonData : {"Label" : Label, "Details" : Details },
+				method: CMD,
+				jsonData: {"Label" : Label, "Details" : Details, "Grade_Level" : Grade_Level },
 				scope: this,
+				theForm: form,
 				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentToxicityInstructionRecordID = "";
 					this.CurrentToxicityInstruction = "";
-					var theInstructionField = this.getToxicityInstruction_Instruction();
-					var theDocsField = this.getToxicityInstruction_Documentation();
-					theInstructionField.setValue("");
-					theDocsField.setValue("");
-
+					opts.theForm.reset();
 					if (!resp.success) {
 						Ext.MessageBox.alert("Saving Error", "Site Configuration - Toxicity Instruction, Save Error - " + resp.msg );
 					}
@@ -173,16 +164,12 @@ Ext.define('COMS.controller.Management.Toxicity', {
 						theGrid.getStore().load();
 					}
 				},
-				failure : function( response, opts ) {
+				failure: function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentToxicityInstructionRecordID = "";
 					this.CurrentToxicityInstruction = "";
-					var theInstructionField = this.getToxicityInstruction_Instruction();
-					var theDocsField = this.getToxicityInstruction_Documentation();
-					theInstructionField.setValue("");
-					theDocsField.setValue("");
-
+					opts.theForm.reset();
 					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Toxicity Instruction, Save Error - " + "e.message" + "<br />" + resp.msg );
 				}
 			});
@@ -191,10 +178,13 @@ Ext.define('COMS.controller.Management.Toxicity', {
 			var Msg = "";
 			var Docs = "";
 			if (!theData.Label) {
-				Msg += "<li>Missing Instruction Selection</li>";
+				Msg += "<li>Missing Toxicity Instruction</li>";
+			}
+			if (!theData.Grade_Level) {
+				Msg += "<li>Missing Grade / Level Information</li>";
 			}
 			if ("" === theData.Details) {
-				Msg += "<li>Missing Documentation for Toxicity Instruction</li>";
+				Msg += "<li>Missing Details for Toxicity Instruction</li>";
 			}
 			if ("" !== Msg) {
 				Ext.MessageBox.alert('Invalid', 'Please fix the following errors:<ul>' + Msg + '</ul>');
