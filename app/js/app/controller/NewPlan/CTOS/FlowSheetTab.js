@@ -9,13 +9,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	"views" : [
 		"NewPlan.CTOS.FlowSheet",
 		"NewPlan.CTOS.ToxicitySideEffectsPanel",
-		"NewPlan.CTOS.ToxicitySideEffectsPUWin",
+		// "NewPlan.CTOS.ToxicitySideEffectsPUWin",
 		"NewPlan.CTOS.DiseaseResponsePUWin",
 		"NewPlan.CTOS.OtherPUWin",
 		"NewPlan.CTOS.FlowSheetGrid",
 		"NewPlan.CTOS.FlowSheetOptionalQues",
 		"NewPlan.CTOS.DiseaseResponsePanel",
 		"NewPlan.CTOS.ToxicitySideEffectsPanel",
+		"NewPlan.CTOS.FS_Toxicity",
 		"NewPlan.CTOS.OtherInfoPanel"
 	],
 
@@ -24,6 +25,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		{ "ref" : "FlowSheetGridEdit",				"selector" : "FlowSheet button[name=\"EditOptionalQues\"]"},
 		{ "ref" : "DiseaseResponsePanel",			"selector" : "FlowSheet DiseaseResponsePanel"},
 		{ "ref" : "ToxicitySideEffectsPanel",		"selector" : "FlowSheet ToxicitySideEffectsPanel"},
+		{ "ref" : "FS_Toxicity",		"selector" : "FlowSheet FS_Toxicity"},
 		{ "ref" : "OtherInfoPanel",					"selector" : "FlowSheet OtherInfoPanel"}
 	
 	],

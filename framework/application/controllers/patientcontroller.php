@@ -2470,12 +2470,23 @@ Data:
 
 
 
+/***
+ * URL: http://coms-mwb.dbitpro.com:355/Patient/MedReminders/36DCBFD9-8FC7-45E7-A2DD-DD63E26A701F
+ * Header: Content-Type:application/json
+ * Data: {"MR_ID":"","TemplateID":"","Title":"kjgh kjhg ","Description":"kjhg kjhg ","ReminderWhenCycle":"Before","ReminderWhenPeriod":"Cycle","id":null}
+ */
 
 
 
 	function MedReminders($TemplateID = null, $MR_ID = null){
         $inputData = file_get_contents('php://input');
         $post_vars = json_decode($inputData);
+        error_log("MedReminders Input - $inputData");
+        error_log("MedReminders post_vars - " . $this->varDumpToString($post_vars));
+
+
+
+
         $jsonRecord = array();
         $jsonRecord["success"] = true;
         $tmpRecords = array();

@@ -4,7 +4,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	stores: [
 	],
 	views: [
-		"Common.SelectAdverseReactionAlerts"
+		"Common.SelectAdverseReactionAlerts", "NewPlan.CTOS.FS_Toxicity"
 	],
 	refs: [
 		{ ref: "NoAdverseReactions", selector: "NursingDocs_Assessment [name=\"ND_Ass_None\"]"},

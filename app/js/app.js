@@ -529,6 +529,9 @@ Ext.COMSModels.MedReminder = "COMS.model.MedReminder";
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
 // Controllers must be included here if a store is used in the view managed by the controller
 Ext.require([
+
+
+	"Ext.ux.CheckColumn",
 	// common view components
 	"COMS.view.RequiredInstr",
 	"COMS.view.ProgrammerBtns",
@@ -598,6 +601,8 @@ Ext.require([
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 /*********** LIST OF CONTROLLERS *********************/
+	"COMS.controller.Common.DEMOpuWin",
+	"COMS.controller.NewPlan.CTOS.FS_Toxicity",
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
@@ -1609,6 +1614,8 @@ Ext.application({
 		"Navigation"
 		,"ProgrammerBtns"
 		,"CkBoxTArea"
+		, "Common.DEMOpuWin"
+		, "NewPlan.CTOS.FS_Toxicity"
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
 		, "Common.puWinSelCancer"

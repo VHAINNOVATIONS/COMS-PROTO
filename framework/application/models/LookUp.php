@@ -1849,19 +1849,22 @@ class LookUp extends Model {
         return $this->doToxicityData("update", $ToxID, $_POST);
     }
 
-    function getToxicity($ToxID) {
-        $buf = "";
+    function getToxicity($cat_ID, $subCat) {
         $DataType = "ToxicityInstruction";
-        if ($ToxID) {
-            $buf = "ID = '$ToxID'";
-        }
-        if ($buf) {
-            $buf = " where " . $buf . " and DataType = '$DataType'";
+        $buf = "where DataType = '$DataType'";
+        if ($cat_ID) {
+            if ("CAT" === strtoupper($cat_ID)) {
+                $query = "SELECT distinct Label FROM SiteCommonInformation $buf order by Label";
+            }
+            else {
+                $buf = buf . " and ID = '$cat_ID'";
+                $query = "SELECT ID, Label, Details, ISNULL(CAST(Grade_Level as nvarchar(max)),'') 'Grade_Level' FROM SiteCommonInformation $buf order by Label, Grade_Level";
+            }
         }
         else {
-            $buf = " where DataType = '$DataType'";
+            $query = "SELECT ID, Label, Details, ISNULL(CAST(Grade_Level as nvarchar(max)),'') 'Grade_Level' FROM SiteCommonInformation $buf order by Label, Grade_Level";
         }
-        $query = "SELECT ID, Label, Details, ISNULL(CAST(Grade_Level as nvarchar(max)),'') 'Grade_Level' FROM SiteCommonInformation" . $buf . " order by Label, Grade_Level";
+        error_log("getToxicity - $query");
         return $this->query($query);
     }
 }

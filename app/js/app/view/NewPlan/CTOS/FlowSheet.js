@@ -10,6 +10,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 		{ "xtype" : "FlowSheetGrid" },
 		{ "xtype" : "DiseaseResponsePanel" },
 		{ "xtype" : "ToxicitySideEffectsPanel" },
+		{ "xtype" : "FS_Toxicity" },
 		{ "xtype" : "OtherInfoPanel" },
 		{ "xtype" : "LabInfo" }
 	]

@@ -641,7 +641,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
                 '$currDate',
                 'author'
             )";
-            // error_log("_InsertAssessmentLink Query - $query");
+            error_log("_InsertAssessmentLink Query - $query");
             $retVal = $this->NursingDoc->query($query);
             return $retVal;
     }
@@ -671,7 +671,7 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
                 '$comments',
                 '$levelChosen'
             )";
-        // error_log("_InsertAssessmentDetail Query - $query");
+        error_log("_InsertAssessmentDetail Query - $query");
         $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
@@ -681,6 +681,63 @@ insert into LookUp ( Lookup_Type, Name, Description ) VALUES ( 53, '5', '5. Deat
         $retVal = $this->NursingDoc->query($query);
         return $retVal;
     }
+
+/**
+Record Data
+URL: http://coms-mwb.dbitpro.com:355/NursingDoc/ToxicityDetail/B9C0E369-0BCF-E311-A4B9-000C2935B86F
+Headers: Content-Type:application/json
+Note: Data MUST be valid JSON object (e.g. labels are strings, note ""...
+{ "alertEvent": false, "choice": true, "comments": "", "fieldLabel": "Fatigue", "levelChosen": "2. Fatigue not relieved by rest; limiting instrumental Activity of Daily Living", "sequence": 0}
+
+
+{"patientId":"B9C0E369-0BCF-E311-A4B9-000C2935B86F","assessmentDetails":[{"sequence":0,"fieldLabel":"Fatigue","choice":true,"comments":"","levelChosen":"1"},{"sequence":1,"fieldLabel":"Anorexia","choice":true,"comments":"","levelChosen":"1"},{"sequence":7,"fieldLabel":"Diarrhea","choice":true,"comments":"","levelChosen":"4"},{"sequence":10,"fieldLabel":"Other","choice":true,"comments":"Life is totally messed up!","levelChosen":0}]}
+
+**/
+    function ToxicityDetail($PAT_ID = null, $ToxDetailID = null) {
+        $jsonRecord = array();
+        $jsonRecord['success'] = true;
+        $query = "";
+
+        $inputData = file_get_contents('php://input');
+        $post_vars = json_decode($inputData);
+        // error_log("ToxicityDetail Input - $inputData");
+        // error_log("ToxicityDetail post_vars - " . $this->varDumpToString($post_vars));
+
+        $jsonRecord = array();
+        $AssessmentRecords = array();
+        $jsonRecord['success'] = 'true';
+        $ErrMsg = "Retrieving Toxicity Detail Records";
+
+        $GUID = $this->NursingDoc->newGUID();
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $this->NursingDoc->beginTransaction();
+            $retVal = $this->_InsertAssessmentLink($GUID, $PAT_ID);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->NursingDoc->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+
+            $retVal = $this->_InsertAssessmentDetail($GUID, $post_vars);
+            if ($this->checkForErrors($ErrMsg, $retVal)) {
+                $this->NursingDoc->rollbackTransaction();
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            }
+            $this->NursingDoc->endTransaction();
+        }
+        $this->set('jsonRecord', $jsonRecord);
+    }
+
+
+
 
 /*******
 http://coms-mwb.dbitpro.com:355/NursingDoc/Assessment/B9C0E369-0BCF-E311-A4B9-000C2935B86F

@@ -1509,9 +1509,9 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
 
 
     function doMedRemindersData($fcn, $TemplateID, $MR_ID, $InputData) {
-        $InsertBuf1 = array();;
-        $InsertBuf2 = array();;
-        $UpdateBuf = array();;
+        $InsertBuf1 = array();
+        $InsertBuf2 = array();
+        $UpdateBuf = array();
 
         if (isset($InputData->Title)) {
             $Title = $this->escapeString($InputData->Title);

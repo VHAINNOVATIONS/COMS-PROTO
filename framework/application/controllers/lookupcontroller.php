@@ -1644,6 +1644,19 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *      Returns - JSON List of all Toxicity Instructions
  *
  *      Method: GET
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/ToxicityInstruction/CAT
+ *      Headers: None
+ *      Data: None
+ *      Returns - JSON List of all Toxicity Categories
+ *
+ *      Method: GET
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/ToxicityInstruction/CAT/Name
+ *      Headers: None
+ *      Data: None
+ *      Returns - JSON List of all Toxicity Grade/Levels for the specified Category
+
+ *
+ *      Method: GET
  *      URL : http://coms-mwb.dbitpro.com:355/LookUp/ToxicityInstruction/7357101E-58A8-4FDD-87D5-C607C5BE9EC1
  *      Headers: None
  *      Data: None
@@ -1670,7 +1683,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *     getToxicity($ToxID);
  *
  **/
-    function ToxicityInstruction($ToxID = null) {
+    function ToxicityInstruction($ToxID = null, $SubCat = null) {
         $DataType = 'ToxicityInstruction';
         $msg = 'Toxicity Instructions';
 
@@ -1682,7 +1695,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
         if ("GET" == $_SERVER["REQUEST_METHOD"]) {
-            $records = $this->LookUp->getToxicity($ToxID);
+            $records = $this->LookUp->getToxicity($ToxID, $SubCat);
             $msg = "Get ". $msg;
             $tmpRecords = $records;
         }
