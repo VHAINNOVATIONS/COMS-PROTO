@@ -30,7 +30,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 
 							"displayField" : "Label", 
 							"valueField" : "Label", 
-							"fieldLabel" : "Toxicity <em>*</em>" 
+							"fieldLabel" : "Toxicity <em>*</em>",
+							"allowBlank" : false
 						},
 						{ 
 							"xtype" : "combobox", 
@@ -41,37 +42,34 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 							"queryMode" : "local",
 							"displayField" : "Grade_Level", 
 							"valueField" : "Grade_Level", 
-							"fieldLabel" : "Grade / Level <em>*</em>" 
+							"fieldLabel" : "Grade / Level <em>*</em>",
+							"allowBlank" : false
 						},
 
-						{ "xtype" : "textfield", "margin" : "10", "name" : "ToxEditLevel", "width" : 350, "fieldLabel" : "Grade / Level <em>*</em>", "hidden": true },
-						{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 90, "margin" : "10", "name" : "ToxEditDetails", "fieldLabel" : "Details <em>*</em>", "hidden": true },
+						{ "xtype" : "textfield", "margin" : "10", "name" : "ToxEditLevel", "width" : 350, "fieldLabel" : "Grade / Level <em>*</em>", "hidden": true, "allowBlank" : true },
+						{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 90, "margin" : "10", "name" : "ToxEditDetails", "fieldLabel" : "Details <em>*</em>", "hidden": true, "allowBlank" : true },
 
-						{ "xtype" : "displayfield", "width" : 800, "value" : "&nbsp;", "margin" : "10", "name" : "ToxDetails", "fieldLabel" : "Details", "fieldCls" : "coms-displayfield-box x-form-display-field ",
-
-						},
-						{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 90, "margin" : "10", "name" : "Data", "fieldLabel" : "Comments"},
+						{ "xtype" : "displayfield", "width" : 800, "value" : "&nbsp;", "margin" : "10", "name" : "ToxDetails", "fieldLabel" : "Details", "fieldCls" : "coms-displayfield-box x-form-display-field " },
+						{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 90, "margin" : "10", "name" : "Data", "fieldLabel" : "Comments", "allowBlank" : true},
 						{ 
 							"xtype" : "checkbox", 
 							"margin" : "10", 
 							"name" : "AdverseAlert", 
 							"width" : 350,
-							"fieldLabel" : "Adverse Event (AE) Alert" 
+							"fieldLabel" : "Adverse Event (AE) Alert",
+							"allowBlank" : true
 						},
+						{ "xtype" : "hidden", "name" : "RecID" },
 
 						{ "xtype" : "button", "text" : "Cancel", "name" : "Cancel", "minWidth" : "75", style : {float: "right"} , "margin" : "0 10 0 0"},
-						{ "xtype" : "button", "text" : " Save ", "name" : "Save", "minWidth" : "75", style : "float:right", "margin" : "0"}
-						
-						
+						{ "xtype" : "button", "text" : " Save ", "name" : "Save", "minWidth" : "75", style : "float:right", "margin" : "0", "disabled" : true}
 					],
 				},
 
 				{ "xtype" : "FS_ToxicityGrid", "margin" : 10}
 			],
 			"buttons" : [
-				{ "xtype" : "button", "text" : "Delete", "margin" : "10 0"},
-				{ "xtype" : "button", "text" : "Done", "margin" : "10 0"},
-
+				{ "xtype" : "button", "text" : "Delete", "margin" : "10 0", "disabled" : true}
 			]
 		}
 	]

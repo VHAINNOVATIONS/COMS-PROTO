@@ -2005,6 +2005,7 @@ fieldContainerWalk : function(item, y, z) {
             }
             patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
 			COMS.Patient = this.application.Patient;
+			COMS.Application = this.application;
         }
 		if ("No Current Template Applied to patient to load" === Loaded) {
 				var selCTOSTemplateObj = this.getSelCTOSTemplate();
@@ -2062,6 +2063,7 @@ fieldContainerWalk : function(item, y, z) {
 			}
 
 			COMS.Patient = this.application.Patient;
+			COMS.Application = this.application;
 			return;
 		}
 

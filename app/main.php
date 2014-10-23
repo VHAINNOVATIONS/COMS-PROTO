@@ -53,7 +53,8 @@
 ?>
 
 <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-<script src="/libs/modernizr-2.0.6.js"></script>
+<!--  src="/libs/modernizr-2.0.6.js" -->
+<script src="/libs/modernizr-2.8.3.js"></script>
 
 <script>
 <?php

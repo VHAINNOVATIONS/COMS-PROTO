@@ -1,9 +1,15 @@
 Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	extend: "Ext.app.Controller",
 	views : [ "RequiredInstr", "NewPlan.CTOS.FS_Toxicity", "NewPlan.CTOS.FS_ToxicityGrid" ],
+	stores: [ "ToxGridStore" ],
+
 
 	init: function () {
 		this.control({
+			"FS_Toxicity form" : {
+				validitychange : this.CheckValidation
+			},
+
 			"FS_Toxicity form [name=\"ToxInstr\"]" : {
 				beforequery : this.ToxInstrBeforeQuery,
 				select : this.ToxInstrSelectRec
@@ -14,12 +20,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 			},
 
 			"FS_Toxicity grid" : {
-					select: this.selectGridRow 
+					select: this.selectGridRow,
+					beforerender: this.loadGridStore
 			},
+
 			"FS_Toxicity button[text=\"Delete\"]" : {
 				click: this.DeleteSelectedRecords
 			},
-
 
 			"FS_Toxicity button[name=\"Save\"]" : {
 				click: this.Save
@@ -27,38 +34,79 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 			"FS_Toxicity button[name=\"Cancel\"]" : {
 				click: this.Cancel
 			}
-
-
-
 		});
 	},
 
 	ToxLevel : "",
+	ToxInstr : "",
 
-	getTheGrid : function(thisComp) {
-		return thisComp.owner.findParentByType("FS_Toxicity").down("[name=\"Toxicity Grid\"]");
+	CheckValidation : function( theForm, valid, eOpts ) {
+		var saveBtn = this.getSaveBtn(theForm);
+		if (valid) {
+			saveBtn.setDisabled(false);
+		}
+		else {
+			saveBtn.setDisabled(true);
+		}
 	},
 
+	loadGridStore : function(theGrid) {
+		var theStore = theGrid.getStore();
+		theStore.load({ url: Ext.URLs.ToxGrid + "/0B6308A1-E23D-E411-AA47-000C2935B86F" });
+	},
+
+	gnrlGetComponent: function(thisComp, str) {
+		if (thisComp.owner) {
+			return thisComp.owner.findParentByType("FS_Toxicity").down(str);
+		}
+		else {
+			return thisComp.findParentByType("FS_Toxicity").down(str);
+		}
+	},
+	getTheGrid : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"Toxicity Grid\"]");
+	},
+
+	getIDField : function (thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"RecID\"]");
+	},
 	getToxInstrFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"ToxInstr\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxInstr\"]");
 	},
 
 	getToxLevelFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"ToxLevel\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxLevel\"]");
 	},
 	getToxEditLevelFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"ToxEditLevel\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxEditLevel\"]");
 	},
 
 	getToxEditDetailsFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"ToxEditDetails\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxEditDetails\"]");
 	},
 	getToxDetailsFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"ToxDetails\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxDetails\"]");
 	},
+
+	getCommentsFld : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"Data\"]");
+	},
+
 	getAlertFld : function(thisComp) {
-		return thisComp.findParentByType("FS_Toxicity").down("[name=\"AdverseAlert\"]");
+		return this.gnrlGetComponent(thisComp, "[name=\"AdverseAlert\"]");
 	},
+
+	getDeleteBtn : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[text=\"Delete\"]");
+	},
+
+	getSaveBtn : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"Save\"]");
+	},
+	getTheForm : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "form");
+	},
+
 
 	getToxInstr : function(thisComp) {
 		var theFld = this.getToxInstrFld(thisComp);
@@ -68,6 +116,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	getToxLevel : function(thisComp) {
 		var theFld = this.getToxLevelFld(thisComp);
 		var ret = theFld.getRawValue();
+		if (!theFld.isVisible()) {
+			theFld = this.getToxEditLevelFld(thisComp);
+			ret = theFld.getValue();
+		}
 		return ret;
 	},
 
@@ -81,10 +133,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		theFld.setValue("&nbsp;");
 	},
 
-
-
 	Cancel : function(btn) {
-		btn.up('form').getForm().reset();
+		var theForm = btn.up('form').getForm();
+		var theGrid = this.getTheGrid(theForm);
+		theForm.reset();
+		this.RowIdx = null;
+		theGrid.getSelectionModel().clearSelections();
 	},
 
 	Save : function(btn) {
@@ -92,33 +146,84 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 			var theForm = btn.up('form').getForm();
 			if (theForm.isValid()) {
 				this.Saving = true;
-				try {
-					var theController = this.getController("NewPlan.CTOS.FS_Toxicity");
-					theController.saveData(theForm);
-					this.Saving = false;
-				}
-				catch (e) {
-					this.Saving = false;
-				}
+				this.saveData(theForm);
 			}
 		}
 	},
 
+	saveData : function(theForm) {
+		var theData = theForm.getFieldValues();
+		if (theData.ToxLevel !== "" && theData.ToxEditLevel == "") {
+			delete theData.ToxEditLevel;
+		}
+		else if (theData.ToxEditLevel !== "") {
+			theData.ToxLevel = theData.ToxEditLevel;
+			delete theData.ToxEditLevel;
+		}
 
+		if (theData.ToxDetails !== "" && theData.ToxEditDetails == "") {
+			delete theData.ToxEditDetails;
+		}
+		else if (theData.ToxEditDetails !== "") {
+			theData.ToxDetails = theData.ToxEditDetails;
+			delete theData.ToxEditDetails;
+		}
+		var theGrid = theForm.owner.ownerCt.down("FS_ToxicityGrid")
+		var theStore = theGrid.getStore();
+		if (this.application.Patient) {
+			var PAT_ID = this.application.Patient.PAT_ID;
+		}
+		else {
+			var PAT_ID = "0B6308A1-E23D-E411-AA47-000C2935B86F";
+		}
+		theStore.proxy.url = Ext.URLs.ToxGrid + "/" + PAT_ID;
 
+		var AlertEvent = theData.AdverseAlert ? 1 : 0;
+
+		var storeData = { 
+			"tDate" : Ext.Date.format(new Date(), "m/d/Y"), 
+			"Alert" : AlertEvent, 
+			"Comments" : theData.Data, 
+			"Details" : theData.ToxDetails, 
+			"Grade_Level" : theData.ToxLevel, 
+			"id" : theData.RecID, 
+			"Label" : theData.ToxInstr 
+		};
+		
+		var rec = Ext.create(Ext.COMSModels.ToxGridModel, storeData);
+		rec.dirty = true;
+
+		if (this.RowIdx && this.RowIdx >= 0) {
+			theStore.removeAt(this.RowIdx, 1);
+			theStore.insert(this.RowIdx, rec);
+			this.RowIdx = null;
+		}
+		else {
+			theStore.add(rec);
+		}
+		theStore.commitChanges();
+		theForm.reset();
+		this.Saving = false;
+		this.application.fireEvent("loadAdverseEventsHistory");
+	},
 
 	selectGridRow : function(theRowModel, record, index, eOpts) {
 		this.RowIdx = index;
 		var theView = theRowModel.view;
-		var recID = record.get("ID");
+		var recID = record.get("id");
 		var Label = record.get("Label");
 		var Details = record.get("Details");
 		var Grade_Level = record.get("Grade_Level");
+		this.ToxLevel = Grade_Level;
+		this.ToxInstr = Label;
 		var Comments = record.get("Comments");
 		var tDate = record.get("tDate");
 		var Alert = record.get("Alert");
 
 		Details = Ext.util.Format.htmlDecode(Details);
+
+		var hiddenRecID = this.getIDField(theView);
+		hiddenRecID.setValue(recID);
 
 		var theToxInstrField = this.getToxInstrFld(theView);
 		var theToxDetailsField = this.getToxDetailsFld(theView);
@@ -131,21 +236,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		}
 
 		var theAlertField = this.getAlertFld(theView);
+		var theCommentsField = this.getCommentsFld(theView);
 
 		theToxInstrField.setValue(Label);
 		theToxDetailsField.setValue(Details);
 		theToxLevelField.setValue(Grade_Level);
+		theCommentsField.setValue(Comments);
 		theAlertField.setValue(Alert);
 
 		var records = theRowModel.getSelection();
-		var delBtn = this.getDeleteBtn();
+		
+		var delBtn = this.getDeleteBtn(theView);
 		if (records.length <= 0) {
 			delBtn.setDisabled(true);
 		}
 		else {
 			delBtn.setDisabled(false);
 		}
-
 	},
 
 
@@ -153,9 +260,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	deleteRecord : function(theRecords) {
 		var record = theRecords.pop();
 		if (record) {
-			var rID = record.get("ID");
+			var rID = record.get("id");
 			var CMD = "DELETE";
-			var URL = Ext.URLs.ToxicityInstruction + "/" + rID;
+			var URL = Ext.URLs.ToxGrid + "/" + rID;
 			Ext.Ajax.request({
 				url: URL,
 				method : CMD,
@@ -173,20 +280,30 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		}
 		else {
 			this.application.unMask();
-			this.RefreshPanel();
-			this.CancelForm();
+				this.theForm.getForm().reset();
+				this.RowIdx = null;
+				this.theGrid.getSelectionModel().deselectAll( true );
+				var delBtn = this.getDeleteBtn(this.theForm);
+				delBtn.setDisabled(true);
+				delete this.theForm;
+				delete this.RowIdx;
+				delete this.theGrid;
+				theApp.fireEvent("loadAdverseEventsHistory");
 		}
 	},
 
-	DeleteSelectedRecords : function(theForm) {
-		debugger;
-		var theGrid = this.getTheGrid(theForm);
+	DeleteSelectedRecords : function(theBtn) {
+		var theGrid = this.getTheGrid(theBtn);
+		var theForm = this.getTheForm(theBtn);
 		var theRecords = theGrid.getSelectionModel().getSelection();
 		var len = theRecords.length, i, record;
+		this.theForm = theForm;
+		this.theGrid = theGrid;
+		this.theRecords = theRecords;
 		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Toxicity records?", function(btn) {
 			if ("yes" === btn) {
 				this.application.loadMask("Please wait; Deleting Selected Records");
-				this.deleteRecord(theRecords);
+				this.deleteRecord(this.theRecords);
 			}
 		}, this);
 	},
@@ -232,21 +349,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		theStore.loadData(ToxInstr);
 	},
 
-	loadToxLevelStore : function(theStore, theRecords) {
-		var theInstr = this.ToxLevel;
+	loadToxLevelStore : function(theStore, theData) {
+		var theInstr = this.ToxInstr;
 		var ToxList = [];
-		theRecords.each( function(rec) {
-				var theData = rec.getData();
-				if (theData.Label === theInstr) {
-					if ("" == theData.Grade_Level) {
-						theData.Grade_Level = "None";
-					}
-					var el = {Details : theData.Details, Label: theData.Label, Grade_Level: theData.Grade_Level, ID: theData.ID };
-					ToxList.push(el);
+		var i, rec, len,
+			ToxInstr = [], 
+			ToxOther = [];
+		len = theData.length;
+		for (i = 0; i < len; i++) {
+			rec = theData[i].getData();
+			if (rec.Label === theInstr) {
+				if ("" == rec.Grade_Level) {
+					rec.Grade_Level = "None";
 				}
-			},
-			this
-		);
+				var el = {Details : rec.Details, Label: rec.Label, Grade_Level: rec.Grade_Level, ID: rec.ID };
+				ToxList.push(el);
+			}
+		}
 		theStore.loadData(ToxList);
 	},
 
@@ -289,7 +408,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 	ToxInstrSelectRec : function(combo, recs, eOpts) {
 		var theRecordData = recs[0].getData().Label;
-		this.ToxLevel = theRecordData;
+		this.ToxInstr = theRecordData;
 		var tLevel = this.getToxLevelFld(combo);
 		var tELevel = this.getToxEditLevelFld(combo);
 		var tDetails = this.getToxDetailsFld(combo);
@@ -352,6 +471,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var qeCombo = queryEvent.combo;
 		delete qeCombo.lastQuery;
 		var theInstr = this.getToxInstr(qeCombo);
+		this.ToxInstr = theInstr;
 		if ("" != theInstr) {
 			var qeQuery = queryEvent.query;
 			var qeForceAll = queryEvent.forceAll;
@@ -364,14 +484,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 					store : aStore,
 					callback: function(records, operation, success) {
 						var cStore = operation.combo.getStore();
-						this.loadToxLevelStore(cStore, records);
+						var theRecords = operation.store.getRange();
+						this.loadToxLevelStore(cStore, theRecords);
 						this.application.unMask();
 					}
 				});
 			}
 			else {
 				var cStore = qeCombo.getStore();
-				this.loadToxLevelStore(cStore, aStore);
+				this.loadToxLevelStore(cStore, aStore.getRange());
 			}
 			return true;
 		}
@@ -388,45 +509,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var theData = recs[0].getData().Details;
 		theData = Ext.util.Format.htmlDecode(theData);
 		DetailsField.setValue(theData);
-	},
-
-	saveData : function(theForm) {
-		var theData = theForm.getFieldValues();
-		if (theData.ToxLevel !== "" && theData.ToxEditLevel == "") {
-			delete theData.ToxEditLevel;
-		}
-		else if (theData.ToxEditLevel !== "") {
-			theData.ToxLevel = theData.ToxEditLevel;
-			delete theData.ToxEditLevel;
-		}
-
-		if (theData.ToxDetails !== "" && theData.ToxEditDetails == "") {
-			delete theData.ToxEditDetails;
-		}
-		else if (theData.ToxEditDetails !== "") {
-			theData.ToxDetails = theData.ToxEditDetails;
-			delete theData.ToxEditDetails;
-		}
-		var theGrid = theForm.owner.ownerCt.down("FS_ToxicityGrid")
-		var theStore = theGrid.getStore();
-
-		var storeData = { "tDate" : Ext.Date.format(new Date(), "m/d/Y"), "Alert" : theData.AdverseAlert, "Comments" : theData.Data, "Details" : theData.ToxDetails, "Grade_Level" : theData.ToxLevel, "ID" : "", "Label" : theData.ToxInstr };
-
-		if (this.RowIdx !== null) {
-			theStore.removeAt(this.RowIdx, 1);
-			theStore.insert(this.RowIdx, storeData);
-			this.RowIdx = null;
-		}
-		else {
-			theStore.add(storeData);
-		}
-		theStore.commitChanges();
-		theGrid.getView().refresh();
-		theForm.reset();
-
-
 	}
-	
+
 
 
 });

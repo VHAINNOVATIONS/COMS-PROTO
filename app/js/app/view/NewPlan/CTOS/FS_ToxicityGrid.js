@@ -7,9 +7,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 	"margin" : "10 auto 10 auto",
 	"buttonAlign" : "left",
 
-	"store" : Ext.create('Ext.data.Store', { fields : ["ID", "Label", "Grade_Level", "Details", "Comments", "tDate", "Alert"] }),
+	"store" : "ToxGridStore",
 
-	"selType" : "cellmodel",
 	"forceFit" : true,
 	"overflowY" : "scroll",
 	"minHeight" : 150,

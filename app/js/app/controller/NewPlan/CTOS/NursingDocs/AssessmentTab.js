@@ -20,7 +20,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 			PatientSelected : this.PatientSelected,
 			scope : this
 		});
-	
+	/**
 		this.control({
 			"NursingDocs_Assessment [name=\"ND_Ass_None\"]" : {
 				change : this.ClickNoneCheckbox
@@ -28,11 +28,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 			"NursingDocs_PretreatmentAssesment checkbox" : {
 				change : this.ClickCheckbox
 			},
-            "NursingDocs_Assessment button[action=\"save\"]": {
-                click: this.SaveAssessments
-            }
-			
+			"NursingDocs_Assessment button[action=\"save\"]": {
+				click: this.SaveAssessments
+			}
 		});
+	 **/
 	},
 
 	/* Note: This function gets called twice when a patient is selcted */

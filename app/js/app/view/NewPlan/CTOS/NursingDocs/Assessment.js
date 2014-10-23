@@ -329,9 +329,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PretreatmentAssesment" ,{
 
 		{ xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-boxLabel", inputValue : true, name : "ND_Ass_None", boxLabel : "No Adverse Reaction since Last Treatment" },
 ****************/
-		{ "xtype" : "FS_Toxicity", margin: 10 },
+		{ "xtype" : "FS_Toxicity", margin: "0 10 0 0" }
 
-		{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
+		// { xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
 	]
 });
 

@@ -27,7 +27,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 	*/
 
 	xxxxxSaveForm : function(btn) {
-		debugger;
+		// debugger;
 		var form = btn.up("form");
 		form.save();
 	},
@@ -51,7 +51,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 			url: URL,
 			method : CMD,
 			success: function(form, action) {
-				debugger;
+				// debugger;
 				var MR_ID, results = Ext.JSON.decode(action.response.responseText);
 				if (results.success) {
 					MR_ID = results.records[0].MR_ID;
@@ -64,7 +64,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 				//this.RefreshPanel();
 			},
 			failure: function(form, action) {
-				debugger;
+				// debugger;
 				var SaveTitle = "Saving Medication Reminder FAILED";
 				//this.RefreshPanel();
 				switch (action.failureType) {

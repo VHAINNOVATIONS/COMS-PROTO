@@ -445,12 +445,14 @@ Ext.URLs.RadiationHistory = theJSPath + "/data1/RadiationHistory.js";
 Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Used in the LookupTable_CycleLengthMax model.
 
-
 // INLINE FOR TESTING: Ext.URLs.Messages = "app/data1/Messages/Filtered/RID/16.js";
 // Param = Role ID,
 // Returns list of all Messages for the specified Role ID, used in "MessagesTab" Grid Control
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
+
+
+Ext.URLs.ToxGrid = "/NursingDoc/ToxicityDetail";
 
 Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
@@ -524,6 +526,7 @@ Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
 Ext.COMSModels.MedReminder = "COMS.model.MedReminder";
+Ext.COMSModels.ToxGridModel = "COMS.model.ToxGridModel";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
@@ -538,6 +541,7 @@ Ext.require([
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
+	Ext.COMSModels.ToxGridModel,
 	Ext.COMSModels.MedRisks,
 	Ext.COMSModels.ClinicInfo,
 	Ext.COMSModels.DischargeInstruction,

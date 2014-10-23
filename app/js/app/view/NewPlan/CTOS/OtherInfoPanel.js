@@ -1,7 +1,7 @@
 Ext.define("COMS.view.NewPlan.CTOS.OtherInfoPanel" ,{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.OtherInfoPanel",
-	"title" : "Other Information",
+	"title" : "Additional General Information",
 	"name" : "OtherInfoPanel",
 	"collapsible" : true, 
 	"collapsed" : true, 
