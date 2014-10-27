@@ -24,7 +24,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityHistory", {
 						buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + current.Link.Label + " - Flagged as an ALERT</th></tr>";
 					}
 					buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + current.Link.Label + "</td></tr>";
-					buf += "<tr><th style=\"width: 9em;\">Level:</th><td>" + current.Link.Grade_Level + "</td></tr>";
+					buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Link.Grade_Level + "</td></tr>";
 					buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Link.Details + "</td></tr>";
 					buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Link.Comments + "</td></tr>";
 					return buf;

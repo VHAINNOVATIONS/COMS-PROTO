@@ -471,7 +471,6 @@ class LookUp extends Model {
                 break;
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
-        error_log("getEmoData - Key = $key");
         $EmesisVal = $this->query($query);
         if (count($EmesisVal) >= 1) {
             return htmlspecialchars($EmesisVal[0]["Details"]);

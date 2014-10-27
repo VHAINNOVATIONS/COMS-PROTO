@@ -30,7 +30,8 @@ class MdwsBase {
                             return null;
                     }
 */
-					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'I20355VSTLNX','datasource'=>'54.83.44.110','port'=>'9210','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
+					// $addDataSource = $client->addDataSource(array('id'=>'355','name'=>'I20355VSTLNX','datasource'=>'54.83.44.110','port'=>'9200','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
+					$addDataSource = $client->addDataSource(array('id'=>'355','name'=>'I20355VSTLNX','datasource'=>'54.83.44.110','port'=>'9300','modality'=>'HIS','protocol'=>'VISTA','region'=>'355'));
                     if (isset($connect->connectResult->fault)) {
                             $this->MDWsCrashReport($connect->connectResult, "Connect", false);
                             return null;

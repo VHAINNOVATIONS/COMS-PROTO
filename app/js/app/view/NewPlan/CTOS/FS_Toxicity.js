@@ -42,11 +42,11 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 							"queryMode" : "local",
 							"displayField" : "Grade_Level", 
 							"valueField" : "Grade_Level", 
-							"fieldLabel" : "Grade / Level <em>*</em>",
+							"fieldLabel" : "Grade <em>*</em>",
 							"allowBlank" : false
 						},
 
-						{ "xtype" : "textfield", "margin" : "10", "name" : "ToxEditLevel", "width" : 350, "fieldLabel" : "Grade / Level <em>*</em>", "hidden": true, "allowBlank" : true },
+						{ "xtype" : "textfield", "margin" : "10", "name" : "ToxEditLevel", "width" : 350, "fieldLabel" : "Grade <em>*</em>", "hidden": true, "allowBlank" : true },
 						{ "xtype" : "textareafield", "grow" : true, "width" : 800, "height" : 90, "margin" : "10", "name" : "ToxEditDetails", "fieldLabel" : "Details <em>*</em>", "hidden": true, "allowBlank" : true },
 
 						{ "xtype" : "displayfield", "width" : 800, "value" : "&nbsp;", "margin" : "10", "name" : "ToxDetails", "fieldLabel" : "Details", "fieldCls" : "coms-displayfield-box x-form-display-field " },

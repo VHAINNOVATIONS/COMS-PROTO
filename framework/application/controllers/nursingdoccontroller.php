@@ -1320,7 +1320,7 @@
             $ReactAssessRecords      = array( );
             $AEHREcords              = array( );
             
-            $jsonRecord[ 'success' ] = 'true';
+            // $jsonRecord[ 'success' ] = 'true';
             $ErrMsg                  = "Adverse Events History";
             if ( $PAT_ID == null ) {
                 $jsonRecord[ 'success' ] = false;
@@ -1334,20 +1334,26 @@
 
             $AssessmentRecords = $this->_getAssessmentDataArray($PAT_ID, null );
             if (null === $AssessmentRecords) {
-                $this->set( 'jsonRecord', null );
+                $jsonRecord[ 'success' ] = false;
+                $jsonRecord[ 'msg' ]     = "No Adverse Events Records";
+                $this->set( 'jsonRecord', $jsonRecord );
                 return;
             }
             $AEHCounter = count($AssessmentRecords);
 
             $InfuseReactLinkID = $this->_getInfuseReactLink( $PAT_ID, null );
             if ( $this->checkForErrors( 'Get ND_ReactAssess Link Records Failed. ', $InfuseReactLinkID ) ) {
-                $this->set( 'jsonRecord', null );
+                $jsonRecord[ 'success' ] = false;
+                $jsonRecord[ 'msg' ]     = "Get ND_ReactAssess Link Records Failed";
+                $this->set( 'jsonRecord', $jsonRecord );
                 return;
             }
             foreach ( $InfuseReactLinkID as $InfuseReactLink ) {
                 $InfuseReactDetails = $this->_getInfuseReactDetails( $InfuseReactLink[ 'id' ] );
                 if ( $this->checkForErrors( 'Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink ) ) {
-                    $this->set( 'jsonRecord', null );
+                    $jsonRecord[ 'success' ] = false;
+                    $jsonRecord[ 'msg' ]     = "Get ND_ReactAssess Details Records Failed";
+                    $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
                 $InfuseReact[ 'InfuseReactLink' ]              = $InfuseReactLink;

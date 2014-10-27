@@ -1,7 +1,7 @@
 Ext.define("COMS.view.NewPlan.CTOS.FlowSheetOptionalQues", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.FlowSheetOptionalQues",
-	"title" : "Optional Information",
+	"title" : "Adding General Information",
 	"layout" : "fit",
 	"autoShow" : true,
 	"width" : 950,

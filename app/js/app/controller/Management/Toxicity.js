@@ -181,7 +181,7 @@ Ext.define('COMS.controller.Management.Toxicity', {
 				Msg += "<li>Missing Toxicity Instruction</li>";
 			}
 			if (!theData.Grade_Level) {
-				Msg += "<li>Missing Grade / Level Information</li>";
+				Msg += "<li>Missing Grade Information</li>";
 			}
 			if ("" === theData.Details) {
 				Msg += "<li>Missing Details for Toxicity Instruction</li>";
