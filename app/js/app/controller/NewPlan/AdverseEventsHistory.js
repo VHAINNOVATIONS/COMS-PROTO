@@ -99,7 +99,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 
 					if (resp.success) {
 						if (resp.records) {
-							var i, len, rec;
+							var i, len, rec, alertText = "";
 							this.application.Patient.Assessments = resp.records.Assessments;
 							this.application.Patient.Reactions = resp.records.ReactAssessments;
 							this.application.Patient.TotalAdverseEvents = resp.totalEvents;

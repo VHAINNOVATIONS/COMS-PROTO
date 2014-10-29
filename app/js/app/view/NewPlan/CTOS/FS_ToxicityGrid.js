@@ -21,8 +21,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 	"columns" : [ 
 		{ "text" : "Toxicity", "dataIndex" : "Label", "flex" : 2}, 
 		{ "text" : "Grade", "dataIndex" : "Grade_Level", "flex" : 2}, 
-		{ "text" : "Date", "dataIndex" : "tDate", "flex" : 1 },
-		{ "text" : "Detail", "renderer" : Ext.util.Format.htmlDecode, "dataIndex" : "Details", "flex" : 6 },
+		{ "text" : "Date", "dataIndex" : "tDate", "xtype" : "datecolumn", "format" : "m/d/Y", "flex" : 2 },
+		{ "text" : "Detail", "renderer" : Ext.util.Format.htmlDecode, "dataIndex" : "Details", "flex" : 7 },
 		{ "xtype" : "checkcolumn", "text" : "AE Alert", "dataIndex" : "Alert", "flex" : 1 },
 	]
 });

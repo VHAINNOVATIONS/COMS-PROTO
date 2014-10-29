@@ -168,7 +168,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + resp.msg );
 				}
 				else {
-					theApp.fireEvent("loadAdverseEventsHistory");
+					var theTable2Update = "TheTable2Update";
+					theApp.fireEvent("loadAdverseEventsHistory", theTable2Update);
 					Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 					Patient.AssessmentRecordID = resp.AssessmentID;
 				}
