@@ -28,6 +28,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 				click: this.DeleteSelectedRecords
 			},
 
+			"FS_Toxicity button[text=\"Refresh\"]" : {
+				click: this.RefreshToxGrid
+			},
+
 			"FS_Toxicity button[name=\"Save\"]" : {
 				click: this.Save
 			},
@@ -52,7 +56,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 	loadGridStore : function(theGrid) {
 		var theStore = theGrid.getStore();
-		theStore.load({ url: Ext.URLs.ToxGrid + "/0B6308A1-E23D-E411-AA47-000C2935B86F" });
+		theStore.load({ url: Ext.URLs.ToxGrid + "/" + this.application.Patient.PAT_ID });
+	},
+
+	RefreshToxGrid : function(theBtn) {
+		var theGrid = this.getTheGrid(theBtn);
+		debugger;
+		this.loadGridStore(theGrid);
 	},
 
 	gnrlGetComponent: function(thisComp, str) {
@@ -73,7 +83,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	getToxInstrFld : function(thisComp) {
 		return this.gnrlGetComponent(thisComp, "[name=\"ToxInstr\"]");
 	},
-
+	getOtherToxFld : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"OtherTox\"]");
+	},
 	getToxLevelFld : function(thisComp) {
 		return this.gnrlGetComponent(thisComp, "[name=\"ToxLevel\"]");
 	},
@@ -153,6 +165,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 	saveData : function(theForm) {
 		var theData = theForm.getFieldValues();
+		if ("Other" !== theData.ToxInstr) {
+			theData.OtherTox = "";
+		}
+
 		if (theData.ToxLevel !== "" && theData.ToxEditLevel == "") {
 			delete theData.ToxEditLevel;
 		}
@@ -170,12 +186,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		}
 		var theGrid = theForm.owner.ownerCt.down("FS_ToxicityGrid")
 		var theStore = theGrid.getStore();
-		if (this.application.Patient) {
-			var PAT_ID = this.application.Patient.PAT_ID;
-		}
-		else {
-			var PAT_ID = "0B6308A1-E23D-E411-AA47-000C2935B86F";
-		}
+		var PAT_ID = this.application.Patient.PAT_ID;
 		theStore.proxy.url = Ext.URLs.ToxGrid + "/" + PAT_ID;
 
 		var AlertEvent = theData.AdverseAlert ? 1 : 0;
@@ -187,7 +198,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 			"Details" : theData.ToxDetails, 
 			"Grade_Level" : theData.ToxLevel, 
 			"id" : theData.RecID, 
-			"Label" : theData.ToxInstr 
+			"Label" : theData.ToxInstr,
+			"OtherTox" : theData.OtherTox
 		};
 		
 		var rec = Ext.create(Ext.COMSModels.ToxGridModel, storeData);
@@ -212,6 +224,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var theView = theRowModel.view;
 		var recID = record.get("id");
 		var Label = record.get("Label");
+		var OtherTox = record.get("OtherTox");
+
 		var Details = record.get("Details");
 		var Grade_Level = record.get("Grade_Level");
 		this.ToxLevel = Grade_Level;
@@ -226,6 +240,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		hiddenRecID.setValue(recID);
 
 		var theToxInstrField = this.getToxInstrFld(theView);
+		var theOtherToxField = this.getOtherToxFld(theView);
+
 		var theToxDetailsField = this.getToxDetailsFld(theView);
 		if (!theToxDetailsField.isVisible()) {
 			theToxDetailsField = this.getToxEditDetailsFld(theView);
@@ -238,7 +254,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var theAlertField = this.getAlertFld(theView);
 		var theCommentsField = this.getCommentsFld(theView);
 
+		if ("Other" === Label) {
+			theOtherToxField.show();
+		}
+		else {
+			theOtherToxField.hide();
+		}
+
 		theToxInstrField.setValue(Label);
+		theOtherToxField.setValue(OtherTox);
+
 		theToxDetailsField.setValue(Details);
 		theToxLevelField.setValue(Grade_Level);
 		theCommentsField.setValue(Comments);
@@ -414,11 +439,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var tDetails = this.getToxDetailsFld(combo);
 		var tEDetails = this.getToxEditDetailsFld(combo);
 		var AEAlert = this.getAlertFld(combo);
+		var OtherTox = this.getOtherToxFld(combo);
+
 
 		this.clrToxLevel(combo);
 		this.clrDetails(combo);
 
 		if ( theRecordData.indexOf("No Toxicities") >= 0 ) {
+			OtherTox.hide();
+
 			tELevel.hide();
 			tLevel.hide();
 			tEDetails.hide();
@@ -426,6 +455,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 			AEAlert.hide();
 
+			OtherTox.allowBlank = true;
 			tELevel.allowBlank = true;
 			tLevel.allowBlank = true;
 			tEDetails.allowBlank = true;
@@ -435,6 +465,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 		}
 		else if (theRecordData.indexOf("Other") >= 0) {
+			OtherTox.show();
+
 			tLevel.hide();
 			tDetails.hide();
 
@@ -443,6 +475,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 			AEAlert.show();
 
+			OtherTox.allowBlank = false;
 			tELevel.allowBlank = false;
 			tEDetails.allowBlank = false;
 
@@ -454,11 +487,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 		}
 		else {
+			OtherTox.hide();
 			tELevel.hide();
 			tLevel.show();
 			tEDetails.hide();
 			tDetails.show();
 
+			OtherTox.allowBlank = true;
 			tLevel.allowBlank = false;
 			tELevel.allowBlank = true;
 			tEDetails.allowBlank = true;

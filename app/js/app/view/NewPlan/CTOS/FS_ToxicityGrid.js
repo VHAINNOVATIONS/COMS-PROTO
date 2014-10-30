@@ -19,7 +19,13 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 		"markDirty" : false 
 	},
 	"columns" : [ 
-		{ "text" : "Toxicity", "dataIndex" : "Label", "flex" : 2}, 
+		{ "text" : "Toxicity", "renderer" : function(Label, obj, rec) {
+			var theData = rec.getData();
+			if ("Other" === theData.Label) {
+				return theData.OtherTox;
+			}
+			return Label;
+		}, "dataIndex" : "Label", "flex" : 2}, 
 		{ "text" : "Grade", "dataIndex" : "Grade_Level", "flex" : 2}, 
 		{ "text" : "Date", "dataIndex" : "tDate", "xtype" : "datecolumn", "format" : "m/d/Y", "flex" : 2 },
 		{ "text" : "Detail", "renderer" : Ext.util.Format.htmlDecode, "dataIndex" : "Details", "flex" : 7 },

@@ -721,7 +721,7 @@
             if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
                 
                 if ( $PAT_ID ) {
-                    $query = "select ID as id, PAT_ID, Label, Grade_Level, Details, Comments, tDate, Alert from ND_ToxicityGrid where PAT_ID = '$PAT_ID'";
+                    $query = "select ID as id, PAT_ID, Label, OtherTox, Grade_Level, Details, Comments, tDate, Alert from ND_ToxicityGrid where PAT_ID = '$PAT_ID'";
                     $ret   = $this->NursingDoc->query( $query );
                     if ( $this->checkForErrors( 'Get ND_ToxicityGrid Records Failed. ', $ret ) ) {
                         $this->set( 'jsonRecord', null );
@@ -748,6 +748,7 @@
                 $Comments    = $post_vars->{"Comments"};
                 $tDate       = $post_vars->{"tDate"};
                 $Alert       = $post_vars->{"Alert"};
+                $OtherTox    = $post_vars->{"OtherTox"};
                 
                 $query  = "INSERT INTO ND_ToxicityGrid (
                 ID,
@@ -757,7 +758,8 @@
                 Details,
                 Comments,
                 tDate,
-                Alert
+                Alert,
+                OtherTox
             ) values(
                 '$GUID', 
                 '$PAT_ID',
@@ -766,7 +768,8 @@
                 '$Details',
                 '$Comments',
                 '$tDate',
-                '$Alert'
+                '$Alert',
+                '$OtherTox'
             )";
                 $retVal = $this->NursingDoc->query( $query );
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
@@ -786,6 +789,8 @@
                 $Comments    = $post_vars->{"Comments"};
                 $tDate       = $post_vars->{"tDate"};
                 $Alert       = $post_vars->{"Alert"};
+                $OtherTox    = $post_vars->{"OtherTox"};
+
                 if ( '' == $Alert ) {
                     $Alert = 0;
                 } else {
@@ -797,7 +802,8 @@
                 Details = '$Details',
                 Comments = '$Comments',
                 tDate = '$tDate',
-                Alert = $Alert
+                Alert = $Alert,
+                OtherTox = '$OtherTox'
                 WHERE id = '$PAT_ID'
             ";
                 
@@ -827,7 +833,7 @@
 
         function _getAssessmentDataArray($PAT_ID, $assessmentRecordID ) {
             if ( $PAT_ID ) {
-                $query = "select ID as id, PAT_ID, Label, Grade_Level, Details, Comments, tDate, Alert from ND_ToxicityGrid where PAT_ID = '$PAT_ID'";
+                $query = "select ID as id, PAT_ID, Label, OtherTox, Grade_Level, Details, Comments, tDate, Alert from ND_ToxicityGrid where PAT_ID = '$PAT_ID'";
                 $ret   = $this->NursingDoc->query( $query );
                 if ( $this->checkForErrors( 'Get ND_ToxicityGrid Records Failed. ', $ret ) ) {
                     return null;
