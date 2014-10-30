@@ -19,13 +19,18 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 					// XTemplate Configuration
 				disableFormats: true,
 				renderSection : function ( current ) {
-					var buf = "";
+					var ToxType, buf = "";
 					if (current.type == "Assessment") {
+						ToxType = current.Link.Label;
+						if ("Other" === ToxType) {
+							ToxType = current.Link.OtherTox;
+						}
 						buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - " + current.date + "</th></tr>";
 						if (current.Link.Alert) {
-							buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + current.Link.Label + " - Flagged as an ALERT</th></tr>";
+							buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + ToxType + " - Flagged as an ALERT</th></tr>";
 						}
-						buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + current.Link.Label + "</td></tr>";
+
+						buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + ToxType + "</td></tr>";
 						buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Link.Grade_Level + "</td></tr>";
 						buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Link.Details + "</td></tr>";
 						buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Link.Comments + "</td></tr>";

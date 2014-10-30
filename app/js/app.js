@@ -1822,3 +1822,30 @@ Ext.define('COMS.Ajax', {
 		return response;
 	}
 });
+
+/* taken from - 
+ * http://www.learnsomethings.com/2011/10/25/ext-grid-grouping-summary-collapse-all-expand-all-and-collapse-all-but-the-top-group-overrides-for-extjs4/ 
+ */
+Ext.override(Ext.grid.feature.Grouping, {
+	collapseAll: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');
+		Ext.Array.forEach(groups, function (group) {        
+			self.collapse(Ext.get(group.id));    
+		});
+	},
+	expandAll: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');   
+		Ext.Array.forEach(groups, function (group) {    
+			self.expand(Ext.get(group.id));    
+		});
+	},
+	collapseAllButTop: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');
+		Ext.Array.forEach(groups, function (group) {        
+			self.collapse(Ext.get(group.id));    
+		});
+		if(groups.length > 0){
+			this.expand(Ext.get(groups[0].id));
+		}
+	}
+});
