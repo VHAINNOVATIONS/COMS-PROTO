@@ -4,7 +4,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	stores: [
 	],
 	views: [
-		"Common.SelectAdverseReactionAlerts"
+		"Common.SelectAdverseReactionAlerts", "NewPlan.CTOS.FS_Toxicity"
 	],
 	refs: [
 		{ ref: "NoAdverseReactions", selector: "NursingDocs_Assessment [name=\"ND_Ass_None\"]"},
@@ -20,7 +20,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 			PatientSelected : this.PatientSelected,
 			scope : this
 		});
-	
+	/**
 		this.control({
 			"NursingDocs_Assessment [name=\"ND_Ass_None\"]" : {
 				change : this.ClickNoneCheckbox
@@ -28,11 +28,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 			"NursingDocs_PretreatmentAssesment checkbox" : {
 				change : this.ClickCheckbox
 			},
-            "NursingDocs_Assessment button[action=\"save\"]": {
-                click: this.SaveAssessments
-            }
-			
+			"NursingDocs_Assessment button[action=\"save\"]": {
+				click: this.SaveAssessments
+			}
 		});
+	 **/
 	},
 
 	/* Note: This function gets called twice when a patient is selcted */
@@ -168,7 +168,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 					Ext.MessageBox.alert("Saving Error", "ND - Assessment Section, Save Error - " + resp.msg );
 				}
 				else {
-					theApp.fireEvent("loadAdverseEventsHistory");
+					var theTable2Update = "TheTable2Update";
+					theApp.fireEvent("loadAdverseEventsHistory", theTable2Update);
 					Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 					Patient.AssessmentRecordID = resp.AssessmentID;
 				}

@@ -5,7 +5,8 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		"NewPlan.CTOS.FlowSheetOptionalQues",
 		"NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions",
 		"TemplateList.puWinListPatients",
-		"Common.puWinChangeAdminDate"
+		"Common.puWinChangeAdminDate",
+		"Common.DEMOpuWin"
 	],
 
 	init: function () {
@@ -35,6 +36,9 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 			},
 			"ProgrammerBtns button[text=\"Change Admin Date\"]" : {
 				"click" : this.ClickChangeAdminDate
+			},
+			"ProgrammerBtns button[text=\"Demo Pop Up Window\"]" : {
+				"click" : this.DemoPUWin
 			}
 		});
 	},
@@ -94,6 +98,10 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 			];
 		}
 		Ext.widget("puWinListPatients");
+	},
+
+	DemoPUWin : function() {
+		var DemoPUWin = Ext.widget("DEMOpuWin");
 	},
 
 	ClickAddCumulativeDosing : function() {

@@ -9,7 +9,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 		{ "xtype" : "NursingDocs_Chemotherapy", "cls" : "Level1" },
 		{ "xtype" : "FlowSheetGrid" },
 		{ "xtype" : "DiseaseResponsePanel" },
-		{ "xtype" : "ToxicitySideEffectsPanel" },
+		// { "xtype" : "ToxicitySideEffectsPanel" },
+		{ "xtype" : "FS_ToxicityHistory" },
 		{ "xtype" : "OtherInfoPanel" },
 		{ "xtype" : "LabInfo" }
 	]

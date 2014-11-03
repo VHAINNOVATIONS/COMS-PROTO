@@ -1,11 +1,11 @@
 Ext.define("COMS.view.NewPlan.CTOS.FlowSheetOptionalQues", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.FlowSheetOptionalQues",
-	"title" : "Optional Information",
+	"title" : "Adding General Information",
 	"layout" : "fit",
 	"autoShow" : true,
-	"width" : 850,
-	"height" : 450,
+	"width" : 950,
+	"height" : 550,
 	"closeAction" : "destroy",
 	"defaultFocus" : "[name=\"DRData\"]",
 
@@ -23,23 +23,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheetOptionalQues", {
 						{ "xtype" : "textareafield", "grow" : true, "height" : 180, "name" : "DRData", "fieldLabel" : "Disease Response"}
 					]
 				},
-
-				{
-					"xtype" : "fieldset", "title" : "Toxicity", "collapsible" : true, 
-					"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "10", "width" : 700 },
-					"items" : [
-						{ 
-							"xtype" : "combobox", 
-							"name" : "ToxInstr", 
-							"store" : "Toxicity", 
-							"displayField" : "Label", 
-							"valueField" : "ID", 
-							"fieldLabel" : "Toxicity" 
-						},
-						{ "xtype" : "displayfield", "name" : "ToxDetails", "fieldLabel" : "Details" },
-						{ "xtype" : "textareafield", "grow" : true, "height" : 180,"name" : "Data", "fieldLabel" : "Comments"}
-					]
-				},
+				{ "xtype" : "FS_Toxicity" },
 				{
 					"xtype" : "fieldset", "title" : "Other", "collapsible" : true, 
 					"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "margin" : "10", "width" : 700 },

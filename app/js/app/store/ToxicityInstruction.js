@@ -1,6 +1,7 @@
 Ext.define('COMS.store.ToxicityInstruction', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.ToxicityInstruction,
+	groupField : "Grade_Level",
 	proxy: {
 		type: 'rest',
 		url : Ext.URLs.ToxicityInstruction,
@@ -8,7 +9,9 @@ Ext.define('COMS.store.ToxicityInstruction', {
 			type: 'json',
 			root : 'records'
 		}
-	},
+	}
+/*********	,
+
 	listeners: {
 		"load" : function(store, records, success) {
 			if(success){
@@ -22,4 +25,5 @@ Ext.define('COMS.store.ToxicityInstruction', {
 			}
 		}
 	}
+************/
 });

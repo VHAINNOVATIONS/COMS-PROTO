@@ -2005,6 +2005,7 @@ fieldContainerWalk : function(item, y, z) {
             }
             patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete Update Templates Loaded");
 			COMS.Patient = this.application.Patient;
+			COMS.Application = this.application;
         }
 		if ("No Current Template Applied to patient to load" === Loaded) {
 				var selCTOSTemplateObj = this.getSelCTOSTemplate();
@@ -2062,6 +2063,7 @@ fieldContainerWalk : function(item, y, z) {
 			}
 
 			COMS.Patient = this.application.Patient;
+			COMS.Application = this.application;
 			return;
 		}
 
@@ -2262,6 +2264,7 @@ fieldContainerWalk : function(item, y, z) {
 			// MWB - 7/1/2012 Should this process be called here or in the AssignBtnHandlers() which is where it was originally????
 			// Let other controllers know that this event has occurred
 			this.application.fireEvent("PatientSelected", this.application.PatientSelectedRecs, this.application.PatientSelectedOpts);	// MWB 10 Feb 2012 - Added additional parameters
+			// this.application.fireEvent("PatientSelected", { recs: this.application.PatientSelectedRecs, opts : this.application.PatientSelectedOpts });	// FireEvent takes a single object as the args!
 		}
 	},
 

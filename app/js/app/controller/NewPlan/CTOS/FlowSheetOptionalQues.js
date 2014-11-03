@@ -9,8 +9,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	],
 
     refs: [
-		{ ref: "SaveBtn",					selector: "FlowSheetOptionalQues button[text=\"Save\"]"},
-		{ ref: "ToxDetails",					selector: "FlowSheetOptionalQues [name=\"ToxDetails\"]"}
+		{ ref: "SaveBtn",					selector: "FlowSheetOptionalQues button[text=\"Save\"]"}
 	],
 
 	init: function () {
@@ -21,24 +20,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 			},
 			"FlowSheetOptionalQues button[text=\"Cancel\"]" : {
 				click: this.Cancel
-			},
-			"FlowSheetOptionalQues combobox[name=\"ToxInstr\"]" : {
-				"change" : this.SelectToxInstr
 			}
 		});
-	},
-
-	SelectToxInstr : function(theCombo, nValue, oValue, eOpts) {
-		// debugger;
-		var ToxDetailsField = this.getToxDetails();
-
-		var comboStore = theCombo.getStore();
-		var theRecord = comboStore.findRecord("ID", nValue);
-		var theData = theRecord.getData();
-		ToxDetailsField.setValue(theData.Details);
-
-
-
 	},
 
 	Save : function(btn) {
