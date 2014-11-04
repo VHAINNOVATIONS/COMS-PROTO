@@ -78,7 +78,6 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 	},
 
 	"getMinDate" : function() {
-		// var newDate = Ext.Date.add(new Date(), Ext.Date.DAY, -5);
 		var newDate = new Date();
 		return newDate;
 	},
@@ -232,47 +231,50 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		var list = this.getOEMRecords();
 		var listLen = list.length;
 		var rec = list[idxOfFirstRec2Change];
-		var OldDate = rec.AdminDate;
-		var NewDate = this.addDays2Date(this.offsetDays, OldDate); 
-		rec.AdminDate = NewDate;
-		NewDate = Ext.Date.format(new Date(NewDate), "Y-m-d");
-		// console.log("Changing Admin Date from - " + OldDate + " to - " + NewDate);
-	
-		var URL = "/Patient/UpdateAdminDate/" + rec.id + "/" + NewDate;		// TemplateID/AdminDate = 21F92BED-7DA5-4CA2-92B3-4EE1FD5E601C; 2014-09-25
+		if (rec) {
+			var OldDate = rec.AdminDate;
+			var NewDate = this.addDays2Date(this.offsetDays, OldDate); 
+			rec.AdminDate = NewDate;
+			NewDate = Ext.Date.format(new Date(NewDate), "Y-m-d");
+			var URL = "/Patient/UpdateAdminDate/" + rec.id + "/" + NewDate;		// TemplateID/AdminDate = 21F92BED-7DA5-4CA2-92B3-4EE1FD5E601C; 2014-09-25
 
-		Ext.Ajax.request({
-			scope : this,
-			url: URL,
-			success: function( response, opts ){
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				if (resp.success) {
-
-					if (idxOfFirstRec2Change < idxOfLastRec2Change) {
-						idxOfFirstRec2Change++;
-						// console.log("Firing next event - " + idxOfFirstRec2Change);
-						this.application.fireEvent("ProcAdminDateChange", idxOfFirstRec2Change, idxOfLastRec2Change);
+			Ext.Ajax.request({
+				scope : this,
+				url: URL,
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (resp.success) {
+						if (idxOfFirstRec2Change < idxOfLastRec2Change) {
+							idxOfFirstRec2Change++;
+							this.application.fireEvent("ProcAdminDateChange", idxOfFirstRec2Change, idxOfLastRec2Change);
+						}
+						else {
+							this.application.Patient.TreatmentStart = list[0].AdminDate;
+							this.application.Patient.TreatmentEnd = list[listLen-1].AdminDate;
+							var PatientInfo = this.application.Patient;
+							PatientInfo.OEMDataRendered = false;
+							var theController = this.getController("NewPlan.OEM");
+							theController.DisplayOEMRecordData(PatientInfo);
+						}
 					}
 					else {
-						// console.log("Finished changing dates");
-						this.application.Patient.TreatmentStart = list[0].AdminDate;
-						this.application.Patient.TreatmentEnd = list[listLen-1].AdminDate;
-						var PatientInfo = this.application.Patient;
-						PatientInfo.OEMDataRendered = false;
-						var theController = this.getController("NewPlan.OEM");
-						theController.DisplayOEMRecordData(PatientInfo);
-						var theTab = theController.getOEMTab();
-						theController.tabRendered(theTab);
+						alert("load EoTS - Error");
 					}
+				},
+				failure : function( response, opts ) {
+					this.application.unMask();
+					alert("EoTS Data Load Failed...");
 				}
-				else {
-					alert("load EoTS - Error");
-				}
-			},
-			failure : function( response, opts ) {
-				this.application.unMask();
-				alert("EoTS Data Load Failed...");
-			}
-		});
+			});
+		}
+		else {
+			this.application.Patient.TreatmentStart = list[0].AdminDate;
+			this.application.Patient.TreatmentEnd = list[listLen-1].AdminDate;
+			var PatientInfo = this.application.Patient;
+			PatientInfo.OEMDataRendered = false;
+			var theController = this.getController("NewPlan.OEM");
+			theController.DisplayOEMRecordData(PatientInfo);
+		}
 	}
 });

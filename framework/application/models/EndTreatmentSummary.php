@@ -185,6 +185,10 @@ class EndTreatmentSummary extends Model
         $FollowUpAppointments = $form_data->FollowUpAppointments;
         $patId = (!empty($form_data->PAT_ID)) ? $form_data->PAT_ID : null;
         $ClinicalTrial = $form_data->ClinicalTrial;
+		
+		$query = "SELECT match FROM Patient WHERE Patient_ID = $Patient_ID";
+		$nmatch = $this->query($newidquery);
+		ProgressNote($ProviderReport,$nmatch);
 
         $query = 
             "INSERT INTO EoTS (

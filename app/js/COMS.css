@@ -808,3 +808,37 @@ table.FlowsheetTable {
 	font-weight: bold;
 }
 	
+
+.x-grid-cell-checkcolumn .x-grid-cell-inner {
+    padding-top: 4px;
+    padding-bottom: 2px;
+    line-height: 14px;
+}
+.x-grid-with-row-lines .x-grid-cell-checkcolumn .x-grid-cell-inner {
+    padding-top: 3px;
+}
+.x-grid-checkheader {
+    height: 14px;
+    background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/unchecked.gif"); 
+    background-position: 50% -2px;
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+.x-grid-checkheader-checked {
+    background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/checked.gif"); 
+}
+
+.x-grid-checkheader-editor .x-form-cb-wrap {
+    text-align: center;
+}
+
+
+.coms-displayfield-box {
+    padding: 1px 3px;
+    background: repeat-x 0 0;
+    border: 1px solid;
+    background-color: white;
+    background-image: url('/libs/ExtJS_4.1.0/resources/themes/images/default/form/text-bg.gif');
+    border-color: #b5b8c8;
+}

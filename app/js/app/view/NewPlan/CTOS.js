@@ -48,6 +48,10 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 						{ xtype : "selCTOSTemplate", hidden : true },
 
 						{ xtype : 'dspTemplateData'},
+
+//			{ "xtype" : "MedRemindersGrid" },
+//			{ "xtype" : "MedRemindersForm" },
+
 						{ xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' },
 						{ xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' }
                     ]}

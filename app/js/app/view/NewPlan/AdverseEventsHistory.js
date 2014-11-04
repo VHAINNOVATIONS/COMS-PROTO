@@ -8,38 +8,48 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 	"margin" : "0 0 10 0", 
 	"bodyPadding" : "10",
 	"tpl" : new Ext.XTemplate(
-		"{[this.debuggerFcn( values, parent )]}",
-	
+
 	"<tpl for=\".\">",
 		"<table border=\"1\" class=\"InformationTable\">",
-			/* "<tr><th style=\"width: 9em;\">Date:</th><td class=\"AEH_DateHeading\">{date}</td></tr>", */
-			"<tpl for=\"Assessment\">",
-				"<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - {date}</th></tr>",
-				"<tpl for=\"Details\">",
-					"<tpl if=\"alertEvent\"><tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">{fieldLabel} - Flagged as an ALERT</th></tr></tpl>",
-					"<tr><th style=\"width: 9em;\">Event:</th><td>{fieldLabel}</td></tr>",
-					"<tr><th style=\"width: 9em;\">Level:</th><td>{levelChosen}</td></tr>",
-					"<tr><th style=\"width: 9em;\">Comments:</th><td>{comments}</td></tr>",
-				"</tpl>",
-			"</tpl>",
-			"<tpl for=\"Reaction\">",
-				"<tpl if=\"Details.length != 0\">",
-						"{[this.debuggerFcn( values, parent )]}",
-					"<tr><th colspan=\"2\" style=\"text-align: center;\">Reaction - {date}</th></tr>",
-					"<tpl for=\"Details\">",
-						"<tpl if=\"alertEvent\"><tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">{sectionTitle} - {fieldLabel} - Flagged as an ALERT</th></tr></tpl>",
-						"<tr><th style=\"width: 9em;\">Section:</th><td>{sectionTitle}</td></tr>",
-						"<tr><th style=\"width: 9em;\">Event:</th><td>{fieldLabel}</td></tr>",
-						"<tr><th style=\"width: 9em;\">Comments:</th><td>{comments}</td></tr>",
-					"</tpl>",
-				"</tpl>",
-			"</tpl>",
+		"{[this.renderSection( values )]}",
 		"</table>",
 	"</tpl>",
 
 			{
 					// XTemplate Configuration
 				disableFormats: true,
+				renderSection : function ( current ) {
+					var ToxType, buf = "";
+					if (current.type == "Assessment") {
+						ToxType = current.Link.Label;
+						if ("Other" === ToxType) {
+							ToxType = current.Link.OtherTox;
+						}
+						buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - " + current.date + "</th></tr>";
+						if (current.Link.Alert) {
+							buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + ToxType + " - Flagged as an ALERT</th></tr>";
+						}
+
+						buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + ToxType + "</td></tr>";
+						buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Link.Grade_Level + "</td></tr>";
+						buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Link.Details + "</td></tr>";
+						buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Link.Comments + "</td></tr>";
+					}
+					else if (current.type == "Reaction") {
+						buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Reaction - " + current.date + "</th></tr>";
+						var details = current.Link.Details, dLen = details.length, i, rec;
+						for (i = 0; i < dLen; i++) {
+							rec = details[i];
+							if (rec.alertEvent) {
+								buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + rec.fieldLabel + " - Flagged as an ALERT</th></tr>";
+							}
+							buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + rec.fieldLabel + "</td></tr>";
+							buf += "<tr><th style=\"width: 9em;\">Section:</th><td>" + rec.sectionTitle + "</td></tr>";
+							buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + rec.comments + "</td></tr>";
+						}
+					}
+					return buf;
+				},
 				debuggerFcn : function ( current, prev ) {
 					// debugger;
 				}

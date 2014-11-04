@@ -34,6 +34,13 @@ class Model extends SQLQuery {
         return $GUID;
     }
 
+    function varDumpToString ($var) {
+        ob_start();
+        var_dump($var);
+        $result = ob_get_clean();
+        return $result;
+    }
+
     function escapeString($string) {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
             return str_replace("'", "''", $string);

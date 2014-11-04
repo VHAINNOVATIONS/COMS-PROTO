@@ -1509,33 +1509,33 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
 
 
     function doMedRemindersData($fcn, $TemplateID, $MR_ID, $InputData) {
-        $InsertBuf1 = array();;
-        $InsertBuf2 = array();;
-        $UpdateBuf = "";
+        $InsertBuf1 = array();
+        $InsertBuf2 = array();
+        $UpdateBuf = array();
 
         if (isset($InputData->Title)) {
             $Title = $this->escapeString($InputData->Title);
             $InsertBuf1[] = "Title";
             $InsertBuf2[] = "'$Title'";
-            $UpdateBuf .= "Title = '$Title'";
+            $UpdateBuf[] = "Title = '$Title'";
         }
         if (isset($InputData->Description)) {
             $Description = $this->escapeString($InputData->Description);
             $InsertBuf1[] = "Description";
             $InsertBuf2[] = "'$Description'";
-            $UpdateBuf .= "Description = '$Description'";
+            $UpdateBuf[] = "Description = '$Description'";
         }
         if (isset($InputData->ReminderWhenCycle)) {
             $ReminderWhenCycle = $InputData->ReminderWhenCycle;
             $InsertBuf1[] = "ReminderWhenCycle";
             $InsertBuf2[] = "'$ReminderWhenCycle'";
-            $UpdateBuf .= "ReminderWhenCycle = '$ReminderWhenCycle'";
+            $UpdateBuf[] = "ReminderWhenCycle = '$ReminderWhenCycle'";
         }
         if (isset($InputData->ReminderWhenPeriod)) {
             $ReminderWhenPeriod = $InputData->ReminderWhenPeriod;
             $InsertBuf1[] = "ReminderWhenPeriod";
             $InsertBuf2[] = "'$ReminderWhenPeriod'";
-            $UpdateBuf .= "ReminderWhenPeriod = '$ReminderWhenPeriod'";
+            $UpdateBuf[] = "ReminderWhenPeriod = '$ReminderWhenPeriod'";
         }
 
         if ("update" == $fcn) {

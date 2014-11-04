@@ -3,29 +3,32 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 	"stores" : [
 		"Toxicity",
-		"FlowSheetCombo"
+		"FlowSheetCombo",
+		"ToxGridStore"
 	],
 
 	"views" : [
 		"NewPlan.CTOS.FlowSheet",
-		"NewPlan.CTOS.ToxicitySideEffectsPanel",
-		"NewPlan.CTOS.ToxicitySideEffectsPUWin",
 		"NewPlan.CTOS.DiseaseResponsePUWin",
 		"NewPlan.CTOS.OtherPUWin",
 		"NewPlan.CTOS.FlowSheetGrid",
 		"NewPlan.CTOS.FlowSheetOptionalQues",
 		"NewPlan.CTOS.DiseaseResponsePanel",
-		"NewPlan.CTOS.ToxicitySideEffectsPanel",
-		"NewPlan.CTOS.OtherInfoPanel"
+		// "NewPlan.CTOS.ToxicitySideEffectsPanel",
+		"NewPlan.CTOS.FS_Toxicity",
+		"NewPlan.CTOS.OtherInfoPanel",
+		"NewPlan.CTOS.FS_ToxicityHistory"
 	],
 
 	"refs" : [
 		{ "ref" : "FlowSheetGrid",					"selector" : "FlowSheet FlowSheetGrid"},
 		{ "ref" : "FlowSheetGridEdit",				"selector" : "FlowSheet button[name=\"EditOptionalQues\"]"},
 		{ "ref" : "DiseaseResponsePanel",			"selector" : "FlowSheet DiseaseResponsePanel"},
-		{ "ref" : "ToxicitySideEffectsPanel",		"selector" : "FlowSheet ToxicitySideEffectsPanel"},
+		// { "ref" : "ToxicitySideEffectsPanel",		"selector" : "FlowSheet ToxicitySideEffectsPanel"},
+
+		{ "ref" : "FS_ToxicityHistory",		"selector" : "FlowSheet FS_ToxicityHistory"},
 		{ "ref" : "OtherInfoPanel",					"selector" : "FlowSheet OtherInfoPanel"}
-	
+
 	],
 
 	"init" : function () {
@@ -35,6 +38,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			{ 
 				"PatientSelected" : this.PatientSelected, 
 				"scope" : this 
+			},
+			{
+				"loadAdverseEventsHistory" : this.LoadToxicityHistory, 
+				"scope" : this
 			}
 		);
 
@@ -66,7 +73,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			"FlowSheet DiseaseResponsePanel" : {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
-			"FlowSheet ToxicitySideEffectsPanel" : {
+			"FlowSheet FS_ToxicityHistory" : {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
 			"FlowSheet OtherInfoPanel" : {
@@ -108,7 +115,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			thePanel = this.getDiseaseResponsePanel();
 		}
 		else if ("Toxicity" == theLabel) {
-			thePanel = this.getToxicitySideEffectsPanel();
+			thePanel = this.getFS_ToxicityHistory();
 		}
 		else if ("Other" == theLabel) {
 			thePanel = this.getOtherInfoPanel();
@@ -297,9 +304,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 
-
-
-
+	"LoadToxicityHistory" : function() {
+		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
+	},
 
 
 
@@ -310,6 +317,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		this.loading = 0;
 		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
 		this.getOptionalInfoData(this.application.Patient.PAT_ID);
+		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
 
 //		var CurCycle = this.application.Patient.CurFlowSheetCycle;
 //		if (CurCycle) {
@@ -432,6 +440,50 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		});
 	},
 
+	getToxicityHistoryData : function(PAT_ID) {
+		this.loading++;
+		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
+		this.application.loadMask("Loading Flow Sheet Information");
+		var theModule = this.getFS_ToxicityHistory();
+
+		Ext.Ajax.request({
+			scope : this,
+			url: URL,
+			success: function( response, opts ){
+				this.application.unMask();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+
+				if (resp.success) {
+					if (resp.records) {
+						var i, len, rec;
+						this.application.Patient.Assessments = resp.records.Assessments;
+						this.application.Patient.Reactions = resp.records.ReactAssessments;
+						this.application.Patient.TotalAdverseEvents = resp.totalEvents;
+						var theController = this.getController("NewPlan.AdverseEventsHistory");
+						var data = theController.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
+						theModule.update(data.list);
+					}
+				}
+				else {
+					alert("load Flow Sheet Toxicity History - Error");
+				}
+				this.loading--;
+				if (this.loading <= 0) {
+					this.application.unMask();
+				}
+			},
+			failure : function( response, opts ) {
+				this.application.unMask();
+				alert("Flow Sheet Toxicity History Data Load Failed...");
+				this.loading--;
+				if (this.loading <= 0) {
+					this.application.unMask();
+				}
+			}
+		});
+	},
+
 	getOptionalInfoData : function(PAT_ID) {
 		this.loading++;
 		this.application.loadMask("Loading Flow Sheet Information");
@@ -443,8 +495,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 				var obj = Ext.decode(response.responseText);
 				var Panel = this.getDiseaseResponsePanel();
 				Panel.update(obj);
-				Panel = this.getToxicitySideEffectsPanel();
-				Panel.update(obj);
+				// Panel = this.getToxicitySideEffectsPanel();
+				// Panel.update(obj);
 				Panel = this.getOtherInfoPanel();
 				Panel.update(obj);
 				if (this.loading <= 0) {
@@ -454,7 +506,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			},
 
 			failure : function( ) {
-				this.application.unMask();
+				this.ap
+					plication.unMask();
 				alert("Attempt to load Flow Sheet data failed.");
 			}
 		});

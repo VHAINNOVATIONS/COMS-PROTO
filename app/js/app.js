@@ -445,12 +445,14 @@ Ext.URLs.RadiationHistory = theJSPath + "/data1/RadiationHistory.js";
 Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Used in the LookupTable_CycleLengthMax model.
 
-
 // INLINE FOR TESTING: Ext.URLs.Messages = "app/data1/Messages/Filtered/RID/16.js";
 // Param = Role ID,
 // Returns list of all Messages for the specified Role ID, used in "MessagesTab" Grid Control
 // Example Usage - https://devtest.dbitpro.com/Messages/1
 
+
+
+Ext.URLs.ToxGrid = "/NursingDoc/ToxicityDetail";
 
 Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
@@ -524,17 +526,22 @@ Ext.COMSModels.Toxicity = "COMS.model.Toxicity";
 Ext.COMSModels.CumulativeDosingMeds = "COMS.model.CumulativeDosingMeds";
 Ext.COMSModels.PatientCumulativeDosing = "COMS.model.PatientCumulativeDosing";
 Ext.COMSModels.MedReminder = "COMS.model.MedReminder";
+Ext.COMSModels.ToxGridModel = "COMS.model.ToxGridModel";
 
 
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
 // Controllers must be included here if a store is used in the view managed by the controller
 Ext.require([
+
+
+	"Ext.ux.CheckColumn",
 	// common view components
 	"COMS.view.RequiredInstr",
 	"COMS.view.ProgrammerBtns",
 
 
 	// Require loading of all models to prevent the occasional "me.model is null" error
+	Ext.COMSModels.ToxGridModel,
 	Ext.COMSModels.MedRisks,
 	Ext.COMSModels.ClinicInfo,
 	Ext.COMSModels.DischargeInstruction,
@@ -598,6 +605,8 @@ Ext.require([
 	// INLINE FOR TESTING: Ext.COMSModels.Messages,
 
 /*********** LIST OF CONTROLLERS *********************/
+	"COMS.controller.Common.DEMOpuWin",
+	"COMS.controller.NewPlan.CTOS.FS_Toxicity",
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
 	"COMS.controller.CkBoxTArea",
@@ -1609,6 +1618,8 @@ Ext.application({
 		"Navigation"
 		,"ProgrammerBtns"
 		,"CkBoxTArea"
+		, "Common.DEMOpuWin"
+		, "NewPlan.CTOS.FS_Toxicity"
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
 		, "Common.puWinSelCancer"
@@ -1809,5 +1820,32 @@ Ext.define('COMS.Ajax', {
 		Ext.callback(options.callback, options.scope, [options, success, response]);
 		delete me.requests[request.id];
 		return response;
+	}
+});
+
+/* taken from - 
+ * http://www.learnsomethings.com/2011/10/25/ext-grid-grouping-summary-collapse-all-expand-all-and-collapse-all-but-the-top-group-overrides-for-extjs4/ 
+ */
+Ext.override(Ext.grid.feature.Grouping, {
+	collapseAll: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');
+		Ext.Array.forEach(groups, function (group) {        
+			self.collapse(Ext.get(group.id));    
+		});
+	},
+	expandAll: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');   
+		Ext.Array.forEach(groups, function (group) {    
+			self.expand(Ext.get(group.id));    
+		});
+	},
+	collapseAllButTop: function() {
+		var self = this, groups = this.view.el.query('.x-grid-group-body');
+		Ext.Array.forEach(groups, function (group) {        
+			self.collapse(Ext.get(group.id));    
+		});
+		if(groups.length > 0){
+			this.expand(Ext.get(groups[0].id));
+		}
 	}
 });
