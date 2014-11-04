@@ -602,7 +602,8 @@ class LookupController extends Controller {
                 return;
             }
 
-            $EmoLevel = $retVal[0]["emoLevel"];
+            // $EmoLevel = $retVal[0]["emoLevel"];
+            $EmoLevel = $retVal[0]["emoLevelNum"];
             $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
 
             $FNRisk = $retVal[0]["fnRisk"];

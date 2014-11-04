@@ -452,21 +452,21 @@ class LookUp extends Model {
         }
     }
 
-    function getEmoData( $key = "Low" ) {
+    function getEmoData( $key = "1" ) {
         switch($key) {
-            case "Low":
+            case "1":
                 $Label = "Emesis-1";
                 break;
-            case "Medium":
+            case "2":
                 $Label = "Emesis-2";
                 break;
-            case "Moderate":
+            case "3":
                 $Label = "Emesis-3";
                 break;
-            case "High":
+            case "4":
                 $Label = "Emesis-4";
                 break;
-            case "Very High":
+            case "4":
                 $Label = "Emesis-5";
                 break;
         }
@@ -912,6 +912,7 @@ class LookUp extends Model {
                     mt.Cycle_Length AS length, 
                     mt.Emotegenic_ID AS emoID, 
                     l2.Name AS emoLevel, 
+                    l2.Description AS emoLevelNum, 
                     mt.Febrile_Neutropenia_Risk AS fnRisk, 
                     mt.Pre_MH_Instructions preMHInstruct, 
                     mt.Post_MH_Instructions postMHInstruct, 
