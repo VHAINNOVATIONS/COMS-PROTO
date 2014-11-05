@@ -11,7 +11,8 @@ Ext.define("COMS.view.Common.DEMOpuWin", {
 	"resizable" : true,
 	"modal" : true,
 	"items" : [
-		{ "xtype" : "FS_Toxicity" }
+//		{ "xtype" : "FS_Toxicity" }
+		{ "xtype" : "EmeticMeds" }
 	]
 });
 

@@ -2087,4 +2087,166 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
     }
 
 
+
+
+
+
+
+
+
+
+/*
+ *
+ *    CREATE TABLE [dbo].[EmeticMeds](
+ *        [id] [uniqueidentifier] DEFAULT NEWSEQUENTIALID(),
+ *        [EmoLevel] [int] NOT NULL,
+ *        [MedName] [nvarchar](max) NOT NULL,
+ *        [MedID] [uniqueidentifier] NOT NULL,
+ *    )
+ *
+ * Testing:
+ *      Method: GET
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds
+ *      Headers: None
+ *      Data: None
+ *      Returns - JSON List of all EmeticMeds
+ *
+ *      Method: GET specific EmeticMed
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds/7357101E-58A8-4FDD-87D5-C607C5BE9EC1
+ *      Headers: None
+ *      Data: None
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1","Label":"Sample 0000-0000","Details":"Sample 1234 ----------------------","Grade_Level":""}]}
+ *
+ *      Method: POST
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds
+ *      Headers: Content-Type:application/json
+ *      Data: {"Label":"Sample 0000-0000","Details":"0000000000000000000000000000000","Grade_Level" : "Simple Testing Level"}
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1"}]}
+ *
+ *      Method: PUT
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds/7357101E-58A8-4FDD-87D5-C607C5BE9EC1
+ *      Headers: Content-Type:application/json
+ *      Data: {"Details":"Sample 1234 ----------------------"} <-- Changes only the "Details" field of the specified record.
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1"}]}
+ *
+ *      Note: The ID returned from the POST and PUT is not always the same. Also the parameter passed in the PUT must be a valid ID
+ *      The parameter passed in the PUT is the ID that will be returned from that operation
+ *
+ *  Model Functions which get/set the data as called by the controller function
+ *     setToxicityData($ToxID, $_POST);
+ *     updateToxicityData($ToxID, $_POST);
+ *     getToxicity($ToxID);
+ *
+ **/
+    function EmeticMeds($EMedID = null) {
+        $DataType = 'EmeticMeds';
+        $msg = 'Emetic Meds';
+
+        $inputData = file_get_contents('php://input');
+        $post_vars = json_decode($inputData);
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $tmpRecords = array();
+
+
+        if ("GET" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID == null) {
+                $query = "select * from $DataType";
+            }
+            else {
+                $query = "select * from $DataType where id = '$EMedID'";
+            }
+            $retVal = $this->LookUp->query($query);
+            $msg = "Get ". $msg;
+            $tmpRecords = $retVal;
+        }
+
+        else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+            if (!$ToxID) {
+                $ToxID = $this->LookUp->newGUID();
+            }
+            $records = $this->LookUp->setToxicityData($ToxID, $post_vars);
+            $msg = "Create ". $msg;
+            $ToxRec = array();
+            $ToxRec["ID"] = $ToxID;
+            $tmpRecords[] = $ToxRec;
+        }
+        else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
+            if ($ToxID) {
+                $records = $this->LookUp->updateToxicityData($ToxID, $post_vars);
+                $msg = "Update ". $msg;
+                $ToxRec = array();
+                $ToxRec["ID"] = $ToxID;
+                $tmpRecords[] = $ToxRec;
+            }
+        }
+        else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
+        }
+
+
+        if ($this->checkForErrors("$msg Emetic Meds Info Failed. ", $records)) {
+            $jsonRecord["success"] = "false";
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        } 
+        $jsonRecord["total"] = count($tmpRecords);
+        $jsonRecord["records"] = $tmpRecords;
+        $this->set("jsonRecord", $jsonRecord);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

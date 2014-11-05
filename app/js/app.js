@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 595 & 1595
+ **** Controllers ~ 608 & 1615
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -453,6 +453,8 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 
 
 Ext.URLs.ToxGrid = "/NursingDoc/ToxicityDetail";
+Ext.URLs.EmeticMeds = "/LookUp/EmeticMeds";
+Ext.COMSModels.EmeticMeds = "COMS.model.EmeticMeds";
 
 Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
@@ -633,6 +635,7 @@ Ext.require([
 	"COMS.controller.Management.Toxicity",
 	"COMS.controller.Management.AddLookups",
 	"COMS.controller.Management.CumulativeDosing",
+	"COMS.controller.Management.EmeticMeds",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -1645,6 +1648,7 @@ Ext.application({
 		, "Management.Toxicity"
 		, "Management.AddLookups"
 		, "Management.CumulativeDosing"
+		, "Management.EmeticMeds"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"
