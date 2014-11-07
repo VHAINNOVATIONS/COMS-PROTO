@@ -5,13 +5,13 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 	"autoEl": {
 		tag: "section"
 	},
-	"margin": 10,
+	border: false,
 	"defaults": {
 		"labelAlign": "right",
 		"labelClsExtra": "NursingDocs-label",
 		"labelWidth" : 130,
 		"allowBlank" : false,
-		"margin": 10
+		"margin": "10 0"
 	},
 	"items": [
 		{
@@ -74,7 +74,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"store": "EmeticMeds",
 			"forceFit": true,
 			"overflowY": "scroll",
-			"margin": "10",
+			"margin": "10 0",
 			"multiSelect": true,
 			"viewConfig": {
 				"stripeRows": true,

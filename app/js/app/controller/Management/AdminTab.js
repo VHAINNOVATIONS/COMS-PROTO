@@ -20,7 +20,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.MedicationDocumentation',
 		'Management.ClinicInfo',
 		'Management.DischargeInstructionManagement',
-		'Management.MedRisks'
+		'Management.MedRisks',
+		'Management.EmeticMedsTab'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
