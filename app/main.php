@@ -187,9 +187,11 @@
 <script type="text/javascript" src="/libs/boomerang.js"></script>
 <script type="text/javascript" src="LocalizedCode.js"> </script>
 <script type="text/javascript" src="/libs/prettyPrint.js"></script>
-<script type="text/javascript" <?php
-    echo "src=\"$Version/$Deployment\"";
-?>></script>
+
+
+<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script>
+
+<!-- <script type="text/javascript" src="js/AllScripts.js"></script> -->
 
 <script>
 var UseNewQueryMethod = true;

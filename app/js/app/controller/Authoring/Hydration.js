@@ -205,7 +205,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	'TotalCoursesMax'
 	, 'CycleLengthMax'
 	, 'TimeFrameUnit'
-	, 'EmotegenicLevel'
+	, 'EmetogenicLevel'
 	, 'FebrileNeutropeniaRisk'
 	, 'ReferencesStore'
 	, 'LUReferences'

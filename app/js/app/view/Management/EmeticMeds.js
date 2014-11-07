@@ -16,12 +16,12 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 	"items": [
 		{
 			"xtype" : "combo",
-			"name" : "EmotegenicLevel",
+			"name" : "EmetogenicLevel",
 			"fieldLabel" : "Emotegenic Level <em>*</em>",
 			"labelAlign" : "right",
-			"store" : "EmotegenicLevel",
+			"store" : "EmetogenicLevel",
 			"displayField" : "name",
-			"valueField" : "id"
+			"valueField" : "description"
 		},
 		{
 			"xtype" : "container",
@@ -29,7 +29,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"defaults": {
 				"labelAlign": "right",
 				"labelClsExtra": "NursingDocs-label",
-				"width" : 200,
+				"width" : 350,
 				"labelWidth" : 130,
 				"allowBlank" : false,
 				"margin" : "5 5 5 0"
@@ -84,13 +84,13 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"columns": [
 				{
 					"text": "Emetic Level",
-					"dataIndex": "EmoLevel",
+					"dataIndex": "EmoLevelName",
 					"flex": 1
 				},
 				{
 					"text": "Medication",
 					"dataIndex": "MedName",
-					"flex": 1
+					"flex": 2
 				},
 				{
 					"text": "ID",

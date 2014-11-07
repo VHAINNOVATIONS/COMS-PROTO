@@ -185,9 +185,9 @@ Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 
 
-Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
-Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
-Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
+Ext.URLs.EmetogenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
+Ext.URLs.EmetogenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
+Ext.URLs.EmetogenicLevel = "/LookUp/view/Emetogenic";
 
 
 
@@ -473,7 +473,7 @@ Ext.COMSModels.DiseaseStage = "COMS.model.DiseaseStage";
 Ext.COMSModels.Drugs = "COMS.model.Drugs"; // MWB - 12/29/2011 - Added drug listing
 Ext.COMSModels.DrugUnits = "COMS.model.DrugUnits"; // MWB - 12/29/2011 - Added drug units listing
 Ext.COMSModels.DrugRegimen = "COMS.model.DrugRegimen"; // MWB - 12/30/2011 - Added Drug Regimen
-Ext.COMSModels.EmotegenicLevel = "COMS.model.LookupTable_EmotegenicLevel";
+Ext.COMSModels.EmetogenicLevel = "COMS.model.LookupTable_EmetogenicLevel";
 Ext.COMSModels.FebrileNeutropeniaRisk = "COMS.model.LookupTable_FebrileNeutropeniaRisk";
 Ext.COMSModels.FluidType = "COMS.model.LookupTable_FluidType";
 Ext.COMSModels.GenericLookup = "COMS.model.GenericLookupModel";
@@ -534,14 +534,10 @@ Ext.COMSModels.ToxGridModel = "COMS.model.ToxGridModel";
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
 // Controllers must be included here if a store is used in the view managed by the controller
 Ext.require([
-
-
 	"Ext.ux.CheckColumn",
 	// common view components
 	"COMS.view.RequiredInstr",
 	"COMS.view.ProgrammerBtns",
-
-
 	// Require loading of all models to prevent the occasional "me.model is null" error
 	Ext.COMSModels.ToxGridModel,
 	Ext.COMSModels.MedRisks,
@@ -562,7 +558,7 @@ Ext.require([
 	Ext.COMSModels.Toxicity,
 	Ext.COMSModels.CumulativeDosingMeds,
 	Ext.COMSModels.PatientCumulativeDosing,
-	Ext.COMSModels.EmotegenicLevel,
+	Ext.COMSModels.EmetogenicLevel,
 	Ext.COMSModels.FebrileNeutropeniaRisk,
 	Ext.COMSModels.References,
 	Ext.COMSModels.LUReferences,

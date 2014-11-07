@@ -2097,12 +2097,31 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
 
 /*
  *
- *    CREATE TABLE [dbo].[EmeticMeds](
- *        [id] [uniqueidentifier] DEFAULT NEWSEQUENTIALID(),
- *        [EmoLevel] [int] NOT NULL,
- *        [MedName] [nvarchar](max) NOT NULL,
- *        [MedID] [uniqueidentifier] NOT NULL,
- *    )
+ 
+    CREATE TABLE [dbo].[EmeticMeds](
+        [id] [uniqueidentifier] DEFAULT NEWSEQUENTIALID(),
+        [EmoLevel] [int] NOT NULL,
+        [MedName] [nvarchar](max) NOT NULL,
+        [MedID] [uniqueidentifier] NOT NULL,
+        [MedType] [nvarchar](15) NOT NULL
+    )
+GO    
+INSERT INTO [COMS_TEST_3].[dbo].[EmeticMeds]
+           ([EmoLevel]
+           ,[MedName]
+           ,[MedID]
+           ,[MedType]
+           )
+     VALUES
+           (1
+           ,'5-FLUOROURACIL  FLUOROURACIL INJ,SOLN'
+           ,'7A95474E-A99F-E111-903E-000C2935B86F'
+           ,'InPatient')
+GO
+
+select * from EmeticMeds
+
+
  *
  * Testing:
  *      Method: GET
@@ -2148,41 +2167,61 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
         $jsonRecord["success"] = true;
         $tmpRecords = array();
 
-
+/* Note: The "Magic Number" 13 is the Type in the Lookup Table for the Emetic Levels (1-4) */
         if ("GET" == $_SERVER["REQUEST_METHOD"]) {
             if ($EMedID == null) {
-                $query = "select * from $DataType";
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13";
             }
             else {
-                $query = "select * from $DataType where id = '$EMedID'";
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13
+where l1.MedID = '$EMedID'";
             }
-            $retVal = $this->LookUp->query($query);
+            $records = $this->LookUp->query($query);
             $msg = "Get ". $msg;
-            $tmpRecords = $retVal;
+            $tmpRecords = $records;
         }
 
         else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
-            if (!$ToxID) {
-                $ToxID = $this->LookUp->newGUID();
-            }
-            $records = $this->LookUp->setToxicityData($ToxID, $post_vars);
+            $EMedID = $this->LookUp->newGUID();
+            $records = $this->LookUp->setEmeticMedData($EMedID, $post_vars);
             $msg = "Create ". $msg;
-            $ToxRec = array();
-            $ToxRec["ID"] = $ToxID;
-            $tmpRecords[] = $ToxRec;
+            $Rec = array();
+            $Rec["id"] = $EMedID;
+            $tmpRecords[] = $Rec;
         }
         else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
-            if ($ToxID) {
-                $records = $this->LookUp->updateToxicityData($ToxID, $post_vars);
+            if ($EMedID) {
+                $records = $this->LookUp->updateEmeticMedData($EMedID, $post_vars);
                 $msg = "Update ". $msg;
-                $ToxRec = array();
-                $ToxRec["ID"] = $ToxID;
-                $tmpRecords[] = $ToxRec;
+                $Rec = array();
+                $Rec["id"] = $EMedID;
+                $tmpRecords[] = $Rec;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to update";
             }
         }
         else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID) {
+                $query = "delete from EmeticMeds where id='$EMedID'";
+                $records = $this->LookUp->query($query);
+                $msg = "Delete ". $msg;
+                $tmpRecords = $records;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to delete";
+            }
         }
-
 
         if ($this->checkForErrors("$msg Emetic Meds Info Failed. ", $records)) {
             $jsonRecord["success"] = "false";
@@ -2194,59 +2233,5 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
         $jsonRecord["records"] = $tmpRecords;
         $this->set("jsonRecord", $jsonRecord);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
