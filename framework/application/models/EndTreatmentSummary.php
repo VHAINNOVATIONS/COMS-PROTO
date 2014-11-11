@@ -186,8 +186,11 @@ class EndTreatmentSummary extends Model
         $patId = (!empty($form_data->PAT_ID)) ? $form_data->PAT_ID : null;
         $ClinicalTrial = $form_data->ClinicalTrial;
 		
-		$query = "SELECT match FROM Patient WHERE Patient_ID = $Patient_ID";
-		$nmatch = $this->query($newidquery);
+		$query = "SELECT match FROM Patient WHERE Patient_ID = '$Patient_ID'";
+		$nmatch = $this->query($query);
+		foreach($nmatch as $row){
+			$nmatch= $row['match'];
+        }	
 		ProgressNote($ProviderReport,$nmatch);
 
         $query = 
