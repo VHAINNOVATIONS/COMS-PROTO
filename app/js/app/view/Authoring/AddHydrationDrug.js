@@ -63,8 +63,10 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							width: 405,
 							name: 'Drug',
 							store: 'DrugStore',
-							queryMode: 'local',
 							allowBlank: false,
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
 							displayField: 'name',
 							valueField: 'name'
 						}]
@@ -112,6 +114,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'displayField' : 'name',
 							'valueField' : 'name',
 							'allowBlank' : false,
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
 							'name' : 'Units1'
 						}, 
 						{
@@ -123,6 +128,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'displayField' : 'name',
 							'valueField' : 'name' ,
 							'allowBlank' : false,
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
 							'name' : 'Infusion1'
 						}
 						]
@@ -144,9 +152,12 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								width: 205,
 								lableWidth: 85,
 								allowBlank: false,
-								queryMode: 'local',
 								displayField: 'value',
 								valueField: 'value',
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
+
 								store: 'LookupStore'
 							},
 							{

@@ -2519,13 +2519,198 @@ Data:
         }
 
         if ($this->checkForErrors("$msg Medication Reminder Failed. ", $records)) {
-            $jsonRecord["success"] = "false";
+            $jsonRecord["success"] = false;
             $jsonRecord["msg"] = $this->get("frameworkErr");
             $this->set("jsonRecord", $jsonRecord);
             return;
         } 
         $jsonRecord["total"] = count($tmpRecords);
         $jsonRecord["records"] = $tmpRecords;
+        $this->set("jsonRecord", $jsonRecord);
+    }
+
+
+
+/******************
+ *
+ *
+ * CREATE TABLE [dbo].[EditLockout](
+ *  [id] [uniqueidentifier] DEFAULT NEWSEQUENTIALID(),
+ *  [Patient_ID] [uniqueidentifier] NOT NULL,
+ *  [Section] [nvarchar](max) NULL,
+ *  [User] [nvarchar](max) NULL,
+ *  [dtLocked] [datetime] NULL,
+ *  [dtUnLocked] [datetime] NULL
+ *  
+ *  GET: - http://coms-mwb.dbitpro.com:355/Patient/Lock
+ *  Get info for all locked sites
+ * 
+ *  GET: - http://coms-mwb.dbitpro.com:355/Patient/Lock/<Patient_ID>/<SECTION_NAME>
+ *  Example: - http://coms-mwb.dbitpro.com:355/Patient/Lock/8C77FF35-1D9D-46CA-8082-190D81559EB0/MySite2313
+ *  Get Lock State (true/false) for site specified by Patient_ID = 8C77FF35-1D9D-46CA-8082-190D81559EB0 and Site = MySite2313
+ * 
+ *  PUT: - http://coms-mwb.dbitpro.com:355/Patient/Lock/<R_ID>
+ *  Example: - http://coms-mwb.dbitpro.com:355/Patient/Lock/B9925432-1B69-E411-8A4E-000C2935B86F
+ *  Unlock site specified by record_id = B9925432-1B69-E411-8A4E-000C2935B86F
+ * 
+ *  POST: - http://coms-mwb.dbitpro.com:355/Patient/Lock/<Patient_ID>/<SECTION_NAME>
+ *  Example: - http://coms-mwb.dbitpro.com:355/Patient/Lock/8C77FF35-1D9D-46CA-8082-190D81559EB0/MySite2313
+ *  Lock site specified by Patient_ID = 8C77FF35-1D9D-46CA-8082-190D81559EB0 and Site = MySite2313
+ *  Returns true and record if site is locked
+ *  Returns false and record info of who currently has site locked.
+ * 
+ ******************/
+
+    /* returns records indicating site section is locked */
+    /* if return is one or more records then that indicates those sections are locked. */
+    function _getLockedState($Patient_ID = null, $Section=null ) {
+        $query = "select 
+        el.id, 
+        el.Patient_ID, 
+        el.Section, 
+        el.UserName, 
+        CONVERT(varchar,el.dtLocked,100) as dtLocked, 
+        CONVERT(varchar,el.dtUnLocked,100) as dtUnLocked 
+        from EditLockout el where Patient_ID = '$Patient_ID' 
+        and Section = '$Section' 
+        and dtLocked is not null 
+        and dtUnLocked is null";
+
+error_log("_getLockedState = $query");
+        $retVal = $this->Patient->query($query);
+        return $retVal;
+    }
+
+    function _isSiteLocked($Patient_ID = null, $Section=null ) {
+        $retVal = $this->_getLockedState($Patient_ID, $Section);
+error_log("_isSiteLocked = " . count($retVal));
+        return (count($retVal) > 0);
+    }
+
+    function _unlockSite($rid) {
+        $query = "Update EditLockout set dtUnLocked = GETDATE() where id = '$rid'";
+        $records = $this->Patient->query($query);
+    }
+
+    function Lock($Patient_ID = null, $Section=null, $State=null) {
+
+error_log("Lock = $Patient_ID, $Section, $State");
+
+
+
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $records = array();
+        $msg = "";
+        if ("GET" == $_SERVER["REQUEST_METHOD"]) {
+            /* Additional check for "" takes care of just a trailing slash at the end of the request URI */
+            if ((null === $Patient_ID || "" === $Patient_ID) && null === $Section && null === $State) {
+                error_log("Get info on all locked records");
+                $query = "select 
+                el.id, 
+                el.Patient_ID, 
+                el.Section, 
+                el.UserName, 
+                CONVERT(varchar,el.dtLocked,100) as dtLocked, 
+                CONVERT(varchar,el.dtUnLocked,100) as dtUnLocked, 
+                ISNULL(p.Last_Name, '') as Last_Name,
+                ISNULL(p.First_Name, '') as First_Name,
+                ISNULL(p.Middle_Name, '') as Middle_Name,
+                ISNULL(p.Prefix, '') as Prefix, 
+                ISNULL(p.Suffix, '') as Suffix, 
+                p.Match
+                from EditLockout el 
+                join Patient p on p.Patient_ID = el.Patient_ID
+                where el.dtLocked is not null 
+                and el.dtUnLocked is null";
+
+                $records = $this->Patient->query($query);
+                $jsonRecord["success"] = true;
+                $jsonRecord["total"] = count($records);
+                $jsonRecord["records"] = $records;
+                $this->set("jsonRecord", $jsonRecord);
+                return;
+            }
+
+            if (null === $State){   // Get current state
+                $msg = "Get Lock State for specified section";
+                $LockState = $this->_isSiteLocked($Patient_ID, $Section);
+                $State = $LockState ? "Locked" : "Unlocked";
+                $jsonRecord["success"] = true;
+                $jsonRecord["LockState"] = $State; 
+                $this->set("jsonRecord", $jsonRecord);
+                return;
+            }
+        }
+        else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+error_log("Lock = POST");
+            $LockState = $this->_isSiteLocked($Patient_ID, $Section);
+
+            if ($LockState) {   /* Site is already locked, return info on who has it locked */
+error_log("Site is locked");
+                $records = $this->_getLockedState($Patient_ID, $Section);
+                $jsonRecord["success"] = false;
+                $jsonRecord["total"] = count($records);
+                $jsonRecord["records"] = $records;
+                $this->set("jsonRecord", $jsonRecord);
+                return;
+            }
+
+error_log("Site is NOT locked");
+            $User = $_SESSION["dname"];
+            $MR_ID = $this->Patient->newGUID();
+            $query = "INSERT INTO EditLockout
+(id, Patient_ID, Section, UserName, dtLocked)
+VALUES
+('$MR_ID','$Patient_ID', '$Section', '$User', GETDATE())";
+error_log("POST - $query");
+                $records = $this->Patient->query($query);
+
+error_log("Lock - POST - " . $this->varDumpToString($records));
+
+                $query = "select * from EditLockout where id = '$MR_ID'";
+                $records = $this->Patient->query($query);
+
+error_log("Lock - getLocked - " . $this->varDumpToString($records));
+
+
+                $jsonRecord["success"] = true;
+                $jsonRecord["total"] = count($records);
+                $jsonRecord["records"] = $records;
+
+                $this->set("jsonRecord", $jsonRecord);
+                return;
+        }
+        else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
+            error_log("Unlocking locked record");
+            if (null === $Patient_ID || "" === $Patient_ID) {
+                $jsonRecord["success"] = false;
+                $jsonRecord["msg"] = "No record ID to unlock";
+                $this->set("jsonRecord", $jsonRecord);
+                return;
+            }
+            $retVal = $this->_unlockSite($Patient_ID);
+            $jsonRecord["success"] = true;
+            $jsonRecord["msg"] = "Specified section has been unlocked";
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        }
+        else {
+            $jsonRecord["success"] = false;
+            $jsonRecord["msg"] = "Invalid Request - " . $_SERVER["REQUEST_METHOD"];
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        }
+
+        if ($this->checkForErrors("$msg Edit Lock Failed. ", $records)) {
+            $jsonRecord["success"] = false;
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        } 
+
+        $jsonRecord["total"] = count($records);
+        $jsonRecord["records"] = $records;
         $this->set("jsonRecord", $jsonRecord);
     }
 }

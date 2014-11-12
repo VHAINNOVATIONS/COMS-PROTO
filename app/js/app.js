@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 608 & 1615
+ **** Controllers ~ 608 & 1675
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.Lockout = "/Patient/Lock";
 Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
 Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
@@ -604,6 +605,7 @@ Ext.require([
 
 /*********** LIST OF CONTROLLERS *********************/
 	"COMS.controller.Common.DEMOpuWin",
+	"COMS.controller.Common.EmeticInfo",
 	"COMS.controller.NewPlan.CTOS.FS_Toxicity",
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
@@ -632,6 +634,7 @@ Ext.require([
 	"COMS.controller.Management.AddLookups",
 	"COMS.controller.Management.CumulativeDosing",
 	"COMS.controller.Management.EmeticMeds",
+	"COMS.controller.Management.Lockout",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -746,7 +749,68 @@ Ext.Amputations["Right Foot"] = {
 };
 
 
+/*
+ * Sections:
+ *		Amputations
+ *
+ */
+Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
+	/* 
+	 *	fcn = "Lock", "Unlock" 
+	 *	rid = Patient_ID if fcn = "Lock", Record_ID if fcn = "Unlock";
+	 *	section = Section to manage
+	 */
+	var CMD = "POST";
+	var URL = Ext.URLs.Lockout + "/" + rid;
+	if ("Unlock" == fcn) {
+		CMD = "PUT";
+	}
+	else {
+		URL += "/" + section;
+	}
+	Ext.Ajax.request({
+		url: URL,
+		method : CMD,
+		scope: this,
+		callback : callback,
+		params : params,
+		success: function( response, opts ){
+			var text = response.responseText;
+			var resp = Ext.JSON.decode( text );
+			if (resp.records) {
+				LockedInfo = resp.records[0];
+			}
+			if (resp.success) {
+				opts.callback(opts.params);
+			}
+			else {
+				var Owner = resp.records[0].UserName;
+				if (Owner === dName) {
+					Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "You currently have the " + resp.records[0].Section + " section locked for editing" );
+					opts.callback(opts.params);
+				}
+				else {
+					Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "The " + resp.records[0].Section + " section is currently locked by " + Owner );
+					opts.callback = null;
+				}
+			}
+		},
+		failure : function( response, opts ) {
+			opts.callback = null;
+			var text = response.responseText;
+			var resp = Ext.JSON.decode( text );
+			Ext.MessageBox.alert("Saving Error", "Saving Error", "Can't " + fcn + " desired section - <br />" + resp.msg );
+		}
+	});
+};
+Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
+	Ext.COMS_LockoutAjaxCall("Lock", PatientID, Section, callback, params);
+};
 
+Ext.COMS_UnLockSection = function() {
+	Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
+	delete LockedInfo;
+};
 
 Ext.togglePanelOnTitleBarClick = function(panel) {
 	try {
@@ -1615,9 +1679,10 @@ Ext.application({
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
-		,"ProgrammerBtns"
-		,"CkBoxTArea"
+		, "ProgrammerBtns"
+		, "CkBoxTArea"
 		, "Common.DEMOpuWin"
+		, "Common.EmeticInfo"
 		, "NewPlan.CTOS.FS_Toxicity"
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
@@ -1645,6 +1710,7 @@ Ext.application({
 		, "Management.AddLookups"
 		, "Management.CumulativeDosing"
 		, "Management.EmeticMeds"
+		, "Management.Lockout"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"

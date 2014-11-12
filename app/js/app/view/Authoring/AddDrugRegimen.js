@@ -53,9 +53,12 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						'width' : 425,
 						'name' : 'Drug',
 						'store' : 'DrugStore',
-						'queryMode' : 'local',
 						'displayField' : 'name',
 						'valueField' : 'name',
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
+
 						'allowBlank' : false
 					}
 				]
@@ -123,6 +126,10 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						'displayField' : 'name',
 						'valueField' : 'name',
 						'allowBlank' : false,
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
+
 						'name' : 'Units'
 					}, 
 					{
@@ -134,6 +141,10 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						'displayField' : 'name',
 						'valueField' : 'name' ,
 						'allowBlank' : false,
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
+
 						'name' : 'Route'
 					}
 				]
@@ -155,9 +166,12 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						width: 220,
 						lableWidth:85,
 						allowBlank: false,
-						queryMode: 'local',
 						displayField: 'value',
 						valueField: 'value',
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeahead' : true,
+
 						store: 'LookupStore'
 					},
 					{

@@ -167,6 +167,17 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		// debugger;
 	},
 
+
+	showAmputationWiget : function() {
+		debugger;
+		if (!this.puWinAmputations) {
+			this.puWinAmputations = Ext.widget("puWinSelAmputation");
+		}
+		else {
+			this.puWinAmputations.show();
+		}
+	},
+
 	AssignLinkClicksInPatientInformationTable : function(thePanel, opts) {
 	/* See: http://stackoverflow.com/questions/8079942/ext-js-proper-technique-to-add-listeners-to-dom-created-via-an-xtemplate */
 		thePanel.body.on("click", 
@@ -185,10 +196,8 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
  **/
 				switch( theClass ) {
 					case "anchor AddEditAmputation" : 
-						if (!this.puWinAmputations) {
-							this.puWinAmputations = Ext.widget("puWinSelAmputation");
-						}
-						this.puWinAmputations.show();
+						console.log("Click Anchor");
+						Ext.COMS_LockSection(this.application.Patient.id, "Amputations", this.showAmputationWiget);
 						break;
 					case "anchor AddEditBSA" : 
 						if (!this.puWinBSA) {

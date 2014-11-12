@@ -412,12 +412,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
  *  Description = Amputation (e.g. "Left Foot", "Lower Left Arm", etc) One Amputation per record
  *  Use Patient Controller
  **/
- /*
-	doAmputationSelection : function() {
-		this.puWinAmputations = Ext.widget("puWinSelAmputation");
-		this.puWinAmputations.show();
-	},
-*/
 
 	ShowBSACalcsPUWin : function(opts, tab2switch2) {
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;

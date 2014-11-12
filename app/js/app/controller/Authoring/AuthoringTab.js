@@ -47,7 +47,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, "Common.selTemplate"
 		, "Common.selSequence"
 		, "Common.MedRemindersForm"
-
+		, "Common.EmeticInfo"
 		],
 
 
@@ -298,6 +298,31 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
+	updateEmeticMedLevel : function( template ) {
+		var HighestLevel = 0, HLName, HLMName, el, eln;
+		var theData = template.getData();
+		var theMeds = Ext.Array.merge(theData.Meds, theData.PreMHMeds, theData.PostMHMeds);
+		var EmeticMedStore = Ext.getStore("EmeticMeds");
+		var buf, i, aRec, aMed, medRec, medLen = theMeds.length;
+		for (i = 0; i < medLen; i++) {
+			aMed = theMeds[i];
+			aRec = EmeticMedStore.findRecord("MedName", aMed.Drug, 0, false, false, true);
+			if (aRec) {
+				el = aRec.getData().EmoLevel;
+				if (el > HighestLevel) {
+					HighestLevel = el;
+					HLName = aRec.getData().EmoLevelName;
+					HLMName = aRec.getData().MedName;
+				}
+			}
+		}
+		if (HighestLevel > 0) {
+			buf = "<span style=\"border: 3px solid red; padding: 1em;\">" + HLMName + " has a " + HLName + "</div>";
+			var EmeticInfoCtl = this.getController("Common.EmeticInfo");
+			EmeticInfoCtl.setEmeticInfoContent(buf);
+		}
+	},
+
 
 	getCourseInfo : function( thisTab ) {
 		return thisTab.down("[name=\"courseInfo\"]");
@@ -347,6 +372,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					authoringCtl.application.unMask();
 					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData.frameworkErr);
 				}
+
 			}
 		});
 	},
@@ -512,6 +538,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		else {
 			this.LoadFormWithExistingData(template);
 		}
+		this.updateEmeticMedLevel(template);
 	},
 
 	/* Load Form with existing data */

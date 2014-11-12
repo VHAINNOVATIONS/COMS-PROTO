@@ -23,6 +23,8 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			]
 		},
 
+		{ xtype : 'EmeticInfo' },
+
 		{ xtype : 'TemplateHydration', title : 'Pre Therapy', type : 'Pre' },
 		{ xtype : 'TemplateDrugRegimen', title : 'Therapy' },
 		{ xtype : 'TemplateHydration', title : 'Post Therapy', type : 'Post' },

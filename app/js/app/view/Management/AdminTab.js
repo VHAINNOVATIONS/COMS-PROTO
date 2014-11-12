@@ -16,7 +16,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ xtype : "AddLookups", title: "LookUps" },
 				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"},
 				{ xtype : "EmeticMedsTab", title : "Emetic Medications", name : "Emetic_Meds_Tab"},
-				{ xtype : "Toxicity", title: "Toxicity"}
+				{ xtype : "Toxicity", title: "Toxicity"},
+				{ xtype : "LockoutTab", title: "LockoutTab"}
 			]
 		},
 		{ xtype : "tabpanel", title: "Template Management",
