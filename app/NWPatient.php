@@ -35,16 +35,16 @@ $patientsearch = $match;
 	include('Net/SSH2.php');	 /* Changed to match Sandbox - 30 May 2014 */
 	
 	//Set Variables
-	$host = '172.19.100.94';
-	$username = 'cachemgr355';
-	$password = 'vhaino355';
-	$csession = 'csession cache355';
-	$cdUnix = 'D ^%CD';
-	$instance = 'CPM355';
-	$cprsLogin = 'S DUZ=1';
-	$patientLocation = 'GEN MED';
-	$actingProvider = 'v107';
-	$routine = 'ROUTINE';
+	//$host = '172.19.100.94';
+	//$username = 'cachemgr355';
+	//$password = 'vhaino355';
+	//$csession = 'csession cache355';
+	//$cdUnix = 'D ^%CD';
+	//$instance = 'CPM355';
+	//$cprsLogin = 'S DUZ=1';
+	//$patientLocation = 'GEN MED';
+	//$actingProvider = 'v107';
+	//$routine = 'ROUTINE';
 	
 	function NewOrderPatient($drug,$dose,$Regimen_Dose_Unit,$Description,$match,$NumberofDoses){
 	if ($Description === 'old'){
@@ -54,9 +54,13 @@ $patientsearch = $match;
 	$orderday = date('m_d_Y');
 	
 	//Set Variables
-	$host = '172.19.100.94';
-	$username = 'cachemgr355';
-	$password = 'vhaino355';
+	//$host = '172.19.100.94';
+	$host = $_SESSION['vista'];
+	//$username = 'cachemgr355';
+	$username = $_SESSION['sshusr'];
+	$AC = $_SESSION['AC'];
+	$VC = $_SESSION['VC'];
+	$password = '';
 	$csession = 'csession cache355';
 	$cdUnix = 'D ^%CD';
 	$instance = 'CPM355';
@@ -75,56 +79,35 @@ $patientsearch = $match;
          exit('Login Failed');
     }
 
-	sleep(20);
 	$ssh->write("\r");
-	$ssh->write("$csession \n");
-	sleep(1);
-	$ssh->write("$cdUnix \n");
-	sleep(1);
-	$ssh->write("$instance");
-	$ssh->write("\n");
-	sleep(1);
-	$ssh->write("$cprsLogin");
-	$ssh->write("\n");
-	sleep(1);
-	$ssh->write("D ^XUP");
-	$ssh->write("\n");
-	sleep(2);
-	$ssh->write("Order");
-	$ssh->write("\n");
-	sleep(1);
-	$ssh->write("1");
-	$ssh->write("\n");
-	sleep(1);
-	$ssh->write("FD \r");
-	$ssh->write("$patientSearch");
-	sleep(1);
+	sleep(3);
+	sleep(3);
 	$ssh->write("\r");
+	$ssh->write("$AC\r");
+	$ssh->write("$VC\r");
+	sleep(3);
 	$ssh->write("\r");
-	$ssh->write("\r");
-	$ssh->write("Orders \r");
+	$ssh->write("OE\r");
+	
+	$ssh->write("FD\r");
+	$ssh->write("$patientSearch\r");
 	sleep(1);
-	$ssh->write("NW \r");
-	sleep(1);
-	$ssh->write("$patientLocation");
-	$ssh->write("\r");
-	sleep(1);
-	$ssh->write("$actingProvider");
-	$ssh->write("\r");
-	sleep(1);
-	$ssh->write("y");
+	$ssh->write("AD\r");
 	sleep(1);
 	$ssh->write("\r");
 	sleep(1);
+	$ssh->write("$patientLocation\r");
 	if ($Description === 'InPatient'){
-	$ssh->write("15");
-	$ssh->write("\r");
-	sleep(1);
+		$ssh->write("15\r");
 	}elseif ($Description === 'OutPatient'){
-	$ssh->write("20");
-	$ssh->write("\r");
-	sleep(1);
+		$ssh->write("20\r");
 	}
+	$ssh->write("Provider, One\r");
+	$ssh->write("1\r");
+	
+	sleep(1);
+
+	sleep(1);
 	if ($tdrug === '5-FU  FLUOROURACIL INJ,SOLN'){
 	$ssh->write("5");
 	$ssh->write("\r");
@@ -202,7 +185,7 @@ $patientsearch = $match;
 	$ssh->write("\r");
 	sleep(1);
 	$ssh->write("\r");
-	sleep(1);
+	sleep(5);
 	$ssh->write("P");
 	$ssh->write("\r");
 	}else{
@@ -242,9 +225,13 @@ $patientsearch = $match;
 	function writeDebug($SSHresults,$tdrug,$patientSearch,$orderday){
 	$timeset = date(His);
 	$myFile = "SSHDebug\SSHDebug+".$patientSearch."+".$tdrug."+".$orderday."+".$timeset.".txt";
-	$fh = fopen($myFile, 'w') or die("writeDebug:can't open file");
+	file_put_contents($myFile, $SSHresults);
+	$fh = fopen($myFile, 'w') or die("writeDebug: can't open file");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
+	//echo $SSHresults;
 	}
+	
+	//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match)
 
 ?>

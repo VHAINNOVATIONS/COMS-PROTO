@@ -1,26 +1,20 @@
 <?php
 	//Include and Set phpseclib path
-   // set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');	 /* Changed to match Sandbox - 30 May 2014 */
+    ///set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib');	 /* Changed to match Sandbox - 30 May 2014 */
 	
 	//Include SSH2 file
-	//include('Net/SSH2.php');	 /* Changed to match Sandbox - 30 May 2014 */
+	///include('Net/SSH2.php');	 /* Changed to match Sandbox - 30 May 2014 */
 
     $drug = "";
     $dose = "";
     $Regimen_Dose_Unit = "";
     $Description = "";
     $match = "";
-
-$patientsearch = $match;
-
-
-	
+	$patientsearch = $match;
 	
 	function ProgressNote($note,$match){
 
-	
 	$orderday = date('m_d_Y');
-	
 	//Set Variables
 	$host = '54.83.44.110';
 	$username = 'vista';
@@ -64,6 +58,8 @@ $patientsearch = $match;
 	sleep(1);
 	$ssh->write("NW\r");
 	sleep(1);
+	$ssh->write("N\r");
+	sleep(1);
 	$ssh->write("Primary Care General Note\r");
 	sleep(1);
 	$ssh->write("Yes\r");
@@ -99,8 +95,8 @@ $patientsearch = $match;
 	//Read Results
 	$SSHresults = $ssh->read();
 	//echo $SSHresults;
-	
-	//writeDebug($SSHresults,$tdrug,$patientSearch,$orderday);
+	$xxx = 'nothing';
+	//writeDebug($SSHresults,$note,$patientSearch,$xxx);
 	}
 	
 
