@@ -6,6 +6,9 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 
 	init: function() {
 		this.control({
+			"puWinSelCancer" : {
+				"close" : this.Close
+			},
 			"selDisease": {
 				select: this.onDiseaseSelected
 			},
@@ -18,7 +21,6 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			"puWinSelCancer button[text=\"Save\"]" : {
 				click: this.Save
 			}
-
 		});
 	},
 
@@ -94,10 +96,16 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 				}
 			});
 **/
+			this.Close();
 		}
 	},
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').hide();
+		this.Close();
+	},
+
+	Close : function() {
+		Ext.COMS_UnLockSection();
 	}
 });

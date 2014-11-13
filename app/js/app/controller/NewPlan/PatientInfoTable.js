@@ -169,7 +169,6 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 
 
 	showAmputationWiget : function() {
-		debugger;
 		if (!this.puWinAmputations) {
 			this.puWinAmputations = Ext.widget("puWinSelAmputation");
 		}
@@ -177,6 +176,34 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 			this.puWinAmputations.show();
 		}
 	},
+
+	ShowBSAWidget : function() {
+		if (!this.puWinBSA) {
+			this.puWinBSA = Ext.widget("puWinSelBSA");
+		}
+		else {
+			this.puWinBSA.show();
+		}
+	},
+
+	ShowCancerWidget : function() {
+		if (!this.puWinCancer) {
+			this.puWinCancer = Ext.widget("puWinSelCancer");
+		}
+		else {
+			this.puWinCancer.show();
+		}
+	},
+
+	ShowAddCumulativeMedication : function() {
+		if (!this.puWinCumDose) {
+			this.puWinCumDose = Ext.widget("puWinAddCumDose");
+		}
+		else {
+			this.puWinCumDose.show();
+		}
+	},
+
 
 	AssignLinkClicksInPatientInformationTable : function(thePanel, opts) {
 	/* See: http://stackoverflow.com/questions/8079942/ext-js-proper-technique-to-add-listeners-to-dom-created-via-an-xtemplate */
@@ -200,10 +227,13 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 						Ext.COMS_LockSection(this.application.Patient.id, "Amputations", this.showAmputationWiget);
 						break;
 					case "anchor AddEditBSA" : 
-						if (!this.puWinBSA) {
-							this.puWinBSA = Ext.widget("puWinSelBSA");
-						}
-						this.puWinBSA.show();
+						Ext.COMS_LockSection(this.application.Patient.id, "AddEditBSA", this.ShowBSAWidget);
+						break;
+					case "anchor AddEditCancer" : 
+						Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.ShowCancerWidget);
+						break;
+					case "anchor AddCumulativeMedication" :
+						Ext.COMS_LockSection(this.application.Patient.id, "AddCumulativeMedication", this.ShowAddCumulativeMedication);
 						break;
 					case "anchor DoBSACalcs" : 
 						thisCtl.ShowBSACalcsPUWin({}, "DoBSACalcs");
@@ -221,15 +251,6 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 							autoScroll : true,
 							html : htmlData
 						}).show();
-						break;
-					case "anchor AddEditCancer" : 
-						if (!this.puWinCancer) {
-							this.puWinCancer = Ext.widget("puWinSelCancer");
-						}
-						this.puWinCancer.show();
-						break;
-					case "anchor AddCumulativeMedication" :
-						this.puWinCumDose = Ext.widget("puWinAddCumDose");
 						break;
 				}
 			},

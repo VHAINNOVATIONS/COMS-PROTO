@@ -752,7 +752,17 @@ Ext.Amputations["Right Foot"] = {
 /*
  * Sections:
  *		Amputations
+ *		AddEditBSA
+ *		AddEditCancer
+ *		AddCumulativeMedication
+ *		
+ *	Enable Lock:
+ *		Ext.COMS_LockSection(<ID of patient to lock>, <Section to lock>, <Callback Function when lock is enabled to continue>);
+ *	Example:
+ *		Ext.COMS_LockSection(this.application.Patient.id, "Amputations", this.showAmputationWiget); 
  *
+ *	Call to Unlock last locked section
+ *		Ext.COMS_UnLockSection();
  */
 Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 	/* 
@@ -772,7 +782,7 @@ Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 		url: URL,
 		method : CMD,
 		scope: this,
-		callback : callback,
+		lockCallback : callback,
 		params : params,
 		success: function( response, opts ){
 			var text = response.responseText;
@@ -781,22 +791,24 @@ Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 				LockedInfo = resp.records[0];
 			}
 			if (resp.success) {
-				opts.callback(opts.params);
+				if (opts.lockCallback) {
+					opts.lockCallback.call(this, opts.params);
+				}
 			}
 			else {
 				var Owner = resp.records[0].UserName;
 				if (Owner === dName) {
-					Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "You currently have the " + resp.records[0].Section + " section locked for editing" );
-					opts.callback(opts.params);
+					// Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "You currently have the " + resp.records[0].Section + " section locked for editing" );
+					opts.lockCallback.call(this, opts.params);
 				}
 				else {
 					Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "The " + resp.records[0].Section + " section is currently locked by " + Owner );
-					opts.callback = null;
+					opts.lockCallback = null;
 				}
 			}
 		},
 		failure : function( response, opts ) {
-			opts.callback = null;
+			opts.lockCallback = null;
 			var text = response.responseText;
 			var resp = Ext.JSON.decode( text );
 			Ext.MessageBox.alert("Saving Error", "Saving Error", "Can't " + fcn + " desired section - <br />" + resp.msg );
@@ -808,6 +820,7 @@ Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
 };
 
 Ext.COMS_UnLockSection = function() {
+	debugger;
 	Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
 	delete LockedInfo;
 };
