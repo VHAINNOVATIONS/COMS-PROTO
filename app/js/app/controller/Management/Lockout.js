@@ -51,7 +51,6 @@ Ext.define('COMS.controller.Management.Lockout', {
 
 	UnlockRecord : function(theRecords) {
 		var record = theRecords.pop();
-		debugger;
 		if (record) {
 			var rID = record.get("id");
 			var CMD = "PUT";

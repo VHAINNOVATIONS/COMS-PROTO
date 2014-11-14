@@ -24,6 +24,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 					beforerender: this.loadGridStore
 			},
 
+			"FS_Toxicity button[text=\"Add\"]" : {
+				click: this.LockAndAddNewRecord
+			},
+
 			"FS_Toxicity button[text=\"Delete\"]" : {
 				click: this.DeleteSelectedRecords
 			},
@@ -61,7 +65,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 	RefreshToxGrid : function(theBtn) {
 		var theGrid = this.getTheGrid(theBtn);
-		debugger;
 		this.loadGridStore(theGrid);
 	},
 
@@ -73,6 +76,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 			return thisComp.findParentByType("FS_Toxicity").down(str);
 		}
 	},
+
+	getAddRecordBtn :  function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[text=\"Add\"]");
+	},
+	getAddRecordPanel : function(thisComp) {
+		return this.gnrlGetComponent(thisComp, "[name=\"ToxicityEditPanel\"]");
+	},
+	
 	getTheGrid : function(thisComp) {
 		return this.gnrlGetComponent(thisComp, "[name=\"Toxicity Grid\"]");
 	},
@@ -151,6 +162,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		theForm.reset();
 		this.RowIdx = null;
 		theGrid.getSelectionModel().clearSelections();
+
+		this.releaseLock(this.getAddRecordPanel(btn));
+
 	},
 
 	Save : function(btn) {
@@ -216,6 +230,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		theStore.commitChanges();
 		theForm.reset();
 		this.Saving = false;
+
+		this.releaseLock(this.getAddRecordPanel(theForm));
 		this.application.fireEvent("loadAdverseEventsHistory");
 	},
 
@@ -544,6 +560,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var theData = recs[0].getData().Details;
 		theData = Ext.util.Format.htmlDecode(theData);
 		DetailsField.setValue(theData);
+	},
+
+
+	AddNewRecord : function(params) {
+		var me = params.scope;
+		var theBtn = params.theBtn;
+		var theAddRecordPanel = me.getAddRecordPanel(theBtn);
+		theAddRecordPanel.show();
+		theBtn.setDisabled(true);
+	},
+
+	LockAndAddNewRecord : function(theBtn) {
+		var params = { scope : this, theBtn : theBtn };
+		Ext.COMS_LockSection(this.application.Patient.id, "Toxicity", this.AddNewRecord, params); 
+	},
+
+	releaseLock : function(thePanel) {
+		thePanel.hide();
+		var theBtn = this.getAddRecordBtn(thePanel);
+		theBtn.setDisabled(false);
+		Ext.COMS_UnLockSection();
 	}
 
 
