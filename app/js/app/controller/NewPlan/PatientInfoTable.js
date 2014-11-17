@@ -185,8 +185,8 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		}
 		else {
 			try {
-			this.puWinBSA.show();
-		}
+				this.puWinBSA.show();
+			}
 			catch (e) {
 				this.puWinBSA = Ext.widget("puWinSelBSA");
 				this.puWinBSA.show();
@@ -201,8 +201,8 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		}
 		else {
 			try {
-			this.puWinCancer.show();
-		}
+				this.puWinCancer.show();
+			}
 			catch (e) {
 				this.puWinCancer = Ext.widget("puWinSelCancer");
 				this.puWinCancer.show();
