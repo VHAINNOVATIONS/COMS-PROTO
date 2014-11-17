@@ -15,8 +15,6 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ xtype : "DischargeInstructionManagement", title: "Discharge Instructions"},
 				{ xtype : "AddLookups", title: "LookUps" },
 				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"},
-				{ xtype : "EmeticMedsTab", title : "Emetic Medications", name : "Emetic_Meds_Tab"},
-				{ "xtype" : "MedRisks", "title" : "Neutropenia / Emesis Risks"},
 				{ xtype : "Toxicity", title: "Toxicity"}
 			]
 		},
@@ -27,6 +25,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 			items : [
 				{ "xtype" : "DeleteTemplate", "title" : "Delete Template"},
 				{ "xtype" : "DiseaseStaging", "title" : "Disease Staging" },
+				{ "xtype" : "EmeticMedsTab", title : "Emetic Medications", name : "Emetic_Meds_Tab"},
+				{ "xtype" : "MedRisks", "title" : "Neutropenia / Emesis Risks"},
 				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		},
