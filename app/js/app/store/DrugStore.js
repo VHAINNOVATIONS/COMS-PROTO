@@ -3,7 +3,6 @@ Ext.define('COMS.store.DrugStore', {
     model : Ext.COMSModels.Drugs,
     listeners: {
         'beforeload' : function(store, options){
-            
             if(options.params){
                 if(options.params.ID!=null){
                     store.proxy.url = options.params.URL + options.params.ID;

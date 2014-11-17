@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 595 & 1595
+ **** Controllers ~ 608 & 1675
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.Lockout = "/Patient/Lock";
 Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
 Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
@@ -185,9 +186,9 @@ Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
 
 
 
-Ext.URLs.EmotegenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
-Ext.URLs.EmotegenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
-Ext.URLs.EmotegenicLevel = "/LookUp/view/Emetogenic";
+Ext.URLs.EmetogenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
+Ext.URLs.EmetogenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
+Ext.URLs.EmetogenicLevel = "/LookUp/view/Emetogenic";
 
 
 
@@ -453,6 +454,8 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 
 
 Ext.URLs.ToxGrid = "/NursingDoc/ToxicityDetail";
+Ext.URLs.EmeticMeds = "/LookUp/EmeticMeds";
+Ext.COMSModels.EmeticMeds = "COMS.model.EmeticMeds";
 
 Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";
 Ext.COMSModels.MedRisks = "COMS.model.MedRisks";
@@ -471,7 +474,7 @@ Ext.COMSModels.DiseaseStage = "COMS.model.DiseaseStage";
 Ext.COMSModels.Drugs = "COMS.model.Drugs"; // MWB - 12/29/2011 - Added drug listing
 Ext.COMSModels.DrugUnits = "COMS.model.DrugUnits"; // MWB - 12/29/2011 - Added drug units listing
 Ext.COMSModels.DrugRegimen = "COMS.model.DrugRegimen"; // MWB - 12/30/2011 - Added Drug Regimen
-Ext.COMSModels.EmotegenicLevel = "COMS.model.LookupTable_EmotegenicLevel";
+Ext.COMSModels.EmetogenicLevel = "COMS.model.LookupTable_EmetogenicLevel";
 Ext.COMSModels.FebrileNeutropeniaRisk = "COMS.model.LookupTable_FebrileNeutropeniaRisk";
 Ext.COMSModels.FluidType = "COMS.model.LookupTable_FluidType";
 Ext.COMSModels.GenericLookup = "COMS.model.GenericLookupModel";
@@ -532,14 +535,10 @@ Ext.COMSModels.ToxGridModel = "COMS.model.ToxGridModel";
 // Don't include a controller here until it's included in the "controllers" array in the Ext.application() below.
 // Controllers must be included here if a store is used in the view managed by the controller
 Ext.require([
-
-
 	"Ext.ux.CheckColumn",
 	// common view components
 	"COMS.view.RequiredInstr",
 	"COMS.view.ProgrammerBtns",
-
-
 	// Require loading of all models to prevent the occasional "me.model is null" error
 	Ext.COMSModels.ToxGridModel,
 	Ext.COMSModels.MedRisks,
@@ -560,7 +559,7 @@ Ext.require([
 	Ext.COMSModels.Toxicity,
 	Ext.COMSModels.CumulativeDosingMeds,
 	Ext.COMSModels.PatientCumulativeDosing,
-	Ext.COMSModels.EmotegenicLevel,
+	Ext.COMSModels.EmetogenicLevel,
 	Ext.COMSModels.FebrileNeutropeniaRisk,
 	Ext.COMSModels.References,
 	Ext.COMSModels.LUReferences,
@@ -606,6 +605,7 @@ Ext.require([
 
 /*********** LIST OF CONTROLLERS *********************/
 	"COMS.controller.Common.DEMOpuWin",
+	"COMS.controller.Common.EmeticInfo",
 	"COMS.controller.NewPlan.CTOS.FS_Toxicity",
 	"COMS.controller.Navigation",
 	"COMS.controller.ProgrammerBtns",
@@ -633,6 +633,8 @@ Ext.require([
 	"COMS.controller.Management.Toxicity",
 	"COMS.controller.Management.AddLookups",
 	"COMS.controller.Management.CumulativeDosing",
+	"COMS.controller.Management.EmeticMeds",
+	"COMS.controller.Management.Lockout",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -747,7 +749,81 @@ Ext.Amputations["Right Foot"] = {
 };
 
 
+/*
+ * Sections:
+ *		Amputations
+ *		AddEditBSA
+ *		AddEditCancer
+ *		AddCumulativeMedication
+ *		
+ *	Enable Lock:
+ *		Ext.COMS_LockSection(<ID of patient to lock>, <Section to lock>, <Callback Function when lock is enabled to continue>);
+ *	Example:
+ *		Ext.COMS_LockSection(this.application.Patient.id, "Amputations", this.showAmputationWiget); 
+ *
+ *	Call to Unlock last locked section
+ *		Ext.COMS_UnLockSection();
+ */
+Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
+	/* 
+	 *	fcn = "Lock", "Unlock" 
+	 *	rid = Patient_ID if fcn = "Lock", Record_ID if fcn = "Unlock";
+	 *	section = Section to manage
+	 */
+	var CMD = "POST";
+	var URL = Ext.URLs.Lockout + "/" + rid;
+	if ("Unlock" == fcn) {
+		CMD = "PUT";
+	}
+	else {
+		URL += "/" + section;
+	}
+	Ext.Ajax.request({
+		url: URL,
+		method : CMD,
+		scope: this,
+		lockCallback : callback,
+		params : params,
+		success: function( response, opts ){
+			var text = response.responseText;
+			var resp = Ext.JSON.decode( text );
+			if (resp.records) {
+				LockedInfo = resp.records[0];
+			}
+			if (resp.success) {
+				if (opts.lockCallback) {
+					opts.lockCallback.call(this, opts.params);
+				}
+			}
+			else {
+				var Owner = resp.records[0].UserName;
+				if (Owner === dName) {
+					// Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "You currently have the " + resp.records[0].Section + " section locked for editing" );
+					opts.lockCallback.call(this, opts.params);
+				}
+				else {
+					Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "The " + resp.records[0].Section + " section is currently locked by " + Owner );
+					opts.lockCallback = null;
+				}
+			}
+		},
+		failure : function( response, opts ) {
+			opts.lockCallback = null;
+			var text = response.responseText;
+			var resp = Ext.JSON.decode( text );
+			Ext.MessageBox.alert("Saving Error", "Saving Error", "Can't " + fcn + " desired section - <br />" + resp.msg );
+		}
+	});
+};
+Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
+	Ext.COMS_LockoutAjaxCall("Lock", PatientID, Section, callback, params);
+};
 
+Ext.COMS_UnLockSection = function() {
+	debugger;
+	Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
+	delete LockedInfo;
+};
 
 Ext.togglePanelOnTitleBarClick = function(panel) {
 	try {
@@ -1616,9 +1692,10 @@ Ext.application({
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
 		"Navigation"
-		,"ProgrammerBtns"
-		,"CkBoxTArea"
+		, "ProgrammerBtns"
+		, "CkBoxTArea"
 		, "Common.DEMOpuWin"
+		, "Common.EmeticInfo"
 		, "NewPlan.CTOS.FS_Toxicity"
 		, "Common.SelectAdverseReactionAlerts"
 		, "Common.puWinSelAmputation"
@@ -1645,6 +1722,8 @@ Ext.application({
 		, "Management.Toxicity"
 		, "Management.AddLookups"
 		, "Management.CumulativeDosing"
+		, "Management.EmeticMeds"
+		, "Management.Lockout"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"

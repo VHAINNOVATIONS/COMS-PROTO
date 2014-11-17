@@ -13,7 +13,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	init: function() {
 		this.control({
 			"puWinAddCumDose" : {
-				"show" : function() {this.Saving=false;}
+				"show" : function() {this.Saving=false;},
+				"close" : this.Close
 			},
 			"puWinAddCumDose button[text=\"Cancel\"]" : {
 				click: this.Cancel
@@ -208,9 +209,11 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 				scope : this,
 				success: function(form) {
 					this.FormSubmitGood(form);
+					this.Close();
 				},
 				failure: function(form, action) {
 					this.FormSubmitBad(form, action);
+					this.Close();
 				}
 			}
 		);
@@ -229,5 +232,10 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').close();
+		this.Close();
+	},
+
+	Close : function() {
+		Ext.COMS_UnLockSection();
 	}
 });

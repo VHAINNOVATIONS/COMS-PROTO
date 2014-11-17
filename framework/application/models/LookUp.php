@@ -452,21 +452,21 @@ class LookUp extends Model {
         }
     }
 
-    function getEmoData( $key = "Low" ) {
+    function getEmoData( $key = "1" ) {
         switch($key) {
-            case "Low":
+            case "1":
                 $Label = "Emesis-1";
                 break;
-            case "Medium":
+            case "2":
                 $Label = "Emesis-2";
                 break;
-            case "Moderate":
+            case "3":
                 $Label = "Emesis-3";
                 break;
-            case "High":
+            case "4":
                 $Label = "Emesis-4";
                 break;
-            case "Very High":
+            case "4":
                 $Label = "Emesis-5";
                 break;
         }
@@ -912,6 +912,7 @@ class LookUp extends Model {
                     mt.Cycle_Length AS length, 
                     mt.Emotegenic_ID AS emoID, 
                     l2.Name AS emoLevel, 
+                    l2.Description AS emoLevelNum, 
                     mt.Febrile_Neutropenia_Risk AS fnRisk, 
                     mt.Pre_MH_Instructions preMHInstruct, 
                     mt.Post_MH_Instructions postMHInstruct, 
@@ -1869,5 +1870,54 @@ class LookUp extends Model {
         }
         error_log("getToxicity - $query");
         return $this->query($query);
+    }
+
+
+    function doEmeticMedData($fcn, $EmeticID, $InputData) {
+        $InsertBuf1 = array();
+        $InsertBuf2 = array();
+        $UpdateBuf = array();
+        $DataType = "EmeticMeds";
+        if (isset($InputData->EmoLevel)) {
+            $EmoLevel = $this->escapeString($InputData->EmoLevel);
+            $InsertBuf1[] = "EmoLevel";
+            $InsertBuf2[] = "'$EmoLevel'";
+            $UpdateBuf[] = "EmoLevel = '$EmoLevel'";
+        }
+        if (isset($InputData->MedName)) {
+            $MedName = $this->escapeString($InputData->MedName);
+            $InsertBuf1[] = "MedName";
+            $InsertBuf2[] = "'$MedName'";
+            $UpdateBuf[] = "MedName = '$MedName'";
+        }
+        if (isset($InputData->MedID)) {
+            $MedID = $InputData->MedID;
+            $InsertBuf1[] = "MedID";
+            $InsertBuf2[] = "'$MedID'";
+            $UpdateBuf[] = "MedID = '$MedID'";
+        }
+        if (isset($InputData->MedType)) {
+            $MedType = $InputData->MedType;
+            $InsertBuf1[] = "MedType";
+            $InsertBuf2[] = "'$MedType'";
+            $UpdateBuf[] = "MedType = '$MedType'";
+        }
+
+        if ("update" == $fcn) {
+            $query = "UPDATE $DataType SET " . implode(", ", $UpdateBuf) . " where id = '$EmeticID'";
+        }
+        else {
+            $InsertBuf1[] = "id";
+            $InsertBuf2[] = "'$EmeticID'";
+            $query = "INSERT into $DataType (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
+        }
+        error_log("EmeticMeds - $query");
+        return $this->query($query);
+    }
+    function setEmeticMedData($EmeticID, $_POST) {
+        return $this->doEmeticMedData("insert", $EmeticID, $_POST);
+    }
+    function updateEmeticMedData($EmeticID, $_POST) {
+        return $this->doEmeticMedData("update", $EmeticID, $_POST);
     }
 }

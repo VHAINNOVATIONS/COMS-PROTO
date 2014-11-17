@@ -14,14 +14,16 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			layout: 'hbox', 
 			defaults : {displayField: 'value', valueField: 'id' },
 			items: [
-				{ xtype: 'combo', name: 'EmotegenicLevel', fieldLabel: 'Emotegenic Level <em>*</em>', labelAlign: 'right', 
+				{ xtype: 'combo', name: 'EmetogenicLevel', fieldLabel: 'Emetogenic Level <em>*</em>', labelAlign: 'right', 
 					width: 400, labelWidth: 120, allowBlank: false,
-					store: 'EmotegenicLevel', displayField : 'name', valueField : 'id'
+					store: 'EmetogenicLevel', displayField : 'name', valueField : 'id'
 				},
 				{ xtype : 'textfield', maskRe: /[0-9\.]/, maxValue: 100, minValue: 0, name: 'FebrileNeutropeniaRisk', fieldLabel: 'Febrile Neutropenia Risk', labelAlign: 'right', width : 210, labelWidth: 150 },
 				{ xtype : 'container', html : "%", margin: '1 0 0 3' }
 			]
 		},
+
+		{ xtype : 'EmeticInfo' },
 
 		{ xtype : 'TemplateHydration', title : 'Pre Therapy', type : 'Pre' },
 		{ xtype : 'TemplateDrugRegimen', title : 'Therapy' },

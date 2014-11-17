@@ -1241,7 +1241,7 @@ BOOMR.plugins.BW = {
 			// will complain about insecure resources, so the best is to just bail
 			// and hope that the user gets the cookie from some other page
 
-			BOOMR.info("HTTPS detected, skipping bandwidth test", "bw");
+			// BOOMR.info("HTTPS detected, skipping bandwidth test", "bw");
 			impl.complete = true;
 			BOOMR.sendBeacon();
 			return this;

@@ -602,7 +602,8 @@ class LookupController extends Controller {
                 return;
             }
 
-            $EmoLevel = $retVal[0]["emoLevel"];
+            // $EmoLevel = $retVal[0]["emoLevel"];
+            $EmoLevel = $retVal[0]["emoLevelNum"];
             $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
 
             $FNRisk = $retVal[0]["fnRisk"];
@@ -2085,5 +2086,152 @@ MedName=8695474E-A99F-E111-903E-000C2935B86F&CumulativeDoseAmt=5000&CumulativeDo
         $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Medication already exists)");
     }
 
+
+
+
+
+
+
+
+
+
+/*
+ *
+ 
+    CREATE TABLE [dbo].[EmeticMeds](
+        [id] [uniqueidentifier] DEFAULT NEWSEQUENTIALID(),
+        [EmoLevel] [int] NOT NULL,
+        [MedName] [nvarchar](max) NOT NULL,
+        [MedID] [uniqueidentifier] NOT NULL,
+        [MedType] [nvarchar](15) NOT NULL
+    )
+GO    
+INSERT INTO [COMS_TEST_3].[dbo].[EmeticMeds]
+           ([EmoLevel]
+           ,[MedName]
+           ,[MedID]
+           ,[MedType]
+           )
+     VALUES
+           (1
+           ,'5-FLUOROURACIL  FLUOROURACIL INJ,SOLN'
+           ,'7A95474E-A99F-E111-903E-000C2935B86F'
+           ,'InPatient')
+GO
+
+select * from EmeticMeds
+
+
+ *
+ * Testing:
+ *      Method: GET
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds
+ *      Headers: None
+ *      Data: None
+ *      Returns - JSON List of all EmeticMeds
+ *
+ *      Method: GET specific EmeticMed
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds/7357101E-58A8-4FDD-87D5-C607C5BE9EC1
+ *      Headers: None
+ *      Data: None
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1","Label":"Sample 0000-0000","Details":"Sample 1234 ----------------------","Grade_Level":""}]}
+ *
+ *      Method: POST
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds
+ *      Headers: Content-Type:application/json
+ *      Data: {"Label":"Sample 0000-0000","Details":"0000000000000000000000000000000","Grade_Level" : "Simple Testing Level"}
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1"}]}
+ *
+ *      Method: PUT
+ *      URL : http://coms-mwb.dbitpro.com:355/LookUp/EmeticMeds/7357101E-58A8-4FDD-87D5-C607C5BE9EC1
+ *      Headers: Content-Type:application/json
+ *      Data: {"Details":"Sample 1234 ----------------------"} <-- Changes only the "Details" field of the specified record.
+ *      Returns - {"success":true,"total":1,"records":[{"ID":"7357101E-58A8-4FDD-87D5-C607C5BE9EC1"}]}
+ *
+ *      Note: The ID returned from the POST and PUT is not always the same. Also the parameter passed in the PUT must be a valid ID
+ *      The parameter passed in the PUT is the ID that will be returned from that operation
+ *
+ *  Model Functions which get/set the data as called by the controller function
+ *     setToxicityData($ToxID, $_POST);
+ *     updateToxicityData($ToxID, $_POST);
+ *     getToxicity($ToxID);
+ *
+ **/
+    function EmeticMeds($EMedID = null) {
+        $DataType = 'EmeticMeds';
+        $msg = 'Emetic Meds';
+
+        $inputData = file_get_contents('php://input');
+        $post_vars = json_decode($inputData);
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $tmpRecords = array();
+
+/* Note: The "Magic Number" 13 is the Type in the Lookup Table for the Emetic Levels (1-4) */
+        if ("GET" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID == null) {
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13";
+            }
+            else {
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13
+where l1.MedID = '$EMedID'";
+            }
+            $records = $this->LookUp->query($query);
+            $msg = "Get ". $msg;
+            $tmpRecords = $records;
+        }
+
+        else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+            $EMedID = $this->LookUp->newGUID();
+            $records = $this->LookUp->setEmeticMedData($EMedID, $post_vars);
+            $msg = "Create ". $msg;
+            $Rec = array();
+            $Rec["id"] = $EMedID;
+            $tmpRecords[] = $Rec;
+        }
+        else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID) {
+                $records = $this->LookUp->updateEmeticMedData($EMedID, $post_vars);
+                $msg = "Update ". $msg;
+                $Rec = array();
+                $Rec["id"] = $EMedID;
+                $tmpRecords[] = $Rec;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to update";
+            }
+        }
+        else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID) {
+                $query = "delete from EmeticMeds where id='$EMedID'";
+                $records = $this->LookUp->query($query);
+                $msg = "Delete ". $msg;
+                $tmpRecords = $records;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to delete";
+            }
+        }
+
+        if ($this->checkForErrors("$msg Emetic Meds Info Failed. ", $records)) {
+            $jsonRecord["success"] = "false";
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        } 
+        $jsonRecord["total"] = count($tmpRecords);
+        $jsonRecord["records"] = $tmpRecords;
+        $this->set("jsonRecord", $jsonRecord);
+    }
 
 }

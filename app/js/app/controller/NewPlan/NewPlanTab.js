@@ -415,12 +415,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
  *  Description = Amputation (e.g. "Left Foot", "Lower Left Arm", etc) One Amputation per record
  *  Use Patient Controller
  **/
- /*
-	doAmputationSelection : function() {
-		this.puWinAmputations = Ext.widget("puWinSelAmputation");
-		this.puWinAmputations.show();
-	},
-*/
 
 	ShowBSACalcsPUWin : function(opts, tab2switch2) {
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
@@ -2511,20 +2505,21 @@ fieldContainerWalk : function(item, y, z) {
 
 
 
-/* Manage the Med Reminders Panel for the CTOS Template Display... */
-var theTemplateID2Pass2MedReminders = CTOSTEmplateData.internalId;
+				/* Manage the Med Reminders Panel for the CTOS Template Display... */
+				var theTemplateID2Pass2MedReminders = CTOSTemplateData.internalId;
 
-var mrGrid = this.getCTOS_MedRemindersGrid();
-var mrForm = this.getCTOS_MedRemindersForm();
-var mrDescField = this.getCTOS_MedRemindersDescription();
-var mrCycleField = this.getCTOS_MedRemindersWhenCycle();
-var mrPeriodField = this.getCTOS_MedRemindersWhenPeriod();
+				var mrGrid = this.getCTOS_MedRemindersGrid();
+				var mrForm = this.getCTOS_MedRemindersForm();
+				var mrDescField = this.getCTOS_MedRemindersDescription();
+				var mrCycleField = this.getCTOS_MedRemindersWhenCycle();
+				var mrPeriodField = this.getCTOS_MedRemindersWhenPeriod();
 
-mrGrid.show();
-mrForm.show();
-
-
-
+				if (mrGrid) {
+					mrGrid.show();
+				}
+				if (mrForm) {
+					mrForm.show();
+				}
 
 
 				this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.

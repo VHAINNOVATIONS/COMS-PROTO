@@ -477,7 +477,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							//echo "TR_Drug_ID: || ".$TR_Drug_ID." || ";
 							//echo " || ".$TR_Route_ID_Name." || ";
 							//yes, this one
-							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
+							NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
 							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TH CprsOrdered',$PID,'Line 435',$OrderID);
 							/////trytihs							
 							//$this->updateOrderStatus($TID,$TR_Drug_ID_Name,'TR',$PID);
@@ -512,7 +512,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					}
 				echo "NumberofDoses: ".$NumberofDoses."  |||| ";
 				//yes, this one
-					//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
+					NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match,$NumberofDoses);
    
 					}
 			echo "DDrecct: ".$DDrecct."";
@@ -580,7 +580,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//yes, this one
-							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+							NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 539',$OrderID);
 					$this->valuecheck("".$match."End and Done");
@@ -614,7 +614,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					}
 				echo "NumberofDoses: ".$NumberofDoses."  |||| ";
 				//yes, this one
-							//NewOrderPatient($MH_Drug_ID_Name,$MHI_Infusion_Amt,$MHI_Infusion_Unit_ID_Name,$MH_Description,$match,$NumberofDoses);
+							NewOrderPatient($MH_Drug_ID_Name,$MHI_Infusion_Amt,$MHI_Infusion_Unit_ID_Name,$MH_Description,$match,$NumberofDoses);
    
 					}
 			echo "DDrecct: ".$DDrecct."";
@@ -703,7 +703,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							echo " || ";
 							echo $OrderID;
 							*/
-							//NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
+							NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match);
 							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652',$OrderID);
 							$this->valuecheck("".$match."End and Done");
 
@@ -736,7 +736,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//yes, this one
-							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+							NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 686',$OrderID);
 				
@@ -801,7 +801,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
-					//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+					NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 804',$OrderID);
 					$this->valuecheck("".$match."End and Done");
@@ -868,7 +868,7 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 							}
 					$OrderType = "MH ".$MH_Pre_Or_Post."";
 					//yes, this one
-							//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
+							NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match);
 					$this->writeOrderDebug($match,$MH_Drug_ID_Name,$MH_ID,$MH_Pre_Or_Post,$MH_Description,$MH_Flow_Rate,$MH_Admin_Day,$MH_Infusion_Time,$MH_Sequence_Number,$MH_Fluid_Vol,$MH_Admin_Time);
 					$this->updateOrderStatusIn($TID,$MH_Drug_ID_Name,$OrderType,$PID,'Line 818',$OrderID);
 					$this->valuecheck("".$match."End and Done");

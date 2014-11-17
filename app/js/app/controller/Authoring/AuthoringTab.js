@@ -19,7 +19,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		'TotalCoursesMax'
 		, 'CycleLengthMax'
 		, 'TimeFrameUnit'
-		, 'EmotegenicLevel'
+		, 'EmetogenicLevel'
 		, 'FebrileNeutropeniaRisk'
 		, 'ReferencesStore'
 		, 'LUReferences'
@@ -47,7 +47,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		, "Common.selTemplate"
 		, "Common.selSequence"
 		, "Common.MedRemindersForm"
-
+		, "Common.EmeticInfo"
 		],
 
 
@@ -149,7 +149,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		ref: "CourseNumMax",
 		selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
 	},
-		// Basic Fields (CycleLength, Regimen Name, Emotegenic Level, Febrile Neutropenia Risk)
+		// Basic Fields (CycleLength, Regimen Name, Emetogenic Level, Febrile Neutropenia Risk)
 	{
 		ref: "CycleLength",
 		selector: "AuthoringTab combo[name=\"CycleLength\"]"
@@ -167,8 +167,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
 	},
 	{
-		ref: "EmotegenicLevel",
-		selector: "AuthoringTab combo[name=\"EmotegenicLevel\"]"
+		ref: "EmetogenicLevel",
+		selector: "AuthoringTab combo[name=\"EmetogenicLevel\"]"
 		},
 		{
 		ref: "FebrileNeutropeniaRisk",
@@ -298,6 +298,31 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
+	updateEmeticMedLevel : function( template ) {
+		var HighestLevel = 0, HLName, HLMName, el, eln;
+		var theData = template.getData();
+		var theMeds = Ext.Array.merge(theData.Meds, theData.PreMHMeds, theData.PostMHMeds);
+		var EmeticMedStore = Ext.getStore("EmeticMeds");
+		var buf, i, aRec, aMed, medRec, medLen = theMeds.length;
+		for (i = 0; i < medLen; i++) {
+			aMed = theMeds[i];
+			aRec = EmeticMedStore.findRecord("MedName", aMed.Drug, 0, false, false, true);
+			if (aRec) {
+				el = aRec.getData().EmoLevel;
+				if (el > HighestLevel) {
+					HighestLevel = el;
+					HLName = aRec.getData().EmoLevelName;
+					HLMName = aRec.getData().MedName;
+				}
+			}
+		}
+		if (HighestLevel > 0) {
+			buf = "<span style=\"border: 3px solid red; padding: 1em;\">" + HLMName + " has a " + HLName + "</div>";
+			var EmeticInfoCtl = this.getController("Common.EmeticInfo");
+			EmeticInfoCtl.setEmeticInfoContent(buf);
+		}
+	},
+
 
 	getCourseInfo : function( thisTab ) {
 		return thisTab.down("[name=\"courseInfo\"]");
@@ -347,6 +372,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					authoringCtl.application.unMask();
 					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + operation.request.scope.reader.jsonData.frameworkErr);
 				}
+
 			}
 		});
 	},
@@ -403,7 +429,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 		this.clearValue(this.getDisease());
-		this.clearValue(this.getEmotegenicLevel());
+		this.clearValue(this.getEmetogenicLevel());
 		this.clearValue(this.getExistingDisease());
 		this.clearValue(this.getDiseaseStage());
 		this.clearValue(this.getExistingDiseaseStage());
@@ -411,7 +437,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.clearValue(this.getCycleLengthUnit());
 		this.clearValue(this.getRegimenName());
 		this.clearValue(this.getTemplateAlias());
-		this.clearValue(this.getEmotegenicLevel());
+		this.clearValue(this.getEmetogenicLevel());
 		this.clearValue(this.getFebrileNeutropeniaRisk());
 		this.clearValue(this.getPreHydrationInstructions());
 		this.clearValue(this.getPostHydrationInstructions());
@@ -489,16 +515,21 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var diseaseRecord = disease.getStore().getById(template.data.Disease);
 		if(null === diseaseRecord){
 			var authorCtl = this.getController("Authoring.AuthoringTab");
+			var SelectedDiseaseID = disease.getValue();
+			if (!SelectedDiseaseID) {
+				SelectedDiseaseID = template.data.Disease;
+			}
 			disease.getStore().load({
 				params: {
 						URL: Ext.URLs.DiseaseType + "/",
-						ID: disease.getValue()
+						ID: SelectedDiseaseID
 				},
 				callback: function (records, operation, success) {
 						if (success) {
 							diseaseRecord = disease.getStore().getById(disease.getValue());
 							authorCtl.LoadFormWithExistingData(template);
 						}else{
+							this.application.unMask();
 							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
 						}
 				}
@@ -507,6 +538,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		else {
 			this.LoadFormWithExistingData(template);
 		}
+		this.updateEmeticMedLevel(template);
 	},
 
 	/* Load Form with existing data */
@@ -521,7 +553,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.getCycleLength().setValue(template.data.CycleLength);
 		this.getCycleLengthUnit().setValue(template.data.CycleLengthUnit[0].name);
 		this.getRegimenName().setValue(template.data.RegimenName);
-		this.getEmotegenicLevel().setValue(template.data.ELevel[0].name);
+		this.getEmetogenicLevel().setValue(template.data.ELevel[0].name);
 		this.getFebrileNeutropeniaRisk().setValue(template.data.FNRisk);
 		this.getPreHydrationInstructions().setValue(template.data.PreMHInstructions);
 		this.getPostHydrationInstructions().setValue(template.data.PostMHInstructions);
@@ -743,12 +775,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 		//var regimenName = this.getRegimenName().getValue();
 		var templateAlias = this.getTemplateAlias().getValue();
-		var emotegenicLevel = this.getEmotegenicLevel().getValue();
+		var emetogenicLevel = this.getEmetogenicLevel().getValue();
 
-		if (null != emotegenicLevel && null != emotegenicLevel.id) {
-			emotegenicLevel = emotegenicLevel.id;
-		} else if (null == emotegenicLevel) {
-			emotegenicLevel = '';
+		if (null != emetogenicLevel && null != emetogenicLevel.id) {
+			emetogenicLevel = emetogenicLevel.id;
+		} else if (null == emetogenicLevel) {
+			emetogenicLevel = '';
 		}
 
 		var fnRisk = this.getFebrileNeutropeniaRisk().getValue();
@@ -896,7 +928,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			RegimenName: templateAlias,
 			CycleLength: cycleLength,
 			CycleLengthUnit: cycleLengthUnit,
-			ELevel: emotegenicLevel,
+			ELevel: emetegenicLevel,
 			FNRisk: fnRisk,
 			References: this.getReferencesInArray(),
 			PreMHInstructions: preMhInstructions,

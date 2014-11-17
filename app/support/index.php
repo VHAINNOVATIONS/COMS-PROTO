@@ -22,7 +22,8 @@
 <tr><td colspan="2">&nbsp;</td></tr>
 <tr><td colspan="2" align="center"> <b><font size = "+2">Chemotherapy Ordering Management System (COMS)</font></b><br> Application Prototype Testing Round One<br><br><b><font size = "+1">For immediate support, please call 732.920.8305 or 813.383.4963 between 8AM to 8PM EST.</font></b><br><br><b>Open Support Request Ticket Numbers:</b> <br><?php  include "tickets.php";  ?></td></tr>
 <tr>
-<td colspan="1" align="left"> Date: <?php echo date( "F d, Y", filemtime( 'index.php' ) ); ?></td>
+<td colspan="1" align="left"> Date: <?php echo date( "F d, Y" ); /* date( "F d, Y", filemtime( 'index.php' ) ) */ ?></td>
+
 <td colspan="1" align="right"> Tester: <?php include "../session.php"; echo "".$_SERVER[ 'LOGON_USER' ].", ".$_SESSION[ 'role' ]." "; ?></td>
 </tr>
   <tr><td colspan="1">&nbsp;</td>

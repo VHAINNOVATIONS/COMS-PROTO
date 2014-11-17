@@ -3,7 +3,8 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	init: function() {
 		this.control({
 			"puWinSelAmputation" : {
-				"show" : this.ShowWindow
+				"show" : this.ShowWindow,
+				"close" : this.Close
 			},
 			"puWinSelAmputation button[text=\"Cancel\"]" : {
 				click: this.Cancel
@@ -14,7 +15,10 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 		});
 	},
 
+	
+
 	ShowWindow : function() {
+		console.log("Show Window");
 		var AmpuSelCtl = this.getController("NewPlan.AmputationSelection");
 		AmpuSelCtl.renderAS();
 	},
@@ -52,6 +56,7 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 					var resp = Ext.JSON.decode( text );
 					theForm.reset();
 					btn.up('window').hide();
+					this.Close();
 					if (!resp.success) {
 						Ext.MessageBox.alert("Amputation Selection Save Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
 						this.application.Patient.Amputations = "";
@@ -67,6 +72,7 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 					Ext.MessageBox.alert("Amputation Selection Save Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
 					theForm.reset();
 					btn.up('window').hide();
+					this.Close();
 				}
 			});
 		}
@@ -74,5 +80,9 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').hide();
+		this.Close();
+	},
+	Close : function() {
+		Ext.COMS_UnLockSection();
 	}
 });

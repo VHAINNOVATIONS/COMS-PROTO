@@ -15,6 +15,8 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ xtype : "DischargeInstructionManagement", title: "Discharge Instructions"},
 				{ xtype : "AddLookups", title: "LookUps" },
 				{ xtype : "MedicationDocumentation", title : "Medication Documentation", name : "Documented_Meds_Tab"},
+				{ xtype : "EmeticMedsTab", title : "Emetic Medications", name : "Emetic_Meds_Tab"},
+				{ "xtype" : "MedRisks", "title" : "Neutropenia / Emesis Risks"},
 				{ xtype : "Toxicity", title: "Toxicity"}
 			]
 		},
@@ -25,12 +27,19 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 			items : [
 				{ "xtype" : "DeleteTemplate", "title" : "Delete Template"},
 				{ "xtype" : "DiseaseStaging", "title" : "Disease Staging" },
-				{ "xtype" : "MedRisks", "title" : "Neutropenia / Emesis Risks"},
 				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		},
 		{ xtype : "Globals", title: "Global Variables"},
-		{ xtype : "Users", title: "COMS Users"},
+		{ xtype : "tabpanel", title: "Access",
+			defaults: {
+				padding : "10 10 5 10"
+			},
+			items : [
+				{ xtype : "Users", title: "User Access"},
+				{ xtype : "LockoutTab", title: "Lockout"}
+			]
+		},
 
 		{ xtype : "tabpanel", title: "Clinical Decision Support",
 			defaults: {
