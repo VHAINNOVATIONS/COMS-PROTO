@@ -131,8 +131,8 @@ class FlowsheetController extends Controller
         if (!empty($requestData)) {
             $Cycle = $requestData["Cycle"];
             $Day = $requestData["Day"];
-            $ToxInstrID = $requestData["ToxInstr"];
-            $ToxData = $this->escapeString($requestData["Data"]);
+            //$ToxInstrID = $requestData["ToxInstr"];
+            //$ToxData = $this->escapeString($requestData["Data"]);
             $DiseaseResponse = $this->escapeString($requestData["DRData"]);
             $FS_OtherData = $this->escapeString($requestData["OtherData"]);
         }
@@ -145,12 +145,19 @@ class FlowsheetController extends Controller
             $ErrMsg = "Retrieving $Msg Records";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            if ("" !== $DiseaseResponse || "" !== $FS_OtherData) {
+                $query = "INSERT INTO $TableName
+                   (FS_ID, Disease_Response, Other, PAT_ID, Cycle, Day, AdminDate)
+                   VALUES
+                   ( '$GUID', '$DiseaseResponse', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
+                /**
             if ("" !== $ToxInstrID || "" !== $DiseaseResponse || "" !== $FS_OtherData || "" !== $ToxData) {
                 if ("" == $ToxInstrID) {
                     $query = "INSERT INTO $TableName
                        (FS_ID, Disease_Response, ToxicityLU_ID, Toxicity, Other, PAT_ID, Cycle, Day, AdminDate)
                        VALUES
                        ( '$GUID', '$DiseaseResponse', null, '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
+
                 }
                 else {
                     $query = "INSERT INTO $TableName
@@ -158,6 +165,7 @@ class FlowsheetController extends Controller
                        VALUES
                        ( '$GUID', '$DiseaseResponse', '$ToxInstrID', '$ToxData', '$FS_OtherData', '$PAT_ID', '$Cycle', '$Day', '$AdminDate')";
                 }
+                **/
 
                 $jsonRecord['msg'] = "$Msg Record Created";
                 $ErrMsg = "Creating $Msg Record";

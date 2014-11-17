@@ -191,7 +191,8 @@ class EndTreatmentSummary extends Model
 		foreach($nmatch as $row){
 			$nmatch= $row['match'];
         }	
-		ProgressNote($ProviderReport,$nmatch);
+		$PR = strip_tags($ProviderReport);
+		ProgressNote($PR,$nmatch);
 
         $query = 
             "INSERT INTO EoTS (
