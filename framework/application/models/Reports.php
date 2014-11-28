@@ -29,7 +29,10 @@ class Reports extends Model {
         $query = "insert into InventoryReportsLinks (ID, startDate) values('$newID', '$LastInvDate')";
         // error_log($query);
         $retVal = $this->query($query);
-        return $newID;
+
+        $query = "select ID, CONVERT(varchar(10),Date,101) + ' ' + CONVERT(varchar(8), CAST(Date as TIME), 100) as Date, CONVERT(varchar(10),StartDate,101) + ' ' + CONVERT(varchar(8), CAST(StartDate as TIME), 100) as StartDate from InventoryReportsLinks where ID='$newID'";
+        $retVal = $this->query($query);
+        return $retVal;
     }
 
     function addRecord2Report($repID, $rec) {
@@ -67,14 +70,20 @@ class Reports extends Model {
 
         if (count($tmp) > 0) {
             $report = array();
-            $newReportID = $this->createAReport($LastInvDate);
+            $newReportInfo = $this->createAReport($LastInvDate);
+            $newReportID = $newReportInfo[0]["ID"];
+            $retVal = array();
+            $retVal['ReportID'] = $newReportInfo[0]["ID"];
+            $retVal['StartDate'] = $newReportInfo[0]["StartDate"];
+            $retVal['Date'] = $newReportInfo[0]["Date"];
+
             // error_log("Report ID = $newReportID");
             foreach($tmp as $key => $value) {
                 $aRec = array("Drug"=>$key, "Total"=>$value["Total"], "Units"=>$value["Units"]);
                 $this->addRecord2Report($newReportID, $aRec);
                 $report[] = $aRec;
             }
-            return $newReportID;
+            return $retVal;
         }
         return null;
     }

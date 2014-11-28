@@ -6,6 +6,15 @@
  *  Get a specific Inventory report - http GET - /Reports/Inventory/InventoryID
  *
  *  An inventory report shows how much of a specific drug has been administered during that inventory period.
+ *
+ *  How to clear any existing reports to test generation of a new FIRST report:
+ *  1. Run the following two scripts on the desired DB:
+ *      delete from InventoryReports where ID is not null
+ *      delete from InventoryReportsLinks where ID is not null
+ *  2. Launch the following URL against the server using a Rest Client to clear out the Inventoried flag in the Order_Status table
+ *      HTTP Method/Cmd: Delete
+ *      URL: https://coms-uat-test.dbitpro.com/Reports/Inventory
+ *
  **/
 
 
@@ -41,9 +50,11 @@ class ReportsController extends Controller {
                 $LastInvDate = $tmp->LastInvDate;
             }
 
-            $newReportID = $this->Reports->CreateInventory($LastInvDate);
-            if ($newReportID) {
-                $jsonRecord['ReportID'] = $newReportID;
+            $newReport = $this->Reports->CreateInventory($LastInvDate);
+            if ($newReport) {
+                $jsonRecord['ReportID'] = $newReport["ReportID"];
+                $jsonRecord['StartDate'] = $newReport["StartDate"];
+                $jsonRecord['Date'] = $newReport["Date"];
             }
             else {
                 $jsonRecord['msg'] = "No drugs have been dispensed since the last inventory report";

@@ -120,7 +120,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		header: "<div>Drug</div>",
 		dataIndex: "drug",
 		width: 200,
-		
 		sortable: true,
 		align: "left"
 	}, {
@@ -129,8 +128,7 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		xtype: "numbercolumn", 
 		format:"0.00",
 		width: 60,
-		sortable: false,
-		align: "right"
+		sortable: false
 	}, {
 		header: "<div>Units</div>",
 		dataIndex: "unit",

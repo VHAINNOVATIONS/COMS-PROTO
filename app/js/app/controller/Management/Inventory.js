@@ -27,11 +27,15 @@ Ext.define('COMS.controller.Management.Inventory', {
 	},
 
 	LoadPanel : function(theTab, e, opts) {
+		this.application.loadMask("Please wait; Loading list of reports");
 		this.InvStore = this.getStore("InventoryList");
 		this.InvStore.load();
 	},
 
 	StoreLoaded : function(theStore, records, successful, eOpts ) {
+		var invRptTitle = this.getInvReportTitle().getEl();
+		invRptTitle.setHTML("");
+
 		var errLabel = this.getSelInventoryError().getEl();
 		if (records.length === 0) {
 			errLabel.setHTML("No Inventory reports are available");
@@ -39,11 +43,17 @@ Ext.define('COMS.controller.Management.Inventory', {
 		else {
 			errLabel.setHTML("");
 		}
-
+		this.application.unMask();
 	},
 
 	setReportTitle : function(record) {
-		var Title = "Inventory Report from " + record.StartDate + " - " + record.Date;
+		var Title;
+		if ("01/01/1900 12:00AM" == record.StartDate || "" == record.StartDate) {
+			Title = "Inventory Report as of " + record.Date;
+		}
+		else {
+			Title = "Inventory Report from " + record.StartDate + " - " + record.Date;
+		}
 		var invRptTitle = this.getInvReportTitle().getEl();
 		invRptTitle.setHTML(Title);
 	},
@@ -60,7 +70,7 @@ Ext.define('COMS.controller.Management.Inventory', {
 	},
 
 	GenerateReport : function() {
-		debugger;
+		this.application.loadMask("Please wait; Generating new report");
 		var lastRecDate = "", lastRec = null, numRecs = this.InvStore.getCount();
 		if (numRecs > 0) {
 			lastRec = this.InvStore.getAt(numRecs-1);
@@ -78,12 +88,14 @@ Ext.define('COMS.controller.Management.Inventory', {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success) {
-					// this.setReportTitle(Start, End);
-
 					if (resp.msg) {
-						Ext.MessageBox.alert("Inventory Report Generation", resp.msg );
+						var invRptTitle = this.getInvReportTitle().getEl();
+						invRptTitle.setHTML(resp.msg);
+						var errLabel = this.getSelInventoryError().getEl();
+						errLabel.setHTML("");
 					}
 					else {
+						this.setReportTitle({StartDate : resp.StartDate, Date : resp.Date});
 						var theGrid = this.getInventoryGrid();
 						var theStore = theGrid.getStore();
 						theStore.proxy.url = "/Reports/Inventory/" + resp.ReportID;
@@ -93,11 +105,13 @@ Ext.define('COMS.controller.Management.Inventory', {
 						theStore.load();
 					}
 				}
+				this.application.unMask();
 			},
 			failure : function( response, opts ) {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Delete Emetic Medication Record, Save Error - <br />" + resp.msg );
+				this.application.unMask();
 			}
 		});
 	}
