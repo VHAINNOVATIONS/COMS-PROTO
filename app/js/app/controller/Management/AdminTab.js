@@ -1,6 +1,6 @@
 Ext.define('COMS.controller.Management.AdminTab', {
     extend : 'Ext.app.Controller',
-    stores : [ 'Lockout', 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging'],
+    stores : [ 'Lockout', 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging', 'InventoryConsumption'],
     views : [ 
 		'Management.AdminTab',
 		// 'Management.AddLookups',
@@ -24,7 +24,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.MedRisks',
 		'Management.EmeticMedsTab',
 		'Management.Lockout',
-		'Management.LockoutTab'
+		'Management.LockoutTab',
+		'Management.Inventory'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [

@@ -112,22 +112,25 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		header: "<div>Type</div>",
 		dataIndex: "type",
 		// width: 75,
-			flex: 2,
+		// flex: 2,
+		width: 80,
 		sortable: false,
 		align: "left"
 	}, {
 		header: "<div>Drug</div>",
 		dataIndex: "drug",
-		// width: 100,
-		flex: 3,
+		width: 200,
+		
 		sortable: true,
 		align: "left"
 	}, {
 		header: "<div>Dosage</div>",
 		dataIndex: "dose",
-		width: 50,
+		xtype: "numbercolumn", 
+		format:"0.00",
+		width: 60,
 		sortable: false,
-		align: "left"
+		align: "right"
 	}, {
 		header: "<div>Units</div>",
 		dataIndex: "unit",
@@ -155,13 +158,14 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	}, {
 		header: "<div>Instructions</div>",
 		dataIndex: "instructions",
-		width: 120,
+		// width: 120,
+		flex: 1,
 		sortable: false,
 		align: "left"
 	}, {
 		header: "<div>Order Status</div>",
 		dataIndex: "orderstatus",
-		width: 90,
+		width: 80,
 		sortable: true,
 		align: "left",
 		editor: combo

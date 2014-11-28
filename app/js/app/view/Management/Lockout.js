@@ -43,10 +43,6 @@ Ext.define("COMS.view.Management.Lockout", {
 							theData.Middle_Name + 
 							" (" + theData.Match + ")";
 						return theName.trim();
-
-
-
-
 					},
 					"flex": 2
 				},
@@ -61,7 +57,7 @@ Ext.define("COMS.view.Management.Lockout", {
 					"flex": 1
 				},
 				{
-					"text": "Locked by whom",
+					"text": "User",
 					"dataIndex": "UserName",
 					"flex": 1
 				}

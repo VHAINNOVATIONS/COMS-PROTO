@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.Inventory = "/Reports/Inventory";
 Ext.URLs.Lockout = "/Patient/Lock";
 Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
@@ -635,6 +636,7 @@ Ext.require([
 	"COMS.controller.Management.CumulativeDosing",
 	"COMS.controller.Management.EmeticMeds",
 	"COMS.controller.Management.Lockout",
+	"COMS.controller.Management.Inventory",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -1730,6 +1732,7 @@ Ext.application({
 		, "Management.CumulativeDosing"
 		, "Management.EmeticMeds"
 		, "Management.Lockout"
+		, "Management.Inventory"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"

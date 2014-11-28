@@ -18,8 +18,8 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 			"store" : "TemplateListStore", 
 			"features" : [ Ext.create("Ext.grid.feature.Grouping")],
 			"columns" : [
-				{ "text" : "Template Name", "dataIndex" : "name" },
-				{ "text" : "Description", dataIndex: "description", flex: 1 },
+				{ "text" : "Generated Template Name", "dataIndex" : "name" },
+				{ "text" : "User-Friendly Name", dataIndex: "description", flex: 1 },
 				{ "text" : "Disease Type", dataIndex: "DiseaseName", hidden: true },
 				{ "text" : "# of Patients", "name" : "NumPatients", dataIndex: "PatientCount", "renderer" : 
 					function(value) {

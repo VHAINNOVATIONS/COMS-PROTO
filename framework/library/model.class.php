@@ -53,7 +53,6 @@ class Model extends SQLQuery {
     function NTD_StripLeadingFromDrugName($s = null) {
         $pattern = '/^\d+\. /';
         $r = preg_replace($pattern, "", $s);
-        error_log("NTD_StripLeadingFromDrugName - $s - [$r]");
         return $r;
     }
 }

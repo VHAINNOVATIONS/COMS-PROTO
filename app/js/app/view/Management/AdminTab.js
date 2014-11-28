@@ -68,7 +68,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				padding : "10 10 5 10"
 			},
 			items : [
-				{ "xtype" : "tabpanel", "title" : "Inventory", "closable" : false, "html" : "<h1>Not Yet Available</h1>" },
+				{ "xtype" : "Inventory" },
 				{ "xtype" : "tabpanel", "title" : "Patterns of Care Determination", "closable" : false, "html" : "<h1>Not Yet Available</h1>" },
 				{ "xtype" : "tabpanel", "title" : "Lab Reports", "closable" : false, items : [
 					{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
