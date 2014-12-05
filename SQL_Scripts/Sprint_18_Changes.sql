@@ -20,3 +20,29 @@ CREATE TABLE InventoryReports(
 	Total nvarchar(max) NULL,
 	Unit nvarchar(max) NULL
 )
+
+
+/* required to link the Treatment Table with the Order_Status table */
+ALTER TABLE ND_Treatment ADD Order_ID uniqueidentifier NULL
+
+
+
+
+
+CREATE TABLE ND_TreatmentAmmend (
+	Order_ID uniqueidentifier NULL,
+	Sequence smallint NULL,
+	Drug_Name nvarchar(MAX) NULL,
+	AdminDate nvarchar(MAX) NULL,
+	ChangeDate nvarchar(MAX) NULL,
+	Type nvarchar(MAX) NULL,
+	Drug nvarchar(MAX) NULL,
+	Dose nvarchar(MAX) NULL,
+	Unit nvarchar(MAX) NULL,
+	Route nvarchar(MAX) NULL,
+	StartTime nvarchar(MAX) NULL,
+	EndTime nvarchar(MAX) NULL,
+	Comments nvarchar(MAX) NULL,
+	Treatment_User nvarchar(MAX) NULL,
+	Treatment_Date nvarchar(MAX) NULL
+)

@@ -4,6 +4,7 @@ Ext.define("COMS.model.ND_Treatment", {
 		"patientID",			// GUID for the Patient
 		"templateID",			// GUID for the Template
 		"PAT_ID",				// GUID for the Treatment record
+		"Order_ID",
 		"Cycle",
 //		"CourseNum",			// MWB - 6/17/2012 - This is really the "Cycle"
 		"adminDay",
@@ -33,6 +34,7 @@ Ext.define("COMS.model.ND_Treatment", {
 		type: "rest",
 		api: {
 			read: Ext.URLs.ND_Treatment,	// this is really /Order/Orders <--- MWB - 6/29/2012 Removed for testing???
+			// read: Ext.URLs.ND_TreatmentDispensed,
 			// read: Ext.URLs.ReadND_Treatment,		// Parameter = PAT_ID -> "/NursingDoc/Treatment/<PAT_ID>",
 			create: "/NursingDoc/Treatment",
 			update: "/NursingDoc/Treatment"

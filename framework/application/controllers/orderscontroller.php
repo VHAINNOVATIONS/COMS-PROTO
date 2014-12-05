@@ -25,7 +25,7 @@ class OrdersController extends Controller {
 
 
 
-   function grabOrders($patientID, $AdminDate) {
+   function grabOrders($patientID, $AdminDate, $Dispensed = null) {
 
         $form_data = json_decode(file_get_contents('php://input'));
         $jsonRecord = array();
@@ -62,19 +62,56 @@ class OrdersController extends Controller {
       ,os.Drug_ID
       ,os.FlowRate
       ,os.Sequence
-      ,os.Amt as dose
+      ,CASE
+          WHEN os.Amt = FLOOR(os.Amt ) THEN 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,0), os.Amt ))
+          ELSE 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,1), os.Amt ))
+      END as dose
       ,os.Unit as unit
       ,os.Route as route
       ,os.flvol
       ,os.infusion
+      ,ndt.Order_ID as ndtOrder_ID
       ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
       FROM Order_Status os 
+      join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
       where Patient_ID = '$patientID' and Admin_Date='$AdminDate'";
 
+      $query = "SELECT
+       os.Order_Status as orderstatus
+      ,os.Drug_Name as drug
+      ,os.Order_Type as type
+      ,os.Patient_ID as patientID
+      ,os.Order_ID
+      ,os.Drug_ID
+      ,os.FlowRate
+      ,os.Sequence
+      ,CASE
+          WHEN os.Amt = FLOOR(os.Amt ) THEN 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,0), os.Amt ))
+          ELSE 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,1), os.Amt ))
+      END as dose
+      ,os.Unit as unit
+      ,os.Route as route
+      ,os.flvol
+      ,os.infusion
+      ,ISNULL(CONVERT(varchar(50),ndt.StartTime),'') as StartTime
+      ,ISNULL(CONVERT(varchar(50),ndt.EndTime),'') as EndTime
+      ,ISNULL(CONVERT(varchar(50),ndt.Comments),'') as Comments
+      ,ISNULL(CONVERT(varchar(50),ndt.Treatment_User),'') as Treatment_User
+      ,ISNULL(CONVERT(varchar(50),ndt.Treatment_Date),'') as Treatment_Date
+      ,ISNULL(CONVERT(varchar(50),ndt.Dose),'') as ndDose
+      ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
+      FROM Order_Status os 
+      left join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
+      where os.Patient_ID = '$patientID' and os.Admin_Date='$AdminDate'";
 
-
-
-
+                if ($Dispensed) {
+                    $query .= " and (Order_Status = 'Dispensed' or Order_Status = 'Administered')";
+                }
+error_log("Orders - $query");
                 $TreatmentData = $this->Orders->query($query);
                 if ($this->checkForErrors('Get Patient Templates Failed. ', $TreatmentData)) {
                     $jsonRecord['success'] = 'false';
@@ -618,6 +655,10 @@ else if ("Cancel" === $status) {
         $query = "select PAT_ID from Patient_Assigned_Templates where Patient_ID = '$PatientID' and Template_ID = '$TemplateID' and Is_Active=1";
         $retVal = $this->Orders->query($query);
         return $retVal[0]["PAT_ID"];
+    }
+
+    function Dispensed($patientID = null, $AdminDate = null) {
+        $this->grabOrders($patientID, $AdminDate, true);
     }
 }
 

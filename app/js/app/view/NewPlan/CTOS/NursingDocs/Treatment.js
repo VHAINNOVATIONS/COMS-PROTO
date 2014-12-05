@@ -35,24 +35,18 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 		},
 		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
 		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature },
-		{ header : "", width : 20, hidden: false, xtype : "actioncolumn", items : [ {
-				xtype : "button",
-				icon: '/images/pencil.png',
-				text: "",
-				handler : function(theGridView, theRowNum, theCol) { 
-					var theStore = theGridView.getStore();
-					var theRec = theStore.getAt(theRowNum);
-					debugger; 
+		{ header : "", width : 40, xtype: 'actioncolumn', hideable: false, 
+			handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
+				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record : record, scope : this });
+			},
+			getClass: function(v, meta, rec, row, col, store) {
+				if ("Administered" === rec.get("orderstatus")) {
+					this.items[0].tooltip = "Make addendum";
+					return "EditCell";
 				}
-				/**
-				renderer : function(n1, n2, treatmentRecordObj) {
-				var tro = treatmentRecordObj.getData();
-				if ("Administered" == tro.orderstatus) {
-					return "<img src=\"/images/pencil.png\">";
-				}
+				this.items[0].tooltip = "";
 				return "";
-				**/
-			}]
+			}
 		}
 	]
 });
@@ -73,7 +67,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
                     defaults : { margin : "5 0 30 0" },
                     items : [
 						{ xtype : "box", html : "Items marked with a <em class=\"required-field\">*</em> have an addendum", margin : "0", style : { "textAlign" : "center", "fontWeight" : "bold" }},
-                        { xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
+						{ xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
                     ]
                 },
                 { xtype : "button", text : "Administration Complete" }

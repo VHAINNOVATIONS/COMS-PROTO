@@ -928,7 +928,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			RegimenName: templateAlias,
 			CycleLength: cycleLength,
 			CycleLengthUnit: cycleLengthUnit,
-			ELevel: emetegenicLevel,
+			ELevel: emetogenicLevel,
 			FNRisk: fnRisk,
 			References: this.getReferencesInArray(),
 			PreMHInstructions: preMhInstructions,

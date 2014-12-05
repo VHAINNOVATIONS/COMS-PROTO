@@ -33,8 +33,8 @@ Ext.define('COMS.controller.Management.Inventory', {
 	},
 
 	StoreLoaded : function(theStore, records, successful, eOpts ) {
-		var invRptTitle = this.getInvReportTitle().getEl();
-		invRptTitle.setHTML("");
+		// var invRptTitle = this.getInvReportTitle().getEl();
+		// invRptTitle.setHTML("");
 
 		var errLabel = this.getSelInventoryError().getEl();
 		if (records.length === 0) {
@@ -75,10 +75,12 @@ Ext.define('COMS.controller.Management.Inventory', {
 		if (numRecs > 0) {
 			lastRec = this.InvStore.getAt(numRecs-1);
 			lastRecDate = lastRec.getData().Date;
-			debugger;
 		}
 		var CMD = "POST";
 		var URL = Ext.URLs.Inventory;
+		var errLabel = this.getSelInventoryError().getEl();
+		errLabel.setHTML("");
+
 		Ext.Ajax.request({
 			url: URL,
 			method : CMD,
@@ -91,8 +93,6 @@ Ext.define('COMS.controller.Management.Inventory', {
 					if (resp.msg) {
 						var invRptTitle = this.getInvReportTitle().getEl();
 						invRptTitle.setHTML(resp.msg);
-						var errLabel = this.getSelInventoryError().getEl();
-						errLabel.setHTML("");
 					}
 					else {
 						this.setReportTitle({StartDate : resp.StartDate, Date : resp.Date});

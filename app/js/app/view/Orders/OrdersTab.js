@@ -127,6 +127,17 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		dataIndex: "dose",
 		xtype: "numbercolumn", 
 		format:"0.00",
+		renderer: function(v) {
+			var fltValue = parseFloat(v);
+			var intValue = parseInt(v);
+			if (intValue == Number.NaN) {
+				return("");
+			}
+			if (intValue == fltValue) {
+			 return(intValue);
+			}
+			return(fltValue);
+		},
 		width: 60,
 		sortable: false
 	}, {
