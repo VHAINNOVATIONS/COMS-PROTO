@@ -60,6 +60,9 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 			]
 		},
 
+
+	{ "xtype" : "RequiredInstr" },
+
 		{ "xtype" : "box", html : "<h2>Make Addendum to Patient Treatment Record</h2>" },
 		{ "xtype" : "grid", margin: "10 5 10 5",
 			name : "ModifyData",
@@ -119,9 +122,27 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 						id : "endTimeEditor"
 					})
 				},
-				{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
+				{ header : "Comments <em class=\"required-field\">*</em>", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
 				{ header : "Signature", dataIndex : "", width : 200, renderer : Ext.ND_TreatmentSignature }
 			]
-		}
+		},
+
+	{ "xtype" : "button", "text" : "Cancel", "scope" : this }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	]
 });

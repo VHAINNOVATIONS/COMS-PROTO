@@ -1639,21 +1639,26 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		});
 	},
 
-
 	getEmoLevelInfo : function(ELevel) {
 		var eLevel1 = ELevel.split(" ")[0];
 		var x = "";
 		switch (eLevel1) {
+			case "Minimal Emetic Risk" :
 			case "Low":
 				x = "Emesis-1";
 				break;
+
+			case "Low Emetic Risk" :
 			case "Medium":
 				x = "Emesis-2";
 				break;
 
+			case "Moderate Emetic Risk" :
 			case "Moderate":
 				x = "Emesis-3";
 				break;
+
+			case "High Emetic Risk" :
 			case "High":
 				x = "Emesis-4";
 				break;
