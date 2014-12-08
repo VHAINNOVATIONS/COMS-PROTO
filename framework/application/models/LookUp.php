@@ -257,7 +257,7 @@ class LookUp extends Model {
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
         $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
-        
+error_log("saveTemplate - BP1");
 
             $query = "SELECT NEWID()";
             $Template_ID = $this->query($query);
@@ -286,7 +286,7 @@ class LookUp extends Model {
         $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
         $currDateResult = $this->query($query);
         $currDate = $currDateResult[0]['currdate'];
-        
+error_log("saveTemplate - BP2");
         if($cycle){
             $query = "
                 SELECT Template_ID AS lookupid 
@@ -297,19 +297,18 @@ class LookUp extends Model {
                     AND Admin_Date = '$adminDate'
                     AND Patient_ID = '$patientId'
             ";
+error_log("saveTemplate - BP2 Query - $query");
             $retVal = $this->query($query);
             if($retVal){
                 return $retVal;
             }
         }
+error_log("saveTemplate - BP3");
 
-        if($diseaseStage){
-            $query = "
-                INSERT INTO Master_Template (
+
+$queryStart_CODE = "INSERT INTO Master_Template (
                     Template_ID,
                     Regimen_ID, 
-                    Cancer_ID, 
-                    Disease_Stage_ID, 
                     Location_ID, 
                     Version, 
                     Is_Active, 
@@ -322,12 +321,9 @@ class LookUp extends Model {
                     Created_By, 
                     Total_Courses, 
                     Regimen_Instruction,
-                    Date_Created
-                ) VALUES (
-                    '$Template_ID',
+                    Date_Created";
+$queryStart_DATA = "'$Template_ID',
                     '$regimenId',
-                    '$cancerId',
-                    '$diseaseStage',
                     '$locationId',
                     1,
                     1,
@@ -341,100 +337,47 @@ class LookUp extends Model {
                     $courseNumMax,
                     '$regimenInstruction',
                     '$currDate'
-                )
-            ";
-            
+";
+
+
+
+        if($diseaseStage){
+            $queryStart_CODE .= "Disease_Stage_ID";
+            $queryStart_DATA .= "'$diseaseStage'";
+            $error = "disease stage";
         } else if($cycle) {
-            $query = "
-                INSERT INTO Master_Template (
-                    Template_ID,
-                    Regimen_ID, 
-                    Cancer_ID, 
-                    Location_ID, 
-                    Version, 
-                    Is_Active, 
-                    Cycle_Length, 
-                    Cycle_Time_Frame_ID, 
-                    Emotegenic_ID, 
-                    Febrile_Neutropenia_Risk, 
-                    Pre_MH_Instructions, 
-                    Post_MH_Instructions, 
-                    Created_By, 
-                    Total_Courses, 
-                    Regimen_Instruction, 
+            $queryStart_CODE .= "
                     Admin_Day, 
                     Admin_Date, 
                     Course_Number,
-                    Date_Created,
-                    Patient_ID
-                ) VALUES (
-                    '$Template_ID',
-                    '$regimenId',
-                    '$cancerId',
-                    '$locationId',
-                    1,
-                    1,
-                    '$cycleLength',
-                    '$cycleLengthUnit',
-                    '$emotegnicLevel',
-                    '$fibroNeutroRisk',
-                    '$preMHInstructions',
-                    '$postMHInstructions',
-                    '$userId',
-                    $courseNumMax,
-                    '$regimenInstruction',
+                    Patient_ID";
+            $queryStart_DATA .= "
                     '$adminDay',
                     '$adminDate',
                     '$cycle',
-                    '$currDate',
-                    '$patientId'
-                )
-            ";
-        } else {
-            $query = "
-                INSERT INTO Master_Template (
-                    Template_ID,
-                    Regimen_ID, 
-                    Cancer_ID, 
-                    Location_ID, 
-                    Version, 
-                    Is_Active, 
-                    Cycle_Length, 
-                    Cycle_Time_Frame_ID, 
-                    Emotegenic_ID, 
-                    Febrile_Neutropenia_Risk, 
-                    Pre_MH_Instructions, 
-                    Post_MH_Instructions, 
-                    Created_By, 
-                    Total_Courses, 
-                    Regimen_Instruction,
-                    Date_Created
-                ) VALUES (
-                    '$Template_ID',
-                    '$regimenId',
-                    '$cancerId',
-                    '$locationId',
-                    1,
-                    1,
-                    '$cycleLength',
-                    '$cycleLengthUnit',
-                    '$emotegnicLevel',
-                    '$fibroNeutroRisk',
-                    '$preMHInstructions',
-                    '$postMHInstructions',
-                    '$userId',
-                    $courseNumMax,
-                    '$regimenInstruction',
-                    '$currDate'
-                )
-            ";
+                    '$patientId'";
+            $error = "Cycle";
         }
+
+        if ('' !== $cancerId) {
+            $queryStart_CODE .= ",
+                Cancer_ID";
+            $queryStart_DATA .= ",
+                '$cancerId'";
+            $error .= " Has Cancer";
+        }
+        else {
+            $error .= " No Cancer";
+        }
+
+        $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
+        error_log("saveTemplate - BP3 - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
             return $retVal;
         }
-
+error_log("saveTemplate - BP4");
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
         //$Ret[0] = $Template_ID;
@@ -1405,7 +1348,12 @@ class LookUp extends Model {
                 $query = "
                     SELECT 
                         mhi.Infusion_ID AS id, 
-                        mhi.Infusion_Amt AS amt, 
+                        CASE
+                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+                            ELSE 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+                        END as amt,
                         l1.Name AS unit, 
                         l2.Name AS type, 
                         mhi.BSA_Dose AS bsaDose, 
@@ -1426,7 +1374,12 @@ class LookUp extends Model {
                 $query = "
                     SELECT 
                         mhi.Infusion_ID AS id, 
-                        mhi.Infusion_Amt AS amt, 
+                        CASE
+                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+                            ELSE 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+                        END as amt,
                         l1.Name AS unit, 
                         l2.Name AS type, 
                         mhi.BSA_Dose AS bsaDose, 
@@ -1447,7 +1400,13 @@ class LookUp extends Model {
             $query = "
                 SELECT 
                     mhi.Infusion_ID AS id, 
-                    mhi.Infusion_Amt AS amt, 
+                        CASE
+                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+                            ELSE 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+                        END as amt,
+
                     l1.Name AS unit, 
                     l2.Name AS type, 
                     mhi.BSA_Dose AS bsaDose, 

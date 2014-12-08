@@ -43,6 +43,7 @@ Ext.Loader.setConfig({
 	}
 });
 
+Ext.URLs.Inventory = "/Reports/Inventory";
 Ext.URLs.Lockout = "/Patient/Lock";
 Ext.URLs.MedReminders = "/Patient/MedReminders";
 Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
@@ -240,6 +241,7 @@ Ext.URLs.Orders = "/Orders/Orders";
 // Ext.URLs.AddND_Treatment = "/Treatment/NDT";
 Ext.URLs.ReadND_Treatment = "/NursingDoc/Treatment"; // Param = PAT_ID to obtain all treatments for the current ID. Used mostly in Flowsheet
 Ext.URLs.ND_Treatment = "/Orders/Orders"; // This URI is called to obtain the initial Treatment Record from the Orders generated.
+Ext.URLs.ND_TreatmentDispensed = "/Orders/Dispensed/"; // This URI is called to obtain the initial Treatment Record from the Orders generated.
 Ext.URLs.AddND_Treatment = "/Orders/Orders";
 // Param = none
 // Returns all the orders for all patients for the next 3 days.
@@ -618,6 +620,7 @@ Ext.require([
 	"COMS.controller.Common.puWinChangeAdminDate",
 	"COMS.controller.Common.selCTOSTemplate",
 	"COMS.controller.Common.MedRemindersForm",
+	"COMS.controller.Common.puWinTreatmentAmmend",
 
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
@@ -635,6 +638,7 @@ Ext.require([
 	"COMS.controller.Management.CumulativeDosing",
 	"COMS.controller.Management.EmeticMeds",
 	"COMS.controller.Management.Lockout",
+	"COMS.controller.Management.Inventory",
 
 	"COMS.controller.Messages.MessagesTab",
 
@@ -1705,6 +1709,7 @@ Ext.application({
 		, "Common.selCTOSTemplate"
 		, "Common.puWinChangeAdminDate"
 		, "Common.MedRemindersForm"
+		, "Common.puWinTreatmentAmmend"
 		, "NewPlan.AdverseEventsHistory"
 		, "NewPlan.AskQues2ApplyTemplate"
 		, "NewPlan.NewPlanTab"
@@ -1724,6 +1729,7 @@ Ext.application({
 		, "Management.CumulativeDosing"
 		, "Management.EmeticMeds"
 		, "Management.Lockout"
+		, "Management.Inventory"
 		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
 		, "NewPlan.OEM"
 		, "NewPlan.PatientInfoTable"

@@ -34,7 +34,20 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 			})
 		},
 		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
-		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature }
+		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature },
+		{ header : "", width : 40, xtype: 'actioncolumn', hideable: false, 
+			handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
+				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record : record, scope : this });
+			},
+			getClass: function(v, meta, rec, row, col, store) {
+				if ("Administered" === rec.get("orderstatus")) {
+					this.items[0].tooltip = "Make addendum";
+					return "EditCell";
+				}
+				this.items[0].tooltip = "";
+				return "";
+			}
+		}
 	]
 });
 
@@ -53,7 +66,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
                     name : "ND_T_Meds",
                     defaults : { margin : "5 0 30 0" },
                     items : [
-                        { xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
+						{ xtype : "box", html : "Items marked with a <em class=\"required-field\">*</em> have an addendum", margin : "0", style : { "textAlign" : "center", "fontWeight" : "bold" }},
+						{ xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
                     ]
                 },
                 { xtype : "button", text : "Administration Complete" }

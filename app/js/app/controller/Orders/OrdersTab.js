@@ -26,12 +26,14 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 			},
 			"OrdersTab button[text=\"Update Records\"]": {
 				click: function () {
+					this.application.loadMask("Updating Order Records");
 					this.PostedRecsFailed = [];
 					this.PostedRecs = [];
 
 					var HandleResponse = function(record, status, theScope) {
 						theScope.PostedRecs.pop();
 						if (theScope.PostedRecs.length <= 0) {
+							theScope.application.unMask();
 							if (theScope.PostedRecsFailed.length <= 0) {
 								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
 								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true);

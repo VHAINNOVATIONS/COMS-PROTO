@@ -102,7 +102,14 @@ class Orders extends Model {
                 //echo "<br>****MHI**** for ".$Template_ID."<br><br>";
                 //echo $MH_ID;
                 //echo "<br><br>";
-                $queryMHIq = "select Infusion_Unit_ID as Infusion_Unit_ID, Infusion_Type_ID as Infusion_Type_ID,Infusion_Amt as Infusion_Amt,Fluid_Type as Fluid_Type,BSA_Dose as BSA_Dose,Fluid_Vol as Fluid_Vol,Flow_Rate as Flow_Rate, Infusion_Time as Infusion_Time from MH_Infusion WHERE MH_ID = '$MH_ID'";
+                $queryMHIq = "select Infusion_Unit_ID as Infusion_Unit_ID, Infusion_Type_ID as Infusion_Type_ID,
+                        CASE
+                            WHEN Infusion_Amt = FLOOR(Infusion_Amt) THEN 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
+                            ELSE 
+                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
+                        END as Infusion_Amt,
+                Fluid_Type as Fluid_Type,BSA_Dose as BSA_Dose,Fluid_Vol as Fluid_Vol,Flow_Rate as Flow_Rate, Infusion_Time as Infusion_Time from MH_Infusion WHERE MH_ID = '$MH_ID'";
                 $queryMHI = $this->query($queryMHIq);
                 foreach ($queryMHI as $row) {
                     $MHI_Infusion_Unit_ID = $row['Infusion_Unit_ID'];
@@ -529,7 +536,13 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 			//$queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
 			
 			$queryTIDsq = "select mt.Template_ID as TR_Template_ID, mt.Regimen_ID as MT_Regimen_ID, mt.Cancer_ID as MT_Cancer_ID, " .
-			"mhi.Infusion_Amt as MHI_Infusion_Amt, mhi.Infusion_Type_ID as MHI_Infusion_Type_ID, mhi.Infusion_Unit_ID as MHI_Infusion_Unit_ID, " .
+			"CASE
+                WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+                ELSE 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+             END as MHI_Infusion_Amt,
+            mhi.Infusion_Type_ID as MHI_Infusion_Type_ID, mhi.Infusion_Unit_ID as MHI_Infusion_Unit_ID, " .
 			"mhi.Fluid_Vol as MHI_Fluid_Vol, mhi.Flow_Rate as MHI_Flow_Rate, mt.Course_Number as MT_Course_Number, mt.Cycle_Length as MT_Cycle_Length, " .
 			"mt.Cycle_Time_Frame_ID as MT_Cycle_Time_Framer_ID, mt.Total_Courses as MT_Total_Courses, mt.Admin_Day as TR_Admin_Day, " .
 			"mt.Admin_Date as MT_Admin_Date, mh.Drug_ID as MH_Drug_ID, mh.Pre_Or_Post as MH_Pre_Or_Post, mh.Description as MH_Description, " .
@@ -572,7 +585,13 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$MH_Description = $this->LookupDescriptionIn($MH_Drug_ID);
 					
 					
-						$queryMHILKMHq = "select Infusion_Amt as MHICHK_Infusion_Amt " .
+						$queryMHILKMHq = "select 
+			CASE
+                WHEN Infusion_Amt = FLOOR(Infusion_Amt) THEN 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
+                ELSE 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
+             END as MHICHK_Infusion_Amt" .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){
@@ -728,7 +747,13 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$MH_Drug_ID_Name = $this->LookupNameIn($MH_Drug_ID);
 					$MH_Description = $this->LookupDescriptionIn($MH_Drug_ID);
 					
-						$queryMHILKMHq = "select Infusion_Amt as MHICHK_Infusion_Amt " .
+						$queryMHILKMHq = "select 
+			CASE
+                WHEN Infusion_Amt = FLOOR(Infusion_Amt) THEN 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
+                ELSE 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
+             END as MHICHK_Infusion_Amt" .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){
@@ -794,7 +819,13 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$MH_Description = $this->LookupDescriptionIn($MH_Drug_ID);
 					
 					
-						$queryMHILKMHq = "select Infusion_Amt as MHICHK_Infusion_Amt " .
+						$queryMHILKMHq = "select 
+			CASE
+                WHEN Infusion_Amt = FLOOR(Infusion_Amt) THEN 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
+                ELSE 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
+             END as MHICHK_Infusion_Amt" .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){
@@ -860,7 +891,14 @@ $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
 					$MH_Description = $this->LookupDescriptionIn($MH_Drug_ID);
 					
 					
-						$queryMHILKMHq = "select Infusion_Amt as MHICHK_Infusion_Amt " .
+						$queryMHILKMHq = "select 
+			CASE
+                WHEN Infusion_Amt = FLOOR(Infusion_Amt) THEN 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
+                ELSE 
+                    CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
+             END as MHICHK_Infusion_Amt" .
+
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){

@@ -1737,6 +1737,8 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
     function MedRisks($ID = null, $Type = null) {
+
+        error_log("MedRisks - $ID; $Type");
         $DataType = 'Risks';
         $Msg = 'Emesis/Neutropenia Risks';
         if ("Type" == $ID) {

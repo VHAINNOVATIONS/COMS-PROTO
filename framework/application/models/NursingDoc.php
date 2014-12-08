@@ -140,6 +140,7 @@ class NursingDoc extends Model {
         $Route = $data->route;
         $StartTime = $data->StartTime;
         $EndTime = $data->EndTime;
+        $Order_ID = $data->Order_ID;
 
         $Comments = $this->escapeString($data->Comments);
 
@@ -155,6 +156,7 @@ class NursingDoc extends Model {
                 Treatment_ID,
                 Patient_ID,
                 Template_ID,
+                Order_ID,
                 PAT_ID,
                 Cycle,
                 AdminDay,
@@ -177,6 +179,7 @@ class NursingDoc extends Model {
                 '{$this->_treatmentId}',
                 '$Patient_ID',
                 '$Template_ID',
+                '$Order_ID',
                 '$PAT_ID',
                 '$Cycle',
                 '$AdminDay',
@@ -607,9 +610,9 @@ class NursingDoc extends Model {
             $adminDate = $ad[2] . "-" . $ad[0] . "-" . $ad[1];
         }
         $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
-        // error_log("UpdateOrder Query = $query");
+        error_log("UpdateOrder Query = $query");
         $result = $this->query($query);
-        // error_log("UpdateOrder - " . json_encode($result));
+        error_log("UpdateOrder - " . json_encode($result));
         return $result;
     }
 }

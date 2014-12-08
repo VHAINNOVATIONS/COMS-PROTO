@@ -16,7 +16,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		"ND_Treatment"
 	],
 	views : [
-		"NewPlan.CTOS.NursingDocs.Authenticate"
+		"NewPlan.CTOS.NursingDocs.Authenticate",
+		"Common.puWinTreatmentAmmend"
 	],
 
 	refs: [
@@ -85,6 +86,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				initialField.focus(true, true);
 			}
 		}
+/**
+		else if (9 === cellIdx) {
+			if ("" !== record.getData().AccessCode) {
+				// Ammend record
+				debugger;
+			}
+		}
+**/
 	},
 
 
@@ -327,7 +336,7 @@ this.AdminDate = today;
 		 ***/
 
 		this.application.loadMask("Loading Treatment Administration Information");
-		theStore.proxy.api.read = "/Orders/Orders/" + Patient.id + "/" + today4URL;
+		theStore.proxy.api.read = Ext.URLs.ND_TreatmentDispensed + Patient.id + "/" + today4URL;
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){
@@ -463,7 +472,7 @@ this.AdminDate = today;
 });
 
 Ext.ND_TreatmentTimeRenderer = function(v) {
-	if ("" !== v) {
+	if (v && "" !== v) {
 		var v1, v2, v3;
 		if ("string" == typeof v) {
 			v1 = v.split("T");
@@ -496,11 +505,19 @@ Ext.ND_TreatmentTypeOrderRenderer = function(v) {
 };
 
 Ext.ND_TreatmentSignature = function(v, metadata, record, rowIndex, colIndex, store, view) {
-	var aStyle = "style=\"text-decoration:underline; color: navy;\" ";
+	var aStyle = "style=\"text-decoration:underline; color: navy;\"";
 	var dspValue = "Sign to Verify";
 	if (v) {
 		aStyle = "";
 		dspValue = (v + " - " + record.get("Treatment_Date"));
 	}
-	return Ext.String.format("<span class=\"anchor TreatmentSigner\" {0}row={1} col={2}>{3}</span>", aStyle, rowIndex, colIndex, dspValue);
+	return Ext.String.format("<span class=\"anchor TreatmentSigner\" {0} row={1} col={2}>{3}</span>", aStyle, rowIndex, colIndex, dspValue);
+};
+
+Ext.ND_TreatmentAmmendIcon = function(v, metadata, record, rowIndex, colIndex, store, view) {
+	var aClass = "";
+	if ("Administered" === record.getData().orderstatus) {
+		aClass = "class=\"EditCell\" ";
+	}
+	return Ext.String.format("<div {0} row={1} col={2}>&nbsp;</div>", aClass, rowIndex, colIndex);
 };

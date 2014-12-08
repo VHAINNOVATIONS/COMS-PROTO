@@ -842,3 +842,10 @@ table.FlowsheetTable {
     background-image: url('/libs/ExtJS_4.1.0/resources/themes/images/default/form/text-bg.gif');
     border-color: #b5b8c8;
 }
+
+
+.EditCell {
+	background-image: url('/images/pencil.png');
+	background-repeat: repeat-x;
+	width: 18px;
+}

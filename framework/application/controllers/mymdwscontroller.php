@@ -4,6 +4,23 @@
  * 
  * @property Mymdws $Mymdws
  * @property MdwsBase $mdwsBase
+ *
+ *    function TreatmentStatus($detail)
+ *    function AllVitals($lastFour,$existingClient = null)
+ *    function Allergies($lastFour,$existingClient=null)
+ *    function LabInfoResults($lastFour,$existingClient=null)
+ *    function MDWSAllVitals($client)
+ *    function MDWSAllVitals($client)
+ *    function MDWSAllergies($client)
+ *    function MDWSLabInfo($client,$startDate,$endDate)
+ *    function MDWSMatchPatient($client,$lastFour)
+ *    function MDWSSelectPatientByDFN($client,$dfn)
+ *    function Match($lastFour)
+ *    function MdwsSetup($isSSN,$value)
+ *    function Mega($type = null,$value = null)
+ *    function checkForErrors($errorMsg,$retVal)
+ *    private function _mdwsMeds($client)
+ *
  */
 class MymdwsController extends Controller 
 {

@@ -234,6 +234,7 @@
                  "EndTreatmentSummary" === $urlArray[ 0 ] || 
                  "Flowsheet"           === $urlArray[ 0 ] || 
                  "Git"                 === $urlArray[ 0 ] || 
+                 "Reports"             === $urlArray[ 0 ] || 
                  "Search"              === $urlArray[ 0 ] ) {
                         $point = "urlArray Matched";
                         PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 4, $_SESSION[ 'sessionid' ] );
