@@ -15,8 +15,8 @@ $compname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 $ip_vistor = $_SERVER['REMOTE_ADDR'];
 $userid = get_current_user();
 
-$serverName = "SQL\SERVER";
-$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"xxxx","Database"=>"COMS_Tracking");
+$serverName = "DBITDATA\DBIT";
+$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_Tracking");
 $conn =  sqlsrv_connect( $serverName, $connectionOptions);
 
 $sqlid = "SELECT id FROM COMS_Feedback ORDER BY id";

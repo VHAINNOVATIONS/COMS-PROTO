@@ -257,10 +257,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             Btns.on("click", this.handlePatientSelectionClickEvent, this);
         }
 		if ("Programmer" === dName ) {
-			var pb = this.getProgrammerBtns();
-			if (pb) {
-				pb.show();
-			}
+			// this.getProgrammerBtns().show();
 		}
         Ext.togglePanelOnTitleBarClick(panel);
     },
