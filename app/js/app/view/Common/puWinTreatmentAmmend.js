@@ -12,7 +12,7 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 	"items" : [
 		// { "xtype" : "box", html : "Ammendments to this record<hr>" },
 
-		{ "xtype" : "box", html : "<h1>Addendums to Patient Treatment Record</h1><h2>Previous Addendums to Patient Treatment Record</h2>" },
+		{ "xtype" : "box", html : "<h1>Addendums to Patient Treatment Record</h1><h2>Previous Entries to Patient Treatment Record</h2>" },
 
 		{ "xtype" : "grid", "name" : "AddendumsHistory",
 			margin: "10 5 30 5",
@@ -61,9 +61,10 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 		},
 
 
-	{ "xtype" : "RequiredInstr" },
+	
 
 		{ "xtype" : "box", html : "<h2>Make Addendum to Patient Treatment Record</h2>" },
+		{ "xtype" : "RequiredInstr", "margin" : "0 0 0 100" },
 		{ "xtype" : "grid", margin: "10 5 10 5",
 			name : "ModifyData",
 			store : {
@@ -127,22 +128,7 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 			]
 		},
 
-	{ "xtype" : "button", "text" : "Cancel", "scope" : this }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	{ "xtype" : "button", "text" : "Cancel", "scope" : this, "margin" : "0 0 0 50" }
 
 	]
 });

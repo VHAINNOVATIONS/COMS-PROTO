@@ -8,9 +8,21 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 	init: function () {
 		this.control({
 			"puWinTreatmentAmmend" : { 
+				scope : this,
 				afterrender : this.AmmendRecordRendered,
 				activate : this.ActivateWindow
-			}
+			},
+			"puWinTreatmentAmmend button[text=\"Cancel\"]" : {
+				click: this.Cancel
+			},
+
+			"puWinTreatmentAmmend [name=\"ModifyData\"]" : { // Handles the Cell Edit (both start and end of edit cycle.
+				cellclick : this.AssignVerify2SignHandler
+//				beforeedit : this.beforeCellEdit,
+//				edit : this.afterCellEdit,
+			},
+
+
 
 			/**
 			"puWinTreatmentAmmend [name=\"ModifyData\"]" : {
@@ -25,6 +37,12 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 			**/
 		});
 	},
+
+
+	Cancel : function(btn) {
+		btn.up('window').close();
+	},
+
 	ActivateWindow : function( theWin, eOpts ) {
 		var theGrid = this.getGrid();
 		var theStore = theGrid.getStore();
@@ -39,18 +57,19 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 	},
 
 	AssignVerify2SignHandler : function(tableView, cellElement, cellIdx, record, rowElement, rowIndex, evt, opts) {
+		debugger;
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
 				Ext.MessageBox.alert("Error", "You MUST specify at least a \"Start Time\" for this administration");
 			}
-			else if ("" === Comment) {
+			else if ("" === record.get("Comments")) {
 				Ext.MessageBox.alert("Error", "You MUST make a comment on the reason for the addendum");
 			}
 			else {
-				this.curTreatmentRecord = record;
 				record.set("Treatment_User", "In Process...");
 				var EditRecordWin = Ext.widget("Authenticate");
+				EditRecordWin.curTreatmentRecord = record;
 				var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
 				initialField.focus(true, true);
 			}

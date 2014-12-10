@@ -1643,22 +1643,22 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var eLevel1 = ELevel.split(" ")[0];
 		var x = "";
 		switch (eLevel1) {
-			case "Minimal Emetic Risk" :
+			case "Minimal" :
 			case "Low":
 				x = "Emesis-1";
 				break;
 
-			case "Low Emetic Risk" :
+			case "Low" :
 			case "Medium":
 				x = "Emesis-2";
 				break;
 
-			case "Moderate Emetic Risk" :
+			case "Moderate" :
 			case "Moderate":
 				x = "Emesis-3";
 				break;
 
-			case "High Emetic Risk" :
+			case "High" :
 			case "High":
 				x = "Emesis-4";
 				break;

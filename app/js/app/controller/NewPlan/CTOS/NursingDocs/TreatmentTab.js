@@ -61,7 +61,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			"NursingDocs_Treatment button[name=\"btnHydration\"]" : { click : this.BtnClicked },
 
 			"Authenticate[title=\"Authenticate\"] button[action=\"save\"]": {
-				click: this.AuthenticateUser
+				click: {
+					scope : this,
+					fn : this.AuthenticateUser
+				}
 			},
 			"NursingDocs_Treatment button[text=\"Administration Complete\"]" : { click : this.TreatmentCompleteClicked }
 		});
@@ -82,38 +85,53 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				record.set("Treatment_User", "In Process...");
 					// Prompt user and issue AJAX call to verify their credentials and save this record if credentials verified.
 				var EditRecordWin = Ext.widget("Authenticate");
+				EditRecordWin.curTreatmentRecord = record;
 				var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
 				initialField.focus(true, true);
 			}
 		}
-/**
-		else if (9 === cellIdx) {
-			if ("" !== record.getData().AccessCode) {
-				// Ammend record
-				debugger;
-			}
-		}
-**/
 	},
 
 
-	AuthenticateUser : function (button) {
+	SaveTreatmentRecord : function(curTreatmentRecord) {
+		var tData = curTreatmentRecord.getData();
+		var drug = curTreatmentRecord.get("drug");
+		var res = drug.replace(/^\d+\. /, "");
+		curTreatmentRecord.set("drug", drug);
+		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("AccessCode"));
+		curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
+		curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
+		curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
 
+		this.application.loadMask("Saving record of changes");
+		// POST Changed data row back to server then upon successful posting of the data...
+		curTreatmentRecord.save({
+			scope : this,
+			callback : function(record, operation) {
+				var theData = record.getData();
+				if ("Therapy" === theData.type) {
+							var thisCtl = this.getController("Common.puWinAddCumDose");
+							// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
+							var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
+							thisCtl.SaveNewCumDoseInfo( Info );
+				}
+
+				this.application.unMask();
+				if (!operation.success) {
+						Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
+				}
+			}
+		});
+		delete this.curTreatmentRecord;
+	},
+
+	AuthenticateUser : function (button) {
+debugger;
 // get Route
 // if Route !== Oral the End Time MUST be set before signing
 // IF the medication is ORAL, SubQ, IM or IVP then only a start time is required before the user can sign off on the record
 // ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
-
-
-
-
-
-
-
-
-
-
-
+		var curTreatmentRecord = button.up("Authenticate").curTreatmentRecord;
 
 		this.SignRecordBtn = button;
 		button.hide();
@@ -123,11 +141,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var values = form.getValues();
 		var SignData = window.SessionUser + " - " + Ext.Date.format(new Date(), "m/d/Y - g:i a");
 
-		this.curTreatmentRecord.set("AccessCode", values.AccessCode);
-		this.curTreatmentRecord.set("User", values.AccessCode);
-		this.curTreatmentRecord.set("VerifyCode", values.VerifyCode);
-		this.curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
-		this.curTreatmentRecord.set("templateID", this.application.Patient.AppliedTemplateID);
+		curTreatmentRecord.set("AccessCode", values.AccessCode);
+		curTreatmentRecord.set("User", values.AccessCode);
+		curTreatmentRecord.set("VerifyCode", values.VerifyCode);
+		curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
+		curTreatmentRecord.set("templateID", this.application.Patient.AppliedTemplateID);
 
 
 		Ext.Ajax.request({
@@ -138,43 +156,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success && "Failed" !== resp.records) {
-					var tData = this.curTreatmentRecord.getData();
-					var drug = this.curTreatmentRecord.get("drug");
-					var res = drug.replace(/^\d+\. /, "");
-					this.curTreatmentRecord.set("drug", drug);
-
-
-/*
- *
- alert("Correct Drug being sent by stripping off leading # and '. '");
- */
-
-					this.curTreatmentRecord.set("Treatment_User", this.curTreatmentRecord.get("AccessCode"));
-					this.curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
-					this.curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
-					this.curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
-
 					win.close();
-			        this.application.loadMask("Saving record of changes");
-					// POST Changed data row back to server then upon successful posting of the data...
-					this.curTreatmentRecord.save({
-						scope : this,
-						callback : function(record, operation) {
-							var theData = record.getData();
-							if ("Therapy" === theData.type) {
-										var thisCtl = this.getController("Common.puWinAddCumDose");
-										// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
-										var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
-										thisCtl.SaveNewCumDoseInfo( Info );
-							}
-
-							this.application.unMask();
-							if (!operation.success) {
-									Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
-							}
-						}
-					});
-					this.curTreatmentRecord = null;
+					this.SaveTreatmentRecord (curTreatmentRecord);
 				}
 				else {
 					Ext.MessageBox.alert("Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
