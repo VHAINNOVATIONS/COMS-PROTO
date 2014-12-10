@@ -824,15 +824,9 @@ Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
 };
 
 Ext.COMS_UnLockSection = function() {
-	try {
-		if (LockedInfo) {
-			Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
-			delete LockedInfo;
-		}
-	}
-	catch (e) {
-//		console.log("LockedInfo does not exist");
-	}
+	debugger;
+	Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
+	delete LockedInfo;
 };
 
 Ext.togglePanelOnTitleBarClick = function(panel) {

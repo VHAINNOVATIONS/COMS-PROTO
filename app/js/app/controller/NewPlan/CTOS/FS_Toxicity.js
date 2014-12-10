@@ -568,11 +568,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		var theBtn = params.theBtn;
 		var theAddRecordPanel = me.getAddRecordPanel(theBtn);
 		theAddRecordPanel.show();
-
-var f1 = this.getToxInstrFld(theAddRecordPanel);
-f1.allowBlank = false;
-var f2 = this.getToxLevelFld(theAddRecordPanel);
-f2.allowBlank = false;
 		theBtn.setDisabled(true);
 	},
 
@@ -583,12 +578,6 @@ f2.allowBlank = false;
 
 	releaseLock : function(thePanel) {
 		thePanel.hide();
-
-var f1 = this.getToxInstrFld(thePanel);
-f1.allowBlank = true;
-var f2 = this.getToxLevelFld(thePanel);
-f2.allowBlank = true;
-
 		var theBtn = this.getAddRecordBtn(thePanel);
 		theBtn.setDisabled(false);
 		Ext.COMS_UnLockSection();

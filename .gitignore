@@ -19,3 +19,4 @@ app/dbitcon.php
 app/js_Files2Ignore/*
 aspnet_client/*
 framework/config/* 
+/app/SSHDebug

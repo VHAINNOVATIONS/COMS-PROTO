@@ -1,10 +1,1 @@
 add 
-     [exec] warning: LF will be replaced by CRLF in build/logs/GIT_COMMAND_LOG.log.
-     [exec] The file will have its original line endings in your working directory.
-commit 
-     [exec] [testchanges f1b0e5d] tweaked build process
-     [exec]  2 files changed, 2 insertions(+)
-push 
-     [exec] Branch testchanges set up to track remote branch testchanges from origin.
-     [exec] To http://dbitbuild.dbitpro.com:88/COMS.git
-     [exec]    96a51c6..f1b0e5d  testchanges -> testchanges

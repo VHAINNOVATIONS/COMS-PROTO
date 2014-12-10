@@ -5,7 +5,7 @@ $body .= "Modules: ".$Modules."\n";
 $body .= "Feedback: ".$Feedback."\n";
 $body .="\n";
 
-$serverName = "DBITDATA\DBIT";
+$serverName = "SQL\SERVER";
 $connectionOptions = array("Database"=>"COMS_Demo");
 $conn =  sqlsrv_connect($serverName, $connectionOptions);
 

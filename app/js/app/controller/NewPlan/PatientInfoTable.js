@@ -171,7 +171,6 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	showAmputationWiget : function() {
 		if (!this.puWinAmputations) {
 			this.puWinAmputations = Ext.widget("puWinSelAmputation");
-			this.puWinAmputations.show();
 		}
 		else {
 			this.puWinAmputations.show();
@@ -181,48 +180,27 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	ShowBSAWidget : function() {
 		if (!this.puWinBSA) {
 			this.puWinBSA = Ext.widget("puWinSelBSA");
-			this.puWinBSA.show();
 		}
 		else {
-			try {
-				this.puWinBSA.show();
-			}
-			catch (e) {
-				this.puWinBSA = Ext.widget("puWinSelBSA");
-				this.puWinBSA.show();
-			}
+			this.puWinBSA.show();
 		}
 	},
 
 	ShowCancerWidget : function() {
 		if (!this.puWinCancer) {
 			this.puWinCancer = Ext.widget("puWinSelCancer");
-			this.puWinCancer.show();
 		}
 		else {
-			try {
-				this.puWinCancer.show();
-			}
-			catch (e) {
-				this.puWinCancer = Ext.widget("puWinSelCancer");
-				this.puWinCancer.show();
-			}
+			this.puWinCancer.show();
 		}
 	},
 
 	ShowAddCumulativeMedication : function() {
 		if (!this.puWinCumDose) {
 			this.puWinCumDose = Ext.widget("puWinAddCumDose");
-			this.puWinCumDose.show();
 		}
 		else {
-			try {
-				this.puWinCumDose.show();
-			}
-			catch (e) {
-				this.puWinCumDose = Ext.widget("puWinAddCumDose");
-				this.puWinCumDose.show();
-			}
+			this.puWinCumDose.show();
 		}
 	},
 
