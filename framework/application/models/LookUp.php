@@ -399,18 +399,23 @@ error_log("saveTemplate - BP4");
         switch($key) {
             case "1":
                 $Label = "Emesis-1";
+                $Label = "Minimal Emetic Risk";
                 break;
             case "2":
                 $Label = "Emesis-2";
+                $Label = "Low Emetic Risk";
                 break;
             case "3":
                 $Label = "Emesis-3";
+                $Label = "Moderate Emetic Risk";
                 break;
             case "4":
                 $Label = "Emesis-4";
+                $Label = "High Emetic Risk";
                 break;
             case "4":
                 $Label = "Emesis-5";
+                $Label = "High Emetic Risk";
                 break;
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";

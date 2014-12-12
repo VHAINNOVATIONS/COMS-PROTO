@@ -534,16 +534,24 @@ class LookupController extends Controller {
         $EmoLevel = explode(" ", $retVal[0]["emoLevel"]);
         switch($EmoLevel[0]) {
             case "Low":
+            case "Minimal Emetic Risk":
                 $Label = "Emesis-1";
+                $Label = "Minimal Emetic Risk";
                 break;
             case "Medium":
+            case "Low Emetic Risk":
                 $Label = "Emesis-2";
+                $Label = "Low Emetic Risk";
                 break;
             case "Moderate":
+            case "Moderate Emetic Risk":
                 $Label = "Emesis-3";
+                $Label = "Moderate Emetic Risk";
                 break;
             case "High":
+            case "High Emetic Risk":
                 $Label = "Emesis-4";
+                $Label = "High Emetic Risk";
                 break;
             case "Very High":
                 $Label = "Emesis-5";
