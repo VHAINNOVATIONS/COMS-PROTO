@@ -5,7 +5,7 @@ Ext.define("COMS.view.Common.selCTOSTemplate", {
 	"autoEl" : { "tag" : "section" },
 	"margin" : "0",
 	"items" : [
-		{ "xtype" : "Search4Template", "hidden": false },
+		{ "xtype" : "Search4Template", "hidden": true },
 		{ "xtype" : "container",
 			"layout" : "hbox",
 			"items" : [

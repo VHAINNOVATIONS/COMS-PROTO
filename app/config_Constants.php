@@ -32,7 +32,7 @@ else if (defined('dbITCOMSTest')) {
 	define('DB_PASSWORD', 'dbitPASS99');
 }
 else if (defined('MWBarlow')) {
-    define('DB_NAME', 'COMS_TEST_3');
+    define('DB_NAME', 'COMS_TEST_5');
 	define('DB_TYPE', 'sqlsrv');
 	define('DB_HOST', "DBITDATA\DBIT");
 	define('DB_USER', 'coms_db_user');

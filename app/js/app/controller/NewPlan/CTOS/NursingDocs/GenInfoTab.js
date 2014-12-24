@@ -753,7 +753,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 					Ext.MessageBox.alert("Saving Error", "ND - GenInfo - General Information Section, Save Error - " + resp.msg );
 				}
 				else {
-					Ext.MessageBox.alert("Saving Patient Identification/Teaching", "Saving Patient Identification/Teaching Complete" );
+					Ext.MessageBox.alert("Saving General Information Section", "Saving General Information Complete" );
 				}
 			},
 			failure : function( response, opts ) {

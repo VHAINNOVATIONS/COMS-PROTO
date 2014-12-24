@@ -147,6 +147,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
             'EditLookup button[action="save"]': {
                 click: this.clickSaveDrug
             },
+            'EditLookup button[action="cancel"]': {
+                click: this.clickCancelDrug
+            },
+
             'AdminTab EditLookup button[action="cancel"]': {
                 click: this.clickCancelDrug
             },

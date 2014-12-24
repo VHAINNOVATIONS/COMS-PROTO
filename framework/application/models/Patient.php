@@ -110,14 +110,6 @@ class Patient extends Model
                 $this->query($query);
             }
         }
-        
-        if (empty($clinicalTrial)) {
-            $clinicalTrialColumn = null;
-            $clinicalTrialValue = null;
-        } else {
-            $clinicalTrialColumn = ', Clinical_Trial';
-            $clinicalTrialValue = ", '$clinicalTrial'";
-        }
         $query = "
             INSERT INTO Patient_Assigned_Templates (
                 Patient_ID,
@@ -130,8 +122,8 @@ class Patient extends Model
                 Status,
                 Perf_Status_ID,
                 Weight_Formula,
-                BSA_Method
-                $clinicalTrialColumn
+                BSA_Method,
+                Clinical_Trial
             ) values (
                 '$patientId',
                 '$templateId',
@@ -143,10 +135,9 @@ class Patient extends Model
                 'Ordered',
                 '$performanceStatus',
                 '$weightFormula',
-                '$bsaFormula'
-                $clinicalTrialValue
+                '$bsaFormula',
+                '$clinicalTrial'
             )";
-        
         $retValue = $this->query($query);
 
         /**
@@ -175,6 +166,7 @@ class Patient extends Model
          * $this->query($query); if (null != $retVal &&
          * array_key_exists('error', $retVal)) { return $retVal; }
          */
+
         $query = "
             SELECT PAT_ID AS id 
             FROM Patient_Assigned_Templates 
@@ -182,9 +174,7 @@ class Patient extends Model
                 AND Template_ID ='$templateId' 
                 AND Date_Ended_Actual is NULL
         ";
-
         $result = $this->query($query);
-        
         return $result;
     }
 
@@ -329,6 +319,7 @@ function convertReason2ID($Reason) {
     function getMeasurements_v1 ($id, $dateTaken)
     {
         $query = "SELECT Patient_ID as id from Patient where DFN = '" . $id . "'";
+        error_log("getMeasurements_v1 - $query");
         $patientId = $this->query($query);
         
         if (null != $patientId && ! array_key_exists('error', $patientId)) {
@@ -395,6 +386,8 @@ function convertReason2ID($Reason) {
                 ORDER BY Date_Taken DESC";
             }
         }
+
+        error_log("getMeasurements_v1 - $query");
         return $this->query($query);
     }
 

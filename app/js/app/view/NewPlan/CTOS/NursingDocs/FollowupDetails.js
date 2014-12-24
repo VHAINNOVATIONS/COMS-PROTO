@@ -11,9 +11,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.FollowupDetails", {
 			"defaultType": "radio",
 			"fieldLabel": "Follow up type",
 			"width": 20,
-			"defaults": {"labelAlign": "right","labelWidth": 70,"labelClsExtra": "NursingDocs-label"},
+			"defaults": {"labelAlign": "right","labelWidth": 100,"labelClsExtra": "NursingDocs-label"},
 			"items": [{
 				"name": "FollowUp_Type",
+				"labelWidth": 90,
 				"inputValue": "InPatient",
 				"fieldLabel": "Inpatient"
 			}, {

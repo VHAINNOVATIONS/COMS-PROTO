@@ -249,6 +249,8 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
+error_log("saveTemplate(LookUp Model) - Entry Point");
+
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
         $cycleLength = $formData->CycleLength;
@@ -303,7 +305,7 @@ error_log("saveTemplate - BP2 Query - $query");
                 return $retVal;
             }
         }
-error_log("saveTemplate - BP3");
+error_log("saveTemplate - BP3a");
 
 
 $queryStart_CODE = "INSERT INTO Master_Template (
@@ -371,7 +373,7 @@ $queryStart_DATA = "'$Template_ID',
         }
 
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-        error_log("saveTemplate - BP3 - $error - $query");
+        error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {

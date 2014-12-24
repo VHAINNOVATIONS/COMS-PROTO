@@ -5,7 +5,7 @@ Ext.define("COMS.view.Common.selTemplate", {
 	"store" : "Templates",
 	"width" : 600,
 	"size" : 60,
-	"labelWidth" : 160,
+	"labelWidth" : 190,
 	"fieldLabel" : "Select a Template <em>*</em>",
 	"labelAlign" : "right",
 	"displayField" : "description",

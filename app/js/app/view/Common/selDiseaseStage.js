@@ -10,7 +10,7 @@ Ext.define("COMS.view.Common.selDiseaseStage" ,{
 	"queryMode" : "local",
 	"fieldLabel" : "Cancer Stage",
 	"labelAlign" : "right",
-	"width" : 250,
+	"width" : 300,
 	"size " : 10,
-	"labelWidth" : 90
+	"labelWidth" : 120
 });

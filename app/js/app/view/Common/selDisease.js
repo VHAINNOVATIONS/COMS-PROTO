@@ -13,9 +13,9 @@ Ext.define("COMS.view.Common.selDisease" ,{
 	"emptyText" : "Select a Cancer Type",
 
 	"allowBlank" : false,
-	"width" : 500,
-	"size" : 50,
-	"labelWidth" : 160,
+	"width" : 600,
+	"size" : 60,
+	"labelWidth" : 190,
 	"fieldLabel" : "Select a type of cancer <em>*</em>",
 	"labelAlign" : "right",
 	"displayField" : "name",

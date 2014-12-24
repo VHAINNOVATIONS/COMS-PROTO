@@ -92,6 +92,29 @@ var theMainItemsList = function(itemsInGroup) {
 						"displayField" : "formula"
 					}]
 				}, 
+				{ 
+					"xtype" : "container",
+					"layout" : "hbox",
+					"defaults" : {
+						"margin" : "5 5 5 0"
+					},
+					"items" : [
+						{
+							"xtype" : "textfield", 
+							"name" : "OtherWeight", 
+							"fieldLabel" : "Other weight to use <em>*</em>", 
+							"labelWidth" : 170, 
+							"labelAlign" : "right", 
+							"width" : 220, 
+							"labelStyle" : "font-weight: bold" 
+						},
+						{
+							"xtype" : "box", "margin" : "10",
+							"html" : "<span class=\"NursingDocs-boxLabel\">lbs.</span>"
+						}
+					]
+				},
+
 				{
 					"xtype" : "radiogroup",
 					"labelAlign" : "top",

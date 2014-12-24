@@ -168,12 +168,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Fever",
-					boxLabel : " Fever", width: 100
+					boxLabel : " Fever", xxwidth: 100
 				},
 				{ 
 					xtype : "textfield", labelAlign: "right", labelClsExtra : "NursingDocs-label", hidden : true,
 					name : "ND_RA_CRS_Temperature",
-					fieldLabel : " - Temperature", labelWidth: 110
+					fieldLabel : " - Temperature", xxlabelWidth: 110
 				},
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
@@ -193,22 +193,22 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Hypotension", 
-					boxLabel : " Hypotension", width: 100
+					boxLabel : " Hypotension", XXwidth: 100
 				},
 
 				{ xtype : "fieldcontainer", name: "ND_RA_CRS_HypotensionBP", hidden : true,
-					fieldLabel : " - Blood Pressure", labelWidth: 110, 
+					fieldLabel : " - Blood Pressure", labelWidth: 130, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
-					{ xtype : "textfield", name : "ND_RA_CRS_Systolic", width: 30 },
+					{ xtype : "textfield", name : "ND_RA_CRS_Systolic", width: 60 },
 					{ xtype : "displayfield", value : " / " },
-					{ xtype : "textfield", name : "ND_RA_CRS_Diastolic", width: 30 },
+					{ xtype : "textfield", name : "ND_RA_CRS_Diastolic", width: 60 },
 					{ xtype : "displayfield", value : " (Lowest value)" }
 				]},
 
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Tachycardia", 
-					boxLabel : " Tachycardia", width: 100
+					boxLabel : " Tachycardia", xxwidth: 100
 				},
 
 				{ xtype : "fieldcontainer", name: "ND_RA_CRS_TachycardiaPulse", hidden : true,
@@ -231,12 +231,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Rash", 
-					boxLabel : " Rash", width: 100
+					boxLabel : " Rash", xxwidth: 100
 				},
 				{ 
-					xtype : "textfield", labelAlign: "right", labelClsExtra : "NursingDocs-label", hidden : true,
+					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_CRS_RashDesc", 
-					fieldLabel : " - Description", labelWidth: 110
+					fieldLabel : "Enter description"
 				},
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
@@ -257,7 +257,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_CRS_OtherDetails",
-					fieldLabel : "Enter description"					
+					fieldLabel : "Enter description"
 				}
 			]
 		},
@@ -289,11 +289,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				},
 
 				{ xtype : "fieldcontainer", name: "ND_RA_HorA_HypotensionBP", hidden : true,
-					fieldLabel : " - Blood Pressure", labelWidth: 110, 
+					fieldLabel : " - Blood Pressure", labelWidth: 130, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
-					{ xtype : "textfield", name : "ND_RA_HorA_Systolic", width: 30 },
+					{ xtype : "textfield", name : "ND_RA_HorA_Systolic", width: 60 },
 					{ xtype : "displayfield", value : " / " },
-					{ xtype : "textfield", name : "ND_RA_HorA_Diastolic", width: 30 },
+					{ xtype : "textfield", name : "ND_RA_HorA_Diastolic", width: 60 },
 					{ xtype : "displayfield", value : " (Lowest value)" }
 				]},
 
@@ -368,7 +368,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{ 
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_CR_Comments",
-					fieldLabel : "Comments", labelWidth: 110
+					fieldLabel : "Comments", xxlabelWidth: 110
 				}
 			]
 		},

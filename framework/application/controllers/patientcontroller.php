@@ -271,23 +271,20 @@ class PatientController extends Controller
     public function savePatientTemplate()
     {
         $formData = json_decode(file_get_contents('php://input'));
-        
-        $this->Patient->beginTransaction();
-        
-        $returnVal = $this->Patient->savePatientTemplate($formData);
 
+        $this->Patient->beginTransaction();
+        $returnVal = $this->Patient->savePatientTemplate($formData);
         if ($this->checkForErrors('Apply Patient Template Failed. ', $returnVal)) {
             $this->set('patientTemplateId', null);
             $this->Patient->rollbackTransaction();
             return;
         }
+        $this->Patient->endTransaction();
         
         $this->createOEMRecords($formData);
         
         $this->set('patientTemplateId', $returnVal[0]['id']);
         $this->set('frameworkErr', null);
-        
-        $this->Patient->endTransaction();
     }
     
     /**
