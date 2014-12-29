@@ -323,7 +323,7 @@ $queryStart_CODE = "INSERT INTO Master_Template (
                     Created_By, 
                     Total_Courses, 
                     Regimen_Instruction,
-                    Date_Created";
+                    Date_Created,";
 $queryStart_DATA = "'$Template_ID',
                     '$regimenId',
                     '$locationId',
@@ -338,9 +338,8 @@ $queryStart_DATA = "'$Template_ID',
                     '$userId',
                     $courseNumMax,
                     '$regimenInstruction',
-                    '$currDate'
+                    '$currDate',
 ";
-
 
 
         if($diseaseStage){
