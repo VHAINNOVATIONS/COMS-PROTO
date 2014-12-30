@@ -259,7 +259,6 @@ error_log("saveTemplate(LookUp Model) - Entry Point");
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
         $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
-//error_log("saveTemplate - BP1");
 
             $query = "SELECT NEWID()";
             $Template_ID = $this->query($query);
@@ -288,7 +287,6 @@ error_log("saveTemplate(LookUp Model) - Entry Point");
         $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
         $currDateResult = $this->query($query);
         $currDate = $currDateResult[0]['currdate'];
-//error_log("saveTemplate - BP2");
         if($cycle){
             $query = "
                 SELECT Template_ID AS lookupid 
@@ -299,7 +297,6 @@ error_log("saveTemplate(LookUp Model) - Entry Point");
                     AND Admin_Date = '$adminDate'
                     AND Patient_ID = '$patientId'
             ";
-//error_log("saveTemplate - BP2 Query - $query");
             $retVal = $this->query($query);
             if($retVal){
                 return $retVal;
@@ -326,6 +323,7 @@ $queryStart_CODE = "INSERT INTO Master_Template (
                     Date_Created";
 
 
+
 $queryStart_DATA = "'$Template_ID',
                     '$regimenId',
                     '$locationId',
@@ -342,7 +340,6 @@ $queryStart_DATA = "'$Template_ID',
                     '$regimenInstruction',
                     '$currDate'
 ";
-
 
 
         if($diseaseStage){
