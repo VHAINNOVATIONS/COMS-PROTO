@@ -20,9 +20,7 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 				cellclick : this.AssignVerify2SignHandler
 //				beforeedit : this.beforeCellEdit,
 //				edit : this.afterCellEdit,
-			},
-
-
+			}
 
 			/**
 			"puWinTreatmentAmmend [name=\"ModifyData\"]" : {
