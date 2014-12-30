@@ -95,6 +95,8 @@ var theMainItemsList = function(itemsInGroup) {
 				{ 
 					"xtype" : "container",
 					"layout" : "hbox",
+					"name" : "OtherWeightEntry",
+					"hidden" : true,
 					"defaults" : {
 						"margin" : "5 5 5 0"
 					},

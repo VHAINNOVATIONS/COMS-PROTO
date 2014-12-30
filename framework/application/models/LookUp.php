@@ -259,7 +259,7 @@ error_log("saveTemplate(LookUp Model) - Entry Point");
         $fibroNeutroRisk = $formData->FNRisk;
         $courseNumMax = $formData->CourseNumMax;
         $keepActive = (empty($formData->KeepAlive)) ? true : $formData->KeepAlive;
-error_log("saveTemplate - BP1");
+//error_log("saveTemplate - BP1");
 
             $query = "SELECT NEWID()";
             $Template_ID = $this->query($query);
@@ -288,7 +288,7 @@ error_log("saveTemplate - BP1");
         $query = "SELECT CONVERT(VARCHAR,GETDATE(),121) AS currdate";
         $currDateResult = $this->query($query);
         $currDate = $currDateResult[0]['currdate'];
-error_log("saveTemplate - BP2");
+//error_log("saveTemplate - BP2");
         if($cycle){
             $query = "
                 SELECT Template_ID AS lookupid 
@@ -299,7 +299,7 @@ error_log("saveTemplate - BP2");
                     AND Admin_Date = '$adminDate'
                     AND Patient_ID = '$patientId'
             ";
-error_log("saveTemplate - BP2 Query - $query");
+//error_log("saveTemplate - BP2 Query - $query");
             $retVal = $this->query($query);
             if($retVal){
                 return $retVal;
@@ -324,6 +324,8 @@ $queryStart_CODE = "INSERT INTO Master_Template (
                     Total_Courses, 
                     Regimen_Instruction,
                     Date_Created";
+
+
 $queryStart_DATA = "'$Template_ID',
                     '$regimenId',
                     '$locationId',
@@ -344,16 +346,16 @@ $queryStart_DATA = "'$Template_ID',
 
 
         if($diseaseStage){
-            $queryStart_CODE .= "Disease_Stage_ID";
-            $queryStart_DATA .= "'$diseaseStage'";
+            $queryStart_CODE .= ", Disease_Stage_ID";
+            $queryStart_DATA .= ", '$diseaseStage'";
             $error = "disease stage";
         } else if($cycle) {
-            $queryStart_CODE .= "
+            $queryStart_CODE .= ",
                     Admin_Day, 
                     Admin_Date, 
                     Course_Number,
                     Patient_ID";
-            $queryStart_DATA .= "
+            $queryStart_DATA .= ",
                     '$adminDay',
                     '$adminDate',
                     '$cycle',
@@ -373,7 +375,7 @@ $queryStart_DATA = "'$Template_ID',
         }
 
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-        error_log("saveTemplate - BP3b - $error - $query");
+        // error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
@@ -1834,7 +1836,7 @@ error_log("saveTemplate - BP4");
         else {
             $query = "SELECT ID, Label, Details, ISNULL(CAST(Grade_Level as nvarchar(max)),'') 'Grade_Level' FROM SiteCommonInformation $buf order by Label, Grade_Level";
         }
-        error_log("getToxicity - $query");
+        // error_log("getToxicity - $query");
         return $this->query($query);
     }
 
@@ -1877,7 +1879,7 @@ error_log("saveTemplate - BP4");
             $InsertBuf2[] = "'$EmeticID'";
             $query = "INSERT into $DataType (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
         }
-        error_log("EmeticMeds - $query");
+        // error_log("EmeticMeds - $query");
         return $this->query($query);
     }
     function setEmeticMedData($EmeticID, $_POST) {

@@ -61,8 +61,7 @@ class Patient extends Model
      * @param stdClass $formData            
      * @return array
      */
-    public function savePatientTemplate($formData)
-    {
+    public function savePatientTemplate($formData) {
         $patientId = $formData->PatientID;
         $templateId = $formData->TemplateID;
         $dateApplied = $formData->DateApplied;
@@ -145,8 +144,7 @@ class Patient extends Model
          *
          * @todo This should be handled by the controller not the model
          */
-        OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, 
-                $dateEnded, $goal, $clinicalTrial, $performanceStatus);
+        OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, $dateEnded, $goal, $clinicalTrial, $performanceStatus);
         
         $lookup = new LookUp();
         foreach ($formData->Amputations as $amputation) {
@@ -319,7 +317,7 @@ function convertReason2ID($Reason) {
     function getMeasurements_v1 ($id, $dateTaken)
     {
         $query = "SELECT Patient_ID as id from Patient where DFN = '" . $id . "'";
-        error_log("getMeasurements_v1 - $query");
+        // error_log("getMeasurements_v1 - $query");
         $patientId = $this->query($query);
         
         if (null != $patientId && ! array_key_exists('error', $patientId)) {
@@ -387,7 +385,7 @@ function convertReason2ID($Reason) {
             }
         }
 
-        error_log("getMeasurements_v1 - $query");
+        // error_log("getMeasurements_v1 - $query");
         return $this->query($query);
     }
 
@@ -1567,7 +1565,7 @@ function UpdateAdminDateMT ($Template_ID,$Admin_Date)
             $buf = " where " . $buf;
         }
         $query = "SELECT * FROM Med_Reminders" . $buf;
-        error_log($query);
+        // error_log($query);
         return $this->query($query);
     }
 
