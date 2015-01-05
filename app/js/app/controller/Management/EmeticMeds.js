@@ -187,7 +187,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 	deleteRecord : function(theRecords) {
 		var record = theRecords.pop();
 		if (record) {
-			debugger;
+			// debugger;
 			var rID = record.get("id");
 			var CMD = "DELETE";
 			var URL = Ext.URLs.EmeticMeds + "/" + rID;

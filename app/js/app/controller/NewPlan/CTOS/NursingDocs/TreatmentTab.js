@@ -126,7 +126,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	},
 
 	AuthenticateUser : function (button) {
-debugger;
+// debugger;
 // get Route
 // if Route !== Oral the End Time MUST be set before signing
 // IF the medication is ORAL, SubQ, IM or IVP then only a start time is required before the user can sign off on the record

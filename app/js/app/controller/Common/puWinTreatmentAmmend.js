@@ -55,7 +55,7 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 	},
 
 	AssignVerify2SignHandler : function(tableView, cellElement, cellIdx, record, rowElement, rowIndex, evt, opts) {
-		debugger;
+		// debugger;
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
