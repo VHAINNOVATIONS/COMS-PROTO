@@ -968,16 +968,11 @@ function convertReason2ID($Reason) {
         return $this->query($query);
     }
 
+    // Gets the currently active template applied to the patient specified by $id
     function getTemplateIdByPatientID ($id)
     {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "select Template_ID as id from Patient_Assigned_Templates where Patient_ID = '" .
-                     $id . "' and Is_Active = 1";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select Template_ID as id from Patient_Assigned_Templates where Patient_ID = '" .
-                     $id . "' and Is_Active = true";
-        }
-        
+        // $query = "select Template_ID as id from Patient_Assigned_Templates where Patient_ID = '$id' and Is_Active = 1";
+        $query = "select Template_ID as id from Patient_Assigned_Templates where Patient_ID = '$id' and Date_Ended_Actual is null";
         return $this->query($query);
     }
 
