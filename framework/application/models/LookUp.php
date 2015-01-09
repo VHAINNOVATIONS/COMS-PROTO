@@ -397,6 +397,8 @@ error_log("saveTemplate - BP4");
     }
 
     function getEmoData( $key = "1" ) {
+        $Label = "";
+// error_log("getEmoData - (Entry Point) - $key");
         switch($key) {
             case "1":
                 $Label = "Emesis-1";
@@ -418,6 +420,10 @@ error_log("saveTemplate - BP4");
                 $Label = "Emesis-5";
                 $Label = "High Emetic Risk";
                 break;
+        }
+//         error_log("getEmoData - $key - no Label?");
+        if ("" == $Label) {
+            return htmlspecialchars($key);
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
         $EmesisVal = $this->query($query);

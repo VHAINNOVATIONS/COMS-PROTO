@@ -364,9 +364,9 @@ foreach($oemRecords as $aRecord) {
                 $aTempRec["Start"] . "<br>to " . 
                 $aTempRec["End"];
         }
-        else {
-            error_log("No Matching Record in Therapy for $Key");
-        }
+//        else {
+//            error_log("No Matching Record in Therapy for $Key");
+//        }
         
         $Therapy[$MedName] += array($CycleColLabel => $MedData);
     }
@@ -467,7 +467,6 @@ foreach($PostTherapy as $Med) {
             }
 
 
-
 $PreAdminRecords = array();
 $TherapyAdminRecords = array();
 $PostAdminRecords = array();
@@ -476,26 +475,47 @@ $TKeys = array();
 foreach ($records as $aRec) {
     // error_log("Order Record = " . $this->varDumpToString($aRec));
 
-    if (array_key_exists("ndt_Type", $aRec)) {
-        $Type = $aRec["ndt_Type"];
-        $aDate = $aRec["ndt_AdminDate"];
-        $MedName = $aRec["ndt_Drug"];
+    if (array_key_exists("Type", $aRec)) {
+        $Type = $aRec["Type"];
+        $aDate = $aRec["AdminDate"];
+        $MedName = $aRec["Drug"];
+        $MedName = preg_replace('/^\d+\. /', '', $MedName);
+
         $Key = "$aDate-$MedName";
-        $s1 = explode("T", $aRec["ndt_StartTime"]);
-        $s1 = $s1[1];
-        $e1 = explode("T", $aRec["ndt_EndTime"]);
-        $e1 = $e1[1];
+        $sTime = $aRec["StartTime"];
+        /**
+        if ("" !== $sTime) {
+            $s1 = explode("T", $sTime);
+            error_log("StartTime - " . $sTime . " - " . $this->varDumpToString($s1));
+            if (count($s1) > 0) {
+                $s1 = $s1[1];
+            }
+            $sTime = $s1;
+        }
+        **/
+        $eTime = $aRec["EndTime"];
+        /**
+        if ("" !== $eTime) {
+            $e1 = explode("T", $aRec["EndTime"]);
+            error_log("EndTime - " . $aRec["EndTime"] . " - " . $this->varDumpToString($e1));
+            $e1 = $e1[1];
+            if (count($e1) > 0) {
+                $e1 = $e1[1];
+            }
+            $eTime = $e1;
+        }
+        **/
         $tmpRec = array(
-            "Dose"=>$aRec["ndt_Dose"], 
-            "Unit"=>$aRec["ndt_Unit"], 
-            "Route"=>$aRec["ndt_Route"], 
-            "Start"=>$s1, 
-            "End"=>$e1
+            "Dose"=>$aRec["Dose"], 
+            "Unit"=>$aRec["Unit"], 
+            "Route"=>$aRec["Route"], 
+            "Start"=>$sTime, 
+            "End"=>$eTime
          );
         $tmpARec = array($Key => $tmpRec);
 
         
-        if ("Pre Therapy" == $Type) {
+        if ("Pre" == $Type) {
             // error_log("Saving Pre Therapy - $aDate");
             // $PreAdminRecords += $tmpARec;
             error_log("Saving PRE Therapy - ($Key) - " . $this->varDumpToString($tmpRec));
@@ -507,9 +527,8 @@ foreach ($records as $aRec) {
             else {
                 error_log("NOT Saving PRE Therapy - Key ($Key) DOES exist so NOT appending new record - ");
             }
-
         }
-        else if ("Post Therapy" == $Type) {
+        else if ("Post" == $Type) {
             // error_log("Saving Post Therapy - $aDate");
             $PostAdminRecords += $tmpARec;
         }
@@ -533,6 +552,9 @@ foreach ($records as $aRec) {
 //        error_log("ndt_Type key does not exist");
 //    }
 }
+
+
+
 /**
 error_log("================================================");
 $KeysList = array_keys($TKeys);
