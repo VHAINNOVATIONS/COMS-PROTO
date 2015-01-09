@@ -70,7 +70,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
 						{ xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
                     ]
                 },
-                { xtype : "button", text : "Administration Complete" }
+                { xtype : "button", text : "Administration Complete", hidden : true }
             ]
         }
     ]

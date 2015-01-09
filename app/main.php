@@ -19,8 +19,9 @@
     $ProjType = "Proof of Concept, 0.16, October 3, 2014";
     $ProjType = "Proof of Concept, 0.17, October 24, 2014";
     $ProjType = "Proof of Concept, 0.18, November 14, 2014";
-    */
     $ProjType = "Proof of Concept, 0.19, December 5, 2014";
+    */
+    $ProjType = "Demo, January 9, 2015";
 ?>
 
 <!doctype html>
@@ -147,12 +148,14 @@
             <ul style="text-align: right; font-size:small;">
             <!--
                 <li style="display: inline;"><a href="app/feedback/fbf.php" target="_blank">Feedback</a></li>
-            -->
                 <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
+            -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
                 <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                 <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
+                <!--
                 <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
+                -->
             </ul>
         </navigation>
     </form>

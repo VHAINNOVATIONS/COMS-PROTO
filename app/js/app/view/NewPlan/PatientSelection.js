@@ -76,7 +76,10 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 		"<p>For example, <br><b>\"ThreeHundredTwenty, Patient\"</b> is available as t0320 or T0320; <br><b>\"OneHundredThirty, Patient\"</b> is available as o0130 or O0130 " +
 		"(where the first character is the letter \"Oh\" as opposed to the number \"Zero\".)</p>" +
 		"<p>Due to multiple users accessing patients throughout the COMS Enhancement Period, patients will be allocated as follows:" +
-		"<ul> <li>VHA/OI&T Stakeholders may use the 100, 200, and 300 series</li> <li>Implementation Readiness Analysis and Review Team may use the 400 series</li> <li>Development Team may use the 500 series</li> </ul>" } },
+		"<ul>"+
+			"<li>VHA/OI&T Stakeholders may use the 100, 200, 300 and 400 series</li> " + 
+			"<li>Development Team may use the 500 series</li>" +
+		"</ul>" } },
 		{ xtype : "SelectPatient" }
 	]
 });
