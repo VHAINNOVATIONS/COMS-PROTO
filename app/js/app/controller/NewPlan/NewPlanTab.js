@@ -178,7 +178,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 afterrender: this.handlePatientSelectionRender
             },
             "NewPlanTab PatientInfo PatientInfoTable" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
+                afterrender: Ext.togglePanelOnTitleBarClick,
+				expand : this.MaskPITPanelOnExpand
             },
             "NewPlanTab PatientInfo PatientTemplates" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
@@ -206,6 +207,26 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
+	MaskPITPanelOnExpand : function (p, ani, opts) {
+//		if ("Patient Information" !== p.title ) {
+//			this.MaskPITable("Loading Patient Information");
+//		}
+//		else {
+//			this.MaskPITable(false);
+//		}
+	},
+
+	MaskPITable : function (msg) {
+//		var PITablePanel = this.getPatientInfoTable();
+//		if (msg) {
+//			PITablePanel.setTitle("Patient Information - " + msg);
+//			PITablePanel.setLoading(msg, false);
+//		}
+//		else {
+//			PITablePanel.setTitle("Patient Information");
+//			PITablePanel.setLoading(false, false);
+//		}
+	},
 
 	clickPatientListCount : function( evt, itemClicked ) {
 		if ("anchor PatientList" == itemClicked.className) {
@@ -1817,6 +1838,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.application.PatientSelectedRecs = recs;
 		this.application.PatientSelectedOpts = eOpts;
 
+		// this.MaskPITable("Loading Patient Information");
 		this.application.loadMask("Loading Patient Records... For selected patient");
 		this.application.DataLoadCount = 10;		// Count of # of modules to load
 		/* Modules to load - Update this count when a new module is added
@@ -2104,6 +2126,9 @@ fieldContainerWalk : function(item, y, z) {
 				// Allergies
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
+
+			// this.MaskPITable(false);
+
 			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 

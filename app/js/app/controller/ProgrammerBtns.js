@@ -12,7 +12,9 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 	init: function () {
 		this.control({
 			"scope" : this,
-			
+			"ProgrammerBtns button[text=\"Mask PI Table\"]" : {
+				"click" : this.ClickMaskTest
+			},
 			"ProgrammerBtns button[text=\"Debugger\"]" : {
 				"click" : this.ClickDebugger
 			},
@@ -55,6 +57,11 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		debugger;
 	},
 
+
+	ClickMaskTest : function() {
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		thisCtl.MaskPITable("Test");
+	},
 
 	ClickPatientsList : function() {
 		if (!this.application.TemplateListPatients) {

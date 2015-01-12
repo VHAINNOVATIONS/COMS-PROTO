@@ -3,7 +3,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	"alias" : "widget.ProgrammerBtns",
 	"name" : "ProgrammerBtns",
 	"margin" : "10",
-	"hidden" : true,
+	"hidden" : false,
 	
 	"items" : [
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : 2 }, 
@@ -17,7 +17,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 				{ "xtype" : "button", "text" : "Patients List" },
 				{ "xtype" : "button", "text" : "Change Admin Date" },
 				
-				{ "xtype" : "button", "text" : " " },
+				{ "xtype" : "button", "text" : "Mask PI Table" },
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : "Load Treatment Data" },

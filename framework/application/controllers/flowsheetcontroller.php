@@ -234,7 +234,7 @@ class FlowsheetController extends Controller
 
 
 
-public function FSDataConvert($id = null, $PAT_ID = null, $PreT, $Therapy, $PostT) {
+public function FSDataConvert($id = null, $PAT_ID = null, $PreT, $TTherapy, $PostT) {
 
     $GeneralInfoRecords = $this->getGeneralInfo($PAT_ID);
     $GIRDates = array();
@@ -352,11 +352,11 @@ foreach($oemRecords as $aRecord) {
             $Therapy[$MedName] += array("label"=>$MedName);
         }
         $MedData = "";
-        if (array_key_exists($Key, $Therapy)) {
-            $aTempRec = $Therapy[$Key];
-            if(count($aTempRec) > 1) {
-                $aTempRec = $aTempRec[0];
-            }
+        if (array_key_exists($Key, $TTherapy)) {
+            $aTempRec = $TTherapy[$Key];
+            // if(count($aTempRec) > 1) {
+            //     $aTempRec = $aTempRec[0];
+            // }
             $MedData = 
                 $aTempRec["Dose"] . " " . 
                 $aTempRec["Unit"] . " " . 

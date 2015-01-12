@@ -153,13 +153,13 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		sortable: false,
 		align: "left"
 	}, {
-		header: "<div class=\"multiLine\">Fluid/<br/>Volume</div>",
+		header: "<div class=\"multiLine\">Fluid/<br/>Volume<br>ml</div>",
 		dataIndex: "fluidVol",
 		width: 50,
 		sortable: false,
 		align: "left"
 	}, {
-		header: "<div class=\"multiLine\">Flow<br/>Rate</div>",
+		header: "<div class=\"multiLine\">Flow<br/>Rate<br>ml/hr</div>",
 		dataIndex: "flowRate",
 		width: 40,
 		sortable: false,
