@@ -602,6 +602,37 @@
             $orderStatus = "Ordered";
             $Notes       = "Line 552, PatientController";
             
+
+
+
+
+$query = "select PAT_ID FROM Patient_Assigned_Templates where Patient_ID = '$patientid' and Template_ID = '$templateId' and Date_Ended_Actual is null";
+$this->Patient->query( $query );
+
+error_log("PatientController.Getting PAT_ID to insert into Order_Status table");
+error_log($query);
+            $result = $this->Patient->query($query);
+            if (! empty($result[0]['PAT_ID'])) {
+                $PAT_ID = $result[0]['PAT_ID'];
+                error_log("Got PAT_ID = $PAT_ID");
+            }
+            else {
+                error_log("No PAT_ID - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR");
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             
             $query = "
             INSERT INTO Order_Status (
@@ -613,6 +644,7 @@
 				Drug_ID,
                 Order_Type, 
                 Patient_ID,
+                PAT_ID,
 				Notes,
 				Amt,
 				iAmt,
@@ -649,6 +681,7 @@
                 '$DrugID',
                 '$orderType',
                 '$patientid',
+                '$PAT_ID',
                 '$Notes',
                 '$pamt',
                 '$iamt',
@@ -1532,7 +1565,12 @@
             if ( $orderID ) {
                 $query       = "select Order_Status from Order_Status where Order_ID = '$orderID'";
                 $OrderStatus = $this->Patient->query( $query );
-                return $OrderStatus[ 0 ][ "Order_Status" ];
+                try {
+                    return $OrderStatus[ 0 ][ "Order_Status" ];
+                } catch (Exception $e) {
+                    error_log("PatientController.getOrderStatus query = $query");
+                    return "";
+                }
             }
             return "";
         }

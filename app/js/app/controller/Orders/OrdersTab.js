@@ -26,14 +26,17 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 			},
 			"OrdersTab button[text=\"Update Records\"]": {
 				click: function () {
-					this.application.loadMask("Updating Order Records");
+					var theGrid = this.getOrders();
+					theGrid.setLoading( "Updating Order Records", false );
+
 					this.PostedRecsFailed = [];
 					this.PostedRecs = [];
 
 					var HandleResponse = function(record, status, theScope) {
 						theScope.PostedRecs.pop();
 						if (theScope.PostedRecs.length <= 0) {
-							theScope.application.unMask();
+							var theGrid = theScope.getOrders();
+							theGrid.setLoading( false, false );
 							if (theScope.PostedRecsFailed.length <= 0) {
 								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
 								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true);
@@ -84,6 +87,9 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							});
 						}
 					}
+					else {
+						theGrid.setLoading( false, false );
+					}
 				}
 			}
 		});
@@ -107,7 +113,6 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 						if (this.application.Patient) {
 							PatientInfo = this.application.Patient;
 							PatientInfo.OEMDataRendered = false;
-
 							this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
 						}
 					}
