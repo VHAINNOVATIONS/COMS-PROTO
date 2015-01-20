@@ -1851,7 +1851,7 @@ error_log($query);
          *
          *  Sample Patient ID = 'FC7C048A-19C2-E111-A7F5-000C2935B86F'
          **/
-        private function _getBSA( $patientID ) {
+        public function _getBSA( $patientID ) {
             $query = "select * from Patient_BSA where Patient_ID = '$patientID' AND Active = 1";
             return $this->Patient->query( $query );
         }

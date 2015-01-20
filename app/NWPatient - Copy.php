@@ -23,7 +23,7 @@ $patientsearch = $match;
 	function valuecheck($value){
 	$today = date(MDY);
 	$myFile = "SSHDebug\ValueDebug+".$value."+".$today.".txt";
-	$fh = fopen($myFile, 'w') or die("valuecheck:can't open file");
+	$fh = fopen($myFile, 'w') or die("NWPatient - valuecheck :can't open file");
 	fwrite($fh, "Value:  ".$value."  ");
 	fclose($fh);
 	}
@@ -214,7 +214,7 @@ $patientsearch = $match;
 	function writeDebug($SSHresults,$tdrug,$patientSearch,$orderday){
 	$timeset = date(His);
 	$myFile = "SSHDebug\SSHDebug+".$patientSearch."+".$tdrug."+".$orderday."+".$timeset.".txt";
-	$fh = fopen($myFile, 'w') or die("writeDebug:can't open file");
+	$fh = fopen($myFile, 'w') or die("NWPatient - writeDebug:can't open file");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
 	}

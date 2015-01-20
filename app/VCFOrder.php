@@ -160,7 +160,7 @@ $patientsearch = $match;
 	function writeDebug($SSHresults,$tdrug,$patientSearch,$orderday){
 	$timeset = date(His);
 	$myFile = "SSHDebug\SSHDebug+".$patientSearch."+".$tdrug."+".$orderday."+".$timeset.".txt";
-	$fh = fopen($myFile, 'w') or die("writeDebug:can't open file");
+	$fh = fopen($myFile, 'w') or die("VCFOrder - writeDebug:can't open file");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
 	}

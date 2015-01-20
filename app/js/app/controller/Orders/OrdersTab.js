@@ -69,10 +69,32 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 								Ext.MessageBox.alert("Information", "Please select an Order Status");
 								return;
 							}
+// When order is finalized must compute any med dosage values based on BSA
+// debugger;
+/**
+var PatientBSA = { 
+	"BSA" : this.application.Patient.BSA, 
+	"Method" : this.application.Patient.BSA_Method, 
+	"Formula" : this.application.Patient.BSAFormula, 
+	"Weight" : this.application.Patient.BSA_Weight 
+}
+**/
+
+
+/**
+if ("Finalized" == orderStatus) {
+	var rUnit = rec.unit.toLowerCase();
+	if ("mg/kg" == rUnit || "mg/m2" == rUnit || "units / m2" == rUnit || "units / kg" == rUnit) {
+		var dose = rec.dose;
+	}
+}
+**/
 							var order = Ext.create("COMS.model.OrdersTable", {
-								orderstatus: rec.get("orderstatus"),
+								orderstatus: orderStatus,
 								templateID: rec.get("templateID"),
 								drug: rec.get("drug"),
+								dose: rec.get("dose"),
+								unit: rec.get("unit"),
 								patientID: rec.get("patientID"),
 								type: rec.get("type"),
 								route: rec.get("route"),

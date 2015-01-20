@@ -9,7 +9,7 @@ valuecheck2($AccessCode);
 	function valuecheck2($value){
 	$today = date(MDY);
 	$myFile = "SSHDebug\LoginDebug+".$value."+".$today.".txt";
-	$fh = fopen($myFile, 'w') or die("can't open file");
+	$fh = fopen($myFile, 'w') or die("NWLogin_Test - valuecheck2 - can't open file");
 	fwrite($fh, "Value:  ".$value."  ");
 	fclose($fh);
 	}
@@ -89,7 +89,7 @@ valuecheck2($AccessCode);
 	function writeDebug2($SSHresults){
 	$timeset = date(His);
 	$myFile = "SSHDebug\SSHDebugLogin+".$timeset.".txt";
-	$fh = fopen($myFile, 'w') or die("can't open file");
+	$fh = fopen($myFile, 'w') or die("NWLogin_Test - writeDebug2 - can't open file");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
 	}

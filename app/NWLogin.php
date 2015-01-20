@@ -107,7 +107,7 @@
 	//function writeDebug2($SSHresults){
 	//$timeset = date(His);
 	//$myFile = "SSHDebug\SSHDebugLogin+".$timeset.".txt";
-	//$fh = fopen($myFile, 'w') or die("can't open file");
+	//$fh = fopen($myFile, 'w') or die("NWLogin - can't open file");
 	//fwrite($fh, $SSHresults);
 	//fclose($fh);
 	//}

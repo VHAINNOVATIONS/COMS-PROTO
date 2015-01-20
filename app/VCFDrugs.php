@@ -256,7 +256,7 @@ LOCAL DRUG NAME                                   INACTIVE               DEA
 	//$timeset = date(His);
 	$timeset = $_SERVER['REQUEST_TIME'];
 	$myFile = "SSHDebug\Drugs+".$lrange."+".$timeset.".txt";
-	$fh = fopen($myFile, 'w') or die("writeDebug:can't open file");
+	$fh = fopen($myFile, 'w') or die("VCFDrugs - writeDebug:can't open file");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
 	return($myFile);

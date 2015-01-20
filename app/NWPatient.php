@@ -23,7 +23,7 @@ $patientsearch = $match;
 	function valuecheck($value){
 	$today = date(MDY);
 	$myFile = "SSHDebug\ValueDebug+".$value."+".$today.".txt";
-	$fh = fopen($myFile, 'w') or die("valuecheck:can't open file");
+	$fh = fopen($myFile, 'w') or die("NWPatient - valuecheck :can't open file");
 	fwrite($fh, "Value:  ".$value."  ");
 	fclose($fh);
 	}
@@ -223,13 +223,16 @@ $patientsearch = $match;
 	}
 
 	function writeDebug($SSHresults,$tdrug,$patientSearch,$orderday){
+        /** MWB - 1/20/2015 - Crashes on Meds which contain a "/" so commented it out.
+         ** It's for debug only so no issue.
 	$timeset = date(His);
 	$myFile = "SSHDebug\SSHDebug+".$patientSearch."+".$tdrug."+".$orderday."+".$timeset.".txt";
 	file_put_contents($myFile, $SSHresults);
-	$fh = fopen($myFile, 'w') or die("writeDebug: can't open file");
+	$fh = fopen($myFile, 'w') or die("NWPatient - writeDebug: can't open file - $myFile");
 	fwrite($fh, $SSHresults);
 	fclose($fh);
 	//echo $SSHresults;
+        **/
 	}
 	
 	//NewOrderPatient($MH_Drug_ID_Name,$MHI_MH_Dose,$Regimen_Dose_Unit,$MH_Description,$match)

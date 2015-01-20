@@ -28,7 +28,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					this.Close();
+					Ext.COMS_UnLockSection();
 					if (!resp.success) {
 						Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + resp.msg );
 					}
@@ -43,7 +43,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 				failure : function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					this.Close();
+					Ext.COMS_UnLockSection();
 					Ext.MessageBox.alert("Saving Error", "NewPlanTab - BSA Selection, Save Error - " + "e.message" + "<br />" + resp.msg );
 				}
 			});
@@ -55,7 +55,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 	Cancel : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').hide();
-		this.Close();
+		Ext.COMS_UnLockSection();
 	},
 
 	Close : function() {

@@ -33,11 +33,13 @@ class OrdersController extends Controller {
         if ($form_data != NULL) {
 
             $this->Orders->beginTransaction();
+error_log("OrdersController.grabOrders.HasFormData - ");
+error_log(json_encode($form_data));
 
             $returnVal = $this->Orders->updateOrderStatus($form_data);
 
             if ($this->checkForErrors('Update Order Status Values Failed. ', $returnVal)) {
-                error_log("orders 1 - " . $this->varDumpToString($returnVal));
+                error_log("orders 1 - " . json_encode($returnVal));
                 $this->Orders->rollbackTransaction();
                 $jsonRecord['success'] = 'false';
                 $jsonRecord['msg'] = $this->get('frameworkErr');

@@ -191,6 +191,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"button[id=\"AddVitals_PatientInfoPanel3\"]" : {
 					click : this.HandleVSFormShowCalcButtons
 			},
+			"button[text=\"Calculations\"]" : {
+					click : this.HandleVSFormShowCalcButtons
+			},
             "button[name=\"ShowBSA\"]" : {
                 click: this.NDGIVS_BSA_Calculations
             },
@@ -365,6 +368,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 						else if ("ndVitalsWeightP" === fldName) {
 							this.ConvertWeight(fld, eOpts);
 						}
+					}
+				}
+				else {
+					if ("ndVitalsTempF" === fldName ) {
+						this.ConvertTemp(fld, eOpts);
+					}
+					else if ("ndVitalsHeightIN" === fldName) {
+						this.ConvertHeight(fld, eOpts);
+					}
+					else if ("ndVitalsWeightP" === fldName) {
+						this.ConvertWeight(fld, eOpts);
 					}
 				}
 			}
