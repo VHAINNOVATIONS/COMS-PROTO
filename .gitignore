@@ -4,19 +4,11 @@ GIT_COMMAND_LOG.log
 web.config
 web.xml
 
-app\SSHDebug\*
-app\config_Constants.php
-app\dbitcon.php
-app/config_Constants.php
-app/dbitcon.php
-app\js_Files2Ignore\*
-aspnet_client\*
-build\* 
-framework\config\* 
-
+app/SSHDebug
 app/config_Constants.php
 app/dbitcon.php
 app/js_Files2Ignore/*
+build/* 
 aspnet_client/*
 framework/config/* 
-/app/SSHDebug
+_Temp/*

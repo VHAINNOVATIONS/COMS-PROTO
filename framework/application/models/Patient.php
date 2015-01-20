@@ -391,6 +391,8 @@ function convertReason2ID($Reason) {
 
     function saveVitals ($form_data, $patientId)
     {
+
+        error_log("Patient.Model.saveVitals - " . json_encode($form_data));
         if (empty($patientId)) {
             
             if (isset($form_data->{'patientId'})) {
@@ -486,10 +488,8 @@ function convertReason2ID($Reason) {
          * values for WeightFormula and BSA Method if the Start Date of the
          * Template is after the Date Taken
          */
-        $query = "SELECT Perf_Status_ID as id,BSA_Method as bsaMethod,Weight_Formula as weightFormula " .
-                     "FROM Patient_Assigned_Templates where Is_Active = 1 and Patient_ID = '" .
-                     $patientId . "' " . "AND Date_Started <= '" . $dateTaken .
-                     "'";
+        $query = "SELECT Perf_Status_ID as id,BSA_Method as bsaMethod,Weight_Formula as weightFormula 
+                 FROM Patient_Assigned_Templates where Is_Active = 1 and Patient_ID = '$patientId' AND Date_Started <= '$dateTaken'";
         
         $record = $this->query($query);
         if (null != $record && array_key_exists('error', $record)) {
@@ -501,9 +501,12 @@ function convertReason2ID($Reason) {
             } else {
                 $performanceId = $PS_ID;
             }
-            
-            $bsaMethod = $record[0]['bsaMethod'];
-            $weightFormula = $record[0]['weightFormula'];
+            if ("" == $bsaMethod) {
+                $bsaMethod = $record[0]['bsaMethod'];
+            }
+            if ("" == $weightFormula) {
+                $weightFormula = $record[0]['weightFormula'];
+            }
         }
         
         if (null == $oemRecordId) {
@@ -548,12 +551,11 @@ function convertReason2ID($Reason) {
                          "','" . $bsaWeight . "',";
             }
         }
-        
-        (empty($performanceId)) ? $query .= "null)" : $query .= "'" .
-                 $performanceId . "')";
-        
-        // echo $query;
-        
+
+        (empty($performanceId)) ? $query .= "null)" : $query .= "'" . $performanceId . "')";
+
+        error_log("Patient.Model.saveVitals - $query");
+
         $result = $this->query($query);
         
         if ($result) {
