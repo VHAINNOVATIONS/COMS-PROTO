@@ -3,13 +3,17 @@
     $LastLogin  = null;
     $AccessCode = null;
     
+
+
     $mwbTemp = "Unknown URI";
+    $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     if ( isset( $_GET[ 'url' ] ) ) {
-        $mwbTemp = $_GET[ 'url' ];
+        $mwbTemp = $_GET[ 'url' ];	// Get any URL Query String Parameters
     }
     error_log( "-------------------------" );
     error_log( "Start Process - $mwbTemp" );
-    
+    error_log( "Full Path - $actual_link" );
+
     //Include and Set phpseclib path
     //set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib'); <-- Commented on on 30 May 2014
     //Include SSH2 file
