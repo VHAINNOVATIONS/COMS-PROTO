@@ -1765,6 +1765,11 @@ Ext.application({
 
 	launch: function () {
 		wccConsoleLog("Launching Application Base");
+//		console.log("Disable Cache - app.launch()");
+		Ext.Loader.setConfig({ disableCaching:false });
+		Ext.Ajax.disableCaching = false;
+		Ext.Loader.config.disableCaching = false;
+
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {
 			id: "AppContainer",

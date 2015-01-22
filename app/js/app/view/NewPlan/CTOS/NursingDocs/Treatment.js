@@ -10,7 +10,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
     features: [{ftype:'grouping'}],
     viewConfig:{ markDirty: false },
     selType: "cellmodel",
-    plugins: [ Ext.create("Ext.grid.plugin.CellEditing", { clicksToEdit: 1 }) ],
+    plugins: [ Ext.ND_cellEditing ],
 	columns : [
 		{ header : "", dataIndex : "typeOrder", hidden : true, renderer: Ext.ND_TreatmentTypeOrderRenderer },
 		{ header : "Medication", dataIndex : "drug", width : 120 },
@@ -33,7 +33,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 				id : "endTimeEditor"
 			})
 		},
-		{ header : "Comments", dataIndex : "Comments", width : 250, editor : { xtype : "textfield" } },
+		{ header : "Comments", dataIndex : "Comments", width : 250, 
+			renderer : Ext.ND_CommentRenderer, 
+			editor : { xtype : "textfield" } 
+		},
 		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature },
 		{ header : "", width : 40, xtype: 'actioncolumn', hideable: false, 
 			handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {

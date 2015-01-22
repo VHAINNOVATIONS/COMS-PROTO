@@ -487,20 +487,68 @@ Ext.ND_TreatmentTypeOrderRenderer = function(v) {
 	}
 };
 
-Ext.ND_TreatmentSignature = function(v, metadata, record, rowIndex, colIndex, store, view) {
+Ext.ND_TreatmentSignature = function(value, metadata, record, rowIndex, colIndex, store, view) {
 	var aStyle = "style=\"text-decoration:underline; color: navy;\"";
 	var dspValue = "Sign to Verify";
-	if (v) {
-		aStyle = "";
-		dspValue = (v + " - " + record.get("Treatment_Date"));
+	var retBuf = "";
+	var status = record.getData().orderstatus;
+	var dspStatus = record.getData().ActualOrderStatus;
+	// if ("Not Dispensed" == status || "Cancelled" ) {
+	if ("Dispensed" == status || "Administered" == status ) {
+		if (value) {
+			aStyle = "";
+			dspValue = (value + " - " + record.get("Treatment_Date"));
+		}
 	}
-	return Ext.String.format("<span class=\"anchor TreatmentSigner\" {0} row={1} col={2}>{3}</span>", aStyle, rowIndex, colIndex, dspValue);
+	else {
+		aStyle = "";
+		dspValue = "";
+	}
+	retBuf = Ext.String.format("<span class=\"anchor TreatmentSigner\" {0} row={1} col={2}>{3}</span>", aStyle, rowIndex, colIndex, dspValue);
+
+	return retBuf;
 };
 
-Ext.ND_TreatmentAmmendIcon = function(v, metadata, record, rowIndex, colIndex, store, view) {
+Ext.ND_TreatmentAmmendIcon = function(value, metadata, record, rowIndex, colIndex, store, view) {
 	var aClass = "";
 	if ("Administered" === record.getData().orderstatus) {
 		aClass = "class=\"EditCell\" ";
 	}
 	return Ext.String.format("<div {0} row={1} col={2}>&nbsp;</div>", aClass, rowIndex, colIndex);
 };
+
+Ext.ND_CommentRenderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+	if ("Administered" === record.getData().orderstatus || "Dispensed" === record.getData().orderstatus) {
+		return value;
+	}
+	else {
+		return record.getData().ActualOrderStatus;
+	}
+};
+
+// plugins: [ Ext.ND_cellEditing ],
+// plugins: [ Ext.create("Ext.grid.plugin.CellEditing", { clicksToEdit: 1 }) ],
+Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+    pluginId: 'cellplugin',
+    clicksToEdit: 1,
+    listeners : {
+        scope: this,
+        beforeedit: function(e, options) {
+			if ("Administered" === options.record.getData().orderstatus) {
+				return true;
+			}
+			else {
+				return false;
+			}
+			/** - https://ahlearns.wordpress.com/2012/06/22/ext-js-4-simple-grid-with-cell-editing/
+            // Allow edits in the first column to new rows only
+            if (options.colIdx === 0) {
+                if (options.record.phantom === true) {
+                    return true;
+                }
+                return false;
+            }
+			 **/
+        }
+    }
+});

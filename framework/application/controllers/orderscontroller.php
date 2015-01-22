@@ -55,6 +55,8 @@ error_log(json_encode($form_data));
             
         } else {
             if ($patientID && $AdminDate) {
+
+/***
                 $query = "SELECT
        os.Order_Status as orderstatus
       ,os.Drug_Name as drug
@@ -79,7 +81,7 @@ error_log(json_encode($form_data));
       FROM Order_Status os 
       join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
       where Patient_ID = '$patientID' and Admin_Date='$AdminDate'";
-
+ ***/
       $query = "SELECT
        os.Order_Status as orderstatus
       ,os.Drug_Name as drug
@@ -98,6 +100,7 @@ error_log(json_encode($form_data));
       ,os.Unit as unit
       ,os.Route as route
       ,os.flvol
+      ,os.FluidType
       ,os.infusion
       ,ISNULL(CONVERT(varchar(50),ndt.StartTime),'') as StartTime
       ,ISNULL(CONVERT(varchar(50),ndt.EndTime),'') as EndTime
@@ -111,7 +114,44 @@ error_log(json_encode($form_data));
       where os.Patient_ID = '$patientID' and os.Admin_Date='$AdminDate'";
 
                 if ($Dispensed) {
-                    $query .= " and (Order_Status = 'Dispensed' or Order_Status = 'Administered')";
+                    $query = "
+SELECT
+CASE 
+when os.Order_Status = 'Cancelled' or os.Order_Status = 'Administered' or os.Order_Status = 'Dispensed' THEN
+os.Order_Status
+Else
+'Not Dispensed'
+End as orderstatus
+      ,os.Order_Status as ActualOrderStatus
+      ,os.Drug_Name as drug
+      ,os.Order_Type as type
+      ,os.Patient_ID as patientID
+      ,os.Order_ID
+      ,os.Drug_ID
+      ,os.FlowRate
+      ,os.Sequence
+      ,CASE
+          WHEN os.Amt = FLOOR(os.Amt ) THEN 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,0), os.Amt ))
+          ELSE 
+              CONVERT(nvarchar(max), CONVERT(decimal(10,1), os.Amt ))
+      END as dose
+      ,os.Unit as unit
+      ,os.Route as route
+      ,os.flvol
+      ,os.FluidType
+      ,os.infusion
+      ,ISNULL(CONVERT(varchar(50),ndt.StartTime),'') as StartTime
+      ,ISNULL(CONVERT(varchar(50),ndt.EndTime),'') as EndTime
+      ,ISNULL(CONVERT(varchar(50),ndt.Comments),'') as Comments
+      ,ISNULL(CONVERT(varchar(50),ndt.Treatment_User),'') as Treatment_User
+      ,ISNULL(CONVERT(varchar(50),ndt.Treatment_Date),'') as Treatment_Date
+      ,ISNULL(CONVERT(varchar(50),ndt.Dose),'') as ndDose
+      ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
+      FROM Order_Status os 
+      left join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
+      where os.Patient_ID = '$patientID' and os.Admin_Date='$AdminDate'";
+
                 }
 error_log("Orders - $query");
                 $TreatmentData = $this->Orders->query($query);

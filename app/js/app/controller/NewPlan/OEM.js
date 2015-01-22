@@ -135,7 +135,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	DisplayOEMRecordData : function( PatientInfo ) {
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
-		this.application.loadMask("Loading OEM Records...");
+		//this.application.loadMask("Loading OEM Records...");
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {

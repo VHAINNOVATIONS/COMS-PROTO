@@ -165,6 +165,12 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		sortable: false,
 		align: "left"
 	}, {
+		header: "<div class=\"multiLine\">Fluid<br/>Type</div>",
+		dataIndex: "fluidType",
+		width: 40,
+		sortable: false,
+		align: "left"
+	}, {
 		header: "<div>Instructions</div>",
 		dataIndex: "instructions",
 		// width: 120,

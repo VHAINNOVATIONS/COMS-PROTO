@@ -6,7 +6,6 @@ Ext.define("COMS.model.ND_Treatment", {
 		"PAT_ID",				// GUID for the Treatment record
 		"Order_ID",
 		"Cycle",
-//		"CourseNum",			// MWB - 6/17/2012 - This is really the "Cycle"
 		"adminDay",
 		"adminDate",
 		"typeOrder",	// Used to display therapy type in grid in sorted order (Pre = 1, Therapy = 2, Post = 3)
@@ -27,7 +26,8 @@ Ext.define("COMS.model.ND_Treatment", {
 		"dose_originalValue",
 		"unit_originalValue",
 		"route_originalValue",
-		"orderstatus"
+		"orderstatus",
+		"ActualOrderStatus"
 	],
 
 	proxy: {

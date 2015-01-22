@@ -239,8 +239,9 @@ class FlowsheetController extends Controller
         $Template_ID = $this->Flowsheet->getTemplateID( $PAT_ID );
 
         $administeredRecords = $this->getAdministeredRecords( $PAT_ID );
+        $HoldCancelRecords = $this->getHoldCancelRecords( $PAT_ID );
 
-        if ( empty( $administeredRecords ) ) {
+        if ( empty( $administeredRecords ) && empty( $HoldCancelRecords )) {
             $administeredRecords[ 'error' ] = 'No Records Found';
         }
 
@@ -248,6 +249,14 @@ class FlowsheetController extends Controller
             $this->set( 'jsonRecord', array(
                  'success' => false,
                 'msg' => $this->get( 'frameworkErr' ) . $administeredRecords[ 'error' ] 
+            ) );
+            return;
+        }
+
+        if ( $this->_checkForErrors( 'Get Flowsheet Failed. ', $HoldCancelRecords ) ) {
+            $this->set( 'jsonRecord', array(
+                 'success' => false,
+                'msg' => $this->get( 'frameworkErr' ) . $HoldCancelRecords[ 'error' ] 
             ) );
             return;
         }
@@ -292,6 +301,34 @@ class FlowsheetController extends Controller
                 }
             }
         }
+
+        foreach ( $HoldCancelRecords as $aRec ) {
+            if ( array_key_exists( "Order_Type", $aRec ) ) {
+                $Type    = $aRec[ "Order_Type" ];
+                $aDate   = $aRec[ "Admin_Date" ];
+                $MedName = $aRec[ "Drug_Name" ];
+
+                $Key     = "$aDate-$MedName";
+                $tmpRec  = array("Status" => $aRec[ "Order_Status" ]);
+                $tmpARec = array( $Key => $tmpRec );
+
+                if ( "Pre" == $Type ) {
+                    if ( !array_key_exists( $Key, $PreAdminRecords ) ) {
+                        $PreAdminRecords += $tmpARec;
+                    }
+                } else if ( "Post" == $Type ) {
+                    if ( !array_key_exists( $Key, $PostAdminRecords ) ) {
+                        $PostAdminRecords += $tmpARec;
+                    }
+                } else if ( "Therapy" == $Type ) {
+                    $TKeys[ ] = $Key;
+                    if ( !array_key_exists( $Key, $TherapyAdminRecords ) ) {
+                        $TherapyAdminRecords += $tmpARec;
+                    }
+                }
+            }
+        }
+
         $this->FSDataConvert2( $Patient_ID, $PAT_ID, $PreAdminRecords, $TherapyAdminRecords, $PostAdminRecords );
     }
 
@@ -312,13 +349,54 @@ os.Order_Status
 ,ndt.EndTime
 ,ndt.Comments
 ,ndt.Treatment_User
-,ndt.Treatment_Date";
-
-        $query  = $query . "
+,ndt.Treatment_Date
 FROM Order_Status os
 LEFT JOIN ND_Treatment ndt on ndt.Order_ID = os.Order_ID
 WHERE
-os.PAT_ID = '$PAT_ID' and os.Order_Status = 'Administered' or os.Order_Status = 'Hold' or os.Order_Status = 'Cancel'";
+os.PAT_ID = '$PAT_ID' and os.Order_Status='Administered'";
+
+/**
+        $query = "
+SELECT 
+os.Order_Status
+,os.Drug_Name
+,os.Order_Type
+,CONVERT(VARCHAR(10), os.Admin_Date, 101) as Admin_Date
+,ndt.Dose
+,ndt.Unit
+,ndt.Route
+,ndt.StartTime
+,ndt.EndTime
+,ndt.Comments
+,ndt.Treatment_User
+,ndt.Treatment_Date
+,os.PAT_ID
+,ndt.PAT_ID
+,ndt.Cycle
+,ndt.AdminDay
+FROM Order_Status os
+LEFT JOIN ND_Treatment ndt on ndt.Order_ID = os.Order_ID and ndt.PAT_ID = os.PAT_ID
+WHERE ndt.PAT_ID = '$PAT_ID'";
+**/
+error_log("getAdministeredRecords - $query");
+        $result = $this->Flowsheet->query( $query );
+        return ( $result );
+    }
+
+
+    function getHoldCancelRecords( $PAT_ID ) {
+        $query = "
+SELECT 
+os.Order_Status
+,os.Drug_Name
+,os.Order_Type
+,CONVERT(VARCHAR(10), os.Admin_Date, 101) as Admin_Date
+,os.PAT_ID
+FROM Order_Status os
+WHERE
+os.PAT_ID = '$PAT_ID' and (os.Order_Status = 'Hold' or os.Order_Status = 'Cancel')";
+
+error_log("getHoldCancelRecords - $query");
         $result = $this->Flowsheet->query( $query );
         return ( $result );
     }
@@ -508,7 +586,7 @@ os.PAT_ID = '$PAT_ID' and os.Order_Status = 'Administered' or os.Order_Status = 
         $MedData = "";
         if ( array_key_exists( $Key, $Recs ) ) {
             $rec = $Recs[ $Key ];
-            error_log( "lookupController.MedCell - $CycleColLabel - $Key - " . $rec[ "Status" ] );
+            // error_log( "flowsheetController.MedCell - $CycleColLabel - $Key - " . $rec[ "Status" ] );
             if ( "Administered" == $rec[ "Status" ] ) {
                 $MedData = $rec[ "Dose" ] . " " . $rec[ "Unit" ] . " " . $rec[ "Route" ] . "<br>From " . $rec[ "Start" ] . "<br>to " . $rec[ "End" ];
             } else {

@@ -322,8 +322,18 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 name: "ndVitalsHeightCM",
                 labelSeparator: "",
                 value: " (  cm)",
+                width: 50
+            }, {
+					xtype : "container",
+					html: "Last Recorded:",
+					margin: "4 5 0 4"
+                }, {
+                xtype: "displayfield",
+                name: "ndVitalsHeightLastRecorded",
+                labelSeparator: "",
+                value: "in/cm",
                 width: 90
-            }]
+			}]
         }, {
             xtype: "textfield",
             maskRe: /[0-9]/,
@@ -382,8 +392,21 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 name: "ndVitalsWeightKG",
                 labelSeparator: "",
                 value: " (  kg)",
+                width: 50
+            },  
+                {
+                    xtype: "container",
+                    html: "Last Recorded:",
+                    margin: "4 5 0 4"
+                },
+            {
+                xtype: "displayfield",
+                name: "ndVitalsWeightLastRecorded",
+                labelSeparator: "",
+                value: "lbs/kg",
                 width: 90
-            }]
+            }
+			]
         }, {
             xtype: "numberfield",
             maxValue: 10,
