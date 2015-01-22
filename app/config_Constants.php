@@ -33,7 +33,7 @@ else if (defined('dbITCOMSTest')) {
 }
 else if (defined('MWBarlow')) {
     define('DB_NAME', 'COMS_TEST_7');		/* For COMS-MWB App */
-    define('DB_NAME', 'COMS_TEST_6');		/* For COMS TEST App */
+    // define('DB_NAME', 'COMS_TEST_6');		/* For COMS TEST App */
 	define('DB_TYPE', 'sqlsrv');
 	define('DB_HOST', "DBITDATA\DBIT");
 	define('DB_USER', 'coms_db_user');

@@ -3,7 +3,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	"alias" : "widget.ProgrammerBtns",
 	"name" : "ProgrammerBtns",
 	"margin" : "10",
-	"hidden" : false,
+	"hidden" : true,
 	
 	"items" : [
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : 2 }, 

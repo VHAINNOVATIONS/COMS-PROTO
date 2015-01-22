@@ -534,7 +534,7 @@ Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
     listeners : {
         scope: this,
         beforeedit: function(e, options) {
-			if ("Administered" === options.record.getData().orderstatus) {
+			if ("Administered" === options.record.getData().orderstatus || "Dispensed" === options.record.getData().orderstatus) {
 				return true;
 			}
 			else {
