@@ -1,6 +1,6 @@
 Ext.define('COMS.model.OrdersTable', {
 	extend: 'Ext.data.Model',
-	fields: [ 'patientID', 'templateID', 'adminDay', "CourseNum", 'adminDate', 'drug', 'type', 'dose', 'unit', 'route', 'fluidVol', 'flowRate', 'instructions', 'orderstatus', 'ActualOrderStatus', 'orderid', 'Last_Name' ],
+	fields: [ 'patientID', 'templateID', 'adminDay', "CourseNum", 'adminDate', 'drug', 'type', 'dose', 'unit', 'route', 'fluidVol', 'fluidType', 'flowRate', 'instructions', 'orderstatus', 'ActualOrderStatus', 'orderid', 'Last_Name' ],
 	proxy: {
 		type: 'rest',
 		api: {

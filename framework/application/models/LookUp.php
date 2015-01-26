@@ -1280,6 +1280,7 @@ error_log("saveTemplate - BP4");
                      ORDER BY Sequence_Number
                 ";
             }
+// error_log("LookUp.Model.getRegimens - $query");
             $retVal = $this->query($query);
         }
         return $retVal;

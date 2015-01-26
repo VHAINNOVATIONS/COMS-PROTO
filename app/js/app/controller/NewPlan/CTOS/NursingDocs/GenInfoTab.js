@@ -538,8 +538,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 	_saveVitals2DB : function(record, parent) {
-		var params = Ext.encode(record);
-		this.SavingVitals = true;
 		this.application.loadMask("One moment please, saving Patient Vitals...");
 
 		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
@@ -572,6 +570,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
         NDVitalsHeightCM.setValue("");
         NDVitalsTempC.setValue("");
 
+		this._saveVitalsPOST(record);
+	},
+
+	_saveVitalsPOST : function(record) {
+		this.SavingVitals = true;
+		var params = Ext.encode(record);
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.AddVitals,
@@ -581,13 +585,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.SavingVitals = false;
-				// if (!this.SavingVitals && !this.SavingGenInfo) {
-					this.application.unMask();
-				// }
-
-
+				this.application.unMask();
 				if (resp.success) {
-			        var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
+					var newPlanTabCtl = this.getController("NewPlan.NewPlanTab");
 					newPlanTabCtl.loadVitals("Update Vitals");
 					Ext.MessageBox.alert("Vital Signs", "Vitals Information Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 				}
@@ -596,6 +596,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				}
 			},
 			failure : function( response, opts ) {
+				this.SavingVitals = false;
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
@@ -744,12 +745,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		record.patientIDGood = rgPatientID.patientIDGood || false;
 		record.consentGood = rgConsent.consentGood || false;
 		record.comment = PatientIDComment;
-
 		record.educationGood = rgEduAssess.educationGood || false;
 		record.planReviewed = rgPlanReviewed.planReviewed || false;
-		var params = Ext.encode(record);
-		this.SavingGenInfo = true;
 
+		this.SavingGenInfo = true;
+		var params = Ext.encode(record);
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.AddND_GenInfo,

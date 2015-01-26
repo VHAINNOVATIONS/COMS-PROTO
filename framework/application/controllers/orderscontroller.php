@@ -522,9 +522,7 @@ else if ("Cancel" === $status) {
         if ($therapyCount) {
 
             foreach ($therapys as $therapy) {
-
-                if ('Therapy' === $type) {	
-
+                if ('Therapy' === $type) {
                     $tmpOemRecord = $this->createTherapyRow($patient, $oemrecord, $therapy, $type, $typeOrder);
                     array_push($modtmpOemRecord, $tmpOemRecord);
                 } else {
@@ -559,7 +557,7 @@ else if ("Cancel" === $status) {
         } else {
             list($bsaDose, $bsaUnit) = array(null, null);
         }
-	
+
         $tmpOemRecord = array();
 
         $tmpOemRecord['patientID'] = $patient['patientID'];
@@ -576,6 +574,7 @@ else if ("Cancel" === $status) {
         $tmpOemRecord['route'] = $therapy['route'];
         $tmpOemRecord['fluidVol'] = $therapy['flvol'];
         $tmpOemRecord['flowRate'] = $therapy['flowRate'];
+        $tmpOemRecord['fluidType'] = $therapy['fluidType'];
         $tmpOemRecord['instructions'] = $therapy['instructions'];
         $tmpOemRecord['Order_ID'] = $therapy['Order_ID'];
 
@@ -599,6 +598,7 @@ else if ("Cancel" === $status) {
         $tmpOemRecord['unit'] = $detail['unit'];
         $tmpOemRecord['route'] = $detail['type'];
         $tmpOemRecord['fluidVol'] = $detail['fluidVol'];
+        $tmpOemRecord['fluidType'] = $detail['fluidType'];
         $tmpOemRecord['flowRate'] = $detail['flowRate'];
         $tmpOemRecord['instructions'] = $therapy['description'];
         $tmpOemRecord['Order_ID'] = $therapy['Order_ID'];
@@ -623,6 +623,7 @@ else if ("Cancel" === $status) {
         $tmpOemRecord['unit'] = '';
         $tmpOemRecord['route'] = '';
         $tmpOemRecord['fluidVol'] = '';
+        $tmpOemRecord['fluidType'] = '';
         $tmpOemRecord['flowRate'] = '';
         $tmpOemRecord['instructions'] = '';
 		$tmpOemRecord['Order_ID'] = $oemrecord['Order_ID'];

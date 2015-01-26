@@ -511,18 +511,21 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 	getOptionalInfoData : function(PAT_ID) {
 		this.maskFlowSheetPanels(this.getDiseaseResponsePanel(), "Disease Response");
+		this.maskFlowSheetPanels(this.getOtherInfoPanel(), "Additional General Information");
 
 		Ext.Ajax.request({
 			scope : this,
 			url : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
 			success : function( response) {
 				var obj = Ext.decode(response.responseText);
+
 				var Panel = this.getDiseaseResponsePanel();
 				Panel.update(obj);
+				this.unMaskFlowSheetPanels(Panel, "Disease Response");
+
 				Panel = this.getOtherInfoPanel();
 				Panel.update(obj);
-				this.unMaskFlowSheetPanels(Panel, "Disease Response");
-				console.log("Restoring Disease Response");
+				this.unMaskFlowSheetPanels(Panel, "Additional General Information");
 			},
 
 			failure : function( ) {

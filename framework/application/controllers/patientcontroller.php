@@ -711,7 +711,7 @@ error_log($query);
 				'$BSAFormula'
             )
          ";
-            //echo $query;
+// error_log("PatientController._insertOrderStatus - Query = $query");
             $this->Patient->query( $query );
             /*removed for Order ID Bug
             $mssqlLimit = null;
@@ -879,6 +879,9 @@ error_log($query);
             $regimens            = array( );
             $regimens[ 0 ]       = new stdClass();
             $regimens[ 0 ]->data = $data;
+// error_log("Patient.Controller._insertRegimens - Save Data");
+// error_log(json_encode($data));
+
             
             $lookup = new LookUp();
             $retVal = $lookup->saveRegimen( $regimens, $templateId, $orderId );
@@ -913,6 +916,9 @@ error_log($query);
             $hydrations            = array( );
             $hydrations[ 0 ]       = new stdClass();
             $hydrations[ 0 ]->data = $data;
+
+// error_log("Patient.Controller._insertHydrations - Save Data");
+// error_log(json_encode($data));
             
             $lookup = new LookUp();
             $retVal = $lookup->saveHydrations( $hydrations, $hydration[ "type" ], $templateId, $orderId );
@@ -1164,6 +1170,9 @@ error_log($query);
                 $TherapyRecord[ "InfusionTime" ] = $regimen[ "infusion" ];
                 $Therapy[ ]                      = $TherapyRecord;
             }
+// error_log("Patient.Controller.Therapy - Therapy Data");
+// error_log(json_encode($Therapy));
+
             return $Therapy;
         }
         
@@ -1251,6 +1260,9 @@ error_log($query);
                 }
                 $HydrationArray[ ] = $HydrationRecord;
             }
+// error_log("Patient.Controller.PrePostTherapy - HydrationArray Data");
+// error_log(json_encode($HydrationArray));
+
             return $HydrationArray;
         }
         
@@ -1462,7 +1474,8 @@ error_log($query);
             if ( null != $regimens && array_key_exists( 'error', $regimens ) ) {
                 return $regimens;
             }
-            
+// error_log("Patient.Controller.Regimens - SET Regimens - ");
+// error_log(json_encode($regimens));
             $this->set( 'regimens', $regimens );
         }
         
@@ -1611,9 +1624,10 @@ error_log($query);
                     $myinfusion[ 'Order_Status' ] = $this->getOrderStatus( $myinfusion[ 'Order_ID' ] );
                     $myinfusions[ $i ]->{'data'}  = $myinfusion;
                 }
-                
                 $infusionMap[ $hydration[ 'id' ] ] = $myinfusions;
             }
+// error_log("Patient.Controller.Hydrations - infusionMap Data");
+// error_log(json_encode($infusionMap));
             
             $this->set( $type . 'hydrations', $hydrations );
             $this->set( $type . 'infusions', $infusionMap );
@@ -2330,6 +2344,17 @@ error_log($query);
          *
          **/
         
+        function _AddRecordMed2CumList($CumDoseMeds, &$aMed) {
+            foreach($CumDoseMeds as $aCumMed) {
+                if ($aCumMed['MedID'] == $aMed['MedID']) {
+                    error_log(json_encode($aCumMed));
+                    $aMed['MaxCumulativeDoseAmt'] = $aCumMed['CumulativeDoseAmt'];
+                    $aMed['MaxCumulativeDoseUnits'] = $aCumMed['CumulativeDoseUnits'];
+                    return;
+                }
+            }
+        }
+
         function CumulativeDoseTracking( $PatientID = null, $cdhRecordID = null ) {
             $jsonRecord              = array( );
             $jsonRecord[ 'success' ] = true;
@@ -2354,7 +2379,21 @@ error_log($query);
             }
             
             $ErrMsg = "";
+
+
+
+
+
             if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+
+
+            $controller = 'LookupController';
+            $lookupController = new $controller('Lookup', 'lookup', null);
+            $query = $lookupController->_getAllCumulativeDoseMeds(null);
+            $CumDoseMeds = $this->Patient->query( $query );
+//            error_log("PatientController.CumulativeDoseTracking - Cumulative Meds List");
+//            error_log(json_encode($CumDoseMeds));
+
                 //error_log("CumulativeDoseTracking - GET");
                 if ( $PatientID ) {
                     $partialQuery = "SELECT 
@@ -2379,6 +2418,66 @@ error_log($query);
                 //error_log("CumulativeDoseTracking Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
+
+                $PatientsCumMeds = $this->Patient->query( $query );
+                if ( $this->checkForErrors( $ErrMsg, $PatientsCumMeds ) ) {
+                    $jsonRecord[ 'success' ] = false;
+                    $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
+                    $this->Patient->rollbackTransaction();
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    return;
+                }
+
+
+                $jsonRecord[ 'success' ] = 'true';
+                $CumMedsList = array( );
+                if ( count( $PatientsCumMeds ) > 0 ) {
+
+
+                    $Lifetime = 0;
+                    $LastKey = "";
+                    foreach ($PatientsCumMeds as $aMed) {
+                        $rec = $aMed;
+                        $this->_AddRecordMed2CumList($CumDoseMeds, $rec);
+                        if (!array_key_exists ( $aMed['MedID'] , $CumMedsList )) {
+                            if("" != $LastKey) {
+                                $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
+                            }
+                            $LastKey = $aMed['MedID'];
+                            $Lifetime = 0;
+                            $CumMedsList[$aMed['MedID']] = array();
+                            $CumMedsList[$aMed['MedID']]['MedName'] = $rec['MedName'];
+                            $CumMedsList[$aMed['MedID']]['MaxCumulativeDoseAmt'] = $rec['MaxCumulativeDoseAmt'];
+                            $CumMedsList[$aMed['MedID']]['MaxCumulativeDoseUnits'] = $rec['MaxCumulativeDoseUnits'];
+                            $CumMedsList[$aMed['MedID']]['LifetimeAmt'] = 0;
+                        }
+                        $newRec = array();
+                        $Lifetime += $rec['CumulativeDoseAmt'];
+                        $newRec['Amt'] = $rec['CumulativeDoseAmt'];
+                        $newRec['Src'] = $rec['Source'];
+                        $newRec['Author'] = $rec['Author'];
+                        $CumMedsList[$aMed['MedID']]['Patient'][] = $newRec;
+                        // $CumMedsList[$aMed['MedID']]['Patient']['Src'] =
+                        // $CumMedsList[$aMed['MedID']]['Patient']['Author'] = $rec['Author'];
+
+//                        error_log(json_encode($aMed));
+//                        error_log("A specific Med - ");
+//                        error_log(json_encode($rec));
+//                        $CumMedsList[] = $rec;
+                    }
+                    if("" != $LastKey) {
+                        $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
+                    }
+                    unset( $jsonRecord[ 'msg' ] );
+                    $jsonRecord[ 'total' ]   = count( $CumMedsList );
+                    $jsonRecord[ 'records' ] = $CumMedsList;
+                }
+// error_log("CumMedsList");
+// error_log(json_encode($CumMedsList));
+
+                $this->set( 'jsonRecord', $jsonRecord );
+                return;
+
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
                 //error_log("CumulativeDoseTracking - POST");
                 /*********************************************************************************

@@ -100,9 +100,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 									"<th>Received / %</th>",
 									"<th>Source</th>",
 								"</tr>",
-								"<tpl for=\"CumulativeDoseTracking\">",
-									"{[this.buildCumDoseMedInfo(values)]}",
-								"</tpl>",
+								"{[this.buildCumDoseMedInfo(values)]}",
 							"</table>",
 						"</td>",
 					"</tr>",
@@ -148,58 +146,70 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return false;
 					},
 					buildCumDoseMedInfo : function ( data ) {
-						var CurCumDoseList = data.CurCumDoseList;
-						var len = CurCumDoseList.length;
-						var MedMaxDoseNum =("" + data.MedMaxDose).replace(",", "");
-						var CurCumDoseAmtNum =("" + data.CurCumDoseAmt).replace(",", "");
+						var key, buf = "",
+							CurCumDoseAmt,
+							Pct2,
+							CurCumDoseList = data.CumulativeDoseTracking,
+							CurCumDoseAmtNum, CumulativeDoseAmt,
+							MedName, Units,
+							MedMaxDoseNum,
+							MaxCumDose4PatientAmt,
+							MedMaxDose,
+							innerArray,
+							i, len, MaxCumDose4Patient, MaxCumDosePct4Patient,
+							InnerArrayBuf;
+						for (key in CurCumDoseList) {
+							if (CurCumDoseList.hasOwnProperty(key)) {
+								MedName = CurCumDoseList[key].MedName;
+								Units = CurCumDoseList[key].MaxCumulativeDoseUnits;
+								MedMaxDoseNum =("" + CurCumDoseList[key].MaxCumulativeDoseAmt).replace(",", "");
+								MedMaxDose = Ext.util.Format.number(MedMaxDoseNum, "0,0");
+								innerArray = CurCumDoseList[key].Patient;
+								len = innerArray.length;
+								MaxCumDose4Patient = 0;
+								MaxCumDosePct4Patient = 0;
+								InnerArrayBuf = "";
 
-						var MedMaxDose = Ext.util.Format.number(MedMaxDoseNum, "0,0");
-						var CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
-						var Pct2, Pct1 = ((CurCumDoseAmtNum / MedMaxDoseNum ) * 100);
-						Pct1 = Ext.util.Format.number(Pct1, "0,0.0");
-
-						var buf = "";
-							buf += "<tr>";
-							buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + len + "\">" + data.MedName + "<div class=\"cdtEm\"> " + 
-								MedMaxDose + " " + data.MedMaxDoseUnits + "</div></td>";
-							buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + len + "\">" + 
-								CurCumDoseAmt + " " + data.MedMaxDoseUnits + 
-								" / " + Pct1 + "%" + 
-								"</td>";
-
-						var i;
-						for (i = 0; i < len; i++) {
-							if (i > 0) {
 								buf += "<tr>";
+								buf += "<td style=\"vertical-align: top; text-align: center;\" rowspan=\"" + innerArray.length + "\">" + MedName + "<div class=\"cdtEm\"> ";
+								buf += MedMaxDose + " " +  Units + "</div></td>";
+								buf += "<td style=\"vertical-align: top; text-align: right;\" rowspan=\"" + innerArray.length + "\">";
+								for (i = 0; i < len; i++) {
+									CurCumDoseAmtNum = 1 * ("" + innerArray[i].Amt).replace(",", "");
+									MaxCumDose4Patient += CurCumDoseAmtNum;
+									CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
+									Pct2 = (( CurCumDoseAmt / MedMaxDoseNum ) * 100);
+									Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+									if (i > 0) {
+										InnerArrayBuf += "<tr>";
+									}
+									CumulativeDoseAmt = Ext.util.Format.number(("" + innerArray[i].Amt).replace(",", ""), "0,0");
+									InnerArrayBuf += "<td style=\"vertical-align: top; text-align: right;\">" + CumulativeDoseAmt + " " + Units + " / " + Pct2 + "% </td>";
+									InnerArrayBuf += "<td style=\"vertical-align: top;\">" + innerArray[i].Src + "</td>";
+									InnerArrayBuf += "</tr>";
+								}
+								MaxCumDosePct4Patient = MaxCumDose4Patient / MedMaxDoseNum;
+								MaxCumDose4PatientAmt = Ext.util.Format.number(MaxCumDose4Patient, "0,0");
+								Pct2 = (MaxCumDosePct4Patient * 100);
+								Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+								buf += MaxCumDose4PatientAmt + " " + Units + " / " + Pct2 + "% </td>" + InnerArrayBuf;
 							}
-							CurCumDoseAmtNum = ("" + CurCumDoseList[i].CumulativeDoseAmt).replace(",", "");
-							CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
-							Pct2 = (( CurCumDoseAmt / MedMaxDoseNum ) * 100);
-							Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
-
-							var CumulativeDoseAmt = Ext.util.Format.number(("" + CurCumDoseList[i].CumulativeDoseAmt).replace(",", ""), "0,0");
-							buf += "<td style=\"vertical-align: top; text-align: right;\">" + CumulativeDoseAmt + " " + CurCumDoseList[i].Units + " / " + Pct2 + "% </td>";
-//							buf += "<td style=\"vertical-align: top; text-align: right;\">" + 
-//								 + "%" + "</td>";
-
-							buf += "<td style=\"vertical-align: top;\">" + CurCumDoseList[i].Source + "</td>";
-							buf += "</tr>";
 						}
 						return buf;
 					},
 
 					hasData : function (data) {
 						if ("" === data) {
-							return (false);
+							return false;
 						}
-						return (true);
+						return true;
 					},
 
 					TemplateName : function (name) {
 						if ("" === name) {
-							return ("None at this time");
+							return "None at this time";
 						}
-						return (name);
+						return name;
 					},
 
 					Links : function (name, id) {
@@ -207,7 +217,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 						try {
 							if ("" === name) {
-								return ("&nbsp;");
+								return "&nbsp;";
 							}
 
 							// This is the link which appears at the end of the "Calculate BSA" table.
@@ -244,13 +254,13 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						try {
 							var i, len = a.length, buf = "";
 							if (0 === len) {
-								return ("None");
+								return "None";
 							}
 
 							for (i =0; i < len; i++) {
 								buf += a[i].description + "<br>";
 							}
-							return (buf);
+							return buf;
 						}
 						catch (e) {
 							return "";

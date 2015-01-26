@@ -323,7 +323,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 labelSeparator: "",
                 value: " (  cm)",
                 width: 50
-            }, {
+            }
+/*****
+				, {
 					xtype : "container",
 					html: "Last Recorded:",
 					margin: "4 5 0 4"
@@ -333,7 +335,9 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 labelSeparator: "",
                 value: "in/cm",
                 width: 90
-			}]
+			}
+*****/
+			]
         }, {
             xtype: "textfield",
             maskRe: /[0-9]/,
@@ -393,7 +397,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 labelSeparator: "",
                 value: " (  kg)",
                 width: 50
-            },  
+            }
+/*****				,  
                 {
                     xtype: "container",
                     html: "Last Recorded:",
@@ -406,6 +411,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
                 value: "lbs/kg",
                 width: 90
             }
+*****/
 			]
         }, {
             xtype: "numberfield",

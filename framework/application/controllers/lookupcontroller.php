@@ -396,7 +396,11 @@ class LookupController extends Controller {
     function Regimens($id = null) {
 
         if ($id != null) {
-            $this->set('regimens', $this->LookUp->getRegimens($id));
+            $regimens = $this->LookUp->getRegimens($id);
+// error_log("Lookup.Controller.Regimens - Set Regimens");
+// error_log(json_encode($regimens));
+
+            $this->set('regimens', $regimens);
         } else {
             $this->set('regimens', null);
             $this->set('frameworkErr', 'No Template ID provided.');
@@ -682,6 +686,8 @@ class LookupController extends Controller {
                 return;
             }
             $this->set('regimens', $retVal);
+// error_log("Lookup.Controller.TemplateData - Set Regimens");
+// error_log(json_encode($retVal));
 
 
 
