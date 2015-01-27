@@ -67,7 +67,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var route = combo.getValue();
 		var theContainer = this.getFluidInfo();
 		var aContainer;
-        if ("IVPB" == route || "IV" == route) {
+		if (Ext.routeRequiresFluid(route)) {
 			theContainer.show();
 		}
 		else {

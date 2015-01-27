@@ -1,10 +1,23 @@
 /*global Ext */
+Ext.getHydrationFormValues = function(config, value) {
+	var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
+	var hydrationForm = addHydrationDrug.down('form');
+	return hydrationForm.getValues();
+};
+Ext.HydrationRouteValidation = function(config, value){
+	var values = Ext.getHydrationFormValues(config, value);
+	var route = values.Infusion1;
+
+	if (Ext.routeRequiresFluid(route)) {
+		if('' === value){
+			return false;
+		}
+	}
+	return true;
+};
 Ext.apply(Ext.data.validations,{
 			amt1hydration: function(config, value) {
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
+				var values = Ext.getHydrationFormValues(config, value);
 				if(('' === values.Amt1) && ('' === value)){
 					return false;
 				}
@@ -13,190 +26,36 @@ Ext.apply(Ext.data.validations,{
 				}
 				return true;
 			},
-				/**
-			amt2hydration: function(config, value) {
 
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
-				if('' === value && (values.Units2 && '' !== values.Units2 || values.Infusion2 && '' !== values.Infusion2)){
-					return false;
-				}else{
-					return true;
-				}
-			},
-			 **/
 			unit1hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
+				var values = Ext.getHydrationFormValues(config, value);
 				if('' === value && ('' !== values.Amt1 || values.Infusion1 && '' !== values.Infusion1)){
 					return false;
 				}else{
 					return true;
 				}
-
 			},
-				/**
-			unit2hydration: function(config, value){
 
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
-				if('' === value && ('' !== values.Amt2 || values.Infusion2 && '' !== values.Infusion2)){
-					return false;
-				}else{
-					return true;
-				}
-
-			},
-			**/
 			route1hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
+				var values = Ext.getHydrationFormValues(config, value);
 				if('' === value && ('' !== values.Amt1 || values.Units1 && '' !== values.Units1)){
 					return false;
 				}else{
 					return true;
 				}
-
 			},
-
-				/**
-			route2hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-
-				if('' === value && ('' !== values.Amt2 || values.Units2 && '' !== values.Units2)){
-					return false;
-				}else{
-					return true;
-				}
-
-			},
-			**/
 			fluidVol1hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route1 = values.Infusion1;
-
-				if("IVPB" === route1 || "IV" === route1){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
-
+				return Ext.HydrationRouteValidation(config, value);
 			},
-				/**
-			fluidVol2hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route2 = values.Infusion2;
-
-				if("IVPB" === route2 || "IV" === route2){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
-
-			},
-			**/
 			adminTimehydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route1 = values.Infusion1;
-				var route2 = values.Infusion2;
-
-				if("IVPB" === route1 || "IV" === route1){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
+				return Ext.HydrationRouteValidation(config, value);
 			},
 			flowRate1hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route1 = values.Infusion1;
-
-				if("IVPB" === route1 || "IV" === route1){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
+				return Ext.HydrationRouteValidation(config, value);
 			},
-				/**
-			flowRate2hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route2 = values.Infusion2;
-
-				if("IVPB" === route2 || "IV" === route2){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
-			},
-			**/
 			fluidType1hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route1 = values.Infusion1;
-
-				if("IVPB" === route1 || "IV" === route1){
-					if('' === value){
-						return false;
-					}
-				}
-
-				return true;
+				return Ext.HydrationRouteValidation(config, value);
 			}
-				/**
-			fluidType2hydration: function(config, value){
-
-				var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-				var hydrationForm = addHydrationDrug.down('form');
-				var values = hydrationForm.getValues();
-				var route2 = values.Infusion2;
-
-				if("IVPB" === route2 || "IV" === route2){
-					if('' === value){
-						return false;
-					}
-				}
-				return true;
-			}
-			**/
 		});
 
 Ext.define('COMS.controller.Authoring.Hydration', {
@@ -256,18 +115,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		ref: 'HydrationInfusion1',
 		selector: 'AddHydrationDrug combo[name="Infusion1"]'
 	},
-		/**
-	{
-		ref: 'HydrationAmt2',
-		selector: 'AddHydrationDrug textfield[name="Amt2"]'
-	}, {
-		ref: 'HydrationUnits2',
-		selector: 'AddHydrationDrug combo[name="Units2"]'
-	}, {
-		ref: 'HydrationInfusion2',
-		selector: 'AddHydrationDrug combo[name="Infusion2"]'
-	},
-	**/
 	{
 		ref: 'HydrationInstructions',
 		selector: 'AddHydrationDrug textfield[name="Instructions"]'
@@ -284,21 +131,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		ref: 'HydrationFluidType1',
 		selector: 'AddHydrationDrug textfield[name="FluidType1"]'
 	},
-		/**
-	{
-		ref: 'HydrationFluidVol2',
-		selector: 'AddHydrationDrug textfield[name="FluidVol2"]'
-	},{
-		ref: 'HydrationFlowRate2',
-		selector: 'AddHydrationDrug textfield[name="FlowRate2"]'
-	},{
-		ref: 'HydrationFluidType2',
-		selector: 'AddHydrationDrug textfield[name="FluidType2"]'
-	},{
-		ref: 'HydrationInfusionTime2',
-		selector: 'AddHydrationDrug textfield[name="InfusionTime2"]'
-	},
-	**/
 	{
 		ref: 'HydrationDay',
 		selector: 'AddHydrationDrug textfield[name="Day"]'
@@ -345,25 +177,12 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			'AddHydrationDrug combo[name="Infusion1"]' : {
 				select: this.routeSelected
 			},
-			/**
-			'AddHydrationDrug combo[name="Infusion2"]' : {
-				select: this.routeSelected
-			},
-			**/
 			'AddHydrationDrug textfield[name="FlowRate1"]' : {
 				blur: this.calcInfusionTime
 			},
 			'AddHydrationDrug textfield[name="FluidVol1"]' : {
 				blur: this.calcInfusionTime
 			},
-			/**
-			'AddHydrationDrug textfield[name="FlowRate2"]' : {
-				blur: this.calcInfusionTime
-			},
-			'AddHydrationDrug textfield[name="FluidVol2"]' : {
-				blur: this.calcInfusionTime
-			},
-			**/
 			'AddHydrationDrug combo[name="Drug"]' : {
 				collapse: this.collapseCombo,
 				expand : this.loadCombo
@@ -425,13 +244,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			flowRate = this.getHydrationFlowRate1().getValue();
 			infusionTime = this.getHydrationInfusionTime1();
 		}
-		/**
-		else if('2' === lastChar){
-			fluidVol = this.getHydrationFluidVol2().getValue();
-			flowRate = this.getHydrationFlowRate2().getValue();
-			infusionTime = this.getHydrationInfusionTime2();
-		}
-		**/
 		if('' !== flowRate && '' !== fluidVol){
 			infusionTime.setValue(Ext.CalcInfusionTime(fluidVol,flowRate,true));
 		}
@@ -463,7 +275,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		}
 
 		if(null !== route && '' !== route){
-			if("IVPB" === route || "IV" === route){
+			if(Ext.routeRequiresFluid(route)) {
+			// if("IVPB" === route || "IV" === route){
 				if('Infusion1' === combo.getName()){
 					this.getFluidInfo().show();
 				}
@@ -485,9 +298,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	SaveSequence: function(button, opts){		// MWB - 7/19/2012 - Changes...
-//        var nextSequenceNumber = Ext.ComponentQuery.query('HydrationSequence form radiogroup[name=\"ApplySequence\"]');
-//        var insertSequenceNumber = Ext.ComponentQuery.query('HydrationSequence radiogroup[name=\"ApplySequence\"]')[1];
-//        var sequence = Ext.ComponentQuery.query('HydrationSequence form radiogroup[name=\'ApplySequence\']');
 		wccConsoleLog("SaveSequence()");
 		var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
 

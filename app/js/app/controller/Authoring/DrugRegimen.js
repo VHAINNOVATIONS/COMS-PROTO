@@ -1,58 +1,62 @@
-Ext.apply(Ext.data.validations, {
-    fluidVolregimen: function (config, value) {
+Ext.StdRouteValidation = function (config, value) {
         var drugRegimen = Ext.ComponentQuery.query('AddDrugRegimen')[0];
         var form = drugRegimen.down('form');
         var values = form.getValues();
         var route = values.Route;
 
-        if ("IVPB" == route || "IV" == route) {
+        if (Ext.routeRequiresFluid(route)) {
             if ('' == value) {
                 return false;
             }
         }
         return true;
+    };
+Ext.routeRequiresFluid = function(route) {
+	if ("IVPB" == route) {
+		return true;
+	}
+	if ("IV" == route) {
+		return true;
+	}
+	if ("Intrathecal" == route) {
+		return true;
+	}
+	if ("Intra-arterial" == route) {
+		return true;
+	}
+	if ("Intra-hepatic" == route) {
+		return true;
+	}
+	if ("Peritoneal" == route) {
+		return true;
+	}
+	if ("Intravesicular" == route) {
+		return true;
+	}
+	if ("Intraocular" == route) {
+		return true;
+	}
+	if ("Intravitreal" == route) {
+		return true;
+	}
+	return false;
+};
+
+Ext.apply(Ext.data.validations, {
+    fluidVolregimen: function (config, value) {
+        return Ext.StdRouteValidation(config, value);
     },
 
     adminTimeregimen: function (config, value) {
-        var drugRegimen = Ext.ComponentQuery.query('AddDrugRegimen')[0];
-        var form = drugRegimen.down('form');
-        var values = form.getValues();
-        var route = values.Route;
-
-        if ("IVPB" == route || "IV" == route) {
-            if ('' == value) {
-                return false;
-            }
-        }
-        return true;
+        return Ext.StdRouteValidation(config, value);
     },
 
     flowRateregimen: function (config, value) {
-        var drugRegimen = Ext.ComponentQuery.query('AddDrugRegimen')[0];
-        var form = drugRegimen.down('form');
-        var values = form.getValues();
-        var route = values.Route;
-
-        if ("IVPB" == route || "IV" == route) {
-            if ('' == value) {
-                return false;
-            }
-        }
-        return true;
+        return Ext.StdRouteValidation(config, value);
     },
 
     fluidTyperegimen: function (config, value) {
-        var drugRegimen = Ext.ComponentQuery.query('AddDrugRegimen')[0];
-        var form = drugRegimen.down('form');
-        var values = form.getValues();
-        var route = values.Route;
-
-        if ("IVPB" == route || "IV" == route) {
-            if ('' == value) {
-                return false;
-            }
-        }
-        return true;
+        return Ext.StdRouteValidation(config, value);
     }
 });
 
@@ -227,9 +231,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
     },
 
+	/* Determine fluid Type allowed based on Medication selected */
 	FluidTypeRouteSelected: function(combo, recs, eOpts){
-				/* MWB - 4/17/2014 - for new requirement (*IV Fluid Type Choices Issue #80) need to get the drug to determine which fluid types are allowable */
-				// var theDrug = combo.up("form").down("combo[name=\"Drug\"]");
 				var theDrug = combo.up("form").down("combo[name=\"Drug\"]").valueModels[0].data;
 				var theDrugID = theDrug.id;
 
@@ -242,6 +245,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	},
 
 
+
     routeSelected: function (combo, recs, eOpts) {
         var route = null;
 
@@ -252,7 +256,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
         }
 
 		if (null != route && '' != route) {
-			if ("IVPB" == route || "IV" == route) {
+			if (Ext.routeRequiresFluid(route)) {
 				this.getFluidInfo().show();
 				this.getDoseSpacer().hide();
 				this.getDrugRegimenAdminTime().show();
