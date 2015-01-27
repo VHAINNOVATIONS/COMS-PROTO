@@ -211,18 +211,18 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	},
 
 	ShowAddCumulativeMedication : function() {
-		if (!this.puWinCumDose) {
-			this.puWinCumDose = Ext.widget("puWinAddCumDose");
-			this.puWinCumDose.show();
-		}
-		else {
-			try {
+		try {
+			if (!this.puWinCumDose) {
+				this.puWinCumDose = Ext.widget("puWinAddCumDose");
 				this.puWinCumDose.show();
 			}
-			catch (e) {
-				this.puWinCumDose = Ext.widget("puWinAddCumDose");
-			this.puWinCumDose.show();
+			else {
+				this.puWinCumDose.show();
 			}
+		}
+		catch (e) {
+			this.puWinCumDose = Ext.widget("puWinAddCumDose");
+			this.puWinCumDose.show();
 		}
 	},
 
