@@ -51,7 +51,7 @@ a, button.anchor, .anchor button, .textAnchor {
 	background-position: 50% -2px; 
 	margin-left: 1px; 
 	background-color: transparent; 
-	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/unchecked.gif"); 
+	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/access/grid/unchecked.gif"); 
 	background-position: -1px -1px; 
 	background-repeat: no-repeat; 
 	height: 14px; 
@@ -59,7 +59,24 @@ a, button.anchor, .anchor button, .textAnchor {
 	display: inline-block; 
 } 
 .x-boundlist-selected .x-combo-checker { 
-	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/checked.gif"); 
+	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/access/grid/checked.gif"); 
+}
+
+
+td .x-form-item-label {
+	padding: 0!important;	/* helps to position label better */
+}
+
+.HelpIcon { 
+	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/access/tools/tool-sprites.gif");
+	width: 15px;
+	height: 15px;
+	background-position-y: 60px;
+	background-position-x: 15px;
+	padding-left: 15px;
+	margin-left: 2px;
+	top: 3px;
+	position: relative;
 }
 
 

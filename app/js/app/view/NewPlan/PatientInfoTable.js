@@ -178,7 +178,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 									CurCumDoseAmtNum = 1 * ("" + innerArray[i].Amt).replace(",", "");
 									MaxCumDose4Patient += CurCumDoseAmtNum;
 									CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
-									Pct2 = (( CurCumDoseAmt / MedMaxDoseNum ) * 100);
+									Pct2 = (( CurCumDoseAmtNum / MedMaxDoseNum ) * 100);
 									Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
 									if (i > 0) {
 										InnerArrayBuf += "<tr>";

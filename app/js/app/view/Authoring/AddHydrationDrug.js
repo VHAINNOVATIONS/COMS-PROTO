@@ -33,16 +33,18 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							labelAlign: 'left',
 							name: 'patientRadio',
 							fieldLabel: 'Medication Type',
+							labelWidth: 115,
+							'afterLabelTextTpl' : '<img class="HelpIcon" alt="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" title="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" >',
 							itemId: 'patientRadios',
 							columns: 2,
 							items: [{
-								boxLabel: 'InPatient',
+								boxLabel: 'Inpatient',
 								name: 'PatientType',
 								inputValue: 'InPatient',
 								width: 100,
 								checked: true
 							}, {
-								boxLabel: 'OutPatient',
+								boxLabel: 'Outpatient',
 								name: 'PatientType',
 								inputValue: 'OutPatient',
 								width: 125

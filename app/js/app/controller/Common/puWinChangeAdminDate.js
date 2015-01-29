@@ -213,8 +213,10 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		var msg = this.AcceptableChangeMsg;
 		var list = this.getOEMRecords(), len = list.length;
 
-		
+		var theController = this.getController("NewPlan.OEM");
+
 		if ("" === this.AcceptableChangeMsg) {
+			theController.MaskOEMData(true);
 			if (1 === range2change.length) {
 				this.application.fireEvent("ProcAdminDateChange", range2change[0], 0);
 			}
@@ -227,7 +229,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		Ext.MessageBox.alert('Warning', this.AcceptableChangeMsg + "<br>The requested date change will NOT be performed");
 	},
 
-	ProcAdminDateChange : function(idxOfFirstRec2Change, idxOfLastRec2Change, theScope) {
+	"ProcAdminDateChange" : function(idxOfFirstRec2Change, idxOfLastRec2Change, theScope) {
 		var list = this.getOEMRecords();
 		var listLen = list.length;
 		var rec = list[idxOfFirstRec2Change];
@@ -236,11 +238,15 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 			var NewDate = this.addDays2Date(this.offsetDays, OldDate); 
 			rec.AdminDate = NewDate;
 			NewDate = Ext.Date.format(new Date(NewDate), "Y-m-d");
+			// rec.id = Master_Template.Template_ID = ID of a particular Admin Day, containing all administrations (e.g. multiple Order records from Order_Status table).
 			var URL = "/Patient/UpdateAdminDate/" + rec.id + "/" + NewDate;		// TemplateID/AdminDate = 21F92BED-7DA5-4CA2-92B3-4EE1FD5E601C; 2014-09-25
+			var JSON_Data = {"Admin_Date" : NewDate, "Orders" : rec };
 
 			Ext.Ajax.request({
 				scope : this,
 				url: URL,
+				method : "PUT",
+				jsonData : JSON_Data,
 				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
@@ -263,6 +269,9 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 					}
 				},
 				failure : function( response, opts ) {
+					var theController = this.getController("NewPlan.OEM");
+					var thePanel = theController.getOEM_Level1();
+					theController.MaskOEMData(false);
 					this.application.unMask();
 					alert("EoTS Data Load Failed...");
 				}

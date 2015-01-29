@@ -16,22 +16,14 @@ var combo = new Ext.form.ComboBox({
 		fields: [{
 			name: "orderstatus"
 		}],
-		data: [{
-				orderstatus: "Ordered"
-			}, {
-				orderstatus: "In-Coordination"
-			}, {
-				orderstatus: "Cleared"
-			}, {
-				orderstatus: "Finalized"
-			}, {
-				orderstatus: "Dispensed"
-			}, {
-				orderstatus: "Administered"
-			}, {
-				orderstatus: "Cancelled"
-			}
-
+		data: [
+			{orderstatus: "Ordered"}, 
+			// {orderstatus: "In-Coordination"}, 
+			{orderstatus: "Cleared"}, 
+			{orderstatus: "Finalized"}, 
+			{orderstatus: "Dispensed"}, 
+			// {orderstatus: "Administered"}, 
+			{orderstatus: "Cancelled"}
 		]
 	},
 	displayField: "orderstatus"

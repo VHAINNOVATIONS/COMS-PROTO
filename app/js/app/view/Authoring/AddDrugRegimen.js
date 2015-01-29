@@ -32,11 +32,13 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 						'labelAlign' : 'left',
 						'name' : 'patientRadio',
 						'fieldLabel' : 'Medication Type',
+						'afterLabelTextTpl' : '<img class="HelpIcon" alt="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" title="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" >',
+						'labelWidth' : 115,
 						'itemId' : 'patientRadios',
 						'columns' : 2,
 						'items' : [
-							{ boxLabel  : 'InPatient', name : 'PatientType', inputValue: 'InPatient', width: 100, checked: true  },
-							{ boxLabel  : 'OutPatient', name  : 'PatientType', inputValue: 'OutPatient', width: 125  }
+							{ boxLabel  : 'Inpatient', name : 'PatientType', inputValue: 'InPatient', width: 100, checked: true  },
+							{ boxLabel  : 'Outpatient', name  : 'PatientType', inputValue: 'OutPatient', width: 125  }
 						]
 					}
 				]

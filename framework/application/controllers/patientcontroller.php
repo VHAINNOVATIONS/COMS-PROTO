@@ -2581,8 +2581,28 @@ error_log($query);
             return;
         }
         
-        function UpdateAdminDate( $Template_ID, $Admin_Date ) {
+
+
+
+        function UpdateAdminDate( $Template_ID, $Admin_Date) {
+            $formData = json_decode( file_get_contents( 'php://input' ) );
+            $fAdmin_Date        = $formData->Admin_Date;
+            // $fOrder_ID          = $formData->Order_ID;
+            $fOrders            = $formData->Orders;
+//            error_log("UpdateAdminDate - Template_ID = $Template_ID, Admin_Date = $Admin_Date, FormAdmin_Date = $fAdmin_Date");
+//            error_log("UpdateAdminDate - Orders = ");
+//            error_log(json_encode($fOrders));
+
+            $Pre = $fOrders->PreTherapy;
+            $Therapy = $fOrders->Therapy;
+            $Post = $fOrders->PostTherapy;
+
+            $this->Patient->UpdateOrderStatusAdminDate($Pre, $fAdmin_Date, "Pre");
+            $this->Patient->UpdateOrderStatusAdminDate($Therapy, $fAdmin_Date, "Therapy");
+            $this->Patient->UpdateOrderStatusAdminDate($Post, $fAdmin_Date, "Post");
+
             $jsonRecord = array( );
+            $records = array();
             $records    = $this->Patient->UpdateAdminDateMT( $Template_ID, $Admin_Date );
             if ( $this->checkForErrors( 'Update Admin Date Failed. ', $records ) ) {
                 $jsonRecord[ 'success' ] = 'false';

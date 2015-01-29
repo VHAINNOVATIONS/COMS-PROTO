@@ -268,7 +268,8 @@ error_log("Orders - $query");
             foreach ($patientTemplates as $patient) {
                 //$oemrecords = $patientModel->getTopLevelOEMRecords($patient['patientID'],$patient['templateID']);
                 $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays($patient['patientID'], $patient['templateID']);
-				//var_dump($oemrecords);
+error_log("Orders.Controller.grabOrders - OEM Records for a given Patient (" . $patient['patientID'] . ") and Template (" . $patient['templateID'] . ")");
+error_log(json_encode($oemrecords));
 				
 
                 if ($this->checkForErrors('Get Top Level OEM Data Failed. ', $oemrecords)) {

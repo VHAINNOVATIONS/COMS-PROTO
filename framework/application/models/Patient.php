@@ -1466,33 +1466,30 @@ function convertReason2ID($Reason) {
 		$newidquery = "SELECT NEWID()";
 		$GUID = $this->query($newidquery);
 		$GUID = $GUID[0][""];
-        
-		$query = "
-		UPDATE Patient_CumulativeDoseHistory
-		SET  CumulativeDoseAmt = '$CumulativeDoseAmt',
-        CumulativeDoseUnits = '$CumulativeDoseUnits',
-	    Author = '".$_SESSION['rid']."'
-		WHERE ID = '$CDHID'";
-		   
+        $query = "UPDATE Patient_CumulativeDoseHistory
+        SET CumulativeDoseAmt = '$CumulativeDoseAmt',
+            CumulativeDoseUnits = '$CumulativeDoseUnits',
+            Author = '".$_SESSION['rid']."'
+        WHERE ID = '$CDHID'";
+
 		$result = $this->query($query);
-        //echo $query;
 		return 'updated';
     }
-    
-    // order check end of else
-    // }
-	
-function UpdateAdminDateMT ($Template_ID,$Admin_Date)
-    {
-    
-       $query = "
-            UPDATE Master_Template SET 
-            Admin_Date = '$Admin_Date'
-            WHERE Template_ID = '$Template_ID'
-                ";
-		   
-		$result = $this->query($query);
-        
+
+    function UpdateAdminDateMT ($Template_ID,$Admin_Date) {
+        $query = "UPDATE Master_Template SET Admin_Date = '$Admin_Date' WHERE Template_ID = '$Template_ID'";
+        $result = $this->query($query);
+    }
+
+    function UpdateOrderStatusAdminDate($Therapy, $AdminDate) {
+        foreach($Therapy as $aRec) {
+//          error_log("UpdateOrderStatusAdminDate = ");
+//          error_log(json_encode($aRec));
+            $Order_ID = $aRec->Order_ID;
+            $query = "UPDATE Order_Status SET Admin_Date = '$AdminDate' WHERE Order_ID = '$Order_ID'";
+//          error_log("UpdateOrderStatusAdminDate = $query");
+            $result = $this->query($query);
+        }
     }
 
 

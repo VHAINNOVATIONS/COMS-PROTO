@@ -46,7 +46,16 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				select : this.selAdminDayChange
 			},
 			"NewPlanTab OEM" : {
-					afterrender : this.DelegateHandlers
+					afterrender : this.DelegateHandlers,
+					beforeactivate : this.ActivatingThisTab,	/* Still takes long after clicking tab before hitting this point */
+					beforerender : this.ActivatingThisTab2,
+					beforeshow : this.ActivatingThisTab3,
+					beforedeactivate : this.ActivatingThisTab4,
+					beforedeactivate : this.ActivatingThisTab5,
+					blur : this.ActivatingThisTab6,
+					beforestatesave : this.ActivatingThisTab7,
+					click : this.ActivatingThisTab8,
+					statesave : this.ActivatingThisTab9
 			}
 		});
 	},
@@ -56,6 +65,18 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	// else returns null.
 	theDate_Cycle : "",
 	theDate_Dat : "",
+
+	MaskOEMData : function(flg) {
+		this.showToday();
+		var thePanel = this.getDspOEMTemplateData();
+		if (flg) {
+			thePanel.setLoading( "Loading Patient OEM Information", false );
+		}
+		else {
+			thePanel.setLoading( false, false );
+			this.showToday();
+		}
+	},
 	IsDayAnAdminDay : function( theDate ) {
 		var j, theData, dataLen, thePatient, AdminDay, dayData;
 		try {
@@ -75,6 +96,38 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		catch (e) {
 		}
 		return null;
+	},
+
+	ActivatingThisTab : function( theTab, eOpts ) {
+		this.TabEventTracker("1. beforeactivate", theTab, eOpts);
+	},
+	ActivatingThisTab2 : function( theTab, eOpts ) {
+		this.TabEventTracker("2. beforerender", theTab, eOpts);
+	},
+	ActivatingThisTab3 : function( theTab, eOpts ) {
+		this.TabEventTracker("3. beforeshow", theTab, eOpts);
+	},
+	ActivatingThisTab4 : function( theTab, eOpts ) {
+		this.TabEventTracker("4. beforedeactivate", theTab, eOpts);
+	},
+	ActivatingThisTab5 : function( theTab, eOpts ) {
+		this.TabEventTracker("5. N/A", theTab, eOpts);
+	},
+	ActivatingThisTab6 : function( theTab, eOpts ) {
+		this.TabEventTracker("6. blur", theTab, eOpts);
+	},
+	ActivatingThisTab7 : function( theTab, eOpts ) {
+		this.TabEventTracker("7. beforestatesave", theTab, eOpts);
+	},
+	ActivatingThisTab8 : function( theTab, eOpts ) {
+		this.TabEventTracker("8. click", theTab, eOpts);
+	},
+	ActivatingThisTab9 : function( theTab, eOpts ) {
+		this.TabEventTracker("9. statesave", theTab, eOpts);
+	},
+
+	TabEventTracker : function( msg, theTab, eOpts) {
+		console.log("OEM Tab Event Tracker - " + msg);
 	},
 
 	DelegateHandlers : function(theTab, b, c) {
@@ -133,13 +186,16 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 	DisplayOEMRecordData : function( PatientInfo ) {
+		this.MaskOEMData(true);
+
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
 		//this.application.loadMask("Loading OEM Records...");
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
-				this.application.unMask();
+				// this.application.unMask();
+				this.MaskOEMData(false);
 				var i, vvv = TemplateData.OEMRecordsStore.data.items, vvvLen = vvv.length;
 				var newArray = [];
 				for (i = 0; i < vvvLen; i++) {
@@ -149,6 +205,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				this.RenderData4EachAdminDay(this.application.Patient.OEMRecords);
 			},
 			failure: function (err) {
+				this.MaskOEMData(false);
 				this.DataLoadCountDecrement("loadOrderRecords FAIL");
 				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
@@ -250,6 +307,26 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			theElement.style.display="block";
 		}
 	},
+	showToday : function() {
+		var Showing = false,
+			today = Ext.util.Format.date(new Date()),
+			Elements = Ext.query(".OEMRecord"),
+			ElLen = Elements.length,
+			i, theElement;
+		this.hideAllAdminDays();
+
+		for (i = 0; i < ElLen; i++) {
+			theElement = Elements[i];
+			if (theElement.innerText.indexOf(today) > 0) {
+				theElement.style.display="block";
+				Showing = true;
+			}
+		}
+		if (!Showing) {
+			Elements[0].style.display="block";
+		}
+	},
+
 	selAdminDayChange : function(combo, recs, eOpts) {
 		var thisCtl = this.getController("NewPlan.OEM");
 		var Elements = Ext.query(".OEMRecord");
