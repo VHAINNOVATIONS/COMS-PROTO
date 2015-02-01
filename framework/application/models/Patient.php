@@ -576,6 +576,10 @@ function convertReason2ID($Reason) {
 
     function updateOEMRecord ($form_data)
     {
+
+error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
+
+
         $templateid = $form_data->{'TemplateID'};
         $oemrecordid = $form_data->{'OEMRecordID'};
         $therapyid = $form_data->{'TherapyID'};
@@ -590,7 +594,7 @@ function convertReason2ID($Reason) {
         
         $units = $form_data->{'Units'};
         $infusionmethod = $form_data->{'InfusionMethod'};
-        $fluidtype = $form_data->{'FluidType'};
+        $fluidtype = $this->escapeString($form_data->{'FluidType'});
         $fluidvol = $form_data->{'FluidVol'};
         $flowrate = $form_data->{'FlowRate'};
         $infusiontime = $form_data->{'InfusionTime'}; 
@@ -599,7 +603,7 @@ function convertReason2ID($Reason) {
         $bsadose2 = $form_data->{'BSA_Dose'};
         $units2 = $form_data->{'Units'};
         $infusionmethod2 = $form_data->{'InfusionMethod'};
-        $fluidtype2 = $form_data->{'FluidType'};
+        $fluidtype2 = $this->escapeString($form_data->{'FluidType'});
         $fluidvol2 = $form_data->{'FluidVol'};
         $flowrate2 = $form_data->{'FlowRate'};
         $infusiontime2 = $form_data->{'InfusionTime2'};
@@ -704,6 +708,10 @@ function convertReason2ID($Reason) {
             Infusion_Time = '$infusiontime',
             Reason = '$Reason'
             where Patient_Regimen_ID = '$therapyid'";
+
+error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
+
+
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
                 return $retVal;
@@ -711,6 +719,8 @@ function convertReason2ID($Reason) {
         } 
         else if ('Pre' === $therapytype || 'Post' === $therapytype) {
             $query = "select * from MH_Infusion where MH_ID = '$therapyid'";
+error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
+
             $infusionRecord = $this->query($query);
             if (null != $infusionRecord && array_key_exists('error', $infusionRecord)) {
                 return $infusionRecord;
@@ -723,6 +733,7 @@ function convertReason2ID($Reason) {
                 Status = '$Status',
                 Reason = '$Reason'
                 where MH_ID = '$therapyid'";
+error_log("Patient.Model.updateOEMRecord - Update - $query" );
 
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -767,17 +778,22 @@ function convertReason2ID($Reason) {
                     return $retVal;
                 }
 
+
+
                 $query = "Update MH_Infusion 
                 set Infusion_Amt = '$dose',
                 BSA_DOSE ='$bsadose',
                 Infusion_Unit_ID='$unitid',
                 Infusion_Type_ID='$infusionTypeid',
-                Fluid_Type='$fluidtype',
+                Fluid_Type='$escFT',
                 Flow_Rate='$flowrate',
                 Fluid_Vol='$fluidvol',
                 Infusion_Time='$infusiontime'
                 where Infusion_ID ='" .$infusionRecord[$index]['Infusion_ID'] . "'";
                 $retVal = $this->query($query);
+
+error_log("Patient.Model.updateOEMRecord - Loop - $query" );
+
                 if (null != $retVal && array_key_exists('error', $retVal)) {
                     return $retVal;
                 }
@@ -1244,7 +1260,7 @@ function convertReason2ID($Reason) {
     	        Order_Status = '$orderStatus' 
     	    WHERE Order_ID = '$orderId'
     	";
-        
+error_log("Patient.Model.updateOrderStatus - $query");
         return $this->query($query);
     }
 
@@ -1254,16 +1270,15 @@ function convertReason2ID($Reason) {
      * @param string $drug            
      * @param string $orderStatus            
      */
-    public function updateOrderStatusByPatientIdAndDrugName ($patientId, 
-            $drugName, $orderStatus)
-    {
+    public function updateOrderStatusByPatientIdAndDrugName ($patientId, $drugName, $orderStatus, $Order_ID) {
         $query = "
 	        UPDATE Order_Status SET
 	            Order_Status = '$orderStatus'
 	        WHERE Patient_ID = '$patientId'
 	            AND Drug_Name = '$drugName'
+                AND Order_ID = '$Order_ID'
 	    ";
-        
+error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
         return $this->query($query);
     }
 

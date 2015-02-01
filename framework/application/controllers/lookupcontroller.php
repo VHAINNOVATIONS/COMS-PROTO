@@ -1480,11 +1480,6 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
  *      DELETE http://coms-mwb.dbitpro.com:355/LookUp/DischargeInstruction/542C549B-05D2-E311-A4B9-000C2935B86F
  **/
     function _CommonServiceCallMethod($ID, $DataType, $Msg) {
-        
-
-
-
-// error_log("SiteCommonInfo");
         $jsonRecord = array();
         $jsonRecord['success'] = true;
         $query = "";
@@ -1506,7 +1501,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             else {
                 $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label ";
             }
-            // error_log("SiteCommonInfo Query - $query");
+// error_log("Lookup.Controller._CommonServiceCallMethod - $Label; DataType - $DataType; Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
         }
@@ -1582,6 +1577,8 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
                 $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = '$DataType' order by Label ";
             }
         }
+// error_log("Lookup.Controller._CommonServiceCallMethodByLabel - Label = $Label; DataType - $DataType; Query - $query");
+
         if ("" !== $query) {
             $retVal = $this->LookUp->query($query);
             if ($this->checkForErrors($ErrMsg, $retVal)) {
@@ -1751,12 +1748,37 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
 
 
     function MedRisks($ID = null, $Type = null) {
-
-        // error_log("MedRisks - $ID; $Type");
         $DataType = 'Risks';
+        switch($Type) {
+            case "Emesis-1":
+            case "Low":
+            case "Minimal Emetic Risk":
+                $Type = "Minimal Emetic Risk";
+                break;
+            case "Emesis-2":
+            case "Medium":
+            case "Low Emetic Risk":
+                $Type = "Low Emetic Risk";
+                break;
+            case "Emesis-3":
+            case "Moderate":
+            case "Moderate Emetic Risk":
+                $Type = "Moderate Emetic Risk";
+                break;
+            case "Emesis-4":
+            case "High":
+            case "High Emetic Risk":
+                $Type = "High Emetic Risk";
+                break;
+            case "Emesis-5":
+            case "Very High":
+                $DataType = "Emesis-5";
+                break;
+        }
         $Msg = 'Emesis/Neutropenia Risks';
         if ("Type" == $ID) {
-            return $this->_CommonServiceCallMethodByLabel($Type, $DataType, $Msg);
+            $retVal = $this->_CommonServiceCallMethodByLabel($Type, $DataType, $Msg);
+            return $retVal;
         }
         return $this->_CommonServiceCallMethod($ID, $DataType, $Msg);
     }

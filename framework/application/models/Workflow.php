@@ -134,6 +134,9 @@ class Workflow extends Model {
 /////Begin - OEM Edit Workflow
 /////////////////////////
     function OEMeditWorkflow($form_data){
+error_log("Workflow.Model.OEMeditWorkflow - Entry Point");
+error_log(json_encode($form_data));
+
     //function OEMeditWorkflow($templateid, $oemrecordid, $therapyid, $therapytype, $instructions, $admintime, $medid, $med, $dose, $bsadose, $units, $infusionmethod, $fluidtype, $fluidvol, $flowrate, $infusiontime, $dose2, $bsadose2, $units2, $infusionmethod2, $fluidtype2, $fluidvol2, $flowrate2, $infusiontime2) {
         $templateid = $form_data->TemplateID;
         $oemrecordid = $form_data->OEMRecordID;
