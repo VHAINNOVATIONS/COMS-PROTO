@@ -50,10 +50,12 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<th>",
 						"{[this.AddEditBtns(\"Cancer\", values, parent)]}",
 						"Type(s) of Cancer: </th>",
-						"<td colspan=3>",
+						"<td colspan=5>",
+							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Reported on</th><th>By</th></tr>",
 							"<tpl for=\"Disease\">",
-								"<div>{Type}&nbsp;-&nbsp;{Stage}</div>",
+								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td></tr>",
 							"</tpl>",
+							"</table>",
 						"</td>",
 					"</tr>",
 
@@ -131,7 +133,19 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						return buf;
 					},
-
+/**********
+					DiseaseHistory : function(values) {
+						// "<tr>{[this.DiseaseHistory(values)]}</tr>",
+						var buf = "";
+						if ("" === values.DiseaseStage) {
+							buf = values.DiseaseName + " Reported on " + values.date + " by " + values.Author;
+						}
+						else {
+							buf = values.DiseaseName + " - " + values.DiseaseStage + " Reported on " + values.date + " by " + values.Author;
+						}
+						return buf;
+					},
+***************/
 					AddEditBtns : function (btnName, values, parent) {
 						var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
 						var Mid = "name=\"AddEdit" + btnName + "\" ";

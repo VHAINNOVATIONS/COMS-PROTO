@@ -43,59 +43,83 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		this.application.Cancer.Stage = recs[0].data;
 	},
 
+	getDiseaseHistory : function(Patient) {
+		var URL = Ext.URLs.CancerType + "/" + Patient.id;
+		Ext.Ajax.request({
+			url: URL,
+			method : "GET",
+			scope : this,
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (!resp.success) {
+					Ext.MessageBox.alert("Saving Error", "Patient Information Type of Cancer, Save Error - " + resp.msg );
+					this.application.Patient.Disease = null;
+				}
+				else {
+					// Ext.MessageBox.alert('Thank you!', 'Patient Information Type of Cancer has been saved');
+					this.application.Patient.Disease = resp.records;
+					this.updatePITable(this.application.Patient);
+				}
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				Ext.MessageBox.alert("Saving Error", "Patient Information Type of Cancer, Save Error - " + "e.message" + "<br />" + resp.msg );
+				theForm.reset();
+				btn.up('window').hide();
+			}
+		});
+	},
+
+	updatePITable : function(Patient) {
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var piTableInfo = thisCtl.getPatientInfoTableInformation();
+		piTableInfo.update(this.application.Patient);
+	},
+
 	Save : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();
 			var postData = [], dataEl = [], patientCancerTypes = [];
 
-			for (var key in theData) {
-				if (theData.hasOwnProperty(key)) {
-					var el = [];
-					// el["description"] = key;
-					el.description = key;
-					patientCancerTypes.push(el);
-					postData.push(key);
-				}
-			}
-/**
-			var params = {"Amputations" : postData };
-			this.application.Patient.Amputations = patientAmputations;
-			var AmputationDisplay = Ext.get("PatientInformationTableAmputations");
-			postData = postData.join("<br>");
-			AmputationDisplay.setHTML(postData);
-
 			var patient_id = this.application.Patient.id;
-			this.application.loadMask("Updating Patient Amputations");
+			var DiseaseID = theForm.findField("selDisease").getValue();
+			var DiseaseStageID = theForm.findField("Select Disease Stage Control").getValue();
+
+			var DiseaseName = theForm.findField("selDisease").getRawValue();
+			var DiseaseStageName = theForm.findField("Select Disease Stage Control").getRawValue();
+			var params = { Patient_ID : patient_id, "Disease_ID" : DiseaseID, "DiseaseStage_ID" : DiseaseStageID };
+
 			Ext.Ajax.request({
-				url: Ext.URLs.Amputations + "/" + patient_id,
+				url: Ext.URLs.CancerType,
 				method : "POST",
 				jsonData : params,
 				scope : this,
 				success: function( response, opts ){
-					this.application.unMask();
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					theForm.reset();
 					btn.up('window').hide();
 					if (!resp.success) {
-						Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + resp.msg );
-						this.application.Patient.Amputations = "";
+						Ext.MessageBox.alert("Saving Error", "Patient Information Type of Cancer, Save Error - " + resp.msg );
+						this.application.Patient.ListOfDiseases = "";
 					}
 					else {
-						Ext.MessageBox.alert('Thank you!', 'Patient amputation records have been saved');
+						// Ext.MessageBox.alert('Thank you!', 'Patient Information Type of Cancer has been saved');
+						this.application.Patient.Disease = resp.records;
+						this.updatePITable(this.application.Patient);
 					}
 				},
 				failure : function( response, opts ) {
-					this.application.unMask();
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
-					Ext.MessageBox.alert("Saving Error", "NewPlanTab - AmputationSelection, Save Error - " + "e.message" + "<br />" + resp.msg );
+					Ext.MessageBox.alert("Saving Error", "Patient Information Type of Cancer, Save Error - " + "e.message" + "<br />" + resp.msg );
 					theForm.reset();
 					btn.up('window').hide();
 				}
 			});
-**/
 			this.Close();
 		}
 	},

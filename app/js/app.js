@@ -63,6 +63,8 @@ Ext.URLs.MedHold = "/LookUp/MedHold";
 Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
 Ext.URLs.SiteConfig = "/LookUp/SiteConfig";
 Ext.URLs.Amputations = "/Patient/Amputations";
+Ext.URLs.CancerType = "/Patient/Cancer";
+
 Ext.URLs.LookupIVFluidType4Med = "/LookUp/IVFluidType4Med/";
 
 Ext.URLs.Reasons = "/Workflow/Reasons";

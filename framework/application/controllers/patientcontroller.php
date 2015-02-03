@@ -2881,4 +2881,114 @@ VALUES
             $jsonRecord[ "records" ] = $records;
             $this->set( "jsonRecord", $jsonRecord );
         }
+
+
+
+
+/********************
+use COMS_TEST_6
+alter table Patient
+add constraint PK_Patient_ID Primary key(Patient_ID)
+GO
+alter table LookUp
+add constraint PK_Lookup_ID Primary key(Lookup_ID)
+GO
+alter table DiseaseStaging
+add constraint PK_ID Primary key(ID)
+GO
+
+CREATE TABLE PatientDiseaseHistory(
+    PDH_ID uniqueidentifier not null default newsequentialid() constraint PK_PDH_ID PRIMARY KEY,
+    Patient_ID uniqueidentifier NOT NULL constraint FK_Patient_ID REFERENCES Patient (Patient_ID),
+    Date_Assessment datetime NOT NULL default getdate(),
+    Author varchar(30) NULL,
+    Disease_ID uniqueidentifier NOT NULL constraint FK_Disease_ID REFERENCES LookUp(Lookup_ID),
+    DiseaseStage_ID uniqueidentifier NULL constraint FK_ID REFERENCES DiseaseStaging (ID)
+)
+ ********************/
+        function Query4ListOfCancers( $Patient_ID = null) {
+            $query = "select 
+                CONVERT(varchar,pdh.Date_Assessment,101) as date,
+                pdh.Author,
+                lu.Name as DiseaseName,
+                case when ds.Stage is null then '' else ds.Stage end as DiseaseStage
+                from PatientDiseaseHistory pdh
+                join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
+                left outer join DiseaseStaging ds on ds.ID = pdh.DiseaseStage_ID
+                where Patient_ID = '$Patient_ID'
+                order by date DESC";
+
+            if (null == $Patient_ID) {
+                $jsonRecord[ "success" ] = false;
+                $msg                     = "Query into Patient Disease History failed, Missing Patient ID";
+                $jsonRecord[ "msg" ]     = $msg;
+                $this->set( "jsonRecord", $jsonRecord );
+                return null;
+            }
+            $retVal = $this->Patient->query( $query );
+            if ( $this->checkForErrors( 'Query into Patient Disease History failed', $retVal ) ) {
+                $jsonRecord[ "success" ] = false;
+                $msg                     = "Query into Patient Disease History failed";
+                $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
+                $this->set( "jsonRecord", $jsonRecord );
+                return null;
+            }
+            return $retVal;
+        }
+
+        function Cancer( $Patient_ID = null, $Disease_ID = null, $DiseaseStage_ID = null ) {
+            $jsonRecord              = array( );
+            $jsonRecord[ "success" ] = true;
+            $records                 = array( );
+            $msg                     = "Disease type and stage have been saved";
+            $Author                  = $_SESSION[ 'dname' ];
+
+            if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+                $retVal = $this->Query4ListOfCancers($Patient_ID);
+            }
+            else if ( "POST" == $_SERVER[ "REQUEST_METHOD" ] ) {
+                $form_data = json_decode( file_get_contents( 'php://input' ) );
+                $Patient_ID = $form_data->Patient_ID;
+                $Disease_ID = $form_data->Disease_ID;
+                $DiseaseStage_ID = $form_data->DiseaseStage_ID;
+
+                $this->Patient->beginTransaction();
+                if ('' == $DiseaseStage_ID) {
+                    $query = "INSERT INTO PatientDiseaseHistory 
+    (Patient_ID,Author,Disease_ID) 
+VALUES 
+    ('$Patient_ID','$Author','$Disease_ID')";
+                }
+                else {
+                    $query = "INSERT INTO PatientDiseaseHistory 
+    (Patient_ID,Author,Disease_ID,DiseaseStage_ID) 
+VALUES 
+    ('$Patient_ID','$Author','$Disease_ID','$DiseaseStage_ID')";
+                }
+
+                $retVal = $this->Patient->query( $query );
+
+                if ( $this->checkForErrors( 'Insert into Patient_History failed.', $retVal ) ) {
+                    $this->Patient->rollbackTransaction();
+
+                    $jsonRecord[ "success" ] = false;
+                    $msg                     = "Disease type and stage have NOT been saved ";
+                    $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
+                    $this->set( "jsonRecord", $jsonRecord );
+                    return;
+                }
+                $this->Patient->endTransaction();
+                $retVal = $this->Query4ListOfCancers($Patient_ID);
+            }
+            else {
+                $jsonRecord[ 'success' ] = false;
+                $jsonRecord[ 'msg' ]     = "Incorrect method for saving Cancer Type (expected a GET/POST got a " . $_SERVER[ 'REQUEST_METHOD' ];
+                $this->set( 'jsonRecord', $jsonRecord );
+                return;
+            }
+            $this->set( 'frameworkErr', null );
+            $jsonRecord[ "total" ]   = count( $retVal );
+            $jsonRecord[ "records" ] = $retVal;
+            $this->set( "jsonRecord", $jsonRecord );
+        }
     }

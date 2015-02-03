@@ -1863,6 +1863,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.loadOrderRecords();				// module 6
 		this.loadCumulativeMedDosing();
 
+		var puWinSelCancerCtl = this.getController("Common.puWinSelCancer");
+		puWinSelCancerCtl.getDiseaseHistory(this.application.Patient);
+
         if (this.application.Patient.TemplateID) {
             this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
         }
