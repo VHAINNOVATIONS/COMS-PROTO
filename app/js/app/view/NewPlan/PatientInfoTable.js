@@ -51,7 +51,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"{[this.AddEditBtns(\"Cancer\", values, parent)]}",
 						"Type(s) of Cancer: </th>",
 						"<td colspan=5>",
-							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Reported on</th><th>By</th></tr>",
+							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Recorded on</th><th>User</th></tr>",
 							"<tpl for=\"Disease\">",
 								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td></tr>",
 							"</tpl>",
@@ -150,6 +150,10 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
 						var Mid = "name=\"AddEdit" + btnName + "\" ";
 						var Post = ">Add/Edit</button>&nbsp;&nbsp;";
+						if ("Cancer" == btnName) {
+							Post = ">Add</button>&nbsp;&nbsp;";
+						}
+						
 						return Pre + Mid + Post;
 					},
 

@@ -25,7 +25,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	},
 
 	Save : function(btn) {
-		this.application.loadMask("Saving Information");
 		var PAT_ID = "", Cycle = "", Day = "";
 		if (this.application && this.application.Patient) {
 			PAT_ID = this.application.Patient.PAT_ID;
@@ -36,35 +35,43 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		}
 
 		var theForm = btn.up("form");
-		theForm.getForm().submit({
-			clientValidation: true,
-			scope : this,
-			"url" : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
-			params : {
-				"PAT_ID" : PAT_ID,
-				"Cycle" : Cycle,
-				"Day" : Day
-			},
-			success: function(form, action) {
-			   Ext.Msg.alert('Success', "General Information has been successfully saved");
-			   theForm.up("window").close();
-			   var theCtrlr = this.getController("NewPlan.CTOS.FlowSheetTab");
-			   theCtrlr.updateFlowsheetPanel();
-			},
-			failure: function(form, action) {
-				switch (action.failureType) {
-					case Ext.form.action.Action.CLIENT_INVALID:
-						Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
-						break;
-					case Ext.form.action.Action.CONNECT_FAILURE:
-						Ext.Msg.alert('Failure', 'Ajax communication failed');
-						break;
-					case Ext.form.action.Action.SERVER_INVALID:
-					   Ext.Msg.alert('Failure', action.result.msg);
-			   }
-			   this.application.unMask();
-			}
-		});
+		var BaseForm = theForm.getForm();
+		if (BaseForm.isDirty()) {
+			this.application.loadMask("Saving Information");
+			BaseForm.submit({
+				clientValidation: false,
+				scope : this,
+				"url" : Ext.URLs.FlowSheetOptionalInfo + "/" + PAT_ID,
+				params : {
+					"PAT_ID" : PAT_ID,
+					"Cycle" : Cycle,
+					"Day" : Day
+				},
+				success: function(form, action) {
+					Ext.Msg.alert('Success', "General Information has been successfully saved");
+					this.application.unMask();
+					theForm.up("window").close();
+					var theCtrlr = this.getController("NewPlan.CTOS.FlowSheetTab");
+					theCtrlr.updateFlowsheetPanel();
+				},
+				failure: function(form, action) {
+					switch (action.failureType) {
+						case Ext.form.action.Action.CLIENT_INVALID:
+							Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
+							break;
+						case Ext.form.action.Action.CONNECT_FAILURE:
+							Ext.Msg.alert('Failure', 'Ajax communication failed');
+							break;
+						case Ext.form.action.Action.SERVER_INVALID:
+							Ext.Msg.alert('Failure', action.result.msg);
+					}
+					this.application.unMask();
+				}
+			});
+		}
+		else {
+			theForm.up("window").close();
+		}
 	},
 
 	Cancel : function(btn) {

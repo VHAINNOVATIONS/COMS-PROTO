@@ -390,7 +390,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	ShowSelectedCycles : function(grid, start, end) {
-		debugger;
 		Ext.suspendLayouts(); 
 		end = end + 1;
 		var theCols = this.createColumns(this.application.Patient.FlowsheetData);

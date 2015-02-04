@@ -2,6 +2,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	extend: "Ext.app.Controller",
 	views : [ "RequiredInstr", "NewPlan.CTOS.FS_Toxicity", "NewPlan.CTOS.FS_ToxicityGrid" ],
 	stores: [ "ToxGridStore" ],
+	
 
 
 	init: function () {
@@ -50,11 +51,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 
 	CheckValidation : function( theForm, valid, eOpts ) {
 		var saveBtn = this.getSaveBtn(theForm);
-		if (valid) {
-			saveBtn.setDisabled(false);
-		}
-		else {
-			saveBtn.setDisabled(true);
+		if (theForm.isDirty()) {
+			if (valid) {
+				saveBtn.setDisabled(false);
+			}
+			else {
+				saveBtn.setDisabled(true);
+			}
 		}
 	},
 
