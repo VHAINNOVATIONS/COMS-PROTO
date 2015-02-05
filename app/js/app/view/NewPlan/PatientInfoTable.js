@@ -51,9 +51,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"{[this.AddEditBtns(\"Cancer\", values, parent)]}",
 						"Type(s) of Cancer: </th>",
 						"<td colspan=5>",
-							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Recorded on</th><th>User</th></tr>",
+							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Recorded on</th><th>User</th><th>Delete</th></tr>",
 							"<tpl for=\"Disease\">",
-								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td></tr>",
+								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td><td>",
+		"{[this.DeleteCancer(out, values, parent, xindex, xcount)]}",
+								"</td></tr>",
 							"</tpl>",
 							"</table>",
 						"</td>",
@@ -114,6 +116,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					disableFormats: true,
 					DebuggerFcn : function ( values ) {
 						// debugger;
+					},
+
+					DeleteCancer : function (out, values, parent, xindex, xcount) {
+						var ci = xindex-1;
+						return "<button class=\"anchor DeleteCancerType\" tabType=\"DeleteCancerType\" CancerIdx=\"" + ci + "\" name=\"DeleteCancerType\">Delete</button>";
 					},
 
 					clinicalTrial : function ( values ) {

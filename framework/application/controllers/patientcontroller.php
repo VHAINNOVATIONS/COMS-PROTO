@@ -2908,6 +2908,7 @@ CREATE TABLE PatientDiseaseHistory(
  ********************/
         function Query4ListOfCancers( $Patient_ID = null) {
             $query = "select 
+                PDH_ID,
                 CONVERT(varchar,pdh.Date_Assessment,101) as date,
                 pdh.Author,
                 lu.Name as DiseaseName,
@@ -2976,6 +2977,26 @@ VALUES
                     $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
                     $this->set( "jsonRecord", $jsonRecord );
                     return;
+                }
+                $this->Patient->endTransaction();
+                $retVal = $this->Query4ListOfCancers($Patient_ID);
+            }
+            else if ( "DELETE" == $_SERVER[ "REQUEST_METHOD" ] ) {
+                $PDH_ID = $Disease_ID;
+                $this->Patient->beginTransaction();
+                if ('' !== $PDH_ID) {
+                    $query = "DELETE FROM PatientDiseaseHistory where PDH_ID = '$PDH_ID'";
+// error_log("Delete Record from PDH - $query");
+                    $retVal = $this->Patient->query( $query );
+
+                    if ( $this->checkForErrors( 'DELETE from Patient_History failed.', $retVal ) ) {
+                        $this->Patient->rollbackTransaction();
+                        $jsonRecord[ "success" ] = false;
+                        $msg                     = "Disease has NOT been deleted from Patient Record";
+                        $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
+                        $this->set( "jsonRecord", $jsonRecord );
+                        return;
+                    }
                 }
                 $this->Patient->endTransaction();
                 $retVal = $this->Query4ListOfCancers($Patient_ID);

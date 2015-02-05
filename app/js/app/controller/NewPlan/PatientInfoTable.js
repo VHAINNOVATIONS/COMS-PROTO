@@ -210,6 +210,48 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		}
 	},
 
+	DeleteSelectedCancerFromPatient : function(params) {
+		var PDH_ID = params.DiseaseData.PDH_ID;
+		delete params.DiseaseData;
+		var puWinSelCancer = params.getController( "Common.puWinSelCancer" );
+		puWinSelCancer.delDiseaseHistory(params.application.Patient, PDH_ID);
+	},
+
+	DeleteCancerWidget : function() {
+		var Patient = this.application.Patient;
+		var CancerIdx = this.application.CancerIdx;
+		var DiseaseData = Patient.Disease;
+		if (CancerIdx >= 0 && CancerIdx <= DiseaseData.length) {
+			DiseaseData = DiseaseData[CancerIdx];
+			delete this.application.CancerIdx;
+
+			var msg = "Are you sure you want to remove:";
+			msg += "<div style=\"margin-left: 2em;\">Cancer Type: " + DiseaseData.DiseaseName + "</div>";
+			msg += "<div style=\"margin-left: 2em;\">Cancer Stage: " + DiseaseData.DiseaseStage + "</div>";
+
+			Ext.Msg.show({
+				title:"Remove Cancer Type?",
+				msg: msg,
+				buttons: Ext.Msg.YESNO,
+				icon: Ext.Msg.QUESTION,
+				CancerIdx : CancerIdx,
+				fn: function(buttonId, str, opt) {
+					if ("yes" == buttonId) {
+						this.DiseaseData = DiseaseData;
+						Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.DeleteSelectedCancerFromPatient, this);
+					}
+					else {
+						Ext.MessageBox.alert("Cancel", "Cancer type has NOT been removed.");
+					}
+				},
+				scope: this
+			});
+		}
+		else {
+		}
+	},
+
+
 	ShowAddCumulativeMedication : function() {
 		try {
 			if (!this.puWinCumDose) {
@@ -232,6 +274,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 		thePanel.body.on("click", 
 			function( evt, target ) {
 				var theClass = target.className;
+				
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
 				// var tabType = target.getAttribute("tabtype");
 
@@ -253,6 +296,12 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 						break;
 					case "anchor AddEditCancer" : 
 						Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.ShowCancerWidget);
+						break;
+					case "anchor DeleteCancerType" : 
+						console.log("Click Delete Cancer Type");
+						this.application.CancerIdx = target.getAttribute("CancerIdx");
+						this.DeleteCancerWidget();
+						// Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.DeleteCancerWidget, this);
 						break;
 					case "anchor AddCumulativeMedication" :
 						Ext.COMS_LockSection(this.application.Patient.id, "AddCumulativeMedication", this.ShowAddCumulativeMedication);

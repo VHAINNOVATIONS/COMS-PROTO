@@ -72,6 +72,37 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		});
 	},
 
+	delDiseaseHistory : function(Patient, PDH_ID) {
+		var URL = Ext.URLs.CancerType + "/" + Patient.id + "/" + PDH_ID;
+		Ext.Ajax.request({
+			url: URL,
+			method : "DELETE",
+			scope : this,
+			success: function( response, opts ){
+				Ext.COMS_UnLockSection();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (!resp.success) {
+					Ext.MessageBox.alert("Delete Error", "Patient Information Type of Cancer, Delete Error - " + resp.msg );
+				}
+				else {
+					this.application.Patient.Disease = resp.records;
+					this.updatePITable(this.application.Patient);
+				}
+			},
+			failure : function( response, opts ) {
+				Ext.COMS_UnLockSection();
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				Ext.MessageBox.alert("Delete Error", "Patient Information Type of Cancer, Delete Error - " + "e.message" + "<br />" + resp.msg );
+				theForm.reset();
+				btn.up('window').hide();
+			}
+		});
+	},
+
+
+
 	updatePITable : function(Patient) {
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var piTableInfo = thisCtl.getPatientInfoTableInformation();
