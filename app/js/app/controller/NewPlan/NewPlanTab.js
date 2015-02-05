@@ -444,7 +444,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 			tempBSA = Patient.BSA;
 			this.application.Patient.BSA_Reduction = 0;
-			PatientData = Ext.ShowBSACalcs(Patient, true, null, null);
+			PatientData = Ext.ShowBSACalcs(Patient, true, null, null, null);
 
 			/* MWB - 6/4/2014 Added new code to allow user to select Height/Weight for BSA Calculations */
 			Ext.widget('window', {
@@ -2321,7 +2321,7 @@ fieldContainerWalk : function(item, y, z) {
 			params.BSA = Ext.BSA_Calc(params);
 
 
-			var PatientData = Ext.ShowBSACalcs(params, false, null, null);
+			var PatientData = Ext.ShowBSACalcs(params, false, null, null, null);
 
 			Ext.MessageBox.show({
 				title : "Body Surface Area Calculations",

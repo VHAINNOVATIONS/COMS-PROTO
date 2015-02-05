@@ -384,18 +384,25 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		if ("Show Dosage Calculation" === btnTitle) {
 			calcDose = aBtn.getAttribute("calcDose");
 
-			var t1 = aBtn.getAttribute("doseunits");
-			var t2 = t1.split("/");
-			if ("m2" === t2[1]) {
-				t2[1] = "m<sup>2</sup>";
+			var origDose = aBtn.getAttribute("dose");
+			var t1 = aBtn.getAttribute("doseunits").toLowerCase().replace(" ", "");
+			// if ("mg/kg" == Units || "units / m2" == Units || "units / kg" == Units || "units/m2" == Units || "units/kg" == Units || "mg/m2" == Units || "mg/kg" == Units) {
+			
+			if ("mg/kg" == t1 || "units/kg" == t1) {
+				var PatientWeightInKilos = Ext.Pounds2Kilos(Patient.Weight);
+				dose = origDose * PatientWeightInKilos;
+				dose = dose + " " + t1;
 			}
-			dose = aBtn.getAttribute("dose") + " " + t2.join("/");
-			PatientData = Ext.ShowBSACalcs(Patient, false, dose, calcDose);
-			var title = "Body Surface Area Calculations";
-			if (dose.search("AUC") >= 0) {
-				title = "AUC Dosage Calculations";
+			else {
+				var t2 = t1.split("/");
+				if ("m2" === t2[1]) {
+					t2[1] = "m<sup>2</sup>";
+				}
+				dose = origDose + " " + t1;
 			}
-
+			
+			PatientData = Ext.ShowBSACalcs(Patient, false, dose, calcDose, origDose);
+			var title = "Dosage Calculations";
 			Ext.MessageBox.show({
 				title : title,
 				msg : PatientData,

@@ -869,7 +869,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	HandleVSFormShowCalcButtons : function (evt, btn) {
 		var Patient = this.application.Patient;
-		var PatientData = Ext.ShowBSACalcs(Patient, false, null, null);
+		var PatientData = Ext.ShowBSACalcs(Patient, false, null, null, null);
 
 		Ext.MessageBox.show({
 			title : "Body Surface Area Calculations",

@@ -932,7 +932,47 @@ Ext.LeanWeight = function (w, h, g) { // Height in Inches, weight in pounds
 
 
 
+Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, origDose) {
+	var x1 = Dose.split(" ");
+	var units = x1[1].split("/")[0];
 
+	var temp = Ext.apply(PatientInfo, {
+		dose: Dose,
+		calcDose: calcDose,
+		origDose: origDose,
+		units : units
+	});
+/**
+	var AdditionalPossibleXTemplateInfo =
+		"<tr><th>BSA Weight <br>({WeightFormula})</th><td>{BSA_Weight} kg</td></tr>",
+		"<tr><th>Height:</th><td>{Height} in {[this.HeightInCM(values)]}</td></tr>",
+		"<tr><th>Weight</th><td>{Weight} lbs {[this.WeightInKG(values)]}</td></tr>";
+ **/
+	var html = new Ext.XTemplate(
+		"<table class=\"InformationTable\" border=\"1\">",
+		"<tr><th>Actual Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]}</td></tr>",
+		"<tr><th>Dose</th><td>{origDose} {units}/kg</td></tr>",
+		"<tr><th>Calculated&nbsp;Dose</th><td>{[this.calcDose(values)]}</td></tr>",
+		"</table>", {
+			// XTemplate Configuration
+			disableFormats: true,
+			WeightInKG: function (x) {
+				if ("" === x.Weight) {
+					return "";
+				}
+				var x1 = Ext.Pounds2Kilos(x.Weight);
+				return (" = " + x1 + " kg");
+			},
+			calcDose: function (x) {
+				var kg = Ext.Pounds2Kilos(x.Weight);
+				var dose = x.origDose;
+				return kg + "&nbsp;*&nbsp;" + dose + "&nbsp;=&nbsp;" + (1*kg*dose) + "&nbsp;" + x.units;
+			}
+		}
+	);
+	var newFormula = html.applyTemplate(temp);
+	return newFormula;
+},
 Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	var temp = Ext.apply(PatientInfo, {
 		dose: Dose,
@@ -1051,7 +1091,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	return newFormula;
 };
 
-Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
+Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 	// Dose is the original dosage (e.g. 15 mg/m2)
 	// calcDose is the calculated dosage based on Dosage Units and various formula (e.g. 15mg, if the BSA is 1 in the above example)
 	// Dose, calcDose and calcDoseUnits are passed by the HandleOEMCalcDoseButtons() in the OEM.js controller
@@ -1060,6 +1100,9 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 
 	if (Dose && Dose.search("AUC") >= 0) {
 		return Ext.ShowAUCCalcs(PatientInfo, saveCalc, Dose, calcDose);
+	}
+	if (Dose && (Dose.search("mg/kg") >= 0 || Dose.search("units/kg") >= 0)) {
+		return Ext.ShowUnitPerWeightCalcs(PatientInfo, saveCalc, Dose, calcDose, OrigDose);
 	}
 
 	if ("" === temp.BSA_Method) {

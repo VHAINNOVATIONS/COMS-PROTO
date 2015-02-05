@@ -102,6 +102,8 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 		"<h2>Cycle {Cycle} (of {[parent.numCycles]}); Admin Day: {Day}</h2>",
 		"<div>Date: {AdminDate}{[this.CalcEditAdminDate(values)]}</div>",
 
+"{[this.debuggerFcn( values, parent )]}",
+
 		"<table border=\"1\" class=\"Therapy InformationTable\">",
 			"<colgroup width=30%></colgroup>",
 			"<colgroup width=50%></colgroup>",
@@ -320,6 +322,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				curCycle : 0,
 				curDay : 0,
                 SiteConfig : {},
+				debuggerFcn : function ( current, prev ) {
+					// debugger;
+				},
 
                 showReason : function(values, parent) {
                     if ("" !== values.Reason) {
@@ -341,7 +346,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				},
 
 				CalculateBSA_Dosing : function (values, therapy) {
-					var du, duuc, calcDose, BSA_Dose, dspCalcDose, Dose, Units, ret = "N/A";
+					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
 					if (therapy) {
 						du = values.DoseUnits;
 						Dose = values.Dose;
@@ -363,7 +368,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 						dspCalcDose = BSA_Dose + " " + calcDose;
 					}
 					else if (duuc.search("KG") > 0) {
-						BSA_Dose = Dose * this.Patient.BSA_Weight;		// Get most recent Vitals Weight
+						// BSA_Dose = Dose * this.Patient.BSA_Weight;		// Get most recent Vitals Weight
+						WeightInKilos = Ext.Pounds2Kilos(this.Patient.Weight);
+						BSA_Dose = Dose * WeightInKilos;		// Get most recent Vitals Weight
 						BSA_Dose = Ext.FormatNumber("" + BSA_Dose);
 						dspCalcDose = BSA_Dose + " " + calcDose;
 					}
