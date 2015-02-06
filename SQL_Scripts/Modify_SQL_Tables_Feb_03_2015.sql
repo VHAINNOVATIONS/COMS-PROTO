@@ -43,7 +43,7 @@ CREATE TABLE PatientDiseaseHistory(
     Date_Assessment datetime NOT NULL DEFAULT getdate(),
     Author varchar(30) NULL,
     Disease_ID uniqueidentifier NOT NULL constraint FK_Disease_ID REFERENCES LookUp(Lookup_ID),
-    DiseaseStage_ID uniqueidentifier NOT NULL constraint FK_ID REFERENCES DiseaseStaging (ID)
+    DiseaseStage_ID uniqueidentifier NULL constraint FK_ID REFERENCES DiseaseStaging (ID)
 )
 
 /* Patch SiteCommonInformation Table to address Emetic Risk Issue */
@@ -54,3 +54,4 @@ CREATE TABLE PatientDiseaseHistory(
   Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='2A619798-0BD7-E311-8759-000C2935B86F'
   Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='8C84A051-C571-E411-B128-005056B7661F'
   Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='2CC1E08E-C571-E411-B128-005056B7661F'
+
