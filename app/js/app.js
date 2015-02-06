@@ -1,7 +1,7 @@
 // Note: ExtJS bombs when strict mode is applied
 // Useful functions within the application
 /*********** Search for - LIST OF CONTROLLERS 
- **** Controllers ~ 608 & 1675
+ **** Controllers ~ 611 & 1751
 /**
  *
  *	this.getController("NewPlan.OEM").IsDayAnAdminDay( Ext.Date.format( new Date(), "m/d/Y") );
