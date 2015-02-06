@@ -40,10 +40,17 @@ GO
 CREATE TABLE PatientDiseaseHistory(
     PDH_ID uniqueidentifier not null default newsequentialid() constraint PK_PDH_ID PRIMARY KEY,
     Patient_ID uniqueidentifier NOT NULL constraint FK_Patient_ID REFERENCES Patient (Patient_ID),
-    Date_Assessment datetime NULL,
+    Date_Assessment datetime NOT NULL DEFAULT getdate(),
     Author varchar(30) NULL,
-    Lookup_ID uniqueidentifier NOT NULL constraint FK_Lookup_ID REFERENCES LookUp(Lookup_ID),
+    Disease_ID uniqueidentifier NOT NULL constraint FK_Disease_ID REFERENCES LookUp(Lookup_ID),
     DiseaseStage_ID uniqueidentifier NOT NULL constraint FK_ID REFERENCES DiseaseStaging (ID)
 )
 
-
+/* Patch SiteCommonInformation Table to address Emetic Risk Issue */
+  UPDATE [COMS_5].[dbo].[SiteCommonInformation] SET [Label] = 'Minimal Emetic Risk' WHERE ID='8A0495C6-0BD7-E311-8759-000C2935B86F'
+  UPDATE [COMS_5].[dbo].[SiteCommonInformation] SET [Label] = 'Low Emetic Risk' WHERE ID='E87EFA98-88D7-E311-8759-000C2935B86F'
+  UPDATE [COMS_5].[dbo].[SiteCommonInformation] SET [Label] = 'Moderate Emetic Risk' WHERE ID='885FCFAC-0BD7-E311-8759-000C2935B86F'
+  UPDATE [COMS_5].[dbo].[SiteCommonInformation] SET [Label] = 'High Emetic Risk' WHERE ID='385850A6-88D7-E311-8759-000C2935B86F'
+  Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='2A619798-0BD7-E311-8759-000C2935B86F'
+  Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='8C84A051-C571-E411-B128-005056B7661F'
+  Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='2CC1E08E-C571-E411-B128-005056B7661F'
