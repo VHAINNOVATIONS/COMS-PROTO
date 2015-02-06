@@ -2456,13 +2456,16 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 $jsonRecord[ 'success' ] = 'true';
                 $CumMedsList = array( );
                 if ( count( $PatientsCumMeds ) > 0 ) {
-
-
+error_log("Patient.Controller.CumulativeDoseTracking.Walking Patients Meds - ");
                     $Lifetime = 0;
                     $LastKey = "";
                     foreach ($PatientsCumMeds as $aMed) {
+error_log("Patient. Med - ");
+error_log(json_encode($aMed));
                         $rec = $aMed;
                         $this->_AddRecordMed2CumList($CumDoseMeds, $rec);
+error_log("Array Key does NOT exist - ");
+error_log(json_encode($CumMedsList));
                         if (!array_key_exists ( $aMed['MedID'] , $CumMedsList )) {
                             if("" != $LastKey) {
                                 $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
@@ -2471,6 +2474,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                             $Lifetime = 0;
                             $CumMedsList[$aMed['MedID']] = array();
                             $CumMedsList[$aMed['MedID']]['MedName'] = $rec['MedName'];
+                            $CumMedsList[$aMed['MedID']]['MedMaxDose'] = $rec['MaxCumulativeDoseAmt'];
                             $CumMedsList[$aMed['MedID']]['MaxCumulativeDoseAmt'] = $rec['MaxCumulativeDoseAmt'];
                             $CumMedsList[$aMed['MedID']]['MaxCumulativeDoseUnits'] = $rec['MaxCumulativeDoseUnits'];
                             $CumMedsList[$aMed['MedID']]['LifetimeAmt'] = 0;
@@ -2483,21 +2487,29 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                         $CumMedsList[$aMed['MedID']]['Patient'][] = $newRec;
                         // $CumMedsList[$aMed['MedID']]['Patient']['Src'] =
                         // $CumMedsList[$aMed['MedID']]['Patient']['Author'] = $rec['Author'];
+error_log("A specific Med - ");
+error_log(json_encode($rec));
 
-//                        error_log(json_encode($aMed));
-//                        error_log("A specific Med - ");
-//                        error_log(json_encode($rec));
 //                        $CumMedsList[] = $rec;
                     }
                     if("" != $LastKey) {
                         $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
+error_log("Patient. LastKey = $LastKey; Lifetime Total = $Lifetime");
                     }
                     unset( $jsonRecord[ 'msg' ] );
+                    $recs = array();
+                    foreach ( $CumMedsList as $key => $aMed ) {
+                        $aMed['ID'] = $key;
+                        $recs[] = $aMed;
+                    }
                     $jsonRecord[ 'total' ]   = count( $CumMedsList );
-                    $jsonRecord[ 'records' ] = $CumMedsList;
+                    $jsonRecord[ 'records' ] = $recs;
                 }
-// error_log("CumMedsList");
-// error_log(json_encode($CumMedsList));
+                else {
+error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
+                }
+ error_log("CumMedsList");
+ error_log(json_encode($CumMedsList));
 
                 $this->set( 'jsonRecord', $jsonRecord );
                 return;

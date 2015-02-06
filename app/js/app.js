@@ -950,9 +950,9 @@ Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, or
  **/
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",
-		"<tr><th>Actual Weight</th><td>{Weight} lbs{[this.WeightInKG(values)]}</td></tr>",
-		"<tr><th>Dose</th><td>{origDose} {units}/kg</td></tr>",
-		"<tr><th>Calculated&nbsp;Dose</th><td>{[this.calcDose(values)]}</td></tr>",
+		"<tr><th>Actual Weight: </th><td>{Weight} lbs{[this.WeightInKG(values)]}</td></tr>",
+		"<tr><th>Ordered Dose: </th><td>{origDose} {units}/kg</td></tr>",
+		"<tr><th>Calculated&nbsp;Dose: </th><td>{[this.calcDose(values)]}</td></tr>",
 		"</table>", {
 			// XTemplate Configuration
 			disableFormats: true,
@@ -966,7 +966,7 @@ Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, or
 			calcDose: function (x) {
 				var kg = Ext.Pounds2Kilos(x.Weight);
 				var dose = x.origDose;
-				return kg + "&nbsp;*&nbsp;" + dose + "&nbsp;=&nbsp;" + (1*kg*dose) + "&nbsp;" + x.units;
+				return x.origDose + "&nbsp;*&nbsp;" + kg + "kg&nbsp;=&nbsp;" + (1*kg*dose) + x.units;
 			}
 		}
 	);
@@ -1096,13 +1096,15 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 	// calcDose is the calculated dosage based on Dosage Units and various formula (e.g. 15mg, if the BSA is 1 in the above example)
 	// Dose, calcDose and calcDoseUnits are passed by the HandleOEMCalcDoseButtons() in the OEM.js controller
 	var temp = PatientInfo;
-
-
-	if (Dose && Dose.search("AUC") >= 0) {
-		return Ext.ShowAUCCalcs(PatientInfo, saveCalc, Dose, calcDose);
+	var ckDose = "";
+	if (Dose) {
+		ckDose = Dose.toLowerCase();
 	}
-	if (Dose && (Dose.search("mg/kg") >= 0 || Dose.search("units/kg") >= 0)) {
-		return Ext.ShowUnitPerWeightCalcs(PatientInfo, saveCalc, Dose, calcDose, OrigDose);
+	if (Dose && ckDose.search("auc") >= 0) {
+		return Ext.ShowAUCCalcs(PatientInfo, saveCalc, ckDose, calcDose);
+	}
+	if (Dose && ckDose.search("mg/kg") >= 0 || ckDose.search("units/kg") >= 0) {
+		return Ext.ShowUnitPerWeightCalcs(PatientInfo, saveCalc, ckDose, calcDose, OrigDose);
 	}
 
 	if ("" === temp.BSA_Method) {
@@ -1117,7 +1119,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 	delete temp.Dose;
 	delete temp.calcDose;
 	if (calcDose && Dose) {
-		temp.Dose = Dose;
+		temp.Dose = ckDose;
 		temp.calcDose = calcDose;
 	}
 
