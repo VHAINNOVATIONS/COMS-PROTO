@@ -63,3 +63,4 @@ INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALU
 INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('43479300-2695-E411-AD26-000C2935B86F','12',NULL,'Intravesicular', '')
 INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('44479300-2695-E411-AD26-000C2935B86F','12',NULL,'Intraocular', '')
 INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('53087408-2695-E411-AD26-000C2935B86F','12',NULL,'Intravitreal', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('0C2E60DA-4CA6-E411-B0EB-000C2935B86F','12',NULL,'Via Tube', '')
