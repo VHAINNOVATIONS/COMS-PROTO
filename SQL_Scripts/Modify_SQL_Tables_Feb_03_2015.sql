@@ -55,3 +55,11 @@ CREATE TABLE PatientDiseaseHistory(
   Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='8C84A051-C571-E411-B128-005056B7661F'
   Delete from [COMS_5].[dbo].[SiteCommonInformation] where ID='2CC1E08E-C571-E411-B128-005056B7661F'
 
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('B3A030E5-2595-E411-AD26-000C2935B86F','12',NULL,'Intra-arterial', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('B4A030E5-2595-E411-AD26-000C2935B86F','12',NULL,'Sublingual', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('E34317EF-2595-E411-AD26-000C2935B86F','12',NULL,'Intra-hepatic', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('6352EFF6-2595-E411-AD26-000C2935B86F','12',NULL,'Peritoneal', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('6452EFF6-2595-E411-AD26-000C2935B86F','12',NULL,'Topical', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('43479300-2695-E411-AD26-000C2935B86F','12',NULL,'Intravesicular', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('44479300-2695-E411-AD26-000C2935B86F','12',NULL,'Intraocular', '')
+INSERT INTO LookUp (Lookup_ID, Lookup_Type,Lookup_Type_ID,Name,Description) VALUES ('53087408-2695-E411-AD26-000C2935B86F','12',NULL,'Intravitreal', '')
