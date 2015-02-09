@@ -221,9 +221,12 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						var cdmirUnits = cdmir.CumulativeDoseUnits;
 						var m0 = cdmir.MedName;
 
-						var m1 = Ext.util.Format.number(("" + cdmir.CumulativeDoseAmt).replace(",", ""), "0,0") + " " + cdmirUnits;
-						var m2 = Ext.util.Format.number(("" + cdmir.CumDosePerCycle).replace(",", ""), "0,0") + " " + cdmirUnits;
-						var m3 = Ext.util.Format.number(("" + cdmir.CumDosePerRegimen).replace(",", ""), "0,0") + " " + cdmirUnits;
+						// var m1 = Ext.util.Format.number(("" + cdmir.CumulativeDoseAmt).replace(",", ""), "0,0") + " " + cdmirUnits;
+						// var m2 = Ext.util.Format.number(("" + cdmir.CumDosePerCycle).replace(",", ""), "0,0") + " " + cdmirUnits;
+						// var m3 = Ext.util.Format.number(("" + cdmir.CumDosePerRegimen).replace(",", ""), "0,0") + " " + cdmirUnits;
+						var m1 = Ext.FormatNumber(("" + cdmir.CumulativeDoseAmt).replace(",", "")) + " " + cdmirUnits;
+						var m2 = Ext.FormatNumber(("" + cdmir.CumDosePerCycle).replace(",", "")) + " " + cdmirUnits;
+						var m3 = Ext.FormatNumber(("" + cdmir.CumDosePerRegimen).replace(",", "")) + " " + cdmirUnits;
 
 						msg += "<tr>";
 						msg += "<td>" + m0 + "</td>";
@@ -248,8 +251,10 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 										else {
 											var cdtAmt = cdt.CurCumDoseAmt;
 										}
-										msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
+										// msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
+										msg += "<td>" + Ext.FormatNumber(cdt.CurCumDoseAmt) + " " + cdmirUnits + "</td>";
 										
+									
 
 										if ("string" == typeof cdmir.CumulativeDoseAmt) {
 											var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
@@ -262,9 +267,12 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 										if (exceeds > (1 * cdmirAmt)) {
 											var xeedsByAmt = (exceeds - (1 * cdmirAmt));
 											var xceedsByPct = ((xeedsByAmt / (1 * cdmirAmt)) * 100) + 100;
-											msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
+											// msg += "<td>" + Ext.util.Format.number(xceedsByPct, "0,0") + "%</td>";
+											msg += "<td>" + Ext.FormatNumber(xceedsByPct) + "%</td>";
+
 											msg += "</tr><tr><td colspan=\"6\" class=\"smlTCDWarning\">";
-											msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
+											// msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.util.Format.number(xeedsByAmt, "0,0") + " " + cdmirUnits + " (" + Ext.util.Format.number(xceedsByPct, "0,0") + "%) ";
+											   msg += "Warning, Regimen will exceed Patient's Lifetime Cumulative Dose of " + cdmir.MedName + " by " + Ext.FormatNumber(xeedsByAmt) + " " + cdmirUnits + " (" + Ext.FormatNumber(xceedsByPct) + "%) ";
 											msg += "</td></tr>";
 										}
 										else {

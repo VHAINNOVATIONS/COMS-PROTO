@@ -335,14 +335,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 
 
 				HasBSADose : function(units) {
-									var du = units.toUpperCase();
-									var r1 = du.search("M2");
-									var r2 = du.search("KG");
-									var r3 = du.search("AUC");
-									if (r1 > 0 || r2 > 0 || r3 >= 0 ) {
-										return true;
-									}
-									return false;
+					var du = units.toUpperCase();
+					var r1 = du.search("M2");
+					var r2 = du.search("KG");
+					var r3 = du.search("AUC");
+					if (r1 > 0 || r2 > 0 || r3 >= 0 ) {
+						return true;
+					}
+					return false;
 				},
 
 				CalculateBSA_Dosing : function (values, therapy) {

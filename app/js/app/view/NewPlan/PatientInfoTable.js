@@ -188,7 +188,8 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 								MedName = CurCumDoseList[key].MedName;
 								Units = CurCumDoseList[key].MaxCumulativeDoseUnits;
 								MedMaxDoseNum =("" + CurCumDoseList[key].MaxCumulativeDoseAmt).replace(",", "");
-								MedMaxDose = Ext.util.Format.number(MedMaxDoseNum, "0,0");
+								// MedMaxDose = Ext.util.Format.number(MedMaxDoseNum, "0,0");
+								MedMaxDose = Ext.FormatNumber(MedMaxDoseNum);
 								innerArray = CurCumDoseList[key].Patient;
 								len = innerArray.length;
 								MaxCumDose4Patient = 0;
@@ -202,21 +203,26 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 								for (i = 0; i < len; i++) {
 									CurCumDoseAmtNum = 1 * ("" + innerArray[i].Amt).replace(",", "");
 									MaxCumDose4Patient += CurCumDoseAmtNum;
-									CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
+									// CurCumDoseAmt = Ext.util.Format.number(CurCumDoseAmtNum, "0,0");
+									CurCumDoseAmt = Ext.FormatNumber(CurCumDoseAmtNum);
 									Pct2 = (( CurCumDoseAmtNum / MedMaxDoseNum ) * 100);
-									Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+									// Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+									Pct2 = Ext.FormatNumber(Pct2);
 									if (i > 0) {
 										InnerArrayBuf += "<tr>";
 									}
-									CumulativeDoseAmt = Ext.util.Format.number(("" + innerArray[i].Amt).replace(",", ""), "0,0");
+									// CumulativeDoseAmt = Ext.util.Format.number(("" + innerArray[i].Amt).replace(",", ""), "0,0");
+									CumulativeDoseAmt = Ext.FormatNumber(("" + innerArray[i].Amt).replace(",", ""));
 									InnerArrayBuf += "<td style=\"vertical-align: top; text-align: right;\">" + CumulativeDoseAmt + " " + Units + " / " + Pct2 + "% </td>";
 									InnerArrayBuf += "<td style=\"vertical-align: top;\">" + innerArray[i].Src + "</td>";
 									InnerArrayBuf += "</tr>";
 								}
 								MaxCumDosePct4Patient = MaxCumDose4Patient / MedMaxDoseNum;
-								MaxCumDose4PatientAmt = Ext.util.Format.number(MaxCumDose4Patient, "0,0");
+								// MaxCumDose4PatientAmt = Ext.util.Format.number(MaxCumDose4Patient, "0,0");
+								MaxCumDose4PatientAmt = Ext.FormatNumber(MaxCumDose4Patient);
 								Pct2 = (MaxCumDosePct4Patient * 100);
-								Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+								// Pct2 = Ext.util.Format.number(Pct2, "0,0.0");
+								Pct2 = Ext.FormatNumber(Pct2);
 								buf += MaxCumDose4PatientAmt + " " + Units + " / " + Pct2 + "% </td>" + InnerArrayBuf;
 							}
 						}

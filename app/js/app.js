@@ -858,7 +858,12 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 };
 
 Ext.GeneralRounding2Digits = function (n) {
-	var ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2) + "e-" + 2), "0.00");
+	// var ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2) + "e-" + 2), "0.00");
+	var ret = Ext.FormatNumber(+(Math.round(n + "e+" + 2) + "e-" + 2));
+	var n = ret.search(/0$/i);
+	if (n>0) {
+		ret = ret.substring(0, ret.length - 1);
+	}
 	return ret;
 };
 
@@ -926,7 +931,8 @@ Ext.LeanWeight = function (w, h, g) { // Height in Inches, weight in pounds
 	if ("M" === g) {
 		LeanWeight = (1.1 * WeightInKilos) - 128 * (WeightSquared / HeightSquared);
 	}
-	LeanWeight = Ext.util.Format.number(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2), "0.00");
+	// LeanWeight = Ext.util.Format.number(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2), "0.00");
+	LeanWeight = Ext.util.FormatNumber(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2));
 	return LeanWeight;
 };
 
@@ -1024,11 +1030,8 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				var sc = x.SerumCreatinine || 1;
 				var AUC = x.dose.split(" ")[0];
 				var age = x.Age;
-				var GFR = (140 - age) * kg;
-				if ("F" === gender) {
-					GFR = GFR * 0.85;
-				}
-				GFR = 1 * Ext.GeneralRounding2Digits(GFR / (72 * sc));
+
+				var GFR = Ext.CalcGFR(age, kg, gender, x.SerumCreatinine);
 				var Dose = (GFR + 25) * AUC;
 				Dose = Ext.GeneralRounding2Digits(Dose);
 
@@ -1358,9 +1361,11 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 
 					var tmp2 = ((BSA_Value * Reduction) / 100);
-					tmp2 = Ext.util.Format.number(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2), "0.00");
+					// tmp2 = Ext.util.Format.number(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2), "0.00");
+					tmp2 = Ext.util.FormatNumber(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2));
 					var Final = (BSA_Value - tmp2);
-					Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
+					// Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
+					Final = Ext.FormatNumber(+(Math.round(Final + "e+" + 2) + "e-" + 2));
 					AmpuReduction = " - " + Reduction + "% (due to Amputations) = " + Final;
 				}
 
@@ -1422,7 +1427,8 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 		CalcWeight = Ext.LeanWeight(w, h, g); // Weight in pounds, Height in Inches
 		break;
 	}
-	CalcWeight = Ext.util.Format.number(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2), "0.00");
+	// CalcWeight = Ext.util.Format.number(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2), "0.00");
+	CalcWeight = Ext.util.Format.number(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2));
 	PatientInfo.BSA_Weight = CalcWeight;
 	return CalcWeight;
 };
@@ -1486,10 +1492,12 @@ Ext.BSA_Calc = function (PatientInfo) {
 		}
 
 		var tmp = ((BaseBSA * Reduction) / 100);
-		var tmp1 = Ext.util.Format.number(+(Math.round(tmp + "e+" + 2) + "e-" + 2), "0.00");
+		// var tmp1 = Ext.util.Format.number(+(Math.round(tmp + "e+" + 2) + "e-" + 2), "0.00");
+		var tmp1 = Ext.FormatNumber(+(Math.round(tmp + "e+" + 2) + "e-" + 2));
 
 		Final = (Final - tmp1);
-		Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
+		// Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
+		Final = Ext.FormatNumber(+(Math.round(Final + "e+" + 2) + "e-" + 2));
 	}
 
 	//	PatientInfo.BSA = Final;
@@ -1535,23 +1543,27 @@ Ext.DoseCalc = function (Patient, d, du) {
 	return ReturnDose;
 };
 
+Ext.CalcGFR = function(age, kg, gender, SerumCreatinine) {
+	var GFR = (140 - age) * kg;
+	SerumCreatinine = SerumCreatinine || 1; // fail safe if no SC is available from Lab Results
+	if ("F" === gender) {
+		GFR = GFR * 0.85;
+	}
+	GFR = 1 * Ext.GeneralRounding2Digits(GFR / (72 * SerumCreatinine));
+	return GFR;
+}
 
 Ext.CalcAUCDose = function (Patient, AUC) {
 	var age = Patient.Age;
 	var gender = Patient.Gender;
 	var wt = Patient.Weight; // in pounds
 	var kg = Ext.Pounds2Kilos(wt);
-	var sc = Patient.SerumCreatinine || 1; // fail safe if no SC is available from Lab Results
 	AUC = AUC || 1; // fail safe if no AUC is passed;
 
-	var GFR = (140 - age) * kg;
-	if ("F" === gender) {
-		GFR = GFR * 0.85;
-	}
-	GFR = GFR / (72 * sc);
+	var GFR = Ext.CalcGFR(age, kg, gender, Patient.SerumCreatinine);
 	var Dose = (GFR + 25) * AUC;
 	Dose = Ext.GeneralRounding2Digits(Dose);
-	Dose = Ext.FormatNumber("" + Dose);
+	// Dose = Ext.FormatNumber("" + Dose);
 	return Dose + " mg";
 };
 
@@ -1600,7 +1612,8 @@ Ext.generic_BSA_Calc = function (h, w, hMultiplier, hPower, wMultiplier, wPower)
 
 	var BSA = hMultiplier * H1 * wMultiplier * W1;
 
-	var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };
 
@@ -1612,7 +1625,8 @@ Ext.BSA_Mosteller = function (h, w) { // Height in Meters, Weight in Kg
 		h = 0;
 	}
 	var BSA = Math.sqrt((h * 100 * w) / 3600);
-	var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };
 
@@ -1652,7 +1666,8 @@ Ext.BSA_Boyd = function (h, w) { // Height in Meters, Weight in Kg
 		h = 0;
 	}
 	var BSA = 0.0003207 * Math.pow(h * 100, 0.3) * Math.pow(w * 1000, (0.7285 - 0.0188 * Math.log(w * 1000) / Math.LN10));
-	var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };
 /*************************************************************
@@ -1860,11 +1875,16 @@ Ext.application({
 			},
 				// Note this function DOES fail if num = "123.000"
 			FormatNumber : function(num) {		// Formats number with the "Always Lead, Never Follow" format (e.g. 123,456 and 0.567 not 123,456.00 or .678)
-				 var n1 = parseInt(num, 10);
-				 if (n1 == num) {
-					 return Ext.util.Format.number(num, "0,000");
-				 }
-				 return Ext.util.Format.number(num, "0,000.00")
+				var n1 = parseInt(num, 10);
+				if (n1 == num) {
+					return Ext.util.Format.number(num, "0,000");
+				}
+				var ret = Ext.util.Format.number(num, "0,000.00");
+				var n = ret.search(/0$/i);
+				if (n>0) {
+					ret = ret.substring(0, ret.length - 1);
+				}
+				 return ret;
 			},
 
 			in2cm: function (height) { // Inches to Centimeters; rounded to 2 decimal places
