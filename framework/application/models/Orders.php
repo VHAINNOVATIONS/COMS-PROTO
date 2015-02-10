@@ -616,7 +616,7 @@ echo "||";
                     CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
                 ELSE 
                     CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
-             END as MHICHK_Infusion_Amt" .
+             END as MHICHK_Infusion_Amt " .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){
@@ -778,7 +778,7 @@ echo "||";
                     CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
                 ELSE 
                     CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
-             END as MHICHK_Infusion_Amt" .
+             END as MHICHK_Infusion_Amt " .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
 						foreach($queryMHILKMH as $row){
@@ -850,9 +850,10 @@ echo "||";
                     CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
                 ELSE 
                     CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
-             END as MHICHK_Infusion_Amt" .
+             END as MHICHK_Infusion_Amt " .
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
+						//echo $queryMHILKMHq;
 						foreach($queryMHILKMH as $row){
 							$MHI_MH_Dose = $row['MHICHK_Infusion_Amt'];
 							}
@@ -922,7 +923,7 @@ echo "||";
                     CONVERT(nvarchar(max), CONVERT(decimal(10,0), Infusion_Amt))
                 ELSE 
                     CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
-             END as MHICHK_Infusion_Amt" .
+             END as MHICHK_Infusion_Amt " .
 
 						"from MH_Infusion WHERE MH_ID ='$MH_ID'";
 						$queryMHILKMH = $this->query($queryMHILKMHq);
