@@ -2537,8 +2537,8 @@ error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
                 '$CumulativeDoseUnits',
                 '$Source'
             )";
-                
-                //error_log($query);
+
+error_log("Patient.Controller.CumulativeDoseTracking - POST - $query");
                 $retVal = $this->Patient->query( $query );
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
                     $this->Patient->rollbackTransaction();

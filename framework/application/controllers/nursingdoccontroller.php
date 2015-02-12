@@ -493,7 +493,8 @@
                 $patientID = $form_data->patientID;
                 $drug      = $form_data->drug;
                 $adminDate = $form_data->adminDate;
-                $this->NursingDoc->UpdateOrder( $patientID, $drug, $adminDate );
+                $orderID   = $form_data->Order_ID;
+                $this->NursingDoc->UpdateOrder( $patientID, $drug, $adminDate, $orderID );
                 
                 if ( $this->checkForErrors( 'Update Nursing Doc Treatment Values Failed. ', $returnVal ) ) {
                     $this->NursingDoc->rollbackTransaction();

@@ -109,6 +109,33 @@ class NursingDoc extends Model {
             FROM ND_Treatment
             WHERE PAT_ID = '$id'
         ";
+        $query = "select 
+nt.Treatment_ID,
+nt.Patient_ID,
+nt.Template_ID,
+nt.Order_ID,
+nt.PAT_ID,
+os.Drug_ID,
+nt.Cycle,
+nt.AdminDay,
+nt.AdminDate,
+nt.Type,
+nt.Drug,
+nt.Dose,
+nt.Unit,
+nt.Route,
+nt.StartTime,
+nt.EndTime,
+nt.Comments,
+nt.Treatment_User,
+nt.Treatment_Date,
+nt.Drug_OriginalValue,
+nt.Dose_OriginalValue,
+nt.Unit_OriginalValue,
+nt.Route_OriginalValue
+from ND_Treatment nt
+join Order_Status os on os.Order_ID = nt.Order_ID
+WHERE nt.PAT_ID = '$id'";
         
         return $this->query($query);
     }
@@ -603,13 +630,14 @@ class NursingDoc extends Model {
         }
     }
 
-    function UpdateOrder($patientID,$drug,$adminDate) {
+    function UpdateOrder($patientID,$drug,$adminDate, $Order_ID) {
         $drug = $this->NTD_StripLeadingFromDrugName($drug);
         $ad = explode("/", $adminDate);
         if (count($ad) > 1) {
             $adminDate = $ad[2] . "-" . $ad[0] . "-" . $ad[1];
         }
-        $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
+        // $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Patient_ID = '$patientID' AND Drug_Name = '$drug' AND Admin_date = '$adminDate'";
+        $query = "UPDATE Order_Status SET Order_Status = 'Administered' WHERE Order_ID = '$Order_ID'";
         error_log("UpdateOrder Query = $query");
         $result = $this->query($query);
         error_log("UpdateOrder - " . json_encode($result));

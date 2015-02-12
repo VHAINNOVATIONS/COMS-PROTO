@@ -222,28 +222,30 @@
                 if ( isset( $_GET[ 'url' ] ) ) {
                     $url        = $_GET[ 'url' ];
                     $urlArray   = explode( "/", $url );
-                    $FirstParam = $urlArray[ 0 ];
+                    $ClassName = $urlArray[ 0 ];
                     $point      = "Logged In";
                     //		PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,3,$_SESSION['sessionid']);
-                    // Adjust the if statement below when new classes are added to the framework
-            if ( "Patient"             === $urlArray[ 0 ] || 
-                 "LookUp"              === $urlArray[ 0 ] || 
-                 "NursingDoc"          === $urlArray[ 0 ] || 
-                 "Mymdws"              === $urlArray[ 0 ] || 
-                 "Messages"            === $urlArray[ 0 ] || 
-                 "Workflow"            === $urlArray[ 0 ] || 
-                 "Admin"               === $urlArray[ 0 ] || 
-                 "Session"             === $urlArray[ 0 ] || 
-                 "Orders"              === $urlArray[ 0 ] || 
-                 "EndTreatmentSummary" === $urlArray[ 0 ] || 
-                 "Flowsheet"           === $urlArray[ 0 ] || 
-                 "Git"                 === $urlArray[ 0 ] || 
-                 "Reports"             === $urlArray[ 0 ] || 
-                 "Search"              === $urlArray[ 0 ] ) {
-                        $point = "urlArray Matched";
-                        PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 4, $_SESSION[ 'sessionid' ] );
-                        $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
-                        require_once $bootstrap_path;
+                    // Adjust the if statement below when new classes/controllers are added to the framework
+                    if ( "Patient"             === $ClassName || 
+                         "LookUp"              === $ClassName || 
+                         "NursingDoc"          === $ClassName || 
+                         "Mymdws"              === $ClassName || 
+                         "Messages"            === $ClassName || 
+                         "Workflow"            === $ClassName || 
+                         "Admin"               === $ClassName || 
+                         "Session"             === $ClassName || 
+                         "Orders"              === $ClassName || 
+                         "EndTreatmentSummary" === $ClassName || 
+                         "Flowsheet"           === $ClassName || 
+                         "Git"                 === $ClassName || 
+                         "Reports"             === $ClassName || 
+                         "Search"              === $ClassName ||
+                         "BSACalc"             === $ClassName
+                    ) {
+                            $point = "urlArray Matched";
+                            PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 4, $_SESSION[ 'sessionid' ] );
+                            $bootstrap_path = ROOT . DS . 'framework' . DS . 'library' . DS . 'bootstrap.php';
+                            require_once $bootstrap_path;
                     } else {
                         $point             = "No urlArray Matched";
                         //	PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,5,$_SESSION['sessionid']);

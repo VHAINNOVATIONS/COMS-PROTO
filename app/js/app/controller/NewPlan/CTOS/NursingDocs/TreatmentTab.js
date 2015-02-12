@@ -112,7 +112,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				if ("Therapy" === theData.type) {
 							var thisCtl = this.getController("Common.puWinAddCumDose");
 							// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
-							var Info = { "MedID" : "", "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
+							var Info = { "MedID" : theData.Drug_ID, "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
 							thisCtl.SaveNewCumDoseInfo( Info );
 				}
 

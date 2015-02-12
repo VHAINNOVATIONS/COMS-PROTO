@@ -12,6 +12,7 @@ Ext.define("COMS.model.ND_Treatment", {
 		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
 		"drug",		// Includes sequence in the treatment type (e.g. "1. Ibuprofin" in Pre Therapy, "3. Mylanta" in Post Therapy
 		"MedID",
+		"Drug_ID",
 		"dose",
 		"unit",
 		"UnitID",
