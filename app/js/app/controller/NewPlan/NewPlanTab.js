@@ -448,7 +448,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 			/* MWB - 6/4/2014 Added new code to allow user to select Height/Weight for BSA Calculations */
 			Ext.widget('window', {
-				title: "Body Surface Area Calculations",
+				title: "Dosage Calculations",
 				closeAction: "destroy",
 				width: 520,
 				height: 370,
@@ -2324,7 +2324,7 @@ fieldContainerWalk : function(item, y, z) {
 			var PatientData = Ext.ShowBSACalcs(params, false, null, null, null);
 
 			Ext.MessageBox.show({
-				title : "Body Surface Area Calculations",
+				title : "Dosage Calculations",
 				msg : PatientData,
 				buttons : Ext.MessageBox.OK
 			});

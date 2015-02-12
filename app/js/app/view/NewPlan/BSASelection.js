@@ -5,7 +5,7 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
 	autoShow: true,
 	width: 390,
 
-    title : "Body Surface Area Calculations",
+    title : "Dosage Calculations",
     name : "bsaCalcInfo",
     hidden: true,
     layout : "hbox",

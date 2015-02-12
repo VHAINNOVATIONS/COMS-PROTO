@@ -872,7 +872,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var PatientData = Ext.ShowBSACalcs(Patient, false, null, null, null);
 
 		Ext.MessageBox.show({
-			title : "Body Surface Area Calculations",
+			title : "Dosage Calculations",
 			msg : PatientData,
 			buttons : Ext.MessageBox.OK
 		});
