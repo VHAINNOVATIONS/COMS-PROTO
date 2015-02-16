@@ -101,12 +101,23 @@ if ("Finalized" == orderStatus) {
 								orderid: rec.get("orderid"),
 								Last_Name: rec.get("Last_Name")
 							});
+/**
+if ("Finalized" == order.getData().orderstatus){
+	var Units = order.getData().unit.toLowerCase();
+	if ("mg/kg" == Units || "units / m2" == Units || "units / kg" == Units || "mg/m2" == Units || "mg/kg" == Units) {
+		order = this.getFinalizedDosage(order);
+	}
+}
+**/
 							this.PostedRecs.push(order);
+							// debugger;
+
 							order.save({
 								scope: this,
 								success: ResponseAlertGood,
 								failure: ResponseAlertFail
 							});
+
 						}
 					}
 					else {

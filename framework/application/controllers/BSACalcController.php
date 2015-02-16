@@ -1,6 +1,21 @@
 <?php
     
-    class BSACalcs {
+    class BSACalcController extends Controller {
+        public $AmputationsPctLoss = array(
+            "Upper Left Arm" => 6,
+            "Upper Right Arm" => 6,
+            "Lower Left Arm" => 4,
+            "Lower Right Arm" => 4,
+            "Left Hand and Fingers" => 3,
+            "Right Hand and Fingers" => 3,
+            "Left Thigh" => 12,
+            "Right Thigh" => 12,
+            "Lower Left Leg" => 6,
+            "Lower Right Leg" => 6,
+            "Left Foot" => 3,
+            "Right Foot" => 3
+        );
+
         /**
          *
          * BSA Calculation Formulas
@@ -17,30 +32,38 @@
             return $num;
         }
         
-        function CalcAUCDose( $Patient, $AUC = null ) {
-            $age    = $Patient->Age;
-            $gender = $Patient->Gender;
-            $wt     = $Patient->Weight; // in pounds
+        function CalcAUCDose( $Patient, $AUC ) {
+error_log("CalcAUCDose - $AUC");
+error_log(json_encode($Patient));
+            $age    = $Patient["Age"];
+            $gender = $Patient["Gender"];
+            $wt     = $Patient["Weight"]; // in pounds
             $kg     = $this->Pounds2Kilos( $wt );
-            $sc     = $Patient->SerumCreatinine || 1; // fail safe if no SC is available from Lab Results
-            $AUC    = $AUC || 1; // fail safe if no AUC is passed;
-            
-            
-            
-            
-            $GFR = ( 140 - $age ) * $kg;
+            $sc     = $Patient["SerumCreatinine"] ?  $Patient["SerumCreatinine"] : 1; // fail safe if no SC is available from Lab Results
+            $AUC    = $AUC ? $AUC : 1; // fail safe if no AUC is passed;
+
+            $GFR = ( 140 - $age );
+error_log("CalcAUCDose - GFR = 140 - $age = $GFR");
+
+            $GFR = $GFR * $kg;
+error_log("CalcAUCDose - GFR = (140 - $age) * $kg = $GFR");
+
             if ( "F" === $gender ) {
                 $GFR = $GFR * 0.85;
+error_log("CalcAUCDose - GFR = (140 - $age) * $kg * 0.85 for Female = $GFR");
             }
             
             // echo "Age = $age\nKG = $kg\nAUC = $AUC\nSC = $sc\nGFR=$GFR\n";
             
-            $GFR  = $GFR / ( 72 * $sc );
-            // echo "GFR = $GFR\n";
+            $GFR1  = $GFR / ( 72 * $sc );
+error_log("CalcAUCDose - GFR =  $GFR / ( 72 * $sc ) = $GFR1");
+            $GFR = $GFR1;
+
             $Dose = ( $GFR + 25 ) * $AUC;
-            // echo "Dose = $Dose\n";
+error_log("CalcAUCDose - GFR =  ($GFR +25) * $AUC = $Dose");
+
             $Dose = $this->FormatNumber( $Dose );
-            return $Dose . " mg";
+            return $Dose;
         }
         
         

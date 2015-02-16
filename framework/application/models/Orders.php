@@ -24,6 +24,7 @@ class Orders extends Model {
                 "LEFT OUTER JOIN MH_Infusion mhi ON mhi.MH_ID = mh.MH_ID " .
                 "WHERE pat.Date_Ended_Actual is not NULL";
 
+error_log("getOrders - $query");
         return $this->query($query);
     }
 
@@ -161,112 +162,62 @@ class Orders extends Model {
         return $this->query($query);
     }
 
+
+
     function updateOrderStatus($form_data) {
-
-
-error_log("OrdersModel.grabOrders.HasFormData - ");
-error_log(json_encode($form_data));
-
-
-
-
+        error_log("OrdersModel.updateOrderStatus ENTRY POINT");
+        error_log(json_encode($form_data));
 
         $Template_IDF = $form_data->{'templateID'};
         $OrderStatusF = $form_data->{'orderstatus'};
         $Drug_NameF = $form_data->{'drug'};
         $OrderIDF = $form_data->{'orderid'};
-		$PIDF = $form_data->{'patientID'};
-		$typeF = $form_data->{'type'};
-		$routeF = $form_data->{'route'};
+        $PIDF = $form_data->{'patientID'};
+        $typeF = $form_data->{'type'};
+        $routeF = $form_data->{'route'};
 
-
-/*******************************************/
-if ("Finalized" == $OrderStatusF) {
-error_log("OrdersModel.grabOrders - Order Finalized");
-    $DoseF = $form_data->{'dose'};
-    $UnitF = strtolower($form_data->{'unit'});
-    if ("mg/kg" == $UnitF || "mg/m2" == $UnitF || "units / m2" == $UnitF || "units / kg" == $UnitF) {
-        // Calculate Dose based on BSA
-        $controller = 'PatientController';
-        $patientController = new $controller('Patient', 'patient', null);
-        $BSA = $patientController->_getBSA( $PIDF );
-        error_log("BSA Formula");
-        error_log(json_encode($BSA));
-
-
-/*
-switch (PatientInfo.BSA_Method) {
-	case "Capped":
-		break;
-
-	case "DuBois":
-		temp.PatientInfo_BSA = Ext.BSA_DuBois(PatientInfo.Height, PatientInfo.BSA_Weight);
-		break;
-
-	case "Mosteller":
-		temp.PatientInfo_BSA = Ext.BSA_Mosteller(PatientInfo.Height, PatientInfo.BSA_Weight);
-		break;
-
-	case "Haycock":
-		temp.PatientInfo_BSA = Ext.BSA_Haycock(PatientInfo.Height, PatientInfo.BSA_Weight);
-		break;
-
-	case "Gehan and George":
-		temp.Formula = Ext.BSA_Formulas.Gehan_George;
-		temp.PatientInfo_BSA = Ext.BSA_Gehan_George(PatientInfo.Height, PatientInfo.BSA_Weight);
-		break;
-
-	case "Boyd":
-		temp.PatientInfo_BSA = Ext.BSA_Boyd(PatientInfo.Height, PatientInfo.BSA_Weight);
-		break;
-	}
-**/
-    }
-}
-
-/*******************************************/
-
+        
+        $doseF = $form_data->{'dose'};
+        $unitF = $form_data->{'unit'};
 
 
         $query = "SELECT Template_ID as Template_ID_CHK, Order_Status as Order_StatusCHK " .
                 "FROM Order_Status " .
-				"WHERE Order_ID = '" . $OrderIDF . "' ";
-        
+                "WHERE Order_ID = '" . $OrderIDF . "' ";
         $queryq = $this->query($query);
         if (count($queryq) > 0) {
-			$Notes = "Line 179";
-            $query = "Update Order_Status set Order_Status = '".$OrderStatusF."',Drug_Name = '".$Drug_NameF."',Notes = '".$Notes."' " .
-                    //"where Template_ID = '" . $Template_IDF . "' AND Drug_Name = '".$Drug_NameF."'";
-                    "where Order_ID = '" . $OrderIDF . "' ";
+            if ("FinalizedUpdate" == $OrderStatusF) {   // We've updated the dosing and units in the Orders Controller because the dosage was a calculated dosage.
+                $OrderStatusF = "Finalized";
+                $query = "Update Order_Status set Order_Status = 'Finalized',Drug_Name = '$Drug_NameF', Unit = '$unitF', Amt='$doseF', iAmt = '$doseF' where Order_ID = '$OrderIDF' ";
+            }
+            else {
+                $query = "Update Order_Status set Order_Status = '$OrderStatusF',Drug_Name = '$Drug_NameF' where Order_ID = '$OrderIDF' ";
+            }
         } else {
-    		$Notes = "Line 184, Order.php";
-            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Order_Type, Drug_Name, Patient_ID,Notes)" .
-			"VALUES ('".$Template_IDF."','".$OrderStatusF."','Inserted Order','".$Drug_NameF."','".$PIDF."','".$Notes."')";
+            $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Order_Type, Drug_Name, Patient_ID)" .
+            "VALUES ('$Template_IDF','$OrderStatusF','Inserted Order','$Drug_NameF','$PIDF')";
         }
 
-		if ($OrderStatusF === "Finalized"){
-    		$this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF,$OrderIDF);
-		}
-		elseif ($OrderStatusF === "Hold"){
-    		$this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
-		}
+        if ($OrderStatusF === "Finalized"){
+            $this->sendCPRSOrderIn($Template_IDF,$PIDF,$typeF,$routeF,$OrderIDF);
+        }
+        elseif ($OrderStatusF === "Hold"){
+            $this->updateOrderStatusHold($Template_IDF,$PIDF,$typeF,$routeF);
+        }
         return $this->query($query);
     }
-    
-	
-    //function getOrderStatus($templateId,$drugName,$PID,$Order_ID){
-    function getOrderStatus($Order_ID){
-        
-		
-		$query = "SELECT Order_Status as orderStatus, Order_ID as orderid " .
-		"FROM Order_Status " .
-		"WHERE Order_ID = '".$Order_ID."' ";		
-        //echo $query;
-        return $this->query($query);
-        
 
-        
-    }	
+
+
+
+
+
+	function getOrderStatus($Order_ID){
+		$query = "SELECT Order_Status as orderStatus, Order_ID as orderid, unit, Amt as dose " .
+		"FROM Order_Status " .
+		"WHERE Order_ID = '$Order_ID' ";
+		return $this->query($query);
+	}
 
     function updateOrderStatusIn($TID,$Drug_Name,$Order_Type,$PID,$Notes,$OrderID){
         
@@ -284,7 +235,6 @@ switch (PatientInfo.BSA_Method) {
 		echo " OrderID : ";
 		echo $OrderID;
 	*/
-
 		
 		$Template_IDchk = NULL;
 		$Drug_Namechk = NULL;
@@ -295,9 +245,8 @@ switch (PatientInfo.BSA_Method) {
 		"WHERE Order_ID = '".$OrderID."'";
 		//"WHERE Template_ID = '".$TID."' " .
 		//"AND Drug_Name = '".$Drug_Name."'";
-		error_log("Orders.Model.updateOrderStatusIn( $query )");
-
-
+		error_log("Orders.Model.updateOrderStatusIn - $Notes");
+        error_log( $query );
 		//echo $query;
 		$queryq = $this->query($query);
 		foreach($queryq as $row){
@@ -445,6 +394,7 @@ function updateOrderStatusHold($TID,$Drug_Name,$Order_Type,$PID){
 
 	
 function sendCPRSOrderIn($TID,$PID,$typeF,$routeF,$OrderID){
+    $Regimen_Dose_Unit = "";    // Avoids error reported in log for line 935 but need to really find out. MWB 2/12/2015
 
 /*echo $TID;
 echo "||";
@@ -734,10 +684,10 @@ echo "||";
 					$TR_Admin_Time = $row['TR_Admin_Time'];
 					$TR_BSA_Dose = $row['TR_BSA_Dose'];
 					$TR_Fluid_Type = $row['TR_Fluid_Type'];
-						$TR_Drug_ID_Name = $this->LookupNameIn($TR_Drug_ID);
-						$TR_Description = $this->LookupDescriptionIn($TR_Drug_ID);
-							$Regimen_Dose_Unit = $this->LookupNameIn($TR_Regimen_Dose_Unit_ID);
-							$TR_Route_ID_Name = $this->LookupNameIn($TR_Route_ID);
+					$TR_Drug_ID_Name = $this->LookupNameIn($TR_Drug_ID);
+					$TR_Description = $this->LookupDescriptionIn($TR_Drug_ID);
+					$Regimen_Dose_Unit = $this->LookupNameIn($TR_Regimen_Dose_Unit_ID);
+					$TR_Route_ID_Name = $this->LookupNameIn($TR_Route_ID);
 							/*
 							echo $TR_Drug_ID_Name;
 							echo " || ";
@@ -747,11 +697,11 @@ echo "||";
 							echo " || ";
 							echo $OrderID;
 							*/
-							NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match, 1);
-							$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652',$OrderID);
-							$this->valuecheck("".$match."End and Done");
+					NewOrderPatient($TR_Drug_ID_Name,$TR_Regimen_Dose,$Regimen_Dose_Unit,$TR_Description,$match, 1);
+					$this->updateOrderStatusIn($TID,$TR_Drug_ID_Name,'TR',$PID,'Line 652',$OrderID);
+					$this->valuecheck("".$match."End and Done");
 
-					}
+				}
 				//Medication_Hydration
 				$queryMHq = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " .
 				"Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " .

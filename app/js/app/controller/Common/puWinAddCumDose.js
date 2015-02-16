@@ -61,7 +61,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 				if (med2Ck.MedName === rec.MedName) {
 					med2ckFlg = true;
 
-					cur = rec.CurCumDoseAmt;
+					cur = rec.CurCumDoseAmt || rec.MaxCumulativeDoseAmt;
+					cur = cur.replace(",", "") * 1;
 					if (rec.MedMaxDose) {
 						max = rec.MedMaxDose.replace(",", "") * 1;		// rec.MedMaxDose is string which may contain thousands separator
 						ExceedsWarningLimit = (cur / max) * 100;
@@ -69,18 +70,15 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						if (ExceedsWarningLimit > 75) {
 							exceedsCount++;
 							exceeds = cur - WarningLimit;
-// 							var maxNum = Ext.util.Format.number(("" + max).replace(",", ""), "0,0");
 							var maxNum = Ext.FormatNumber(("" + max).replace(",", ""));
-// 							var ExceedsNum = Ext.util.Format.number(("" + exceeds).replace(",", ""), "0,0");
 							var ExceedsNum = Ext.FormatNumber(("" + exceeds).replace(",", ""));
-// 							var CurDose = Ext.util.Format.number(("" + cur).replace(",", ""), "0,0");
 							var CurDose = Ext.FormatNumber(("" + cur).replace(",", ""));
+							var units = rec.MedMaxDoseUnits || rec.MaxCumulativeDoseUnits;
 							var pct = ((cur/max)*100);
-							// pct = Ext.util.Format.number(pct, "0,0.0");
 							pct = Ext.FormatNumber(pct);
 							WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
-								"<td>" + maxNum + " " + rec.MedMaxDoseUnits + "</td>" + 
-								"<td>" + CurDose + " " + rec.MedMaxDoseUnits + "</td>" + 
+								"<td>" + maxNum + " " + units + "</td>" + 
+								"<td>" + CurDose + " " + units + "</td>" + 
 								"<td>" + pct + "%</td></tr>";
 						}
 					}

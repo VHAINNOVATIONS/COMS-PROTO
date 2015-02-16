@@ -983,6 +983,8 @@ error_log("Patient.Model.updateOEMRecord - Loop - $query" );
                      "order by Admin_Date";
         }
         
+
+// error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
         return $this->query($query);
     }
 

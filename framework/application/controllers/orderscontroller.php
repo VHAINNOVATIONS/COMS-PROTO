@@ -25,17 +25,188 @@ class OrdersController extends Controller {
 
 
 
+    function getMostRecentVitals($PatientID) {
+        $controller = 'PatientController';
+        $patientController = new $controller('Patient', 'patient', null);
+        $patientModel = new Patient();
+        $records = $patientModel->getMeasurements_v1( $PatientID, null );
+        $mrHeight = 0;
+        $mrWeight = 0;
+        $ret = array();
+        $ret["Age"] = $records[0]["Age"];
+        $ret["Gender"] = $records[0]["Gender"];
+        // error_log("Patient Vitals - " . json_encode($records));
+        foreach ($records as $aVital) {
+            $h = $aVital["Height"];
+            $w = $aVital["Weight"];
+            if ("" !== $h && 0 == $mrHeight ) {
+                $mrHeight = $h;
+            }
+            if ("" !== $w && 0 == $mrWeight ) {
+                $mrWeight = $w;
+            }
+            if ($mrWeight !== 0 && $mrHeight !== 0) {
+                $ret["Height"] = $mrHeight;
+                $ret["Weight"] = $mrWeight;
+                return $ret;
+            }
+        }
+        $ret["Height"] = $mrHeight;
+        $ret["Weight"] = $mrWeight;
+        return $ret;
+    }
+
+
+    function getAmputationPct($PatientID) {
+        // error_log("Amputations for - $PatientID");
+        $lookup = new LookUp();
+        $amputations = $lookup->getLookupDescByNameAndType($PatientID, '30');
+        if ( $this->checkForErrors( 'Get Patient Amputations Failed. ', $amputations ) ) {
+            $this->set( 'templatedata', null );
+            // error_log("Error getting Amputations..." . $this->get('frameworkErr'));
+            return;
+        }
+        $totalPctReduction = 0;
+        // $BSACalcs = new BSACalcs;
+
+        $controller = 'BSACalcController';
+        $BSACalcs = new $controller('BSACalc', 'bsacalc', null);
+
+        // error_log("Amputation Count = " . count($amputations));
+        foreach ( $amputations as $amputation ) {
+            $Ampu = $amputation['description'];
+            // error_log("Ampu = $Ampu");
+            $rslt = $BSACalcs->AmputationsPctLoss[$Ampu];
+            // error_log("rslt = $rslt");
+            $totalPctReduction += $rslt;
+            // error_log("Pct BSA Reduction due to amputation of $Ampu = $rslt");
+        }
+        // error_log("TOTAL Pct BSA Reduction due to amputation = $totalPctReduction");
+        return $totalPctReduction;
+    }
+
+    function FinalizeMedicationDosing($form_data) {
+error_log("OrdersModel.grabOrders - Order Finalized");
+error_log(json_encode($form_data));
+
+        $DoseF = $form_data->{'dose'};
+        $UnitF = strtolower($form_data->{'unit'});
+        $PIDF = $form_data->{'patientID'};
+
+error_log("OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF");
+        if ("auc" == $UnitF || "mg/kg" == $UnitF || "mg/m2" == $UnitF || "units / m2" == $UnitF || "units / kg" == $UnitF) {
+            // Calculate Dose based on BSA
+            $controller = 'PatientController';
+            $patientController = new $controller('Patient', 'patient', null);
+            $BSA = $patientController->_getBSA( $PIDF );
+            $w = $BSA[0]["WeightFormula"];
+            $b = $BSA[0]["BSAFormula"];
+
+            error_log("BSA Formula - $w; $b");
+
+            $mrHW = $this->getMostRecentVitals($PIDF);
+            error_log("Most Recent = " . $mrHW["Height"] . " " . $mrHW["Weight"] . " " . $mrHW["Age"] . " " . $mrHW["Gender"]);
+
+            $ampu = $this->getAmputationPct($PIDF);
+            error_log("TOTAL Pct BSA Reduction due to amputation = $ampu");
+
+            $controller = 'BSACalcController';
+            $BSACalcs = new $controller('BSACalc', 'bsacalc', null);
+            $WeightInKG = $BSACalcs->Pounds2Kilos($mrHW["Weight"]);
+            $HeightInM = $BSACalcs->In2Meters($mrHW["Height"]);
+
+            $BSAWeight = $WeightInKG;
+            if ("Adjusted Weight" == $w) {
+                $BSAWeight = $BSACalcs->AdjustedWeight( $mrHW["Weight"], $mrHW["Height"], $mrHW["Gender"] ); // Height in Inches, weight in pounds
+            }
+            else if ("Ideal Weight" == $w) {
+                $BSAWeight = $BSACalcs->IdealWeight( $mrHW["Weight"], $mrHW["Height"], $mrHW["Gender"] ); // Height in Inches, weight in pounds
+            }
+            else if ("Lean Weight" == $w) {
+                $BSAWeight = $BSACalcs->LeanWeight( $mrHW["Weight"], $mrHW["Height"], $mrHW["Gender"] ); // Height in Inches, weight in pounds
+            }
+            error_log("Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW["Weight"] . "/$WeightInKG; Weight Method = $w; BSAWeight = $BSAWeight");
+
+            $BSA = 0;
+            if ("Mosteller" == $b) {
+                $BSA = $BSACalcs->BSA_Mosteller( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+            else if ("DuBois" == $b) {
+                $BSA = $BSACalcs->BSA_DuBois( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+            else if ("Haycock" == $b) {
+                $BSA = $BSACalcs->BSA_Haycock( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+            else if ("Gehan and George" == $b) {
+                $BSA = $BSACalcs->BSA_Gehan_George( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+            else if ("Boyd" == $b) {
+                $BSA = $BSACalcs->BSA_Boyd( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+
+            if ("auc" == $UnitF) {
+                $Patient["Age"] = $mrHW["Age"];
+                $Patient["Gender"] = $mrHW["Gender"];
+                $Patient["Weight"] = $mrHW["Weight"];
+                $Patient["SerumCreatinine"] = 1;
+                $CalculatedDose = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
+                error_log("CalculatedDose for $UnitF = $CalculatedDose");
+                $form_data->{'dose'} = $CalculatedDose;
+                $form_data->{'unit'} = "mg";
+            }
+            else if ("mg/kg" == $UnitF || "units / kg" == $UnitF) {
+                $CalculatedDose = $DoseF * $WeightInKG;
+                error_log("CalculatedDose for $UnitF = $CalculatedDose");
+                $form_data->{'dose'} = $CalculatedDose;
+                if ("mg/kg" == $UnitF) {
+                    $form_data->{'unit'} = "mg";
+                }
+                else {
+                    $form_data->{'unit'} = "units";
+                }
+            }
+            else {
+                $CalculatedDose = $DoseF * $BSA;
+                error_log("CalculatedDose for $UnitF = $CalculatedDose");
+                $form_data->{'dose'} = $CalculatedDose;
+                if ("mg/m2" == $UnitF) {
+                    $form_data->{'unit'} = "mg";
+                }
+                else {
+                    $form_data->{'unit'} = "units";
+                }
+            }
+            $form_data->{'orderstatus'} = "FinalizedUpdate";
+        }
+        return $form_data;
+    }
+
+
+
+
+
+
    function grabOrders($patientID, $AdminDate, $Dispensed = null) {
+error_log("OrdersController.grabOrders.ENTRY POINT - patientID = $patientID, AdminDate = $AdminDate, Dispensed = $Dispensed");
+/* for a POST to update an order the form has the patientID and the orderid */
 
         $form_data = json_decode(file_get_contents('php://input'));
         $jsonRecord = array();
         
         if ($form_data != NULL) {
-
             $this->Orders->beginTransaction();
 error_log("OrdersController.grabOrders.HasFormData - ");
 error_log(json_encode($form_data));
 
+            $OrderStatusF = $form_data->{'orderstatus'};
+            $PIDF = $form_data->{'patientID'};
+            if ("Finalized" == $OrderStatusF) {
+                $form_data = $this->FinalizeMedicationDosing($form_data);
+            }
+error_log("OrdersController.grabOrders.HasFormData - POST FINALIZEATION!");
+error_log(json_encode($form_data));
+
+$returnVal = null;
             $returnVal = $this->Orders->updateOrderStatus($form_data);
 
             if ($this->checkForErrors('Update Order Status Values Failed. ', $returnVal)) {
@@ -55,6 +226,7 @@ error_log(json_encode($form_data));
             
         } else {
             if ($patientID && $AdminDate) {
+error_log("OrdersController.grabOrders - Have PatientID and Date - ");
 
 /***
                 $query = "SELECT
@@ -231,6 +403,7 @@ error_log("Orders - $query");
                 $this->set('jsonRecord', $retData);
                 return;
             }
+error_log("OrdersController.grabOrders - Do NOT Have PatientID and Date - ");
 
 
             $finalOrders = array();
@@ -374,6 +547,8 @@ error_log(json_encode($oemrecords));
                         if(!empty($orderStatus) && count($orderStatus) > 0){
                             $orderRecord['orderstatus'] = $orderStatus[0]['orderStatus'];
                             $orderRecord['orderid'] = $orderid[0]['orderid'];
+                            $orderRecord['dose'] = $orderid[0]['dose'];     // grabbing dose/unit from order status since they might have been updated in the finalization process - MWB
+                            $orderRecord['unit'] = $orderid[0]['unit'];
                         }else{
                             $orderRecord['orderstatus'] = 'Not Set';
                             $orderRecord['orderid'] = '';

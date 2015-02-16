@@ -323,7 +323,9 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			}
 		}
 		if (!Showing) {
-			Elements[0].style.display="block";
+			if (Elements && Elements.length > 0) {
+				Elements[0].style.display="block";
+			}
 		}
 	},
 

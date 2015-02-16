@@ -184,7 +184,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 
 		this.setChemoBioField("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]", TempDesc, ("" !== TempDesc));
 		var theField = Ext.ComponentQuery.query("NursingDocs_Chemotherapy [name=\"Link2XternalFlowsheet\"]");
-		var i, len = theField.length, data = "<a href=\"Fsheet/?PID=" + this.application.Patient.PAT_ID + "&PName=" + this.application.Patient.name + "\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)";
+		var i, len = theField.length, data = "<a href=\"Fsheet/?PAT_ID=" + this.application.Patient.PAT_ID + "&PID=" + this.application.Patient.id + "&PName=" + this.application.Patient.name + "\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)";
 		for (i = 0; i < len; i++) {
 			theField[i].update(data);
 		}
