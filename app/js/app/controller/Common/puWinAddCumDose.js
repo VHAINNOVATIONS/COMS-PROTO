@@ -53,35 +53,59 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		exceedsCount = 0;
 		WarningMsgBuf = "";
 
+		// Walk tracked Meds for this patient
 		for (i = 0; i < len; i++) {
 			rec = cdInfo[i];
 			med2ckFlg = false;
+
+			var Amt = 0;
+			for (j = 0; j < rec.Patient.length; j++) {
+				Amt += rec.Patient[j].Amt.replace(",", "") * 1;
+			}
+
+			var MaxAmt = rec.MedMaxDose.replace(",", "") * 1;
+			var xx = Ext.GeneralRounding2Digits((Amt / MaxAmt)*100);
+			xx= xx.replace(",", "") * 1;
+			var Pct = xx;
+			var MedName = rec.MedName;
+			var Units = rec.MaxCumulativeDoseUnits;
+
+				// Look for matching med in Current Template
 			for (j = 0; j < med2ckLen; j++) {
 				med2Ck = curTemplateCumDoseTrackingMeds[j];
 				if (med2Ck.MedName === rec.MedName) {
 					med2ckFlg = true;
-
-					cur = rec.CurCumDoseAmt || rec.MaxCumulativeDoseAmt;
-					cur = cur.replace(",", "") * 1;
+					exceedsCount++;
+					if ((Pct * 1) > 75) {
+						WarningMsgBuf += "<tr><td>" + MedName + "</td>" + 
+							"<td>" + Ext.GeneralRounding2Digits(MaxAmt) + " " + Units + "</td>" + 
+							"<td>" + Ext.GeneralRounding2Digits(Amt) + " " + Units + "</td>" + 
+							"<td>" + Pct + "%</td></tr>";
+					}
+					break;
+/******************
+					// cur = rec.CurCumDoseAmt || rec.MaxCumulativeDoseAmt;
+					// cur = cur.replace(",", "") * 1;
 					if (rec.MedMaxDose) {
 						max = rec.MedMaxDose.replace(",", "") * 1;		// rec.MedMaxDose is string which may contain thousands separator
-						ExceedsWarningLimit = (cur / max) * 100;
-						WarningLimit = 0.75 * max;
-						if (ExceedsWarningLimit > 75) {
+						ExceedsWarningLimit = Pct;
+						// WarningLimit = 0.75 * max;
+						if (Pct > 75) {
 							exceedsCount++;
-							exceeds = cur - WarningLimit;
+							// exceeds = Amt - WarningLimit;
 							var maxNum = Ext.FormatNumber(("" + max).replace(",", ""));
-							var ExceedsNum = Ext.FormatNumber(("" + exceeds).replace(",", ""));
-							var CurDose = Ext.FormatNumber(("" + cur).replace(",", ""));
+							// var ExceedsNum = Ext.FormatNumber(("" + exceeds).replace(",", ""));
+							// var CurDose = Ext.FormatNumber(("" + cur).replace(",", ""));
 							var units = rec.MedMaxDoseUnits || rec.MaxCumulativeDoseUnits;
-							var pct = ((cur/max)*100);
-							pct = Ext.FormatNumber(pct);
+							// var pct = ((cur/max)*100);
+							// pct = Ext.FormatNumber(pct);
 							WarningMsgBuf += "<tr><td>" + rec.MedName + "</td>" + 
-								"<td>" + maxNum + " " + units + "</td>" + 
-								"<td>" + CurDose + " " + units + "</td>" + 
-								"<td>" + pct + "%</td></tr>";
+								"<td>" + Ext.GeneralRounding2Digits(maxNum) + " " + units + "</td>" + 
+								"<td>" + Ext.GeneralRounding2Digits(Amt) + " " + units + "</td>" + 
+								"<td>" + Pct + "%</td></tr>";
 						}
 					}
+*******************/
 				}
 			}
 

@@ -658,7 +658,12 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	},
 
 	SaveEoTS : function(button) {
+		// this.application.loadMask("Saving record of changes");
+		
         var win = button.up('window');
+
+win.setLoading( "Saving End of Treatment Summary", true ) ;
+
 		var ProvRep = this.getProviderReport();
 		var FUA = this.getFollowUpAppointments();
 		this.EoTSData.ClinicalTrial = this.application.Patient.ClinicalTrial;
@@ -679,6 +684,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
                 if (win.widget ) {
                     Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
                 }
+				win.setLoading( false, false ) ;
 		        win.close();
 				// alert("Update History display with to display EoTS via ID returned in data");
 				var thisCtl = this.getController("NewPlan.NewPlanTab");

@@ -948,43 +948,37 @@ error_log("Patient.Model.updateOEMRecord - Loop - $query" );
         // $EndDate = mktime(0,0,0,date("m"),date("d")+2,date("Y"));
         $EndDateSearch = date("m/d/Y", $EndDate);
         
-        $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '" .
-                 $id . "'";
+        $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '$id'";
+error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - PatientID = $patientId; TemplateID = $id");
+error_log($query);
+
+
         $regimenId = $this->query($query);
         
         if (null != $regimenId && array_key_exists('error', $regimenId)) {
             return $regimenId;
         }
         
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "
-            select 
-                Course_Number as CourseNum, 
-                Admin_Day as Day, 
-                CONVERT(VARCHAR(10), Admin_Date, 101) as AdminDate, 
-                Pre_MH_Instructions as PreTherapyInstr,
-                Regimen_Instruction as TherapyInstr, 
-                Post_MH_Instructions as PostTherapyInstr, 
-                Template_ID as TemplateID
-                from Master_Template 
-                where Course_Number != 0 and
-                Admin_Date >='" . $today . "' and 
-                Admin_Date < '" . $EndDateSearch . "'" . "and 
-                Regimen_ID = '" . $regimenId[0]['RegimenID'] . "' " . "and 
-                Patient_ID = '" . $patientId . "' " . "
-                order by Admin_Date
-            ";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select Course_Number as CourseNum, Admin_Day as Day, date_format(Admin_Date, '%m/%d/%Y') as AdminDate, Pre_MH_Instructions as PreTherapyInstr, " .
-                     "Regimen_Instruction as TherapyInstr, Post_MH_Instructions as PostTherapyInstr, Template_ID as TemplateID " .
-                     "from Master_Template " . "where Course_Number != 0 " .
-                     "and Regimen_ID = '" . $regimenId[0]['RegimenID'] . "' " .
-                     "and Patient_ID = '" . $patientId . "' " .
-                     "order by Admin_Date";
-        }
+        $query = "
+        select 
+            Course_Number as CourseNum, 
+            Admin_Day as Day, 
+            CONVERT(VARCHAR(10), Admin_Date, 101) as AdminDate, 
+            Pre_MH_Instructions as PreTherapyInstr,
+            Regimen_Instruction as TherapyInstr, 
+            Post_MH_Instructions as PostTherapyInstr, 
+            Template_ID as TemplateID
+            from Master_Template 
+            where Course_Number != 0 and
+            Admin_Date >='" . $today . "' and 
+            Admin_Date < '" . $EndDateSearch . "'" . "and 
+            Regimen_ID = '" . $regimenId[0]['RegimenID'] . "' " . "and 
+            Patient_ID = '" . $patientId . "' " . "
+            order by Admin_Date
+        ";
         
 
-// error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
+error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
         return $this->query($query);
     }
 

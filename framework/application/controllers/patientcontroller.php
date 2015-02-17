@@ -2388,20 +2388,10 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             $GUID      = "";
             $this->Patient->beginTransaction();
             $Date2 = date( "F j, Y" );
-            parse_str( file_get_contents( "php://input" ), $post_vars );
-            if ( isset( $post_vars[ "value" ] ) ) {
-                $MedID = $post_vars[ "value" ];
-            }
-            if ( isset( $post_vars[ "LifetimeDose" ] ) ) {
-                $CumulativeDoseAmt = $post_vars[ "LifetimeDose" ];
-            }
-            if ( isset( $post_vars[ "Units" ] ) ) {
-                $CumulativeDoseUnits = $post_vars[ "Units" ];
-            }
-            if ( isset( $post_vars[ "Source" ] ) ) {
-                $Source = $post_vars[ "Source" ];
-            }
-            
+
+
+
+
             $ErrMsg = "";
 
 
@@ -2415,10 +2405,10 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             $lookupController = new $controller('Lookup', 'lookup', null);
             $query = $lookupController->_getAllCumulativeDoseMeds(null);
             $CumDoseMeds = $this->Patient->query( $query );
-//            error_log("PatientController.CumulativeDoseTracking - Cumulative Meds List");
-//            error_log(json_encode($CumDoseMeds));
+            error_log("PatientController.CumulativeDoseTracking - Cumulative Meds List");
+            error_log(json_encode($CumDoseMeds));
 
-                //error_log("CumulativeDoseTracking - GET");
+            error_log("CumulativeDoseTracking - GET");
                 if ( $PatientID ) {
                     $partialQuery = "SELECT 
                    dt.CumulativeDoseAmt, 
@@ -2439,7 +2429,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                         $query = $partialQuery;
                     }
                 }
-                //error_log("CumulativeDoseTracking Query - $query");
+                error_log("CumulativeDoseTracking Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
 
@@ -2515,6 +2505,49 @@ error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
                 return;
 
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+
+
+                parse_str( file_get_contents( "php://input" ), $post_vars );
+                $lookup = new LookUp();
+
+                if ( isset( $post_vars[ "MedName" ] ) ) {
+                    $MedName = $post_vars[ "MedName" ];
+                    $MedName = $this->NTD_StripLeadingFromDrugName($MedName);
+
+                    $retVal = $lookup->getLookupIdByNameAndType($MedName, 2);
+                    error_log(json_encode($retVal));
+                    $MedID = $retVal[0]["id"];
+                }
+
+
+/*** MedID is wrong, doesn't match Lookup Table value.
+                if ( isset( $post_vars[ "value" ] ) ) {
+                    $MedID = $post_vars[ "value" ];
+                }
+***/
+                if ( isset( $post_vars[ "LifetimeDose" ] ) ) {
+                    $CumulativeDoseAmt = $post_vars[ "LifetimeDose" ];
+                }
+
+                if ( isset( $post_vars[ "UnitName" ] ) ) {
+                    $CumulativeDoseUnits = $post_vars[ "UnitName" ];
+                } else if ( isset( $post_vars[ "Units" ] ) ) {
+                    $CumulativeDoseUnits = $post_vars[ "Units" ];
+                }
+                if ("" !== $CumulativeDoseUnits) {
+                    $retVal = $lookup->getLookupIdByNameAndType($CumulativeDoseUnits, 11);
+                    error_log(json_encode($retVal));
+                    $CumulativeDoseUnitsID = $retVal[0]["id"];
+                    error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
+                }
+
+                if ( isset( $post_vars[ "Source" ] ) ) {
+                    $Source = $post_vars[ "Source" ];
+                }
+            
+
+
+
                 //error_log("CumulativeDoseTracking - POST");
                 /*********************************************************************************
                 Sample POST
@@ -2534,11 +2567,11 @@ error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
                 '$PatientID',
                 '$MedID',
                 '$CumulativeDoseAmt',
-                '$CumulativeDoseUnits',
+                '$CumulativeDoseUnitsID',
                 '$Source'
             )";
 
-error_log("Patient.Controller.CumulativeDoseTracking - POST - $query");
+error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUnitsID - QUERY - $query");
                 $retVal = $this->Patient->query( $query );
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
                     $this->Patient->rollbackTransaction();
@@ -2550,13 +2583,40 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $query");
                 $query = "";
                 /* Reset query so we don't run it again in the final step */
             } else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+
+                parse_str( file_get_contents( "php://input" ), $post_vars );
+                if ( isset( $post_vars[ "value" ] ) ) {
+                    $MedID = $post_vars[ "value" ];
+                }
+                if ( isset( $post_vars[ "LifetimeDose" ] ) ) {
+                    $CumulativeDoseAmt = $post_vars[ "LifetimeDose" ];
+                }
+
+                if ( isset( $post_vars[ "UnitName" ] ) ) {
+                    $CumulativeDoseUnits = $post_vars[ "UnitName" ];
+                } else if ( isset( $post_vars[ "Units" ] ) ) {
+                    $CumulativeDoseUnits = $post_vars[ "Units" ];
+                }
+                if ("" !== $CumulativeDoseUnits) {
+                    $lookup = new LookUp();
+                    $retVal = $lookup->getLookupIdByNameAndType($CumulativeDoseUnits, 11);
+                    error_log(json_encode($retVal));
+                    $CumulativeDoseUnitsID = $retVal[0]["id"];
+                    error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
+                }
+
+                if ( isset( $post_vars[ "Source" ] ) ) {
+                    $Source = $post_vars[ "Source" ];
+                }
+                
+
                 /* Update table record */
                 $query = "
                 UPDATE $DataTable
                    SET 
                     MedID = '$MedID', 
                     CumulativeDoseAmt = '$CumulativeDoseAmt', 
-                    CumulativeDoseUnits = '$CumulativeDoseUnits'
+                    CumulativeDoseUnits = '$CumulativeDoseUnitsID'
             ";
                 if ( isset( $Source ) ) {
                     $query .= ",Source = '$Source'";

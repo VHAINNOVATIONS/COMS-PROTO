@@ -26,7 +26,7 @@ Ext.define("COMS.view.OEM.OEM_Level1", {
 		"<tpl for=\"Patient\">",
 			"{[this.debuggerFcn( values, parent )]}",
 			"<a href=\"Patient/PrintOrders/{id}\" target=\"PrintWin\">Print</a> Orders (opens new window)&nbsp;",
-			"<a href=\"Fsheet/?PID={id}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
+			"<a href=\"Fsheet/?PID={id}&PAT_ID={PAT_ID}&PName={name}\" target=\"FlowsheetWin\">Flowsheet</a> (opens new window)",
 		"</tpl>",
 		"<table border=\"1\" width=\"100%\" class=\"Therapy InformationTable\">",
 			"<colgroup width=12%></colgroup>",

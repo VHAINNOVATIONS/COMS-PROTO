@@ -33,7 +33,6 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 					this.PostedRecs = [];
 
 					var HandleResponse = function(record, status, theScope) {
-						theScope.PostedRecs.pop();
 						if (theScope.PostedRecs.length <= 0) {
 							var theGrid = theScope.getOrders();
 							theGrid.setLoading( false, false );
@@ -43,6 +42,16 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							}
 							else {
 								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+							}
+						}
+						else {
+							var aRec = theScope.PostedRecs.pop();
+							if (aRec) {
+								aRec.save({
+									scope: theScope,
+									success: ResponseAlertGood,
+									failure: ResponseAlertFail
+								});
 							}
 						}
 					};
@@ -69,26 +78,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 								Ext.MessageBox.alert("Information", "Please select an Order Status");
 								return;
 							}
-// When order is finalized must compute any med dosage values based on BSA
-// debugger;
-/**
-var PatientBSA = { 
-	"BSA" : this.application.Patient.BSA, 
-	"Method" : this.application.Patient.BSA_Method, 
-	"Formula" : this.application.Patient.BSAFormula, 
-	"Weight" : this.application.Patient.BSA_Weight 
-}
-**/
 
-
-/**
-if ("Finalized" == orderStatus) {
-	var rUnit = rec.unit.toLowerCase();
-	if ("mg/kg" == rUnit || "mg/m2" == rUnit || "units / m2" == rUnit || "units / kg" == rUnit) {
-		var dose = rec.dose;
-	}
-}
-**/
 							var order = Ext.create("COMS.model.OrdersTable", {
 								orderstatus: orderStatus,
 								templateID: rec.get("templateID"),
@@ -101,16 +91,7 @@ if ("Finalized" == orderStatus) {
 								orderid: rec.get("orderid"),
 								Last_Name: rec.get("Last_Name")
 							});
-/**
-if ("Finalized" == order.getData().orderstatus){
-	var Units = order.getData().unit.toLowerCase();
-	if ("mg/kg" == Units || "units / m2" == Units || "units / kg" == Units || "mg/m2" == Units || "mg/kg" == Units) {
-		order = this.getFinalizedDosage(order);
-	}
-}
-**/
 							this.PostedRecs.push(order);
-							// debugger;
 
 							order.save({
 								scope: this,
@@ -119,6 +100,7 @@ if ("Finalized" == order.getData().orderstatus){
 							});
 
 						}
+						HandleResponse(null, null, this);	// Save the first record.
 					}
 					else {
 						theGrid.setLoading( false, false );

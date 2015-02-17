@@ -860,9 +860,12 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 Ext.GeneralRounding2Digits = function (n) {
 	// var ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2) + "e-" + 2), "0.00");
 	var ret = Ext.FormatNumber(+(Math.round(n + "e+" + 2) + "e-" + 2));
-	var n = ret.search(/0$/i);
-	if (n>0) {
-		ret = ret.substring(0, ret.length - 1);
+	var n = ret.search(/\./i);
+	if (n > 0) {	// We have a decimal point
+		var n = ret.search(/0$/i);
+		if (n>0) {
+			ret = ret.substring(0, ret.length - 1);
+		}
 	}
 	return ret;
 };

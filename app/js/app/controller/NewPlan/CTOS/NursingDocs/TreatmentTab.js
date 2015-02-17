@@ -319,7 +319,7 @@ this.AdminDate = today;
 		 ***/
 
 		this.application.loadMask("Loading Treatment Administration Information");
-		theStore.proxy.api.read = Ext.URLs.ND_TreatmentDispensed + Patient.id + "/" + today4URL;
+		theStore.proxy.api.read = Ext.URLs.ND_TreatmentDispensed + Patient.PAT_ID + "/" + today4URL;
 		theStore.load({
 			scope : this,
 			callback: function(records,operation,success){
