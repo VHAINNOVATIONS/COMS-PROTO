@@ -15,76 +15,16 @@
 }
 
 
-td .x-form-item-label {
-	padding: 0!important;	/* helps to position label better */
-}
-
-.HelpIcon { 
-	background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/tools/tool-sprites.gif");
-	width: 15px;
-	height: 15px;
-	background-position-y: 60px;
-	background-position-x: 15px;
-	padding-left: 15px;
-	margin-left: 2px;
-	top: 3px;
-	position: relative;
-}
-
-
 body{
 		background:#EFEFEF;
 		color:navy;
 		
 	}
 
-
-.DataTable { 
-	width: 100% 
-} 
-
-.DataTable th { 
-	text-align: center!important;
-} 
-
 .Level1, .Level3 {
 		background:#EFEFEF;
 }
 
-        .Test td { vertical-align: top!important; }
-        .RequiredInstr {
-            margin: 10px;
-            font-weight: bold;
-        }
-        .RequiredInstr em {
-            color: red;
-        }
-        .centeredMsg {
-            text-align: left;
-            margin-left: 200px;
-            font-weight: bold;
-        }
-
-
-.coms-section-emphasis {
-	background: #EFEFEF; 
-	padding: 0.5em; 
-	border: thin solid navy;
-}
-
-
-.coms-section-emphasis ul {
-	margin: 1.0em 2.5em;
-}
-
-.coms-section-emphasis li {
-	list-style: disc;
-}
-
-.consolelog {
-    color: silver; 
-    margin-left: 1em;
-}
 
 
 #results div {
@@ -113,11 +53,6 @@ body{
 
 	nav li{
 		display:inline !important;
-	}
-
-	.PatternsOfCare li {
-		display:block !important;
-		list-style: disc;
 	}
 
 	ul, ol {
@@ -631,8 +566,7 @@ th.drug {
 	background-color: silver;
 }
 
-.NursingDocs-label { font-weight : bold!important; }
-.NursingDocs-right { text-align : right!important; }
+.NursingDocs-label { font-weight : bold; }
 .NursingDocs-boxLabel { font-weight : bold; padding-left: 1em; }
 
 a:visited, a {
@@ -648,7 +582,7 @@ abbr {
 /* We use buttons which look like anchors, in place of anchor tags, to perform actions (like opening a window) */
 /* Using an anchor to perform an action is not compliant w/ HTML Specs and requires extra effort to prevent scrolling to the top of the page */
 /* A button is the proper way to perform actions but sometimes we want buttons to look like links */
-button.anchor, .anchor button, .textAnchor {
+button.anchor, .anchor button {
 	background : none;
 	border : 0 none;
 	color: blue;
@@ -720,154 +654,4 @@ table.OEMRecord_Element tr {
 
 .ndctWarning span, .scEditInstructions span {
 	color: red;
-}
-
-.BSACalcTable table {
-	width: 100%;
-}
-
-/*
-.BSACalcTable .x-form-item-Label, 
-.BSACalcTable .x-field-label-cell {
-	border: thin solid #99BCE8;
-	font-weight: bold;
-	background-color: white;
-	font-size: smaller;
-}
-
-.BSACalcTable .x-form-item-Field,
-.BSACalcTable .x-form-item-body {
-	border: thin solid #99BCE8;
-	font-weight: normal;
-	background-color: transparent;
-	font-size: smaller;
-}
-*/
-
-.BSACalcTable tr, .BSACalcTable td {
-	border: thin solid #99BCE8;
-}
-
-
-.BSACalcTable td table { margin-bottom: 0; }
-
-.BSACalcTable label {
-	font-weight: bold!important;
-	margin-right: 0.5em;
-}
-
-table.FlowsheetTable {
-	margin-bottom: 1em;
-}
-
-.FlowsheetTable thead th {
-	text-align: left;
-	font-weight: bold;
-	font-size: 110%;
-	background-color: #c5c5c5;
-	padding-left: 0.5em;
-}
-.FlowsheetTable td {
-	padding: 0.25em;
-}
-
-.FlowsheetTable a {
-	color: black;
-}
-
-.x-column-header-text div {
-	font-weight: bold;
-	text-align: center;
-	padding-top: 0.5em;
-}
-
-.x-column-header-text div.multiLine {
-	padding-top: 0!important;
-}
-
-
-.TCDWarning {
-	font-size: 150%;
-	font-weight: bold!important;
-	color: red;
-	text-align: center!important;
-}
-
-.smlTCDWarning {
-	font-size: 100%;
-	font-weight: bold!important;
-	color: red;
-	text-align: left!important;
-}
-
-.HighlightedInfoTable {
-	border: thick solid blue!important;
-	margin-top: 1em!important;
-	margin-bottom: 1em!important;
-}
-
-.cdtEm {
-	font-weight: bold;
-	color: red;
-}
-
-.TCDWarning table {
-	font-size: 85%;
-	margin: 0 auto;
-}
-
-.TCDWarning th, .TCDWarning td {
-	text-align: center;
-	font-weight: bold;
-	padding: 0 0.25em;
-}
-.TCDWarning td {
-	text-align: right;
-}
-
-.em {
-	font-style : italic;
-	font-weight: bold;
-}
-	
-
-.x-grid-cell-checkcolumn .x-grid-cell-inner {
-    padding-top: 4px;
-    padding-bottom: 2px;
-    line-height: 14px;
-}
-.x-grid-with-row-lines .x-grid-cell-checkcolumn .x-grid-cell-inner {
-    padding-top: 3px;
-}
-.x-grid-checkheader {
-    height: 14px;
-    background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/unchecked.gif"); 
-    background-position: 50% -2px;
-    background-repeat: no-repeat;
-    background-color: transparent;
-}
-
-.x-grid-checkheader-checked {
-    background-image: url("/libs/ExtJS_4.1.0/resources/themes/images/default/grid/checked.gif"); 
-}
-
-.x-grid-checkheader-editor .x-form-cb-wrap {
-    text-align: center;
-}
-
-
-.coms-displayfield-box {
-    padding: 1px 3px;
-    background: repeat-x 0 0;
-    border: 1px solid;
-    background-color: white;
-    background-image: url('/libs/ExtJS_4.1.0/resources/themes/images/default/form/text-bg.gif');
-    border-color: #b5b8c8;
-}
-
-
-.EditCell {
-	background-image: url('/images/pencil.png');
-	background-repeat: repeat-x;
-	width: 18px;
 }

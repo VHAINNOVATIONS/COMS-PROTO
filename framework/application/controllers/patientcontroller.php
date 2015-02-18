@@ -3084,4 +3084,119 @@ VALUES
             $jsonRecord[ "records" ] = $retVal;
             $this->set( "jsonRecord", $jsonRecord );
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Patterns of Care Determination (PCD) List Types of Cancer by Gender */
+        function PCD_CancerByGender() {
+            $jsonRecord              = array( );
+            $jsonRecord[ "success" ] = true;
+            $records                 = array( );
+            $msg                     = "Patterns of Care Determination (PCD) List Types of Cancer by Gender";
+
+            $query = "select 
+ pdh.Patient_ID, 
+ pdh.Disease_ID, 
+ case when pdh.DiseaseStage_ID is null then null else pdh.DiseaseStage_ID end as Stage_ID,
+ lu.name as Cancer,
+ case when ds.Stage is null then '' else ds.Stage end, 
+ p.Gender
+ from PatientDiseaseHistory pdh
+ join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
+ join Patient p on p.Patient_ID = pdh.Patient_ID
+ left join DiseaseStaging ds on ds.ID = pdh.DiseaseStage_ID
+ order by p.Gender";
+
+
+            $retVal = $this->Patient->query( $query );
+            if ( $this->checkForErrors( 'Patterns of Care Determination failed.', $retVal ) ) {
+                $jsonRecord[ "success" ] = false;
+                $msg                     = "Patterns of Care Determination can not be determined";
+                $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
+                $this->set( "jsonRecord", $jsonRecord );
+                return;
+            }
+
+            $Gender = "";
+            $Cancer = "";
+            $retRec = array();
+            $records = array();
+            foreach($retVal as $aRecord) {
+                // echo $aRecord["Gender"] . " - " . $aRecord["Cancer"] . "<br>";
+                if ("" == $Gender) {
+                    $Gender = $aRecord["Gender"];
+                    // reset and CountCancerType
+                    $Cancer = $aRecord["Cancer"];
+                    $ThisCancer = 1;
+                    // echo "Reset and CountCancerType 1<br>";
+                }
+                else if ($Gender == $aRecord["Gender"]) {
+                    if ("" == $Cancer) {
+                        // reset and CountCancerType
+                        $Cancer = $aRecord["Cancer"];
+                        $ThisCancer = 1;
+                        // echo "Reset and CountCancerType 2<br>";
+                    }
+                    else if ($Cancer == $aRecord["Cancer"]) {
+                        // Count CancerType
+                        $ThisCancer = $ThisCancer + 1;
+                        // echo "CountCancerType (matching cancer)<br>";
+                    }
+                    else {
+                        // echo "Total up previous Cancers - $Gender; $Cancer; $ThisCancer<br>";
+                        $retRec["Gender"] = $Gender;
+                        $retRec["Cancer"] = $Cancer;
+                        $retRec["count"] = $ThisCancer;
+                        // echo json_encode($retRec) . "<br>";
+                        $records[] = $retRec;
+                        // echo json_encode($records) . "<br>";
+                        // echo "Total Up CancerType 1<br>";
+                        $Cancer = $aRecord["Cancer"];
+                        $ThisCancer = 1;
+                    }
+                }
+                else {
+                    // echo "Total up previous Cancers and terminate Gender";
+                    // echo "End of Gender - $Gender; Switching Cancer from $Cancer<br>";
+                    $Gender = $aRecord["Gender"];
+                    // reset and CountCancerType
+                    $Cancer = $aRecord["Cancer"];
+                    $ThisCancer = 1;
+                }
+            }
+            $retRec["Gender"] = $Gender;
+            $retRec["Cancer"] = $Cancer;
+            $retRec["count"] = $ThisCancer;
+            $records[] = $retRec;
+//            echo "Total Up CancerType 2<br>";
+
+
+            $this->set( 'frameworkErr', null );
+            $jsonRecord[ "total" ]   = count( $records );
+            $jsonRecord[ "records" ] = $records;
+            $this->set( "jsonRecord", $jsonRecord );
+        }
+
+
+
+
+
+
+
+
+
+
     }

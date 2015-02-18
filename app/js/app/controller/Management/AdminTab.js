@@ -25,7 +25,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.EmeticMedsTab',
 		'Management.Lockout',
 		'Management.LockoutTab',
-		'Management.Inventory'
+		'Management.Inventory',
+		'Management.PatternsOfCareTab'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [

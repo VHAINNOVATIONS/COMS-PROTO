@@ -1,0 +1,37 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]>    <html class="no-js ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]>    <html class="no-js ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+		<title>Patterns of Care Determination - Disease by Gender for Chemotherapy Order Management System (COMS)</title>
+		<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
+		<link rel="stylesheet" type="text/css" href="COMS.css">
+		<style>
+		h2 { text-align: center; }
+		</style>
+		<script src="/libs/modernizr-2.0.6.js"></script>
+	</head>
+<body>
+<h1>Patterns of Care Determination</h1>
+<h2>Disease by Gender</h2>
+
+<div id="GridPanel" style="width:98%; margin: 10px auto;"></div>
+
+<script type="text/javascript" src="/libs/ExtJS_4.1.0/ext-all-debug.js"></script>
+<script type="text/javascript" src="fSheet.js"></script>
+
+<script>
+	Ext.require([
+		'Ext.grid.*',
+		'Ext.data.*',
+		'Ext.form.field.Number',
+		'Ext.form.field.Date',
+		'Ext.tip.QuickTipManager'
+	]);
+</script>
+
+</body>
+</html>
