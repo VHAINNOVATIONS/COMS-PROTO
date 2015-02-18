@@ -662,7 +662,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		
         var win = button.up('window');
 
-win.setLoading( "Saving End of Treatment Summary", true ) ;
+win.setLoading( "Saving End of Treatment Summary", false ) ;
 
 		var ProvRep = this.getProviderReport();
 		var FUA = this.getFollowUpAppointments();

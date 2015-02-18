@@ -1178,6 +1178,11 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 		break;
 	}
 
+	if ("" == calcDose) {
+		calcDose = OrigDose * temp.BSA;
+		calcDose = Ext.GeneralRounding2Digits(calcDose);
+	}
+
 
 	var html = new Ext.XTemplate(
 		"<table class=\"InformationTable\" border=\"1\">",

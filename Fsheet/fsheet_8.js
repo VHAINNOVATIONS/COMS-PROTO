@@ -9,7 +9,10 @@ var FSheet = function() {
 		PID : "",
 		PAT_ID : "",
 		PName : "",
-		theDataURI : "/Flowsheet/FS2",
+		FlowsheetServiceURL : "/Flowsheet/FS2",
+		DRServiceURL : "/NursingDoc/AdverseEventsHistory/",
+		FlowsheetOIServiceURL : "/Flowsheet/Optional",
+		DRPanel : null,
 		puWin : null,
 		nCols : 0,
 		nRows : 0,
@@ -100,7 +103,7 @@ var FSheet = function() {
 
 
 		makeGrid : function(theStore, theColumns) {
-			var theBody = Ext.getBody();
+			var theBody = Ext.get("GridPanel");
 			var gWidth = this.nCols * 150;
 			var gHeight = this.nRows * 10;
 			var grid = Ext.create('Ext.grid.Panel', {
@@ -122,17 +125,126 @@ var FSheet = function() {
 				}],
 				columns: theColumns
 			});
-			// var tmpWidth = Ext.getBody().getViewSize().width - 50;
-			// var tmpHeight = Ext.getBody().getViewSize().height - 160;
-			// grid.setSize(tmpWidth, tmpHeight);
+		},
+		MakeDRPanel : function(theData) {
+			var theBody = Ext.get("DRPanel");
+			this.DRPanel = Ext.create("Ext.panel.Panel", {
+				"title" : "Disease Response",
+				"name" : "DiseaseResponsePanel",
+				"collapsible" : true, 
+				"collapsed" : true, 
+				"margin" : "0 0 10 0", 
+				"bodyPadding" : "10",
+				"autoEl" : { "tag" : "section" },
+				"cls" : "Tab", 
+				renderTo: theBody,
+				"tpl" : new Ext.XTemplate(
+					"<tpl for=\"records\">",
+						"{[this.debuggerFcn( values, parent )]}",
+						"<tpl if=\"Disease_Response != ''\">",
+							"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"DRPanel-{AdminDate}-{xindex}\">",
+							"	<thead><tr><th><a name=\"DR_{AdminDate}\" id=\"DR_{AdminDate}\">Disease Response for date - {AdminDate}</a></th></tr></thead>",
+							"	<tr><td>{Disease_Response}</td></tr>",
+							"</table>",
+						"</tpl>",
+					"</tpl>",
+					{
+						disableFormats: true,
+						formatData : function(data) {
+							return Ext.util.Format.htmlDecode(data);
+						},
+						debuggerFcn : function(v, p) {
+							debugger;
+						}
+					}
+				)
+			});
+		},
+
+		MakeTHPanel : function() {
+			var theBody = Ext.get("THPanel");
+			this.THPanel = Ext.create("Ext.panel.Panel", {
+				"title" : "Toxicity History",
+				"name" : "FS_ToxicityHistory",
+				"collapsible" : true, 
+				"collapsed" : true, 
+				"margin" : "0 0 10 0", 
+				"bodyPadding" : "10",
+				renderTo: theBody,
+				"tpl" : new Ext.XTemplate(
+					"{[this.debuggerFcn( values )]}",
+					"<tpl for=\".\">",
+						"<table border=\"1\" class=\"InformationTable\">",
+						"{[this.renderSection( values )]}",
+						"</table>",
+					"</tpl>",
+					{
+							// XTemplate Configuration
+						disableFormats: true,
+						renderSection : function ( current ) {
+							var buf = "";
+							if (current.type == "Assessment") {
+								buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - " + current.date + "</th></tr>";
+								if (current.Link.Alert) {
+									buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + current.Link.Label + " - Flagged as an ALERT</th></tr>";
+								}
+								buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + current.Link.Label + "</td></tr>";
+								buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Link.Grade_Level + "</td></tr>";
+								buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Link.Details + "</td></tr>";
+								buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Link.Comments + "</td></tr>";
+								return buf;
+							}
+							return "";
+						},
+						debuggerFcn : function ( current, prev ) {
+							debugger;
+						}
+					}
+				)
+			});
+		},
+		MakeOIPanel : function() {
+			var theBody = Ext.get("OIPanel");
+			this.OIPanel = Ext.create("Ext.panel.Panel", {
+				"title" : "Additional General Information",
+				"name" : "OtherInfoPanel",
+				"collapsible" : true, 
+				"collapsed" : true, 
+				"margin" : "0 0 10 0", 
+				"bodyPadding" : "10",
+				"autoEl" : { "tag" : "section" },
+				"cls" : "Tab", 
+				renderTo: theBody,
+				"tpl" : new Ext.XTemplate(
+					"{[this.debuggerFcn( values )]}",
+					"<tpl for=\"records\">",
+						"<tpl if=\"Other != ''\">",
+							"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"OIPanel-{AdminDate}-{xindex}\">",
+							"	<thead><tr><th><a name=\"OI_{AdminDate}\" id=\"OI_{AdminDate}\">Other Information for date - {AdminDate}</a></th></tr></thead>",
+							"	<tr><td>{[this.formatData(values.Other, xindex)]}</td></tr>",
+							"</table>",
+						"</tpl>",
+					"</tpl>",
+					{
+						disableFormats: true,
+						formatData : function(data, idx) {
+							return Ext.util.Format.htmlDecode(data);
+						},
+						debuggerFcn : function ( current, prev ) {
+							debugger;
+						}
+					}
+				)
+			});
 		},
 
 		getData : function() {
-			var URL = this.theDataURI + "/" + this.PID + "/" + this.PAT_ID
+			var URL = this.FlowsheetServiceURL + "/" + this.PID + "/" + this.PAT_ID;
 			Ext.Ajax.request({
 				scope : this,
 				url : URL,
 				success : function( response ){
+					this.getDRData();
 					var theResponse = Ext.JSON.decode(response.responseText);
 					var theData = theResponse.records;
 					var theColumns = this.createColumns(theData);
@@ -146,13 +258,61 @@ var FSheet = function() {
 					alert("Attempt to load latest treatment data failed.");
 				}
 			})
-		}
+		},
+		getDRData : function() {
+			var URL = this.DRServiceURL + this.PAT_ID;
+			Ext.Ajax.request({
+				scope : this,
+				url : URL,
+				success : function( response ){
+					this.getOIData();
+					var theResponse = Ext.JSON.decode(response.responseText);
+					this.DRPanelData = theResponse.records;
+					Ext.getBody().unmask();
+				},
+
+				failure : function(  ) {
+					Ext.getBody().unmask();
+					alert("Attempt to load latest treatment data failed.");
+				}
+			})
+		},
+		getOIData: function() {
+			var URL = this.FlowsheetOIServiceURL + this.PAT_ID;
+			Ext.Ajax.request({
+				scope : this,
+				url : URL,
+				success : function( response ){
+					var theResponse = Ext.JSON.decode(response.responseText);
+					this.OIPanelData = theResponse.records;
+					debugger;
+					this.PanelData = [this.DRPanelData,this.OIPanelData];
+
+					this.THPanel.update(this.PanelData);
+					this.DRPanel.update(this.PanelData);
+					this.OIPanel.update(this.PanelData);
+					Ext.getBody().unmask();
+				},
+
+				failure : function(  ) {
+					Ext.getBody().unmask();
+					alert("Attempt to load latest treatment data failed.");
+				}
+			})
+		}		
 	};
 
 	// Public
 	Ext.getBody().mask("Loading Flowsheet Data", "x-mask-loading").setHeight(1000 + Ext.getBody().getHeight());
 	Ext.onReady(function(){
+		Ext.Ajax.timeout = 60000;
+		Ext.override(Ext.data.Connection, {timeout: 60000});
+		Ext.override(Ext.data.proxy.Ajax, { timeout: 60000 });
+		Ext.override(Ext.form.action.Action, { timeout: 60 });
 		Prv.initLocalVars();
+		Prv.MakeDRPanel();
+		Prv.MakeTHPanel();
+		Prv.MakeOIPanel();
 		Prv.getData();
 	});
 
