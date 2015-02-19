@@ -11,7 +11,7 @@ var FSheet = function() {
 		PName : "",
 		FlowsheetServiceURL : "/Flowsheet/FS2",
 		DRServiceURL : "/NursingDoc/AdverseEventsHistory/",
-		FlowsheetOIServiceURL : "/Flowsheet/Optional",
+		FlowsheetOIServiceURL : "/Flowsheet/Optional/",
 		DRPanel : null,
 		puWin : null,
 		nCols : 0,

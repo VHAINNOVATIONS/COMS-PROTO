@@ -1,44 +1,21 @@
 Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
     extend: 'Ext.app.Controller',
-    stores: [
-        "TemplateListStore"
-        ,"TemplateListByLocationStore"
-    ],
-    views: [
-        'TemplatePromotion.TemplatePromotionTab',
-		"Common.selCTOSTemplate"
-    ],
-
-    refs: [
-        { ref: "theGrid", selector: "TemplatePromotionTab"},
-        {
-            ref: "TemplateType",
-            selector: "TemplatePromotionTab selCTOSTemplate selTemplateType"
-        }
-    ],
+    stores: [ "TemplateListStore", "TemplateListByLocationStore" ],
+    views: [ "TemplatePromotion.TemplatePromotionTab" ],
+    refs: [ { ref: "theGrid", selector: "TemplatePromotionTab"} ],
 
 	init: function () {
 		this.control({
 			"scope" : this,
 
 			"TemplatePromotionTab" : {
-				"beforerender" : this.renderPanel
-			},
-			"TemplatePromotionTab selCTOSTemplate selTemplateType": {
-				"select" : this.TemplateTypeChange
-			},
-			"TemplatePromotionTab selCTOSTemplate button": {
-				"click" : this.ShowAllTemplates
-			},
-			"TemplatePromotionTab grid" : {
 				"cellclick" : this.clickCell
 			},
 			"TemplatePromotionTab button[text=\"Refresh\"]": {
-				click: this.HandleRefresh
+				"click" : this.HandleRefresh
 			},
 			"TemplatePromotionTab button[text=\"Update Records\"]": {
-				click: function () {
-					debugger;
+				"click" : function () {
 					var theGrid = this.getTheGrid();
 					theGrid.setLoading( "Updating Template Records", false );
 
@@ -79,7 +56,6 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 						HandleResponse(record, true, this);
 					};
 
-
 					var theStore = theGrid.getStore();
 					var DirtyRecords = theStore.getUpdatedRecords();
 					var drLen = DirtyRecords.length;
@@ -96,7 +72,6 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 								Ext.MessageBox.alert("Information", "Please select a Location");
 								return;
 							}
-							debugger;
 							var JSON_Data = {"LocationID" : Location, "ID" : recID };
 							this.PostedRecs.push(JSON_Data);
 						}
@@ -138,12 +113,6 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 			}
 		}
 	},
-
-	renderPanel: function (panel) {
-		var theGrid = this.getTheGrid();
-		theGrid.getStore().load();
-		return true;
-	},
     TemplateTypeChange: function (combo, recs, eOpts) {
         var guid = combo.getValue();
         var text = combo.getRawValue();
@@ -159,14 +128,10 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
         theGrid.getStore().load();
     },
 
-
-
-
-
-
-	"HandleRefresh" : function (button, evt, eOpts) {
+	HandleRefresh : function () {
         var theGrid = this.getTheGrid();
         theGrid.getStore().load();
+		return true;
 	}
 
 });

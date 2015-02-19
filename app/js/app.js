@@ -860,7 +860,6 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 };
 
 Ext.GeneralRounding2Digits = function (n) {
-	// var ret = Ext.util.Format.number(+(Math.round(n + "e+" + 2) + "e-" + 2), "0.00");
 	var ret = Ext.FormatNumber(+(Math.round(n + "e+" + 2) + "e-" + 2));
 	var n = ret.search(/\./i);
 	if (n > 0) {	// We have a decimal point
@@ -936,8 +935,7 @@ Ext.LeanWeight = function (w, h, g) { // Height in Inches, weight in pounds
 	if ("M" === g) {
 		LeanWeight = (1.1 * WeightInKilos) - 128 * (WeightSquared / HeightSquared);
 	}
-	// LeanWeight = Ext.util.Format.number(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2), "0.00");
-	LeanWeight = Ext.util.FormatNumber(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2));
+	LeanWeight = Ext.FormatNumber(+(Math.round(LeanWeight + "e+" + 2) + "e-" + 2));
 	return LeanWeight;
 };
 
@@ -1219,7 +1217,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 		"<tr><th>BSA</th><td>{[this.finalBSA(values)]}</td></tr>",
 		"<tpl if=\"calcDose\">",
-		"<tr><th>Dose</th><td>{[this.finalBSA(values)]} * {Dose} = {calcDose}</td></tr>",
+		"<tr><th>Dose</th><td>{[this.finalBSA(values)]} * {Dose} = {calcDose} {[this.finalBSAUnits(values)]}</td></tr>",
 		"</tpl>",
 		"</table>", {
 			// XTemplate Configuration
@@ -1369,18 +1367,23 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 						}
 					}
 
-
 					var tmp2 = ((BSA_Value * Reduction) / 100);
-					// tmp2 = Ext.util.Format.number(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2), "0.00");
-					tmp2 = Ext.util.FormatNumber(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2));
+					var t1 = tmp2 + "e+" + 2;
+					var t2 = Math.round(t1);
+					var t3 = t2 + "e-" + 2;
+					var t4 = Ext.GeneralRounding2Digits(t3);
+					tmp2 = Ext.FormatNumber(+t3);
+					tmp2 = Ext.FormatNumber(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2));
 					var Final = (BSA_Value - tmp2);
-					// Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
-					Final = Ext.FormatNumber(+(Math.round(Final + "e+" + 2) + "e-" + 2));
+
+					var f1 = Final + "e+" + 2;
+					var f2 = Math.round(f1);
+					var f3 = f2 + "e-" + 2;
+					var f4 = Ext.GeneralRounding2Digits(f3);
+					Final = Ext.FormatNumber(+f3);
+
 					AmpuReduction = " - " + Reduction + "% (due to Amputations) = " + Final;
 				}
-
-
-
 
 				x.BSA_NoReduction = BSA_Value; // Original Calculated BSA w/o reduction due to amputations;
 				var buf = "<tr><th>&nbsp;</th><td>" + strFormula + " = " + BSA_Value + AmpuReduction + " m<sup>2</sup></td></tr>";
@@ -1390,6 +1393,10 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 			finalBSA: function (v) {
 				return ("= " + Ext.BSA_Calc(v) + " m<sup>2</sup>");
+			},
+
+			finalBSAUnits : function(v) {
+				return v.Dose.split(" ")[1].split("/")[0];
 			},
 
 			changeHeightWeight : function () {
@@ -1437,8 +1444,7 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 		CalcWeight = Ext.LeanWeight(w, h, g); // Weight in pounds, Height in Inches
 		break;
 	}
-	// CalcWeight = Ext.util.Format.number(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2), "0.00");
-	CalcWeight = Ext.util.Format.number(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2));
+	CalcWeight = Ext.FormatNumber(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2));
 	PatientInfo.BSA_Weight = CalcWeight;
 	return CalcWeight;
 };
@@ -1502,12 +1508,15 @@ Ext.BSA_Calc = function (PatientInfo) {
 		}
 
 		var tmp = ((BaseBSA * Reduction) / 100);
-		// var tmp1 = Ext.util.Format.number(+(Math.round(tmp + "e+" + 2) + "e-" + 2), "0.00");
-		var tmp1 = Ext.FormatNumber(+(Math.round(tmp + "e+" + 2) + "e-" + 2));
 
+		var tmp1 = Ext.FormatNumber(+(Math.round(tmp + "e+" + 2) + "e-" + 2));
 		Final = (Final - tmp1);
-		// Final = Ext.util.Format.number(+(Math.round(Final + "e+" + 2) + "e-" + 2), "0.00");
-		Final = Ext.FormatNumber(+(Math.round(Final + "e+" + 2) + "e-" + 2));
+		var f1 = Final + "e+" + 2;
+		var f2 = Math.round(f1);
+		var f3 = f2 + "e-" + 2;
+		var f4 = Ext.GeneralRounding2Digits(f3);
+
+		Final = Ext.FormatNumber(+f3);
 	}
 
 	//	PatientInfo.BSA = Final;
@@ -1622,7 +1631,7 @@ Ext.generic_BSA_Calc = function (h, w, hMultiplier, hPower, wMultiplier, wPower)
 
 	var BSA = hMultiplier * H1 * wMultiplier * W1;
 
-	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+
 	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };
@@ -1635,7 +1644,7 @@ Ext.BSA_Mosteller = function (h, w) { // Height in Meters, Weight in Kg
 		h = 0;
 	}
 	var BSA = Math.sqrt((h * 100 * w) / 3600);
-	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+
 	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };
@@ -1676,7 +1685,7 @@ Ext.BSA_Boyd = function (h, w) { // Height in Meters, Weight in Kg
 		h = 0;
 	}
 	var BSA = 0.0003207 * Math.pow(h * 100, 0.3) * Math.pow(w * 1000, (0.7285 - 0.0188 * Math.log(w * 1000) / Math.LN10));
-	// var rBSA = Ext.util.Format.number(+(Math.round(BSA + "e+" + 2) + "e-" + 2), "0.00");
+
 	var rBSA = Ext.FormatNumber(+(Math.round(BSA + "e+" + 2) + "e-" + 2));
 	return rBSA;
 };

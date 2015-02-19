@@ -120,7 +120,7 @@
 <div id="application" class="container initialHide">
     <header id="Header" class="application">
         <h1 id="title">Chemotherapy Order Management System (COMS)</h1>
-        <h2 style="text-align: center;font-size: 1.5em; color: red;">Proof of Concept - Demo System</h2>
+        <!-- <h2 style="text-align: center;font-size: 1.5em; color: red;">Proof of Concept - Demo System</h2> -->
         <div id="welcome">
         Welcome <?php
             echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";
