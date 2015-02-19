@@ -52,8 +52,10 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
                 ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
-                ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
+				,{ title : 'Template Promotion', items : [ {xtype : 'TemplatePromotionTab' }]}
+				,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
                 ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
+
 				// ,{ title : 'Testing', items : [ {xtype : 'DischargeInstructions', margin: "10" }]}
             ];
         }

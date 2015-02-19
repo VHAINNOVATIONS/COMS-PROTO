@@ -1086,6 +1086,8 @@ error_log("saveTemplate - BP4");
                     lu.Name as name
                     ,mt.Template_ID as id
                     ,mt.Regimen_ID as regimenId
+                    ,mt.Location_ID
+                    ,l6.Name as Location
                     ,lu.Lookup_Type as type
                     ,case when l3.Name is not null then l3.Description else lu.Description end as description
                     ,mt.Cycle_Length as length
@@ -1103,6 +1105,7 @@ error_log("saveTemplate - BP4");
                     INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
                     INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID
                     INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+                    INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
                     LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                     LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
             if (NULL != $id) {

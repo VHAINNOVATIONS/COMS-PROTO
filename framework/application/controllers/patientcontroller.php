@@ -131,11 +131,9 @@
         function Template( $id = NULL ) {
             if ( $id != NULL ) {
                 $patientTemplate = $this->Patient->getPriorPatientTemplates( $id );
-                
                 if ( $this->checkForErrors( 'Get Patient Template Failed. ', $patientTemplate ) ) {
                     return;
                 }
-                
                 $this->set( 'patientTemplate', $patientTemplate );
                 $this->set( 'frameworkErr', null );
             } else {
@@ -3190,6 +3188,41 @@ VALUES
             $this->set( "jsonRecord", $jsonRecord );
         }
 
+        /* Patterns of Care Determination (PCD) */
+        /* Cancer Types & Applied Templates */
+        function PCD_CancerByGender2() {
+            $jsonRecord              = array( );
+            $jsonRecord[ "success" ] = true;
+            $records                 = array( );
+            $msg                     = "Patterns of Care Determination (PCD) List Types of Cancer by Gender";
+
+            $query = "
+
+
+ select 
+lu.Name as name
+,case when l3.Name is not null then l3.Description else lu.Description end as description
+,l4.Name as Designed4DiseaseName
+,mt.Disease_Stage_ID 
+,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  Designed4DiseaseStageName
+from Master_Template mt
+INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID
+INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
+INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID
+INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
+LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)
+ 
+ select pat.Patient_ID, pat.Template_ID, pdh.Disease_ID, 
+ case when pdh.DiseaseStage_ID is null then null else pdh.DiseaseStage_ID end as Stage_ID,
+ case when ds.Stage is null then '' else ds.Stage end as Stage, 
+ lu.name as Cancer
+ from Patient_Assigned_Templates pat
+ join PatientDiseaseHistory pdh on pdh.Patient_ID = pat.Patient_ID
+ join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
+ left join DiseaseStaging ds on ds.ID = pdh.DiseaseStage_ID
+";
+        }
 
 
 

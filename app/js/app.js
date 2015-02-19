@@ -56,6 +56,7 @@ Ext.URLs.PatientCumulativeDosing = "/Patient/CumulativeDoseTracking";
 Ext.URLs.CumulativeDosingMeds = "/LookUp/CumulativeDoseMeds";
 
 Ext.URLs.MedRisks = "/LookUp/MedRisks";
+Ext.URLs.TemplateLocation = "/LookUp/TemplateLocation/";
 
 Ext.URLs.MedDoc = "/LookUp/MedDocs";
 Ext.URLs.TemplateMedDocs = "/LookUp/TemplateMedDocs";
@@ -627,6 +628,7 @@ Ext.require([
 	"COMS.controller.Orders.OrdersTab",
 	"COMS.controller.TemplateList.TemplateListTab",
 	"COMS.controller.TemplateList.puWinListPatients",
+	"COMS.controller.TemplatePromotion.TemplatePromotionTab",
 
 	"COMS.controller.Authoring.AuthoringTab",
 	"COMS.controller.Authoring.DrugRegimen",
@@ -1795,6 +1797,7 @@ Ext.application({
 		, "Authoring.AuthoringTab"
 		, "TemplateList.TemplateListTab"
 		, "TemplateList.puWinListPatients"
+		, "TemplatePromotion.TemplatePromotionTab"
 		, "Authoring.DrugRegimen"
 		, "Authoring.Hydration"
 		, "Management.AdminTab"

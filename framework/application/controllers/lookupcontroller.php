@@ -2272,4 +2272,115 @@ where l1.MedID = '$EMedID'";
         $this->set("jsonRecord", $jsonRecord);
     }
 
+    function Locations() {
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $query = "select Lookup_ID as id, Name from Lookup where Lookup_Type=22";
+        $records = $this->LookUp->query($query);
+        $jsonRecord["total"] = count($records);
+        $jsonRecord["records"] = $records;
+        $this->set("jsonRecord", $jsonRecord);
+
+    }
+
+    function TemplateLocation($TemplateID) {
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $records = array();
+
+        if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
+error_log("Updating Template Location");
+
+            $tmp = json_decode(file_get_contents("php://input"));
+error_log(json_encode($tmp));
+            if(isset($tmp->LocationID)) {
+                $LocationID = $tmp->LocationID;
+error_log("Have New Location ID = $LocationID");
+                $query = "UPDATE Master_Template SET Location_ID = '$LocationID' WHERE Template_ID = '$TemplateID'";
+error_log("Query = $query");
+                $records = $this->LookUp->query($query);
+            }
+        }
+        $jsonRecord["total"] = count($records);
+        $jsonRecord["records"] = $records;
+        $this->set("jsonRecord", $jsonRecord);
+    }
+
+    function Template($EMedID = null) {
+        $DataType = 'EmeticMeds';
+        $msg = 'Emetic Meds';
+
+        $inputData = file_get_contents('php://input');
+        $post_vars = json_decode($inputData);
+        $jsonRecord = array();
+        $jsonRecord["success"] = true;
+        $tmpRecords = array();
+
+/* Note: The "Magic Number" 13 is the Type in the Lookup Table for the Emetic Levels (1-4) */
+        if ("GET" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID == null) {
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13";
+            }
+            else {
+                $query = "
+select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
+from EmeticMeds l1
+join LookUp l2 on l1.MedID = l2.Lookup_ID
+join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13
+where l1.MedID = '$EMedID'";
+            }
+            $records = $this->LookUp->query($query);
+            $msg = "Get ". $msg;
+            $tmpRecords = $records;
+        }
+
+        else if ("POST" == $_SERVER["REQUEST_METHOD"]) {
+            $EMedID = $this->LookUp->newGUID();
+            $records = $this->LookUp->setEmeticMedData($EMedID, $post_vars);
+            $msg = "Create ". $msg;
+            $Rec = array();
+            $Rec["id"] = $EMedID;
+            $tmpRecords[] = $Rec;
+        }
+        else if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID) {
+                $records = $this->LookUp->updateEmeticMedData($EMedID, $post_vars);
+                $msg = "Update ". $msg;
+                $Rec = array();
+                $Rec["id"] = $EMedID;
+                $tmpRecords[] = $Rec;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to update";
+            }
+        }
+        else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
+            if ($EMedID) {
+                $query = "delete from EmeticMeds where id='$EMedID'";
+                $records = $this->LookUp->query($query);
+                $msg = "Delete ". $msg;
+                $tmpRecords = $records;
+            }
+            else {
+                $records = array();
+                $records['error'] = "No Record ID for Record to delete";
+            }
+        }
+
+        if ($this->checkForErrors("$msg Emetic Meds Info Failed. ", $records)) {
+            $jsonRecord["success"] = "false";
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            $this->set("jsonRecord", $jsonRecord);
+            return;
+        } 
+        $jsonRecord["total"] = count($tmpRecords);
+        $jsonRecord["records"] = $tmpRecords;
+        $this->set("jsonRecord", $jsonRecord);
+    }
+
 }

@@ -30,17 +30,19 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		},
-		{ xtype : "Globals", title: "Global Variables"},
+		// { xtype : "Globals", title: "Global Variables"},
+			{ xtype : "LockoutTab", title: "Lockout"},
+/*
 		{ xtype : "tabpanel", title: "Access",
 			defaults: {
 				padding : "10 10 5 10"
 			},
 			items : [
-				{ xtype : "Users", title: "User Access"},
+				// { xtype : "Users", title: "User Access"},
 				{ xtype : "LockoutTab", title: "Lockout"}
 			]
 		},
-
+*/
 		{ xtype : "tabpanel", title: "Clinical Decision Support",
 			defaults: {
 				padding : "10 10 5 10"
