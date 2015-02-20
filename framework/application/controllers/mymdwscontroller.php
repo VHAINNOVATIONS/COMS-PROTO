@@ -354,6 +354,20 @@ class mymdwscontroller extends Controller
 
                 return ($name);
             } else {
+              // NODE Vista, this is the least intrusive way to do this
+              if($_SESSION['USE_NODE']){
+                $nodevista = new NodeVista();
+                $nvpatient = $nodevista->get('patient/lastfive/'.$value);
+                $mdwspatients = new Array();
+                $mdwspatients['count'] = 0;
+                if(isset($nvpatient)){
+                  $mdwspatients['patients'] = new Array();
+                  $mdwspatients['patients']['PatientTO'] = $nvpatient;
+                  $mdwspatients['count'] = 1;
+                }
+                // convert to mdws to object
+                $mdwspatients = (object) $mdwspatients;
+              }else{
                 $client = $this->mdwsBase->MDWS_Setup($roles);
 
                 if (null === $client) {
@@ -363,6 +377,8 @@ class mymdwscontroller extends Controller
                     return $jsonRecord;
                 }
                 $mdwspatients = $this->MDWSMatchPatient($client, $value);
+              }
+                
             ///var_dump($mdwspatients);
             }
 
@@ -381,8 +397,13 @@ class mymdwscontroller extends Controller
             $mdwspatient = $mdwspatients->patients->PatientTO;
             $this->_dfn = $mdwspatient->localPid;
         }
-
-        $mdwspatient = $this->MDWSSelectPatientByDFN($client, $this->_dfn);
+        if($_SESSION['USE_NODE']){
+            $nodevista = new NodeVista();
+            $mdwspatient = $nodevista->get('patient/'.$this->_dfn);
+        }else{
+            $mdwspatient = $this->MDWSSelectPatientByDFN($client, $this->_dfn);
+        }
+        
 
         if (null === $mdwspatient) {
             $jsonRecord['success'] = false;

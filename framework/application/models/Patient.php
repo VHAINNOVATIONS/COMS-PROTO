@@ -816,9 +816,20 @@ error_log("Patient.Model.updateOEMRecord - Loop - $query" );
             $middleName = $fullName[2];
         }
         
-        $year = substr($dob, 0, 4);
-        $month = substr($dob, 4, 2);
-        $day = substr($dob, 6, 2);
+        $year = null;
+        $month = null;
+        $day = null;
+        // date is in ISO-8601 format
+        if(strpos($dob, 'T') !== FALSE){
+          $date = strtotime($dob);
+          $year = date("Y", $date);
+          $month = date("M", $date);
+          $day = date("d", $date);
+        }else{
+          $year = substr($dob, 0, 4);
+          $month = substr($dob, 4, 2);
+          $day = substr($dob, 6, 2);
+        }
         
         $sqlDob = $month . "/" . $day . "/" . $year;
         
