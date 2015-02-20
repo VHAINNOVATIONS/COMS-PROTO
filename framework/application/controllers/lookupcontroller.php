@@ -2299,6 +2299,16 @@ error_log("Have New Location ID = $LocationID");
                 $query = "UPDATE Master_Template SET Location_ID = '$LocationID' WHERE Template_ID = '$TemplateID'";
 error_log("Query = $query");
                 $records = $this->LookUp->query($query);
+
+                if($tmp->NationalLevel) {
+                    $query = "UPDATE Template_Availability SET NationalLevel = 'Yes' WHERE TemplateID = '$TemplateID'";
+                }
+                else {
+                    $query = "UPDATE Template_Availability SET NationalLevel = 'No' WHERE TemplateID = '$TemplateID'";
+                }
+error_log("Query = $query");
+                $records = $this->LookUp->query($query);
+
             }
         }
         $jsonRecord["total"] = count($records);

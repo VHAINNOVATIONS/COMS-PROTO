@@ -72,7 +72,11 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 								Ext.MessageBox.alert("Information", "Please select a Location");
 								return;
 							}
-							var JSON_Data = {"LocationID" : Location, "ID" : recID };
+							var JSON_Data = {"LocationID" : Location, "ID" : recID, "NationalLevel" : false };
+							var aName = TemplateLocationStore.findRecord( "id", Location).getData().Name;
+							if ("National Templates" == aName) {
+								JSON_Data.NationalLevel = true;
+							}
 							this.PostedRecs.push(JSON_Data);
 						}
 						HandleResponse(null, null, this);	// Save the first record.

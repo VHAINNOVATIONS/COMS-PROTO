@@ -53,6 +53,18 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
 				,{ title : 'Template Promotion', items : [ {xtype : 'TemplatePromotionTab' }]}
+				,{ xtype : "tabpanel", title: "Reports",
+					defaults: {
+						padding : "10 10 5 10"
+					},
+					items : [
+						{ "xtype" : "Inventory" },
+						{ "xtype" : "PatternsOfCareTab", "title" : "Patterns of Care Determination", "closable" : false },
+						{ "xtype" : "tabpanel", "title" : "Lab Reports", "closable" : false, items : [
+							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
+						]}
+					]
+				}
 				,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
                 ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
 
@@ -65,6 +77,18 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
                 ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
+				,{ xtype : "tabpanel", title: "Reports",
+					defaults: {
+						padding : "10 10 5 10"
+					},
+					items : [
+						{ "xtype" : "Inventory" },
+						{ "xtype" : "PatternsOfCareTab", "title" : "Patterns of Care Determination", "closable" : false },
+						{ "xtype" : "tabpanel", "title" : "Lab Reports", "closable" : false, items : [
+							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
+						]}
+					]
+				}
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
@@ -73,6 +97,18 @@ Ext.define('COMS.view.NavigationTabs' ,{
                 { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
                 ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
                 ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
+				,{ xtype : "tabpanel", title: "Reports",
+					defaults: {
+						padding : "10 10 5 10"
+					},
+					items : [
+						{ "xtype" : "Inventory" },
+						{ "xtype" : "PatternsOfCareTab", "title" : "Patterns of Care Determination", "closable" : false },
+						{ "xtype" : "tabpanel", "title" : "Lab Reports", "closable" : false, items : [
+							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
+						]}
+					]
+				}
                 ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
