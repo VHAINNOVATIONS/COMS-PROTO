@@ -3110,7 +3110,7 @@ VALUES
  pdh.Disease_ID, 
  case when pdh.DiseaseStage_ID is null then null else pdh.DiseaseStage_ID end as Stage_ID,
  lu.name as Cancer,
- case when ds.Stage is null then '' else ds.Stage end, 
+ case when ds.Stage is null then '' else ds.Stage end as Stage, 
  p.Gender
  from PatientDiseaseHistory pdh
  join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
@@ -3133,22 +3133,27 @@ VALUES
             $retRec = array();
             $records = array();
             foreach($retVal as $aRecord) {
+				$aCancer = $aRecord["Cancer"];
+				if ($aRecord["Stage"] != "") {
+					$aCancer = $aCancer . " / " . $aRecord["Stage"];
+				}
+
                 // echo $aRecord["Gender"] . " - " . $aRecord["Cancer"] . "<br>";
                 if ("" == $Gender) {
                     $Gender = $aRecord["Gender"];
                     // reset and CountCancerType
-                    $Cancer = $aRecord["Cancer"];
+                    $Cancer = $aCancer;
                     $ThisCancer = 1;
                     // echo "Reset and CountCancerType 1<br>";
                 }
                 else if ($Gender == $aRecord["Gender"]) {
                     if ("" == $Cancer) {
                         // reset and CountCancerType
-                        $Cancer = $aRecord["Cancer"];
+						$Cancer = $aCancer;
                         $ThisCancer = 1;
                         // echo "Reset and CountCancerType 2<br>";
                     }
-                    else if ($Cancer == $aRecord["Cancer"]) {
+                    else if ($Cancer == $aCancer) {
                         // Count CancerType
                         $ThisCancer = $ThisCancer + 1;
                         // echo "CountCancerType (matching cancer)<br>";
@@ -3156,13 +3161,13 @@ VALUES
                     else {
                         // echo "Total up previous Cancers - $Gender; $Cancer; $ThisCancer<br>";
                         $retRec["Gender"] = $Gender;
-                        $retRec["Cancer"] = $Cancer;
+	                    $Cancer = $aCancer;
                         $retRec["count"] = $ThisCancer;
                         // echo json_encode($retRec) . "<br>";
                         $records[] = $retRec;
                         // echo json_encode($records) . "<br>";
                         // echo "Total Up CancerType 1<br>";
-                        $Cancer = $aRecord["Cancer"];
+                        $Cancer = $aCancer;
                         $ThisCancer = 1;
                     }
                 }
@@ -3171,13 +3176,23 @@ VALUES
                     // echo "End of Gender - $Gender; Switching Cancer from $Cancer<br>";
                     $Gender = $aRecord["Gender"];
                     // reset and CountCancerType
-                    $Cancer = $aRecord["Cancer"];
+                    $Cancer = $aCancer;
                     $ThisCancer = 1;
                 }
-            }
+
+
             $retRec["Gender"] = $Gender;
             $retRec["Cancer"] = $Cancer;
             $retRec["count"] = $ThisCancer;
+// echo "$Gender; $Cancer; $ThisCancer <br>\n";
+
+            }
+
+//			echo $Cancer . "<br>";
+            $retRec["Gender"] = $Gender;
+            $retRec["Cancer"] = $Cancer;
+            $retRec["count"] = $ThisCancer;
+//echo json_encode($retRec) . "<br>\n";
             $records[] = $retRec;
 //            echo "Total Up CancerType 2<br>";
 

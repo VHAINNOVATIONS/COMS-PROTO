@@ -21,6 +21,8 @@ var FSheet = function() {
 				renderTo: theBody,
 				store: new Ext.data.JsonStore({
 					autoLoad: true,
+					sortOnLoad: true,
+					sorters: { property : "Cancer", direction : "ASC" },
 					proxy: {
 						type: 'ajax',
 						url: this.FlowsheetServiceURL,
@@ -32,7 +34,7 @@ var FSheet = function() {
 					fields: ['Cancer', 'Gender', 'count']
 				}),
 				columns: [
-					{ text: 'Disease Type',  dataIndex: 'Cancer', flex : 1 },
+					{ text: 'Disease Type / Stage',  dataIndex: 'Cancer', flex : 1 },
 					{ text: 'Gender', dataIndex: 'Gender'},
 					{ text: 'Count', dataIndex: 'count' }
 				]
