@@ -194,6 +194,12 @@ class mymdwscontroller extends Controller
 
             $patient[0]['Amputations'] = $tmpAmputations;
 
+
+$nodevista = new NodeVista();
+$VPR = $nodevista->get("patient/details/" . $this->_dfn);
+$patient[0]['VPR'] = json_decode($VPR);
+
+
             /*
              * KD - 5/9/12 - New fields were added since the previous version referenced below
              *               $details[0]['Goal'] = '';
@@ -351,31 +357,33 @@ class mymdwscontroller extends Controller
 
             if (trim($Match) === $value) {
                 $this->_dfn = $DFNcoms;
-
                 return ($name);
             } else {
+                $client = $this->mdwsBase->MDWS_Setup($roles);
+                if (null === $client) {
+                    $jsonRecord['success'] = false;
+                    $jsonRecord['message'] = $this->mdwsBase->MDWSCrashed(true);
+                    return $jsonRecord;
+                }
+
               // NODE Vista, this is the least intrusive way to do this
               if($_SESSION['USE_NODE']){
                 $nodevista = new NodeVista();
-                $nvpatient = $nodevista->get('patient/lastfive/'.$value);
-                $mdwspatients = new Array();
+                $nvpatient = json_decode($nodevista->get("patient/lastfive/$value"), true);
+                $nvpatient = $nvpatient[0];
+
+                $mdwspatients = array();
                 $mdwspatients['count'] = 0;
                 if(isset($nvpatient)){
-                  $mdwspatients['patients'] = new Array();
-                  $mdwspatients['patients']['PatientTO'] = $nvpatient;
+                  $mdwspatients['UseNode'] = "true";
+                  $mdwspatients['patients'] = new stdClass();
+                  $mdwspatients['patients']->PatientTO = (object)$nvpatient;
                   $mdwspatients['count'] = 1;
                 }
                 // convert to mdws to object
                 $mdwspatients = (object) $mdwspatients;
               }else{
-                $client = $this->mdwsBase->MDWS_Setup($roles);
 
-                if (null === $client) {
-                    $jsonRecord['success'] = false;
-                    $jsonRecord['message'] = $this->mdwsBase->MDWSCrashed(true);
-
-                    return $jsonRecord;
-                }
                 $mdwspatients = $this->MDWSMatchPatient($client, $value);
               }
                 
@@ -399,7 +407,7 @@ class mymdwscontroller extends Controller
         }
         if($_SESSION['USE_NODE']){
             $nodevista = new NodeVista();
-            $mdwspatient = $nodevista->get('patient/'.$this->_dfn);
+            $mdwspatient = json_decode($nodevista->get('patient/'.$this->_dfn));
         }else{
             $mdwspatient = $this->MDWSSelectPatientByDFN($client, $this->_dfn);
         }

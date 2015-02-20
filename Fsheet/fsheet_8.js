@@ -126,26 +126,26 @@ var FSheet = function() {
 				columns: theColumns
 			});
 		},
-		MakeDRPanel : function(theData) {
+		MakeDRPanel : function() {
 			var theBody = Ext.get("DRPanel");
 			this.DRPanel = Ext.create("Ext.panel.Panel", {
 				"title" : "Disease Response",
 				"name" : "DiseaseResponsePanel",
-				"collapsible" : true, 
-				"collapsed" : true, 
+//				"collapsible" : true, 
+//				"collapsed" : true, 
 				"margin" : "0 0 10 0", 
 				"bodyPadding" : "10",
 				"autoEl" : { "tag" : "section" },
 				"cls" : "Tab", 
 				renderTo: theBody,
 				"tpl" : new Ext.XTemplate(
-					"<tpl for=\"records\">",
-						"{[this.debuggerFcn( values, parent )]}",
+				"{[this.debuggerFcn( values, parent )]}",
+				"<tpl for=\".\">",
 						"<tpl if=\"Disease_Response != ''\">",
 							"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"DRPanel-{AdminDate}-{xindex}\">",
 							"	<thead><tr><th><a name=\"DR_{AdminDate}\" id=\"DR_{AdminDate}\">Disease Response for date - {AdminDate}</a></th></tr></thead>",
 							"	<tr><td>{Disease_Response}</td></tr>",
-							"</table>",
+							"</table><br>",
 						"</tpl>",
 					"</tpl>",
 					{
@@ -154,7 +154,7 @@ var FSheet = function() {
 							return Ext.util.Format.htmlDecode(data);
 						},
 						debuggerFcn : function(v, p) {
-							debugger;
+							// debugger;
 						}
 					}
 				)
@@ -166,8 +166,8 @@ var FSheet = function() {
 			this.THPanel = Ext.create("Ext.panel.Panel", {
 				"title" : "Toxicity History",
 				"name" : "FS_ToxicityHistory",
-				"collapsible" : true, 
-				"collapsed" : true, 
+//				"collapsible" : true, 
+//				"collapsed" : true, 
 				"margin" : "0 0 10 0", 
 				"bodyPadding" : "10",
 				renderTo: theBody,
@@ -183,21 +183,18 @@ var FSheet = function() {
 						disableFormats: true,
 						renderSection : function ( current ) {
 							var buf = "";
-							if (current.type == "Assessment") {
-								buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - " + current.date + "</th></tr>";
-								if (current.Link.Alert) {
-									buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + current.Link.Label + " - Flagged as an ALERT</th></tr>";
-								}
-								buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + current.Link.Label + "</td></tr>";
-								buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Link.Grade_Level + "</td></tr>";
-								buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Link.Details + "</td></tr>";
-								buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Link.Comments + "</td></tr>";
-								return buf;
+							buf = "<tr><th colspan=\"2\" style=\"text-align: center;\">Assessment - " + current.tDate + "</th></tr>";
+							if (current.Alert) {
+								buf += "<tr><th colspan=\"2\" style=\"text-align: center;color:red;\" class=\"alert\">" + current.Label + " - Flagged as an ALERT</th></tr>";
 							}
-							return "";
+							buf += "<tr><th style=\"width: 9em;\">Event:</th><td>" + current.Label + "</td></tr>";
+							buf += "<tr><th style=\"width: 9em;\">Grade:</th><td>" + current.Grade_Level + "</td></tr>";
+							buf += "<tr><th style=\"width: 9em;\">Details:</th><td>" + current.Details + "</td></tr>";
+							buf += "<tr><th style=\"width: 9em;\">Comments:</th><td>" + current.Comments + "</td></tr>";
+							return buf;
 						},
 						debuggerFcn : function ( current, prev ) {
-							debugger;
+							// debugger;
 						}
 					}
 				)
@@ -208,8 +205,8 @@ var FSheet = function() {
 			this.OIPanel = Ext.create("Ext.panel.Panel", {
 				"title" : "Additional General Information",
 				"name" : "OtherInfoPanel",
-				"collapsible" : true, 
-				"collapsed" : true, 
+//				"collapsible" : true, 
+//				"collapsed" : true, 
 				"margin" : "0 0 10 0", 
 				"bodyPadding" : "10",
 				"autoEl" : { "tag" : "section" },
@@ -217,12 +214,12 @@ var FSheet = function() {
 				renderTo: theBody,
 				"tpl" : new Ext.XTemplate(
 					"{[this.debuggerFcn( values )]}",
-					"<tpl for=\"records\">",
+					"<tpl for=\".\">",
 						"<tpl if=\"Other != ''\">",
 							"<table border=\"1\" width=\"100%\" class=\"FlowsheetTable\" id=\"OIPanel-{AdminDate}-{xindex}\">",
 							"	<thead><tr><th><a name=\"OI_{AdminDate}\" id=\"OI_{AdminDate}\">Other Information for date - {AdminDate}</a></th></tr></thead>",
 							"	<tr><td>{[this.formatData(values.Other, xindex)]}</td></tr>",
-							"</table>",
+							"</table><br>",
 						"</tpl>",
 					"</tpl>",
 					{
@@ -231,7 +228,7 @@ var FSheet = function() {
 							return Ext.util.Format.htmlDecode(data);
 						},
 						debuggerFcn : function ( current, prev ) {
-							debugger;
+							// debugger;
 						}
 					}
 				)
@@ -285,12 +282,13 @@ var FSheet = function() {
 				success : function( response ){
 					var theResponse = Ext.JSON.decode(response.responseText);
 					this.OIPanelData = theResponse.records;
-					debugger;
-					this.PanelData = [this.DRPanelData,this.OIPanelData];
+					var Assessments = this.DRPanelData.Assessments;
+					var ReactAssessments = this.DRPanelData.ReactAssessments;
+					var DiseaseResponse = this.OIPanelData;
 
-					this.THPanel.update(this.PanelData);
-					this.DRPanel.update(this.PanelData);
-					this.OIPanel.update(this.PanelData);
+					this.THPanel.update(Assessments);
+					this.DRPanel.update(DiseaseResponse);
+					this.OIPanel.update(DiseaseResponse);
 					Ext.getBody().unmask();
 				},
 

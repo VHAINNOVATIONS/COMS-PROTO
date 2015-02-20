@@ -56,10 +56,8 @@ class NodeVista{
       
       // if result is json, Decode and send it back
       $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
-      if(strpos($contentType, 'json') !== FALSE)
-        $result = json_decode($result);
-      
       curl_close($curl);
+
 
       return $result;
   }

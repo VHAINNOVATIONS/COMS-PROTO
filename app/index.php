@@ -2,7 +2,9 @@
     $FirstLogin = null;
     $LastLogin  = null;
     $AccessCode = null;
-    
+
+
+     $_SESSION[ 'USE_NODE' ] = "Test";
 
 
     $mwbTemp = "Unknown URI";
@@ -226,6 +228,7 @@
                     $point      = "Logged In";
                     //		PostTrack($_SESSION['ruser'],$_SESSION['AC'],$point,3,$_SESSION['sessionid']);
                     // Adjust the if statement below when new classes/controllers are added to the framework
+                    $_SESSION[ 'USE_NODE' ] = true;
                     if ( "Patient"             === $ClassName || 
                          "LookUp"              === $ClassName || 
                          "NursingDoc"          === $ClassName || 

@@ -791,9 +791,6 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
                 Infusion_Time='$infusiontime'
                 where Infusion_ID ='" .$infusionRecord[$index]['Infusion_ID'] . "'";
                 $retVal = $this->query($query);
-
-error_log("Patient.Model.updateOEMRecord - Loop - $query" );
-
                 if (null != $retVal && array_key_exists('error', $retVal)) {
                     return $retVal;
                 }
@@ -803,12 +800,12 @@ error_log("Patient.Model.updateOEMRecord - Loop - $query" );
 
     function addNewPatient ($patient, $value, $GUID)
     {
+        error_log("Patient - " . $patient->name);
         $fullName = explode(',', $patient->name);
         $gender = $patient->gender;
         $dob = $patient->dob;
         $dfn = $patient->localPid;
-        
-		
+
         $lastName = $fullName[0];
         $firstName = $fullName[1];
         
@@ -823,7 +820,7 @@ error_log("Patient.Model.updateOEMRecord - Loop - $query" );
         if(strpos($dob, 'T') !== FALSE){
           $date = strtotime($dob);
           $year = date("Y", $date);
-          $month = date("M", $date);
+          $month = date("m", $date);
           $day = date("d", $date);
         }else{
           $year = substr($dob, 0, 4);
