@@ -241,18 +241,23 @@ var FSheet = function() {
 				scope : this,
 				url : URL,
 				success : function( response ){
-					this.getDRData();
 					var theResponse = Ext.JSON.decode(response.responseText);
 					var theData = theResponse.records;
-					var theColumns = this.createColumns(theData);
-					var aStore = this.createStore(theData);
-					this.makeGrid(aStore, theColumns);
 					Ext.getBody().unmask();
+					if (theResponse.success) {
+						this.getDRData();
+						var theColumns = this.createColumns(theData);
+						var aStore = this.createStore(theData);
+						this.makeGrid(aStore, theColumns);
+					}
+					else {
+						Ext.MessageBox.alert("Flowsheet Load Failed", theResponse.msg );
+					}
 				},
 
 				failure : function(  ) {
 					Ext.getBody().unmask();
-					alert("Attempt to load latest treatment data failed.");
+					alert("Attempt to load Flowsheet data failed.");
 				}
 			})
 		},
