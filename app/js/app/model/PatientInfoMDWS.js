@@ -38,22 +38,27 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 	fields: [
 		"id",
 		"name",
-		"DOB",
-		"Gender",
-		"Age",
+			"DOB",
+			"Gender",
+			"Age",
 		// "Measurements",		// Array of measurements
-		"DFN",				// Data File Name which links to MDWS
+			"DFN",				// Data File Name which links to MDWS
 		"Disease",			// Array of diseases
 
-		"TemplateName",		// Info on the currently active template
-		"TemplateDescription",
-		"TemplateID",
-		"TreatmentStart",
-        "TreatmentEnd",
-		"TreatmentStatus",
+			"TemplateName",		// Info on the currently active template
+			"TemplateDescription",
+			"TemplateID",
+			"TreatmentStart",
+			"TreatmentEnd",
+			"TreatmentStatus",
 
-		"Amputations",
-		"message"			// Used in case an error message is returned from the framework
+			"Amputations",
+		"message",			// Used in case an error message is returned from the framework
+			"VPR",		// Consider this as a string even though it's really a JSON Object from VistA - MWB - 2/24/2015
+			"BSAFormula",
+			"ClinicalTrial",
+			"Goal",
+			"PerformanceStatus",
 	],
 
 	hasMany : [
