@@ -2112,14 +2112,18 @@ console.log("Loading Orders - Finished");
 		 */
 
 // wccConsoleLog("Loading Patient Records");
-		this.Modules2Load.push({func : this.loadMDWSData, name : "LoadMDWSData"});
-		this.Modules2Load.push({func : this.loadLabInfo, name : "loadLabInfo"});
 		this.Modules2Load.push({func : this.loadAllergyInfo, name : "loadAllergyInfo"});
-		this.Modules2Load.push({func : this.loadVitals, name : "loadVitals - Vitals"});
-		this.Modules2Load.push({func : this.loadTemplates, name : "loadTemplates - Templates"});
-		this.Modules2Load.push({func : this.loadAllTemplatesApplied2Patient, name : "loadAllTemplatesApplied2Patient - PatientSelected"});
+		this.Modules2Load.push({func : this.loadLabInfo, name : "loadLabInfo"});
+		this.Modules2Load.push({func : this.loadMDWSData, name : "LoadMDWSData"});
+
 		this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 		this.Modules2Load.push({func : this.loadCumulativeMedDosing, name : "loadCumulativeMedDosing"});
+
+		this.Modules2Load.push({func : this.loadAllTemplatesApplied2Patient, name : "loadAllTemplatesApplied2Patient - PatientSelected"});
+		this.Modules2Load.push({func : this.loadTemplates, name : "loadTemplates - Templates"});
+		this.Modules2Load.push({func : this.loadVitals, name : "loadVitals - Vitals"});
+
+
 
 			/**
 		this.loadMDWSData();					// module 1

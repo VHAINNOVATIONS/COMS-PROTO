@@ -89,6 +89,7 @@
     echo "var Page2Open = '$page2Open';\n";
     echo "var theJSPath = '$Version/';\n";
     echo "var dName = '" . $_SESSION[ 'dname' ] . "';\n";
+    echo "var siteid = '$sitelist';\n";     // Needed for posting to VistA
     echo "var session_ID = '" . $_SESSION[ "sessionid" ] . "';\n";
     /* Unique Session ID */
     echo "var User_ID = '" . $_SESSION[ "Role_ID" ] . "';\n";
