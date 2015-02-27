@@ -38,6 +38,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		,"NewPlan.PatientTemplates"
 		,"NewPlan.PatientHistory"
 		,"NewPlan.LabInfo"
+		,"NewPlan.KnownProblems"
 		,"NewPlan.OEM"
 		,"NewPlan.AdverseEventsHistory"
 
@@ -103,6 +104,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientTemplates",				selector: "NewPlanTab PatientInfo PatientTemplates"},
 		{ ref: "PatientHistory",				selector: "NewPlanTab PatientInfo PatientHistory"},
 		{ ref: "LaboratoryInfo",				selector: "NewPlanTab PatientInfo LabInfo"},
+		{ ref: "KnownProblems",					selector: "NewPlanTab PatientInfo KnownProblems"},
 
 		{ ref: "CTOSDataDsp",					selector: "NewPlanTab PatientInfo CTOS dspTemplateData"},
 
@@ -191,6 +193,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo LabInfo" : {
+                afterrender: Ext.togglePanelOnTitleBarClick
+            },
+            "NewPlanTab PatientInfo KnownProblems" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo AdverseEventsHistory" : {
@@ -311,7 +316,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		VitalsPanel.setTitle(buf);
 	},
 
-	resetLabInfoPanelPanel: function(thisCtl, numLabResults) {
+	resetLabInfoPanelPanelTitleBar: function(thisCtl, numLabResults) {
 		var LabInfoPanel = thisCtl.getLaboratoryInfo(),
 			buf =  "Laboratory Information ";
 		if (numLabResults && "" !== numLabResults) {
@@ -344,7 +349,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.resetPatientInfoPanel(thisCtl);
 		this.resetTRSPanel(thisCtl, numTemplates);
 		this.resetVitalsPanel(thisCtl, numVitals);
-		this.resetLabInfoPanelPanel(thisCtl, numLabResults);
+		this.resetLabInfoPanelPanelTitleBar(thisCtl, numLabResults);
 		this.resetCTOSPanel(thisCtl);
 		this.getWhat2DoBtns().hide();
 	},
@@ -1047,6 +1052,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.loadTemplates("Templates");					// module 5
                 this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
 				this.loadOrderRecords();				// module 6
+console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
                 if (this.application.Patient.TemplateID) {
                     this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
                 }
@@ -1452,43 +1458,6 @@ console.log("Loading Cumulative Med Dosing - Start");
 		console.log("Loading Lab Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadLabInfo PASS");
 		this.PatientDataLoadComplete("Lab Info");
-
-/***************************
-        var liModel = this.getModel("LabInfo");
-		var theStore = Ext.getStore("LabInfo");
-		var prox = liModel.proxy;
-		var uri = prox.url;
-		theStore.proxy.url = uri + "/" + this.application.Patient.id;
-		theStore.groupField = "specimen";
-
-		theStore.load( {
-            scope : this,
-			callback: function(records, operation, success) {
-// wccConsoleLog("LabInfo Model - Load Complete");
-console.log("Loading Lab Data - Finished");
-				var thisCtl, LaboratoryInfo, tmp, len;
-				if (success) {
-	                wccConsoleLog("Laboratory Info Loaded - Processing");
-					this.application.Patient.History = records;
-
-						//------------------
-						//
-						// Grabbing Serum Creatinine (for AUC Calculations) needed data from Labs on loading.
-						//
-						//
-
-
-						// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-					this.DataLoadCountDecrement("loadLabInfo PASS");
-					this.PatientDataLoadComplete("Lab Info");
-				}
-				else {
-	                this.DataLoadCountDecrement("loadLabInfo FAIL");
-					this.PatientDataLoadComplete("Lab Info - FAILED Loading");
-				}
-		    }
-		});
-***************/
     },
 
 
@@ -1500,208 +1469,231 @@ console.log("Loading Lab Data - Finished");
 
 
 
+	convertVPR : {
+		Allergies : [],
+		Vitals : [],
+		Labs : [],
+		Problems : [],
+		vHeight : "",
+		vWeight : "",
+		vIdx : "",
+		aIdx : "",
+		lIdx : "",
+		pIdx : "",
+		theVPRData : {},
 
+		extractDate : function(aDate) {
+			aDate = String(aDate);
+			return (aDate.substring(4,6) + "/" + aDate.substring(6,8) + "/" + aDate.substring(0,4));
+		},
 
-	convertVPR2Vitals : function (vData) {
-		var rec, typeUID, nIdx, typeName, idx = "", i, len = vData.length;
-		var Vitals = [], vHeight = "", vWeight = "";
-
-	/*****
-	Age: 79
-	BP: "120/78"
-	DateTaken: "02/05/2015"
-	Gender: "M"
-	Height: "60"
-	Pain: "1"
-	Pulse: "62"
-	Respiration: "18"
-	Temperature: "98.6"
-	TemperatureLocation: "Axillary"
-	Weight: "220"
-
-	"displayName": "BP", - BP - result
-	"displayName": "P", - Pulse - result
-	"displayName": "PN", - Pain - result
-	"displayName": "R", - Resp - result
-	"displayName": "T", - Temp - result
-		"units": "F" - if units = C then convert to F
-		"qualifiers": [
-			{
-				"name": "ORAL", - TemperatureLocation
-				"vuid": 4500642
+		ConvertAssocArray : function(theData) {
+			var key, newData = [];
+			for (key in theData) {
+				if (theData.hasOwnProperty(key)) {
+					// theData.date = key;
+					newData.push(theData[key]);
+				}
 			}
-		],
+			return newData;
+		},
 
-	"displayName": "WT", - result
-		"units": "lb" - if units = kg then convert to lb
-	"displayName": "HT", - result
-		"units": "in" - if units = m/cm then convert to in
+		extractAllergies : function(vDataRec) {
+			var typeUID;
+			if (vDataRec.uid) {
+				typeUID = vDataRec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
+				if ("allergy" === typeUID.toLowerCase()) {
+					this.Allergies.push({name: vDataRec.products[0].name, reaction : vDataRec.reactions[0].name });
+					return true;
+				}
+			}
+			return false;
+		},
 
+		extractLabs : function(rec) {
+			var thisLab = { name : "", comment : "", result : "", sample : "", specimen : "", units : ""}, typeUID, nIdx, DateTaken;
+			if (rec.uid) {
+				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
+				if ("lab" === typeUID.toLowerCase()) {
+					nIdx = rec.observed.toString();
+					DateTaken = this.extractDate(nIdx);
+					thisLab.date = DateTaken;
 
-	 *****/
-	/***********************
-	Age: 79
-	BP: "120/78"
-	BSA: "2.05"
-	BSA_Method: "Mosteller"
-	BSA_Weight: "100.24"
-	Cycle: ""
-	DateTaken: "02/05/2015"
-	Day: ""
-	Gender: "M"
-	Height: "60"
-	PS: "No Change"
-	PSID: "N/C"
-	Pain: "1"
-	Pulse: "62"
-	Respiration: "18"
-	SPO2: "99"
-	Temperature: "98.6"
-	TemperatureLocation: "Axillary"
-	Weight: "220"
-	WeightFormula: "Actual Weight"
-	 ***********************/
+					if (rec.typeName) {
+						thisLab.name = rec.typeName;
+					}
+					if (rec.comment) {
+						thisLab.comment = rec.comment;
+					}
+					if (rec.result) {
+						thisLab.result = rec.result;
+					}
+					if (rec.sample) {
+						thisLab.sample = rec.sample;
+					}
+					if (rec.specimen) {
+						thisLab.specimen = rec.specimen;
+					}
+					if (rec.units) {
+						thisLab.units = rec.units;
+					}
+					this.Labs.push(thisLab);
+				}
+			}
+		},
 
-		for (i = 0; i < len; i++) {
-			if (vData[i].kind) {
-				rec = vData[i];
+		extractProblems : function(rec) {
+			var thisProblem = {}, DateEntered = "", DateUpdated = "", DateOfOnset = "", Problem = "", serviceConnected = "No", statusName = "", unverified = "";
+			if (rec.uid) {
+				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
+				if ("problem" === typeUID.toLowerCase()) {
+					if (rec.entered) {
+						DateEntered = this.extractDate(rec.entered);
+					}
+					if (rec.onset) {
+						DateOfOnset = this.extractDate(rec.onset);
+					}
+					if (rec.updated) {
+						DateUpdated = this.extractDate(rec.updated);
+					}
+					if (rec.problemText) {
+						Problem = rec.problemText;
+					}
+					if (rec.serviceConnected) {
+						serviceConnected = "Yes";
+					}
+					if (rec.statusName) {
+						statusName = rec.statusName;
+					}
+					if (rec.unverified) {
+						unverified = rec.unverified;
+					}
+					thisProblem.DateEntered = DateEntered;
+					thisProblem.DateOfOnset = DateOfOnset;
+					thisProblem.DateUpdated = DateUpdated;
+					thisProblem.Problem = Problem;
+					thisProblem.serviceConnected = serviceConnected;
+					thisProblem.statusName = statusName;
+					thisProblem.unverified = unverified;
+					this.Problems.push(thisProblem);
+				}
+			}
+		},
+
+		extractVitals : function(rec) {
+			var typeUID, nIdx, typeName, data, DateTaken;
+			if (rec.uid) {
 				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
 				if ("vital" === typeUID.toLowerCase()) {
+		// console.log("Tracking Vital - " + rec.typeName);
 					nIdx = rec.observed.toString();
-					if (idx !== nIdx) {
-						idx = nIdx;
-						Vitals[idx] = {};
+					if (this.vIdx !== nIdx) {
+						this.vIdx = nIdx;
+						DateTaken = this.extractDate(nIdx);
+		// console.log("Tracking Vital for " + DateTaken);
+						this.Vitals[this.vIdx] = {DateTaken : DateTaken};
 					}
 					switch (rec.typeName) {
 					case "BLOOD PRESSURE":
 						data = "BP";
-						// units = "B_Units";
 						break;
 					case "PULSE":
 						data = "Pulse";
-						// units = "Pulse_Units";
 						break;
 					case "PAIN":
 						data = "Pain";
-						// units = "Pain_Units";
 						break;
 					case "RESPIRATION":
 						data = "Respiration";
-						// units = "Respiration_Units";
 						break;
 					case "TEMPERATURE":
 						data = "Temperature";
 						units = "Temperature_Units";
-						Vitals[idx][units] = rec.units;
+						this.Vitals[this.vIdx][units] = rec.units;
 						if ("c" == rec.units) {
 							// convert to F
 						}
 						loc = "TemperatureLocation";
-						Vitals[idx][loc] = rec.qualifiers[0].name;
+						if (rec.qualifiers) {
+							this.Vitals[this.vIdx][loc] = rec.qualifiers[0].name;
+						}
 						break;
 					case "WEIGHT":
 						data = "Weight";
 						units = "Weight_Units";
-						Vitals[idx][units] = rec.units;
+						this.Vitals[this.vIdx][units] = rec.units;
 						if ("kg" == rec.units) {
 							// convert to lbs
 						}
-						if ("" === vWeight) {
-							vWeight = rec.result;
+						if (this.application && this.application.Patient) {
+							if ("" === this.application.Patient.Weight) {
+								this.application.Patient.Weight = rec.result;
+							}
 						}
 						break;
 					case "HEIGHT":
 						data = "Height";
 						units = "Height_Units";
-						Vitals[idx][units] = rec.units;
+						this.Vitals[this.vIdx][units] = rec.units;
 						if ("cm" == rec.units) {
 							// convert to inches
 						}
 						if ("m" == rec.units) {
 							// convert to inches
 						}
-						if ("" === vHeight) {
-							vWeight = rec.result;
+						if (this.application && this.application.Patient) {
+							if ("" === this.application.Patient.Height) {
+								this.application.Patient.Height = rec.result;
+							}
 						}
 						break;
 					default:
 						data = rec.typeName;
 						break;
 					}
-					Vitals[idx][data] = rec.result;
+					this.Vitals[this.vIdx][data] = rec.result;
+					return true;
 				}
 			}
-		}
-		var DateTaken, key, x, vEntry, VitalsConverted = [];
+			return false;
+		},
 
-		for (key in Vitals) {
-			if(Vitals.hasOwnProperty(key)){
-				DateTaken = key.substring(4,6) + "/" + key.substring(6,8) + "/" + key.substring(0,4);
-				x = Vitals[key];
-				vEntry = x;
-				vEntry.DateTaken = DateTaken;
-				VitalsConverted.push(vEntry);
+		parseVPR : function (vData) {
+			var rec, i, len = vData.length;
+			var flg;
+
+			for (i = 0; i < len; i++) {
+				rec = vData[i];
+				flg = this.extractVitals(rec);
+				if (!flg) {
+					flg = this.extractAllergies(rec);
+					if (!flg) {
+						theLabs = this.extractLabs(rec);
+						if (!flg) {
+							flg = this.extractProblems(rec);
+						}
+					}
+				}
 			}
+			// Convert vitals from associative array
+			var theVitals = this.ConvertAssocArray(this.Vitals);
+
+			theVPRData = { Allergies : this.Allergies, Vitals : theVitals, Labs : this.Labs, Problems : this.Problems };
+			return theVPRData;
 		}
-		this.application.Patient.Height = vHeight;
-		this.application.Patient.Weight = vWeight;
-		return VitalsConverted;
 	},
 
-
 	loadVitals : function(RetCode) {
-		// debugger;
-		var VPR = this.application.TempPatient.VPR.data.items;
-		this.application.Patient.Vitals = this.convertVPR2Vitals (VPR);
+		this.application.Patient.Vitals = this.application.Patient.ParsedVPR.Vitals;
 console.log("Loading Vitals - Start");
 
-//						this.application.Patient.Vitals = rawData.records;
-//						this.application.Patient.Height = vHeight;
-//						this.application.Patient.Weight = vWeight;
+				this.DataLoadCountDecrement("loadVitals PASS");
+				this.PatientDataLoadComplete(RetCode);
 
 
 
-//				this.DataLoadCountDecrement("loadVitals PASS");
-//				this.PatientDataLoadComplete(RetCode);
 
-
-/*****
-Age: 79
-BP: "120/78"
-DateTaken: "02/05/2015"
-Gender: "M"
-Height: "60"
-Pain: "1"
-Pulse: "62"
-Respiration: "18"
-Temperature: "98.6"
-TemperatureLocation: "Axillary"
-Weight: "220"
-
- *****/
-/***********************
-Age: 79
-BP: "120/78"
-BSA: "2.05"
-BSA_Method: "Mosteller"
-BSA_Weight: "100.24"
-Cycle: ""
-DateTaken: "02/05/2015"
-Day: ""
-Gender: "M"
-Height: "60"
-PS: "No Change"
-PSID: "N/C"
-Pain: "1"
-Pulse: "62"
-Respiration: "18"
-SPO2: "99"
-Temperature: "98.6"
-TemperatureLocation: "Axillary"
-Weight: "220"
-WeightFormula: "Actual Weight"
- ***********************/
- /**/
+/**
         var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
         pVitalsModel.load(pVitalsModelParam, {
             scope : this,
@@ -1806,7 +1798,7 @@ console.log("Loading Vitals - Finished");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
             }
         });
- /***************/
+ ***************/
 	},
 
 
@@ -1969,6 +1961,104 @@ console.log("Loading Templates - Finished");
 			}
 		});
 	},
+
+	manageOrderRecordsAfterLoading : function(OEMRecords) {
+
+			// If BSA_Dose is empty then calculate it for each record and save that record back.
+			// BUT we need to calculate the BSA value and BSA_Weight before we load the records...
+			// Then walk through theData.OEMRecords;
+			var a, b, c, aRec, bRec, bRecUnits, calcDose, updateRecord = false, tmpDose, Dose, Units,
+				theRecords, oRecLen,
+				tRecords, oTherapyLen;
+
+//			if (this.application.Patient && this.application.Patient.OEMRecords && this.application.Patient.OEMRecords.OEMRecords) {
+//				theRecords = this.application.Patient.OEMRecords.OEMRecords;
+				theRecords = OEMRecords;
+				oRecLen = theRecords.length;
+				for (a = 0; a < oRecLen; a++) {
+					aRec = theRecords[a];
+					if (aRec.Therapy) {
+						oTherapyLen = aRec.Therapy.length;
+						for (b = 0; b < oTherapyLen; b++) {
+							bRec = aRec.Therapy[b];
+							bRecUnits = bRec.DoseUnits.toUpperCase();
+							calcDose = false;
+
+							if (bRecUnits.search("M2") > 0 || bRecUnits.search("KG") > 0 || bRecUnits.search("AUC") >= 0 ) {
+								calcDose = true;
+							}
+
+							if (calcDose) {
+								if ("" === bRec.BSA_Dose || "NaN mg" === bRec.BSA_Dose) {
+									if (bRecUnits.search("M2") > 0) {
+										Dose = bRec.Dose * Patient.BSA;
+										Dose = Ext.GeneralRounding2Digits(Dose);
+										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
+										bRec.BSA_Dose = Dose + " " + Units;
+										updateRecord = true;
+									}
+									else if	(bRecUnits.search("KG") > 0) {
+										Dose = bRec.Dose * Patient.BSA_Weight;
+										Dose = Ext.GeneralRounding2Digits(Dose);
+										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
+										bRec.BSA_Dose = Dose + " " + Units;
+										updateRecord = true;
+									}
+									else if (bRecUnits.search("AUC") >= 0) {
+										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
+										bRec.BSA_Dose = Dose;
+										updateRecord = true;
+									}
+								}
+								else {
+									// MWB - 7/12/2012 - Fix to update Dosage Calculations every time patient info is loaded.
+									// DO NOT IMPLEMENT until further notice...
+									// Implement as per SIC's e-mail - 7/12/2012 08:56 AM
+
+									if (bRecUnits.search("M2") > 0) {
+										Dose = bRec.Dose * Patient.BSA;
+										Dose = Ext.GeneralRounding2Digits(Dose);
+										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
+										tmpDose = Dose + " " + Units;
+										if (tmpDose != bRec.BSA_Dose) {
+											bRec.BSA_Dose = tmpDose;
+											updateRecord = true;
+										}
+									}
+									else if	(bRecUnits.search("KG") > 0) {
+										Dose = bRec.Dose * Patient.BSA_Weight;
+										Dose = Ext.GeneralRounding2Digits(Dose);
+										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
+										tmpDose = Dose + " " + Units;
+										if (tmpDose != bRec.BSA_Dose) {
+											bRec.BSA_Dose = tmpDose;
+											updateRecord = true;
+										}
+									}
+									else if (bRecUnits.search("AUC") >= 0) {
+										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
+										tmpDose = Dose;
+										if (tmpDose != bRec.BSA_Dose) {
+											bRec.BSA_Dose = tmpDose;
+											updateRecord = true;
+										}
+									}
+
+								}
+							}
+						}
+					}
+					else {
+						oTherapyLen = aRec.Therapy.length;
+						for (b = 0; b < oTherapyLen; b++) {
+							bRec = aRec.Therapy[b];
+							this.UpdateOEMRecords(aRec, bRec);
+						}
+					}
+				}
+//			}
+	},
+
 	loadOrderRecords : function( ) {
 console.log("Loading Orders - Start");
 		var PatientID = this.application.Patient.id;
@@ -1987,6 +2077,7 @@ console.log("Loading Orders - Finished");
 					this.application.Patient.OEMRecords = theData;
 					this.getEmoLevelInfo(theData.ELevelName);
 					this.getFNRiskInfo(theData.FNRisk);
+					this.manageOrderRecordsAfterLoading(theData);
 
 				}
 				catch (err) {
@@ -1996,22 +2087,22 @@ console.log("Loading Orders - Finished");
 					wccConsoleLog(err.message + " @ Line# " + err.lineNo);
 				}
 
-				this.DataLoadCountDecrement("loadOrderRecords PASS");
-				this.PatientDataLoadComplete("OEM Records");
+//				this.DataLoadCountDecrement("loadOrderRecords PASS");
+//				this.PatientDataLoadComplete("OEM Records");
 
-				if (this.application.DataLoadCount <= 0) {
-					PatientInfo = this.application.Patient;
-					PatientInfo.OEMDataRendered = false;
-					this.application.fireEvent("DisplayOEMData", PatientInfo);
-				}
+//				if (this.application.DataLoadCount <= 0) {
+//					PatientInfo = this.application.Patient;
+//					PatientInfo.OEMDataRendered = false;
+//					this.application.fireEvent("DisplayOEMData", PatientInfo);
+//				}
 
 
 			},
 			failure: function (err) {
 				wccConsoleLog("Template Data failed to load properly");
 				// alert("Warning - No Order Information available for Patient " + this.application.Patient.name);
-				this.DataLoadCountDecrement("loadOrderRecords FAIL");
-				this.PatientDataLoadComplete("Templates - Failed to load");
+//				this.DataLoadCountDecrement("loadOrderRecords FAIL");
+//				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
 	},
@@ -2047,6 +2138,7 @@ console.log("Loading Orders - Finished");
 
 
 		this.application.Patient = piData;
+		this.application.Patient.ParsedVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
 
 		// Get a handle to the frameset itself
         var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -2112,11 +2204,11 @@ console.log("Loading Orders - Finished");
 		 */
 
 // wccConsoleLog("Loading Patient Records");
+		// this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 		this.Modules2Load.push({func : this.loadAllergyInfo, name : "loadAllergyInfo"});
 		this.Modules2Load.push({func : this.loadLabInfo, name : "loadLabInfo"});
 		this.Modules2Load.push({func : this.loadMDWSData, name : "LoadMDWSData"});
 
-		this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 		this.Modules2Load.push({func : this.loadCumulativeMedDosing, name : "loadCumulativeMedDosing"});
 
 		this.Modules2Load.push({func : this.loadAllTemplatesApplied2Patient, name : "loadAllTemplatesApplied2Patient - PatientSelected"});
@@ -2251,19 +2343,66 @@ console.log("Loading Orders - Finished");
 	},
 
 
-fieldContainerWalk : function(item, y, z) {
-	if (this.application.Patient.AllTemplatesApplied2Patient && "0" == item.inputValue) {
-		var current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
-		var label;
-		if (current) {
-			label = "Select <span class=\"em\">\"" + current[0].TemplateDescription + "\"</span> template (as currently appled to patient)";
+	fieldContainerWalk : function(item, y, z) {
+		if (this.application.Patient.AllTemplatesApplied2Patient && "0" == item.inputValue) {
+			var current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
+			var label;
+			if (current) {
+				label = "Select <span class=\"em\">\"" + current[0].TemplateDescription + "\"</span> template (as currently appled to patient)";
+			}
+			else {
+				label = "No Template currently applied to this patient";
+			}
+			item.el.down('.x-form-cb-label').update(label);
 		}
-		else {
-			label = "No Template currently applied to this patient";
+	},
+
+
+	getObjLenMsg : function (Obj) {
+		var tmp = "No Records Available", v, key, len = 0;
+		if (Obj) {
+			v = Obj;
+			for (key in v) {
+				if (v.hasOwnProperty(key)) {
+					len++;
+				}
+			}
+		if (len > 0) {
+			tmp = len + " Record";
+			tmp += (1 === len) ? "" : "s";
+			}
 		}
-		item.el.down('.x-form-cb-label').update(label);
-	}
-},
+		return tmp;
+	},
+
+	updateKnownProblems : function() {
+		var buf =  "Existing Conditions ";
+		var tmp = "No Records Available";
+		var KnownProblemsPanel = this.getKnownProblems();
+		var KnownProblemsData = this.application.Patient.ParsedVPR.Problems;
+
+		if (KnownProblemsData && KnownProblemsData.length > 0) {
+			tmp = KnownProblemsData.length;
+			if (tmp > 1) {
+				tmp = tmp + " Records";
+			}
+			else {
+				tmp = tmp + " Record";
+			}
+			buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>";
+		}
+		KnownProblemsPanel.setTitle(buf);
+		KnownProblemsPanel.getStore().loadData(KnownProblemsData);
+	},
+
+
+	updateLabInfo : function() {
+		var LaboratoryInfoPanel = this.getLaboratoryInfo();
+		var LabsData = this.application.Patient.ParsedVPR.Labs;
+		tmp = this.getObjLenMsg(LabsData);
+		this.resetLabInfoPanelPanelTitleBar(this, tmp);
+		LaboratoryInfoPanel.getStore().loadData(LabsData);
+	},
 
 	PatientDataLoadComplete : function(Loaded) {
 		wccConsoleLog("PatientDataLoadComplete - " + Loaded);
@@ -2271,6 +2410,7 @@ fieldContainerWalk : function(item, y, z) {
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
 		var piTableInfo, patientTemplates, dspVSHTemplateData, VSHTemplateDataBtns;
+		var KnownProblems;
 
 		if ("All Templates Applied" === Loaded) {
 			var historical = this.application.Patient.AllTemplatesApplied2Patient.get("historical"),
@@ -2325,17 +2465,10 @@ fieldContainerWalk : function(item, y, z) {
 
 			PatientHistoryVitalStats = thisCtl.getVitalSigns();
 			PatientHistoryVitalStats.update(Patient);
+			KnownProblems = this.getKnownProblems();
+			KnownProblems.update(this.application.Patient.ParsedVPR.Problems);
 
-			PatientHistory = thisCtl.getPatientHistory();
-
-			tmp = "No Records Available";
-			if (Patient.Vitals) {
-			len = Patient.Vitals.length;
-				if (len > 0) {
-				tmp = len + " Record";
-				tmp += (1 === len) ? "" : "s";
-				}
-			}
+			tmp = this.getObjLenMsg(this.application.Patient.Vitals);
 			this.resetVitalsPanel(thisCtl, tmp);
 
 			dspVSHTemplateData = this.getVitalSigns();
@@ -2354,31 +2487,21 @@ fieldContainerWalk : function(item, y, z) {
 		}
 
 
-if (this.Modules2Load.length > 0) {
-	var Module = this.Modules2Load.pop();
-	func2Call = Ext.bind(Module.func, this);
-	console.log("Running " + Module.name);
-	func2Call();
-}
-else {
-	DataLoadCount = 0;
-}
-
-
-
-
-
-
-
-
-
+		if (this.Modules2Load.length > 0) {
+			var Module = this.Modules2Load.pop();
+			func2Call = Ext.bind(Module.func, this);
+			console.log("Running " + Module.name);
+			func2Call();
+		}
+		else {
+			DataLoadCount = 0;
+		}
 
 
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
 			var piTable;
-			var LaboratoryInfo;
-			var PatientHistoryVitalStats, PatientHistory;
+			var PatientHistoryVitalStats;
 
 			if (Ext.Date.isEqual(new Date(Patient.TreatmentStart), new Date(new Date().toDateString()))) {
 				var PostStatus = " - Rest Day";
@@ -2398,39 +2521,17 @@ else {
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
+			piTableInfo.show();
 
 			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 
-			var HTML = piTableInfo.tpl.apply(Patient);
-
-			piTableInfo.show();
-
-			LaboratoryInfo = thisCtl.getLaboratoryInfo();
-			tmp = "No Records Available";
-
-			if (Patient.History) {
-			len = Patient.History.length;
-				if (len > 0) {
-				tmp = len + " Record";
-				tmp += (1 === len) ? "" : "s";
-				}
-			}
-			this.resetLabInfoPanelPanel(thisCtl, tmp);
+			this.updateKnownProblems();
+			this.updateLabInfo();
 
 			PatientHistoryVitalStats = thisCtl.getVitalSigns();
 			PatientHistoryVitalStats.update(Patient);
-
-			PatientHistory = thisCtl.getPatientHistory();
-
-			tmp = "No Records Available";
-			if (Patient.Vitals) {
-			len = Patient.Vitals.length;
-				if (len > 0) {
-				tmp = len + " Record";
-				tmp += (1 === len) ? "" : "s";
-				}
-			}
+			tmp = this.getObjLenMsg(this.application.Patient.Vitals);
 			this.resetVitalsPanel(thisCtl, tmp);
 
 			dspVSHTemplateData = this.getVitalSigns();
@@ -2445,6 +2546,13 @@ else {
 
 			patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
 			patientTemplates.show();
+
+
+
+			this.loadOrderRecords();
+console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
+/**
+this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 
 			// If BSA_Dose is empty then calculate it for each record and save that record back.
 			// BUT we need to calculate the BSA value and BSA_Weight before we load the records...
@@ -2495,7 +2603,7 @@ else {
 									// MWB - 7/12/2012 - Fix to update Dosage Calculations every time patient info is loaded.
 									// DO NOT IMPLEMENT until further notice...
 									// Implement as per SIC's e-mail - 7/12/2012 08:56 AM
-									/**********************************************/
+
 									if (bRecUnits.search("M2") > 0) {
 										Dose = bRec.Dose * Patient.BSA;
 										Dose = Ext.GeneralRounding2Digits(Dose);
@@ -2524,7 +2632,7 @@ else {
 											updateRecord = true;
 										}
 									}
-									/***********************************************/
+
 								}
 							}
 						}
@@ -2538,6 +2646,10 @@ else {
 					}
 				}
 			}
+********************/
+
+
+
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 			this.application.fireEvent("PatientSelected", this.application.PatientSelectedRecs, this.application.PatientSelectedOpts);	// MWB 10 Feb 2012 - Added additional parameters
 		}
@@ -2946,6 +3058,7 @@ else {
 		if (this.application.Patient) {
 			this.application.DataLoadCount = 1;
 			this.loadOrderRecords();
+			console.log("Load Order Records from - LoadOEM_OrderData");
 		}
 	},
 

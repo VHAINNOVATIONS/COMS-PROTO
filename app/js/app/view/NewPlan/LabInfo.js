@@ -11,20 +11,43 @@ Ext.define('COMS.view.NewPlan.LabInfo' ,{
 	title : "Laboratory Information",
 	height: 300,
 
-	store : "LabInfo",	// ??? <-- Create store dynamically from the model to pass Patient ID to the model via the Proxy.
-
-	features: [ Ext.create('Ext.grid.feature.Grouping')	],
+	store: Ext.create("Ext.data.Store", {
+		fields:["date", "name", "comment", "result", "sample", "specimen", "units"],
+		groupField: "date",
+		proxy: {
+			type: "memory",
+			reader: {
+				type: "json",
+				root: "items"
+			}
+		}
+	}),
+	
+	features: [ 
+		{
+			ftype: "grouping",
+			groupHeaderTpl: [
+				"{name} : ({[values.children.length]}) Lab{[values.children.length> 1 ? 's' : '']}"
+			],
+			startCollapsed: true
+		}
+	],
 	columns : [
-        { header: 'ID', dataIndex : 'ID', hidden : true },
-        { header: 'Date', dataIndex : 'relDate' },
-        { header: 'Collection Date', dataIndex : 'specColDate' },
-		{ header: 'Lab Tech', dataIndex : 'author' },
-        { header: 'Specimen', dataIndex : 'specimen', hidden : true },		// <-- This is the default field to be grouped on, so we hide it but still make it available if the user regroups the grid
-        { header: 'Info', dataIndex : 'specInfo' },
-		{ header : "Name", dataIndex : "name" },
-		{ header : "Result", dataIndex : "result" },
-		{ header : "Acceptable Range", dataIndex : "acceptRange" },
-		{ header : "OUT of Range", dataIndex : "outOfRange" },
-        { header: 'comment', dataIndex : 'comment' }
+		// { header: 'Date', dataIndex : 'date' },
+		{ header: "Name", dataIndex : "name", width : 50 },
+		// { header: 'Collection Date', dataIndex : 'specColDate' },
+		// { header: 'Lab Tech', dataIndex : 'author' },
+		{ header: 'Specimen', dataIndex : 'specimen' },
+		{ header: 'Sample', dataIndex : 'sample' },
+		// { header: 'Info', dataIndex : 'specInfo' },
+		{ header: "Result", dataIndex : "result", 
+			renderer: function(value, p, record) {
+				return (value + " " + record.getData().units);
+			}
+		},
+		// { header: "Units", dataIndex : "units" },
+		// { header: "Acceptable Range", dataIndex : "acceptRange" },
+		// { header: "OUT of Range", dataIndex : "outOfRange" },
+		{ header: 'comment', dataIndex : 'comment', flex : 1 }
 	]
 });

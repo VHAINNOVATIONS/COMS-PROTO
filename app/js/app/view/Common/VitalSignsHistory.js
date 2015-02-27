@@ -50,52 +50,69 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		"</table>",
 
 		{
-					// XTemplate Configuration
-				disableFormats: true,
-                tempCalc: function (data, pData) {
-                    // debugger;
-                },
-                BSA_WeightCalc: function (data, pData) {
-                    if ("" == data.WeightFormula || "" == data.BSA_Method || "" == data.Weight) {
-                        return "";
-                    }
-					// return data.BSA_Weight;
+				// XTemplate Configuration
+			disableFormats: true,
+			tempCalc: function (data, pData) {
+				// debugger;
+			},
+			BSA_WeightCalc: function (data, pData) {
+				if (data.WeightFormula && data.BSA_Method && data.Weight) {
+					if ("" == data.WeightFormula || "" == data.BSA_Method || "" == data.Weight) {
+						return "";
+					}
 					return Ext.BSAWeight(data);
-                },
-                BPCalc: function (data, pData) {
-                    if ("0/0" == data.BP) {
-                        return "";
-                    }
-                    return data.BP;
-                },
+				}
+				return "";
+			},
 
-                TempCalc: function (data, pData) {
-                    if ("" == data.Temperature) {
-                        return data.Temperature;
-                    }
-                    var tempF = data.Temperature;
-                    var tempC = Ext.TempF2C(tempF);
-                    return tempF + "/" + tempC;
-                },
-                HeightCalc: function (data, pData) {
-                    if ("" == data.Height) {
-                        return data.Height;
-                    }
-                    var height = data.Height;
-                    var mHeight = Ext.In2CM(height);
-                    return height + "/" + mHeight;
+			BPCalc: function (data, pData) {
+				if (data.BP) {
+					if ("0/0" == data.BP) {
+						return "";
+					}
+					return data.BP;
+				}
+				return "";
+			},
 
-                },
-                WeightCalc: function (data, pData) {
-                    if ("" == data.Weight) {
-                        return data.Weight;
-                    }
-                    var weight = data.Weight;
-                    var mWeight = Ext.Pounds2Kilos(weight);
-                    return weight + "/" + mWeight;
-                },
+			TempCalc: function (data, pData) {
+				if (data.Temperature) {
+					if ("" == data.Temperature) {
+						return "";
+					}
+					var tempF = data.Temperature;
+					var tempC = Ext.TempF2C(tempF);
+					return tempF + "/" + tempC;
+				}
+				return "";
+			},
 
-				BSACalc: function (data, pData) {
+			HeightCalc: function (data, pData) {
+				if (data.Height) {
+					if ("" == data.Height) {
+						return "";
+					}
+					var height = data.Height;
+					var mHeight = Ext.In2CM(height);
+					return height + "/" + mHeight;
+				}
+				return "";
+			},
+
+			WeightCalc: function (data, pData) {
+				if (data.Weight) {
+					if ("" == data.Weight) {
+						return data.Weight;
+					}
+					var weight = data.Weight;
+					var mWeight = Ext.Pounds2Kilos(weight);
+					return weight + "/" + mWeight;
+				}
+				return "";
+			},
+
+			BSACalc: function (data, pData) {
+				if (data.WeightFormula && data.BSA_Method) {
 					data.Amputations = pData.Amputations;
 					if ("" === data.WeightFormula || "" === data.BSA_Method) {
 						return "<abbr title=\"Not Available\">N/A</abbr>";
@@ -110,8 +127,9 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 							"bsa_Method=\"" + data.BSA_Method + "\" " + 
 						">" + BSA + "</button> m<sup>2</sup>");
 					}
-					return "<abbr title=\"Not Available\">N/A</abbr>";
 				}
+				return "<abbr title=\"Not Available\">N/A</abbr>";
+			}
 		}
 	)
 });

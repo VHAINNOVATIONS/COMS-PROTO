@@ -146,7 +146,7 @@ function PostSQLQuery($query){
 	
     /** Custom SQL Query * */
     function query($query, $singleResult = 0) {
-	$this->PostSQLQuery($query);
+	// $this->PostSQLQuery($query);
 		if (DB_TYPE == 'mssql') {
             $this->_result = mssql_query($query, $this->_dbHandle);
         } else if (DB_TYPE == 'sqlsrv') {
