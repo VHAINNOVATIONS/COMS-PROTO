@@ -127,7 +127,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 	TabEventTracker : function( msg, theTab, eOpts) {
-		console.log("OEM Tab Event Tracker - " + msg);
+		// console.log("OEM Tab Event Tracker - " + msg);
 	},
 
 	DelegateHandlers : function(theTab, b, c) {
@@ -514,7 +514,8 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		this.application.NewPerformanceStatus = NewPS;
 		var rec = Ext.create(Ext.COMSModels.Vitals, {
 			"PatientID" : PatientInfo.id,
-			"PS_ID" : PSID
+			"PS_ID" : PSID,
+			"DateTaken" : ""
 		});
 		rec.save(
 			{ 

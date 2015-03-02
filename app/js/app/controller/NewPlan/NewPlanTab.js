@@ -354,14 +354,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		});
 	},
 
-    cancelApply: function(button){
+	cancelApply: function(button){
 		wccConsoleLog("CancelApplication of Template");
-    },
+	},
 
 
 	CancelVitals : function(btn) {
 		btn.up('form').getForm().reset();
 	},
+
     SaveVitals : function() {
         var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
         if (theController) {
@@ -998,7 +999,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
                         try {
-//							console.log("Generating EoTS then creating new instance of Widget");
+// console.log("Generating EoTS then creating new instance of Widget");
                             var fncName = "Generate End of Treatment Summary";
                             this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
                             this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
@@ -1109,7 +1110,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	// Called to complete the "TemplateApplied" process. Called from the success event of the patientTemplate.save() AJAX call in the "ApplyTemplate()" function above.
 	PatientModelLoadSQLPostTemplateApplied : function( PatientGUID, TreatmentID ) {
-		console.log("Loading Patient Info Model from PatientModelLoadSQLPostTemplateApplied function");
+		// console.log("Loading Patient Info Model from PatientModelLoadSQLPostTemplateApplied function");
 		var pModel = this.getModel("PatientInfo");
 		var pModelParam = PatientGUID;
 		this.application.PatientID = PatientGUID;	// Not yet used... MWB - 5/25/2012
@@ -1142,7 +1143,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.loadTemplates("Templates");					// module 5
                 this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
 				this.loadOrderRecords();				// module 6
-console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
+// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
                 if (this.application.Patient.TemplateID) {
                     this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
                 }
@@ -1223,7 +1224,7 @@ console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
 	PatientModelLoadMDWS : function(query) {
 		// debugger;
         // Load Patient Information via /Mymdws/Match/ Service Call
-		console.log("Loading Patient Info MDWS Model from PatientModelLoadMDWS function");
+		// console.log("Loading Patient Info MDWS Model from PatientModelLoadMDWS function");
         var pModel = this.getModel("PatientInfoMDWS");
         var pModelParam = query;
 		this.application.PatientSSN_ID = query;
@@ -1331,7 +1332,7 @@ console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
 // console.log("Loading Patient Data for ");
 // console.log("Patient GUID - " + patientMDWSGUID );
 
-console.log("Loading Patient Info Model from LoadAllData4PatientByMDWSGUID function");
+// console.log("Loading Patient Info Model from LoadAllData4PatientByMDWSGUID function");
 		var pModel = this.getModel("PatientInfo");
 		this.application.loadMask("Loading Patient Records... After selecting template");
 
@@ -1441,7 +1442,7 @@ console.log("Loading Patient Info Model from LoadAllData4PatientByMDWSGUID funct
 
 
 	loadMDWSData : function() {
-		console.log("Loading MDWS Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
+		// console.log("Loading MDWS Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
 		this.DataLoadCountDecrement("loadMDWSData Pass");
 		this.PatientDataLoadComplete("MDWS Mega Call");
@@ -1491,7 +1492,7 @@ console.log("Loading MDWS Data - Finished");
 //------------------------------------------------------------------------------------------------------------------------------
 
     loadAllergyInfo : function() {
-		console.log("Loading Allergy Info - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
+		// console.log("Loading Allergy Info - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadAllergyInfo PASS");
 		this.PatientDataLoadComplete("Allergy Info");
 
@@ -1524,13 +1525,13 @@ console.log("Loading Allergy Info - Finished");
 
 
 	loadCumulativeMedDosing : function() {
-console.log("Loading Cumulative Med Dosing - Start");
+// console.log("Loading Cumulative Med Dosing - Start");
 		var liModel = this.getModel("PatientCumulativeDosing");
 		var liModelParam = this.application.Patient.id;
 		liModel.load(liModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
-				console.log("Loading Cumulative Med Dosing - Finished");
+				// console.log("Loading Cumulative Med Dosing - Finished");
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				var tmp = "0 Records";
 				this.application.Patient.CumulativeDoseTracking = rawData.records;
@@ -1546,7 +1547,7 @@ console.log("Loading Cumulative Med Dosing - Start");
 
 
     loadLabInfo : function() {
-		console.log("Loading Lab Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
+		// console.log("Loading Lab Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadLabInfo PASS");
 		this.PatientDataLoadComplete("Lab Info");
     },
@@ -1780,16 +1781,26 @@ console.log("Loading Cumulative Med Dosing - Start");
 		var j, vRec, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
 		for (j = 0; j < vLen; j++) {
 			if (rec.DateTaken === vitals[j].DateTaken) {
-				console.log("Found Vital Match - " + rec.DateTaken + " - Merging records");
+				// console.log("Found Vital Match - " + rec.DateTaken + " - Merging records");
 				vRec = vitals[j];
-				vRec.BSA = rec.BSA;
-				vRec.BSA_Method = rec.BSA_Method;
-				vRec.BSA_Weight = rec.BSA_Weight;
-				vRec.WeightFormula = rec.WeightFormula;
-				vRec.PS = rec.PS;
-				vRec.PSID = rec.PSID;
+				if (!vRec.MostRecent) {
+					vRec.MostRecent = true;
+					vRec.BSA = rec.BSA;
+					vRec.BSA_Method = rec.BSA_Method;
+					vRec.BSA_Weight = rec.BSA_Weight;
+					vRec.WeightFormula = rec.WeightFormula;
+					vRec.PS = rec.PS;
+					vRec.PSID = rec.PSID;
+				}
 				return;
 			}
+		}
+	},
+
+	clearMostRecent : function() {
+		var j, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
+		for (j = 0; j < vLen; j++) {
+			vitals[j].MostRecent = false;
 		}
 	},
 
@@ -1798,22 +1809,16 @@ console.log("Loading Cumulative Med Dosing - Start");
 		for (i = 0; i < recLen; i++) {
 			this.copyNonVitals2Vitals(records[i]);
 		}
+		this.clearMostRecent();
 	},
 
 	loadVitals : function(RetCode) {
-				// this.DataLoadCountDecrement("loadVitals PASS");
-				// this.PatientDataLoadComplete(RetCode);
-console.log("Loading Vitals from SQL - START - " + new Date().getTime());
-
-
-/**************************/
 
 		var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
 		pVitalsModel.load(pVitalsModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
 				var rawData = Ext.JSON.decode(response.response.responseText);
-console.log("Loading Vitals from SQL - Finished - " + new Date().getTime());
 				if (rawData && rawData.records) {
 					this.walkVitalsArray4Match(rawData.records);
 				}
@@ -1930,14 +1935,14 @@ console.log("Loading Vitals from SQL - Finished - " + new Date().getTime());
      *
      **/
     loadAllTemplatesApplied2Patient : function() {
-console.log("Loading All Templates Applied 2 Patient - Start");
+// console.log("Loading All Templates Applied 2 Patient - Start");
         // console.log("loadAllTemplatesApplied2Patient Entry Point");
         var phModel = this.getModel("AllTemplatesApplied2Patient");
         var phModelParam = this.application.Patient.id;
         phModel.load(phModelParam, {
             scope : this,
             success : function( AllTemplatesApplied2Patient, response ) {
-console.log("Loading All Templates Applied 2 Patient - Finished");
+// console.log("Loading All Templates Applied 2 Patient - Finished");
                 this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
                 this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
                 this.PatientDataLoadComplete("All Templates Applied");
@@ -1964,13 +1969,13 @@ console.log("Loading All Templates Applied 2 Patient - Finished");
 
 
 	loadTemplates : function() {
-console.log("Loading Templates - Start");
+// console.log("Loading Templates - Start");
         var phModel = this.getModel("PatientTemplates");
         var phModelParam = this.application.Patient.id;
         phModel.load(phModelParam, {
             scope : this,
             success : function( patientInfo, response ) {
-console.log("Loading Templates - Finished");
+// console.log("Loading Templates - Finished");
 // wccConsoleLog("PatientTemplates Model - Load Complete");
 				var rawData = Ext.JSON.decode(response.response.responseText);
                 // First take all the data received and put it into a local JSON object for the TPL to process
@@ -2182,14 +2187,14 @@ console.log("Loading Templates - Finished");
 	},
 
 	loadOrderRecords : function( ) {
-console.log("Loading Orders - Start");
+// console.log("Loading Orders - Start");
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
 				try {
-console.log("Loading Orders - Finished");
+// console.log("Loading Orders - Finished");
 					wccConsoleLog("Template Data Loaded - Processing");
 					var theData = TemplateData.data;
 					theData.PatientName = this.application.Patient.name;
@@ -2614,7 +2619,7 @@ console.log("Loading Orders - Finished");
 		if (this.Modules2Load.length > 0) {
 			var Module = this.Modules2Load.pop();
 			func2Call = Ext.bind(Module.func, this);
-			console.log("Running " + Module.name);
+			// console.log("Running " + Module.name);
 			func2Call();
 		}
 		else {
@@ -2674,7 +2679,7 @@ console.log("Loading Orders - Finished");
 
 
 			this.loadOrderRecords();
-console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
+// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
 /**
 this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 
@@ -3059,17 +3064,17 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 	LoadSpecifiedTemplate : function(TemplateID, module) {
 		if (this.application.Patient && this.application.Patient.AppliedTemplate && this.application.Patient.AppliedTemplate.id == TemplateID) {
-			console.log("Specified Template (" + TemplateID + ") already loaded... (from " + module + ")");
+			// console.log("Specified Template (" + TemplateID + ") already loaded... (from " + module + ")");
 			return;
 		}
-		console.log("Loading Specified Template - Start - " + TemplateID + " (from " + module + ")");
+		// console.log("Loading Specified Template - Start - " + TemplateID + " (from " + module + ")");
 		var CTOSModel = this.getModel("CTOS");
 		var CTOSModelParam = TemplateID;
 		this.clearCTOS();
 		CTOSModel.load(CTOSModelParam, {
 			scope: this,
 			success: function (CTOSTemplateData, response) {
-				console.log("Loading Specified Template - Finished");
+				// console.log("Loading Specified Template - Finished");
 				this.application.Patient.AppliedTemplateID = TemplateID;
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 				this.application.Patient.AppliedTemplate = CTOSTemplateData.data;
@@ -3178,11 +3183,11 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 	},
 
 	LoadOEM_OrderData : function() {
-		console.log("Loading OEM Data");
+		// console.log("Loading OEM Data");
 		if (this.application.Patient) {
 			this.application.DataLoadCount = 1;
 			this.loadOrderRecords();
-			console.log("Load Order Records from - LoadOEM_OrderData");
+			// console.log("Load Order Records from - LoadOEM_OrderData");
 		}
 	},
 
