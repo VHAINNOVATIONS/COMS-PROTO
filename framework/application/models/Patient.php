@@ -414,20 +414,11 @@ function convertReason2ID($Reason) {
                 return $retVal;
             }
         }
-        
-        /*
-         * sic removed, was not setting dateTaken
-         * if(isset($form_data->{'DateTaken'})){ $dateTaken =
-         * $form_data->{'DateTaken'}; } else { $dateTaken =
-         * $this->getCurrentDate(); }
-         */
-        
         if (empty($dateTaken)) {
             $dateTaken = $this->getCurrentDate();
         }
         
-        $query = "SELECT count(*) as count FROM Patient_History where Patient_ID = '" .
-                 $patientId . "' AND Date_Taken = '" . $dateTaken . "'";
+        $query = "SELECT count(*) as count FROM Patient_History where Patient_ID = '$patientId' AND Date_Taken = '$dateTaken'";
         $existingHistory = $this->query($query);
         
         if ($existingHistory[0]['count'] > 0) {
@@ -441,6 +432,69 @@ function convertReason2ID($Reason) {
             $oemRecordId = null;
         }
         
+
+error_log("saveVitals - " . $form_data->{'DFN'});
+error_log("Provider DUZ - " . $_SESSION['UserDUZ']);
+
+
+$nodevista = new NodeVista();
+$observed = gmdate('YmdHis');
+$objDateTime = new DateTime('NOW');
+$observed = $objDateTime->format(DateTime::ISO8601);
+$_SESSION[ 'sitelist' ] = "169";
+
+
+
+
+/**
+$nodevista = new NodeVista();
+$VPR = $nodevista->post("patient/vital/add" . $this->_dfn);
+$patient[0]['VPR'] = json_decode($VPR);
+
+
+{
+   "patient": 100500,
+   "location" : 23,
+   "observed_date_time":"2015-02-20T09:00:00.000Z",
+   "vital" : {
+     "type": "BP",
+     "value" : "160/90",
+     "provider": "11549"
+   }
+}
+URL to POST Vitals: http://127.0.0.1:3000/v1/patient/vital/add
+change 127.0.0.1 to dbittest.dbitpro.com
+
+observed_date_time = gmdate('Y-m-dTH:i:s');
+
+Date
+Temp
+Pulse
+BP
+Resp
+Pain
+SPO2
+Height
+Weight
+
+ **/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         $systolic = $form_data->{'Systolic'};
         $diastolic = $form_data->{'Diastolic'};
         
@@ -450,16 +504,67 @@ function convertReason2ID($Reason) {
             $bp = $form_data->{'BP'};
         }
         
+        $bp1=preg_replace('/\s+/', '', $bp);
+        $VitalObj = array('type' => "BP", 'value' => $bp1, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+
         $height = $form_data->{'Height'};
+        $VitalObj = array('type' => "HT", 'value' => $height, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+
         $weight = $form_data->{'Weight'};
+        $VitalObj = array('type' => "WT", 'value' => $weight, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
         
+
         $temp = $form_data->{'Temperature'};
         $tempLoc = $form_data->{'TemperatureLocation'};
+
         $pulse = $form_data->{'Pulse'};
+        $VitalObj = array('type' => "P", 'value' => $pulse, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+
         $resp = $form_data->{'Respiration'};
+        $VitalObj = array('type' => "R", 'value' => $resp, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+
         $pain = $form_data->{'Pain'};
+        $VitalObj = array('type' => "PN", 'value' => $pain, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+
         $spo2 = $form_data->{'SPO2'};
+        $VitalObj = array('type' => "PO2", 'value' => $spo2, 'provider' => $_SESSION['UserDUZ']);
+        $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
+        error_log("POST Vital - " . json_encode($PatientData));
+        $postRet = $nodevista->post("patient/vital/add" . $PatientData);
+        error_log("NodeVista - Post Return - " . json_encode($postRet));
+
         
+
+
         $bsa = $form_data->{'BSA'};
         $bsaMethod = $form_data->{'BSA_Method'};
         $weightFormula = $form_data->{'WeightFormula'};
@@ -474,7 +579,6 @@ function convertReason2ID($Reason) {
             $templateId = null;
         }
         
-        // MWB Added...
         $PS_ID = null;
         if (isset($form_data->{'PS_ID'})) {
             $PS_ID = $form_data->{'PS_ID'};
@@ -508,6 +612,8 @@ function convertReason2ID($Reason) {
                 $weightFormula = $record[0]['weightFormula'];
             }
         }
+
+
         
         if (null == $oemRecordId) {
             if (! empty($templateId)) {
@@ -1365,21 +1471,15 @@ error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
     {
         $query = "SELECT Patient_ID as LK_Patient_ID FROM Master_Template WHERE Template_ID = '" .
                  $oemrecordid . "'";
-        
-        // var_dump($query);
         $queryq = $this->query($query);
         foreach ($queryq as $row) {
             $patientid = $row['LK_Patient_ID'];
         }
-        // echo $patientid;
         return $patientid;
     }
 
     function OEMupdateOrderStatus ($form_data)
     {
-        //var_dump($form_data);
-        // var_dump($preHydrations);
-        
         $TID = $form_data->{'TemplateID'};
         // $patientid = $form_data->{'PatientId'};
         // $patientid = $this->LookupPatientID($OEMRecordID);

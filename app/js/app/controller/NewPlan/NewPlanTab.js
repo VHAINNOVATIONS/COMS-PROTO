@@ -3,6 +3,96 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	 *
 	 *	PatientSelected function is what loads all the data
 	 *
+	 * Function List:
+	 *
+	 *		MaskPITPanelOnExpand : function (p, ani, opts) {
+	 *		MaskPITable : function (msg) {
+	 *		clickPatientListCount : function( evt, itemClicked ) {
+	 *		tabRendered : function( theTab ) {
+	 *		InitIntelligentDataElementStore : function() {
+	 *		cancelApply : function(button){
+	 *		CancelVitals : function(btn) {
+	 *		SaveVitals : function() {
+	 *		handlePatientSelectionRender : function( panel ) {
+	 *		resetPatientInfoPanel: function(thisCtl) {
+	 *		resetTRSPanel: function(thisCtl, numTemplates) {
+	 *		resetVitalsPanel: function(thisCtl, numVitals) {
+	 *		resetLabInfoPanelPanelTitleBar: function(thisCtl, numLabResults) {
+	 *		resetCTOSPanel: function(thisCtl) {
+	 *		resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
+	 *
+	 *		HandleTemplateBtnClicks : function (event, element) {
+	 *		ShowBSACalcsPUWin : function(opts, tab2switch2) {
+	 *		afterrender : function(theWin, eOpts) {
+	 *		HandleAnchorClicks : function (event, element) {
+	 *		loadCombo : function(picker, eOpts){
+	 *		callback: function(records,operation,success){
+	 *		collapseCombo : function(picker,eOpts){
+	 *		resetTemplateFilter : function(button){
+	 *		editTemplate : function(button){
+	 *		callback: function (records, operation, success) {
+	 *		afterFindDisease : function(diseaseRecord){
+	 *		callback: function(records,operation,success){
+	 *		afterFindTemplate : function(templateRecord,controller,template){
+	 *		ShowAskQues2ApplyTemplate : function(records, operation, success) {
+	 *		applyTemplateToPatient : function(button){
+	 *		clearCTOS : function(button){
+	 *		TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
+	 *		PatientModelLoadSQLPostTemplateApplied : function( PatientGUID, TreatmentID ) {
+	 *		PatientModelLoadSQL : function( query ) {
+	 *		PatientModelLoadMDWS : function(query) {
+	 *		PatientStoreQuery : function( ) {
+	 *		QSEnter : function( fld, e, eOpts ) {
+	 *		LoadAllData4PatientByMDWSGUID : function(patientMDWSGUID) {
+	 *		ConfirmPatientClick : function(evt, btn) {
+	 *		handleShowUpdateMDWSClickEvent : function( evt, btn ) {
+	 *		handlePatientSelectionClickEvent : function( evt, theBtn ) {
+	 *		loadMDWSData : function() {
+	 *		loadAllergyInfo : function() {
+	 *		loadCumulativeMedDosing : function() {
+	 *		loadLabInfo : function() {
+	 *		extractDate : function(aDate) {
+	 *		ConvertAssocArray : function(theData) {
+	 *		extractAllergies : function(vDataRec) {
+	 *		extractLabs : function(rec) {
+	 *		extractProblems : function(rec) {
+	 *		extractVitals : function(rec) {
+	 *		parseVPR : function (vData) {
+	 *		loadVitals : function(RetCode) {
+	 *		loadAllTemplatesApplied2Patient : function() {
+	 *		loadTemplates : function() {
+	 *		getFNRiskInfo : function(FNRisk) {
+	 *		getEmoLevelInfo : function(ELevel) {
+	 *		manageOrderRecordsAfterLoading : function(OEMRecords) {
+	 *		loadOrderRecords : function( ) {
+	 *		PatientSelected : function(combo, recs, eOpts) {
+	 *		UpdateOEMRecords : function(aRec, bRec) {
+	 *		reAddHandlers : function() {
+	 *		buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
+	 *		DataLoadCountDecrement : function(module) {
+	 *		fieldContainerWalk : function(item, y, z) {
+	 *		getObjLenMsg : function (Obj) {
+	 *		updateKnownProblems : function() {
+	 *		updateLabInfo : function() {
+	 *		PatientDataLoadComplete : function(Loaded) {
+	 *		HandleVSHCalcDoseButtons : function( event, element ) {
+	 *		AssignBtnHandlers : function() {
+	 *		onTemplateTypeChange : function(combo, recs, eOpts) {
+	 *		DiseaseSelected : function(combo, recs, eOpts) {
+	 *		onDiseaseStageChange : function(combo, recs, eOpts) {
+	 *		CTOS_DataLoad2 : function(TemplateID) {
+	 *		CTOS_DataLoad : function(TemplateID) {
+	 *		LoadSpecifiedTemplate : function(TemplateID, module) {
+	 *		ShowSelectedTemplate : function(theTemplate) {
+	 *		selTemplateChange : function(combo, recs, eOpts) {
+	 *		SaveBSAInfo : function() {	// Used to update the BSA if it's recalculated
+	 *		LoadOEM_OrderData : function() {
+	 *		selectMedReminderGridRow : function(theRowModel, record, index, eOpts) {
+	 *		getAnyMedReminders4Template : function(TemplateID) {
+	 *		RefreshMedRemindersGrid : function() {
+	 *		AddMedReminders2Store : function(MedReminders) {
+	 *		getMedRemindersInArray : function() {
+	 *
 	 ********************************/
     extend : "Ext.app.Controller",
     puWinAmputations : null,
@@ -1352,6 +1442,7 @@ console.log("Loading Patient Info Model from LoadAllData4PatientByMDWSGUID funct
 
 	loadMDWSData : function() {
 		console.log("Loading MDWS Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
+		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
 		this.DataLoadCountDecrement("loadMDWSData Pass");
 		this.PatientDataLoadComplete("MDWS Mega Call");
 /****************
@@ -1585,13 +1676,11 @@ console.log("Loading Cumulative Med Dosing - Start");
 			if (rec.uid) {
 				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
 				if ("vital" === typeUID.toLowerCase()) {
-		// console.log("Tracking Vital - " + rec.typeName);
 					nIdx = rec.observed.toString();
 					if (this.vIdx !== nIdx) {
 						this.vIdx = nIdx;
 						DateTaken = this.extractDate(nIdx);
-		// console.log("Tracking Vital for " + DateTaken);
-						this.Vitals[this.vIdx] = {DateTaken : DateTaken};
+						this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
 					}
 					switch (rec.typeName) {
 					case "BLOOD PRESSURE":
@@ -1661,6 +1750,10 @@ console.log("Loading Cumulative Med Dosing - Start");
 		parseVPR : function (vData) {
 			var rec, i, len = vData.length;
 			var flg;
+			this.Allergies = [];
+			this.Vitals = [];
+			this.Labs = [];
+			this.Problems = [];
 
 			for (i = 0; i < len; i++) {
 				rec = vData[i];
@@ -1683,27 +1776,56 @@ console.log("Loading Cumulative Med Dosing - Start");
 		}
 	},
 
+	copyNonVitals2Vitals : function(rec) {
+		var j, vRec, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
+		for (j = 0; j < vLen; j++) {
+			if (rec.DateTaken === vitals[j].DateTaken) {
+				console.log("Found Vital Match - " + rec.DateTaken + " - Merging records");
+				vRec = vitals[j];
+				vRec.BSA = rec.BSA;
+				vRec.BSA_Method = rec.BSA_Method;
+				vRec.BSA_Weight = rec.BSA_Weight;
+				vRec.WeightFormula = rec.WeightFormula;
+				vRec.PS = rec.PS;
+				vRec.PSID = rec.PSID;
+				return;
+			}
+		}
+	},
+
+	walkVitalsArray4Match : function(records) {
+		var i, recLen = records.length;
+		for (i = 0; i < recLen; i++) {
+			this.copyNonVitals2Vitals(records[i]);
+		}
+	},
+
 	loadVitals : function(RetCode) {
-		this.application.Patient.Vitals = this.application.Patient.ParsedVPR.Vitals;
-console.log("Loading Vitals - Start");
-
-				this.DataLoadCountDecrement("loadVitals PASS");
-				this.PatientDataLoadComplete(RetCode);
+				// this.DataLoadCountDecrement("loadVitals PASS");
+				// this.PatientDataLoadComplete(RetCode);
+console.log("Loading Vitals from SQL - START - " + new Date().getTime());
 
 
+/**************************/
+
+		var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
+		pVitalsModel.load(pVitalsModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
+				var rawData = Ext.JSON.decode(response.response.responseText);
+console.log("Loading Vitals from SQL - Finished - " + new Date().getTime());
+				if (rawData && rawData.records) {
+					this.walkVitalsArray4Match(rawData.records);
+				}
 
 
-/**
-        var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
-        pVitalsModel.load(pVitalsModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
-                var rawData = Ext.JSON.decode(response.response.responseText);
-                var aVital, vBSA_Weight = "", vWeightFormula = "", vBSA_Method = "", vBSA = "", vHeight = "", vWeight = "";
-                var HaveAllCount = 6;
-console.log("Loading Vitals - Finished");
+
+
+
+
+
+/**************************
 				if (rawData) {
-					var i, h, w, t, rec, el;
 					if (rawData.total >= 0) {
 						for (i = 0; i < rawData.total; i++) {
 							rec = rawData.records[i];
@@ -1786,19 +1908,19 @@ console.log("Loading Vitals - Finished");
 						this.application.Patient.Weight = vWeight;
 					}
 				}
+********************/
 
 					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
 				// debugger;
 				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);
-
-            },
+			},
 			failure : function (err, response) {
 				this.DataLoadCountDecrement("loadVitals FAIL");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
-            }
-        });
- ***************/
+			}
+		});
+ /***************/
 	},
 
 
@@ -2139,6 +2261,8 @@ console.log("Loading Orders - Finished");
 
 		this.application.Patient = piData;
 		this.application.Patient.ParsedVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
+		this.application.Patient.Allergies = this.application.Patient.ParsedVPR.Allergies;
+		this.application.Patient.Vitals    = this.application.Patient.ParsedVPR.Vitals;
 
 		// Get a handle to the frameset itself
         var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -2389,8 +2513,8 @@ console.log("Loading Orders - Finished");
 			else {
 				tmp = tmp + " Record";
 			}
-			buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>";
 		}
+		buf += "<span class='LabInfoTitleInfo' style='margin-left: 3em; font-size: smaller;'>(" + tmp + ")</span>";
 		KnownProblemsPanel.setTitle(buf);
 		KnownProblemsPanel.getStore().loadData(KnownProblemsData);
 	},

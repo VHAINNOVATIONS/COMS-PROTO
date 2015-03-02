@@ -539,6 +539,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	_saveVitals2DB : function(record, parent) {
 		this.application.loadMask("One moment please, saving Patient Vitals...");
+		record.DFN = this.application.Patient.DFN;
 
 		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
 		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
