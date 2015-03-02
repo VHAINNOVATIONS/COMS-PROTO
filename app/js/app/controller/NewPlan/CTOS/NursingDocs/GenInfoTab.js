@@ -261,10 +261,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			min, max, Msg, LastVital, pct, pctLast, valu;
 		if (Vitals.length > 0) {
 			LastVitals = Vitals[0];
-			var BP = LastVitals.BP.split("/");
-			if (BP.length > 0) {
-				systolic = BP[0];
-				diastolic = BP[1];
+			if (LastVitals.BP) {
+				var BP = LastVitals.BP.split("/");
+				if (BP.length > 0) {
+					systolic = BP[0];
+					diastolic = BP[1];
+				}
 			}
 		}
 		if ("on" === IDESpec.MinMax) {
@@ -539,6 +541,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	_saveVitals2DB : function(record, parent) {
 		this.application.loadMask("One moment please, saving Patient Vitals...");
+		record.DFN = this.application.Patient.DFN;
 
 		var Temperature = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempF\"]")[0];
 		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];

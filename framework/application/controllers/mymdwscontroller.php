@@ -88,7 +88,14 @@ class mymdwscontroller extends Controller
         $jsonRecord = array();
 
         $client = $this->MdwsSetup(true, $lastFour);    // MWB - 5/7/2012 Added the boolean "true" to the call since MdwsSetup has been modified to require a "isSSN" parameter
-//		$client = $this->MdwsSetup($lastFour);
+        $nodevista = new NodeVista();
+
+        if (!array_key_exists ( 'UserDUZ' , $_SESSION )) {
+            $UserInfo = $nodevista->get("user/info");
+            $obj = json_decode($UserInfo);
+            error_log("User Information = $UserInfo");
+            $_SESSION['UserDUZ'] = $obj->{'duz'};
+        }
 
 
         if (null != $client && !is_array($client)) {
@@ -198,6 +205,10 @@ class mymdwscontroller extends Controller
 $nodevista = new NodeVista();
 $VPR = $nodevista->get("patient/details/" . $this->_dfn);
 $patient[0]['VPR'] = json_decode($VPR);
+
+
+ // {"duz":"1","name":"PROGRAMMER,ONE","full_name":"One Programmer","division":{"ien":"500","station_name":"CAMP MASTER","station_number":"500"},"title":"COMPUTER SPECIALIST","section":"INFORMATION SYSTEMS CENTER","language":"","dtime":"9999"}
+//echo $UserInfo;
 
 
             /*

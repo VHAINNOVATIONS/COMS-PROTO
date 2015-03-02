@@ -59,7 +59,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 		var theCombo = this.getInfusionReactionCombo();
 		var theStore = theCombo.getStore();
 		theStore.proxy.url = "/NursingDoc/ReactAssessList/" + this.application.Patient.PAT_ID;
-		console.log("Store Proxy - " + theStore.proxy.url);
+		// console.log("Store Proxy - " + theStore.proxy.url);
 //		theStore.load();
 	},
 

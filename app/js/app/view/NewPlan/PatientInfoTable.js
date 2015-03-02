@@ -64,15 +64,18 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Allergies: </th>",
 						"<td colspan=5>",
+
 							"<tpl if=\"this.Allergies(values)\">",
 								"<table class=\"DataTable\">",
 									"<tr>",
 										"<th>Name</th>",
-										"<th>Type</th>",
+										// "<th>Type</th>",
 										"<th>Comment</th>",
 									"</tr>",
 									"<tpl for=\"Allergies\">",
-										"<tr><td>{name}</td><td>{type}</td><td>{comment}</td></tr>",
+										"<tr><td>{name}</td>",
+										// "<td>{type}</td>",
+										"<td>{reaction}</td></tr>",
 									"</tpl>",
 								"</table>",
 							"</tpl>",
@@ -140,19 +143,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						return buf;
 					},
-/**********
-					DiseaseHistory : function(values) {
-						// "<tr>{[this.DiseaseHistory(values)]}</tr>",
-						var buf = "";
-						if ("" === values.DiseaseStage) {
-							buf = values.DiseaseName + " Reported on " + values.date + " by " + values.Author;
-						}
-						else {
-							buf = values.DiseaseName + " - " + values.DiseaseStage + " Reported on " + values.date + " by " + values.Author;
-						}
-						return buf;
-					},
-***************/
+
 					AddEditBtns : function (btnName, values, parent) {
 						var Pre = "<button class=\"anchor AddEdit" + btnName + "\" tabType=\"AddEdit" + btnName + "\" ";
 						var Mid = "name=\"AddEdit" + btnName + "\" ";
@@ -165,6 +156,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					},
 
 					Allergies : function ( values ) {
+						// debugger;
 						if (values.Allergies.length > 0) {
 							return true;
 						}

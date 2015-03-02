@@ -15,7 +15,11 @@ class NodeVista{
   * @param url - this should be the operation - e.g: /patient/id
   */
   public function post($url, $data=false){
-    return $this->call("POST", $url, $data);
+      $ret = $this->call("POST", $url, $data);
+      error_log("NodeVista Class - Post - URL - " . $url);
+      error_log("NodeVista Class - Post - DATA - " . $data);
+      error_log("NodeVista Class - Post - RET - " . $ret);
+      return $ret;
   }
 
   /* 
@@ -47,7 +51,8 @@ class NodeVista{
         'X-Access-Token: '.NV_ACCESS_TOKEN,
         'X-Token-Secret: '.NV_ACCESS_SECRET,
         'X-ACCESS-CODE: '.NV_ACCESS_CODE,
-        'X-VERIFY-CODE: '.NV_VERIFY_CODE
+        'X-VERIFY-CODE: '.NV_VERIFY_CODE,
+        'Content-Type: application/json'
       ));
       curl_setopt($curl, CURLOPT_URL, NV_BASE_URL.'/'.$url);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);

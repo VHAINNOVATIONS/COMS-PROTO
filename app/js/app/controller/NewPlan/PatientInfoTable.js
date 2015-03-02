@@ -288,7 +288,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
  **/
 				switch( theClass ) {
 					case "anchor AddEditAmputation" : 
-						console.log("Click Anchor");
+						// console.log("Click Anchor");
 						Ext.COMS_LockSection(this.application.Patient.id, "Amputations", this.showAmputationWiget);
 						break;
 					case "anchor AddEditBSA" : 
@@ -298,7 +298,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 						Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.ShowCancerWidget);
 						break;
 					case "anchor DeleteCancerType" : 
-						console.log("Click Delete Cancer Type");
+						// console.log("Click Delete Cancer Type");
 						this.application.CancerIdx = target.getAttribute("CancerIdx");
 						this.DeleteCancerWidget();
 						// Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.DeleteCancerWidget, this);

@@ -18,7 +18,7 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	
 
 	ShowWindow : function() {
-		console.log("Show Window");
+		// console.log("Show Window");
 		var AmpuSelCtl = this.getController("NewPlan.AmputationSelection");
 		AmpuSelCtl.renderAS();
 	},
