@@ -8,7 +8,7 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 	'extend' : 'Ext.window.Window',
 	'alias' : 'widget.AddDrugRegimen',
 
-	'title' : 'Add New Drug Regimen',
+	'title' : 'Add New Therapy Drug',
 	'layout' : 'fit',
 	'autoShow' : true,
 	'width' : 800,
@@ -16,12 +16,6 @@ Ext.define('COMS.view.Authoring.AddDrugRegimen', {
 		'xtype' : "form",
 		'items' : [
 			{"xtype": "RequiredInstr"},
-//			{
-//				'xtype' : 'container',
-//				'margin' : '10 0 10 5',
-//				'html' : '<b>Fields with a <span style="color:red">*</span> are required fields</b>',
-//				'width' : 220
-//			},
 			{
 				'xtype' : 'container',
 				'layout' : 'hbox',
