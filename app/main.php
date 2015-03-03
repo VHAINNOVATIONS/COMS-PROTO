@@ -1,29 +1,5 @@
 <?php
-    /** Archived Version Info
-    $ProjType = "Prototype, 0.1, June 18, 2012";
-    $ProjType = "Proof of Concept, 0.1, November 22, 2013";
-    $ProjType = "Proof of Concept, 0.2, December 13, 2013";
-    $ProjType = "Proof of Concept, 0.3, January 3, 2014";
-    $ProjType = "Proof of Concept, 0.4, January 24, 2014";
-    $ProjType = "Proof of Concept, 0.5, February 14, 2014";
-    $ProjType = "Proof of Concept, 0.6, March 7, 2014";
-    $ProjType = "Proof of Concept, 0.7, March 28, 2014";
-    $ProjType = "Proof of Concept, 0.8, April 18, 2014";
-    $ProjType = "Proof of Concept, 0.9, May 9, 2014";
-    $ProjType = "Proof of Concept, 0.10, May 30, 2014";
-    $ProjType = "Proof of Concept, 0.11, June 20, 2014";
-    $ProjType = "Proof of Concept, 0.12, July 11, 2014";
-    $ProjType = "Proof of Concept, 0.13, August 1, 2014";
-    $ProjType = "Proof of Concept, 0.14, August 22, 2014";
-    $ProjType = "Proof of Concept, 0.15, September 19, 2014";
-    $ProjType = "Proof of Concept, 0.16, October 3, 2014";
-    $ProjType = "Proof of Concept, 0.17, October 24, 2014";
-    $ProjType = "Proof of Concept, 0.18, November 14, 2014";
-    $ProjType = "Proof of Concept, 0.19, December 5, 2014";
-    $ProjType = "Demo, January 9, 2015";
-	$ProjType = "Demo, January 23, 2015";
-    $ProjType = "Demo, February 6, 2015";
-    */
+    /** Archived Version Info*/
     $ProjType = "Demo, February 20, 2015";
 ?>
 
@@ -65,31 +41,12 @@
 
 <script>
 <?php
-    /* Session Variables available - MWB 1/24/2014
-    ["chktrack"]=> 1
-    ["sessionid"]=> "iv3e8v7mi7jcokep9d3rnotah7" 
-    ["sessionStatus"]=> 0
-    ["role"]=> "All Roles" 
-    ["dname"]=> "Programmer" 
-    ["rid"]=> 26
-    ["cprsUsername"]=> "1programmer" 
-    ["cprsPass"]=> "programmer1" 
-    ["Email"]=> "programmer1@dbitmail.com" 
-    ["TemplateAuthoring"]=> 1
-    ["Role_ID"]=> "63C5D238-9AB6-E111-A560-000C2935B86F" ; NOTE: This is really the unique User Id and maps to the "created_by" column in the Master Templates table.
-    ["sitelist"]=> "901" 
-    ["domain"]=> "mwb.dbitpro.com" 
-    ["MDWS_Status"]=> "Crashed" 
-    ["MDWS_Type"]=> "Disconnect" 
-    ["MDWS_Msg"]=> "There are no open connections" 
-    ["MDWS_Suggestion"]=> "" 
-    *************************************/
+    
     /* Initializing of global JavaScript variables */
     echo "var AccessibilityMode = '" . $_SESSION[ "BrowserMode" ] . "';\n";
     echo "var Page2Open = '$page2Open';\n";
     echo "var theJSPath = '$Version/';\n";
     echo "var dName = '" . $_SESSION[ 'dname' ] . "';\n";
-    echo "var siteid = '$sitelist';\n";     // Needed for posting to VistA
     echo "var session_ID = '" . $_SESSION[ "sessionid" ] . "';\n";
     /* Unique Session ID */
     echo "var User_ID = '" . $_SESSION[ "Role_ID" ] . "';\n";
@@ -126,7 +83,7 @@
         Welcome <?php
             echo "" . $_SESSION[ "dname" ] . ", " . $_SESSION[ "role" ] . "";
         ?> -- 
-        <a href="support/" target='_blank'>Help</a>
+        <a href="support/" target='_blank'>Help</a> <a href="SQL_Scripts.zip" target='_blank'___</a>
         <?php
             if ( "High" == $_SESSION[ "BrowserMode" ] ) {
         ?>
@@ -155,9 +112,10 @@
                 <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
             -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
+				<!--<li style="display: inline;"><a href="COMS.zip" target='_blank'>Files</a></li>-->
                 <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
-                <li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
-                <!--
+                <!--<li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
+                
                 <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
                 -->
             </ul>
@@ -166,28 +124,26 @@
 </div><!-- end of #Application -->
 
 <div id="footer" class="initialHide" >
-    <abbr title="Chemotherapy Order Management System">COMS</abbr> <?php
-        echo $ProjType;
-    ?>
-    <div>
+    <!--<abbr title="Chemotherapy Order Management System">COMS</abbr>-->
+	<div>
         This application works best in 
         MS-IE Version 9 or above, 
         Mozilla Firefox Version 20 and above, 
         Google Chrome Version 30 and above
     </div>
 
-    <!-- Display MDWS Notational information here -->
-    <div id="MDWs_Info"></div>
+    <!-- Display MDWS Notational information here 
+    <div id="MDWs_Info"></div>-->
 
-    <!-- Display Boomerang Page Load Statistics here -->
-    <div id="results"></div>
+    <!-- Display Boomerang Page Load Statistics here 
+    <div id="results"></div>-->
 </div>
 
-<!-- Display ConsoleLog information here -->
+<!-- Display ConsoleLog information here 
 <section class="consolelog">
     <h2>Log Info</h2>
     <div id="LogInfo" style="height:100px; overflow: auto;"></div>
-</section>
+</section>-->
 
 <script type="text/javascript" <?php
     echo "src=\"$LibsVersion/ext-all-debug.js\"";

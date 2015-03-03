@@ -14,17 +14,20 @@
 ?>
 <table align="center" width = "60%" border=0 bgcolor="#FFFFFF">
 <tr><td>
+
 <table align="center" width = "50%" border=0 bgcolor="#FFFFFF">
-<tr><td colspan="1" align="center"><img src='../images/vainnovations.png'></td><td colspan="1" align="center"><font size="20">db<font color="#000099">IT</font>pro</font></td>
+<tr><td colspan="2" align="center"> <b><font size = "+2">Chemotherapy Ordering Management System (COMS)</font></b><br><br><b><font size = "+1">For immediate support, please call one of the following numbers:</b>
+<br><br><table><tr>
+<td><b>7AM to 9PM EST</b><br></b>732.920.8305<br>813.383.4963<br>732.682.8226</td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><b>9PM to 7AM</b><br>732.920.8305</td>
 </tr>
 </table>
-<table align="center" width = "50%" border=0 bgcolor="#FFFFFF">
-<tr><td colspan="2">&nbsp;</td></tr>
-<tr><td colspan="2" align="center"> <b><font size = "+2">Chemotherapy Ordering Management System (COMS)</font></b><br> Application Prototype Testing Round One<br><br><b><font size = "+1">For immediate support, please call 732.920.8305 or 813.383.4963 between 8AM to 8PM EST.</font></b><br><br><b>Open Support Request Ticket Numbers:</b> <br><?php  include "tickets.php";  ?></td></tr>
+</font></b><br><br><b>Open Support Request Ticket Numbers:</b> <br><?php  include "tickets.php";  ?></td></tr>
 <tr>
-<td colspan="1" align="left"> Date: <?php echo date( "F d, Y" ); /* date( "F d, Y", filemtime( 'index.php' ) ) */ ?></td>
+<td colspan="1" align="left"> <?php echo date( "F d, Y" ); /* date( "F d, Y", filemtime( 'index.php' ) ) */ ?></td>
 
-<td colspan="1" align="right"> Tester: <?php include "../session.php"; echo "".$_SERVER[ 'LOGON_USER' ].", ".$_SESSION[ 'role' ]." "; ?></td>
+<td colspan="1" align="right"></td>
 </tr>
   <tr><td colspan="1">&nbsp;</td>
   <td colspan="1">&nbsp;</td></tr>

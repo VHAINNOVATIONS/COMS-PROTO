@@ -181,11 +181,11 @@
                 while ( $row = sqlsrv_fetch_array( $getglobals, SQLSRV_FETCH_ASSOC ) ) {
                     $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
                     $_SESSION[ 'domain' ]   = $row[ 'domain' ];
-                    $_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
+                    //$_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
                     $_SESSION[ 'vista' ]    = $row[ 'vista' ];
-                    $_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
-                    $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
-                    $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
+                    //$_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
+                    //$_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
+                    //$_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
                 }
                 
                 $dname             = $_SESSION[ 'dname' ];
