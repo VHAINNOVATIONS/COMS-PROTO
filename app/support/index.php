@@ -99,5 +99,6 @@ To copy the entire screen - Press PRINT SCREEN.  To copy only an active window -
 </form>
 </table>
 </td></tr></table>
+<a href="video/COMS_1.wmv">Video 1</a>
 </body>
 </html>
