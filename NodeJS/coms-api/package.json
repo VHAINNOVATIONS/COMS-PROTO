@@ -1,0 +1,26 @@
+{
+  "name": "coms-api",
+  "version": "1.0.0",
+  "description": "Connection between node and VistA",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Rahul Gokulnath",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "jade": "*",
+    "morgan": "*",
+    "method-override": "*",
+    "mocha": "*",
+    "bunyan": "*",
+    "node-cache": "*",
+    "underscore": "*",
+    "underscore.string": "*",
+    "async": "*"
+  },
+  "private": true,
+  "analyze": true
+}

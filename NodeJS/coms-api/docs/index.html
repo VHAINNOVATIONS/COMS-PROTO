@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Node.JS/VistA API Documentation</title>
+    
+    <!--
+      <link href="/docs/console/styles/vendor.css" rel="stylesheet" type="text/css">
+     -->
+    <link rel="stylesheet" href="styles/api-console-light-theme.css" type="text/css" />
+  </head>
+  <body ng-app="ramlConsoleApp" ng-cloak>
+    <div sytle="overflow:auto;position:relative">
+      <raml-console src="/docs/spec-raml/coms.raml"></raml-console>
+    </div>
+    <script type="text/javascript" src="scripts/api-console-vendor.js"></script>
+    <script type="text/javascript" src="scripts/api-console.js"></script>
+    <script type="text/javascript">
+      $.noConflict();
+    </script>
+  </body>
+</html>
