@@ -112,7 +112,7 @@
                 <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
             -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
-				<!--<li style="display: inline;"><a href="COMS.zip" target='_blank'>Files</a></li>-->
+				<!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
                 <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
                 <!--<li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                 
