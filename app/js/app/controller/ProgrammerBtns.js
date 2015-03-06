@@ -41,6 +41,9 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 			},
 			"ProgrammerBtns button[text=\"Demo Pop Up Window\"]" : {
 				"click" : this.DemoPUWin
+			},
+			"ProgrammerBtns button[text=\"Load Vitals\"]" : {
+				"click" : this.ClickLoadVitals
 			}
 		});
 	},
@@ -62,6 +65,14 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		thisCtl.MaskPITable("Test");
 	},
+
+	ClickLoadVitals : function() {
+		if (this.PatientCheck()) {
+			var thisCtl = this.getController("NewPlan.NewPlanTab");
+			thisCtl.loadVitals("Vitals");
+		}
+	},
+
 
 	ClickPatientsList : function() {
 		if (!this.application.TemplateListPatients) {

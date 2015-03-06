@@ -1168,7 +1168,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	//
 	//----------------------------------------------------------------------------------------------------------------
 	PatientModelLoadSQL : function( query ) {
-		// debugger;
 		var PatientStore = COMS.store.Patients.create();
 		this.application.loadMask("One moment please, retrieving Patient Information for " + query + "...");
 		PatientStore.load({ scope : this, callback :
@@ -1222,7 +1221,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	PatientModelLoadMDWS : function(query) {
-		// debugger;
         // Load Patient Information via /Mymdws/Match/ Service Call
 		// console.log("Loading Patient Info MDWS Model from PatientModelLoadMDWS function");
         var pModel = this.getModel("PatientInfoMDWS");
@@ -1288,9 +1286,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	// Get here by either clicking on the "Query CPRS for Patient" button or hitting the "Enter" key in the SSN Field.
 	PatientStoreQuery : function( ) {
-		// alert("PatientStoreQuery");
-		// debugger;
-
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		thisCtl.getPatientInfo().hide();
 		var puWinAddCumDoseCtl = this.getController("Common.puWinAddCumDose");
@@ -1328,11 +1323,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	LoadAllData4PatientByMDWSGUID : function(patientMDWSGUID) {
-// debugger;
-// console.log("Loading Patient Data for ");
-// console.log("Patient GUID - " + patientMDWSGUID );
-
-// console.log("Loading Patient Info Model from LoadAllData4PatientByMDWSGUID function");
 		var pModel = this.getModel("PatientInfo");
 		this.application.loadMask("Loading Patient Records... After selecting template");
 
@@ -1576,7 +1566,23 @@ console.log("Loading Allergy Info - Finished");
 
 		extractDate : function(aDate) {
 			aDate = String(aDate);
-			return (aDate.substring(4,6) + "/" + aDate.substring(6,8) + "/" + aDate.substring(0,4));
+			var d1 = "", d2 = "";
+			if (aDate.length >= 14 ) {
+				d1 = aDate.substring(8,10) + ":" + aDate.substring(10,12) + ":" + aDate.substring(12, 14);
+			}
+			d2 = aDate.substring(4,6) + "/" + aDate.substring(6,8) + "/" + aDate.substring(0,4);
+			if (d1 !== "") {
+				d2 += " " + d1;
+			}
+			return (d2);
+		},
+		getObserved : function(aDate) {
+			var d1 = aDate.split(" ");
+			var d2 = d1[0].split("/");
+			var d3 = d2[2] + d2[0] + d2[2];
+			var d4 = d1[1].split(":");
+			var d5 = d4.join("");
+			return d3+d5;
 		},
 
 		ConvertAssocArray : function(theData) {
@@ -1680,7 +1686,7 @@ console.log("Loading Allergy Info - Finished");
 					if (this.vIdx !== nIdx) {
 						this.vIdx = nIdx;
 						DateTaken = this.extractDate(nIdx);
-						this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
+						this.Vitals[this.vIdx] = {Observed : nIdx, DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
 					}
 					switch (rec.typeName) {
 					case "BLOOD PRESSURE":
@@ -1844,7 +1850,6 @@ console.log("Loading Allergy Info - Finished");
 			key2 = "";
 			rec = theData[i];
 			k = rec.DateTaken;
-			debugger;
 			try {
 				if (k) {
 					key = k.split(" ");
@@ -1864,7 +1869,6 @@ console.log("Loading Allergy Info - Finished");
 			if ("" !== key ) {
 				if (assocArray.hasOwnProperty(key)) {
 					assocRec = assocArray[key];
-					// debugger; // Merge this record with other.
 					for (k in assocRec) {
 						if (assocRec.hasOwnProperty(k) && rec.hasOwnProperty(k)) {
 							if (!assocRec[k] || "" === assocRec[k]) {
@@ -1893,18 +1897,16 @@ console.log("Loading Allergy Info - Finished");
 
 	MergeWithVPR_Array : function(SQLRecords) {
 		var i, key, key1, sRec, vRec, VPR_vitals, SQLRecords;
-		debugger;
-		VPR_vitals = this.Convert2AssocArray(this.application.Patient.Vitals);
+		VPR_vitals = this.Convert2AssocArray(this.application.Patient.ParsedVPR.Vitals);
 		if (SQLRecords.length > 0) {
 			SQLRecords = this.Convert2AssocArray(SQLRecords);
-			debugger;
 			for (key in VPR_vitals) {
-			debugger;
 				if (VPR_vitals.hasOwnProperty(key)) {
 					if (SQLRecords.hasOwnProperty(key)) {
 						vRec = VPR_vitals[key];
 						sRec = SQLRecords[key];
-						for (key1 in SQLRecords) {
+						delete SQLRecords[key];
+						for (key1 in sRec) {
 							if (sRec.hasOwnProperty(key1)) {
 								if (vRec.hasOwnProperty(key1)) {
 									if (vRec[key1] == "") {
@@ -1920,22 +1922,38 @@ console.log("Loading Allergy Info - Finished");
 				}
 				else if (SQLRecords.hasOwnProperty(key)) {
 					VPR_vitals[key] = SQLRecords[key];
+					delete SQLRecords[key];
 				}
 				else {
 					debugger;
 				}
 			}
-/*************
-			for (i = 0; i < recLen; i++) {
-				this.copyNonVitals2Vitals(SQLRecords[i]);
+
+
+			for (key in SQLRecords) {
+				if (SQLRecords.hasOwnProperty(key)) {
+					if (VPR_vitals.hasOwnProperty(key)) {
+						debugger;
+					}
+					else {
+						SQLRecords[key].Observed = this.convertVPR.getObserved(SQLRecords[key].DateTaken);
+						VPR_vitals[key] = SQLRecords[key];
+					}
+				}
 			}
-			this.clearMostRecent();
-			vitals.sort(function (a, b) {
-				a = new Date(a.DateTaken);
-				b = new Date(b.DateTaken);
-				return a>b ? -1 : a<b ? 1 : 0;
+
+			var retVitals = [];
+			for (key in VPR_vitals) {
+				if (VPR_vitals.hasOwnProperty(key)) {
+					retVitals.push(VPR_vitals[key]);
+				}
+			}
+			retVitals.sort(function (a, b) {
+				aD = new Date(a.DateTaken);
+				bD = new Date(b.DateTaken);
+				return aD>bD ? -1 : aD<bD ? 1 : 0;
 			});
-****************/
+			return retVitals;
 		}
 	},
 
@@ -1948,12 +1966,8 @@ console.log("Loading Allergy Info - Finished");
 			success : function( patientInfo, response ) {
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
-					debugger;
-					this.MergeWithVPR_Array(rawData.records);
-					var theVPRData = this.application.Patient.ParsedVPR;
-					// theVPRData.Vitals = this.ConvertAssocArray(theVPRData.Vitals);
-					this.application.Patient.ParsedVPR = theVPRData;
-
+					var mergedVitals = this.MergeWithVPR_Array(rawData.records);
+					this.application.Patient.Vitals = mergedVitals;
 				}
 				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);

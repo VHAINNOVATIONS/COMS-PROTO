@@ -18,7 +18,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 				{ "xtype" : "button", "text" : "Change Admin Date" },
 				
 				{ "xtype" : "button", "text" : "Mask PI Table" },
-				{ "xtype" : "button", "text" : " " },
+				{ "xtype" : "button", "text" : "Load Vitals" },
 				{ "xtype" : "button", "text" : " " },
 				{ "xtype" : "button", "text" : "Load Treatment Data" },
 				{ "xtype" : "button", "text" : "FS Optional Ques" },
