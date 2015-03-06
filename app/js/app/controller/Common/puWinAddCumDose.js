@@ -63,7 +63,10 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 				Amt += rec.Patient[j].Amt.replace(",", "") * 1;
 			}
 
-			var MaxAmt = rec.MedMaxDose.replace(",", "") * 1;
+			var MaxAmt = 1;
+			if (rec.MedMaxDose) {
+				MaxAmt = rec.MedMaxDose.replace(",", "") * 1;
+			}
 			var xx = Ext.GeneralRounding2Digits((Amt / MaxAmt)*100);
 			xx= xx.replace(",", "") * 1;
 			var Pct = xx;

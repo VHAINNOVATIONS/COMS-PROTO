@@ -26,7 +26,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.Lockout',
 		'Management.LockoutTab',
 		'Management.Inventory',
-		'Management.PatternsOfCareTab'
+		'Management.PatternsOfCareTab',
+		'Management.Roles'
 	],
     models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
     refs: [
@@ -45,11 +46,61 @@ Ext.define('COMS.controller.Management.AdminTab', {
     {
         ref: 'MedsNonRounded', 
         selector: 'AdminTab MedsNonRounded grid'
-    },	
+    },
+/***************
     {
         ref: 'Users', 
         selector: 'AdminTab Users grid'
-    },	
+    },
+***************/
+    {
+        ref: 'RolesForm', 
+        selector: 'AdminTab Roles'
+    },
+	{
+        ref: 'RolesGrid', 
+        selector: 'AdminTab Roles grid'
+    },
+
+	{
+		ref : "RoleUserName",
+		selector : "AdminTab Roles [name=\"name\"]"
+	},
+
+	{
+		ref : "RoleUserEmail",
+		selector : "AdminTab Roles [name=\"email\"]"
+	},
+	{
+		ref : "RoleUserAccessCode",
+		selector : "AdminTab Roles [name=\"AccessCode\"]"
+	},
+	{
+		ref : "RoleUserRole",
+		selector : "AdminTab Roles [name=\"Role\"]"
+	},
+	{
+		ref : "RoleUserTemplateAuthoring",
+		selector : "AdminTab Roles [name=\"TemplateAuthoring\"]"
+	},
+	{
+		ref : "RoleDeleteBtn",
+		selector : "AdminTab Roles button[text=\"Delete\"]"
+	},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     {
         ref: 'ActiveWorkflows', 
         selector: 'AdminTab ActiveWorkflows grid'
@@ -229,6 +280,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
             "form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
                 click: this.clickRoundingRuleCancel
             },
+
+
+
 			"form [name=\"IV_FluidTypesList\"]" : {
 				select: this.selectIVFluidTypeGridRow
 			},
@@ -241,6 +295,25 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
 				click: this.clickFluidTypeSave
 			},
+
+
+			"Roles grid" : {
+				select: this.selectRolesGridRow,
+				beforerender: this.RolesLoadGrid
+			},
+			"Roles button[text=\"Cancel\"]" : {
+				click: this.clickRolesCancel
+			},
+			"Roles button[text=\"Save\"]" : {
+				click: this.clickRolesSave
+			},
+			"Roles button[text=\"Delete\"]" : {
+				click: this.clickRolesDelete
+			},
+			"Roles button[text=\"Refresh\"]" : {
+				click: this.clickRolesRefresh
+			},
+
 
 
 /* Medication Documentation */
@@ -718,6 +791,122 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	clickMedDocCancel : function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
+
+
+	RolesUserInfo : {},
+	selectRolesGridRow : function(theRowModel, record, index, eOpts) {
+		/* "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Email", "TemplateAuthoring", "Role_ID", "Last_SessionID" ], */
+		this.RolesUserInfo = record.getData();
+
+		var NameField = this.getRoleUserName();
+		NameField.setValue(this.RolesUserInfo.DisplayName);
+
+		var EmailField = this.getRoleUserEmail();
+		EmailField.setValue(this.RolesUserInfo.Email);
+
+		var ACField = this.getRoleUserAccessCode();
+		ACField.setValue(this.RolesUserInfo.username);
+
+		var RoleField = this.getRoleUserRole();
+		RoleField.setValue(this.RolesUserInfo.role);
+
+		var TAField = this.getRoleUserTemplateAuthoring();
+		TAField.setValue(this.RolesUserInfo.TemplateAuthoring);
+
+		var DelBtn = this.getRoleDeleteBtn();
+		DelBtn.enable();
+		DelBtn.show();
+	},
+
+	RolesLoadGrid : function (panel) {
+		delete this.RolesUserInfo;
+		this.getRolesForm().getForm().reset();
+		var DelBtn = this.getRoleDeleteBtn();
+		DelBtn.disable();
+		DelBtn.show();
+		this.application.loadMask("Please wait; Loading User Roles");
+		var theGrid = this.getRolesGrid();
+		theGrid.getStore().load();
+		this.application.unMask();
+		return true;
+	},
+
+	clickRolesCancel : function ( theButton, eOpts) {
+		delete this.RolesUserInfo;
+		theButton.up('form').getForm().reset();
+	},
+
+	clickRolesSave : function ( theButton, eOpts) {
+		this.application.loadMask("Please wait; Saving User Role Information");
+		var Name = this.getRoleUserName().getValue();
+		var Email = this.getRoleUserEmail().getValue();
+		var AC = this.getRoleUserAccessCode().getValue();
+		var Role = this.getRoleUserRole().getValue();
+		var TA = this.getRoleUserTemplateAuthoring().getValue();
+		var theGrid = this.getRolesGrid();
+		var theStore = theGrid.getStore();
+		var CMD = "POST";
+		var rid = theStore.count(false);
+		if (this.RolesUserInfo.rid) {
+			CMD = "PUT";
+			rid = this.RolesUserInfo.rid;
+		}
+		var RoleData = { "rid" : rid, "username" : AC, "role" : Role, "DisplayName" : Name, "Email" : Email, "TemplateAuthoring" : TA };
+
+		delete this.RolesUserInfo;
+		Ext.Ajax.request({
+			url: "/Admin/UserRoles",
+			method: CMD,
+			scope : this,
+			jsonData : RoleData,
+			success: function(response, opts) {
+				this.RolesLoadGrid();
+				this.application.unMask();
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+				this.application.unMask();
+			}
+		});
+	},
+
+	clickRolesDelete : function ( theButton, eOpts) {
+		var RoleData = this.RolesUserInfo;
+		var eOpts = {scope : this};
+		Ext.MessageBox.show({
+			title: "Information",
+			msg: "You are about to delete User: " + RoleData.DisplayName + ". Would you like to delete this user from the system?",
+			width:300,
+			buttons: Ext.MessageBox.OKCANCEL,
+			scope : this,
+			fn: function(buttonId){
+				if('ok'==buttonId){
+					var RoleData = this.RolesUserInfo;
+					delete this.RolesUserInfo;
+					Ext.Ajax.request({
+						url: "/Admin/UserRoles",
+						method: "DELETE",
+						scope : this,
+						jsonData : RoleData,
+						success: function(response, opts) {
+							this.RolesLoadGrid();
+							this.application.unMask();
+						},
+						failure: function(response, opts) {
+							wccConsoleLog('server-side failure with status code ' + response.status);
+							this.application.unMask();
+						}
+					});
+				}
+			}
+		});
+	},
+
+	clickRolesRefresh : function ( theButton, eOpts) {
+		theButton.up('form').getForm().reset();
+		this.RolesLoadGrid();
+	},
+
 
 
 

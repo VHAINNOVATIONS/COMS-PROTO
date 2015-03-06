@@ -603,7 +603,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.application.unMask();
-				Ext.MessageBox.alert("Saving Error", "ND - GenInfo - Vitals Information Section, Save Error - " + resp.msg );
+				Ext.MessageBox.alert("Saving Vitals ERROR", "Vitals Information Section, Save Error - <br>" + resp.msg );
 			}
 		});
 	},

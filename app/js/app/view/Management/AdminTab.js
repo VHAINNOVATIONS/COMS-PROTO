@@ -31,7 +31,16 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ "xtype" : "tabpanel", "title" : "Import / Export Template", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		},
-		{ "xtype" : "LockoutTab", "title" : "Lockout"},
+		{ "xtype" : "tabpanel", "title" : "User Access",
+			"defaults" : {
+				"padding" : "10 10 5 10"
+			},
+			"items" : [
+				{ "xtype" : "LockoutTab", "title" : "Lockout"},
+				{ "xtype" : "Roles", "title" : "User Roles" }
+			]
+		},
+		
 		{ "xtype" : "tabpanel", "title" : "Clinical Decision Support",
 			"defaults" : {
 				"padding" : "10 10 5 10"

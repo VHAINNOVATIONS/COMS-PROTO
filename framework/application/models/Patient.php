@@ -334,7 +334,8 @@ function convertReason2ID($Reason) {
                 BSA_Method as BSA_Method, 
                 BSA,
                 BSA_Weight,
-                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken, 
+                CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
+                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2, 
                 Temperature, 
                 TemperatureLocation, 
                 Pulse, 
@@ -363,7 +364,8 @@ function convertReason2ID($Reason) {
                 BSA_Method as BSA_Method, 
                 BSA,
                 BSA_Weight,
-                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken,
+                CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
+                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2,
                 Temperature, 
                 TemperatureLocation, 
                 Pulse, 
@@ -417,7 +419,10 @@ function convertReason2ID($Reason) {
         if (empty($dateTaken)) {
             $dateTaken = $this->getCurrentDate();
         }
-        
+        $objDateTime = new DateTime('NOW');
+        $observed = $objDateTime->format(DateTime::ISO8601);
+        // $dateTaken = $observed;
+        /**************** - MWB - 3/4/2015 - Checking if vital has already been saved for this date ************************
         $query = "SELECT count(*) as count FROM Patient_History where Patient_ID = '$patientId' AND Date_Taken = '$dateTaken'";
         $existingHistory = $this->query($query);
         
@@ -425,24 +430,17 @@ function convertReason2ID($Reason) {
             $existingHistory['apperror'] = "Vitals data already exists for this Patient on this date.";
             return $existingHistory;
         }
+        *****************/
         
         if (isset($form_data->{'OEMRecordID'})) {
             $oemRecordId = $form_data->{'OEMRecordID'};
         } else {
             $oemRecordId = null;
         }
-        
-
-        error_log("saveVitals - " . $form_data->{'DFN'});
-        error_log("Vitals for DFN Check - " . json_encode($form_data));
-        error_log("Provider DUZ - " . $_SESSION['UserDUZ']);
 
 
+        $errMsgList = array();
         $nodevista = new NodeVista();
-        $objDateTime = new DateTime('NOW');
-        $observed = $objDateTime->format(DateTime::ISO8601);
-        // $_SESSION[ 'sitelist' ] = "169";
-
         $systolic = $form_data->{'Systolic'};
         $diastolic = $form_data->{'Diastolic'};
         
@@ -457,9 +455,12 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "BP", 'value' => $bp1, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving BP to VistA - " . $eRet1["error"];
+                $bp = "";
+            }
         }
 
 
@@ -468,9 +469,13 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "HT", 'value' => $height, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Height to VistA - " . $eRet1["error"];
+                $height = "";
+            }
         }
 
         $weight = $form_data->{'Weight'};
@@ -478,11 +483,15 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "WT", 'value' => $weight, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Weight to VistA - " . $eRet1["error"];
+                $weight = "";
+            }
         }
-        
+
 
         $temp = $form_data->{'Temperature'};
         $tempLoc = $form_data->{'TemperatureLocation'};
@@ -490,9 +499,13 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "T", 'value' => $temp, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Temperature to VistA - " . $eRet1["error"];
+                $temp = "";
+            }
         }
 
         $pulse = $form_data->{'Pulse'};
@@ -500,9 +513,13 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "P", 'value' => $pulse, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Pulse to VistA - " . $eRet1["error"];
+                $pulse = "";
+            }
         }
 
         $resp = $form_data->{'Respiration'};
@@ -510,9 +527,13 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "R", 'value' => $resp, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Respiration to VistA - " . $eRet1["error"];
+                $resp = "";
+            }
         }
 
         $pain = $form_data->{'Pain'};
@@ -520,22 +541,40 @@ function convertReason2ID($Reason) {
             $VitalObj = array('type' => "PN", 'value' => $pain, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
+
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving Pain to VistA - " . $eRet1["error"];
+                $pain = "";
+            }
         }
+
 
         $spo2 = $form_data->{'SPO2'};
         if ($spo2 && $spo2 !== "") {
+            $spo2 = strval($spo2);
+error_log("Saving Pulse Oximetry - $spo2");
             $VitalObj = array('type' => "PO2", 'value' => $spo2, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-            error_log("POST Vital - " . json_encode($PatientData));
+error_log("Saving Pulse Oximetry - Data = $PatientData");
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-            error_log("NodeVista - Post Return - " . json_encode($postRet));
-        }
-        
 
+            $eRet1 = json_decode( $postRet, true );
+            if (array_key_exists("error", $eRet1)) {
+                $errMsgList[] = "Error saving SPO2 to VistA - " . $eRet1["error"];
+                $spo2 = "";
+            }
+        }
+        if (count($errMsgList) > 0) {
+            $errors = implode("\n\r", $errMsgList);
+            $AppErr = array();
+            $AppErr['apperror'] = $errors;
+            return $AppErr;
+        }
+
+error_log("No VistA Errors...");
 
         $bsa = $form_data->{'BSA'};
         $bsaMethod = $form_data->{'BSA_Method'};
@@ -569,6 +608,7 @@ function convertReason2ID($Reason) {
         
         $record = $this->query($query);
         if (null != $record && array_key_exists('error', $record)) {
+error_log("getting Performance Status Error - $query");
             return $record;
         } else if (count($record) > 0) {
             if (null === $PS_ID) {
@@ -585,15 +625,20 @@ function convertReason2ID($Reason) {
             }
         }
 
-
+error_log("Performance Status Saved");
         
         if (null == $oemRecordId) {
+            $ob1 = explode("T", $observed);
+            $time = explode("-", $ob1[1]);
+            $ob2 = $ob1[0] . " ". $time[0];
+error_log("SQL Time ($ob2) from VistA time ($observed)");
+$observed = $ob2;
             if (! empty($templateId)) {
                 $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,TemperatureLocation,Date_Taken, " .
                          "Template_ID, Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $observed . "'," .
                          "'" . $templateId . "','" . $pulse . "','" . $resp .
                          "','" . $pain . "','" . $spo2 . "'," . "'" . $bsaMethod .
                          "','" . $weightFormula . "','" . $bsaWeight . "',";
@@ -602,7 +647,7 @@ function convertReason2ID($Reason) {
                          "Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $observed . "'," .
                          "'" . $pulse . "','" . $resp . "','" . $pain . "','" .
                          $spo2 . "'," . "'" . $bsaMethod . "','" . $weightFormula .
                          "','" . $bsaWeight . "',";
@@ -613,7 +658,7 @@ function convertReason2ID($Reason) {
                          "Template_ID, OEM_ID, Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $observed . "'," .
                          "'" . $templateId . "','" . $oemRecordId . "','" .
                          $pulse . "','" . $resp . "','" . $pain . "','" . $spo2 .
                          "'," . "'" . $bsaMethod . "','" . $weightFormula . "','" .
@@ -623,16 +668,16 @@ function convertReason2ID($Reason) {
                          "Pulse, Respiration, Pain, OxygenationLevel,BSA_Method,Weight_Formula,BSA_Weight,Performance_ID) values(" .
                          "'" . $patientId . "','" . $height . "','" . $weight .
                          "','" . $bp . "','" . $systolic . "','" . $diastolic .
-                         "','" . $bsa . "','$temp','$tempLoc','" . $dateTaken . "'," .
+                         "','" . $bsa . "','$temp','$tempLoc','" . $observed . "'," .
                          "'" . $pulse . "','" . $resp . "','" . $pain . "','" .
                          $spo2 . "'," . "'" . $bsaMethod . "','" . $weightFormula .
                          "','" . $bsaWeight . "',";
             }
         }
 
-        (empty($performanceId)) ? $query .= "null)" : $query .= "'" . $performanceId . "')";
+        (empty($performanceId)) ? $query .= "null)" : $query .= "'$performanceId')";
 
-        error_log("Patient.Model.saveVitals - $query");
+error_log("Patient.Model.saveVitals - $query");
 
         $result = $this->query($query);
         

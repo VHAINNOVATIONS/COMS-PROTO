@@ -113,12 +113,10 @@ class Admin extends Model {
     }	
 	
 	function getUsers() {
-     
-        $query = "SELECT rid as rid,username as username,role as role,DisplayName as DisplayName,Email as Email,cprsUsername as cprsUsername,cprsPass as cprsPass FROM Roles ORDER BY username";
-        
+//        $query = "SELECT rid as rid,username as username,role as role,DisplayName as DisplayName,Email as Email,cprsUsername as cprsUsername,cprsPass as cprsPass FROM Roles ORDER BY username";
+        $query = "select * from LookUp where Lookup_Type = 24 order by name";
         return $this->query($query);
-        
-    }	
+    }
 
 	function updateUsers($form_data){
 	

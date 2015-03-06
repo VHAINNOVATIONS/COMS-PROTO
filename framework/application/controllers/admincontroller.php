@@ -44,26 +44,95 @@ class AdminController extends Controller {
         
     }
 
-	function Users(){
-        
+    function Users(){
         $jsonRecord = array();
-        
         $records = $this->Admin->getUsers();
-        
         if ($this->checkForErrors('Get Users Failed. ', $records)) {
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = $this->get('frameworkErr');
             $this->set('jsonRecord', $jsonRecord);
             return;
         } 
-        
         $jsonRecord['success'] = true;            
         $jsonRecord['total'] = count($records);
-
         $jsonRecord['records'] = $records;
-
         $this->set('jsonRecord', $jsonRecord);
-        
+    }
+
+    function UserRoles(){
+        $jsonRecord = array();
+
+        if ("GET" == $_SERVER['REQUEST_METHOD']) {
+            $query = "SELECT * FROM Roles ORDER BY username";
+            $records = $this->Admin->query( $query );
+            if ($this->checkForErrors('Get Users Failed. ', $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            } 
+            $jsonRecord['total'] = count($records);
+            $jsonRecord['records'] = $records;
+        }
+        else if ("PUT" == $_SERVER['REQUEST_METHOD']) {
+            $form_data = json_decode(file_get_contents('php://input'));
+            $rid = $form_data->{'rid'};
+            $username = $form_data->{'username'};
+            $role = $form_data->{'role'};
+            $DisplayName = $form_data->{'DisplayName'};
+            $Email = $form_data->{'Email'};
+            $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
+
+$query = "Update Roles 
+            set username = '$username',
+            role ='$role', 
+            DisplayName ='$DisplayName', 
+            Email = '$Email',
+            TemplateAuthoring ='$TemplateAuthoring'
+            where rid = '$rid'";
+error_log("UPDATE Record - $query");
+            $records = $this->Admin->query( $query );
+            if ($this->checkForErrors('Update User Failed. ', $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            } 
+        }
+        else if ("POST" == $_SERVER['REQUEST_METHOD']) {
+            $form_data = json_decode(file_get_contents('php://input'));
+            $rid = $form_data->{'rid'};
+            $username = $form_data->{'username'};
+            $role = $form_data->{'role'};
+            $DisplayName = $form_data->{'DisplayName'};
+            $Email = $form_data->{'Email'};
+            $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
+            $query = "INSERT into Roles (rid, username, role, DisplayName, Email, TemplateAuthoring) VALUES ('$rid', '$username','$role', '$DisplayName', '$Email','$TemplateAuthoring')";
+error_log("POST Record - $query");
+            $records = $this->Admin->query( $query );
+            if ($this->checkForErrors('Save New User Failed. ', $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            } 
+
+        }
+        else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
+            $form_data = json_decode(file_get_contents('php://input'));
+            $rid = $form_data->{'rid'};
+            $query = "DELETE from Roles where rid='$rid'";
+error_log("Delete Record - $query");
+            $records = $this->Admin->query( $query );
+            if ($this->checkForErrors('Delete User Failed. ', $records)) {
+                $jsonRecord['success'] = false;
+                $jsonRecord['msg'] = $this->get('frameworkErr');
+                $this->set('jsonRecord', $jsonRecord);
+                return;
+            } 
+        }
+        $jsonRecord['success'] = true;            
+        $this->set('jsonRecord', $jsonRecord);
     }
 	
 	function ActiveWorkFlows(){

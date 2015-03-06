@@ -1515,7 +1515,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 
                 $jsonRecord = array( );
                 
-                $jsonRecord[ 'success' ] = 'true';
+                $jsonRecord[ 'success' ] = true;
                 $jsonRecord[ 'total' ]   = count( $records );
                 
                 $jsonRecord[ 'records' ] = $records;
@@ -1523,14 +1523,14 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 $this->set( 'jsonRecord', $jsonRecord );
                 $this->set( 'frameworkErr', null );
             } else if ( $form_data ) {
-                
                 $this->Patient->beginTransaction();
                 
                 $saveVitals = $this->Patient->saveVitals( $form_data, null );
-                
+                error_log("Model call to saveVitals - " . json_encode($saveVitals));
+
                 if ( null != $saveVitals && array_key_exists( 'apperror', $saveVitals ) ) {
                     $errorMsg                = $saveVitals[ 'apperror' ];
-                    $jsonRecord[ 'success' ] = 'false';
+                    $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'msg' ]     = $errorMsg;
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
@@ -1539,22 +1539,19 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 }
                 
                 if ( $this->checkForErrors( 'Save Patient Vitals Failed. ', $saveVitals ) ) {
-                    $jsonRecord[ 'success' ] = 'false';
+                    $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
                     $this->Patient->rollbackTransaction();
                     return;
                 }
-                
+
                 $jsonRecord = array( );
-                
-                $jsonRecord[ 'success' ] = 'true';
+                $jsonRecord[ 'success' ] = true;
                 $jsonRecord[ 'msg' ]     = 'Vitals Record Saved';
-                
                 $jsonRecord[ 'records' ] = '';
-                // $jsonRecord['records'] = $form_data->{'total'};
-                
+
                 $this->set( 'jsonRecord', $jsonRecord );
                 $this->set( 'frameworkErr', null );
                 $this->Patient->endTransaction();
@@ -1566,14 +1563,10 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
         
         function getVitals( $PatientID = null, $dateTaken = null ) {
             $this->Vitals( $PatientID );
-            // error_log("getVitals - ");
-            // error_log(json_encode( $this->get('jsonRecord') ));
             return $this->get( 'jsonRecord' );
         }
         
         function Allergies( $patientId = null ) {
-            
-            // $form_data = json_decode(file_get_contents('php://input'));
             $jsonRecord = array( );
             
             if ( $patientId != NULL ) {
@@ -1586,12 +1579,9 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                     $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-                
                 $jsonRecord[ 'success' ] = 'true';
                 $jsonRecord[ 'total' ]   = count( $records );
-                
                 $jsonRecord[ 'records' ] = $records;
-                
                 $this->set( 'jsonRecord', $jsonRecord );
             }
         }
@@ -3241,10 +3231,64 @@ LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)
 
 
 
+    function VPR($DFN) {
+        $jsonRecord              = array( );
+        $jsonRecord[ "success" ] = true;
+        $records                 = array( );
+        $msg                     = "";
+        if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            $nodevista = new NodeVista();
+            $VPR = $nodevista->get("patient/details/$DFN");
+            $patient[0]['VPR'] = json_decode($VPR);
+            $jsonRecord[ "total" ]   = count( $VPR );
+            $jsonRecord[ "records" ] = json_decode($VPR);
+        } else {
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = "Invalid Request - " . $_SERVER[ "REQUEST_METHOD" ];
+        }
+        $this->set( "jsonRecord", $jsonRecord );
+    }
 
 
 
 
 
+
+
+
+
+
+
+
+        function BaseControllerExample( $Patient_ID = null, $Section = null, $State = null ) {
+            $jsonRecord              = array( );
+            $jsonRecord[ "success" ] = true;
+            $records                 = array( );
+            $msg                     = "";
+            if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+                if ( $this->checkForErrors( "$msg Edit Lock Failed. ", $records ) ) {
+                    $jsonRecord[ "success" ] = false;
+                    $jsonRecord[ "msg" ]     = $this->get( "frameworkErr" );
+                    $this->set( "jsonRecord", $jsonRecord );
+                    return;
+                }
+                $jsonRecord[ "total" ]   = count( $records );
+                $jsonRecord[ "records" ] = $records;
+                $this->set( "jsonRecord", $jsonRecord );
+            } else if ( "POST" == $_SERVER[ "REQUEST_METHOD" ] ) {
+                $records                 = $this->_getLockedState( $Patient_ID, $Section );
+                $jsonRecord[ "success" ] = true;
+                $jsonRecord[ "total" ]   = count( $records );
+                $jsonRecord[ "records" ] = $records;
+                $this->set( "jsonRecord", $jsonRecord );
+                return;
+            } else if ( "PUT" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            } else {
+                $jsonRecord[ "success" ] = false;
+                $jsonRecord[ "msg" ]     = "Invalid Request - " . $_SERVER[ "REQUEST_METHOD" ];
+                $this->set( "jsonRecord", $jsonRecord );
+                return;
+            }
+        }
 
     }

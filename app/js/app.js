@@ -43,30 +43,110 @@ Ext.Loader.setConfig({
 	}
 });
 
-Ext.URLs.Inventory = "/Reports/Inventory";
-Ext.URLs.Lockout = "/Patient/Lock";
-Ext.URLs.MedReminders = "/Patient/MedReminders";
-Ext.URLs.PatientDischarge = "/Patient/DischargeInstructions";
-Ext.URLs.DiseaseStaging = "/LookUp/DiseaseStaging";
 
-Ext.URLs.ClinicInfo = "/LookUp/ClinicInfo";
-Ext.URLs.DischargeInstruction = "/LookUp/DischargeInstruction";
-Ext.URLs.ToxicityInstruction = "/LookUp/ToxicityInstruction";
+
+Ext.URLs.Inventory               = "/Reports/Inventory";
+Ext.URLs.Lockout                 = "/Patient/Lock";
+Ext.URLs.LoadVPR                 = "/Patient/VPR";
+Ext.URLs.MedReminders            = "/Patient/MedReminders";
+Ext.URLs.PatientDischarge        = "/Patient/DischargeInstructions";
+Ext.URLs.DiseaseStaging          = "/LookUp/DiseaseStaging";
+
+Ext.URLs.ClinicInfo              = "/LookUp/ClinicInfo";
+Ext.URLs.DischargeInstruction    = "/LookUp/DischargeInstruction";
+Ext.URLs.ToxicityInstruction     = "/LookUp/ToxicityInstruction";
+Ext.URLs.CumulativeDosingMeds    = "/LookUp/CumulativeDoseMeds";
+Ext.URLs.MedRisks                = "/LookUp/MedRisks";
+Ext.URLs.TemplateLocation        = "/LookUp/TemplateLocation/";
+Ext.URLs.MedDoc                  = "/LookUp/MedDocs";
+Ext.URLs.TemplateMedDocs         = "/LookUp/TemplateMedDocs";
+Ext.URLs.MedHold                 = "/LookUp/MedHold";
+Ext.URLs.RoundingRule            = "/LookUp/RoundingRule";
+Ext.URLs.SiteConfig              = "/LookUp/SiteConfig";
+Ext.URLs.LookupIVFluidType4Med   = "/LookUp/IVFluidType4Med/";
+Ext.URLs.DiseaseType             = "/LookUp/view/DiseaseType";
+// No Params,
+// Returns list of all Diseases, used in "Select Disease Type" combobox
+// Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
+
+
+Ext.URLs.IntelligentDataEntry    = "/LookUp/IDEntry";
+Ext.URLs.NOT_USED_IDEntry        = "/LookUp/IDEntry";
+
+Ext.URLs.TemplateAlias           = "/LookUp/view/TemplateAlias";
+// No Params,
+// Returns list of all Template Aliases (e.g. User Defined Template Name)
+// Used to determine duplicate Template by User Name
+
+Ext.URLs.Templates               = "/LookUp/Templates";
+// No Param - Returns list of templates available
+
+Ext.URLs.TemplateList            = "/LookUp/Templates";
+
+Ext.URLs.TemplateListByLocation  = "/LookUp/Templates/Location"; // Requires LocationID as the last parameter
+
+Ext.URLs.FlagTemplateInactive    = "/LookUp/flagTemplateInactive";
+
+Ext.URLs.BaseView                = "/LookUp/view";
+Ext.URLs.TimeFrameUnit           = "/LookUp/view/TimeFrameUnit";
+Ext.URLs.TempLoc                 = "/LookUp/view/TempLoc";
+Ext.URLs.DelivMech               = "/LookUp/view/DelivMech";
+
+Ext.URLs.EmetogenicLevel_ASCO    = "/LookUp/view/Erisk_ASCO";
+Ext.URLs.EmetogenicLevel_NCCN    = "/LookUp/view/Erisk_NCCN";
+Ext.URLs.EmetogenicLevel         = "/LookUp/view/Emetogenic";
+Ext.URLs.EmeticMeds              = "/LookUp/EmeticMeds";
+
+Ext.URLs.TemplateSources         = "/LookUp/view/TemplateSource";
+
+Ext.URLs.DiseaseStage            = "/LookUp/DiseaseStage";
+// Param = DiseaseType ID,
+// Returns list of all Stages for the specified Disease Type, used in "Select Disease Stage" combobox
+// Example Usage - https://devtest.dbitpro.com/LookUp/DiseaseStage/C884F3AA-0B21-E111-BF57-000C2935B86F
+
+Ext.URLs.Lookups                 = "/LookUp/viewall";
+Ext.URLs.AddLookup               = "/LookUp/save"; //KD - 12/20/11 - new URI associated with adding data to the lookup table
+Ext.URLs.DeleteLookup            = "/LookUp/save"; // "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
+
+Ext.URLs.References              = "/LookUp/view/References"; // MWB - 12/27/2011 - Moved from local to SQL Data Store
+Ext.URLs.HydrationDrug           = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydration drug listing
+Ext.URLs.NOT_USED_Drugs          = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
+Ext.URLs.Drugs = "/LookUp/view/Drug"; //KD - 05/17/12 - Will Append 'InPatient' or 'OutPatient' in Controller
+Ext.URLs.DrugsInPatient = "/LookUp/view/DrugsInPatient";
+Ext.URLs.DrugsOutPatient = "/LookUp/view/DrugsOutPatient";
+Ext.URLs.DrugUnits = "/LookUp/view/Unit/Drug"; // MWB - 12/29/2011 - Added drug units listing
+Ext.URLs.Units = "/LookUp/view/Unit"; // MWB - 12/29/2011 - Added drug units listing
+Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug Regimen
+Ext.URLs.Infusion = "/LookUp/view/Route"; // MWB - 12/30/2011 - Added Infusion
+Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/CTOS
+Ext.URLs.AddCTOS = "/LookUp/saveTemplate/";
+Ext.URLs.UpdateCTOS = "/LookUp/updateTemplate/";
+Ext.URLs.DeleteTemplate = "/LookUp/deleteTemplate"; //KD 1/26/12 - To delete Templates.
+
+Ext.URLs.IVFluidType = "/LookUp/IVFluidType/";
+Ext.URLs.FluidType = "/LookUp/view/FluidType"; //KD 3/7/2012 - Retrieve Fluid Types
+
+Ext.URLs.PrintTemplate = "/LookUp/PrintTemplate";
+// Param = Template GUID
+// Opens a new window showing the specified template as a stand alone page for printing.
+// Example Usage - https://mwb.dbitpro.com/LookUp/PrintTemplate/D7356037-A3B5-E111-A560-000C2935B86F
+
+
+
+
+
+
+
+
+
+
 Ext.URLs.PatientCumulativeDosing = "/Patient/CumulativeDoseTracking";
-Ext.URLs.CumulativeDosingMeds = "/LookUp/CumulativeDoseMeds";
 
-Ext.URLs.MedRisks = "/LookUp/MedRisks";
-Ext.URLs.TemplateLocation = "/LookUp/TemplateLocation/";
 
-Ext.URLs.MedDoc = "/LookUp/MedDocs";
-Ext.URLs.TemplateMedDocs = "/LookUp/TemplateMedDocs";
-Ext.URLs.MedHold = "/LookUp/MedHold";
-Ext.URLs.RoundingRule = "/LookUp/RoundingRule";
-Ext.URLs.SiteConfig = "/LookUp/SiteConfig";
 Ext.URLs.Amputations = "/Patient/Amputations";
 Ext.URLs.CancerType = "/Patient/Cancer";
 
-Ext.URLs.LookupIVFluidType4Med = "/LookUp/IVFluidType4Med/";
+
 
 Ext.URLs.Reasons = "/Workflow/Reasons";
 Ext.URLs.Patients = "/Patient/viewall";
@@ -108,20 +188,6 @@ Ext.URLs.Patients = "/Patient/viewall";
 Ext.URLs.HoldCancel = "/Patient/HoldCancel";
 Ext.URLs.OrderHoldCancel = "/Orders/HoldCancel";
 Ext.URLs.OrderStatus = "/Orders/OrderStatus";
-
-Ext.URLs.DiseaseType = "/LookUp/view/DiseaseType";
-// No Params,
-// Returns list of all Diseases, used in "Select Disease Type" combobox
-// Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
-
-
-Ext.URLs.IntelligentDataEntry = "/LookUp/IDEntry";
-// Ext.URLs.IDEntry = "/LookUp/IDEntry";
-
-Ext.URLs.TemplateAlias = "/LookUp/view/TemplateAlias";
-// No Params,
-// Returns list of all Template Aliases (e.g. User Defined Template Name)
-// Used to determine duplicate Template by User Name
 
 Ext.URLs.LabInfo = "/Patient/LabInfoResults";
 // Param = Patient ID (e.g. 28225CF5-3937-E111-9B9C-000C2935B86F)
@@ -168,66 +234,6 @@ Ext.URLs.Vitals = "/Patient/Vitals";
 
 Ext.URLs.AddVitals = "/Patient/Vitals";
 
-Ext.URLs.PrintTemplate = "/LookUp/PrintTemplate";
-// Param = Template GUID
-// Opens a new window showing the specified template as a stand alone page for printing.
-// Example Usage - https://mwb.dbitpro.com/LookUp/PrintTemplate/D7356037-A3B5-E111-A560-000C2935B86F
-
-
-Ext.URLs.Templates = "/LookUp/Templates";
-// No Param - Returns list of templates available
-
-Ext.URLs.TemplateList = "/LookUp/Templates";
-
-Ext.URLs.TemplateListByLocation = "/LookUp/Templates/Location"; // Requires LocationID as the last parameter
-
-Ext.URLs.FlagTemplateInactive = "/LookUp/flagTemplateInactive";
-
-Ext.URLs.BaseView = "/LookUp/view";
-Ext.URLs.TimeFrameUnit = "/LookUp/view/TimeFrameUnit";
-Ext.URLs.TempLoc = "/LookUp/view/TempLoc";
-Ext.URLs.DelivMech = "/LookUp/view/DelivMech";
-
-
-
-Ext.URLs.EmetogenicLevel_ASCO = "/LookUp/view/Erisk_ASCO";
-Ext.URLs.EmetogenicLevel_NCCN = "/LookUp/view/Erisk_NCCN";
-Ext.URLs.EmetogenicLevel = "/LookUp/view/Emetogenic";
-
-
-
-
-Ext.URLs.TemplateSources = "/LookUp/view/TemplateSource";
-
-Ext.URLs.DiseaseStage = "/LookUp/DiseaseStage";
-// Param = DiseaseType ID,
-// Returns list of all Stages for the specified Disease Type, used in "Select Disease Stage" combobox
-// Example Usage - https://devtest.dbitpro.com/LookUp/DiseaseStage/C884F3AA-0B21-E111-BF57-000C2935B86F
-
-Ext.URLs.Lookups = "/LookUp/viewall";
-Ext.URLs.AddLookup = "/LookUp/save"; //KD - 12/20/11 - new URI associated with adding data to the lookup table
-Ext.URLs.DeleteLookup = "/LookUp/save";		// "/LookUp/delete"; //KD - 12/23/11 - new URI associated with deleting data from the lookup table
-
-
-Ext.URLs.References = "/LookUp/view/References"; // MWB - 12/27/2011 - Moved from local to SQL Data Store
-Ext.URLs.HydrationDrug = "/LookUp/Hydration"; // MWB - 12/28/2011 - Added Hydration drug listing
-//Ext.URLs.Drugs = "/LookUp/view/Drug/NonFormaDrug"; // MWB - 12/29/2011 - Added drug listing //KD - 1/13/11 - To support Non-Formulary Drugs
-Ext.URLs.Drugs = "/LookUp/view/Drug"; //KD - 05/17/12 - Will Append 'InPatient' or 'OutPatient' in Controller
-Ext.URLs.DrugsInPatient = "/LookUp/view/DrugsInPatient";
-Ext.URLs.DrugsOutPatient = "/LookUp/view/DrugsOutPatient";
-Ext.URLs.DrugUnits = "/LookUp/view/Unit/Drug"; // MWB - 12/29/2011 - Added drug units listing
-Ext.URLs.Units = "/LookUp/view/Unit"; // MWB - 12/29/2011 - Added drug units listing
-Ext.URLs.DrugRegimen = "/LookUp/DrugRegimen"; // MWB - 12/30/2011 - Added drug Regimen
-Ext.URLs.Infusion = "/LookUp/view/Route"; // MWB - 12/30/2011 - Added Infusion
-Ext.URLs.CTOS = "/LookUp/TemplateData/"; // MWB - 1/2/2012 - Added TemplateData/CTOS
-Ext.URLs.AddCTOS = "/LookUp/saveTemplate/";
-Ext.URLs.UpdateCTOS = "/LookUp/updateTemplate/";
-Ext.URLs.DeleteTemplate = "/LookUp/deleteTemplate"; //KD 1/26/12 - To delete Templates.
-
-Ext.URLs.IVFluidType = "/LookUp/IVFluidType/";
-
-
-Ext.URLs.FluidType = "/LookUp/view/FluidType"; //KD 3/7/2012 - Retrieve Fluid Types
 
 Ext.URLs.AdminGlobals = "/Admin/Globals";
 // No Params
@@ -459,7 +465,15 @@ Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 
 
 Ext.URLs.ToxGrid = "/NursingDoc/ToxicityDetail";
-Ext.URLs.EmeticMeds = "/LookUp/EmeticMeds";
+
+
+
+
+
+
+
+
+
 Ext.COMSModels.EmeticMeds = "COMS.model.EmeticMeds";
 
 Ext.COMSModels.DiseaseStaging = "COMS.model.DiseaseStaging";

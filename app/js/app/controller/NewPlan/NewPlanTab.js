@@ -1583,7 +1583,6 @@ console.log("Loading Allergy Info - Finished");
 			var key, newData = [];
 			for (key in theData) {
 				if (theData.hasOwnProperty(key)) {
-					// theData.date = key;
 					newData.push(theData[key]);
 				}
 			}
@@ -1769,7 +1768,6 @@ console.log("Loading Allergy Info - Finished");
 					}
 				}
 			}
-			// Convert vitals from associative array
 			var theVitals = this.ConvertAssocArray(this.Vitals);
 
 			theVPRData = { Allergies : this.Allergies, Vitals : theVitals, Labs : this.Labs, Problems : this.Problems };
@@ -1777,24 +1775,113 @@ console.log("Loading Allergy Info - Finished");
 		}
 	},
 
-	copyNonVitals2Vitals : function(rec) {
+	copyNonVitals2Vitals : function(SQLRec) {
+		/**
 		var j, vRec, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
 		for (j = 0; j < vLen; j++) {
-			if (rec.DateTaken === vitals[j].DateTaken) {
-				// console.log("Found Vital Match - " + rec.DateTaken + " - Merging records");
+			if (SQLRec.DateTaken === vitals[j].DateTaken) {
+				// console.log("Found Vital Match - " + SQLRec.DateTaken + " - Merging records");
 				vRec = vitals[j];
-				if (!vRec.MostRecent) {
-					vRec.MostRecent = true;
-					vRec.BSA = rec.BSA;
-					vRec.BSA_Method = rec.BSA_Method;
-					vRec.BSA_Weight = rec.BSA_Weight;
-					vRec.WeightFormula = rec.WeightFormula;
-					vRec.PS = rec.PS;
-					vRec.PSID = rec.PSID;
+				if ("N/C" !== SQLRec.PSID) {
+					vRec.PSID = SQLRec.PSID;
+					vRec.PS = SQLRec.PS;
 				}
+				//if (!vRec.MostRecent) {
+					//vRec.MostRecent = true;
+					if (!vRec.BSA) {
+						vRec.BSA = SQLRec.BSA;
+					}
+					if (!vRec.BSA_Method) {
+						vRec.BSA_Method = SQLRec.BSA_Method;
+					}
+					if (!vRec.BSA_Weight) {
+						vRec.BSA_Weight = SQLRec.BSA_Weight;
+					}
+					if (!vRec.WeightFormula) {
+						vRec.WeightFormula = SQLRec.WeightFormula;
+					}
+					if (!vRec.PS) {
+						vRec.PS = SQLRec.PS;
+					}
+					if (!vRec.PSID) {
+						vRec.PSID = SQLRec.PSID;
+					}
+					if (!vRec.TemperatureLocation) {
+						vRec.TemperatureLocation = SQLRec.TemperatureLocation
+					}
+**/
+						/***
+					vRec.BSA = SQLRec.BSA;
+					vRec.BSA_Method = SQLRec.BSA_Method;
+					vRec.BSA_Weight = SQLRec.BSA_Weight;
+					vRec.WeightFormula = SQLRec.WeightFormula;
+					vRec.PS = SQLRec.PS;
+					vRec.PSID = SQLRec.PSID;
+					vRec.TemperatureLocation = SQLRec.TemperatureLocation
+						 ***/
+				//}
+/**
 				return;
 			}
+			else {
+				if ("N/C" !== SQLRec.PSID) {
+					vRec = [];
+					vRec.PSID = SQLRec.PSID;
+					vRec.PS = SQLRec.PS;
+					vRec.DateTaken = SQLRec.DateTaken;
+					vitals.push(vRec);
+				}
+			}
 		}
+**/
+	},
+
+	Convert2AssocArray : function(theData) {
+		var i, k, rec, key, key1, key2, recLen = theData.length, assocRec, assocArray = [];
+		for (i = 0; i < recLen; i++) {
+			key = "";
+			key1 = "";
+			key2 = "";
+			rec = theData[i];
+			k = rec.DateTaken;
+			debugger;
+			try {
+				if (k) {
+					key = k.split(" ");
+					
+					key1 = key[0].split("/");
+					key1 = key1[2] + key1[0] + key1[1];
+					if (key.length > 1) {
+						key2 = key[1].split(":");
+						key2 = key2[0] + key2[1] + key2[2];
+					}
+					key = key1 + key2;
+				}
+			}
+			catch (e) {
+				debugger;
+			}
+			if ("" !== key ) {
+				if (assocArray.hasOwnProperty(key)) {
+					assocRec = assocArray[key];
+					// debugger; // Merge this record with other.
+					for (k in assocRec) {
+						if (assocRec.hasOwnProperty(k) && rec.hasOwnProperty(k)) {
+							if (!assocRec[k] || "" === assocRec[k]) {
+								assocRec[k] = rec[k];
+							}
+						}
+						else if (rec.hasOwnProperty(k)) {
+							assocRec[k] = rec[k];
+						}
+					}
+				}
+				else {
+					assocArray[key] = rec;
+				}
+			}
+		}
+		return assocArray;
 	},
 
 	clearMostRecent : function() {
@@ -1804,119 +1891,70 @@ console.log("Loading Allergy Info - Finished");
 		}
 	},
 
-	walkVitalsArray4Match : function(records) {
-		var i, recLen = records.length;
-		for (i = 0; i < recLen; i++) {
-			this.copyNonVitals2Vitals(records[i]);
+	MergeWithVPR_Array : function(SQLRecords) {
+		var i, key, key1, sRec, vRec, VPR_vitals, SQLRecords;
+		debugger;
+		VPR_vitals = this.Convert2AssocArray(this.application.Patient.Vitals);
+		if (SQLRecords.length > 0) {
+			SQLRecords = this.Convert2AssocArray(SQLRecords);
+			debugger;
+			for (key in VPR_vitals) {
+			debugger;
+				if (VPR_vitals.hasOwnProperty(key)) {
+					if (SQLRecords.hasOwnProperty(key)) {
+						vRec = VPR_vitals[key];
+						sRec = SQLRecords[key];
+						for (key1 in SQLRecords) {
+							if (sRec.hasOwnProperty(key1)) {
+								if (vRec.hasOwnProperty(key1)) {
+									if (vRec[key1] == "") {
+										vRec[key1] = sRec[key1];
+									}
+								}
+								else {
+									vRec[key1] = sRec[key1];
+								}
+							}
+						}
+					}
+				}
+				else if (SQLRecords.hasOwnProperty(key)) {
+					VPR_vitals[key] = SQLRecords[key];
+				}
+				else {
+					debugger;
+				}
+			}
+/*************
+			for (i = 0; i < recLen; i++) {
+				this.copyNonVitals2Vitals(SQLRecords[i]);
+			}
+			this.clearMostRecent();
+			vitals.sort(function (a, b) {
+				a = new Date(a.DateTaken);
+				b = new Date(b.DateTaken);
+				return a>b ? -1 : a<b ? 1 : 0;
+			});
+****************/
 		}
-		this.clearMostRecent();
 	},
 
-	loadVitals : function(RetCode) {
 
+/* Note: If there are no current vitals in SQL we still need to process any vitals in the VistA VPR */
+	loadVitals : function(RetCode) {
 		var pVitalsModel = this.getModel("Vitals"), pVitalsModelParam = this.application.Patient.id;
 		pVitalsModel.load(pVitalsModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
-					this.walkVitalsArray4Match(rawData.records);
+					debugger;
+					this.MergeWithVPR_Array(rawData.records);
+					var theVPRData = this.application.Patient.ParsedVPR;
+					// theVPRData.Vitals = this.ConvertAssocArray(theVPRData.Vitals);
+					this.application.Patient.ParsedVPR = theVPRData;
+
 				}
-
-
-
-
-
-
-
-/**************************
-				if (rawData) {
-					if (rawData.total >= 0) {
-						for (i = 0; i < rawData.total; i++) {
-							rec = rawData.records[i];
-							for (el in rec) {
-								if (rec.hasOwnProperty(el)) {
-								if (null === rec[el]) {
-									rec[el] = "";
-								}
-							}
-							}
-							h = rawData.records[i].Height;
-							t = h.split(" ");
-							if (t.length > 1) {
-								rawData.records[i].Height = t[0];
-							}
-							w = rawData.records[i].Weight;
-							t = w.split(" ");
-							if (t.length > 1) {
-								rawData.records[i].Weight = t[0];
-							}
-						}
-						// this.application.Patient.Vitals = rawData.records;
-						this.application.Patient.Height = "";
-						this.application.Patient.Weight = "";
-
-						// We need to get the most recent vitals needed for BSA into the Patient Object (specifically height/weight) if available.
-						var Vitals = this.application.Patient.Vitals,
-							vLen = Vitals.length;
-
-						for (i = 0; (i < vLen) && (HaveAllCount > 0); i++) {
-							aVital = Vitals[i];
-							if ("" === vBSA_Weight && "" !== aVital.BSA_Weight) {
-								vBSA_Weight = aVital.BSA_Weight;
-								HaveAllCount--;
-							}
-							if ("" === vWeightFormula && "" !== aVital.WeightFormula) {
-								vWeightFormula = aVital.WeightFormula;
-								HaveAllCount--;
-							}
-							if ("" === vBSA_Method && "" !== aVital.BSA_Method) {
-								vBSA_Method = aVital.BSA_Method;
-								HaveAllCount--;
-							}
-							if ("" === vBSA && "" !== aVital.BSA) {
-								vBSA = aVital.BSA;
-								HaveAllCount--;
-							}
-							if ("" === vHeight && "" !== aVital.Height) {
-								vHeight = aVital.Height;
-								HaveAllCount--;
-							}
-							if ("" === vWeight && "" !== aVital.Weight) {
-								vWeight = aVital.Weight;
-								HaveAllCount--;
-							}
-						}
-						if (HaveAllCount > 0) {
-							var errMsg = [];
-							if ("" === vBSA_Weight) {
-								errMsg.push("BSA Weight");
-							}
-							if ("" === vBSA_Method) {
-								errMsg.push("BSA Method");
-							}
-							if ("" === vWeightFormula) {
-								errMsg.push("BSA Weight Formula");
-							}
-							if ("" === vBSA) {
-								errMsg.push("BSA");
-							}
-							if ("" === vHeight) {
-								errMsg.push("Patient Height");
-							}
-							if ("" === vWeight) {
-								errMsg.push("Patient Weight");
-							}
-							var errMsgStr = errMsg.join(", ");
-						}
-						this.application.Patient.Height = vHeight;
-						this.application.Patient.Weight = vWeight;
-					}
-				}
-********************/
-
-					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				// debugger;
 				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);
 			},
@@ -1925,9 +1963,36 @@ console.log("Loading Allergy Info - Finished");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
 			}
 		});
- /***************/
 	},
 
+
+	reloadVPR : function() {
+				Ext.Ajax.request({
+					scope : this,
+					url: Ext.URLs.LoadVPR + "/" + this.application.Patient.EoTS_ID,
+					success: function( response, opts ){
+						this.application.unMask();
+						var text = response.responseText;
+						var resp = Ext.JSON.decode( text );
+						if (resp.success) {
+							if (resp.records[0]) {
+								this.application.Patient.EoTS = resp.records[0];
+								Ext.widget("ViewEndTreatmentSummary");
+							}
+							else {
+								alert("No records available for this EoTS");
+							}
+						}
+						else {
+							alert("load EoTS - Error");
+						}
+					},
+					failure : function( response, opts ) {
+						this.application.unMask();
+						alert("EoTS Data Load Failed...");
+					}
+				});
+	},
 
     /**
      *
