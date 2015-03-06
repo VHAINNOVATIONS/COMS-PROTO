@@ -1,0 +1,422 @@
+#%RAML 0.8
+title: Node.JS/VistA API
+version: v1
+baseUri: http://dbittest.dbitpro.com:3000/{version}
+mediaType: application/json
+protocols: [ HTTP ] 
+/authenticate:
+  post:
+    description: Authenticate against the VistA instance
+    headers:
+      X-Access-Token:
+        displayName: dbITpro Access Token
+      X-Token-Secret:
+        displayName: dbITpro Access Secret
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          accesscode:
+            description: The VistA Access Code
+            type: string
+            required: true
+          verifycode:
+            description: The Vista Verify Code
+            type: string
+            required: true
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type" : "object",
+                "properties" : {
+                  "success" : {
+                    "type" : "string"
+                  }
+                }
+              }
+      401:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type" : "object",
+                "properties" : {
+                  "error" : {
+                    "type" : "string"
+                  }
+                }
+              }
+/patient/{PatientId}:
+    get:
+      description: Retrieve patient by ID. This ID is the DFN.
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+/patient/name/{PatientName}:
+    get:
+      description: Get a patient by Patient Name Search string. This can be the full or partial patient name
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+      responses:
+        200:
+          body:
+            application/json:
+              schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-03/schema",
+                  "type" : "object",
+                  "properties" : {
+                    "dfn" : {
+                      "description" : "This is a Vista ID to track patients. Points to the patient record in the patient file",
+                      "type" : "string"
+                    },
+                    "name" : {
+                      "description" : "The full name of the patient",
+                      "type" : "string"
+                    }
+                  }
+                }
+/patient/medications/{PatientId}:
+    get:
+      description: Retrieve medications for patient by ID. This ID is the DFN.
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+      responses:
+        200:
+          body:
+            application/json:
+              schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-03/schema",
+                  "type" : "object",
+                  "properties" : {
+                    "ien" : {
+                      "description" : "Internal Entry Number. The internal entry drug number entered by Pharmacy personnel into the DRUG file (#50) to identify Unit Dose and IV medications.",
+                      "type" : "string"
+                    },
+                    "administration" : {
+                      "description" : "Where the medication needs to be administered inpatient or outpatient",
+                      "type" : "string"
+                    },
+                    "medication" : {
+                      "description" : "The name of the medication, usually also contains the dosage information",
+                      "type" : "string"
+                    },
+                    "additional_number" : {
+                      "description" : "not sure what the number signifies",
+                      "type" : "string"
+                    },
+                    "status" : {
+                      "description" : "whether medication is being administered actively or discontinued",
+                      "type" : "string"
+                    }
+                  }
+                }
+/patient/medication/detail/{PatientId}/{MedicationIEN}:
+    get:
+      description: Retrieve medications for patient by ID. This ID is the DFN.
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+      responses:
+        200:
+          body:
+            text/plain:
+              example: |
+                Non-VA ACETAMINOPHEN TAB 325MG\ \ TAKE ONE TABLET BY MOUTH Q4HPRN\ \ \ \ Activity:\ \ 01/15/2014 10:09 New Order entered by PROVIDER,THIRTY (Scholar Extraor)\ \ Order Text: Non-VA ACETAMINOPHEN TAB 325MG\ \ TAKE ONE TABLET BY MOUTH Q4HPRN\ \ Nature of Order: ELECTRONICALLY ENTERED\ \ Documented by: \ \ Signature: NOT REQUIRED\ \ 01/15/2014 10:15 Discontinued by PROVIDER,THIRTY (Scholar Extraor)\ \ Reason for DC: CHANGED\ \ \ \ Current Data:\ \ Current Primary Provider: PROVIDER,THIRTY\ \ Current Attending Physician: PROVIDER,THIRTY\ \ Treating Specialty: \ \ Ordering Location: CARDIOLOGY\ \ Start Date/Time: \ \ Stop Date/Time: 01/15/2014 10:15\ \ Current Status: DISCONTINUED\ \ Orders that have been explicitly stopped.\ \ Order #33593\ \ \ \ Order:\ \ Herbal/OTC/Non VA Medication: ACETAMINOPHEN TAB 325MG \ \ Instructions: 325MG ORAL (BY MOUTH) Q4HPRN \ \ Sig: \ \ TAKE ONE TABLET BY MOUTH Q4HPRN\ \ Comments: \ \ Statement/Explanation \ \ \ \ Order Checks:\ \ MODERATE: Remote Order Checking not available - checks done on local data only\ \ LOW: Order Checks could not be done for Drug: ACETAMINOPHEN 325MG TAB,\ \ please complete a manual check for Drug Interactions and Duplicate\ \ Therapy. \ \ LOW: Order Checks could not be done for Drug: LISINOPRIL 5MG TAB, please\ \ complete a manual check for Drug Interactions and Duplicate\ \ Therapy. \ \ LOW: Order Checks could not be done for Drug: SIMVASTATIN 5MG TAB,\ \ please complete a manual check for Drug Interactions and Duplicate\ \ Therapy. \ \ LOW: Order Checks could not be done for Drug: WARFARIN (C0UMADIN) NA 1MG\ \ TAB, please complete a manual check for Drug Interactions and\ \ Duplicate Therapy. \ \ LOW: Order Checks could not be done for Drug: CHROMIUM PICOLINATE 200MCG\ \ CAP, please complete a manual check for Drug Interactions and\ \ Duplicate Therapy. \ \ 
+/clinics:
+  get:
+    description: Get a list of all the clinics
+    headers:
+      X-Access-Token:
+        displayName: dbITpro Access Token
+      X-Token-Secret:
+        displayName: dbITpro Access Secret
+      X-Access-Code:
+        displayName: VistA Access Code
+      X-Verify-Code:
+        displayName: VistA Verify Code
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "ien":"58",
+                  "name":"10TH FLOOR"
+                },
+                {
+                  "ien":"169",
+                  "name":"19 LINDA'S FUNNY CLINIC"
+                },
+                {
+                  "ien":"64",
+                  "name":"AUDIOLOGY"
+                }
+              ]
+/clinic/availability/{IEN}:
+  get:
+    description: Get availability in Vista Format for a clinic - the ID is the IEN number of the clniic. You can retrieve the IEN by the /clnics call
+    headers:
+      X-Access-Token:
+        displayName: dbITpro Access Token
+      X-Token-Secret:
+        displayName: dbITpro Access Secret
+      X-Access-Code:
+        displayName: VistA Access Code
+      X-Verify-Code:
+        displayName: VistA Verify Code
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "$schema": "http://json-schema.org/draft-03/schema",
+                "type" : "object",
+                "properties" : {
+                  "day" : {
+                    "description" : "The ISO 8601 date that represents the day that the slots are valid for",
+                    "type" : "date-time"
+                  },
+                  "slots" : {
+                    "description" : "The Vista String which represents open slots",
+                    "type" : "string"
+                  }
+                }
+              }
+            example: |
+              [
+                {
+                  "day": "1993-10-01T04:00:00.000Z",
+                  "slots": "FR 01 [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] "
+                },
+                {
+                  "day": "1995-11-11T05:00:00.000Z",
+                  "slots": " 11 VETERANS DAY"
+                },
+                {
+                  "day": "1995-11-15T05:00:00.000Z",
+                  "slots": "WE 15 [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] [1] "
+                }
+              ]
+/clinic/details/{IEN}:
+  get:
+    description: Get the details for a clinic. This operation returns any data associated with this clinic from VistA. IEN can be retrieved from the GET clinics operation
+    headers:
+      X-Access-Token:
+        displayName: dbITpro Access Token
+      X-Token-Secret:
+        displayName: dbITpro Access Secret
+      X-Access-Code:
+        displayName: VistA Access Code
+      X-Verify-Code:
+        displayName: VistA Verify Code
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "*OKC A": "OKC^OKC",
+                "ABBREVIATION": "PCM^PCM",
+                "ADMINISTER INPATIENT MEDS?": "1^YES",
+                "ALLOWABLE CONSECUTIVE NO-SHOWS": "99^99",
+                "APPT. CANCELLATION LETTER": "1^Pt. Cancellation",
+                "CLINIC CANCELLATION LETTER": "3^CLINIC CANCELLED",
+                "CLINIC MEETS AT THIS FACILITY?": "Y^YES",
+                "COLLATERAL VISITS? (Y OR N)": "Y^YES",
+                "CREDIT STOP CODE": "248^PREVENTIVE IMMUNIZATION",
+                "DEFAULT APPOINTMENT TYPE": "9^REGULAR"
+              ...
+              }
+/appointment/scheduling_request_types:
+    get:
+      description: Retrieve Possible Scheduling Request Types. This is the Scheduling Request type parameter when making appointments
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                [
+                  {
+                    "type":"N",
+                    "description":"'NEXT AVAILABLE' APPT."
+                  },
+                  {
+                    "type":"C",
+                    "description":"OTHER THAN 'NEXT AVA.' (CLINICIAN REQ.)"
+                  },
+                  {
+                    "type":"P",
+                    "description":"OTHER THAN 'NEXT AVA.' (PATIENT REQ.)"
+                  },
+                  {
+                    "type":"W",
+                    "description":"WALKIN APPT."
+                  },
+                  {
+                    "type":"M",
+                    "description":"MULTIPLE APPT. BOOKING"
+                  },
+                  {
+                    "type":"A",
+                    "description":"AUTO REBOOK"
+                  },
+                  {
+                    "type":"O",
+                    "description":"OTHER THAN 'NEXT AVA.' APPT."
+                  }
+                ]
+/appointment/make:
+    post:
+      description: | 
+        ## Make an appointment at a clinic for a patient. 
+        #### Please read the schema definition carefully. This operation requires a lot of dependent information from other operations
+      headers:
+        X-Access-Token:
+          displayName: dbITpro Access Token
+        X-Token-Secret:
+          displayName: dbITpro Access Secret
+        X-Access-Code:
+          displayName: VistA Access Code
+        X-Verify-Code:
+          displayName: VistA Verify Code
+      body:
+        application/json:
+            schema: |
+              {
+                "type": "object",
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "id": "http://www.dbitpro.com/vista-schema",
+                "required": true,
+                "properties": {
+                  "patient": {
+                    "description" : "Patient DFN from the /patient operation",
+                    "type": "string",
+                    "required": true
+                  },
+                  "clinic": {
+                    "type": "string",
+                    "required": true,
+                    "description" : "Clinic IEN, from the /clinics operation"
+                  },
+                  "date" : {
+                    "type": "date-time",
+                    "required": true,
+                    "description": "Find an available time slot from the /clinics/availability operation"
+                  },
+                  "appointment_type" : {
+                    "type" : [
+                       {"enum": ["1"], "description":"COMPENSATION & PENSION"},
+                       {"enum": ["2"], "description":"CLASS II DENTAL"},
+                       {"enum": ["3"], "description":"ORGAN DONORS"},
+                       {"enum": ["4"], "description":"EMPLOYEE"},
+                       {"enum": ["5"], "description":"PRIMA FACIA"},
+                       {"enum": ["6"], "description":"RESEARCH"},
+                       {"enum": ["7"], "description":"COLLATERAL OF VET."},
+                       {"enum": ["8"], "description":"SHARING AGREEMENT"},
+                       {"enum": ["9"], "description":"REGULAR"},
+                       {"enum": ["10"], "description":"COMPUTER GENERATED"},
+                       {"enum": ["11"], "description":"SERVICE CONNECTED"}
+                    ],
+                    "required" : "true",
+                    "description" : "the Type of appointment this is"
+                  },
+                  "sub_type": {
+                    "type": "integer",
+                    "required": false,
+                    "description" : "Appointment Type Sub-Category (one of the active Sharing Agreement Sub-Category returned by LSTASTYP^SDMAPI5, to add a new Sub-Category use ADDASC^SDMAPI5)"
+                  },
+                  "length" : {
+                    "type" : "integer",
+                    "required" : true,
+                    "description" : "Length of appointment in minutes"
+                  },
+                  "scheduling_request_type": {
+                    "type": "string",
+                    "required": false,
+                    "description" : "Get a list of scheduling_request_type from /appointment/scheduling_request_types"
+                  },
+                  "other": {
+                    "type": "string",
+                    "required": false,
+                    "description" : "Any other tests ordered in association with the appointment"
+                  },
+                  "check_in": {
+                    "type": "boolean",
+                    "required": false,
+                    "description" : "If set to True appointment will be checked in"
+                  },
+                  "lab" : {
+                    "type": "date-time",
+                    "required": false,
+                    "description": "If this patient is scheduled for laboratory tests in conjunction with this appointment, set LAB to the date/time the patient should report"
+                  },
+                  "xray" : {
+                    "type": "date-time",
+                    "required": false,
+                    "description": "If this patient is scheduled for x-ray in conjunction with this appointment, set XRAY to the date/time the patient should report"
+                  },
+                  "ekg" : {
+                    "type": "date-time",
+                    "required": false,
+                    "description": "If this patient is scheduled for EKG in conjunction with this appointment, set EKG to the date/time the patient should"
+                  },
+                  "require_xray": {
+                    "type": "boolean",
+                    "required": false,
+                    "description" : "Set to true if x-ray films are required for this appointment"
+                  },
+                  "consult" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "description" : "Consult associated with this appointment (pointer to Request/Consultation file)."
+                  },
+                  "level" : {
+                    "type" : "integer",
+                    "required" : false,
+                    "description" : "Forces appointment creation if it is set to 1 and user has SDOB security key (ignores all warnings described below),If set to 1 will return an error if there are no open slots and user do not have SDOB security key,If set to 2 will return an error if there are no open slots,If set to anything higher that 2 or left undefined, will return an error if the patient has an active appointment on same time, or on same day, or a canceled appointment on same time, or if there are no open slots."
+                  }
+                }  
+              }
