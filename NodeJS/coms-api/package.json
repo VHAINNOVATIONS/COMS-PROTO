@@ -14,12 +14,7 @@
     "jade": "*",
     "morgan": "*",
     "method-override": "*",
-    "mocha": "*",
-    "bunyan": "*",
-    "node-cache": "*",
-    "underscore": "*",
-    "underscore.string": "*",
-    "async": "*"
+    "mocha": "*"
   },
   "private": true,
   "analyze": true

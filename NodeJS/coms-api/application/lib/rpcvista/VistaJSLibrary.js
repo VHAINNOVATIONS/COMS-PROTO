@@ -139,7 +139,7 @@ RpcTask.prototype = {
         this.callback = callback;
         this.socket.on('data', this.receive.bind(this));
         this.logger.debug(this.rpcCommand.rpc.replace(/[^ -~]+/, '')); // /[\cA-\cZ]+/  /[\x00-\x1F]+/
-        //console.log("WRITING: "+this.rpcCommand.rpc);
+        console.log("WRITING: "+this.rpcCommand.rpc);
         this.socket.write(this.rpcCommand.rpc);
     },
 
@@ -438,14 +438,12 @@ function buildParamRpcString(paramStringList) {
 }
 
 function buildRpcString(rpcName, paramStringList) {
-    var rpcstr = util.format('%s11302%s%s%s%s',
+    return util.format('%s11302%s%s%s%s',
         PREFIX,
         prependCount(RPC_VERSION),
         prependCount(rpcName),
         buildParamRpcString(paramStringList),
         EOT);
-    console.log("RPC String: "+rpcstr);
-    return rpcstr;
 }
 
 // PRIVATE functions

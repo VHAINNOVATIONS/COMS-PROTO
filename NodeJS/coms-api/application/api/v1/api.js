@@ -472,6 +472,27 @@ router.get('/order/dialog/name/:name', function(req, res){
 });
 
 
+router.post('/order/new', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  order.saveOrder(loginOptions, req.body, callback);
+});
 
 
 module.exports = router;

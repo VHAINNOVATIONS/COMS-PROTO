@@ -86,17 +86,133 @@ exports.parseMedicationDetails = parseMedicationDetails;
 'd270^IV PUSH'
 */
 function parseRoute(str){
-  if(_str.startsWith(str,'d')){
+  if(_str.startsWith(str,'i')){
     var split_str = str.split('^');
-    return {ien: split_str[0].substring(1,split_str[0].length), name: split_str[1]};
+    return {ien: split_str[0].substring(1,split_str[0].length), name: split_str[1], code: split_str[2]};
   }
   return null;
 }
 exports.parseRoute = parseRoute;
 
+/*
+{
+  dfn
+  provider
+  clinic
+  ordertype - inpatient, outpatient
+  drug: ien
+  dosage : 
+  route : {
+    ien:
+    name:
+    code:
+  }
+  administration_time : 24 hour time
+  administration_days : [ 0, 1 , 2 ,3 ] 0 - based day index
+}
 
+Vista Order:
+[
+  '100025',
+  '1',
+  '11',
+  'PSJ OR PAT OE',
+  '23',
+  '129',
+  '',
+  {
+    '4,1':'1527',
+    '136,1':'200MG/1ML',
+    '138,1':'',
+    '386,1':'',
+    '384,1':'',
+    '137,1':'270',
+    '170,1':'QID',
+    '15813,1':'0900-1300-1700-2100',
+    '716,1':'C',
+    '7,1':'9',
+    '15,1':'ORDIALOG("WP",15,1)',
+    '1359,1':'',
+    '385,1':'ORDIALOG("WP",385,1)',
+    '"WP",385,1,1,0':'200MG/1ML IVP QID',
+    '"ORCHECK"':'2',
+    '"ORCHECK","NEW","2","1"':'99^2^Remote Order Checking not available - checks done on local data only',
+    '"ORTS"':'9'
+  },
+     '',
+     '',
+     '',
+     0
+],
 
+*/
+exports.convertOrderToVistaOrderParams = function(order){
+  // convert order type to vista order dialog
+  var order_dialog = {};
+  if(order.type == 'inpatient'){
+    order_dialog.type = 'PSJ OR PAT OE';
+    order_dialog.group_ien = '23';
+    order_dialog.ien = '129';
+  }
+  var weekday = new Array(7);
+  weekday[0]=  "SU";
+  weekday[1] = "MO";
+  weekday[2] = "TU";
+  weekday[3] = "WE";
+  weekday[4] = "TH";
+  weekday[5] = "FR";
+  weekday[6] = "SA";
+  
+  // convert admin date time to vista string
+  var day_string = '';
+  order.administration_days.forEach(function(day){
+    day_string += weekday[day]+'-';
+  });
+  // remove trailing -
+  day_string = day_string.substring(0, day_string.length-1);
+  var vistaorderarray =  {
+    '4,1': order.drug,
+    '136,1': order.dosage,
+    '138,1':'',
+    '386,1':'',
+    '384,1':'',
+    '137,1':order.route.ien,
+    '170,1': day_string+'@'+order.administration_time,
+    '15813,1':order.administration_time,
+    '716,1':'C',
+    '7,1':'9',
+    '15,1':'ORDIALOG("WP",15,1)',
+    '1359,1':'',
+    '385,1':'ORDIALOG("WP",385,1)',
+    '"WP",385,1,1,0': order.dosage+' '+order.route.code + ' '+day_string+'@'+order.administration_time,
+    '"ORCHECK"':'2',
+    '"ORCHECK","NEW","2","1"':'99^2^Remote Order Checking not available - checks done on local data only',
+    '"ORTS"':'9'
+  };
+  
+   return [
+    order.dfn,
+    order.provider,
+    order.clinic,
+    order_dialog.type,
+    order_dialog.group_ien,
+    order_dialog.ien,
+    '',
+    vistaorderarray,
+    '',
+    '',
+    '',
+    0
+  ];
+}
 
+/*
+'~38293;1^23^3150306.1239^^^11^2^^^1^PROGRAMMER,ONE^^0^^^CP1234563^^^BCMA:11^^0^0^0^0\r\ntDEXAMETHASONE INJ,SOLN \r\nt200MG/1ML IVP QID *UNSIGNED*\r\n'
+// only going to return order IEN
+*/
+exports.parseSaveOrderResult = function(result){
+  return {ien: _str.ltrim(result.split(';')[0],'~')};
+}
 
 
 /*

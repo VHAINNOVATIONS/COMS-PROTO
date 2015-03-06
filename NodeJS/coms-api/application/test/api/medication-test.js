@@ -36,5 +36,32 @@ describe('Order Helper', function(){
       var result = orderhelper.parseOrderDialog(testData);
       console.log(result);
     })
+  }),
+  describe('#convertOrderToVistaOrderParams()', function(){
+    it("Should return Order Options", function(){
+      var order = {
+          "dfn": "100025",
+          "provider": "1",
+          "clinic": "11",
+          "type": "inpatient",
+          "drug": "1527",
+          "dosage" : "200MG/5ML",
+          "route" : {
+            "ien": "270",
+            "code": "IVP"
+          },
+          "administration_time" : "1350",
+          "administration_days" : [ 0, 1 , 2 ,3 ]
+      };
+      var result = orderhelper.convertOrderToVistaOrderParams(order);
+      console.log(result);
+    })
+  }),
+  describe('#parseSaveOrderResult()', function(){
+    it("Should return ien: 38293", function(){
+      var testData = '~38293;1^23^3150306.1239^^^11^2^^^1^PROGRAMMER,ONE^^0^^^CP1234563^^^BCMA:11^^0^0^0^0\r\ntDEXAMETHASONE INJ,SOLN \r\nt200MG/1ML IVP QID *UNSIGNED*\r\n';
+      var result = orderhelper.parseSaveOrderResult(testData);
+      expect(result).to.have.property('ien','38293');;
+    })
   })
 });
