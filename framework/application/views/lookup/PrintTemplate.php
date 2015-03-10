@@ -139,10 +139,18 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		} else {
 			echo "<th rowspan=\"2\">$sequence</th>\n";
 		}
+
+        $pos = strrpos($route, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $route);
+            $route = $R1[0];
+        }
+
+
 		echo "<td>$drug</td>\n";
 		echo "<td>$dose $units</td>\n";
 		echo "<td>$route</td>\n";
-		if ("IV" === $route || "IVPB" == $route) {
+		if ("IV" === $route || "IVPB" == $route || "INTRAVENOUS" === $route || "IV PIGGYBACK" === $route) {
 			echo "<td>$fluidVol $fluidUnits</td>\n";
 			echo "<td>$fluidType</td>\n";
 			echo "<td>$infusionTime</td>\n";
