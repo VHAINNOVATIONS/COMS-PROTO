@@ -249,7 +249,7 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
-error_log("saveTemplate(LookUp Model) - Entry Point");
+error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
 
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
@@ -341,7 +341,7 @@ $queryStart_DATA = "'$Template_ID',
                     '$currDate'
 ";
 
-
+        $error = "";
         if($diseaseStage){
             $queryStart_CODE .= ", Disease_Stage_ID";
             $queryStart_DATA .= ", '$diseaseStage'";
@@ -372,10 +372,11 @@ $queryStart_DATA = "'$Template_ID',
         }
 
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-        // error_log("saveTemplate - BP3b - $error - $query");
+error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
+error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
             return $retVal;
         }
 error_log("saveTemplate - BP4");
@@ -463,21 +464,15 @@ error_log("saveTemplate - BP4");
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
             
             if (empty($drugId)) {
-                
                 $drugName = $regimen->Drug;
-                
                 $drug = $this->getLookupIdByNameAndType($drugName, 2);
-                
                 if ($drug) {
                     $drugId = $drug[0]["id"];
                 } else {
                     $drugId = null;
                 }
-                
                 if (empty($drugId)) {
-                    
                     $drug = $this->getLookupIdByNameAndType($drugName, 26);
-                    
                     if ($drug) {
                         $drugId = $drug[0]["id"];
                     }
@@ -506,7 +501,11 @@ error_log("saveTemplate - BP4");
                 return $retVal;
             }
 
+
             $route = $regimen->Route;
+error_log("Lookup Model - saveRegimen - Route = $route");
+
+/*********
             $routeLookup = $this->getLookupIdByNameAndType($route, 12);
             if ($routeLookup) {
                 $routeId = $routeLookup[0]["id"];
@@ -519,7 +518,7 @@ error_log("saveTemplate - BP4");
                 $retVal['error'] = "The Route id could not be determined.";
                 return $retVal;
             }
-            
+ ***************/
             $adminDay = $regimen->Day;
             $infusionTime = $regimen->InfusionTime;
             $fluidVol = $regimen->FluidVol;
@@ -536,7 +535,6 @@ error_log("saveTemplate - BP4");
                     Drug_ID, 
                     Regimen_Dose, 
                     Regimen_Dose_Unit_ID, 
-                    Route_ID, 
                     Admin_Day, 
                     Infusion_Time, 
                     Fluid_Vol, 
@@ -547,13 +545,13 @@ error_log("saveTemplate - BP4");
                     Admin_Time, 
                     Fluid_Type, 
                     Order_ID,
-                    Reason
+                    Reason,
+                    VistA_RouteInfo
                 ) VALUES (
                     '$templateId',
                     '$drugId',
                     $regimenDose,
                     '$unitId',
-                    '$routeId',
                     '$adminDay',
                     '$infusionTime',
                     '$fluidVol',
@@ -564,11 +562,12 @@ error_log("saveTemplate - BP4");
                     '$adminTime',
                     '$fluidType',
                     '$orderId',
-                    '$Reason'
+                    '$Reason',
+                    '$route'
                 )
             ";
 			$retVal = $this->query($query);
-			//$this->OrderX($xx);
+error_log("Lookup Model - saveRegimen - Query = $query");
 
             if (!empty($retVal['error'])) {
                 return $retVal;
@@ -614,38 +613,32 @@ error_log("saveTemplate - BP4");
      * @return array
      */
     public function saveHydrations($hydrations, $type, $templateId, $orderId)
-	{
+    {
         foreach ($hydrations as $hydrationObject) {
-            
             $hydration = $hydrationObject->data;
-            //var_dump($hydration);
             $drugName = (empty($hydration->drugid)) ? null : $hydration->drugid;
-            
             if ($drugName) {
                 $drug = $this->getLookupIdByNameAndType($drugName, 2);
-                
                 if ($drug) {
                     $drugId = $drug[0]["id"];
                 } else {
                     $drugId = null;
                 }
-                
                 if (null == $drugId) {
                     $drug = $this->getLookupIdByNameAndType($drugName, 26);
-                    
                     if ($drug) {
                         $drugId = $drug[0]["id"];
                     }
                 }
             }
-            
+
             if (null == $drugId) {
                 $retVal = array(); 
                 $retVal['error'] = "Insert into Medication_Hydration for " . $type .
                      " Therapy failed. The drug id could not be determined.";
                 return $retVal;
             }
-            
+
             $adminDay = $hydration->adminDay;
             $sequenceNumber = $hydration->sequence;
             $adminTime = $hydration->adminTime;
@@ -653,8 +646,7 @@ error_log("saveTemplate - BP4");
             $fluidVol = $hydration->fluidVol;
             $flowRate = $hydration->flowRate;
             $infusionTime = $hydration->infusionTime;
-            			
-			
+
             $query = "
                 INSERT INTO Medication_Hydration (
                     Drug_ID, 
@@ -676,10 +668,7 @@ error_log("saveTemplate - BP4");
                     '$orderId'
                 )
             ";
-			$retVal = $this->query($query);
-			
-			//$this->OrderX($hydration);
-			            
+            $retVal = $this->query($query);
             if (!empty($retVal['error'])) {
                 return $retVal;
             }
@@ -693,47 +682,43 @@ error_log("saveTemplate - BP4");
                     AND Description = '$description' 
                     AND Sequence_Number = '$sequenceNumber'
             ";
-            
-            $result = $this->query($query);
-            
-            if (!empty($result[0])) {
-                
-                $mhId = $result[0]["mhid"];
-                
-                $infusions = $hydration->infusions;
-                
-                foreach ($infusions as $infusion) { 
-                    
-                    $infusionData = $infusion->data;
 
+            $result = $this->query($query);
+            if (!empty($result[0])) {
+                $mhId = $result[0]["mhid"];
+                $infusions = $hydration->infusions;
+                foreach ($infusions as $infusion) { 
+                    $infusionData = $infusion->data;
                     if(count($infusionData)>1){
                         $unit = $infusionData['unit'];
                     }else{
                         $unit = $infusionData->unit;
                     }
-
                     $unitLookup = $this->getLookupIdByNameAndType($unit, 11);
-
                     if ($unitLookup) {
                         $unitId = $unitLookup[0]["id"];
                     } else {
                         $unitId = null;
                     }
-
                     if (null == $unitId) {
                         $retVal = array(); 
                         $retVal['error'] = "Insert int MH_ID for " . $type .
                              " Therapy failed. The unit id could not be determined.";
                         return $retVal;
                     }
-                    
+
+
+                    /* Get Route Information for Pre/Post Therapy Meds */
                     if(count($infusionData)>1){
                         $unitType = $infusionData['type'];
                     }else{
                         $unitType = $infusionData->type;
                     }
-
+                    $route = $unitType;
+error_log("Lookup Model - saveHydrations - getRoute - $unitType; Storing in VistA_RouteInfo");
+/*******
                     $unitTypeLookup = $this->getLookupIdByNameAndType($unitType, 12);
+error_log("getRoute - " . json_encode($unitTypeLookup));
 
                     if ($unitTypeLookup) {
                         $unitTypeId = $unitTypeLookup[0]["id"];
@@ -747,7 +732,10 @@ error_log("saveTemplate - BP4");
                              " Therapy failed. The Route could not be determined.";
                         return $retVal;
                     }
-                    
+ *******/
+
+
+
                     if(count($infusionData)>1){
                         $amt = $infusionData['amt'];
                         $fluidVol = $infusionData['fluidVol'];
@@ -763,7 +751,7 @@ error_log("saveTemplate - BP4");
                     }
 
                     $fluidType = $this->escapeString($fluidType);
-
+/**
                     $query = "
                         INSERT INTO MH_Infusion (
                             MH_ID, 
@@ -774,7 +762,8 @@ error_log("saveTemplate - BP4");
                             Flow_Rate, 
                             Infusion_Time, 
                             Fluid_Type,
-                            Order_ID
+                            Order_ID,
+                            VistA_RouteInfo
                         ) VALUES (
                             '$mhId',
                             '$unitId',
@@ -784,12 +773,42 @@ error_log("saveTemplate - BP4");
                             '$flowRate',
                             '$infusionTime',
                             '$fluidType',
-                            '$orderId'
+                            '$orderId',
+                            '$route'
                         )
                     ";
+ **/
+
+                    $query = "
+                        INSERT INTO MH_Infusion (
+                            MH_ID, 
+                            Infusion_Unit_ID, 
+                            Infusion_Amt, 
+                            Fluid_Vol, 
+                            Flow_Rate, 
+                            Infusion_Time, 
+                            Fluid_Type,
+                            Order_ID,
+                            Infusion_Type_ID, 
+                            VistA_RouteInfo
+                        ) VALUES (
+                            '$mhId',
+                            '$unitId',
+                            '$amt',
+                            '$fluidVol',
+                            '$flowRate',
+                            '$infusionTime',
+                            '$fluidType',
+                            '$orderId',
+                            '00000000-0000-0000-0000-000000000000',
+                            '$route'
+                        )
+                    ";
+error_log("Lookup Model - saveHydrations - Query - $query");
                     $retVal = $this->query($query);
 
                     if (!empty($retVal['error'])) {
+error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVal));
                         return $retVal;
                     }
                 }

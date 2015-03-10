@@ -55,6 +55,10 @@ class NodeVista{
         'Content-Type: application/json'
       ));
       curl_setopt($curl, CURLOPT_URL, NV_BASE_URL.'/'.$url);
+
+error_log("NodeVista Class URL = " . NV_BASE_URL.'/'.$url);
+
+
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
       $result = curl_exec($curl);

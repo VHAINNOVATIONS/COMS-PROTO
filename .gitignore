@@ -12,3 +12,4 @@ build/*
 aspnet_client/*
 framework/config/* 
 _Temp/*
+*.log

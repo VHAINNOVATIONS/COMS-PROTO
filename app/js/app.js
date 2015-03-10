@@ -65,6 +65,7 @@ Ext.URLs.RoundingRule            = "/LookUp/RoundingRule";
 Ext.URLs.SiteConfig              = "/LookUp/SiteConfig";
 Ext.URLs.LookupIVFluidType4Med   = "/LookUp/IVFluidType4Med/";
 Ext.URLs.DiseaseType             = "/LookUp/view/DiseaseType";
+Ext.URLs.DrugInfo                = "/LookUp/DrugInfo";
 // No Params,
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType

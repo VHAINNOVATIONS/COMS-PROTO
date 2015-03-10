@@ -1,6 +1,9 @@
 <?php
-    /** Archived Version Info*/
-    $ProjType = "Demo, February 20, 2015";
+    /* 
+    $ProjType = "Release 1.0 February 27, 2015"; 
+    $ProjType = "Release 1.1 March 6, 2015"; 
+    */
+    $ProjType = "Release 1.2 March 13, 2015";
 ?>
 
 <!doctype html>
@@ -124,8 +127,8 @@
 </div><!-- end of #Application -->
 
 <div id="footer" class="initialHide" >
-    <!--<abbr title="Chemotherapy Order Management System">COMS</abbr>-->
-	<div>
+    <abbr title="Chemotherapy Order Management System">COMS</abbr> <?php echo $ProjType; ?>
+    <div>
         This application works best in 
         MS-IE Version 9 or above, 
         Mozilla Firefox Version 20 and above, 

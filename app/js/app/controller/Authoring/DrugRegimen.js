@@ -12,31 +12,36 @@ Ext.StdRouteValidation = function (config, value) {
 	return true;
 };
 Ext.routeRequiresFluid = function (route) {
+	route = route.toUpperCase();
 	if ("IVPB" == route) {
 		return true;
 	}
 	if ("IV" == route) {
 		return true;
 	}
-	if ("Intrathecal" == route) {
+	if ("INTRAVENOUS" == route) {
 		return true;
 	}
-	if ("Intra-arterial" == route) {
+
+	if ("INTRATHECAL" == route) {
 		return true;
 	}
-	if ("Intra-hepatic" == route) {
+	if ("INTRA-ARTERIAL" == route) {
 		return true;
 	}
-	if ("Peritoneal" == route) {
+	if ("INTRA-HEPATIC" == route) {
 		return true;
 	}
-	if ("Intravesicular" == route) {
+	if ("PERITONEAL" == route) {
 		return true;
 	}
-	if ("Intraocular" == route) {
+	if ("INTRAVESICULAR" == route) {
 		return true;
 	}
-	if ("Intravitreal" == route) {
+	if ("INTRAOCULAR" == route) {
+		return true;
+	}
+	if ("INTRAVITREAL" == route) {
 		return true;
 	}
 	return false;
@@ -65,6 +70,15 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	stores: ["DrugRegimenStore", "DrugStore", "DrugUnitsStore", "InfusionStore"],
 	views: ["Authoring.AddDrugRegimen", "Management.EditLookup", "Authoring.HydrationSequence"],
 	refs: [
+		{
+			ref: "AddDrugPUWindow",
+			selector: "AddDrugRegimen"
+		}, 
+		{
+			ref: "DrugPUWindow_DoseRouteFields",
+			selector: "AddDrugRegimen [name=\"Dose_RouteFields\"]"
+		},
+
         // Drug Regimen Buttons
 		{
 			ref: "RemoveDrugRegimen",
@@ -123,7 +137,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
         }, {
 			ref: "PatientType",
 			selector: "AddDrugRegimen radiogroup[name=\"patientRadio\"]"
-        }
+        },
+		{
+			ref: "DrugRoute",
+			selector: "AddDrugRegimen [name=\"Route\"]"
+		}
+
 
     ],
 
@@ -131,6 +150,9 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	init: function () {
 		wccConsoleLog("Initialized Drug Regimen Controller!");
 		this.control({
+			"AddDrugRegimen" : {
+				"activate" : this.ShowFields
+			},
 			// MWB 30 Dec 2011 - Added the Drug Regimen functionality...
 			"AuthoringTab TemplateDrugRegimen button": {
 				click: this.DrugRegimenBtns
@@ -165,7 +187,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				blur: this.calcInfusionTime
 			},
 			"AddDrugRegimen combo[name=\"Drug\"]": {
-				collapse: this.collapseCombo,
+				select: this.drugSelected,
 				expand: this.loadCombo
 			},
 			"AddDrugRegimen combo[name=\"FluidType1\"]": {
@@ -176,12 +198,80 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			}
 		});
 	},
-	collapseCombo: function (picker, eOpts) {
-		if (picker.getValue() == null && picker.hiddenValue != null) {
-			picker.setRawValue(picker.hiddenValue); // MWB 15 Feb 2012 - Added missing ";" as per JSLint
-		}
 
+	ShowFields : function( theWin, eOpts ) {
+		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+		var theRouteField = this.getDrugRoute();
+		var v = theRouteField.getValue();
+		var d = theRouteField.getDisplayValue();
+		if (v) {
+			RouteInfoFields.show();
+		}
 	},
+
+	getDrugInfoFromVistA : function (drugName, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + encodeURIComponent(drugName.toLowerCase());
+		var theWin = this.getAddDrugPUWindow();
+		if (theWin) {
+			theWin.setLoading( "Loading Drug Information");
+		}
+		Ext.Ajax.request({
+			url: URL,
+			scope: this,
+			fnc : fnc,
+			success: function(response, opts) {
+				var respObj = Ext.decode(response.responseText);
+				opts.fnc(respObj, this);
+			},
+			failure: function(response, opts) {
+				var theWin = this.getAddDrugPUWindow();
+				if (theWin) {
+					theWin.setLoading( false );
+				}
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+	},
+		
+	AddDrugInfoFromVistA2Store : function(respObj, theScope) {
+		var theWin = theScope.getAddDrugPUWindow();
+		if (theWin) {
+			theWin.setLoading( false );
+		}
+		var RouteCombo = theScope.getDrugRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		var RoutesData4Store = [];
+		var aRoute;
+		var i, rLen = theRoutes.length;
+		for (i = 0; i < rLen; i++ ) {
+			aRoute = {};
+			aRoute.id = theRoutes[i].ien;
+			aRoute.name = theRoutes[i].name;
+			aRoute.description = theRoutes[i].ien;
+			RoutesData4Store.push(aRoute);
+		}
+		RouteStore.loadData(RoutesData4Store);
+		theScope.getDrugPUWindow_DoseRouteFields().show();
+	},
+
+	drugSelected : function(combo, recs, eOpts){
+		this.getDrugPUWindow_DoseRouteFields().hide();
+		var drugName;
+		if(null !== recs){
+			drugName = recs[0].data.name;
+		}else{
+			drugName = combo.getValue();
+		}
+		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+	},
+
+//	collapseCombo: function (picker, eOpts) {
+//		if (picker.getValue() == null && picker.hiddenValue != null) {
+//			picker.setRawValue(picker.hiddenValue); // MWB 15 Feb 2012 - Added missing ";" as per JSLint
+//		}
+//	},
+
 	loadCombo: function (picker, eOpts) {
 
 		if (picker.getStore()) { // MWB - 6/19/2012 - Added to remove the filter added to the store
@@ -673,6 +763,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		} else if ("Edit Drug" === button.text) {
 			if (ckRec.hasRecord) {
 				var record = Ext.create(Ext.COMSModels.DrugRegimen, ckRec.record.data);
+				var drugName = record.getData().Drug;
 				wccConsoleLog("Edit Drug Regimen for - " + ckRec.record.get("Drug"));
 				puWin = Ext.widget("AddDrugRegimen"); // Creates an instance of the "Add Drug Regimen" pop-up window
 				puWin.setTitle("Edit Drug Regimen");
@@ -694,6 +785,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				this.getDrugRegimenFluidType().setValue(record.data.FluidType);
 
 				this.routeSelected(this.getDrugRegimenRoute(), null, null);
+
+		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+		RouteInfoFields.show();
+
+
 			}
 
 		} else if ("Remove Drug" === button.text) {
@@ -716,6 +813,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var theStore = theGrid.getStore();
 		var theForm = win.down("form");
 		var values = theForm.getValues();
+
+		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
+		theRouteField = this.getDrugRoute();
+		values.Route = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
+
+
 		var numRecords = theStore.count();
 		this.insertNewDrugRegimenRecord(win, theStore, numRecords, values);
 	}

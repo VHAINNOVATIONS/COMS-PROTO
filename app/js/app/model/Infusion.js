@@ -1,10 +1,6 @@
 Ext.define('COMS.model.Infusion', {
 	extend: 'Ext.data.Model',
-	fields: [
-		{ name: 'id', type: 'string'},
-		{ name: 'name', type: 'string' },
-		{ name: 'description', type: 'string'}
-	],
+	fields: [ "id", "name", "description" ],
 	proxy: {
 		type: 'rest',
 		url : Ext.URLs.Infusion,

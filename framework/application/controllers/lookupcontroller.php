@@ -2393,4 +2393,61 @@ where l1.MedID = '$EMedID'";
         $this->set("jsonRecord", $jsonRecord);
     }
 
+    function DrugInfo($drugName) {
+        $nodevista               = new NodeVista();
+        $jsonRecord              = array( );
+        $jsonRecord[ "success" ] = true;
+        $records                 = array( );
+        $msg                     = "";
+
+        if ("" === $drugName || null === $drugName) {
+            $msg                     = "ERROR: No Drug Name passed";
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = $msg;
+            $this->set( "jsonRecord", $jsonRecord );
+            return;
+        }
+        if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            $drugName = rawurlencode(trim($drugName));
+            $drugURL  = "medication/name/$drugName";
+            $MedID    = $nodevista->get( $drugURL );
+
+            $obj      = json_decode( $MedID );
+            $medIEN   = $obj->{"ien"};
+            $medName  = $obj->{"name"};
+
+            $MedInfo = $nodevista->get( "order/info/100500/$medIEN" );
+            $MedInfoObj      = json_decode( $MedInfo );
+            $Routes          = $MedInfoObj->{"Route"};
+            $Dosages         = $MedInfoObj->{"Dosage"};
+            $DoseList = array();
+            foreach($Dosages as $d) {
+                $d1 = explode("^^", $d);
+                $d2 = explode("^", $d1[1]);
+                $d3 = explode("&& ", $d2[0]);
+                $Display = $d2[1];
+                $Send = $d2[0];
+                $dList = array();
+                $dList["key"] = $d;
+                $dList["name"] = $Display;
+                $dList["value"] = $Send;
+                $DoseList[] = $dList;
+            }
+            $MedInfo = array();
+            $MedInfo["Name"]       = $medName;
+            $MedInfo["IEN"]        = $medIEN;
+            $MedInfo["Routes"]     = $Routes;
+            $MedInfo["Dosages"]    = $DoseList;
+            $jsonRecord["MedInfo"] = $MedInfo;
+
+            $this->set( "jsonRecord", $jsonRecord );
+        }
+        else {
+            $msg                     = "Wrong Service Call Type... Expected a GET";
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = $msg;
+        }
+        $this->set( "jsonRecord", $jsonRecord );
+    }
+
 }
