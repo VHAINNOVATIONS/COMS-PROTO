@@ -243,6 +243,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	AddDrugInfoFromVistA2Store : function(respObj, theScope) {
+var theValue = theScope.getHydrationInfusion1().getValue();
 		var theWin = theScope.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( false );
@@ -261,6 +262,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			RoutesData4Store.push(aRoute);
 		}
 		RouteStore.loadData(RoutesData4Store);
+
+
+theScope.getHydrationInfusion1().setValue(theValue);
+
 		theScope.getDrugPUWindow_DoseRouteFields().show();
 	},
 
@@ -344,9 +349,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	routeSelected: function(combo, recs, eOpts){
-
 		var route=null;
-
 		if(null !== recs){
 			route = recs[0].data.name;
 		}else{
@@ -355,7 +358,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 		if(null !== route && '' !== route){
 			if(Ext.routeRequiresFluid(route)) {
-			// if("IVPB" === route || "IV" === route){
 				if('Infusion1' === combo.getName()){
 					this.getFluidInfo().show();
 				}
@@ -749,6 +751,9 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	EditDrugGetDetails : function(record) {
 		var drugName = record.getData().Drug;
 		var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
+		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+		RouteInfoFields.hide();
+
 		hdPanel.type = this.panelType;
 		hdPanel.setTitle("Edit " + this.panelType + " Therapy Drug");
 		var theCombo = this.getHydrationSequenceCombo();
@@ -759,7 +764,20 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		this.getHydrationDrugCombo().setValue(record.data.Drug);
 		this.getHydrationAmt1().setValue(record.data.Amt1);
 		this.getHydrationUnits1().setValue(record.data.Units1);
-		this.getHydrationInfusion1().setValue(record.data.Infusion1);
+
+var theRouteName, theRouteID, theRoute = record.data.Infusion1;
+
+if (theRoute.indexOf(" : ") > 0) {
+	theRoute = theRoute.split(" : ");
+	theRouteID = theRoute[1];
+	theRouteName = theRoute[0];
+	this.getHydrationInfusion1().setValue(theRouteID);
+	this.getHydrationInfusion1().setRawValue(theRouteID);
+}
+else {
+	this.getHydrationInfusion1().setValue(theRoute);
+}
+
 
 		this.routeSelected(this.getHydrationInfusion1(),null,null);
 
@@ -772,7 +790,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		this.getHydrationDay().setValue(record.data.Day);
 		this.getHydrationAdminTime().setValue(record.data.AdminTime);
 
-		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
 		RouteInfoFields.show();
 	},

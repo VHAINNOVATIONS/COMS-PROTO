@@ -249,7 +249,7 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
-error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
+// error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
 
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
@@ -302,7 +302,7 @@ error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
                 return $retVal;
             }
         }
-error_log("saveTemplate - BP3a");
+// error_log("saveTemplate - BP3a");
 
 
 $queryStart_CODE = "INSERT INTO Master_Template (
@@ -372,14 +372,14 @@ $queryStart_DATA = "'$Template_ID',
         }
 
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-error_log("saveTemplate - BP3b - $error - $query");
+// error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
-error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
+// error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
             return $retVal;
         }
-error_log("saveTemplate - BP4");
+// error_log("saveTemplate - BP4");
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
         //$Ret[0] = $Template_ID;
@@ -503,7 +503,7 @@ error_log("saveTemplate - BP4");
 
 
             $route = $regimen->Route;
-error_log("Lookup Model - saveRegimen - Route = $route");
+// error_log("Lookup Model - saveRegimen - Route = $route");
 
 /*********
             $routeLookup = $this->getLookupIdByNameAndType($route, 12);
@@ -567,7 +567,7 @@ error_log("Lookup Model - saveRegimen - Route = $route");
                 )
             ";
 			$retVal = $this->query($query);
-error_log("Lookup Model - saveRegimen - Query = $query");
+// error_log("Lookup Model - saveRegimen - Query = $query");
 
             if (!empty($retVal['error'])) {
                 return $retVal;
@@ -715,10 +715,10 @@ error_log("Lookup Model - saveRegimen - Query = $query");
                         $unitType = $infusionData->type;
                     }
                     $route = $unitType;
-error_log("Lookup Model - saveHydrations - getRoute - $unitType; Storing in VistA_RouteInfo");
+// error_log("Lookup Model - saveHydrations - getRoute - $unitType; Storing in VistA_RouteInfo");
 /*******
                     $unitTypeLookup = $this->getLookupIdByNameAndType($unitType, 12);
-error_log("getRoute - " . json_encode($unitTypeLookup));
+// error_log("getRoute - " . json_encode($unitTypeLookup));
 
                     if ($unitTypeLookup) {
                         $unitTypeId = $unitTypeLookup[0]["id"];
@@ -804,11 +804,11 @@ error_log("getRoute - " . json_encode($unitTypeLookup));
                             '$route'
                         )
                     ";
-error_log("Lookup Model - saveHydrations - Query - $query");
+// error_log("Lookup Model - saveHydrations - Query - $query");
                     $retVal = $this->query($query);
 
                     if (!empty($retVal['error'])) {
-error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVal));
+// error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVal));
                         return $retVal;
                     }
                 }
@@ -1363,9 +1363,9 @@ error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVa
                     order by Sequence_Number ";
             }
             $retVal = $this->query($query);
+            return $retVal;
         }
-
-        return $retVal;
+        return null;
     }
 
 
@@ -1378,90 +1378,42 @@ error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVa
     {
         $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
-        if (count($retVal) > 0) {
-            if (isset($retVal[0]["Reason"])) {
-                $query = "
-                    SELECT 
-                        mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
-                        l1.Name AS unit, 
-                        l2.Name AS type, 
-                        mhi.BSA_Dose AS bsaDose, 
-                        mhi.Fluid_Type AS fluidType,
-                        mhi.Fluid_Vol AS fluidVol, 
-                        mhi.Flow_Rate AS flowRate, 
-                        mhi.Infusion_Time AS infusionTime, 
-                        mhi.Order_ID AS Order_ID,
-                        os.Order_Status AS Order_Status
-                    FROM MH_Infusion mhi 
-                        JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                        JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                        JOIN Order_Status os on os.Order_ID = mhi.Order_ID
-                    WHERE mhi.MH_ID = '$id'
-                ";
-            }
-            else {
-                $query = "
-                    SELECT 
-                        mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
-                        l1.Name AS unit, 
-                        l2.Name AS type, 
-                        mhi.BSA_Dose AS bsaDose, 
-                        mhi.Fluid_Type AS fluidType,
-                        mhi.Fluid_Vol AS fluidVol, 
-                        mhi.Flow_Rate AS flowRate, 
-                        mhi.Infusion_Time AS infusionTime, 
-                        mhi.Order_ID AS Order_ID
-                    FROM MH_Infusion mhi 
-                        JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                        JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                    WHERE mhi.MH_ID = '$id'
-                ";
-            }
-            $retVal = $this->query($query);
-        }
-        else {
-            $query = "
-                SELECT 
-                    mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
+        $q1a = ", os.Order_Status AS Order_Status";
+        $q1Join1 = " FROM MH_Infusion mhi 
+    JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
+    left outer JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID";
+        $q1Join2 = " JOIN Order_Status os on os.Order_ID = mhi.Order_ID";
+        $q1Where = " WHERE mhi.MH_ID = '$id'";
+        $q1 = "SELECT 
+    mhi.Infusion_ID AS id, 
+    CASE
+        WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+            CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+        ELSE 
+            CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+    END as amt,
+    l1.Name AS unit, 
+    coalesce(l2.Name, mhi.VistA_RouteInfo) as type,
+    mhi.BSA_Dose AS bsaDose, 
+    mhi.Fluid_Type AS fluidType,
+    mhi.Fluid_Vol AS fluidVol, 
+    mhi.Flow_Rate AS flowRate, 
+    mhi.Infusion_Time AS infusionTime, 
+    mhi.Order_ID AS Order_ID";
 
-                    l1.Name AS unit, 
-                    l2.Name AS type, 
-                    mhi.BSA_Dose AS bsaDose, 
-                    mhi.Fluid_Type AS fluidType,
-                    mhi.Fluid_Vol AS fluidVol, 
-                    mhi.Flow_Rate AS flowRate, 
-                    mhi.Infusion_Time AS infusionTime, 
-                    mhi.Order_ID AS Order_ID
-                FROM MH_Infusion mhi 
-                    JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                    JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                WHERE mhi.MH_ID = '$id'
-            ";
-            $retVal = $this->query($query);
+        $query = $q1 . $q1Join1 . $q1Where;
+        if ((count($retVal) > 0) && isset($retVal[0]["Reason"])) {
+            $query = $q1 . $q1a . $q1Join1 . $q1Join2 . $q1Where;
         }
+// error_log("Lookup Model - getMHInfusions for ID = $id");
+// error_log("Lookup Model - getMHInfusions Query");
+// error_log("$query");
+
+        $retVal = $this->query($query);
         return $retVal;
     }
 
     function getTemplateDetailByNameAndField($name, $field) {
-
         $query = "select Lookup_ID as ID, Description as value from LookUp " .
                 "where replace(upper(Name), ' ', '') = '" . strtoupper($name) . "' " .
                 "AND Lookup_Type = ( " .

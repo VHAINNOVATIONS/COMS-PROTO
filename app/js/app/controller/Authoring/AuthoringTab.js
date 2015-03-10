@@ -941,20 +941,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			DiseaseStage: diseaseStageId,
 			KeepAlive: KeepAlive
 		});
-return template;
-		var errors = template.validate();
-
-		if (errors.length > 0) {
-			var msg = '';
-			errors.each(function (error) {
-				//msg += "field: " + error.field + " message: " + error.message + "<br/>";
-				msg += " message: " + error.message + "<br/>";
-			});
-
-			Ext.MessageBox.alert('Invalid', 'Validation Errors:<br/>' + msg);
-			this.application.unMask();
-			return null;
-		}
 		return template;
 	},
 

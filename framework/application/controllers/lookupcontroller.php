@@ -601,6 +601,7 @@ class LookupController extends Controller {
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
+// error_log("Lookup Controller - TemplateData - ID = $id");
 
             $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
@@ -614,7 +615,6 @@ class LookupController extends Controller {
                 return;
             }
 
-            // $EmoLevel = $retVal[0]["emoLevel"];
             $EmoLevel = $retVal[0]["emoLevelNum"];
             $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
 
@@ -623,35 +623,27 @@ class LookupController extends Controller {
 
             $this->set('templatedata', $retVal);
 
-
-
-
-
-
-
-
-
-
-
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
-            
             $this->set('references', $retVal);
 
 
-
-
-
+            $prehydrations = null;
+            $infusionMap = null;
             $retVal = $this->LookUp->getHydrations($id, 'pre');
-            $prehydrations = $retVal;
-            $infusionMap = array();
-            foreach ($prehydrations as $prehydration) {
-                $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
-                $infusionMap[$prehydration['id']] = $infusions;
+// error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
+// error_log(json_encode($retVal));
+            if ($retVal) {
+                $prehydrations = $retVal;
+                $infusionMap = array();
+                foreach ($prehydrations as $prehydration) {
+                    $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
+                    $infusionMap[$prehydration['id']] = $infusions;
+                }
             }
             $this->set('prehydrations', $prehydrations);
             $this->set('preinfusions', $infusionMap);
@@ -660,6 +652,9 @@ class LookupController extends Controller {
 
 
             $retVal = $this->LookUp->getHydrations($id, 'post');
+// error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
+// error_log(json_encode($retVal));
+
             $posthydrations = $retVal;
             $infusionMap = array();
             foreach ($posthydrations as $posthydration) {
@@ -669,50 +664,51 @@ class LookupController extends Controller {
             $this->set('posthydrations', $posthydrations);
             $this->set('postinfusions', $infusionMap);
 
-            
+
+
             $retVal = $this->LookUp->getRegimens($id);
+// error_log("Lookup Controller - TemplateData - Got Therapy - ");
+// error_log(json_encode($retVal));
+
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
-            if (count($retVal) <= 0) {
+            if (count($retVal) > 0) {
+                if (!isset($retVal[0]["id"])) {
+                    $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');
+                    $this->set('templatedata', null);
+                    return;
+                }
+                $this->set('regimens', $retVal);
+
+                $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
+                if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
+                    $CumulativeDoseMedsInRegimen = array();
+                    if (count($CumulativeDoseMedsList) > 0 ) {
+                        foreach ($retVal as $aDrug) {
+                            $drugID = $aDrug["drugid"];
+                            foreach($CumulativeDoseMedsList as $CDMed) {
+                                if ($CDMed["MedID"] == $drugID) {
+                                    $CumulativeDoseMedsInRegimen[] = $CDMed;
+                                }
+                            }
+                        }
+                    }
+                    $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
+                }
+            }
+/************
+            else {
                 $this->set('frameworkErr', 'Get Template_Regimen Failed. 2');
                 $this->set('templatedata', null);
                 return;
             }
-            if (!isset($retVal[0]["id"])) {
-                $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');
-                $this->set('templatedata', null);
-                return;
-            }
-            $this->set('regimens', $retVal);
-// error_log("Lookup.Controller.TemplateData - Set Regimens");
-// error_log(json_encode($retVal));
-
-
-
-
-
-
-            $CumulativeDoseMedsList = $this->_LookupCumulativeDoseMeds(null);
-            if (!$this->checkForErrors("Cumulative Dose Meds List Lookup Failure", $CumulativeDoseMedsList)) {
-                $CumulativeDoseMedsInRegimen = array();
-                if (count($CumulativeDoseMedsList) > 0 ) {
-                    foreach ($retVal as $aDrug) {
-                        $drugID = $aDrug["drugid"];
-                        foreach($CumulativeDoseMedsList as $CDMed) {
-                            if ($CDMed["MedID"] == $drugID) {
-                                $CumulativeDoseMedsInRegimen[] = $CDMed;
-                            }
-                        }
-                    }
-                }
-                $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
-            }
-
+*************/
 
             $Patients = $this->getPatients4Template( $id );
             $this->set("PatientList", $Patients);
+
 
 
         } else {
@@ -2289,15 +2285,15 @@ where l1.MedID = '$EMedID'";
         $records = array();
 
         if ("PUT" == $_SERVER["REQUEST_METHOD"]) {
-error_log("Updating Template Location");
+// error_log("Updating Template Location");
 
             $tmp = json_decode(file_get_contents("php://input"));
-error_log(json_encode($tmp));
+// error_log(json_encode($tmp));
             if(isset($tmp->LocationID)) {
                 $LocationID = $tmp->LocationID;
-error_log("Have New Location ID = $LocationID");
+// error_log("Have New Location ID = $LocationID");
                 $query = "UPDATE Master_Template SET Location_ID = '$LocationID' WHERE Template_ID = '$TemplateID'";
-error_log("Query = $query");
+// error_log("Query = $query");
                 $records = $this->LookUp->query($query);
 
                 if($tmp->NationalLevel) {
@@ -2306,7 +2302,7 @@ error_log("Query = $query");
                 else {
                     $query = "UPDATE Template_Availability SET NationalLevel = 'No' WHERE TemplateID = '$TemplateID'";
                 }
-error_log("Query = $query");
+// error_log("Query = $query");
                 $records = $this->LookUp->query($query);
 
             }
