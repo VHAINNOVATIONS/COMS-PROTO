@@ -8,7 +8,13 @@
         
         function getPatientsWithActiveTemplates( )
         {
-            $query = "select Patient_ID as patientID,Template_ID as templateID from Patient_Assigned_Templates WHERE Date_Ended_Actual is NULL";
+            $query = "select 
+            pat.Patient_ID as patientID,
+            p.dfn as dfn,
+            pat.Template_ID as templateID 
+            from Patient_Assigned_Templates pat 
+            join Patient p on p.Patient_ID = pat.Patient_ID
+            WHERE Date_Ended_Actual is NULL";
             
             return $this->query( $query );
         }
@@ -192,6 +198,7 @@
             } elseif ( $OrderStatusF === "Hold" ) {
                 $this->updateOrderStatusHold( $Template_IDF, $PIDF, $typeF, $routeF );
             }
+            error_log( "OrdersModel.updateOrderStatus EXIT POINT" );
             return $this->query( $query );
         }
         

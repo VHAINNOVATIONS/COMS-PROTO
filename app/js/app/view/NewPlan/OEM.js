@@ -147,7 +147,8 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 									"<td>{Med}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
-									"<td>{AdminMethod1}</td>",
+									/* "<td>{AdminMethod1}</td>", */
+									"<td>{[this.calcRoute(values)]}</td>",
 								"</tr>",
 
 								"<tpl if=\"this.ShowFluid(AdminMethod1, FluidType1, FluidVol1, FlowRate1)\">",
@@ -216,7 +217,8 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 									"<td>{Dose} {DoseUnits}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
 									"</td>",
-									"<td>{AdminMethod}</td>",
+									/* "<td>{AdminMethod}</td>", */
+									"<td>{[this.calcRoute(values)]}</td>",
 								"</tr>",
 
 								"<tpl if=\"this.ShowFluid(AdminMethod, FluidType, FluidVol, FlowRate)\">",
@@ -282,7 +284,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 									"<td>{Med}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
-									"<td>{AdminMethod1}</td>",
+									/* "<td>{AdminMethod1}</td>", */
+									"<td>{[this.calcRoute(values)]}</td>",
+
 								"</tr>",
 
 								"<tpl if=\"this.ShowFluid(AdminMethod1, FluidType1, FluidVol1, FlowRate1)\">",
@@ -332,6 +336,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
                     }
                     return "";
                 },
+
+				calcRoute : function(data) {
+					var route = data.AdminMethod1 ? data.AdminMethod1 : data.AdminMethod;
+					if (route.indexOf(" : ") > 0) {
+						route = route.split(" : ")[0];
+					}
+					return route;
+				},
 
 
 				HasBSADose : function(units) {
