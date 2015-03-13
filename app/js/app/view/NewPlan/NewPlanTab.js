@@ -15,12 +15,12 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from MDWS" },
 */
 {
-    xtype: "component",
+	xtype: "component",
 	hidden : true, name : "CumulativeDosingWarning", 
-    autoEl:  {
+	autoEl:  {
 		tag : "section",
-		cls: "TCDWarning",
-    },
+		cls: "TCDWarning"
+	},
 	html : "This is a warning of the Total Cumulative Dosing"
 },
 

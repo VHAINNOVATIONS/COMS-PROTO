@@ -32,7 +32,7 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 					"allowBlank" : false,
 					"store" : "CumulativeDosingMeds"
 				},
-				{ "xtype" : "component", "name" : "MedMaxAllowable", "margin" : "0 0 0 140", "autoEl" : { "tag" : "div",  }},
+				{ "xtype" : "component", "name" : "MedMaxAllowable", "margin" : "0 0 0 140", "autoEl" : { "tag" : "div" }},
 				{ "xtype" : "container", "layout" : "hbox", "margin" : "5 0", "defaults" : { "labelAlign" : "right", "labelStyle" : 'font-weight:bold' }, "items" : [
 					{ 
 						"xtype" : "textfield", 

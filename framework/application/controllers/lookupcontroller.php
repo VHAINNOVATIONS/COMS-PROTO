@@ -2458,6 +2458,8 @@ error_log(json_encode($_SESSION));
             $MedInfoObj = $this->getDrugInfoFromVistA($drugName);
             $Routes          = $MedInfoObj->{"Route"};
             $Dosages         = $MedInfoObj->{"Dosage"};
+            $medIEN   = $MedInfoObj->{"Medication"}->{"ien"};
+            $medName  = $MedInfoObj->{"Medication"}->{"name"};
             $DoseList = array();
             foreach($Dosages as $d) {
                 $d1 = explode("^^", $d);

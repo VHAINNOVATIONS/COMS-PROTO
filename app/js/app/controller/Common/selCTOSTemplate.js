@@ -12,31 +12,21 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 			"selCTOSTemplate button[title=\"ResetFilter\"]" : {
 				click : this.resetTemplateFilter
 			},
-
-			// "selCTOSTemplate fieldcontainer radiofield[name=\"SelectTemplateSrc\"]": {
-			//	change: this.AuthorTypeSelected
-			// },
-
-
 			"selCTOSTemplate selTemplateSrc radiofield[name=\"SelectTemplateSrc\"]": {
 				change : this.onTemplateSrcChange
 			},
 			"selCTOSTemplate selDisease" : {
 				select : this.DiseaseSelected,
 				"beforequery" : this.clearSelDiseaseComboStore
-				// collapse: this.collapseCombo,
-				// expand: this.loadCombo
 			},
+/**
 			"selCTOSTemplate selDiseaseStage" : {
-				select : this.onDiseaseStageChange,
-				// collapse: this.collapseCombo,
-				// expand : this.loadCombo
+				select : this.onDiseaseStageChange
 			},
+**/
 			"selCTOSTemplate selTemplate" : {
 				select : this.selTemplateChange,
 				"beforequery" : this.clearSelTemplateComboStore
-				// collapse: this.collapseCombo,
-				// expand : this.loadCombo
 			}
 		});
 	},
@@ -108,7 +98,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	resetTemplateSrc : function(selCTOSTemplateObj) {
 		var TemplateSrcRadios = selCTOSTemplateObj.down("selTemplateSrc");
 		var theRadios = TemplateSrcRadios.items.items;
-		var i, aRadio, rLen = theRadios.length;
+		var i, rLen = theRadios.length;
 		for (i = 0; i < rLen; i++) {
 			theRadios[i].setRawValue(false);
 			theRadios[i].setValue(false);
@@ -158,19 +148,20 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 			this.getSelTemplateCombo(selCTOSTemplateObj).show();
 		}
 	},
-
+/**
 	onDiseaseStageChange : function(a, b, c) {
 //		debugger;
 	},
-
+**/
 	selTemplateChange : function(combo, recs) {
-		var theController, theTemplate, parent, parentName = "";
+		var theController, theTemplate, parent, parentName;
 		theTemplate = recs[0].data;
 		parent = combo.up("AuthoringTab");
+		parentName = "";
 		if (parent) {
 			parentName = "AuthoringTab";
-				theController = this.getController("Authoring.AuthoringTab");
-				theController.ShowSelectedTemplateForm(theTemplate);
+			theController = this.getController("Authoring.AuthoringTab");
+			theController.ShowSelectedTemplateForm(theTemplate);
 		}
 		else {
 			parent = combo.up("NewPlanTab");
@@ -225,8 +216,8 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	hideInitialAndFilterSelector : function (selCTOSTemplateObj) {
 		this.getTemplateSrcObj(selCTOSTemplateObj).hide();
 		this.hideFilterSelector(selCTOSTemplateObj);
-								this.getDiseaseAndStageObj(selCTOSTemplateObj).show();
-								this.showSelCTOSGroup(selCTOSTemplateObj);
+		this.getDiseaseAndStageObj(selCTOSTemplateObj).show();
+		this.showSelCTOSGroup(selCTOSTemplateObj);
 	}
 
 });

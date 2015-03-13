@@ -72,8 +72,17 @@ class Patient extends Model
         $weightFormula = $formData->WeightFormula;
         $bsaFormula = $formData->BSAFormula;
         $clinicalTrial = $formData->ClinicalTrial;
-        
-        $isActive = '1';
+
+        /* MWB - 3/12/2015 - Need to track who assigned the template for submitting the orders */
+        /* Also provider who applied the template might need a second signature so keeping that in mind as well */
+        $AssignedByRoleID = $_SESSION["rid"];
+        $AssignedByUser = $_SESSION["AccessCode"] . "/" . $_SESSION["VerifyCode"];
+        $ApprovedByUser = $_SESSION["AccessCode"] . "/" . $_SESSION["VerifyCode"];
+
+        $isActive = 0;
+        if ("" !== $ApprovedByUser) {
+            $isActive = 1;
+        }
         
         $query = "
             SELECT PAT_ID AS id, Template_ID AS Template_ID 
@@ -109,6 +118,8 @@ class Patient extends Model
                 $this->query($query);
             }
         }
+
+
         $query = "
             INSERT INTO Patient_Assigned_Templates (
                 Patient_ID,
@@ -117,6 +128,9 @@ class Patient extends Model
                 Date_Started,
                 Date_Ended,
                 Is_Active,
+                AssignedByRoleID,
+                AssignedByUser,
+                ApprovedByUser,
                 Goal,
                 Status,
                 Perf_Status_ID,
@@ -129,7 +143,10 @@ class Patient extends Model
                 '$dateApplied',
                 '$dateStarted',
                 '$dateEnded',
-                1,
+                $isActive,
+                '$AssignedByRoleID',
+                '$AssignedByUser',
+                '$ApprovedByUser',
                 '$goal',
                 'Ordered',
                 '$performanceStatus',

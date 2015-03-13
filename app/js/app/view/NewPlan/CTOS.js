@@ -20,6 +20,10 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 
 	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
+		var ApplyBtn = { xtype : "container", name : "Apply", html : "", hidden : true, margin: '0 0 10 50' };
+		if ("Provider" === Sessionrole) {
+			ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' };
+		}
 
 		// Based on the "Sessionrole" set in main.php ($role = $_SESSION['role'];)
 		// determine who can see what tabs.
@@ -27,34 +31,25 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 
 		if ("Administrator" === Sessionrole || "All Roles" === Sessionrole || "1" === SessionTemplateAuthoring) {
 			this.items = [
-
 				{
 					title: "Chemotherapy Template Order Source",
 					items : [
-                    { xtype : "form", name: "NewPlan_CTOS_Form", items : [
-/***/
-						{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns', hidden: true,
-							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
-							defaultType: 'radiofield', defaults: { flex: 1 },
-							items: [ 
-								{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
-								{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
-							]
-						},
-/***/
-
-
-						{ xtype : 'selTemplate', name : 'MyTemplates'},		/* Select Existing Template */
-						{ xtype : "selCTOSTemplate", hidden : true },
-
-						{ xtype : 'dspTemplateData'},
-
-//			{ "xtype" : "MedRemindersGrid" },
-//			{ "xtype" : "MedRemindersForm" },
-
-						{ xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' },
-						{ xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' }
-                    ]}
+						{ xtype : "form", name: "NewPlan_CTOS_Form", items : [
+							{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns', hidden: true,
+								fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
+								defaultType: 'radiofield', defaults: { flex: 1 },
+								items: [ 
+									{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
+									{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
+								]
+							},
+							{ xtype : 'selTemplate', name : 'MyTemplates'},		/* Select Existing Template */
+							{ xtype : "selCTOSTemplate", hidden : true },
+							{ xtype : 'dspTemplateData'},
+							ApplyBtn,
+							{ xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' }
+						]
+						}
 					]
 				},
 
