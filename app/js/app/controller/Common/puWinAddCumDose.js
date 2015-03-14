@@ -114,7 +114,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 
 		}
 		var plural = (exceedsCount > 1 ? "s " : " ");
-		var tmpBuf = "Warning! <br>Regimen Medication" + plural + "Approaching or Exceeding Recommended Maximum Dose" + plural + "<table border=\"1\">"
+		var tmpBuf = "Warning! <br>Regimen Medication" + plural + "Approaching or Exceeding Recommended Maximum Dose" + plural + "<table border=\"1\">";
 		tmpBuf += "<tr><th>Medication</th><th>Recommended Max</th><th>Patient Lifetime Total</th><th>Percentage</th></tr>";
 		tmpBuf += WarningMsgBuf + "</table>";
 

@@ -31,6 +31,20 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
     sortable: false,
     btns: [],
     constructor: function(config) {
+		var ActionBtnClickHandler = function(item) {
+                        var eventName = 'actionbuttonclick';
+                        if (typeof item.eventName != 'undefined') {
+                            eventName = item.eventName;
+                        } else if (typeof item.cls != 'undefined') {
+                            eventName = item.cls.replace(/[^a-zA-Z]/,'')+'click';
+                        }
+                        fun = function() {
+                            if (eventName != 'actionbuttonclick') {
+                                view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
+                            }
+                            view.fireEvent(eventName, view, rowIndex, colIndex);
+                        };
+		};
 
         var me = this,
         cfg = Ext.apply({}, config),
@@ -96,20 +110,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                     fun = Ext.bind(item.handler, context, [view, rowIndex, colIndex]);
                 }
                 else {
-                    (function(item) {
-                        var eventName = 'actionbuttonclick';
-                        if (typeof item.eventName != 'undefined') {
-                            eventName = item.eventName;
-                        } else if (typeof item.cls != 'undefined') {
-                            eventName = item.cls.replace(/[^a-zA-Z]/,'')+'click';
-                        }
-                        fun = function() {
-                            if (eventName != 'actionbuttonclick') {
-                                view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
-                            }
-                            view.fireEvent(eventName, view, rowIndex, colIndex);
-                        };
-                    })(item);
+                    this.ActionBtnClickHandler(item);
                 }
                 var hide;
                 if (typeof item.showIndex != 'undefined') {

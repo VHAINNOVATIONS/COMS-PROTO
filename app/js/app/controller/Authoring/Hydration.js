@@ -61,22 +61,22 @@ Ext.apply(Ext.data.validations,{
 Ext.define('COMS.controller.Authoring.Hydration', {
 	extend: 'Ext.app.Controller',
 	stores: [
-	'TotalCoursesMax'
-	, 'CycleLengthMax'
-	, 'TimeFrameUnit'
-	, 'EmetogenicLevel'
-	, 'FebrileNeutropeniaRisk'
-	, 'ReferencesStore'
-	, 'LUReferences'
-	, 'HydrationStore'
-	, 'DrugStore'
-	, 'DrugUnitsStore'
-	, 'InfusionStore'
+		'TotalCoursesMax',
+		'CycleLengthMax',
+		'TimeFrameUnit',
+		'EmetogenicLevel',
+		'FebrileNeutropeniaRisk',
+		'ReferencesStore',
+		'LUReferences',
+		'HydrationStore',
+		'DrugStore',
+		'DrugUnitsStore',
+		'InfusionStore'
 	],
 	views: [
-	'Authoring.Hydration'
-	, 'Authoring.AddHydrationDrug'
-	, 'Authoring.HydrationSequence'
+		'Authoring.Hydration',
+		'Authoring.AddHydrationDrug',
+		'Authoring.HydrationSequence'
 	],
 
 

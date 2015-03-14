@@ -2,8 +2,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 	extend: "Ext.app.Controller",
 
 	stores: [
-		"ND_CTCAE_SOC"
-		,"ND_CTCAE_Data"
+		"ND_CTCAE_SOC",
+		"ND_CTCAE_Data"
 	],
 
 

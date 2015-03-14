@@ -77,7 +77,7 @@ Ext.define("COMS.view.TemplatePromotion.TemplatePromotionTab", {
 		{ "text" : "# of Patients", "name" : "NumPatients", dataIndex: "PatientCount", "renderer" : 
 			function(value) {
 				if ("0" == value) {
-					return "<div style=\"text-align: center;\">" + value + "</div>";;
+					return "<div style=\"text-align: center;\">" + value + "</div>";
 				}
 				return "<div class=\"textAnchor\" style=\"text-align: center;\">" + value + "</div>";
 			}

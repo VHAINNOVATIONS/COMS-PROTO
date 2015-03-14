@@ -1,8 +1,8 @@
 Ext.define('COMS.controller.TemplateList.TemplateListTab', {
     extend: 'Ext.app.Controller',
     stores: [
-        "TemplateListStore"
-        ,"TemplateListByLocationStore"
+        "TemplateListStore",
+		"TemplateListByLocationStore"
     ],
     views: [
         'TemplateList.TemplateListTab',

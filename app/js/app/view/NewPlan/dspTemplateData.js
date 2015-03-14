@@ -193,6 +193,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			},
 			CumDoseMeds : function ( current, prev ) {
 				var i, msg, medStr, cdmir, cdmirList = current.CumulativeDoseMedsInRegimen, len = cdmirList.length;
+				var cdt, cdtMed, exceeds, xxx, cdtLen, cdtAmt, cdmirAmt;
 				msg = "No Cumulative Dose Tracked Medications in this Regimen";
 
 				if (len > 0) {
@@ -244,20 +245,18 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						
 						var MedNotTracked = true;
 						if (COMS.Patient.CumulativeDoseTracking) {
-							var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
+							cdtLen = COMS.Patient.CumulativeDoseTracking.length;
 							if (cdtLen > 0) {
-								var i, cdt, cdtMed, exceeds, xxx;
 								for (i = 0; i < cdtLen; i++) {
 									cdt = COMS.Patient.CumulativeDoseTracking[i];
 									cdtMed = cdt.MedName;
 									if (cdtMed === cdmir.MedName) {
 										MedNotTracked = false;
-										
 										if ("string" == typeof cdt.CurCumDoseAmt) {
-											var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
+											cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
 										}
 										else {
-											var cdtAmt = cdt.CurCumDoseAmt;
+											cdtAmt = cdt.CurCumDoseAmt;
 										}
 										// msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
 										msg += "<td>" + Ext.FormatNumber(cdt.CurCumDoseAmt) + " " + cdmirUnits + "</td>";
@@ -265,10 +264,10 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 									
 
 										if ("string" == typeof cdmir.CumulativeDoseAmt) {
-											var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
+											cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
 										}
 										else {
-											var cdmirAmt = cdmir.CumulativeDoseAmt;
+											cdmirAmt = cdmir.CumulativeDoseAmt;
 										}
 
 										exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);

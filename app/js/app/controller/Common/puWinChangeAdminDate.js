@@ -104,7 +104,9 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 			NewDateInList, 
 			list, 
 			CurDate, 
-			CurAdminDayIdx;
+			CurAdminDayIdx,
+			NextCycle,
+			thisCycle;
 		nRange = this.nRange;
 		if (!nRange) {
 			return;
@@ -146,8 +148,8 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 					NewLastDateOfCycle = this.addDays2Date(this.offsetDays, LastDayOfCycleRec.AdminDate);
 					StartOfNextCycle = list[NextCycleIdx];
 
-					var NextCycle = new Date(StartOfNextCycle.AdminDate);
-					var thisCycle = new Date(NewLastDateOfCycle);
+					NextCycle = new Date(StartOfNextCycle.AdminDate);
+					thisCycle = new Date(NewLastDateOfCycle);
 					if (NextCycle <= thisCycle) {
 						this.AcceptableChangeMsg = "Changes will overlap the next cycle";
 					}
@@ -159,7 +161,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 				else {
 					LastDayOfCycleRec = list.length;
 					NewLastDateOfCycle = this.addDays2Date(this.offsetDays, LastDayOfCycleRec.AdminDate);
-					var thisCycle = new Date(NewLastDateOfCycle);
+					thisCycle = new Date(NewLastDateOfCycle);
 					this.Range2Change[0] = CurAdminDayIdx;
 					this.Range2Change[1] = LastDayOfCycleRec;
 				}

@@ -51,7 +51,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 					beforerender : this.ActivatingThisTab2,
 					beforeshow : this.ActivatingThisTab3,
 					beforedeactivate : this.ActivatingThisTab4,
-					beforedeactivate : this.ActivatingThisTab5,
+					// beforedeactivate : this.ActivatingThisTab5,
 					blur : this.ActivatingThisTab6,
 					beforestatesave : this.ActivatingThisTab7,
 					click : this.ActivatingThisTab8,

@@ -14,6 +14,8 @@
 var MaxTimeoutMinutes = 5;
 var MaxTimeoutSec = MaxTimeoutMinutes * 60;
 var MaxTimeoutMS = MaxTimeoutSec * 1000;
+var LockedInfo = null;
+
 Ext.override(Ext.data.proxy.Ajax, {
 	timeout: MaxTimeoutMS
 });
@@ -821,7 +823,6 @@ Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 			else {
 				var Owner = resp.records[0].UserName;
 				if (Owner === dName) {
-					// Ext.MessageBox.alert(resp.records[0].Section + " section Locked", "You currently have the " + resp.records[0].Section + " section locked for editing" );
 					opts.lockCallback.call(this, opts.params);
 				}
 				else {
@@ -838,6 +839,7 @@ Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 		}
 	});
 };
+
 Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
 	Ext.COMS_LockoutAjaxCall("Lock", PatientID, Section, callback, params);
 };
@@ -845,8 +847,8 @@ Ext.COMS_LockSection = function(PatientID, Section, callback, params) {
 Ext.COMS_UnLockSection = function() {
 	try {
 		if (LockedInfo) {
-	Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
-	delete LockedInfo;
+			Ext.COMS_LockoutAjaxCall("Unlock", LockedInfo.id, LockedInfo.Section, null, null);
+			LockedInfo = null;
 		}
 	}
 	catch (e) {
@@ -876,9 +878,9 @@ Ext.togglePanelOnTitleBarClick = function(panel) {
 
 Ext.GeneralRounding2Digits = function (n) {
 	var ret = Ext.FormatNumber(+(Math.round(n + "e+" + 2) + "e-" + 2));
-	var n = ret.search(/\./i);
+	n = ret.search(/\./i);
 	if (n > 0) {	// We have a decimal point
-		var n = ret.search(/0$/i);
+		n = ret.search(/0$/i);
 		if (n>0) {
 			ret = ret.substring(0, ret.length - 1);
 		}
@@ -1044,7 +1046,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 			calcGFR: function (x) {
 				var gender = x.Gender;
 				var kg = Ext.Pounds2Kilos(x.Weight);
-				var dose = x.dose.split(" ")[0];
+				// var dose = x.dose.split(" ")[0];
 				var sc = x.SerumCreatinine || 1;
 				var AUC = x.dose.split(" ")[0];
 				var age = x.Age;
@@ -1107,7 +1109,6 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 			}
 		}
 	);
-
 	var newFormula = html.applyTemplate(temp);
 	return newFormula;
 };
@@ -1193,7 +1194,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 		break;
 	}
 
-	if ("" == calcDose) {
+	if ("" === calcDose) {
 		calcDose = OrigDose * temp.BSA;
 		calcDose = Ext.GeneralRounding2Digits(calcDose);
 	}
@@ -1386,7 +1387,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 					var t1 = tmp2 + "e+" + 2;
 					var t2 = Math.round(t1);
 					var t3 = t2 + "e-" + 2;
-					var t4 = Ext.GeneralRounding2Digits(t3);
+					// var t4 = Ext.GeneralRounding2Digits(t3);
 					tmp2 = Ext.FormatNumber(+t3);
 					tmp2 = Ext.FormatNumber(+(Math.round(tmp2 + "e+" + 2) + "e-" + 2));
 					var Final = (BSA_Value - tmp2);
@@ -1394,7 +1395,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 					var f1 = Final + "e+" + 2;
 					var f2 = Math.round(f1);
 					var f3 = f2 + "e-" + 2;
-					var f4 = Ext.GeneralRounding2Digits(f3);
+					// var f4 = Ext.GeneralRounding2Digits(f3);
 					Final = Ext.FormatNumber(+f3);
 
 					AmpuReduction = " - " + Reduction + "% (due to Amputations) = " + Final;
@@ -1529,7 +1530,7 @@ Ext.BSA_Calc = function (PatientInfo) {
 		var f1 = Final + "e+" + 2;
 		var f2 = Math.round(f1);
 		var f3 = f2 + "e-" + 2;
-		var f4 = Ext.GeneralRounding2Digits(f3);
+		// var f4 = Ext.GeneralRounding2Digits(f3);
 
 		Final = Ext.FormatNumber(+f3);
 	}
@@ -1585,7 +1586,7 @@ Ext.CalcGFR = function(age, kg, gender, SerumCreatinine) {
 	}
 	GFR = 1 * Ext.GeneralRounding2Digits(GFR / (72 * SerumCreatinine));
 	return GFR;
-}
+};
 
 Ext.CalcAUCDose = function (Patient, AUC) {
 	var age = Patient.Age;
@@ -1797,67 +1798,64 @@ Ext.application({
 		// Each controller must include all the views used by that controller
 		// as part of that controller definition
 		// Controllers must be included here if a store is used in the view managed by the controller
-		"Navigation"
-		, "ProgrammerBtns"
-		, "CkBoxTArea"
-		, "Common.DEMOpuWin"
-		, "Common.EmeticInfo"
-		, "NewPlan.CTOS.FS_Toxicity"
-		, "Common.SelectAdverseReactionAlerts"
-		, "Common.puWinSelAmputation"
-		, "Common.puWinSelCancer"
-		, "Common.puWinAddCumDose"
-		, "Common.puWinSelBSA"
-		, "Common.selCTOSTemplate"
-		, "Common.puWinChangeAdminDate"
-		, "Common.MedRemindersForm"
-		, "Common.puWinTreatmentAmmend"
-		, "NewPlan.AdverseEventsHistory"
-		, "NewPlan.AskQues2ApplyTemplate"
-		, "NewPlan.NewPlanTab"
-		, "NewPlan.AmputationSelection"
-//		, "NewPlan.PatientHistory"
-		, "Orders.OrdersTab"
-		, "Authoring.AuthoringTab"
-		, "TemplateList.TemplateListTab"
-		, "TemplateList.puWinListPatients"
-		, "TemplatePromotion.TemplatePromotionTab"
-		, "Authoring.DrugRegimen"
-		, "Authoring.Hydration"
-		, "Management.AdminTab"
-		, "Management.DiseaseStaging"
-		, "Management.IntelligentDataElements"
-		, "Management.Toxicity"
-		, "Management.AddLookups"
-		, "Management.CumulativeDosing"
-		, "Management.EmeticMeds"
-		, "Management.Lockout"
-		, "Management.Inventory"
-		, "NewPlan.CTOS.NursingDocs.DischargeInstructions"
-		, "NewPlan.OEM"
-		, "NewPlan.PatientInfoTable"
-		, "NewPlan.OEM_Edit"
-		, "NewPlan.CTOS.FlowSheetTab"
-		, "NewPlan.CTOS.FlowSheetOptionalQues"
-
-		, "NewPlan.CTOS.ChronologyTab"
-		, "NewPlan.CTOS.PatientSummaryTab"
-
-		, "NewPlan.CTOS.NursingDocs.NursingDocs"
-		, "NewPlan.CTOS.NursingDocs.GenInfoTab"
-		, "NewPlan.CTOS.NursingDocs.AssessmentTab"
-		, "NewPlan.CTOS.NursingDocs.PreTreatmentTab"
-		, "NewPlan.CTOS.NursingDocs.TreatmentTab"
-		, "NewPlan.CTOS.NursingDocs.React_AssessTab"
-		, "NewPlan.CTOS.NursingDocs.EducationTab"
-		, "NewPlan.CTOS.NursingDocs.Chemotherapy"
-//		, "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
-		, "NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
-		, "Messages.MessagesTab"
-		, "NewPlan.EndTreatmentSummary"
-		, "NewPlan.ViewEndTreatmentSummary"
-		, "NewPlan.TreatmentDetails"
-
+		"Navigation",
+		"ProgrammerBtns",
+		"CkBoxTArea",
+		"Common.DEMOpuWin",
+		"Common.EmeticInfo",
+		"NewPlan.CTOS.FS_Toxicity",
+		"Common.SelectAdverseReactionAlerts",
+		"Common.puWinSelAmputation",
+		"Common.puWinSelCancer",
+		"Common.puWinAddCumDose",
+		"Common.puWinSelBSA",
+		"Common.selCTOSTemplate",
+		"Common.puWinChangeAdminDate",
+		"Common.MedRemindersForm",
+		"Common.puWinTreatmentAmmend",
+		"NewPlan.AdverseEventsHistory",
+		"NewPlan.AskQues2ApplyTemplate",
+		"NewPlan.NewPlanTab",
+		"NewPlan.AmputationSelection",
+//		"NewPlan.PatientHistory",
+		"Orders.OrdersTab",
+		"Authoring.AuthoringTab",
+		"TemplateList.TemplateListTab",
+		"TemplateList.puWinListPatients",
+		"TemplatePromotion.TemplatePromotionTab",
+		"Authoring.DrugRegimen",
+		"Authoring.Hydration",
+		"Management.AdminTab",
+		"Management.DiseaseStaging",
+		"Management.IntelligentDataElements",
+		"Management.Toxicity",
+		"Management.AddLookups",
+		"Management.CumulativeDosing",
+		"Management.EmeticMeds",
+		"Management.Lockout",
+		"Management.Inventory",
+		"NewPlan.CTOS.NursingDocs.DischargeInstructions",
+		"NewPlan.OEM",
+		"NewPlan.PatientInfoTable",
+		"NewPlan.OEM_Edit",
+		"NewPlan.CTOS.FlowSheetTab",
+		"NewPlan.CTOS.FlowSheetOptionalQues",
+		"NewPlan.CTOS.ChronologyTab",
+		"NewPlan.CTOS.PatientSummaryTab",
+		"NewPlan.CTOS.NursingDocs.NursingDocs",
+		"NewPlan.CTOS.NursingDocs.GenInfoTab",
+		"NewPlan.CTOS.NursingDocs.AssessmentTab",
+		"NewPlan.CTOS.NursingDocs.PreTreatmentTab",
+		"NewPlan.CTOS.NursingDocs.TreatmentTab",
+		"NewPlan.CTOS.NursingDocs.React_AssessTab",
+		"NewPlan.CTOS.NursingDocs.EducationTab",
+		"NewPlan.CTOS.NursingDocs.Chemotherapy",
+//		"NewPlan.CTOS.NursingDocs.VitalSignsEntryForm",
+		"NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions",
+		"Messages.MessagesTab",
+		"NewPlan.EndTreatmentSummary",
+		"NewPlan.ViewEndTreatmentSummary",
+		"NewPlan.TreatmentDetails"
 	],
 
 	launch: function () {

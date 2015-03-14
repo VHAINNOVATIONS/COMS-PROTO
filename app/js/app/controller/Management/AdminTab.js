@@ -870,9 +870,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		});
 	},
 
-	clickRolesDelete : function ( theButton, eOpts) {
+	clickRolesDelete : function ( theButton ) {
 		var RoleData = this.RolesUserInfo;
-		var eOpts = {scope : this};
+		eOpts = {scope : this};
 		Ext.MessageBox.show({
 			title: "Information",
 			msg: "You are about to delete User: " + RoleData.DisplayName + ". Would you like to delete this user from the system?",

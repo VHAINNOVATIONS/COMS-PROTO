@@ -99,19 +99,19 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     puWinBSASelection : null,
 
     stores : [
-    "Patients"	// Used by the "SelectPatient", "PatientInfo" views
-    , "PatientHistory"
-    , "LabInfo"
-    , "TemplateSources"
-    , "DiseaseType"
-    , "DiseaseStage"
-    , "Templates"
-    , "CTOS"
-    , "PerfStatStore"
-    , "TemperatureLocation"
-    , "DeliveryMechanism"
-	, "IDEntry"
-	, 'MedReminders'
+		"Patients",
+		"PatientHistory",
+		"LabInfo",
+		"TemplateSources",
+		"DiseaseType",
+		"DiseaseStage",
+		"Templates",
+		"CTOS",
+		"PerfStatStore",
+		"TemperatureLocation",
+		"DeliveryMechanism",
+		"IDEntry",
+		'MedReminders'
     ],
 
 
@@ -119,46 +119,42 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry", Ext.COMSModels.MedReminder],
 
 	views : [
-		"NewPlan.NewPlanTab"
-		,"NewPlan.MedRemindersPanel"
-		,"NewPlan.PatientSelection"
-		,"NewPlan.SelectPatient"
-		,"NewPlan.PatientInfo"
-		,"NewPlan.PatientInfoTable"
-		,"NewPlan.PatientTemplates"
-		,"NewPlan.PatientHistory"
-		,"NewPlan.LabInfo"
-		,"NewPlan.KnownProblems"
-		,"NewPlan.OEM"
-		,"NewPlan.AdverseEventsHistory"
-
-		,"NewPlan.CTOS"
-		,"NewPlan.CTOS.PatientSummary"
-		,"NewPlan.CTOS.NursingDocs"
-		,"NewPlan.CTOS.KnowledgeBase"
-
-
-		,'Common.Search4Template'
-		,"Common.selCTOSTemplate"
-		,"Common.selTemplateSrc"
-		,"Common.selDiseaseAndStage"
-		,"Common.selDisease"
-		,"Common.selDiseaseStage"
-		,"Common.selTemplate"
-		,"Common.VitalSignsHistory"
-		,"Common.puWinSelCancer"
-		,"Common.puWinAddCumDose"
-		,"Common.puWinSelBSA"
-		,"Common.puWinSelAmputation"
-		,"Common.MedRemindersForm"
-		,"Common.MedRemindersGrid"
-		,"Authoring.MedReminder"
-
-		,"NewPlan.dspTemplateData"
-		,"NewPlan.AskQues2ApplyTemplate"
-		,"NewPlan.AmputationSelection"
-		,"NewPlan.BSASelection"
-		,"NewPlan.EndTreatmentSummary"
+		"NewPlan.NewPlanTab",
+		"NewPlan.MedRemindersPanel",
+		"NewPlan.PatientSelection",
+		"NewPlan.SelectPatient",
+		"NewPlan.PatientInfo",
+		"NewPlan.PatientInfoTable",
+		"NewPlan.PatientTemplates",
+		"NewPlan.PatientHistory",
+		"NewPlan.LabInfo",
+		"NewPlan.KnownProblems",
+		"NewPlan.OEM",
+		"NewPlan.AdverseEventsHistory",
+		"NewPlan.CTOS",
+		"NewPlan.CTOS.PatientSummary",
+		"NewPlan.CTOS.NursingDocs",
+		"NewPlan.CTOS.KnowledgeBase",
+		"Common.Search4Template",
+		"Common.selCTOSTemplate",
+		"Common.selTemplateSrc",
+		"Common.selDiseaseAndStage",
+		"Common.selDisease",
+		"Common.selDiseaseStage",
+		"Common.selTemplate",
+		"Common.VitalSignsHistory",
+		"Common.puWinSelCancer",
+		"Common.puWinAddCumDose",
+		"Common.puWinSelBSA",
+		"Common.puWinSelAmputation",
+		"Common.MedRemindersForm",
+		"Common.MedRemindersGrid",
+		"Authoring.MedReminder",
+		"NewPlan.dspTemplateData",
+		"NewPlan.AskQues2ApplyTemplate",
+		"NewPlan.AmputationSelection",
+		"NewPlan.BSASelection",
+		"NewPlan.EndTreatmentSummary"
 	],
 
     refs: [
@@ -1867,7 +1863,7 @@ console.log("Loading Allergy Info - Finished");
 				}
 			}
 			catch (e) {
-				debugger;
+				wccConsoleLog("NewPlanTab - Convert2AssocArray - Error");
 			}
 			if ("" !== key ) {
 				if (assocArray.hasOwnProperty(key)) {
@@ -1899,7 +1895,7 @@ console.log("Loading Allergy Info - Finished");
 	},
 
 	MergeWithVPR_Array : function(SQLRecords) {
-		var i, key, key1, sRec, vRec, VPR_vitals, SQLRecords;
+		var i, key, key1, sRec, vRec, VPR_vitals;
 		VPR_vitals = this.Convert2AssocArray(this.application.Patient.ParsedVPR.Vitals);
 		if (SQLRecords.length > 0) {
 			SQLRecords = this.Convert2AssocArray(SQLRecords);
@@ -1928,7 +1924,7 @@ console.log("Loading Allergy Info - Finished");
 					delete SQLRecords[key];
 				}
 				else {
-					debugger;
+					wccConsoleLog("NewPlanTab - MergeWithVPR_Array - SQLRecords.hasOwnProperty = FALSE");
 				}
 			}
 
@@ -1936,7 +1932,7 @@ console.log("Loading Allergy Info - Finished");
 			for (key in SQLRecords) {
 				if (SQLRecords.hasOwnProperty(key)) {
 					if (VPR_vitals.hasOwnProperty(key)) {
-						debugger;
+						wccConsoleLog("NewPlanTab - MergeWithVPR_Array - VPR_vitals.hasOwnProperty = TRUE");
 					}
 					else {
 						SQLRecords[key].Observed = this.convertVPR.getObserved(SQLRecords[key].DateTaken);
@@ -2625,7 +2621,7 @@ console.log("Loading Allergy Info - Finished");
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
 		var piTableInfo, patientTemplates, dspVSHTemplateData, VSHTemplateDataBtns;
-		var KnownProblems;
+		var KnownProblems, CumDoseCtl;
 
 		if ("All Templates Applied" === Loaded) {
 			var historical = this.application.Patient.AllTemplatesApplied2Patient.get("historical"),
@@ -2666,7 +2662,7 @@ console.log("Loading Allergy Info - Finished");
 		if ("Update BSA" === Loaded) {
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
-			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 			return;
@@ -2738,7 +2734,7 @@ console.log("Loading Allergy Info - Finished");
 			piTableInfo.update(Patient);
 			piTableInfo.show();
 
-			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 
 			this.updateKnownProblems();

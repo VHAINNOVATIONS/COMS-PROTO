@@ -5,16 +5,16 @@ Ext.define('COMS.controller.Navigation', {
 	// before they are listed in the NavigationTabs Controller
 	// else a "namespace is undefined" error occurs
 	views: [
-		'NavigationTabs'
-		, 'NewPlan.NewPlanTab'
-		, 'Authoring.AuthoringTab'
-		, 'TemplateList.TemplateListTab'
-		, 'ExistingPlan.ExistingPlanTab'
-		, 'KnowledgeBase.KnowledgeBaseTab'
-		, 'Messages.MessagesTab'
-		, 'Management.AdminTab'
-		, 'Testing.TestTab'
-		],
+		'NavigationTabs',
+		'NewPlan.NewPlanTab',
+		'Authoring.AuthoringTab',
+		'TemplateList.TemplateListTab',
+		'ExistingPlan.ExistingPlanTab',
+		'KnowledgeBase.KnowledgeBaseTab',
+		'Messages.MessagesTab',
+		'Management.AdminTab',
+		'Testing.TestTab'
+	],
 
 	// For this controller the following is mostly for debugging
 	// It should be removed prior to releasing to production

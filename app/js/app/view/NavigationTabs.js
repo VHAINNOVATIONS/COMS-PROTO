@@ -48,12 +48,12 @@ Ext.define('COMS.view.NavigationTabs' ,{
         if ("Administrator" === Sessionrole || "All Roles" === Sessionrole) {
 			// this.activeTab = 6;	Opens the "Testing" Tab by default
             this.items = [
-                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
-                ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
-                ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
-                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
-				,{ title : 'Template Promotion', items : [ {xtype : 'TemplatePromotionTab' }]}
-				,{ xtype : "tabpanel", title: "Reports",
+                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] },
+				{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] },
+				{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] },
+				{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] },
+				{ title : 'Template Promotion', items : [ {xtype : 'TemplatePromotionTab' }]},
+				{ xtype : "tabpanel", title: "Reports",
 					defaults: {
 						padding : "10 10 5 10"
 					},
@@ -64,20 +64,18 @@ Ext.define('COMS.view.NavigationTabs' ,{
 							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
 						]}
 					]
-				}
-				,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
-                ,{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
-
-				// ,{ title : 'Testing', items : [ {xtype : 'DischargeInstructions', margin: "10" }]}
+				},
+				{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] },
+				{ title : 'Site Configuration', items : [ {xtype : 'AdminTab' }]}
             ];
         }
         else if ("1" === SessionTemplateAuthoring) {
             this.items = [
-                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
-                ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
-                ,{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] }
-                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
-				,{ xtype : "tabpanel", title: "Reports",
+                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] },
+				{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] },
+				{ title : 'Template Authoring', items : [ { xtype : 'AuthoringTab'} ] },
+				{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] },
+				{ xtype : "tabpanel", title: "Reports",
 					defaults: {
 						padding : "10 10 5 10"
 					},
@@ -88,16 +86,16 @@ Ext.define('COMS.view.NavigationTabs' ,{
 							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
 						]}
 					]
-				}
-                ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
+				},
+				{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
         else {
             this.items = [
-                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] }
-                ,{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] }
-                ,{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] }
-				,{ xtype : "tabpanel", title: "Reports",
+                { title : 'Patient',  items : [ { xtype : 'NewPlanTab' } ] },
+				{ title : 'Orders', items : [ { xtype : 'OrdersTab'} ] },
+				{ title : 'Template List', items : [ { xtype : 'TemplateListTab'} ] },
+				{ xtype : "tabpanel", title: "Reports",
 					defaults: {
 						padding : "10 10 5 10"
 					},
@@ -108,8 +106,8 @@ Ext.define('COMS.view.NavigationTabs' ,{
 							{ xtype : "box", "html" : "<h1>Not Yet Available</h1>" }
 						]}
 					]
-				}
-                ,{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
+				},
+				{ title : 'Messages', items : [ { xtype : 'MessagesTab' } ] }
             ];
         }
         this.callParent(arguments);

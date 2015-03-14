@@ -16,39 +16,38 @@ Ext.apply(Ext.data.validations, {
 Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	extend: 'Ext.app.Controller',
 	stores: [
-		'TotalCoursesMax'
-		, 'CycleLengthMax'
-		, 'TimeFrameUnit'
-		, 'EmetogenicLevel'
-		, 'FebrileNeutropeniaRisk'
-		, 'ReferencesStore'
-		, 'LUReferences'
-		, 'HydrationStore'
-		, 'DrugStore'
-		, 'DrugUnitsStore'
-		, 'InfusionStore'
-		, 'CTOS'
-		, 'MedReminders'
+		'TotalCoursesMax',
+		'CycleLengthMax',
+		'TimeFrameUnit',
+		'EmetogenicLevel',
+		'FebrileNeutropeniaRisk',
+		'ReferencesStore',
+		'LUReferences',
+		'HydrationStore',
+		'DrugStore',
+		'DrugUnitsStore',
+		'InfusionStore',
+		'CTOS',
+		'MedReminders'
 		],
 	views: [
-		'Authoring.References'
-		, 'Authoring.MedReminder'
-		, 'Authoring.Hydration'
-		, 'Authoring.DrugRegimen'
-		, 'Authoring.AddReference'
-		, 'Authoring.CreateNewTemplate'
-		, 'Authoring.CycleLength'
-
-		, 'Common.Search4Template'
-		, "Common.selCTOSTemplate"
-		, "Common.selDiseaseAndStage"
-		, "Common.selDisease"
-		, "Common.selDiseaseStage"
-		, "Common.selTemplate"
-		, "Common.selSequence"
-		, "Common.MedRemindersForm"
-		, "Common.EmeticInfo"
-		],
+		'Authoring.References',
+		'Authoring.MedReminder',
+		'Authoring.Hydration',
+		'Authoring.DrugRegimen',
+		'Authoring.AddReference',
+		'Authoring.CreateNewTemplate',
+		'Authoring.CycleLength',
+		'Common.Search4Template',
+		"Common.selCTOSTemplate",
+		"Common.selDiseaseAndStage",
+		"Common.selDisease",
+		"Common.selDiseaseStage",
+		"Common.selTemplate",
+		"Common.selSequence",
+		"Common.MedRemindersForm",
+		"Common.EmeticInfo"
+	],
 
 
 	refs: [
@@ -1133,6 +1132,13 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}
 		return MedRemindersArray;
 	},
+
+	RecordSaveSuccess : function(data) {
+	},
+	RecordSaveFailure : function(data) {
+		alert("Failure to save Med Reminder");
+	},
+
 	saveAllMedReminders : function(TemplateID) {
 		var MedReminders = this.getMedRemindersInArray();
 		var rec, i, len = MedReminders.length;
@@ -1143,11 +1149,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			rec.save({
 				scope : this,
 				waitMsg: 'Saving Data...',
-				success: function (data) {
-				},
-				failure: function (data) {
-					alert("Failure to save Med Reminder");
-				}
+				success: this.RecordSaveSuccess,
+				failure: this.RecordSaveFailure
 			});
 		}
 	},

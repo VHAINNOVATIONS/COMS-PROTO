@@ -435,7 +435,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					a2 = FluidType;		// + FluidVol + FlowRate;
 					flg = ("" !== a2.trim());
 					return flg;
-
+/*******************
 					try {
 						if ("" === AdminMethod) {
 							return false;
@@ -454,6 +454,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					catch (err) {
 						return( false );
 					}
+ *******************/
 				},
 
 				CalcInfusionTime : function (vol, rate) {

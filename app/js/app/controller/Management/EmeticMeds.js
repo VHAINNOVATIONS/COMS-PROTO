@@ -94,10 +94,12 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 		var theDrugField = this.getSelDrug();
 		theDrugField.setValue(Med);
 
-		var EmoLevel = Ext.create(Ext.COMSModels.EmetogenicLevel, {
+/* MWB - 3/13/2015 - The creation of a model and then assigning that to a field makes no sense ********************************
+		EmoLevel = Ext.create(Ext.COMSModels.EmetogenicLevel, {
 			name : record.get("EmoLevelName"),
 			description : record.get("EmoLevel")
 		});
+*******************/
 		var theLevelField = this.getSelLevel();
 		theLevelField.setValue(EmoLevel);
 
@@ -125,7 +127,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 		fData.MedName = this.getSelDrug().getRawValue();
 		fData.MedID = theData.Drug;
 		fData.MedType = theData.PatientType;
-		fData.EmoLevel = theData.EmetogenicLevel
+		fData.EmoLevel = theData.EmetogenicLevel;
 
 		var ValidForm = form.isValid();
 		if (ValidForm) {
