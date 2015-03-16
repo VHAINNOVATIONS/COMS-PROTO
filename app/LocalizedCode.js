@@ -4,6 +4,7 @@
  *
  **/
 function wccConsoleLog(msg) { 
+	/**
 	var LogTag = Ext.getDom("LogInfo");
 	if (LogTag) {
 		if ("" !== LogTag.innerHTML){
@@ -11,6 +12,7 @@ function wccConsoleLog(msg) {
 		}
 		LogTag.innerHTML += msg;
 	}
+	**/
 }
 
 
@@ -20,6 +22,7 @@ function wccConsoleLog(msg) {
  *	Google Analytics Code
  *
  **/
+ /**
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-30444542-1']);
   _gaq.push(['_setDomainName', 'dbitpro.com']);
@@ -31,13 +34,14 @@ function wccConsoleLog(msg) {
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
-
+**/
 
 /***
  *
  *	YUI Boomerang Analytics Code
  *
  **/
+ /**
 function extract_boomerang_data(o) {
 	var resultsID = document.getElementById('results');
 	if (resultsID) {
@@ -74,3 +78,4 @@ BOOMR.init({
 	}
 
 });
+**/
