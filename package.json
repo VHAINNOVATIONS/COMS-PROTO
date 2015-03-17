@@ -1,0 +1,21 @@
+{
+  "name": "COMS",
+  "version": "1.2.0",
+  "description": "Build file for all the Javascript code in the COMS application",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DBITPRO/COMS.git"
+  },
+  "author": "mike barlow",
+  "bugs": {
+    "url": "https://github.com/DBITPRO/COMS/issues"
+  },
+  "homepage": "https://github.com/DBITPRO/COMS",
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-junit-report": "*",
+    "grunt-xsltproc": "*",
+    "grunt-contrib-concat": "*"
+  }
+}
