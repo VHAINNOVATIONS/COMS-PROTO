@@ -134,6 +134,9 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		theTab.el.on(
 			{
 				"click" : function(e,t, o) { 
+					if (!t.classList) {
+						t.classList = t.className.split(" ");
+					}
 					var classList = Ext.Array.clone(t.classList);
 					if (Ext.Array.contains(classList, "EditOEM_Record")) {
 						return this.handleEditOEM_Record(e, t);

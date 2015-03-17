@@ -120,8 +120,8 @@
                 <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
             -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
-				<!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
-                <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
+                <!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
+                <li style="display: inline;"><button class="anchor" id="LogoutBtn"><b>Logout</b></button>
                 <!--<li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                 
                 <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
@@ -156,14 +156,18 @@
 <script type="text/javascript" <?php
     echo "src=\"$LibsVersion/ext-all-debug.js\"";
 ?>></script>
-<script type="text/javascript" src="/libs/boomerang.js"></script>
-<script type="text/javascript" src="LocalizedCode.js"> </script>
+<!-- <script type="text/javascript" src="/libs/boomerang.js"></script> -->
+
 <script type="text/javascript" src="/libs/prettyPrint.js"></script>
 
+<!-- <script type="text/javascript" src="LocalizedCode.js"> </script>
+<script type="text/javascript" src="js/Consts.js"></script>
+<script type="text/javascript" src="js/Requires.js"></script>
+<script type="text/javascript" src="js/Extensions.js"></script>
+<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script> -->
 
-<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script>
 
-<!-- <script type="text/javascript" src="js/AllScripts.js"></script> -->
+<script type="text/javascript" src="js/COMS.js"></script>
 
 <script>
 var UseNewQueryMethod = true;
@@ -201,20 +205,7 @@ function switchQueryMethod() {
     }
 }
 
-var LogoutCancelled = true;
-function logoutConfirmed(btn) {
-    if ("yes" === btn) {
-        LogoutCancelled = false;
-        document.location.href="/logout.php";
-    }
-    else {
-        LogoutCancelled = true;
-    }
-}
 
-function logoutPrompt(e) {
-    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', logoutConfirmed);
-}
 
 window.onbeforeunload = function(e) { // see: http://jsfiddle.net/zalun/yFuPr/
     if (LogoutCancelled) {

@@ -15,6 +15,30 @@ function wccConsoleLog(msg) {
 	**/
 }
 
+Ext.HandleLogout = function() {
+	var btn = Ext.get("LogoutBtn");
+
+	btn.on('click', function(event, target){
+		logoutPrompt(event);
+	}, null, {
+		delegate: "#LogoutBtn"
+	});
+}
+
+var LogoutCancelled = true;
+function logoutConfirmed(btn) {
+    if ("yes" === btn) {
+        LogoutCancelled = false;
+        document.location.href="/logout.php";
+    }
+    else {
+        LogoutCancelled = true;
+    }
+}
+
+function logoutPrompt(e) {
+    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', logoutConfirmed);
+}
 
 
 /***
