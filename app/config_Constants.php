@@ -1,49 +1,14 @@
 <?php
-
 /** Configuration Variables **/
-
-// MWB - 12/2/2011 - Defines which environment to use
-
-// define ('dbITCOMSTest', true);
-define('MWBarlow', true );
-//define ('DEVELOPMENT_ENVIRONMENT', true);
-
-if (defined('Local')) {
-	define('DB_NAME', 'coms');
-	define('DB_TYPE', 'mysql');
-	define('DB_HOST', 'localhost');
-	define('DB_USER', 'root');
-	define('DB_PASSWORD', 'F00B@r00t');
-}
-
-
-else if (defined('VASandboxTest')) {
-	define('DB_NAME', 'COMS_TestDB');
-	define('DB_TYPE', 'sqlsrv');
-	define('DB_HOST', 'VAPHS355SQL');
-	define('DB_USER', 'coms_db_user');
-	define('DB_PASSWORD', 'COMSpass88');
-}
-else if (defined('dbITCOMSTest')) {
-	define('DB_NAME', 'COMS_UAT_VA');
-	define('DB_TYPE', 'sqlsrv');
-	define('DB_HOST', 'DBITDATA\DBIT');
-	define('DB_USER', 'coms_db_user');
-	define('DB_PASSWORD', 'dbitPASS99');
-}
-else if (defined('MWBarlow')) {
     define('DB_NAME', 'COMS_TEST_7');		/* For COMS-MWB App */
     // define('DB_NAME', 'COMS_TEST_6');		/* For COMS TEST App */
-	define('DB_TYPE', 'sqlsrv');
-	define('DB_HOST', "DBITDATA\DBIT");
-	define('DB_USER', 'coms_db_user');
-	define('DB_PASSWORD', 'dbitPASS99');
+    define('DB_TYPE', 'sqlsrv');
+    define('DB_HOST', "DBITDATA\DBIT");
+    define('DB_USER', 'coms_db_user');
+    define('DB_PASSWORD', 'dbitPASS99');
   // define('NV_BASE_URL', 'http://dbittest.dbitpro.com:3000/v1/');
-  define('NV_BASE_URL', 'http://localhost:3000/v1');
-  define('NV_ACCESS_TOKEN', 'dbittest');
-  define('NV_ACCESS_SECRET', 'dbitpro');
-  define('NV_ACCESS_CODE', 'CPRS1234');
-  define('NV_VERIFY_CODE', 'CPRS4321$');
-
-}
-
+    define('NV_BASE_URL', 'http://localhost:3000/v1');
+    define('NV_ACCESS_TOKEN', 'dbittest');
+    define('NV_ACCESS_SECRET', 'dbitpro');
+    define('NV_ACCESS_CODE', 'CPRS1234');
+    define('NV_VERIFY_CODE', 'CPRS4321$');

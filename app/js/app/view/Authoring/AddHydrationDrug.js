@@ -12,7 +12,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 	title: 'Add New Drug',
 	layout: 'fit',
 	autoShow: true,
-	width: 785,
+	width: 820,
 	modal: true,
 
 	initComponent: function () {
@@ -76,6 +76,8 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 
 					{
 						'xtype' : 'container',
+						"name" : "Dose_RouteFields",
+						"hidden" : true,
 						'layout' : 'hbox',
 						'defaults' : {
 							'labelAlign' : 'right',
@@ -95,7 +97,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'width' : 220,
 							'hidden' : true,
 							'labelWidth' : 130,
-							// 'allowBlank' : false,
 							'name' : 'AdminTime'
 						}, 
 						{
@@ -124,11 +125,14 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						{
 							'xtype' : 'combo',
 							'fieldLabel' : 'Route <em>*</em>',
-							'width' : 180,
+							'width' : 210,
 							'labelWidth' : 65,
-							'store' : 'InfusionStore',
+							// 'store' : 'InfusionStore',
+							"store" : Ext.create('Ext.data.Store', {
+								"fields" : [ "id", "name", "description" ]
+							}),
 							'displayField' : 'name',
-							'valueField' : 'name' ,
+							'valueField' : 'id' ,
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,

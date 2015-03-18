@@ -61,98 +61,105 @@ Ext.apply(Ext.data.validations,{
 Ext.define('COMS.controller.Authoring.Hydration', {
 	extend: 'Ext.app.Controller',
 	stores: [
-	'TotalCoursesMax'
-	, 'CycleLengthMax'
-	, 'TimeFrameUnit'
-	, 'EmetogenicLevel'
-	, 'FebrileNeutropeniaRisk'
-	, 'ReferencesStore'
-	, 'LUReferences'
-	, 'HydrationStore'
-	, 'DrugStore'
-	, 'DrugUnitsStore'
-	, 'InfusionStore'
+		'TotalCoursesMax',
+		'CycleLengthMax',
+		'TimeFrameUnit',
+		'EmetogenicLevel',
+		'FebrileNeutropeniaRisk',
+		'ReferencesStore',
+		'LUReferences',
+		'HydrationStore',
+		'DrugStore',
+		'DrugUnitsStore',
+		'InfusionStore'
 	],
 	views: [
-	'Authoring.Hydration'
-	, 'Authoring.AddHydrationDrug'
-	, 'Authoring.HydrationSequence'
+		'Authoring.Hydration',
+		'Authoring.AddHydrationDrug',
+		'Authoring.HydrationSequence'
 	],
 
 
 	refs: [
-	// Hydration Buttons
-	{
-		ref: 'RemovePreHydration',
-		selector: 'AuthoringTab TemplateHydration[title="Pre Therapy"] button[text="Remove Drug"]'
-	}, {
-		ref: 'EditPreHydration',
-		selector: 'AuthoringTab TemplateHydration[title="Pre Therapy"] button[text="Edit Drug"]'
-	}, {
-		ref: 'RemovePostHydration',
-		selector: 'AuthoringTab TemplateHydration[title="Post Therapy"] button[text="Remove Drug"]'
-	}, {
-		ref: 'EditPostHydration',
-		selector: 'AuthoringTab TemplateHydration[title="Post Therapy"] button[text="Edit Drug"]'
-	},
+		{
+			ref: "AddDrugPUWindow",
+			selector: "AddHydrationDrug"
+		}, 
+		{
+			ref: "DrugPUWindow_DoseRouteFields",
+			selector: "AddHydrationDrug [name=\"Dose_RouteFields\"]"
+		},
+		// Hydration Buttons
+		{
+			ref: 'RemovePreHydration',
+			selector: 'AuthoringTab TemplateHydration[title="Pre Therapy"] button[text="Remove Drug"]'
+		}, {
+			ref: 'EditPreHydration',
+			selector: 'AuthoringTab TemplateHydration[title="Pre Therapy"] button[text="Edit Drug"]'
+		}, {
+			ref: 'RemovePostHydration',
+			selector: 'AuthoringTab TemplateHydration[title="Post Therapy"] button[text="Remove Drug"]'
+		}, {
+			ref: 'EditPostHydration',
+			selector: 'AuthoringTab TemplateHydration[title="Post Therapy"] button[text="Edit Drug"]'
+		},
 
-	// Hydration Fields
-	{
-		ref: 'HydrationDrugCombo',
-		selector: 'AddHydrationDrug combo[name="Drug"]'
-	},
-	{
-		ref: 'HydrationSequenceCombo',
-		selector: 'AddHydrationDrug combo[name="Sequence"]'
-	},
-	{
-		ref: 'HydrationAmt1',
-		selector: 'AddHydrationDrug textfield[name="Amt1"]'
-	}, {
-		ref: 'HydrationUnits1',
-		selector: 'AddHydrationDrug combo[name="Units1"]'
-	}, {
-		ref: 'HydrationInfusion1',
-		selector: 'AddHydrationDrug combo[name="Infusion1"]'
-	},
-	{
-		ref: 'HydrationInstructions',
-		selector: 'AddHydrationDrug textfield[name="Instructions"]'
-	},{
-		ref: 'HydrationFluidVol1',
-		selector: 'AddHydrationDrug textfield[name="FluidVol1"]'
-	},{
-		ref: 'HydrationFlowRate1',
-		selector: 'AddHydrationDrug textfield[name="FlowRate1"]'
-	},{
-		ref: 'HydrationInfusionTime1',
-		selector: 'AddHydrationDrug textfield[name="InfusionTime1"]'
-	},{
-		ref: 'HydrationFluidType1',
-		selector: 'AddHydrationDrug textfield[name="FluidType1"]'
-	},
-	{
-		ref: 'HydrationDay',
-		selector: 'AddHydrationDrug textfield[name="Day"]'
-	},{
-		ref: 'HydrationGrid',
-		selector: 'AuthoringTab TemplateHydration grid'
-	},{
-		ref: 'FluidInfo',
-		selector: 'AddHydrationDrug container[name="fluidInfo"]'
-	},{
-		ref: 'FluidInfo1',
-		selector: 'AddHydrationDrug container[name="fluidInfo1"]'
-	},{
-		ref: 'HydrationAdminTime',
-		selector: 'AddHydrationDrug textfield[name="AdminTime"]'
-	}, {
-		ref: 'Dose1Spacer',
-		selector: 'AddHydrationDrug container[name="dosespacer"]'
-	}, {
-		ref: "PatientType",
-		selector: "AddHydrationDrug radiogroup[name=\"patientRadio\"]"
-	}
+		// Hydration Fields
+		{
+			ref: 'HydrationDrugCombo',
+			selector: 'AddHydrationDrug combo[name="Drug"]'
+		}, {
+			ref: 'HydrationSequenceCombo',
+			selector: 'AddHydrationDrug combo[name="Sequence"]'
+		}, {
+			ref: 'HydrationAmt1',
+			selector: 'AddHydrationDrug textfield[name="Amt1"]'
+		}, {
+			ref: 'HydrationUnits1',
+			selector: 'AddHydrationDrug combo[name="Units1"]'
+		}, {
+			ref: 'HydrationInfusion1',
+			selector: 'AddHydrationDrug combo[name="Infusion1"]'
+		}, {
+			ref: "DrugRoute",
+			selector: "AddHydrationDrug [name=\"Infusion1\"]"
+		}, {
+			ref: 'HydrationInstructions',
+			selector: 'AddHydrationDrug textfield[name="Instructions"]'
+		}, {
+			ref: 'HydrationFluidVol1',
+			selector: 'AddHydrationDrug textfield[name="FluidVol1"]'
+		}, {
+			ref: 'HydrationFlowRate1',
+			selector: 'AddHydrationDrug textfield[name="FlowRate1"]'
+		}, {
+			ref: 'HydrationInfusionTime1',
+			selector: 'AddHydrationDrug textfield[name="InfusionTime1"]'
+		}, {
+			ref: 'HydrationFluidType1',
+			selector: 'AddHydrationDrug textfield[name="FluidType1"]'
+		}, {
+			ref: 'HydrationDay',
+			selector: 'AddHydrationDrug textfield[name="Day"]'
+		}, {
+			ref: 'HydrationGrid',
+			selector: 'AuthoringTab TemplateHydration grid'
+		}, {
+			ref: 'FluidInfo',
+			selector: 'AddHydrationDrug container[name="fluidInfo"]'
+		}, {
+			ref: 'FluidInfo1',
+			selector: 'AddHydrationDrug container[name="fluidInfo1"]'
+		}, {
+			ref: 'HydrationAdminTime',
+			selector: 'AddHydrationDrug textfield[name="AdminTime"]'
+		}, {
+			ref: 'Dose1Spacer',
+			selector: 'AddHydrationDrug container[name="dosespacer"]'
+		}, {
+			ref: "PatientType",
+			selector: "AddHydrationDrug radiogroup[name=\"patientRadio\"]"
+		}
 	],
 
 
@@ -160,6 +167,9 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	init: function () {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 		this.control({
+			"AddHydrationDrug" : {
+				"activate" : this.ShowFields
+			},
 			// MWB 28 Dec 2011 - Added the Pre/Post Hydration Add Drug functionality...
 			'AuthoringTab TemplateHydration button': {
 				click: this.HydrationBtns
@@ -184,7 +194,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				blur: this.calcInfusionTime
 			},
 			'AddHydrationDrug combo[name="Drug"]' : {
-				collapse: this.collapseCombo,
+				select: this.drugSelected,
+				// collapse: this.collapseCombo,
 				expand : this.loadCombo
 			},
 			"AddHydrationDrug combo[name=\"FluidType1\"]" : {
@@ -196,11 +207,84 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		});
 	},
 
-	collapseCombo : function(picker,eOpts){
-		if(picker.getValue() === null && picker.hiddenValue !== null){
-			picker.setRawValue(picker.hiddenValue);		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
+	ShowFields : function( theWin, eOpts ) {
+		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+		var theRouteField = this.getDrugRoute();
+		var v = theRouteField.getValue();
+		var d = theRouteField.getDisplayValue();
+		if (v) {
+			RouteInfoFields.show();
 		}
 	},
+
+
+	getDrugInfoFromVistA : function (drugName, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + encodeURIComponent(drugName.toLowerCase());
+		var theWin = this.getAddDrugPUWindow();
+		if (theWin) {
+			theWin.setLoading( "Loading Drug Information");
+		}
+		Ext.Ajax.request({
+			url: URL,
+			scope: this,
+			fnc : fnc,
+			success: function(response, opts) {
+				var respObj = Ext.decode(response.responseText);
+				opts.fnc(respObj, this);
+			},
+			failure: function(response, opts) {
+				var theWin = this.getAddDrugPUWindow();
+				if (theWin) {
+					theWin.setLoading( false );
+				}
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+	},
+
+	AddDrugInfoFromVistA2Store : function(respObj, theScope) {
+var theValue = theScope.getHydrationInfusion1().getValue();
+		var theWin = theScope.getAddDrugPUWindow();
+		if (theWin) {
+			theWin.setLoading( false );
+		}
+		var RouteCombo = theScope.getDrugRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		var RoutesData4Store = [];
+		var aRoute;
+		var i, rLen = theRoutes.length;
+		for (i = 0; i < rLen; i++ ) {
+			aRoute = {};
+			aRoute.id = theRoutes[i].ien;
+			aRoute.name = theRoutes[i].name;
+			aRoute.description = theRoutes[i].ien;
+			RoutesData4Store.push(aRoute);
+		}
+		RouteStore.loadData(RoutesData4Store);
+
+
+theScope.getHydrationInfusion1().setValue(theValue);
+
+		theScope.getDrugPUWindow_DoseRouteFields().show();
+	},
+
+	drugSelected : function(combo, recs, eOpts){
+		this.getDrugPUWindow_DoseRouteFields().hide();
+		var drugName;
+		if(null !== recs){
+			drugName = recs[0].data.name;
+		}else{
+			drugName = combo.getValue();
+		}
+		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+	},
+
+//	collapseCombo : function(picker,eOpts){
+//		if(picker.getValue() === null && picker.hiddenValue !== null){
+//			picker.setRawValue(picker.hiddenValue);
+//		}
+//	},
 
 	loadCombo: function (picker, eOpts) {
 		if (picker.getStore()) {		// MWB - 6/19/2012 - Added to remove the filter added to the store
@@ -265,9 +349,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	routeSelected: function(combo, recs, eOpts){
-
 		var route=null;
-
 		if(null !== recs){
 			route = recs[0].data.name;
 		}else{
@@ -276,7 +358,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 		if(null !== route && '' !== route){
 			if(Ext.routeRequiresFluid(route)) {
-			// if("IVPB" === route || "IV" === route){
 				if('Infusion1' === combo.getName()){
 					this.getFluidInfo().show();
 				}
@@ -294,7 +375,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				}
 			}
 		}
-
 	},
 
 	SaveSequence: function(button, opts){		// MWB - 7/19/2012 - Changes...
@@ -322,7 +402,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		if ("0" === values.ApplySequence){
 			hydrationValues.Sequence = numRecords + 1;
 			newRecord.data.Sequence = hydrationValues.Sequence;
-			//this.insertNewHydrationRecord(addHydrationDrug, theStore, HydrationType, numRecords, hydrationValues);
 			this.addRecord(addHydrationDrug,newRecord,hydrationValues,theStore);
 		} else if ("1" === values.ApplySequence){
 			var i,  
@@ -472,13 +551,11 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			dupRecord = theStore.findBy(
 
 			function (record, id) {
-
 					if (null === existingRecord && record.data.Drug === data.Drug) {
 						return true;
 					}else if(record.data.Drug === data.Drug && record.data.Sequence -1 !== existingRecord){
 						return true;
 					}
-
 					return false;
 			});
 
@@ -498,7 +575,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 						isDup = true;
 					}
 				}
-
 			}
 
 			if(true === isDup){
@@ -506,41 +582,34 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				var msg = 'A duplicate medication for the same administration day exists. Would you like to continue?';
 
 				Ext.MessageBox.show({
-						title: 'Information',
-						msg: msg,
-						width:300,
-						buttons: Ext.MessageBox.YESNO,
-						fn: function(buttonId, Opts) {
-							if("no" === buttonId) {
-									return;
-									// win.close();
+					title: 'Information',
+					msg: msg,
+					width:300,
+					buttons: Ext.MessageBox.YESNO,
+					fn: function(buttonId, Opts) {
+						if("no" === buttonId) {
+								return;
+						}else{
+							dupSequence = theStore.find("Sequence", data.Sequence, 0, true, false, true);
+							if (-1 !== dupSequence && dupSequence !== existingRecord && title.substring(0,"Edit".length) !== "Edit") {
+								Ext.widget('HydrationSequence', {title: HydrationType + ' Therapy Sequence', name: 'Hydration Sequence'});
+								win.close();
+								return;
 							}else{
-								dupSequence = theStore.find("Sequence", data.Sequence, 0, true, false, true);
-								if (-1 !== dupSequence && dupSequence !== existingRecord && title.substring(0,"Edit".length) !== "Edit") {
-									Ext.widget('HydrationSequence', {title: HydrationType + ' Therapy Sequence', name: 'Hydration Sequence'});
-									win.close();		// MWB - 11/1/2013 - Must close the window before returning
-									return;
-								}else{
-									HyrdationCtl.addRecord(existingRecord,newRecord,data,theStore);
-									// win.close();
-								}
+								HyrdationCtl.addRecord(existingRecord,newRecord,data,theStore);
 							}
 						}
+					}
 				});
-
 			}
 			else{
 				dupRecord = -1;
 				dupSequence = theStore.find("Sequence", data.Sequence, 0, true, false, true);
 				if (-1 !== dupSequence && dupSequence !== existingRecord && title.substring(0,"Edit".length) !== "Edit") {
 					Ext.widget('HydrationSequence', {title: HydrationType +' Therapy Sequence', name: 'Hydration Sequence'});
-					// win.close();		// MWB - 11/1/2013 - Must close the window before returning
 					return;
 				}
-				// else if(dupSequence === dupSequence){ // MWB - 11/4/2013 Why have a useless comparison???
-				else {
-					dupSequence = -1;
-				}
+				dupSequence = -1;
 				win.close();
 			}
 		}
@@ -571,22 +640,19 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		if(errors.length > 0){
 			var msg='';
 			errors.each(function(error){
-				//msg += "field: " + error.field + " message: " + error.message + "<br/>";
 				msg += " message: " + error.message + "<br/>";
 			});
-
 			Ext.MessageBox.alert('Invalid', 'Validation Errors:<br/>' + msg);
 			return null;
 		}
 		return newRecord;
 	},
-	addRecord: function(existingRecord,newRecord,data,theStore){
 
+	addRecord: function(existingRecord,newRecord,data,theStore){
 		if((data.Sequence-1) === existingRecord){
 			theStore.removeAt(existingRecord);
 			theStore.insert(existingRecord, newRecord);
 		}else if((data.Sequence-1) < theStore.count()){
-
 			var desiredSequence = data.Sequence - 1;
 			var currRecord = theStore.getAt(desiredSequence);
 			currRecord.data.Sequence = existingRecord+1;
@@ -596,16 +662,14 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 			theStore.removeAt(existingRecord);
 			theStore.insert(existingRecord,currRecord);
-
 		}else{
 			theStore.insert((data.Sequence-1), newRecord);
 		}
-
 	},
 
 	SaveHydrationDrug: function (button) { // Called when clicking on the "Save" button in the Hydration Drug Pop-Up Window
+
 		wccConsoleLog("SaveHydrationDrug()");
-		// alert("Close window when finished");
 		var win = button.up('window');
 		var HydrationType = win.type;
 		wccConsoleLog("Adding new Drug to the " + HydrationType + " Drug Section");
@@ -615,9 +679,13 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var theStore = theGrid.getStore();
 		var theForm = win.down('form');
 		var values = theForm.getValues();
+
+		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
+		theRouteField = this.getDrugRoute();
+		values.Infusion1 = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
+
 		var numRecords = theStore.count();
 		this.insertNewHydrationRecord(win, theStore, HydrationType, numRecords, values);
-		// win.close();
 	},
 
 
@@ -680,62 +748,78 @@ Ext.define('COMS.controller.Authoring.Hydration', {
         delete this.theQuery;
     },
 
+	EditDrugGetDetails : function(record) {
+		var drugName = record.getData().Drug;
+		var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
+		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+		RouteInfoFields.hide();
+
+		hdPanel.type = this.panelType;
+		hdPanel.setTitle("Edit " + this.panelType + " Therapy Drug");
+		var theCombo = this.getHydrationSequenceCombo();
+		this.addToSequenceStore(theCombo,false);
+		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
+
+		this.getHydrationSequenceCombo().setValue(record.data.Sequence);
+		this.getHydrationDrugCombo().setValue(record.data.Drug);
+		this.getHydrationAmt1().setValue(record.data.Amt1);
+		this.getHydrationUnits1().setValue(record.data.Units1);
+
+var theRouteName, theRouteID, theRoute = record.data.Infusion1;
+
+if (theRoute.indexOf(" : ") > 0) {
+	theRoute = theRoute.split(" : ");
+	theRouteID = theRoute[1];
+	theRouteName = theRoute[0];
+	this.getHydrationInfusion1().setValue(theRouteID);
+	this.getHydrationInfusion1().setRawValue(theRouteID);
+}
+else {
+	this.getHydrationInfusion1().setValue(theRoute);
+}
+
+
+		this.routeSelected(this.getHydrationInfusion1(),null,null);
+
+		this.getHydrationInstructions().setValue(record.data.Instructions);
+		this.getHydrationFluidVol1().setValue(record.data.FluidVol1);
+		this.getHydrationFlowRate1().setValue(record.data.FlowRate1);
+		this.getHydrationInfusionTime1().setValue(record.data.InfusionTime1);
+		this.getHydrationFluidType1().setValue(record.data.FluidType1);
+
+		this.getHydrationDay().setValue(record.data.Day);
+		this.getHydrationAdminTime().setValue(record.data.AdminTime);
+
+		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+		RouteInfoFields.show();
+	},
+
 	HydrationBtns: function (button) { // Handles the onclick event of all the buttons for both the pre and post hydration grids
 		var panel = button.up("panel").up("container");
 		this.theQuery = "AuthoringTab TemplateHydration[title=\"" + panel.type + " Therapy\"] grid";
-        
 		if ("Add Drug" === button.text) {
-
-			//KD - 03/09/2012 - This is done to prevent multiple instances (windows) to be created everytime the "Add Drug" button is clicked
-			var exist = Ext.ComponentQuery.query('AddHydrationDrug')[0];
-            var view;
+			var view, exist = Ext.ComponentQuery.query('AddHydrationDrug')[0];
 			if(!exist) {
 				view = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
 			}
 			else {
 				view = exist;
 			}
-			//KD
-
 			view.type = panel.type;
 			view.setTitle("Add " + panel.type + " Therapy Drug");
 			this.addToSequenceStore(this.getHydrationSequenceCombo(),true);
 		} else {
 			var ckRec = this.getSelectedRecord(false);
 			if (ckRec.hasRecord) {
+				this.panelType = panel.type;
+				this.ckRec = ckRec;
 				var record = Ext.create(Ext.COMSModels.Hydration, ckRec.record.data);
 				if ("Remove Drug" === button.text) {
-                    this.panelType = panel.type;
-                    this.ckRec = ckRec;
-                    Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", this.RemoveSelectedHydrationDrug, this);
+					Ext.Msg.confirm( "Remove Drug", "Are you sure you want to remove this drug from this template?", this.RemoveSelectedHydrationDrug, this);
 				}
 				else if ("Edit Drug" === button.text) {
 					wccConsoleLog("Edit " + panel.type + " Therapy Drug - " + ckRec.record.get('Drug'));
-					var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
-					hdPanel.type = panel.type;
-					hdPanel.setTitle("Edit " + panel.type + " Therapy Drug");
-
-					this.addToSequenceStore(this.getHydrationSequenceCombo(),false);
-
-					hdPanel.recIndex = ckRec.rowNum;	// Used in dup drug check on saving
-
-					this.getHydrationSequenceCombo().setValue(record.data.Sequence);
-					this.getHydrationDrugCombo().setValue(record.data.Drug);
-					this.getHydrationAmt1().setValue(record.data.Amt1);
-					this.getHydrationUnits1().setValue(record.data.Units1);
-					this.getHydrationInfusion1().setValue(record.data.Infusion1);
-
-					this.routeSelected(this.getHydrationInfusion1(),null,null);
-
-					this.getHydrationInstructions().setValue(record.data.Instructions);
-					this.getHydrationFluidVol1().setValue(record.data.FluidVol1);
-					this.getHydrationFlowRate1().setValue(record.data.FlowRate1);
-					this.getHydrationInfusionTime1().setValue(record.data.InfusionTime1);
-					this.getHydrationFluidType1().setValue(record.data.FluidType1);
-
-					this.getHydrationDay().setValue(record.data.Day);
-					this.getHydrationAdminTime().setValue(record.data.AdminTime);
-
+					this.EditDrugGetDetails(record);
 				}
 			}
 			else {

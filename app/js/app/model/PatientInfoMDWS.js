@@ -7,23 +7,6 @@ Ext.define("COMS.model.PatientInfoMDWSDiseases", {
 	belongsTo : "COMS.model.PatientInfoMDWS"
 });
 
-/**********
-Ext.define("COMS.model.PatientInfoMDWSMeasurements", {
-	extend: "Ext.data.Model",
-	fields: [
-		"Height",
-		"Weight",
-		"BP",
-		"DateTaken",
-		"WeightFormula",
-		"BSA_Method",
-		"BSA_Weight",
-		"BSA"
-	],
-	belongsTo : "COMS.model.PatientInfoMDWS"
-});
-************/
-
 Ext.define("COMS.model.PatientInfoAmputee", {
 	extend: "Ext.data.Model",
 	fields: [
@@ -38,34 +21,29 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 	fields: [
 		"id",
 		"name",
-			"DOB",
-			"Gender",
-			"Age",
-		// "Measurements",		// Array of measurements
-			"DFN",				// Data File Name which links to MDWS
+		"DOB",
+		"Gender",
+		"Age",
+		"DFN",				// Data File Name which links to MDWS
 		"Disease",			// Array of diseases
-
-			"TemplateName",		// Info on the currently active template
-			"TemplateDescription",
-			"TemplateID",
-			"TreatmentStart",
-			"TreatmentEnd",
-			"TreatmentStatus",
-
-			"Amputations",
+		"TemplateName",		// Info on the currently active template
+		"TemplateDescription",
+		"TemplateID",
+		"TreatmentStart",
+		"TreatmentEnd",
+		"TreatmentStatus",
+		"Amputations",
 		"message",			// Used in case an error message is returned from the framework
-			"VPR",		// Consider this as a string even though it's really a JSON Object from VistA - MWB - 2/24/2015
-			"BSAFormula",
-			"ClinicalTrial",
-			"Goal",
-			"PerformanceStatus",
+		"VPR",		// Consider this as a string even though it's really a JSON Object from VistA - MWB - 2/24/2015
+		"BSAFormula",
+		"ClinicalTrial",
+		"Goal",
+		"PerformanceStatus"
 	],
 
 	hasMany : [
 		{ model : "COMS.model.PatientInfoMDWSDiseases", name : "Disease" },
 		{ model : "COMS.model.PatientInfoAmputee", name : "Amputations" }
-
-//		{ model : "COMS.model.PatientInfoMDWSMeasurements", name : "Measurements" }
 	],
 	proxy: {
 		type: 'rest',
@@ -78,5 +56,5 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 			successProperty : 'success',
 			messageProperty: 'message'
 		}
-	}        
+	}
 });

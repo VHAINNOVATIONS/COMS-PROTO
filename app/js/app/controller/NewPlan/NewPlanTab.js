@@ -99,19 +99,19 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     puWinBSASelection : null,
 
     stores : [
-    "Patients"	// Used by the "SelectPatient", "PatientInfo" views
-    , "PatientHistory"
-    , "LabInfo"
-    , "TemplateSources"
-    , "DiseaseType"
-    , "DiseaseStage"
-    , "Templates"
-    , "CTOS"
-    , "PerfStatStore"
-    , "TemperatureLocation"
-    , "DeliveryMechanism"
-	, "IDEntry"
-	, 'MedReminders'
+		"Patients",
+		"PatientHistory",
+		"LabInfo",
+		"TemplateSources",
+		"DiseaseType",
+		"DiseaseStage",
+		"Templates",
+		"CTOS",
+		"PerfStatStore",
+		"TemperatureLocation",
+		"DeliveryMechanism",
+		"IDEntry",
+		'MedReminders'
     ],
 
 
@@ -119,46 +119,42 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	models : ["LabInfo", "AllTemplatesApplied2Patient", "IDEntry", Ext.COMSModels.MedReminder],
 
 	views : [
-		"NewPlan.NewPlanTab"
-		,"NewPlan.MedRemindersPanel"
-		,"NewPlan.PatientSelection"
-		,"NewPlan.SelectPatient"
-		,"NewPlan.PatientInfo"
-		,"NewPlan.PatientInfoTable"
-		,"NewPlan.PatientTemplates"
-		,"NewPlan.PatientHistory"
-		,"NewPlan.LabInfo"
-		,"NewPlan.KnownProblems"
-		,"NewPlan.OEM"
-		,"NewPlan.AdverseEventsHistory"
-
-		,"NewPlan.CTOS"
-		,"NewPlan.CTOS.PatientSummary"
-		,"NewPlan.CTOS.NursingDocs"
-		,"NewPlan.CTOS.KnowledgeBase"
-
-
-		,'Common.Search4Template'
-		,"Common.selCTOSTemplate"
-		,"Common.selTemplateSrc"
-		,"Common.selDiseaseAndStage"
-		,"Common.selDisease"
-		,"Common.selDiseaseStage"
-		,"Common.selTemplate"
-		,"Common.VitalSignsHistory"
-		,"Common.puWinSelCancer"
-		,"Common.puWinAddCumDose"
-		,"Common.puWinSelBSA"
-		,"Common.puWinSelAmputation"
-		,"Common.MedRemindersForm"
-		,"Common.MedRemindersGrid"
-		,"Authoring.MedReminder"
-
-		,"NewPlan.dspTemplateData"
-		,"NewPlan.AskQues2ApplyTemplate"
-		,"NewPlan.AmputationSelection"
-		,"NewPlan.BSASelection"
-		,"NewPlan.EndTreatmentSummary"
+		"NewPlan.NewPlanTab",
+		"NewPlan.MedRemindersPanel",
+		"NewPlan.PatientSelection",
+		"NewPlan.SelectPatient",
+		"NewPlan.PatientInfo",
+		"NewPlan.PatientInfoTable",
+		"NewPlan.PatientTemplates",
+		"NewPlan.PatientHistory",
+		"NewPlan.LabInfo",
+		"NewPlan.KnownProblems",
+		"NewPlan.OEM",
+		"NewPlan.AdverseEventsHistory",
+		"NewPlan.CTOS",
+		"NewPlan.CTOS.PatientSummary",
+		"NewPlan.CTOS.NursingDocs",
+		"NewPlan.CTOS.KnowledgeBase",
+		"Common.Search4Template",
+		"Common.selCTOSTemplate",
+		"Common.selTemplateSrc",
+		"Common.selDiseaseAndStage",
+		"Common.selDisease",
+		"Common.selDiseaseStage",
+		"Common.selTemplate",
+		"Common.VitalSignsHistory",
+		"Common.puWinSelCancer",
+		"Common.puWinAddCumDose",
+		"Common.puWinSelBSA",
+		"Common.puWinSelAmputation",
+		"Common.MedRemindersForm",
+		"Common.MedRemindersGrid",
+		"Authoring.MedReminder",
+		"NewPlan.dspTemplateData",
+		"NewPlan.AskQues2ApplyTemplate",
+		"NewPlan.AmputationSelection",
+		"NewPlan.BSASelection",
+		"NewPlan.EndTreatmentSummary"
 	],
 
     refs: [
@@ -1040,8 +1036,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         if(this.getCTOSDataDsp().hidden==false){
             this.getCTOSDataDsp().hide();
             if ("1" === SessionTemplateAuthoring) {
-                this.getApplyTemplateBtn().hide();
-                this.getEditTemplateBtn().hide();
+				if ("Provider" === Sessionrole) {
+					this.getApplyTemplateBtn().hide();
+				}
+				if ("1" === SessionTemplateAuthoring) {
+					this.getEditTemplateBtn().hide();
+				}
             }
             this.application.selTemplate=null;
 
@@ -1157,7 +1157,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			},
 			failure : function (record, operation) {
 				this.application.unMask();
-				wccConsoleLog("Patient Info failed to load properly from MDWS");
+				wccConsoleLog("Patient Info failed to load properly");
 			}
 		});
 	},
@@ -1276,8 +1276,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             },
             failure : function (record, operation) {
 				this.application.unMask();
-	            Ext.MessageBox.alert('MDWS Error', 'Patient Info failed to load properly from MDWS.<br />' + operation.error);
-                wccConsoleLog("Patient Info failed to load properly from MDWS");
+	            Ext.MessageBox.alert('Error', 'Patient Info failed to load properly.<br />' + operation.error);
+                wccConsoleLog("Patient Info failed to load properly");
             }
         });
 	},
@@ -1345,8 +1345,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.PatientSelected(null, recs, null);		// Load all data via multiple Ajax calls
 
 				// Attach event handler to the "Update" and "Show" MDWS Data buttons (styled to look like links) in "view\NewPlan\PatientInfo.js"
-		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from MDWS" },
-		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
+		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info" },
+		//		{ xtype : "container", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info" },
 
 				var Btns = Ext.ComponentQuery.query("NewPlanTab PatientInfo")[0].el.select("button.anchor");
 				Btns.on("click", this.handleShowUpdateMDWSClickEvent, this);
@@ -1356,8 +1356,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			},
 			failure : function (record, operation) {
 				this.application.unMask();
-				// Ext.MessageBox.alert('MDWS Error', 'Patient Info failed to load properly from MDWS.<br />' + operation.error);
-				wccConsoleLog("Patient Info failed to load properly from MDWS");
+				wccConsoleLog("Patient Info failed to load properly");
 			}
 		});
 	},
@@ -1400,7 +1399,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		//---------------------------------
 		//
-		//	This block of code is in place till we can do a reliable query for Patient Information from MDWS
+		//	This block of code is in place till we can do a reliable query for Patient Information
 		//	At that point we will have to create a COMS Service which will query MDWS and return either a single Patient Record
 		//	OR a list of Patient Records to be used as the Store for the "SelectPatient" combo box.
 		//	If a SINGLE record is returned then no combo box is required, just a single link/button to "Accept" and Use the returned Patient Record.
@@ -1864,7 +1863,7 @@ console.log("Loading Allergy Info - Finished");
 				}
 			}
 			catch (e) {
-				debugger;
+				wccConsoleLog("NewPlanTab - Convert2AssocArray - Error");
 			}
 			if ("" !== key ) {
 				if (assocArray.hasOwnProperty(key)) {
@@ -1896,7 +1895,7 @@ console.log("Loading Allergy Info - Finished");
 	},
 
 	MergeWithVPR_Array : function(SQLRecords) {
-		var i, key, key1, sRec, vRec, VPR_vitals, SQLRecords;
+		var i, key, key1, sRec, vRec, VPR_vitals;
 		VPR_vitals = this.Convert2AssocArray(this.application.Patient.ParsedVPR.Vitals);
 		if (SQLRecords.length > 0) {
 			SQLRecords = this.Convert2AssocArray(SQLRecords);
@@ -1925,7 +1924,7 @@ console.log("Loading Allergy Info - Finished");
 					delete SQLRecords[key];
 				}
 				else {
-					debugger;
+					wccConsoleLog("NewPlanTab - MergeWithVPR_Array - SQLRecords.hasOwnProperty = FALSE");
 				}
 			}
 
@@ -1933,7 +1932,7 @@ console.log("Loading Allergy Info - Finished");
 			for (key in SQLRecords) {
 				if (SQLRecords.hasOwnProperty(key)) {
 					if (VPR_vitals.hasOwnProperty(key)) {
-						debugger;
+						wccConsoleLog("NewPlanTab - MergeWithVPR_Array - VPR_vitals.hasOwnProperty = TRUE");
 					}
 					else {
 						SQLRecords[key].Observed = this.convertVPR.getObserved(SQLRecords[key].DateTaken);
@@ -2388,8 +2387,12 @@ console.log("Loading Allergy Info - Finished");
 			var CTOSData = thisCtl.getCTOSDataDsp();
 			CTOSData.update("");
 			CTOSData.hide();
-			this.getApplyTemplateBtn().hide();
-			this.getEditTemplateBtn().hide();
+			if ("Provider" === Sessionrole) {
+				this.getApplyTemplateBtn().hide();
+			}
+			if ("1" === SessionTemplateAuthoring) {
+				this.getEditTemplateBtn().hide();
+			}
 		}
 
 
@@ -2618,7 +2621,7 @@ console.log("Loading Allergy Info - Finished");
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
 		var Patient = this.application.Patient;
 		var piTableInfo, patientTemplates, dspVSHTemplateData, VSHTemplateDataBtns;
-		var KnownProblems;
+		var KnownProblems, CumDoseCtl;
 
 		if ("All Templates Applied" === Loaded) {
 			var historical = this.application.Patient.AllTemplatesApplied2Patient.get("historical"),
@@ -2659,7 +2662,7 @@ console.log("Loading Allergy Info - Finished");
 		if ("Update BSA" === Loaded) {
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);
-			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 			return;
@@ -2731,7 +2734,7 @@ console.log("Loading Allergy Info - Finished");
 			piTableInfo.update(Patient);
 			piTableInfo.show();
 
-			var CumDoseCtl = this.getController("Common.puWinAddCumDose");
+			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 
 			this.updateKnownProblems();
@@ -3046,11 +3049,15 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 					this.getDiseaseStage().setValue(CTOSTemplateData.data.DiseaseStage[0].name);
 
 					CTOSData.show();
-			if ("1" === SessionTemplateAuthoring) {
-					this.getApplyTemplateBtn().disable();	// Template is already applied to patient
-					this.getApplyTemplateBtn().hide();	// so no need to have it available.
-					this.getEditTemplateBtn().show();
-			}
+					if ("1" === SessionTemplateAuthoring) {
+						if ("Provider" === Sessionrole) {
+							this.getApplyTemplateBtn().disable();	// Template is already applied to patient
+							this.getApplyTemplateBtn().hide();	// so no need to have it available.
+						}
+						if ("1" === SessionTemplateAuthoring) {
+							this.getEditTemplateBtn().show();
+						}
+					}
 					this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.
 					this.application.unMask(); // MWB 19 Jan 2012 - Unmask the screen
 
@@ -3096,13 +3103,17 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
                 var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
 
 				if ("1" === SessionTemplateAuthoring) {
-	                if(patientAppliedTemplates.getValue()){
-						this.getApplyTemplateBtn().disable();
-	                }else{
-						this.getApplyTemplateBtn().enable();
+					if ("Provider" === Sessionrole) {
+						if(patientAppliedTemplates.getValue()){
+							this.getApplyTemplateBtn().disable();
+		                }else{
+							this.getApplyTemplateBtn().enable();
+						}
+						this.getApplyTemplateBtn().show();
 					}
-					this.getApplyTemplateBtn().show();
-					this.getEditTemplateBtn().show();
+					if ("1" === SessionTemplateAuthoring) {
+						this.getEditTemplateBtn().show();
+					}
                 }
 
 

@@ -51,7 +51,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 					beforerender : this.ActivatingThisTab2,
 					beforeshow : this.ActivatingThisTab3,
 					beforedeactivate : this.ActivatingThisTab4,
-					beforedeactivate : this.ActivatingThisTab5,
+					// beforedeactivate : this.ActivatingThisTab5,
 					blur : this.ActivatingThisTab6,
 					beforestatesave : this.ActivatingThisTab7,
 					click : this.ActivatingThisTab8,
@@ -134,6 +134,9 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		theTab.el.on(
 			{
 				"click" : function(e,t, o) { 
+					if (!t.classList) {
+						t.classList = t.className.split(" ");
+					}
 					var classList = Ext.Array.clone(t.classList);
 					if (Ext.Array.contains(classList, "EditOEM_Record")) {
 						return this.handleEditOEM_Record(e, t);

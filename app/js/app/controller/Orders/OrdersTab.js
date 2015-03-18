@@ -47,6 +47,8 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 						else {
 							var aRec = theScope.PostedRecs.pop();
 							if (aRec) {
+								var tmpData = aRec.getData();
+								console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
 								aRec.save({
 									scope: theScope,
 									success: ResponseAlertGood,
@@ -73,7 +75,8 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 						for (i = 0; i < drLen; i++) {
 							this.CurRecIdx = i;
 							rec = DirtyRecords[i];
-							var orderStatus = rec.get("orderstatus");
+							var recData = rec.getData();
+							var orderStatus = recData.orderstatus;
 							if (null == orderStatus || "" == orderStatus) {
 								Ext.MessageBox.alert("Information", "Please select an Order Status");
 								return;
@@ -81,24 +84,19 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 
 							var order = Ext.create("COMS.model.OrdersTable", {
 								orderstatus: orderStatus,
-								templateID: rec.get("templateID"),
-								drug: rec.get("drug"),
-								dose: rec.get("dose"),
-								unit: rec.get("unit"),
-								patientID: rec.get("patientID"),
-								type: rec.get("type"),
-								route: rec.get("route"),
-								orderid: rec.get("orderid"),
-								Last_Name: rec.get("Last_Name")
+								templateID: recData.templateID,
+								drug: recData.drug,
+								dose: recData.dose,
+								unit: recData.unit,
+								patientID: recData.patientID,
+								dfn: recData.dfn,
+								type: recData.type,
+								route: recData.route,
+								orderid: recData.orderid,
+								Last_Name: recData.Last_Name,
+								adminDay : recData.adminDate
 							});
 							this.PostedRecs.push(order);
-
-							order.save({
-								scope: this,
-								success: ResponseAlertGood,
-								failure: ResponseAlertFail
-							});
-
 						}
 						HandleResponse(null, null, this);	// Save the first record.
 					}

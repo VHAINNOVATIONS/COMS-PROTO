@@ -54,7 +54,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					"<th rowspan=\"2\">{Sequence}</th>",
 					"<td>{Drug}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
-					"<td>{Infusion1}{[this.optionalData(values.Infusion2, \"\")]}</td>",
+					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
 					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>
 					   over {NumAdminDays} Admin Days per Cycle <br> 
@@ -90,7 +90,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					"<th rowspan=\"2\">{Sequence}</th>",
 					"<td>{Drug}</td>",
 					"<td>{Amt} {Units}</td>",
-					"<td>{Route}</td>",
+					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
 					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>
 					   over {NumAdminDays} Admin Days per Cycle <br> 
@@ -135,7 +135,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					"<th rowspan=\"2\">{Sequence}</th>",
 					"<td>{Drug}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
-					"<td>{Infusion1}{[this.optionalData(values.Infusion2, \"\")]}</td>",
+					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
 					/* "<td rowspan=\"2\">{CumDosePerCycle} {CumDosePerCycleUnits} <br>over {NumAdminDays} Admin Days per Cycle <br> resulting in {CumDosePerRegimen} {CumDosePerCycleUnits} over the course of the Regimen</td>", */
 				"</tr>",
@@ -170,7 +170,14 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				if ("" !== data) {
 					return ("<br /><em>" + data + " " + data2 + "</em>");
 				}
-				return ("");
+				return "";
+			},
+			calcRoute : function(data) {
+				var route = data.Infusion1 ? data.Infusion1 : data.Route;
+				if (route.indexOf(" : ") > 0) {
+					route = route.split(" : ")[0];
+				}
+				return route;
 			},
 			dspInfusionFluid : function( data ) {
 				if (data.FluidType && "" !== data.FluidType) {
@@ -179,12 +186,14 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 				else if (data.FluidType1 && "" !== data.FluidType1) {
 					return data.FluidType1 + " " + data.FluidVol1 + " ml";
 				}
+				return "";
 			},
 			PatientList : function (current) {
 				return "<button class=\"anchor PatientList\">" + current.PatientListCount + "</button>";
 			},
 			CumDoseMeds : function ( current, prev ) {
 				var i, msg, medStr, cdmir, cdmirList = current.CumulativeDoseMedsInRegimen, len = cdmirList.length;
+				var cdt, cdtMed, exceeds, xxx, cdtLen, cdtAmt, cdmirAmt;
 				msg = "No Cumulative Dose Tracked Medications in this Regimen";
 
 				if (len > 0) {
@@ -236,20 +245,18 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 						
 						var MedNotTracked = true;
 						if (COMS.Patient.CumulativeDoseTracking) {
-							var cdtLen = COMS.Patient.CumulativeDoseTracking.length;
+							cdtLen = COMS.Patient.CumulativeDoseTracking.length;
 							if (cdtLen > 0) {
-								var i, cdt, cdtMed, exceeds, xxx;
 								for (i = 0; i < cdtLen; i++) {
 									cdt = COMS.Patient.CumulativeDoseTracking[i];
 									cdtMed = cdt.MedName;
 									if (cdtMed === cdmir.MedName) {
 										MedNotTracked = false;
-										
 										if ("string" == typeof cdt.CurCumDoseAmt) {
-											var cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
+											cdtAmt = cdt.CurCumDoseAmt.replace(",", "");
 										}
 										else {
-											var cdtAmt = cdt.CurCumDoseAmt;
+											cdtAmt = cdt.CurCumDoseAmt;
 										}
 										// msg += "<td>" + Ext.util.Format.number(cdt.CurCumDoseAmt, "0,0") + " " + cdmirUnits + "</td>";
 										msg += "<td>" + Ext.FormatNumber(cdt.CurCumDoseAmt) + " " + cdmirUnits + "</td>";
@@ -257,10 +264,10 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 									
 
 										if ("string" == typeof cdmir.CumulativeDoseAmt) {
-											var cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
+											cdmirAmt = cdmir.CumulativeDoseAmt.replace(",", "");
 										}
 										else {
-											var cdmirAmt = cdmir.CumulativeDoseAmt;
+											cdmirAmt = cdmir.CumulativeDoseAmt;
 										}
 
 										exceeds = (1 * cdtAmt) + (1 * cdmir.CumDosePerRegimen);

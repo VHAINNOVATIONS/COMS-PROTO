@@ -76,7 +76,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 						{ "xtype" : "hidden", "name" : "RecID", "margin" : 0 },
 						{ "xtype" : "button", "text" : "Cancel", "name" : "Cancel", "width" : "125", "minWidth" : "75", style : {float: "right"} , "margin" : "0 10 0 0"},
 						{ "xtype" : "button", "text" : " Save ", "name" : "Save", "minWidth" : "75", style : "float:right", "margin" : "0", "disabled" : true}
-					],
+					]
 				},
 
 				{ "xtype" : "FS_ToxicityGrid", "margin" : "5 10"}

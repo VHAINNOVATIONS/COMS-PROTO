@@ -9,11 +9,9 @@ Ext.define('COMS.store.DrugUnitsStore2', {
 				case "MG":
 				case "MG/M2":
 					return true;
-					break;
 				default:
 					return false;
 			}
-			// return (item.getData().name.indexOf("/") < 0);
 		}
 	]
 });

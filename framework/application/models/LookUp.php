@@ -249,7 +249,7 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
-error_log("saveTemplate(LookUp Model) - Entry Point");
+// error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
 
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
@@ -302,7 +302,7 @@ error_log("saveTemplate(LookUp Model) - Entry Point");
                 return $retVal;
             }
         }
-error_log("saveTemplate - BP3a");
+// error_log("saveTemplate - BP3a");
 
 
 $queryStart_CODE = "INSERT INTO Master_Template (
@@ -341,7 +341,7 @@ $queryStart_DATA = "'$Template_ID',
                     '$currDate'
 ";
 
-
+        $error = "";
         if($diseaseStage){
             $queryStart_CODE .= ", Disease_Stage_ID";
             $queryStart_DATA .= ", '$diseaseStage'";
@@ -372,13 +372,14 @@ $queryStart_DATA = "'$Template_ID',
         }
 
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-        // error_log("saveTemplate - BP3b - $error - $query");
+// error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
+// error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
             return $retVal;
         }
-error_log("saveTemplate - BP4");
+// error_log("saveTemplate - BP4");
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
         //$Ret[0] = $Template_ID;
@@ -463,21 +464,15 @@ error_log("saveTemplate - BP4");
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
             
             if (empty($drugId)) {
-                
                 $drugName = $regimen->Drug;
-                
                 $drug = $this->getLookupIdByNameAndType($drugName, 2);
-                
                 if ($drug) {
                     $drugId = $drug[0]["id"];
                 } else {
                     $drugId = null;
                 }
-                
                 if (empty($drugId)) {
-                    
                     $drug = $this->getLookupIdByNameAndType($drugName, 26);
-                    
                     if ($drug) {
                         $drugId = $drug[0]["id"];
                     }
@@ -506,7 +501,11 @@ error_log("saveTemplate - BP4");
                 return $retVal;
             }
 
+
             $route = $regimen->Route;
+// error_log("Lookup Model - saveRegimen - Route = $route");
+
+/*********
             $routeLookup = $this->getLookupIdByNameAndType($route, 12);
             if ($routeLookup) {
                 $routeId = $routeLookup[0]["id"];
@@ -519,7 +518,7 @@ error_log("saveTemplate - BP4");
                 $retVal['error'] = "The Route id could not be determined.";
                 return $retVal;
             }
-            
+ ***************/
             $adminDay = $regimen->Day;
             $infusionTime = $regimen->InfusionTime;
             $fluidVol = $regimen->FluidVol;
@@ -536,7 +535,6 @@ error_log("saveTemplate - BP4");
                     Drug_ID, 
                     Regimen_Dose, 
                     Regimen_Dose_Unit_ID, 
-                    Route_ID, 
                     Admin_Day, 
                     Infusion_Time, 
                     Fluid_Vol, 
@@ -547,13 +545,13 @@ error_log("saveTemplate - BP4");
                     Admin_Time, 
                     Fluid_Type, 
                     Order_ID,
-                    Reason
+                    Reason,
+                    VistA_RouteInfo
                 ) VALUES (
                     '$templateId',
                     '$drugId',
                     $regimenDose,
                     '$unitId',
-                    '$routeId',
                     '$adminDay',
                     '$infusionTime',
                     '$fluidVol',
@@ -564,11 +562,12 @@ error_log("saveTemplate - BP4");
                     '$adminTime',
                     '$fluidType',
                     '$orderId',
-                    '$Reason'
+                    '$Reason',
+                    '$route'
                 )
             ";
 			$retVal = $this->query($query);
-			//$this->OrderX($xx);
+// error_log("Lookup Model - saveRegimen - Query = $query");
 
             if (!empty($retVal['error'])) {
                 return $retVal;
@@ -614,38 +613,32 @@ error_log("saveTemplate - BP4");
      * @return array
      */
     public function saveHydrations($hydrations, $type, $templateId, $orderId)
-	{
+    {
         foreach ($hydrations as $hydrationObject) {
-            
             $hydration = $hydrationObject->data;
-            //var_dump($hydration);
             $drugName = (empty($hydration->drugid)) ? null : $hydration->drugid;
-            
             if ($drugName) {
                 $drug = $this->getLookupIdByNameAndType($drugName, 2);
-                
                 if ($drug) {
                     $drugId = $drug[0]["id"];
                 } else {
                     $drugId = null;
                 }
-                
                 if (null == $drugId) {
                     $drug = $this->getLookupIdByNameAndType($drugName, 26);
-                    
                     if ($drug) {
                         $drugId = $drug[0]["id"];
                     }
                 }
             }
-            
+
             if (null == $drugId) {
                 $retVal = array(); 
                 $retVal['error'] = "Insert into Medication_Hydration for " . $type .
                      " Therapy failed. The drug id could not be determined.";
                 return $retVal;
             }
-            
+
             $adminDay = $hydration->adminDay;
             $sequenceNumber = $hydration->sequence;
             $adminTime = $hydration->adminTime;
@@ -653,8 +646,7 @@ error_log("saveTemplate - BP4");
             $fluidVol = $hydration->fluidVol;
             $flowRate = $hydration->flowRate;
             $infusionTime = $hydration->infusionTime;
-            			
-			
+
             $query = "
                 INSERT INTO Medication_Hydration (
                     Drug_ID, 
@@ -676,10 +668,7 @@ error_log("saveTemplate - BP4");
                     '$orderId'
                 )
             ";
-			$retVal = $this->query($query);
-			
-			//$this->OrderX($hydration);
-			            
+            $retVal = $this->query($query);
             if (!empty($retVal['error'])) {
                 return $retVal;
             }
@@ -693,47 +682,43 @@ error_log("saveTemplate - BP4");
                     AND Description = '$description' 
                     AND Sequence_Number = '$sequenceNumber'
             ";
-            
-            $result = $this->query($query);
-            
-            if (!empty($result[0])) {
-                
-                $mhId = $result[0]["mhid"];
-                
-                $infusions = $hydration->infusions;
-                
-                foreach ($infusions as $infusion) { 
-                    
-                    $infusionData = $infusion->data;
 
+            $result = $this->query($query);
+            if (!empty($result[0])) {
+                $mhId = $result[0]["mhid"];
+                $infusions = $hydration->infusions;
+                foreach ($infusions as $infusion) { 
+                    $infusionData = $infusion->data;
                     if(count($infusionData)>1){
                         $unit = $infusionData['unit'];
                     }else{
                         $unit = $infusionData->unit;
                     }
-
                     $unitLookup = $this->getLookupIdByNameAndType($unit, 11);
-
                     if ($unitLookup) {
                         $unitId = $unitLookup[0]["id"];
                     } else {
                         $unitId = null;
                     }
-
                     if (null == $unitId) {
                         $retVal = array(); 
                         $retVal['error'] = "Insert int MH_ID for " . $type .
                              " Therapy failed. The unit id could not be determined.";
                         return $retVal;
                     }
-                    
+
+
+                    /* Get Route Information for Pre/Post Therapy Meds */
                     if(count($infusionData)>1){
                         $unitType = $infusionData['type'];
                     }else{
                         $unitType = $infusionData->type;
                     }
-
+                    $route = $unitType;
+// error_log("Lookup Model - saveHydrations - getRoute - $unitType; Storing in VistA_RouteInfo");
+/*******
                     $unitTypeLookup = $this->getLookupIdByNameAndType($unitType, 12);
+// error_log("getRoute - " . json_encode($unitTypeLookup));
 
                     if ($unitTypeLookup) {
                         $unitTypeId = $unitTypeLookup[0]["id"];
@@ -747,7 +732,10 @@ error_log("saveTemplate - BP4");
                              " Therapy failed. The Route could not be determined.";
                         return $retVal;
                     }
-                    
+ *******/
+
+
+
                     if(count($infusionData)>1){
                         $amt = $infusionData['amt'];
                         $fluidVol = $infusionData['fluidVol'];
@@ -763,7 +751,7 @@ error_log("saveTemplate - BP4");
                     }
 
                     $fluidType = $this->escapeString($fluidType);
-
+/**
                     $query = "
                         INSERT INTO MH_Infusion (
                             MH_ID, 
@@ -774,7 +762,8 @@ error_log("saveTemplate - BP4");
                             Flow_Rate, 
                             Infusion_Time, 
                             Fluid_Type,
-                            Order_ID
+                            Order_ID,
+                            VistA_RouteInfo
                         ) VALUES (
                             '$mhId',
                             '$unitId',
@@ -784,12 +773,42 @@ error_log("saveTemplate - BP4");
                             '$flowRate',
                             '$infusionTime',
                             '$fluidType',
-                            '$orderId'
+                            '$orderId',
+                            '$route'
                         )
                     ";
+ **/
+
+                    $query = "
+                        INSERT INTO MH_Infusion (
+                            MH_ID, 
+                            Infusion_Unit_ID, 
+                            Infusion_Amt, 
+                            Fluid_Vol, 
+                            Flow_Rate, 
+                            Infusion_Time, 
+                            Fluid_Type,
+                            Order_ID,
+                            Infusion_Type_ID, 
+                            VistA_RouteInfo
+                        ) VALUES (
+                            '$mhId',
+                            '$unitId',
+                            '$amt',
+                            '$fluidVol',
+                            '$flowRate',
+                            '$infusionTime',
+                            '$fluidType',
+                            '$orderId',
+                            '00000000-0000-0000-0000-000000000000',
+                            '$route'
+                        )
+                    ";
+// error_log("Lookup Model - saveHydrations - Query - $query");
                     $retVal = $this->query($query);
 
                     if (!empty($retVal['error'])) {
+// error_log("Lookup Model - saveHydrations - INSERT - Error " . json_encode($retVal));
                         return $retVal;
                     }
                 }
@@ -1203,87 +1222,60 @@ error_log("saveTemplate - BP4");
 
         $query = "select Reason from Template_Regimen Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
+
+        $q1 = "SELECT 
+        tr.Patient_Regimen_ID AS id, 
+        tr.Regimen_Number AS regnumber, 
+        l.Name AS drug, 
+        tr.Regimen_Dose AS regdose, 
+        l1.Name AS regdoseunit, 
+        tr.Regimen_Dose_Pct AS regdosepct, 
+        tr.Regimen_Reason AS regreason, 
+        tr.Patient_Dose AS patientdose, 
+        l2.Name AS patientdoseunit, 
+coalesce(l3.Name, tr.VistA_RouteInfo) as route,
+        tr.Admin_Day AS adminDay, 
+        tr.Fluid_Vol AS flvol,  
+        l4.Name AS flunit, 
+        tr.Infusion_Time AS infusion, 
+        tr.Flow_rate AS flowRate, 
+        tr.Instructions AS instructions, 
+        tr.Status,
+        tr.Sequence_Number AS sequence, 
+        tr.Admin_Time AS adminTime, 
+        tr.Drug_ID AS drugid, 
+        tr.BSA_Dose AS bsaDose, 
+        tr.Fluid_Type AS fluidType, 
+        tr.T_Type AS type, 
+        tr.Order_ID AS Order_ID";
+
+        $q1a = ", case when tr.Reason is not null and tr.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
+        os.Order_Status AS Order_Status";
+
+        $q1Join = "
+        FROM Template_Regimen tr
+        LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
+        LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
+        LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
+        left outer JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
+        LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID";
+
+        $q1AJoin = "
+        INNER JOIN Workflows wf on wf.ReasonNo = case when tr.Reason is not null and tr.Reason > 1 Then tr.Reason else 1 end
+        INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID";
+
+        $q1Where = "
+        WHERE tr.Template_ID = '$id' 
+        ORDER BY Sequence_Number";
+
         if (count($retVal) > 0) {
             if (isset($retVal[0]["Reason"])) {
-                $query = "
-                    SELECT 
-                        tr.Patient_Regimen_ID AS id, 
-                        tr.Regimen_Number AS regnumber, 
-                        l.Name AS drug, 
-                        tr.Regimen_Dose AS regdose, 
-                        l1.Name AS regdoseunit, 
-                        tr.Regimen_Dose_Pct AS regdosepct, 
-                        tr.Regimen_Reason AS regreason, 
-                        tr.Patient_Dose AS patientdose, 
-                        l2.Name AS patientdoseunit, 
-                        l3.Name AS route, 
-                        tr.Admin_Day AS adminDay, 
-                        tr.Fluid_Vol AS flvol,  
-                        l4.Name AS flunit, 
-                        tr.Infusion_Time AS infusion, 
-                        tr.Flow_rate AS flowRate, 
-                        tr.Instructions AS instructions, 
-                        tr.Status,
-                        tr.Sequence_Number AS sequence, 
-                        tr.Admin_Time AS adminTime, 
-                        tr.Drug_ID AS drugid, 
-                        tr.BSA_Dose AS bsaDose, 
-                        tr.Fluid_Type AS fluidType, 
-                        tr.T_Type AS type, 
-                        tr.Order_ID AS Order_ID,
-                        case when tr.Reason is not null and tr.Reason > 1 Then wf.WorkflowName else '' end AS Reason,
-                        os.Order_Status AS Order_Status
-                     FROM Template_Regimen tr
-                         LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
-                         LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
-                         LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
-                         LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
-                         LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-                         INNER JOIN Workflows wf on wf.ReasonNo = case when tr.Reason is not null and tr.Reason > 1 Then tr.Reason else 1 end
-                         INNER JOIN Order_Status os on os.Order_ID = tr.Order_ID
-
-                     WHERE tr.Template_ID = '$id' 
-                     ORDER BY Sequence_Number
-                ";
+                $query = $q1 . $q1a . $q1Join . $q1AJoin . $q1Where;
             }
             else {
-                $query = "
-                    SELECT 
-                        tr.Patient_Regimen_ID AS id, 
-                        tr.Regimen_Number AS regnumber, 
-                        l.Name AS drug, 
-                        tr.Regimen_Dose AS regdose, 
-                        l1.Name AS regdoseunit, 
-                        tr.Regimen_Dose_Pct AS regdosepct, 
-                        tr.Regimen_Reason AS regreason, 
-                        tr.Patient_Dose AS patientdose, 
-                        l2.Name AS patientdoseunit, 
-                        l3.Name AS route, 
-                        tr.Admin_Day AS adminDay, 
-                        tr.Fluid_Vol AS flvol,  
-                        l4.Name AS flunit, 
-                        tr.Infusion_Time AS infusion, 
-                        tr.Flow_rate AS flowRate, 
-                        tr.Instructions AS instructions, 
-                        tr.Status,
-                        tr.Sequence_Number AS sequence, 
-                        tr.Admin_Time AS adminTime, 
-                        tr.Drug_ID AS drugid, 
-                        tr.BSA_Dose AS bsaDose, 
-                        tr.Fluid_Type AS fluidType, 
-                        tr.T_Type AS type, 
-                        tr.Order_ID AS Order_ID
-                     FROM Template_Regimen tr
-                         LEFT JOIN LookUp l ON tr.Drug_ID = l.Lookup_ID  
-                         LEFT JOIN LookUp l1 ON tr.Regimen_Dose_Unit_ID = l1.Lookup_ID  
-                         LEFT JOIN LookUp l2 ON tr.Patient_Dose_Unit_ID = l2.Lookup_ID 
-                         LEFT JOIN LookUp l3 ON tr.Route_ID = l3.Lookup_ID  
-                         LEFT JOIN LookUp l4 ON tr.Fl_Vol_Unit_ID = l4.Lookup_ID
-                     WHERE tr.Template_ID = '$id' 
-                     ORDER BY Sequence_Number
-                ";
+                $query = $q1 . $q1a . $q1Join . $q1AJoin . $q1Where;
             }
-// error_log("LookUp.Model.getRegimens - $query");
+error_log("LookUp.Model.getRegimens - $query");
             $retVal = $this->query($query);
         }
         return $retVal;
@@ -1343,10 +1335,15 @@ error_log("saveTemplate - BP4");
                     and upper(Pre_Or_Post) ='" . strtoupper($type) . "'
                     order by Sequence_Number ";
             }
-            $retVal = $this->query($query);
-        }
+error_log("Lookup Model - getHydrations for ID = $id");
+error_log("Lookup Model - getHydrations Query");
+error_log("$query");
+error_log("-----------------------------------------------------------");
 
-        return $retVal;
+            $retVal = $this->query($query);
+            return $retVal;
+        }
+        return null;
     }
 
 
@@ -1359,90 +1356,50 @@ error_log("saveTemplate - BP4");
     {
         $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
         $retVal = $this->query($query);
-        if (count($retVal) > 0) {
-            if (isset($retVal[0]["Reason"])) {
-                $query = "
-                    SELECT 
-                        mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
-                        l1.Name AS unit, 
-                        l2.Name AS type, 
-                        mhi.BSA_Dose AS bsaDose, 
-                        mhi.Fluid_Type AS fluidType,
-                        mhi.Fluid_Vol AS fluidVol, 
-                        mhi.Flow_Rate AS flowRate, 
-                        mhi.Infusion_Time AS infusionTime, 
-                        mhi.Order_ID AS Order_ID,
-                        os.Order_Status AS Order_Status
-                    FROM MH_Infusion mhi 
-                        JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                        JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                        JOIN Order_Status os on os.Order_ID = mhi.Order_ID
-                    WHERE mhi.MH_ID = '$id'
-                ";
-            }
-            else {
-                $query = "
-                    SELECT 
-                        mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
-                        l1.Name AS unit, 
-                        l2.Name AS type, 
-                        mhi.BSA_Dose AS bsaDose, 
-                        mhi.Fluid_Type AS fluidType,
-                        mhi.Fluid_Vol AS fluidVol, 
-                        mhi.Flow_Rate AS flowRate, 
-                        mhi.Infusion_Time AS infusionTime, 
-                        mhi.Order_ID AS Order_ID
-                    FROM MH_Infusion mhi 
-                        JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                        JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                    WHERE mhi.MH_ID = '$id'
-                ";
-            }
-            $retVal = $this->query($query);
-        }
-        else {
-            $query = "
-                SELECT 
-                    mhi.Infusion_ID AS id, 
-                        CASE
-                            WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
-                            ELSE 
-                                CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
-                        END as amt,
 
-                    l1.Name AS unit, 
-                    l2.Name AS type, 
-                    mhi.BSA_Dose AS bsaDose, 
-                    mhi.Fluid_Type AS fluidType,
-                    mhi.Fluid_Vol AS fluidVol, 
-                    mhi.Flow_Rate AS flowRate, 
-                    mhi.Infusion_Time AS infusionTime, 
-                    mhi.Order_ID AS Order_ID
-                FROM MH_Infusion mhi 
-                    JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
-                    JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID
-                WHERE mhi.MH_ID = '$id'
-            ";
-            $retVal = $this->query($query);
+        $q1 = "SELECT 
+    mhi.Infusion_ID AS id, 
+    CASE
+        WHEN mhi.Infusion_Amt = FLOOR(mhi.Infusion_Amt) THEN 
+            CONVERT(nvarchar(max), CONVERT(decimal(10,0), mhi.Infusion_Amt))
+        ELSE 
+            CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
+    END as amt,
+    l1.Name AS unit, 
+    coalesce(l2.Name, mhi.VistA_RouteInfo) as type,
+    mhi.BSA_Dose AS bsaDose, 
+    mhi.Fluid_Type AS fluidType,
+    mhi.Fluid_Vol AS fluidVol, 
+    mhi.Flow_Rate AS flowRate, 
+    mhi.Infusion_Time AS infusionTime, 
+    mhi.Order_ID AS Order_ID";
+
+        $q1a = ", os.Order_Status AS Order_Status";
+
+        $q1Join1 = " FROM MH_Infusion mhi 
+    JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
+    left outer JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID";
+
+        $q1Join2 = " JOIN Order_Status os on os.Order_ID = mhi.Order_ID";
+
+        $q1Where = " WHERE mhi.MH_ID = '$id'";
+
+
+
+        $query = $q1 . $q1Join1 . $q1Where;
+        if ((count($retVal) > 0) && isset($retVal[0]["Reason"])) {
+            $query = $q1 . $q1a . $q1Join1 . $q1Join2 . $q1Where;
         }
+error_log("Lookup Model - getMHInfusions for ID = $id");
+error_log("Lookup Model - getMHInfusions Query");
+error_log("$query");
+error_log("-----------------------------------------------------------");
+
+        $retVal = $this->query($query);
         return $retVal;
     }
 
     function getTemplateDetailByNameAndField($name, $field) {
-
         $query = "select Lookup_ID as ID, Description as value from LookUp " .
                 "where replace(upper(Name), ' ', '') = '" . strtoupper($name) . "' " .
                 "AND Lookup_Type = ( " .

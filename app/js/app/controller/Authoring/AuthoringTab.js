@@ -16,39 +16,38 @@ Ext.apply(Ext.data.validations, {
 Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	extend: 'Ext.app.Controller',
 	stores: [
-		'TotalCoursesMax'
-		, 'CycleLengthMax'
-		, 'TimeFrameUnit'
-		, 'EmetogenicLevel'
-		, 'FebrileNeutropeniaRisk'
-		, 'ReferencesStore'
-		, 'LUReferences'
-		, 'HydrationStore'
-		, 'DrugStore'
-		, 'DrugUnitsStore'
-		, 'InfusionStore'
-		, 'CTOS'
-		, 'MedReminders'
+		'TotalCoursesMax',
+		'CycleLengthMax',
+		'TimeFrameUnit',
+		'EmetogenicLevel',
+		'FebrileNeutropeniaRisk',
+		'ReferencesStore',
+		'LUReferences',
+		'HydrationStore',
+		'DrugStore',
+		'DrugUnitsStore',
+		'InfusionStore',
+		'CTOS',
+		'MedReminders'
 		],
 	views: [
-		'Authoring.References'
-		, 'Authoring.MedReminder'
-		, 'Authoring.Hydration'
-		, 'Authoring.DrugRegimen'
-		, 'Authoring.AddReference'
-		, 'Authoring.CreateNewTemplate'
-		, 'Authoring.CycleLength'
-
-		, 'Common.Search4Template'
-		, "Common.selCTOSTemplate"
-		, "Common.selDiseaseAndStage"
-		, "Common.selDisease"
-		, "Common.selDiseaseStage"
-		, "Common.selTemplate"
-		, "Common.selSequence"
-		, "Common.MedRemindersForm"
-		, "Common.EmeticInfo"
-		],
+		'Authoring.References',
+		'Authoring.MedReminder',
+		'Authoring.Hydration',
+		'Authoring.DrugRegimen',
+		'Authoring.AddReference',
+		'Authoring.CreateNewTemplate',
+		'Authoring.CycleLength',
+		'Common.Search4Template',
+		"Common.selCTOSTemplate",
+		"Common.selDiseaseAndStage",
+		"Common.selDisease",
+		"Common.selDiseaseStage",
+		"Common.selTemplate",
+		"Common.selSequence",
+		"Common.MedRemindersForm",
+		"Common.EmeticInfo"
+	],
 
 
 	refs: [
@@ -941,20 +940,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			DiseaseStage: diseaseStageId,
 			KeepAlive: KeepAlive
 		});
-return template;
-		var errors = template.validate();
-
-		if (errors.length > 0) {
-			var msg = '';
-			errors.each(function (error) {
-				//msg += "field: " + error.field + " message: " + error.message + "<br/>";
-				msg += " message: " + error.message + "<br/>";
-			});
-
-			Ext.MessageBox.alert('Invalid', 'Validation Errors:<br/>' + msg);
-			this.application.unMask();
-			return null;
-		}
 		return template;
 	},
 
@@ -1147,6 +1132,13 @@ return template;
 		}
 		return MedRemindersArray;
 	},
+
+	RecordSaveSuccess : function(data) {
+	},
+	RecordSaveFailure : function(data) {
+		alert("Failure to save Med Reminder");
+	},
+
 	saveAllMedReminders : function(TemplateID) {
 		var MedReminders = this.getMedRemindersInArray();
 		var rec, i, len = MedReminders.length;
@@ -1157,11 +1149,8 @@ return template;
 			rec.save({
 				scope : this,
 				waitMsg: 'Saving Data...',
-				success: function (data) {
-				},
-				failure: function (data) {
-					alert("Failure to save Med Reminder");
-				}
+				success: this.RecordSaveSuccess,
+				failure: this.RecordSaveFailure
 			});
 		}
 	},

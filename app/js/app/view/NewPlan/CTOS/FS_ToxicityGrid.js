@@ -4,7 +4,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 	"id" : "FS_ToxicityGrid",
 	"name" : "Toxicity Grid",
 	"title" : "Toxicities",
-	"margin" : "10 auto 10 auto",
 	"buttonAlign" : "left",
 
 	"store" : "ToxGridStore",
@@ -12,7 +11,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 	"forceFit" : true,
 	"overflowY" : "scroll",
 	"minHeight" : 150,
-	"margin" : "10 0 0 0",
+	"margin" : "10 auto 10 auto",
+	// "margin" : "10 0 0 0",
 	"multiSelect" : true,
 	"viewConfig" : { 
 		"stripeRows" : true,

@@ -22,7 +22,14 @@ Ext.define('COMS.view.Authoring.DrugRegimen' ,{
                                 {header : 'Drug', dataIndex : 'Drug', width: 100, align: 'center' },                                
                                 {header : 'Dosage<br/>Amount', dataIndex : 'Amt', width: 50, align: 'center' },
                                 {header : 'Units', dataIndex : 'Units', width: 50, align: 'center' },
-                                {header : 'Route', dataIndex : 'Route', width: 50, align: 'center' },
+                                {header : 'Route', dataIndex : 'Route', width: 50, align: 'center',
+									renderer: function (value, p, record) {
+										if (value.indexOf(" : ") > 0) {
+											return value.split(" : ")[0];
+										}
+										return value;
+									}
+								},
                                 // These are only needed during the administration
                                 // {header : '% of Regimen Dose', dataIndex : 'PctDose', width: 110 },
                                 // {header : 'Reason', dataIndex : 'Reason', flex : 1 },

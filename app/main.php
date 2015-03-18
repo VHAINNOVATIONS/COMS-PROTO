@@ -1,9 +1,15 @@
 <?php
-    /** Archived Version Info*/
-    $ProjType = "Demo, February 20, 2015";
+    /* 
+    $ProjType = "Release 1.0 February 27, 2015"; 
+    $ProjType = "Release 1.1 March 6, 2015"; 
+    */
+    $ProjType = "Release 1.2 March 13, 2015";
+/* <!doctype html> */
+/* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
 ?>
 
-<!doctype html>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="no-js ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="no-js ie8" lang="en"> <![endif]-->
@@ -11,6 +17,7 @@
 <head>
 <meta charset="utf-8">
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+<meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=9">
 <title>Chemotherapy Order Management System (COMS)</title>
 
 <?php
@@ -57,6 +64,7 @@
     /* User name of user currently logged into the domain */
     echo "var Sessionrid = '$rid';\n";
     echo "var Sessionrole = '$role';\n";
+    echo "var SessionDisplayName = '" . $_SESSION[ 'displayName' ] . "';\n";
     echo "var SessionTemplateAuthoring = '$TemplateAuthoring';\n";
     echo "var AuthType = '" . $_SESSION[ "winauth" ] . "';\n";
     if ( isset( $FirstParam ) ) {
@@ -112,8 +120,8 @@
                 <li style="display: inline;"><a href="sv.php" target='_blank'>_</a></li>
             -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
-				<!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
-                <li style="display: inline;"><button class="anchor" onclick="logoutPrompt();"><b>Logout</b></button>
+                <!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
+                <li style="display: inline;"><button class="anchor" id="LogoutBtn"><b>Logout</b></button>
                 <!--<li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                 
                 <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
@@ -124,8 +132,8 @@
 </div><!-- end of #Application -->
 
 <div id="footer" class="initialHide" >
-    <!--<abbr title="Chemotherapy Order Management System">COMS</abbr>-->
-	<div>
+    <abbr title="Chemotherapy Order Management System">COMS</abbr> <?php echo $ProjType; ?>
+    <div>
         This application works best in 
         MS-IE Version 9 or above, 
         Mozilla Firefox Version 20 and above, 
@@ -148,14 +156,18 @@
 <script type="text/javascript" <?php
     echo "src=\"$LibsVersion/ext-all-debug.js\"";
 ?>></script>
-<script type="text/javascript" src="/libs/boomerang.js"></script>
-<script type="text/javascript" src="LocalizedCode.js"> </script>
+<!-- <script type="text/javascript" src="/libs/boomerang.js"></script> -->
+
 <script type="text/javascript" src="/libs/prettyPrint.js"></script>
 
+<!-- <script type="text/javascript" src="LocalizedCode.js"> </script>
+<script type="text/javascript" src="js/Consts.js"></script>
+<script type="text/javascript" src="js/Requires.js"></script>
+<script type="text/javascript" src="js/Extensions.js"></script>
+<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script> -->
 
-<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script>
 
-<!-- <script type="text/javascript" src="js/AllScripts.js"></script> -->
+<script type="text/javascript" src="js/COMS.js"></script>
 
 <script>
 var UseNewQueryMethod = true;
@@ -193,20 +205,7 @@ function switchQueryMethod() {
     }
 }
 
-var LogoutCancelled = true;
-function logoutConfirmed(btn) {
-    if ("yes" === btn) {
-        LogoutCancelled = false;
-        document.location.href="/logout.php";
-    }
-    else {
-        LogoutCancelled = true;
-    }
-}
 
-function logoutPrompt(e) {
-    Ext.MessageBox.confirm('Confirm', 'Are you sure you want to logout?', logoutConfirmed);
-}
 
 window.onbeforeunload = function(e) { // see: http://jsfiddle.net/zalun/yFuPr/
     if (LogoutCancelled) {

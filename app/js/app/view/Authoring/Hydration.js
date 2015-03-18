@@ -38,7 +38,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					sortable: true,
 					align: 'center',
 					renderer: function (value, p, record) {
-						// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -49,7 +48,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					sortable: false,
 					align: 'center',
 					renderer: function (value, p, record) {
-						// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -60,7 +58,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					sortable: false,
 					align: 'center',
 					renderer: function (value, p, record) {
-						// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -71,7 +68,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					sortable: false,
 					align: 'center',
 					renderer: function (value, p, record) {
-						// return Ext.String.format('{0}<br/><div class="OptionalDosing">-- <b>OR</b> --</div>', value, value);
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -99,29 +95,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					renderer: renderRoute,
 					align: 'center'
 				},
-					/******* MWB - 11/1/2013 - Eliminate optional Dosing Info
-				{
-					header: 'Dosage<br/>Amount',
-					dataIndex: 'Amt2',
-					width: 50,
-					sortable: false,
-					hidden: true
-				},
-				{
-					header: 'Units',
-					dataIndex: 'Units2',
-					width: 50,
-					sortable: false,
-					hidden: true
-				},
-				{
-					header: 'Route',
-					dataIndex: 'Infusion2',
-					width: 50,
-					sortable: false,
-					hidden: true
-				},
-				*************/
 				{
 					header: 'Fluid/<br/>Volume',
 					dataIndex: 'FluidVol1',
@@ -154,36 +127,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					renderer: renderFluidType,
 					align: 'center'
 				},
-					/******* MWB - 11/1/2013 - Eliminate optional Dosing Info
-				{
-					header: 'Flow<br/>Rate',
-					dataIndex: 'FlowRate2',
-					width: 40,
-					sortable: false,
-					hidden: true
-				},
-				{
-					header: 'Fluid/<br/>Volume',
-					dataIndex: 'FluidVol2',
-					width: 50,
-					sortable: false,
-					hidden: true
-				},
-				{
-					header: 'Infusion<br/>Time',
-					dataIndex: 'InfusionTime2',
-					width: 60,
-					sortable: false,
-					hidden: true
-				},
-				{
-					header: 'Fluid/<br/>Type',
-					dataIndex: 'FluidType2',
-					width: 50,
-					sortable: false,
-					hidden: true
-				},
-				***/
 				{
 					header: 'Instructions',
 					dataIndex: 'Instructions',
@@ -191,7 +134,6 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					sortable: false,
 					align: 'center',
 					renderer: function (value, p, record) {
-						// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 						return Ext.String.format('{0}', value);
 					}
 				}
@@ -219,10 +161,8 @@ function renderAmt(value, p, record) {
 	var amt2 = record.data.Amt2;
 
 	if (null !== value && null !== amt2 && '' !== amt2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, amt2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
@@ -231,22 +171,15 @@ function renderUnit(value, p, record) {
 	var unit2 = record.data.Units2;
 
 	if (null !== value && null !== unit2 && '' !== unit2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, unit2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
 function renderRoute(value, p, record) {
-
-	var route2 = record.data.Infusion2;
-
-	if (null !== value && null !== route2 && '' !== route2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, route2);
-		return Ext.String.format('{0}', value);
+	if (value.indexOf(" : ") > 0) {
+		return value.split(" : ")[0];
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
@@ -255,10 +188,8 @@ function renderFluidVol(value, p, record) {
 	var val2 = record.data.FluidVol2;
 
 	if (null !== value && null !== val2 && '' !== val2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, val2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
@@ -267,10 +198,8 @@ function renderFlowRate(value, p, record) {
 	var val2 = record.data.FlowRate2;
 
 	if (null !== value && null !== val2 && '' !== val2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, val2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
@@ -279,10 +208,8 @@ function renderInfusionTime(value, p, record) {
 	var val2 = record.data.InfusionTime2;
 
 	if (null !== value && null !== val2 && '' !== val2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, val2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }
 
@@ -291,9 +218,7 @@ function renderFluidType(value, p, record) {
 	var val2 = record.data.FluidType2;
 
 	if (null !== value && null !== val2 && '' !== val2) {
-		// return Ext.String.format('{0}<br/><div class="OptionalDosing">{1}</div>', value, val2);
 		return Ext.String.format('{0}', value);
 	}
-	// return Ext.String.format('{0}<br/><div class="OptionalDosing">&nbsp;</div>', value, value);
 	return Ext.String.format('{0}', value);
 }

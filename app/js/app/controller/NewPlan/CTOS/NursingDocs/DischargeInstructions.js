@@ -97,7 +97,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 					var PAT_ID = this.application.Patient.PAT_ID;
 					var DI_ID = this.application.Patient.DischargeInfoID;
 					if (this.application.Patient.DischargeInfoID) {
-						var DI_ID = this.application.Patient.DischargeInfoID;
+						DI_ID = this.application.Patient.DischargeInfoID;
 						window.open("/DIF?pat_id=" + PAT_ID + "&di_id=" + DI_ID);
 					}
 					else {

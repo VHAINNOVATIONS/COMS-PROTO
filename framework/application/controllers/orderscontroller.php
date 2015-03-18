@@ -198,9 +198,176 @@
                 
                 $OrderStatusF = $form_data->{'orderstatus'};
                 $PIDF         = $form_data->{'patientID'};
+                $DFN          = $form_data->{'dfn'};
                 if ( "Cleared" == $OrderStatusF ) {
                     $form_data = $this->FinalizeMedicationDosing( $form_data );
                 }
+
+
+
+
+
+
+
+                else if ( "Finalized" == $OrderStatusF ) {
+                    $drugName = $form_data->{'drug'};
+            $controller        = 'LookupController';
+            $lookupController  = new $controller( 'Lookup', 'lookup', null );
+            $DrugInfo          = $lookupController->getDrugInfoFromVistA( $drugName );
+error_log("grabOrders function has DrugInfo from Lookup");
+error_log(json_encode($DrugInfo));
+
+
+
+$dayOfWeek = date("w", strtotime($form_data->{'adminDay'}));
+$AdminDays = array();
+$AdminDays[] = $dayOfWeek;
+
+$theMed = $DrugInfo->{"Medication"};
+$theMedID = $theMed->{"ien"};
+$theRoutes = $DrugInfo->{"Route"};
+
+$RouteInfo = explode(" : ", $form_data->{'route'});
+$RouteInfoID = $RouteInfo[1];
+
+$VistA_Route = array();
+$VistA_Route["ien"] = $RouteInfoID;
+foreach ($theRoutes as $route) {
+error_log("Walking Routes - $RouteInfoID - " . json_encode($route));
+    $theRouteID = $route->{"ien"};
+    if ($theRouteID === $RouteInfoID) {
+        $VistA_Route["code"] = $route->{"code"};
+    }
+    else {
+error_log("Walking Routes - $RouteInfoID - Not Found");
+    }
+}
+error_log("Walking Routes - FINISHED");
+
+
+
+error_log("Finalizing an Order - ");
+error_log(json_encode($form_data));
+/****
+{
+    "patientID": "8D196340-1092-421A-A5A1-30168FC86FA1",
+    "templateID": "95026BC2-7F09-4F9A-902E-4F916BB686D9",
+    "adminDay": "",
+    "CourseNum": "",
+    "adminDate": "",
+    "drug": "CARBOPLATIN INJ   ",
+    "type": "Therapy",
+    "dose": "10", - $form_data->{'dose'} . " " . $form_data->{'unit'};
+    "unit": "ml",
+    "route": "INTRAMUSCULAR : 15",
+    "fluidVol": "",
+    "fluidType": "",
+    "flowRate": "",
+    "instructions": "",
+    "orderstatus": "Finalized",
+    "ActualOrderStatus": "",
+    "orderid": "7BE2CF5B-2095-4FD1-8D16-FC51EDF1A1DF",
+    "Last_Name": "FIVEHUNDREDTWO PATIENT",
+    "id": null
+}
+ ****/
+error_log(json_encode($_SESSION));
+/****
+{
+    "chkTrack": 1,
+    "sessionid": "9f9gau88cgf9pktqhd0h9ll3m0",
+    "pgct": 5179,
+    "winauth": "",
+    "ruser": "",
+    "ip_vistor": "199.179.23.116",
+    "compname": "dbiterm.dbitpro.com",
+    "page": "index.php",
+    "url": "https://coms-mwb.dbitpro.com/Orders/Orders?_dc=1426086332728",
+    "AccessCode": "CPRS1234",
+    "VerifyCode": "CPRS4321$",
+    "sessionStatus": 0,
+    "COMSLogin": 1,
+    "NWLoginR": 1,
+    "role": "All Roles",
+    "dname": "Programmer",
+    "rid": "0",
+    "Email": "programmer@dbitmail.com",
+    "TemplateAuthoring": "1",
+    "Role_ID": "4CD32B11-91CC-E311-BAF8-001D09D7525D",
+    "AC": "CPRS1234",
+    "VC": "CPRS4321$",
+    "NWLogin": 355,
+    "sitelist": "169",
+    "domain": "localhost",
+    "mdws": "54.243.40.32",
+    "vista": "54.83.44.110",
+    "sshusr": "vista",
+    "sshpwd": "vistagold",
+    "sshusr2": "CacheMgr",
+    "COMSchk": 1,
+    "MDWS_Status": "Crashed",
+    "MDWS_Type": "Connect",
+    "MDWS_Msg": "Site not in site table",
+    "MDWS_Suggestion": "",
+    "USE_NODE": true,
+    "UserDUZ": "1"
+}
+ ****/
+//            $drugName = rawurlencode(trim($drugName));
+//            $drugURL  = "medication/name/$drugName";
+//            $MedID    = $nodevista->get( $drugURL );
+//            $nodevista               = new NodeVista();
+
+            // getDrugInfoFromVistA($drugName)
+$VistA_Order = array();
+$VistA_Order["dfn"] = "$DFN";
+$VistA_Order["provider"] = $_SESSION["UserDUZ"];
+$VistA_Order["clinic"] = $_SESSION["sitelist"];
+$VistA_Order["type"] = "inpatient";
+$VistA_Order["drug"] = $theMedID;
+$VistA_Order["dosage"] = $form_data->{'dose'} . " " . $form_data->{'unit'};
+$VistA_Order["route"] = $VistA_Route;
+$VistA_Order["administration_days"] = $AdminDays;
+
+error_log("===========================================================");
+error_log("Have Order Data = ");
+error_log(json_encode($VistA_Order));
+
+//            $drugURL  = "medication/name/$drugName";
+//            $MedID    = $nodevista->get( $drugURL );
+
+            $nodevista   = new NodeVista();
+            $orderURL    = "order/new";
+            $OrderReturn = $nodevista->post( $orderURL, json_encode($VistA_Order) );
+
+error_log("Order Sent - ");
+error_log(json_encode($OrderReturn));
+
+
+error_log("===========================================================");
+
+/*********
+
+URL: http://dbittest.dbitpro.com:3000/v1/order/new
+
+POST Data:
+{
+            "dfn": "100025”, // patient id
+            "provider": "1”, // provider id
+            "clinic": "11”, // clinic id
+            "type": "inpatient”, // use only in patient for right now
+            "drug": "1527”, // drug IEN
+            "dosage" : "200MG/5ML”, // arbitrary dosage string
+            "route" : {
+              "ien": "270”, // route IEN from /order/info call
+              "code": “IVP” // route code from /order/info call
+            },
+    "administration_time" : "1350”, // 24 hour representation of time, 1350 - 1:50 p.m., when the drug should be administered on the day
+    "administration_days" : [ 0, 1 , 2 ,3 ] // the day the drug should be administered , 0 - Sunday, 1 - Monday, 2 - Tues, etc... all the way to 6 - Sat
+}
+ ****************/
+                }
+
                 error_log( "OrdersController.grabOrders.HasFormData - POST FINALIZEATION!" );
                 error_log( json_encode( $form_data ) );
                 
@@ -231,6 +398,7 @@
       ,os.Drug_Name as drug
       ,os.Order_Type as type
       ,os.Patient_ID as patientID
+      ,p.dfn as DFN
       ,os.Order_ID
       ,os.Drug_ID
       ,os.FlowRate
@@ -255,6 +423,7 @@
       ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
       FROM Order_Status os 
       left join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
+      join Patient p on p.Patient_ID = os.Patient_ID
       where os.Patient_ID = '$patientID' and os.Admin_Date='$AdminDate'";
                     
                     if ( $Dispensed ) {
@@ -270,6 +439,7 @@ End as orderstatus
       ,os.Drug_Name as drug
       ,os.Order_Type as type
       ,os.Patient_ID as patientID
+      ,p.dfn as DFN
       ,os.Order_ID
       ,os.Drug_ID
       ,os.FlowRate
@@ -294,6 +464,7 @@ End as orderstatus
       ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
       FROM Order_Status os 
       left join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
+      join Patient p on p.Patient_ID = os.Patient_ID
       where os.PAT_ID = '$patientID' and os.Admin_Date='$AdminDate'";
                         
                     }
@@ -311,6 +482,7 @@ End as orderstatus
                                 $type .= " Therapy";
                             }
                             $pid      = $rec[ "patientID" ];
+                            $pdfn     = $rec[ "DFN" ];
                             $aDate    = $rec[ "adminDate" ];
                             $DrugName = $rec[ "drug" ];
                             $query    = "SELECT
@@ -351,6 +523,7 @@ End as orderstatus
                                     $rec[ "PAT_ID" ]              = $tData[ 0 ][ "PAT_ID" ];
                                     $rec[ "Template_ID" ]         = $tData[ 0 ][ "Template_ID" ];
                                     $rec[ "Patient_ID" ]          = $tData[ 0 ][ "Patient_ID" ];
+                                    $rec[ "DFN" ]                 = $pdfn;
                                     $rec[ "Drug_OriginalValue" ]  = $tData[ 0 ][ "Drug_OriginalValue" ];
                                     $rec[ "Unit_OriginalValue" ]  = $tData[ 0 ][ "Unit_OriginalValue" ];
                                     $rec[ "Route_OriginalValue" ] = $tData[ 0 ][ "Route_OriginalValue" ];
@@ -409,7 +582,6 @@ End as orderstatus
                 
                 
                 foreach ( $patientTemplates as $patient ) {
-                    //$oemrecords = $patientModel->getTopLevelOEMRecords($patient['patientID'],$patient['templateID']);
                     $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays( $patient[ 'patientID' ], $patient[ 'templateID' ] );
                     error_log( "Orders.Controller.grabOrders - OEM Records for a given Patient (" . $patient[ 'patientID' ] . ") and Template (" . $patient[ 'templateID' ] . ")" );
                     error_log( json_encode( $oemrecords ) );
@@ -424,9 +596,7 @@ End as orderstatus
                     
                     $Last_Name = $this->Orders->LookupPatientName( $patient[ 'patientID' ] );
                     if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
-                        //$patient['Last_Name'] = $Last_Name['Last_Name'];
                         $patient[ 'Last_Name' ] = $Last_Name;
-                        //var_dump($Last_Name);
                     } else {
                         $patient[ 'Last_Name' ] = '';
                     }
@@ -495,24 +665,13 @@ End as orderstatus
                         $tmpOemRecord = $this->analyzeTherapys( $regimenCount, $regimens, $type, $typeOrder, $patient, $oemrecord );
                         
                         $modOemRecords = array_merge( $modOemRecords, $tmpOemRecord );
-                        
-                        //var_dump($modOemRecords);
-                        
                         $finalOrders = array( ); // This should not be redefined here - it is throwing out the work of the previous iteration
-                        
-                        //var_dump($finalOrders);
-                        
                         foreach ( $modOemRecords as $orderRecord ) {
                             $templateId = $orderRecord[ 'templateID' ];
                             $drug       = $orderRecord[ 'drug' ];
                             $PID        = $patient[ 'patientID' ];
                             $Order_ID   = $orderRecord[ 'Order_ID' ];
-                            
-                            //var_dump($orderRecord);
-                            //var_dump($modOemRecords);
-                            
                             $orderStatus = $this->Orders->getOrderStatus( $Order_ID );
-                            //var_dump($orderStatus);
                             $orderid     = $this->Orders->getOrderStatus( $Order_ID );
                             if ( !empty( $orderStatus ) && count( $orderStatus ) > 0 ) {
                                 $orderRecord[ 'orderstatus' ] = $orderStatus[ 0 ][ 'orderStatus' ];
@@ -523,7 +682,6 @@ End as orderstatus
                                 $orderRecord[ 'orderstatus' ] = 'Not Set';
                                 $orderRecord[ 'orderid' ]     = '';
                             }
-                            //var_dump($orderRecord);
                             array_push( $finalOrders, $orderRecord );
                             
                         }
@@ -535,8 +693,25 @@ End as orderstatus
                 $jsonRecord[ 'records' ] = $finalOrders;
                 $this->set( 'jsonRecord', $jsonRecord );
             }
+error_log( "Orders.Controller.grabOrders END OF SERVICE CALL!" );
         }
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         function Orders( $patientID = null, $AdminDate = null )
         {
             $this->grabOrders( $patientID, $AdminDate );
@@ -665,7 +840,6 @@ End as orderstatus
             $modtmpOemRecord = array( );
             
             if ( $therapyCount ) {
-                
                 foreach ( $therapys as $therapy ) {
                     if ( 'Therapy' === $type ) {
                         $tmpOemRecord = $this->createTherapyRow( $patient, $oemrecord, $therapy, $type, $typeOrder );
@@ -679,24 +853,15 @@ End as orderstatus
                                 $tmpOemRecord = $this->createPrePostTherapyRow( $patient, $oemrecord, $therapy, $type, $typeOrder, $detail );
                                 array_push( $modtmpOemRecord, $tmpOemRecord );
                             }
-                        } else {
-                            //$tmpOemRecord = $this->createBlankRow($patient, $oemrecord, $type);
-                            //array_push($modtmpOemRecord, $tmpOemRecord);
                         }
                     }
                 }
-            } else {
-                //$tmpOemRecord = $this->createBlankRow($patient, $oemrecord, $type);
-                //array_push($modtmpOemRecord, $tmpOemRecord);
             }
-            
-            
             return $modtmpOemRecord;
         }
         
         private function createTherapyRow( $patient, $oemrecord, $therapy, $type, $typeOrder )
         {
-            
             if ( !empty( $therapy[ 'bsaDose' ] ) ) {
                 list( $bsaDose, $bsaUnit ) = explode( ' ', $therapy[ 'bsaDose' ], 2 );
                 $bsaUnit = str_replace( ' ', null, $bsaUnit );
@@ -706,11 +871,11 @@ End as orderstatus
                     null 
                 );
             }
-            
             $tmpOemRecord = array( );
             
             $tmpOemRecord[ 'patientID' ]    = $patient[ 'patientID' ];
             $tmpOemRecord[ 'Last_Name' ]    = $patient[ 'Last_Name' ];
+            $tmpOemRecord[ 'dfn' ]          = $patient[ 'dfn' ];
             $tmpOemRecord[ 'CourseNum' ]    = $oemrecord[ 'CourseNum' ];
             $tmpOemRecord[ 'templateID' ]   = $patient[ 'templateID' ];
             $tmpOemRecord[ 'adminDay' ]     = $oemrecord[ 'Day' ];
@@ -732,11 +897,11 @@ End as orderstatus
         
         private function createPrePostTherapyRow( $patient, $oemrecord, $therapy, $type, $typeOrder, $detail )
         {
-            
             $tmpOemRecord = array( );
             
             $tmpOemRecord[ 'patientID' ]    = $patient[ 'patientID' ];
             $tmpOemRecord[ 'Last_Name' ]    = $patient[ 'Last_Name' ];
+            $tmpOemRecord[ 'dfn' ]          = $patient[ 'dfn' ];
             $tmpOemRecord[ 'CourseNum' ]    = $oemrecord[ 'CourseNum' ];
             $tmpOemRecord[ 'templateID' ]   = $patient[ 'templateID' ];
             $tmpOemRecord[ 'adminDay' ]     = $oemrecord[ 'Day' ];
@@ -763,6 +928,7 @@ End as orderstatus
             
             $tmpOemRecord[ 'patientID' ]    = $patient[ 'patientID' ];
             $tmpOemRecord[ 'Last_Name' ]    = $patient[ 'Last_Name' ];
+            $tmpOemRecord[ 'dfn' ]          = $patient[ 'dfn' ];
             $tmpOemRecord[ 'CourseNum' ]    = $oemrecord[ 'CourseNum' ];
             $tmpOemRecord[ 'templateID' ]   = $patient[ 'templateID' ];
             $tmpOemRecord[ 'adminDay' ]     = $oemrecord[ 'Day' ];

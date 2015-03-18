@@ -26,7 +26,7 @@ Ext.define("COMS.view.Management.Inventory", {
 				"fieldLabel" : "Select an Inventory Date <em>*</em>",
 				"labelAlign" : "right",
 				"displayField" : "Date",
-				"valueField" : "id",
+				"valueField" : "id"
 			},
 		{ "xtype" : "box", "name" : "selInvError", "html" : "", "margin" : "4 0 0 5" }
 		]},

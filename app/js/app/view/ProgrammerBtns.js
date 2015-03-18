@@ -25,8 +25,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 				{ "xtype" : "button", "text" : "Infusion Reactions" },
 				{ "xtype" : "button", "text" : "Refresh Cumulative Dosing" },
 				{ "xtype" : "button", "text" : "Add Cumulative Dosing" }
-
 			]
 		}
 	]
-})
+});

@@ -143,7 +143,13 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		dataIndex: "route",
 		width: 50,
 		sortable: false,
-		align: "left"
+		align: "left",
+		renderer: function(v) {
+			if (v.indexOf(" : ") > 0) {
+				v = v.split(" : ")[0];
+			}
+			return v;
+		}
 	}, {
 		header: "<div class=\"multiLine\">Fluid/<br/>Volume<br>ml</div>",
 		dataIndex: "fluidVol",

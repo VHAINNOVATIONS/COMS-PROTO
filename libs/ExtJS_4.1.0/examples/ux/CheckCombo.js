@@ -146,10 +146,11 @@ Ext.define('Ext.ux.CheckCombo', {
 
             Ext.each(vals, function(val)
             {
+				var record;
                 if (Ext.isNumber(val)) {
-                    var record = me.store.getById(parseInt(val));
+                    record = me.store.getById(parseInt(val));
                 } else {
-                    var record = me.store.findRecord(me.valueField, val);
+                    record = me.store.findRecord(me.valueField, val);
                 }
                 if(record) records.push(record);
             });

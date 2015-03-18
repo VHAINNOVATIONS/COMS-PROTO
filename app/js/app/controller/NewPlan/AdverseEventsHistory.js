@@ -75,7 +75,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 		b = new Date(b.date);
 		return a>b ? -1 : a<b ? 1 : 0;
 	});
-	var data = {numAlerts : numAlert, totEvents : totalEvents2Record, list: list };
+	data = {numAlerts : numAlert, totEvents : totalEvents2Record, list: list };
 	return data;
 },
 

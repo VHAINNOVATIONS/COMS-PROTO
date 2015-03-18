@@ -129,7 +129,7 @@
       ,VC
 	  ,DateEntered
 	  ,DateGood
-		FROM COMS_Sessions	
+		FROM COMS_Sessions
 		WHERE $LastLogin <= $TimeOutMax
 		AND AC != '' 
 		AND compname = '$ipcheck' 
@@ -144,6 +144,8 @@
                 $_SESSION[ 'dname' ]    = $row[ 'dname' ];
                 $_SESSION[ 'role' ]     = $row[ 'role' ];
                 $_SESSION[ 'rid' ]      = $row[ 'rid' ];
+                $_SESSION[ 'displayName' ]      = $row[ 'dname' ];
+
                 $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
                 $_SESSION[ 'Email' ]    = "";
                 if ( array_key_exists( 'Email', $row ) ) {
