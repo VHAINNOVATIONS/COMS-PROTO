@@ -355,6 +355,27 @@ router.get('/user/info', function(req, res){
   user.getInfo(loginOptions,  callback);
 });
 
+router.get('/users', function(req, res){
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  user.getAll(loginOptions, callback);
+});
+
 
 router.get('/medication/name/:name', function(req, res){
   // get login options
@@ -493,6 +514,8 @@ router.post('/order/new', function(req, res){
   // make an appointment
   order.saveOrder(loginOptions, req.body, callback);
 });
+
+
 
 
 module.exports = router;
