@@ -2490,4 +2490,29 @@ error_log(json_encode($_SESSION));
         $this->set( "jsonRecord", $jsonRecord );
     }
 
+
+
+function VistAUsers() {
+error_log("VistAUsers");
+
+        $jsonRecord              = array( );
+        $jsonRecord[ "success" ] = true;
+        $msg                     = "";
+        if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            $nodevista   = new NodeVista();
+            $UserList    = $nodevista->get( "users" );
+            $jdUserList  = json_decode( $UserList );
+            $jsonRecord["total"]   = count($jdUserList);
+            $jsonRecord["records"] = $jdUserList;
+        }
+        else {
+            $msg                     = "Wrong Service Call Type... Expected a GET";
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = $msg;
+        }
+        $this->set( "jsonRecord", $jsonRecord );
+    }
+
+
+
 }
