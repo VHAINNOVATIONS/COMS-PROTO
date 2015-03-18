@@ -355,7 +355,7 @@ router.get('/user/info', function(req, res){
   user.getInfo(loginOptions,  callback);
 });
 
-router.get('/users', function(req, res){
+router.get('/users/:name', function(req, res){
   var loginOptions = {
     accessCode: req.get('X-ACCESS-CODE'),
     verifyCode: req.get('X-VERIFY-CODE') 
@@ -373,7 +373,7 @@ router.get('/users', function(req, res){
     }
   }
   // make an appointment
-  user.getAll(loginOptions, callback);
+  user.findUserByName(loginOptions, req.params.name, callback);
 });
 
 
