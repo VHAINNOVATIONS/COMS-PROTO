@@ -1,5 +1,6 @@
 var vistaconfig = require("../../lib/rpcvista/vistaconfig");
 var vista = require("../../lib/rpcvista/VistaJS");
+
 var userhelper = require("./helpers/userhelper");
 /*
 ^XWB(8994,356,3,1,0)="Result(0) is the users DUZ."
@@ -64,15 +65,16 @@ exports.getInfo = function(loginOptions, callback){
 }
 
 // get a list of all Valid Vista Providers
-exports.getAll = function(loginOptions, callback){
+exports.findUserByName = function(loginOptions, query, callback){
   var configuration = vistaconfig.configuration;
   for(var option in loginOptions){
     configuration[option] = loginOptions[option];
   }
+  console.log("Vista Query: "+query);
   vista.callRpc(
     vistaconfig.logger, 
     configuration, 
-    'ORWU NEWPERS',['', '1', 'PROVIDER'], 
+    'ORWU NEWPERS',[vista.adjustStringForVistaSearch(query), '1'], 
     function(error, result){
       if(result instanceof Error){
         callback(result, null);
