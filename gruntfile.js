@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         separator: '\n\n'
       },
       dist: {
-        src: ['app/LocalizedCode.js', 'app/js/Consts.js', 'libs/ExtJS_4.1.0/examples/ux/*.js', 'libs/ExtJS_4.1.0/examples/ux/**/*.js', 'app/js/Extensions.js', 'app/js/app/ux/**/*.js', 'app/js/app/model/*.js', 'app/js/app/store/*.js','app/js/app/view/**/*.js','app/js/app/controller/**/*.js', 'app/js/app.js', ],
+        src: ['app/LocalizedCode.js', 'app/js/Consts.js', 'libs/ExtJS_4.1.0/examples/ux/*.js', 'libs/ExtJS_4.1.0/examples/ux/**/*.js', 'app/js/Extensions.js', 'app/js/app/ux/**/*.js', 'app/js/app/model/*.js', 'app/js/app/store/*.js','app/js/app/view/**/*.js','app/js/app/controller/**/*.js', 'app/js/app.js' ],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
@@ -64,6 +64,14 @@ module.exports = function(grunt) {
 		}
 	},
 
+	phplint: {
+		options: {
+			swapPath: '_Temp/'
+		},
+		all: [
+			'app/*.php', 'framework/**/*.php'
+		]
+	},
 
     watch: {
       files: ['<%= jshint.files %>'],
@@ -71,8 +79,11 @@ module.exports = function(grunt) {
     }
   });
 
+	grunt.loadNpmTasks('grunt-phplint');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-junit-report');
+
 	grunt.registerTask('default', ['jshint', 'junit_report', 'concat']);
 
 };

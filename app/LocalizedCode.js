@@ -17,13 +17,8 @@ function wccConsoleLog(msg) {
 
 Ext.HandleLogout = function() {
 	var btn = Ext.get("LogoutBtn");
-
-	btn.on('click', function(event, target){
-		logoutPrompt(event);
-	}, null, {
-		delegate: "#LogoutBtn"
-	});
-}
+	btn.on('click', logoutPrompt, this);
+};
 
 var LogoutCancelled = true;
 function logoutConfirmed(btn) {

@@ -73,6 +73,7 @@ Ext.application({
 		Ext.Loader.setConfig({ disableCaching:false });
 		Ext.Ajax.disableCaching = false;
 		Ext.Loader.config.disableCaching = false;
+		Ext.HandleLogout();
 
 		Ext.QuickTips.init();
 		Ext.create("Ext.container.Container", {
