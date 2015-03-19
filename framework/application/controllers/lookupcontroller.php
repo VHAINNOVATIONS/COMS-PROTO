@@ -10,7 +10,6 @@ require_once "/ChromePhp.php";
  * function delete() {
  * function deleteTemplate(){
  * function view($name = null, $description = null, $id = null) {
- * function 
  */
 class LookupController extends Controller {
 
@@ -2492,15 +2491,20 @@ error_log(json_encode($_SESSION));
 
 
 
-function VistAUsers() {
+function VistAUsers($name=null) {
 error_log("VistAUsers");
 
         $jsonRecord              = array( );
         $jsonRecord[ "success" ] = true;
         $msg                     = "";
         if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            $URL = "users";
+            if ($name) {
+                $name   = rawurlencode(trim($name));
+                $URL = "users/$name";
+            }
             $nodevista   = new NodeVista();
-            $UserList    = $nodevista->get( "users" );
+            $UserList    = $nodevista->get( $URL );
             $jdUserList  = json_decode( $UserList );
             $jsonRecord["total"]   = count($jdUserList);
             $jsonRecord["records"] = $jdUserList;
