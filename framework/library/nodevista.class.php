@@ -46,12 +46,16 @@ class NodeVista{
                 }
         }
 
+      error_log("NodeVista Class - Basic Call Function SESSION Variables- " . json_encode($_SESSION));
+
       // Authentication to Node Vista
+        // 'X-ACCESS-CODE: '.NV_ACCESS_CODE,
+        // 'X-VERIFY-CODE: '.NV_VERIFY_CODE,
       curl_setopt($curl, CURLOPT_HTTPHEADER, array(
         'X-Access-Token: '.NV_ACCESS_TOKEN,
         'X-Token-Secret: '.NV_ACCESS_SECRET,
-        'X-ACCESS-CODE: '.NV_ACCESS_CODE,
-        'X-VERIFY-CODE: '.NV_VERIFY_CODE,
+        'X-ACCESS-CODE: '.$_SESSION["AccessCode"],
+        'X-VERIFY-CODE: '.$_SESSION["VerifyCode"],
         'Content-Type: application/json'
       ));
       curl_setopt($curl, CURLOPT_URL, NV_BASE_URL.'/'.$url);
