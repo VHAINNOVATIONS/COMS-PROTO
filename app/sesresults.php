@@ -2,7 +2,6 @@
 
 function LostSessionmdws(){
 	include "dbitcon.php";
-		//Get RID
 		$tsql1 = "SELECT DISTINCT mdws FROM COMS_Sessions WHERE rid != ''";
 		$getvars = sqlsrv_query($conn, $tsql1);
 			while( $row = sqlsrv_fetch_array($getvars, SQLSRV_FETCH_ASSOC)) {
@@ -10,9 +9,6 @@ function LostSessionmdws(){
 				$mdws = $row['mdws'];
 				$AC = $row['AC'];
 				$VC = $row['VC'];
-				//echo "MDWS: ".$mdws."<br>";
-				//echo $AC;
-				//echo $VC;
 				}
 				return $mdws;
 

@@ -34,18 +34,6 @@ $patientsearch = $match;
 	//Include SSH2 file
 	include('Net/SSH2.php');	 /* Changed to match Sandbox - 30 May 2014 */
 	
-	//Set Variables
-	//$host = '172.19.100.94';
-	//$username = 'cachemgr355';
-	//$password = 'vhaino355';
-	//$csession = 'csession cache355';
-	//$cdUnix = 'D ^%CD';
-	//$instance = 'CPM355';
-	//$cprsLogin = 'S DUZ=1';
-	//$patientLocation = 'GEN MED';
-	//$actingProvider = 'v107';
-	//$routine = 'ROUTINE';
-	
 	function NewOrderPatient($drug,$dose,$Regimen_Dose_Unit,$Description,$match,$NumberofDoses){
 	if ($Description === 'old'){
 	
@@ -54,9 +42,7 @@ $patientsearch = $match;
 	$orderday = date('m_d_Y');
 	
 	//Set Variables
-	//$host = '172.19.100.94';
 	$host = $_SESSION['vista'];
-	//$username = 'cachemgr355';
 	$username = $_SESSION['sshusr'];
 	$AC = $_SESSION['AC'];
 	$VC = $_SESSION['VC'];
