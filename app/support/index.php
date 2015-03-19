@@ -32,9 +32,11 @@
   <tr><td colspan="1">&nbsp;</td>
   <td colspan="1">&nbsp;</td></tr>
 <form enctype="multipart/form-data" action="fproc.php" method="post">
-  <tr><td colspan="2">Title: <input type="textbox" name="Title" size="80"><input id="TrackNumber" type="hidden" name="TrackNumber" value="<?php $serverName = "DBITDATA\DBIT";
+  <tr><td colspan="2">Title: <input type="textbox" name="Title" size="80"><input id="TrackNumber" type="hidden" name="TrackNumber" value="<?php 
+  $serverName = "DBITDATA\DBIT";
 $connectionOptions = array("UID"=>"coms_db_user","PWD"=>"dbitPASS99","Database"=>"COMS_Tracking");
 $conn =  sqlsrv_connect( $serverName, $connectionOptions);
+
 $sqlid = "SELECT TrackNumber FROM COMS_UAT ORDER BY TrackNumber";
 $getid = sqlsrv_query($conn, $sqlid);
 while( $row = sqlsrv_fetch_array($getid, SQLSRV_FETCH_ASSOC))
@@ -48,7 +50,7 @@ echo "".$TrackNumber.""; ?>" size=40> </td></tr>
       <option value="Chemotherapy Template Order Source">Chemotherapy Template Order Source</option>
       <option value="Order Entry Management">Order Entry Management</option>
       <option value="Flow Sheet">Flow Sheet</option>
-      <option value="Nursing Documentation">Nursing Documentation</option>
+      <option value="Treatment Documentation">Treatment Documentation</option>
       <option value="End of Treatment Summary">End of Treatment Summary</option>
       <option value="COMS Overall">COMS Overall</option>
     </select></td>
@@ -63,7 +65,7 @@ echo "".$TrackNumber.""; ?>" size=40> </td></tr>
       <option value="Major -- Severe problems but possible to work around;">Major -- Severe problems but possible to work around;</option>
       <option value="Minor -- Does not impact functionality but is not according to specifications">Minor -- Does not impact functionality but is not according to specifications</option>
       </select></td>
-	  <td colspan="1" align="left">File Attachment Description (optional): <input type="text" name="file_info" size="40"><input type="hidden" name="MAX_FILE_SIZE" value="10000000"> </td>
+	  <td colspan="1" align="left"> </td>
 	</tr>
 	<tr><td colspan="2">&nbsp;</td></tr>
 	<tr>
@@ -73,7 +75,7 @@ echo "".$TrackNumber.""; ?>" size=40> </td></tr>
       <option value="Medium -- Event will probably occur in most circumstances">Medium -- Event will probably occur in most circumstances</option>
       <option value="Low -- Incident may occur at some time">Low -- Incident may occur at some time</option>
       </select></td>
-	  <td colspan="1" align="left"><div align="left">File to upload:<br> <input type="file" name="attachment" id="attachment" size="40"></div></td>
+	  <td colspan="1" align="left"></td>
 	  </tr>
 	  <tr><td colspan="2">&nbsp;</td></tr>
 	  <tr>
@@ -87,8 +89,8 @@ echo "".$TrackNumber.""; ?>" size=40> </td></tr>
   </tr>
   <tr><td colspan="2">&nbsp;</td></tr>
      
-  <tr><td colspan="2">Defect -- Provide as many details as possible <br><br> Steps, Inputs, Expected Results, Actual Results, Anomalies, Date/Time, Attempts to Repeat, and Screen Captures <br><br>
-To copy the entire screen - Press PRINT SCREEN.  To copy only an active window - Press ALT+PRINT SCREEN.  To paste into MS Paint -- Click the Start button, select Programs, select Accessories, select Paint to open, then select Edit, select Paste, select File, select Save As, enter file name, change file type to TIFF, and select save file
+  <tr><td colspan="2">Defect -- Provide as many details as possible <br><br> Steps, Inputs, Expected Results, Actual Results, Anomalies, Date/Time and Attempts to Repeat.<br><br>
+
 </td></tr>
   <tr>
     <td colspan="2"><textarea name="Feedback" cols="110" rows="25"></textarea></td>
@@ -102,6 +104,6 @@ To copy the entire screen - Press PRINT SCREEN.  To copy only an active window -
 </form>
 </table>
 </td></tr></table>
-<a href="video/COMS_1.wmv">Video 1</a>
+
 </body>
 </html>
