@@ -46,7 +46,7 @@
             $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
             $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
         }
-        $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$AccessCode'";
+        $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$UserName'";
         $updateRole = sqlsrv_query( $conn, $usql );
         $point      = "signed in";
         PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );

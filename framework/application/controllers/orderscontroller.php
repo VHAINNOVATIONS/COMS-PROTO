@@ -594,6 +594,8 @@ End as orderstatus
                         return;
                     }
                     
+
+error_log("Get Last Name for Patient - " .  $patient[ 'patientID' ]); 
                     $Last_Name = $this->Orders->LookupPatientName( $patient[ 'patientID' ] );
                     if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
                         $patient[ 'Last_Name' ] = $Last_Name;

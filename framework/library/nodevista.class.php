@@ -71,6 +71,7 @@ error_log("NodeVista Class URL = " . NV_BASE_URL.'/'.$url);
       $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
       curl_close($curl);
 
+error_log("NodeVista Result Set = $result");
 
       return $result;
   }

@@ -32709,7 +32709,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				if ("" !== query) {
 					var record = patientInfo.data;
 					Patient_ID = record.id;
-					Patient_Name = record.name;
+					// Patient_Name = record.name;
+					Patient_Name = record.VPR.data.items[0].fullName;
 					var data = record;
 					this.application.TempPatient = record;
 
