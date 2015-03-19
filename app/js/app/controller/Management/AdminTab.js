@@ -61,6 +61,11 @@ Ext.define('COMS.controller.Management.AdminTab', {
         ref: 'RolesGrid', 
         selector: 'AdminTab Roles grid'
     },
+	{
+        ref: 'SelVistAUserNoMatch', 
+        selector: 'AdminTab Roles [name=\"SelVistAUserNoMatch\"]'
+    },
+
 
 	{
 		ref : "RoleUserName",
@@ -86,6 +91,16 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "RoleDeleteBtn",
 		selector : "AdminTab Roles button[text=\"Delete\"]"
+	},
+
+	{
+		ref : "RoleGetUsersBtn",
+		selector : "AdminTab Roles button[name=\"GetUserList\"]"
+	},
+
+	{
+		ref : "RoleGetUsersCombo",
+		selector : "AdminTab Roles [name=\"SelVistAUser\"]"
 	},
 
 
@@ -222,6 +237,13 @@ Ext.define('COMS.controller.Management.AdminTab', {
     init: function() {
         wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
         this.control({
+
+			"AdminTab Roles [name=\"SelVistAUser\"]" : {
+				"select" : this.selectVistAUser
+			},
+			"AdminTab Roles button[name=\"GetUserList\"]" : {
+                click : this.GetUsersFromVistA
+            },
 
             'form[title=\"Rounding Rules\"]' : {
                 beforeshow : this.RoundingRulesFormRenderSetValues
@@ -390,6 +412,58 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				click: this.MedRisksLoadGrid
 			}
 		});
+	},
+
+
+	selectVistAUser : function(combo) {
+		var msg = this.getSelVistAUserNoMatch();
+		msg.hide();
+	},
+
+	UsersFromVistAStoreLoaded : function(records, operation, success) {
+		this.getRolesForm().setLoading( false, false );
+		var theCombo = this.getRoleGetUsersCombo();
+		var theStore = theCombo.getStore();
+		var theRecord = records[0].getData();
+		var checkName = theRecord.name;
+		var theURL = theStore.proxy.url.split("/");
+		var theEnteredName = theURL[theURL.length-1];
+		var theDUZ = theRecord.duz;
+		if (checkName !== theEnteredName) {
+			var msg = this.getSelVistAUserNoMatch();
+			msg.show();
+			theDUZ = "";
+		}
+		// theCombo.fireEvent('select', theCombo, theRecord);
+
+		theStore.proxy.url = "";		// /LookUp/VistAUsers";
+		theCombo.setValue(theDUZ);
+		theCombo.show();
+		this.getRoleUserRole().show();
+		this.getRoleUserTemplateAuthoring().show();
+	},
+
+	GetUsersFromVistA : function(btn) {
+		var theCombo = this.getRoleGetUsersCombo();
+		theCombo.hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
+
+		this.getRolesForm().setLoading( "Getting User Data from VistA", false );
+		var msg = this.getSelVistAUserNoMatch();
+		msg.html = "";
+		msg.hide();
+
+
+		var theValues = btn.up("form").getForm().getValues();
+		var UserName = theValues.LastName;
+		if ("" !== theValues.FirstName) {
+			UserName += "," + theValues.FirstName;
+		}
+
+		var theStore = theCombo.getStore();
+		theStore.proxy.url = "/LookUp/VistAUsers/" + UserName;
+		theStore.load({ scope : this, callback: this.UsersFromVistAStoreLoaded});
 	},
 
 	MedRisksLoadGrid : function(panel) {
@@ -591,23 +665,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			}
 		}
 	},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* Discharge Instruction */
@@ -838,9 +895,21 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 	clickRolesSave : function ( theButton, eOpts) {
 		this.application.loadMask("Please wait; Saving User Role Information");
-		var Name = this.getRoleUserName().getValue();
-		var Email = this.getRoleUserEmail().getValue();
-		var AC = this.getRoleUserAccessCode().getValue();
+
+debugger;
+		var msg = this.getSelVistAUserNoMatch();
+		msg.html = "";
+		msg.hide();
+
+
+		var theCombo = this.getRoleGetUsersCombo();
+		var duz = theCombo.getValue();
+		var Name = theCombo.getRawValue();
+		theCombo.hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
+
+
 		var Role = this.getRoleUserRole().getValue();
 		var TA = this.getRoleUserTemplateAuthoring().getValue();
 		var theGrid = this.getRolesGrid();
@@ -851,7 +920,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			CMD = "PUT";
 			rid = this.RolesUserInfo.rid;
 		}
-		var RoleData = { "rid" : rid, "username" : AC, "role" : Role, "DisplayName" : Name, "Email" : Email, "TemplateAuthoring" : TA };
+		var RoleData = { "rid" : rid, "username" : duz, "role" : Role, "DisplayName" : Name, "TemplateAuthoring" : TA };
 
 		delete this.RolesUserInfo;
 		Ext.Ajax.request({

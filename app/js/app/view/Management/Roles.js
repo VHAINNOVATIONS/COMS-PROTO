@@ -20,56 +20,61 @@ Ext.define("COMS.view.Management.Roles", {
 			"items": [
 				{
 					"xtype" : "textfield",
-					"name" : "name",
-					"fieldLabel" : "Name <em class=\"required-field\">*</em>",
-					"labelWidth": 50,
+					"name" : "LastName",
+					"fieldLabel" : "Last Name <em class=\"required-field\">*</em>",
+					"labelWidth": 80,
 					"width": 190,
 					"allowBlank" : false
 				}, 
 				{
 					"xtype" : "textfield",
-					"name" : "email",
-					"fieldLabel" : "Email Address <em class=\"required-field\">*</em>",
-					"labelWidth": 90,
-					"width": 220,
-					"vtype" : "email"
+					"name" : "FirstName",
+					"fieldLabel" : "First Name <em class=\"required-field\">*</em>",
+					"labelWidth": 80,
+					"width": 190,
+					"allowBlank" : false
 				}, 
 				{
-					"xtype" : "textfield",
-					"name" : "AccessCode",
-					"fieldLabel" : "Access Code <em class=\"required-field\">*</em>",
-					"labelWidth": 85,
-					"width": 200,
-					"allowBlank" : false
-				},
-/**
-
+					"xtype" : "button",
+					"name" : "GetUserList",
+					"text" : "Get Users"
+				}
+			]
+		},
+		{
+			"xtype": "container",
+			"layout": "hbox",
+			"margin" : "0 0 10 0",
+			"defaults" : {"margin" : "0 10 0 0" },
+			"items": [
 				{
 					"xtype": "combo",
-					"name": "Label",
-					"fieldLabel": "User",
+					"name": "SelVistAUser",
+					"fieldLabel": "Users",
 					"labelWidth": 35,
 					"width": 200,
-					"displayField": "Description",
-					"valueField": "Lookup_ID",
-	store: {
-		// autoLoad: true,
-        autoLoad: false,
-		fields: ["Lookup_ID", "Description"],
-		proxy: {
-			type: "rest",
-			url: "/Admin/Users",
-			reader: {
-				type: "json",
-				root: "records"
-			}
-		}
-	}
+					"displayField": "name",
+					"valueField": "duz",
+					"typeAhead" : true,
+					"hidden" : true,
+					"store" : {
+						"fields" : ["name", "duz"],
+						"proxy" : {
+							"type" : "rest",
+							"reader" : {
+								"type" : "json",
+								"root" : "records"
+							}
+						}
+					}
 				},
-**/
+			{
+					"xtype" : "box", "name" : "SelVistAUserNoMatch", "html" : "No match for name entered, please select from choices provided", "hidden" : true 
+			},
 				{
 					"xtype": "combo",
 					"name": "Role",
+					"hidden" : true,
 					"fieldLabel": "Role <em class=\"required-field\">*</em>",
 					"labelWidth": 40,
 					"width": 120,
@@ -86,7 +91,13 @@ Ext.define("COMS.view.Management.Roles", {
 						]
 					})
 				},
-				{ "xtype" : "checkbox",  "name" : "TemplateAuthoring", "labelWidth" : 110, "fieldLabel" : "Template Authoring" }
+				{ 
+					"xtype" : "checkbox",
+					"name" : "TemplateAuthoring",
+					"labelWidth" : 110,
+					"fieldLabel" : "Template Authoring",
+					"hidden": true 
+				}
 			]
 		},
 		{
@@ -107,7 +118,7 @@ Ext.define("COMS.view.Management.Roles", {
 			"store" : {
 				"autoLoad" : false,
 					// username, role, displayname, email, templateAuthoring
-				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Email", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
+				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
 				"proxy" : {
 					"type" : "rest",
 					"url" : "/Admin/UserRoles",
@@ -124,12 +135,7 @@ Ext.define("COMS.view.Management.Roles", {
 					"width" : 120
 				},
 				{
-					"header" : "Email Address",
-					"dataIndex" : "Email",
-					"width" : 180
-				},
-				{
-					"header" : "Access Code",
+					"header" : "DUZ",
 					"dataIndex" : "username",
 					"width" : 120
 				},

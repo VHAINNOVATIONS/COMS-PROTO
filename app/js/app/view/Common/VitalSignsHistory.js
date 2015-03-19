@@ -169,8 +169,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 
 			BSACalc: function (data, pData, pDataIndex) {
 				if (1 === pDataIndex) {
-					debugger;
-					var CurBSAField = Ext.get("PatientInfoTableBSA_Display");
+					/* MWB - 3/18/2015 - Add functionality to push BSA Info into PatientInfo panel once calculated */
 				}
 				if (data.WeightFormula && data.BSA_Method) {
 					data.Amputations = pData.Amputations;
