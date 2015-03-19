@@ -346,14 +346,29 @@
         {
             
             $query  = "SELECT Last_Name as LK_Last_Name, First_Name as LK_First_Name, Match as LK_Match FROM Patient WHERE Patient_ID = '" . $PID . "'";
+            $query  = "SELECT DFN, LK_Last_Name = '', LK_First_Name = '', LK_Match = '' FROM Patient WHERE Patient_ID = '$PID'";
+error_log("Orders Model - LookupPatientName - Query = $query");
+
             $queryq = $this->query( $query );
             foreach ( $queryq as $row ) {
                 $LK_Last_Name  = $row[ 'LK_Last_Name' ];
                 $LK_First_Name = $row[ 'LK_First_Name' ];
                 $LK_Match      = $row[ 'LK_Match' ];
+                $LK_DFN        = $row[ 'DFN' ];
             }
+            $nodevista  = new NodeVista();
+            $URL    = "patient/details/$LK_DFN";
+            $PatientInfo      = $nodevista->get( $URL );
+            $obj        = json_decode( $PatientInfo );
+error_log("Orders Model - LookupPatientName - Patient Info = $PatientInfo");
+            $data     = $obj->{"data"}->{"items"}[0];
+error_log("Orders Model - LookupPatientName - Data - " . json_encode($data));
+            $WName = $data->{"fullName"};
+error_log("Orders Model - LookupPatientName - FullName  - $WName");
+
+
             
-            $WName = $LK_Last_Name . " " . $LK_First_Name;
+            // $WName = $LK_Last_Name . " " . $LK_First_Name;
             
             return $WName;
             //return $this->query($query);

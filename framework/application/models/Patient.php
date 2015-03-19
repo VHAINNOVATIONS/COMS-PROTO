@@ -11,10 +11,15 @@ class Patient extends Model
                      "Age = DATEDIFF(YY, DOB, GETDATE()) - CASE WHEN( (MONTH(DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, " .
                      "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as lname, First_Name as fname, p.DFN as dfn " .
                      "FROM " . $this->_table . " p";
+
+
+            $query = "SELECT ID = Patient_ID, Name = '', Age = '', DOB = '', Gender = '', lname = '', fname = '', p.DFN as dfn FROM " . $this->_table . " p";
+
             if ($patientId != NULL) {
                 $query .= " where p.Patient_ID = '$patientId'";
             }
         }
+        error_log("Patient Model - selectAll - $query");
         return $this->query($query);
     }
 
@@ -27,7 +32,12 @@ class Patient extends Model
                      "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as lname, First_Name as fname, p.DFN as DFN " .
                      "FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '" .
                      $patientId . "'";
-        }        
+
+
+            $query = "SELECT id = Patient_ID, name = '', Age = '', DOB = '', p.DFN as DFN FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '$patientId'";
+
+        }    
+error_log("Patient Model - selectByPatientId - $query");        
         return $this->query($query);
     }
 

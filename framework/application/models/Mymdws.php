@@ -8,6 +8,8 @@ class Mymdws extends Model {
 
     function checkPatientCOMS($lastFour){
         $query = "SELECT Match,First_Name as fname,Last_Name as lname,Middle_Name,DFN,Patient_ID as id FROM Patient WHERE Match = '$lastFour'";
+        $query = "SELECT DFN,Patient_ID as id FROM Patient WHERE DFN = '$lastFour'";
+error_log("checkPatientCOMS - $lastFour = $query");
         $result = $this->query($query); 
         $query2 = "SELECT PAT_ID
         ,Patient_ID
