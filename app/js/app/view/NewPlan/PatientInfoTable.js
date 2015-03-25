@@ -134,14 +134,26 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return x;
 					},
 
-					BSA_Cell : function (values, parent) {
-						if ("" === values.BSA_Method || "" === values.WeightFormula) {
-							return "<abbr title=\"Not Available\">N/A</abbr>";
+					BSA_Cell : function (data) {
+						var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+						var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+						if (
+							(data.hasOwnProperty("BSA")           && "" !== data.BSA           ) && 
+							(data.hasOwnProperty("BSA_Method")    && "" !== data.BSA_Method    && 0 !== data.BSA_Method) && 
+							(data.hasOwnProperty("BSA_Weight")    && "" !== data.BSA_Weight    && 0 !== data.BSA_Weight) && 
+							(data.hasOwnProperty("WeightFormula") && "" !== data.WeightFormula && 0 !== data.WeightFormula) && 
+							(data.hasOwnProperty("Height")        && "" !== data.Height        && 0 !== data.Height) && 
+							(data.hasOwnProperty("Weight")        && "" !== data.Weight        && 0 !== data.Weight)
+						) {
+							var BSA = Ext.BSA_Calc(data);
+							if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
+								data.BSA = BSA;
+								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  "</span>" + btnBuf;
+							}
 						}
-						var buf = "<span id=\"PatientInfoTableBSA_Display\">" + values.BSA +  "</span>" + 
-						"<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
-						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
-						return buf;
+						data.BSA = NAMsg;
+						return NAMsg;
 					},
 
 					AddEditBtns : function (btnName, values, parent) {

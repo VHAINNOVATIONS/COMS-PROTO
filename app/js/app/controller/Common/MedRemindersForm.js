@@ -9,11 +9,6 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 	],
 
 	init: function() {
-		/*
-		this.application.on(
-			{ LoadOEMData : this.scratch, scope : this }
-		);
-		*/
 		this.control({
 			"MedRemindersForm button[text=\"Save\"]" : {
 				click : this.SaveForm
@@ -21,21 +16,10 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 		});
 	},
 
-	/*
-	scratch : function() {
-	},
-	*/
-
-	xxxxxSaveForm : function(btn) {
-		// debugger;
-		var form = btn.up("form");
-		form.save();
-	},
 
 
 	clickCancel : function(theBtn, theEvent, eOpts) {
 		theBtn.up('form').getForm().reset();
-		//this.getTheGrid().getSelectionModel().deselectAll();
 	},
 
 
