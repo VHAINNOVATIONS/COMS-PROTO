@@ -979,7 +979,6 @@ $queryStart_DATA = "'$Template_ID',
     }
 
     function getDataForJson($name) {
-
         if ($name == 'DiseaseType') {
             $orderBy = 'Name';
         } else {
@@ -1024,7 +1023,7 @@ $queryStart_DATA = "'$Template_ID',
                 break;
             case "DELIVMECH":
                 $name = 'Delivery Mechanism';
-        $query = "
+                $query = "
             SELECT id=Lookup_ID, 
                 type=Lookup_Type, 
                 Name, 
@@ -1037,6 +1036,17 @@ $queryStart_DATA = "'$Template_ID',
                         WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')
                 ORDER BY $orderBy
         ";
+                break;
+            case "DRUGSINPATIENT":
+                $query = "
+                SELECT 
+                id=Lookup_ID, 
+                type=Lookup_Type, 
+                Name, 
+                Description 
+                FROM LookUp 
+                WHERE Lookup_Type = 2 AND upper(Description) = 'INPATIENT'
+                ORDER BY Name";
                 break;
             default:
         $query = "

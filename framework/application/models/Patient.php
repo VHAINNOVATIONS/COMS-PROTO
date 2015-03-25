@@ -351,70 +351,67 @@ function convertReason2ID($Reason) {
             $id = $patientId[0]['id'];
         }
         
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            if (null == $dateTaken) {
-                $query = "SELECT 
-                ph.Height as Height,
-                ph.Weight as Weight,
-                BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), 
-                Weight_Formula as WeightFormula, 
-                BSA_Method as BSA_Method, 
-                BSA,
-                BSA_Weight,
-                CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
-                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2, 
-                Temperature, 
-                TemperatureLocation, 
-                Pulse, 
-                Respiration, 
-                Pain, 
-                OxygenationLevel as SPO2, 
-                Cycle, 
-                Admin_Day as Day, 
-                CASE WHEN ph.Performance_ID is null then 'No Change' else l4.Description END as PS, 
-                CASE WHEN ph.Performance_ID is null then 'N/C' else l4.Name END as PSID, 
-                Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, 
-                p.Gender as Gender 
-                FROM Patient_History ph 
-                INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID 
-                LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
-                WHERE ph.Patient_ID = '$id' 
-                ORDER BY Date_Taken DESC";
-				//possible error with above query - sic
-				//echo $query;
-            } else {
-                $query = "SELECT 
-                ph.Height as Height,
-                ph.Weight as Weight,
-                BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), 
-                Weight_Formula as WeightFormula, 
-                BSA_Method as BSA_Method, 
-                BSA,
-                BSA_Weight,
-                CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
-                CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2,
-                Temperature, 
-                TemperatureLocation, 
-                Pulse, 
-                Respiration, 
-                Pain, 
-                OxygenationLevel as SPO2, 
-                Cycle, 
-                Admin_Day as Day, 
-                CASE WHEN ph.Performance_ID is null then 'No Change' else l4.Description END as PS, 
-                CASE WHEN ph.Performance_ID is null then 'N/C' else l4.Name END as PSID, 
-                Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, 
-                p.Gender as Gender 
-                FROM Patient_History ph
-                INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID
-                LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID
-                WHERE ph.Patient_ID = '$id' 
-                AND CONVERT(VARCHAR(10), Date_Taken, 105) = '$dateTaken'
-                ORDER BY Date_Taken DESC";
-            }
+        $baseQuery = "SELECT 
+            ph.Height as Height,
+            ph.Weight as Weight,
+            BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), 
+            Weight_Formula as WeightFormula, 
+            BSA_Method as BSA_Method, 
+            BSA,
+            BSA_Weight,
+            CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
+            CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2, 
+            Temperature, 
+            TemperatureLocation, 
+            Pulse, 
+            Respiration, 
+            Pain, 
+            OxygenationLevel as SPO2, 
+            Cycle, 
+            Admin_Day as Day, 
+            CASE WHEN ph.Performance_ID is null then 'No Change' else l4.Description END as PS, 
+            CASE WHEN ph.Performance_ID is null then 'N/C' else l4.Name END as PSID, 
+            Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, 
+            p.Gender as Gender 
+            FROM Patient_History ph 
+            INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID 
+            LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
+            WHERE ph.Patient_ID = '$id'";
+
+        $baseQuery = "SELECT 
+            ph.Height as Height,
+            ph.Weight as Weight,
+            BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), 
+            Weight_Formula as WeightFormula, 
+            BSA_Method as BSA_Method, 
+            BSA,
+            BSA_Weight,
+            CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
+            CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2, 
+            Temperature, 
+            TemperatureLocation, 
+            Pulse, 
+            Respiration, 
+            Pain, 
+            OxygenationLevel as SPO2, 
+            Cycle, 
+            Admin_Day as Day, 
+            CASE WHEN ph.Performance_ID is null then 'No Change' else l4.Description END as PS, 
+            CASE WHEN ph.Performance_ID is null then 'N/C' else l4.Name END as PSID, 
+            Age = '', 
+            Gender = ''
+            FROM Patient_History ph 
+            INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID 
+            LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
+            WHERE ph.Patient_ID = '$id'";
+
+        if (null == $dateTaken) {
+            $query = $baseQuery . " ORDER BY Date_Taken DESC";
+        } else {
+            $query = $baseQuery . " AND CONVERT(VARCHAR(10), Date_Taken, 105) = '$dateTaken' ORDER BY Date_Taken DESC";
         }
 
-        // error_log("getMeasurements_v1 - $query");
+        error_log("getMeasurements_v1 - $query");
         return $this->query($query);
     }
 

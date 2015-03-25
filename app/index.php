@@ -2,7 +2,7 @@
     $FirstLogin = null;
     $LastLogin  = null;
     $AccessCode = null;
-
+    $LoginError = null;
 
      $_SESSION[ 'USE_NODE' ] = "Test";
 
@@ -103,11 +103,12 @@
         
         
         if ( $LastLogin1 > $TimeOutMax ) {
-            include "login.php";
+           $LoginError        = "BadName1";
+           include "login.php";
         } elseif ( $FirstLogin === 0 ) {
+            $LoginError        = "BadName2";
             include "login.php";
         } else {
-            
             $query = "SELECT TOP 1 sessionid
       ,timestamp
       ,compname
@@ -258,6 +259,7 @@
                         $rid               = $_SESSION[ 'rid' ];
                         $role              = $_SESSION[ 'role' ];
                         $page2Open         = $urlArray[ 0 ];
+                        $LoginError        = null;
                         include_once "main.php";
                     }
                 } else {
@@ -268,12 +270,13 @@
                     $role              = $_SESSION[ 'role' ];
                     $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
                     $page2Open         = $urlArray[ 0 ];
+                    $LoginError        = null;
                     include_once "main.php";
                 }
-                
             }
         }
     } else {
+        $LoginError        = "BadName";
         include "login.php";
     }
 ?>
