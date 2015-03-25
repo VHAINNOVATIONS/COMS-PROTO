@@ -864,9 +864,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		var VSHTemplateDataBtns;
 		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
-		    var newCtl = this.getController("NewPlan.NewPlanTab");
+			var newCtl = this.getController("NewPlan.NewPlanTab");
 			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
 			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
+			var piTableInfo = newCtl.getPatientInfoTableInformation();
+			piTableInfo.update(this.application.Patient);
 		}
 	},
 

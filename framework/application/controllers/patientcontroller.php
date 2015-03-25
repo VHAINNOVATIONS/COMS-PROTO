@@ -2211,77 +2211,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             $this->set( 'jsonRecord', $jsonRecord );
             return;
         }
-        
-        /*********************** SEANS CODE ****************************
-        function CumulativeDoseTracking($pid,$CDHID){
-        
-        $jsonRecord = array();
-        
-        if ($CDHID === NULL){
-        $records = $this->Patient->selectCDH($pid);
-        }else{
-        $records = $this->Patient->selectCDHR($pid,$CDHID);
-        }
-        
-        if ($this->checkForErrors('Get Patient CDH Failed. ', $records)) {
-        $jsonRecord['success'] = 'false';
-        $jsonRecord['msg'] = $this->get('frameworkErr');
-        $this->set('jsonRecord', $jsonRecord);
-        return;
-        } 
-        
-        $jsonRecord['success'] = true;            
-        $jsonRecord['total'] = count($records);
-        
-        $jsonRecord['records'] = $records;
-        
-        $this->set('jsonRecord', $jsonRecord);
-        
-        }
-        
-        function CumulativeDoseTrackingInsert($pid,$MedID,$CDAmts,$CDUnits){
-        
-        $jsonRecord = array();
-        
-        $records = $this->Patient->insertCDHR($pid,$MedID,$CDAmts,$CDUnits);
-        
-        if ($this->checkForErrors('Insert Patient CDH Failed. ', $records)) {
-        $jsonRecord['success'] = 'false';
-        $jsonRecord['msg'] = $this->get('frameworkErr');
-        $this->set('jsonRecord', $jsonRecord);
-        return;
-        } 
-        
-        $jsonRecord['success'] = true;            
-        $jsonRecord['total'] = count($records);
-        
-        $jsonRecord['records'] = $records;
-        
-        $this->set('jsonRecord', $jsonRecord);
-        
-        }
-        function CumulativeDoseTrackingUpdate($CDHID,$CDAmts,$CDUnits){
-        
-        $jsonRecord = array();
-        
-        $records = $this->Patient->updateCDHR($CDHID,$CDAmts,$CDUnits);
-        
-        if ($this->checkForErrors('Update Patient CDH Failed. ', $records)) {
-        $jsonRecord['success'] = 'false';
-        $jsonRecord['msg'] = $this->get('frameworkErr');
-        $this->set('jsonRecord', $jsonRecord);
-        return;
-        } 
-        
-        $jsonRecord['success'] = true;            
-        $jsonRecord['total'] = count($records);
-        
-        $jsonRecord['records'] = $records;
-        
-        $this->set('jsonRecord', $jsonRecord);
-        
-        }
-        ************************************/
+
         /**
          * Cumulative Dose Tracking - This service call manages the Patient Cumulative Dose History records
          * Each time a Patient Cumulative Dose History ("cdhRecord") record is generated for a particular patient a record is maintained consisting of the following:
@@ -2376,19 +2306,8 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             $GUID      = "";
             $this->Patient->beginTransaction();
             $Date2 = date( "F j, Y" );
-
-
-
-
             $ErrMsg = "";
-
-
-
-
-
             if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-
-
             $controller = 'LookupController';
             $lookupController = new $controller('Lookup', 'lookup', null);
             $query = $lookupController->_getAllCumulativeDoseMeds(null);

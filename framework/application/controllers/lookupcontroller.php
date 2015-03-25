@@ -351,7 +351,7 @@ class LookupController extends Controller {
     
     function view($name = null, $description = null, $id = null) {
         $this->set('title', 'All Lookups For - ' . $name);
-        if (NULL === $description && NULL != $name && NULL === $id) {
+        if (NULL != $name && NULL === $description && NULL === $id) {
             $this->set('lookups', $this->LookUp->getDataForJson($name));
         } else if (NULL != $description && NULL != $name && NULL === $id) {
             $this->set('lookups', $this->LookUp->selectByNameAndDesc($name, $description));

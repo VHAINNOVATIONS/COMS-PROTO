@@ -741,9 +741,14 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	// var h = Ext.In2Meters(PatientInfo.Height);	// Height (in Metres)
+	if (!PatientInfo.hasOwnProperty("Height") || !PatientInfo.hasOwnProperty("Weight") || !PatientInfo.hasOwnProperty("Gender") ||
+	   ("" === PatientInfo.Height || "" === PatientInfo.Weight)
+	) {
+		PatientInfo.BSA_Weight = "";
+		return "";
+	}
 	var h = PatientInfo.Height; // Height (in Inches)
 	var w = PatientInfo.Weight; // Ext.Pounds2Kilos(PatientInfo.Weight);
-//	var t = PatientInfo.BSA_Method; // BSA Method (string)
 	var g = PatientInfo.Gender; // Gender (M/F)
 	var CalcWeight = w;
 
@@ -768,6 +773,7 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	PatientInfo.BSA_Weight = CalcWeight;
 	return CalcWeight;
 };
+
 
 Ext.BSA_Calc = function (PatientInfo) {
 
