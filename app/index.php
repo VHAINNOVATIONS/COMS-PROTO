@@ -103,10 +103,10 @@
         
         
         if ( $LastLogin1 > $TimeOutMax ) {
-           $LoginError        = "BadName1";
+           $LoginError        = "Session Timeout";
            include "login.php";
         } elseif ( $FirstLogin === 0 ) {
-            $LoginError        = "BadName2";
+            $LoginError        = "No Previous Login";
             include "login.php";
         } else {
             $query = "SELECT TOP 1 sessionid

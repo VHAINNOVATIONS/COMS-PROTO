@@ -255,7 +255,7 @@
          * savePatientTemplate action
          */
         public function savePatientTemplate( ) {
-            // error_log( "PatientController - savePatientTemplate - Entry Point" );
+// error_log( "PatientController - savePatientTemplate - Entry Point" );
             $formData = json_decode( file_get_contents( 'php://input' ) );
             
             $this->Patient->beginTransaction();
@@ -266,12 +266,12 @@
                 return;
             }
             $this->Patient->endTransaction();
-            // error_log( "PatientController - savePatientTemplate - createOEMRecords" ); // get here
+// error_log( "PatientController - savePatientTemplate - createOEMRecords" ); // get here
             $this->createOEMRecords( $formData );
-            // error_log( "PatientController - savePatientTemplate - Terminating" ); // Never get here...
+// error_log( "PatientController - savePatientTemplate - Terminating" ); // Never get here...
             $this->set( 'patientTemplateId', $returnVal[ 0 ][ 'id' ] );
             $this->set( 'frameworkErr', null );
-            // error_log( "PatientController - savePatientTemplate - Exit" );
+// error_log( "PatientController - savePatientTemplate - Exit" );
         }
         
         /**
@@ -323,7 +323,7 @@
         
         
         function viewall( $id = NULL ) {
-            // error_log("viewall Entry Point");
+// error_log("viewall Entry Point");
             if ( $id == NULL ) {
                 $retVal = $this->Patient->selectAll();
             } else {
@@ -338,7 +338,7 @@
             $patientDetailMap = array( );
             $measurements     = array( );
             $modPatients      = array( );
-            // error_log("Patients Count - " . count($patients));
+// error_log("Patients Count - " . count($patients));
             foreach ( $patients as $patient ) {
                 if ( ( NULL === $id ) || ( NULL !== $id && $patient[ 'ID' ] == $id ) ) {
                     $lookup = new LookUp();
@@ -366,16 +366,16 @@
                     $patientBSA = $this->_getBSA( $patient[ 'ID' ] );
                     
                     $details = $retVal;
-                    // error_log("Details Count - " . count($details));
-                    // error_log("Why are there so many detail records for a single patient?");
+// error_log("Details Count - " . count($details));
+// error_log("Why are there so many detail records for a single patient?");
                     if ( count( $details ) > 0 ) {
                         foreach ( $details as $d ) {
                             $detail = $this->TreatmentStatus( $d );
                             
-                            //error_log("BSA");
-                            //error_log(json_encode($patientBSA));
+// error_log("BSA");
+// error_log(json_encode($patientBSA));
                             if ( isset( $patientBSA ) && count( $patientBSA ) > 0 ) {
-                                // error_log("Got BSA Data from BSA_Info Table");
+// error_log("Got BSA Data from BSA_Info Table");
                                 $a                         = $patientBSA[ 0 ][ "WeightFormula" ];
                                 $b                         = $patientBSA[ 0 ][ "BSAFormula" ];
                                 $detail[ "WeightFormula" ] = $a;
@@ -388,7 +388,7 @@
                             }
                         }
                     } else {
-                        // error_log("No Details, so build one");
+// error_log("No Details, so build one");
                         $detail                          = array( );
                         $detail[ "TemplateName" ]        = "";
                         $detail[ "TemplateDescription" ] = "";
@@ -402,7 +402,7 @@
                         $detail[ "PerformanceStatus" ]   = "";
                         
                         if ( isset( $patientBSA ) && count( $patientBSA ) > 0 ) {
-                            // error_log("Got BSA Data from BSA_Info Table");
+// error_log("Got BSA Data from BSA_Info Table");
                             $a                         = $patientBSA[ 0 ][ "WeightFormula" ];
                             $b                         = $patientBSA[ 0 ][ "BSAFormula" ];
                             $detail[ "WeightFormula" ] = $a;
@@ -435,7 +435,7 @@
             //echo "|||templateIdMT||| ";
             //var_dump($templateIdMT);
             
-            // error_log("_insertOrderStatus infusionMap - " . $this->varDumpToString($infusionMap));
+// error_log("_insertOrderStatus infusionMap - " . $this->varDumpToString($infusionMap));
             
             $iterator = new RecursiveIteratorIterator( new RecursiveArrayIterator( $templateIdMT ) );
             foreach ( $iterator as $key => $value ) {
@@ -607,16 +607,16 @@
 $query = "select PAT_ID FROM Patient_Assigned_Templates where Patient_ID = '$patientid' and Template_ID = '$templateId' and Date_Ended_Actual is null";
 $this->Patient->query( $query );
 
-error_log("PatientController.Getting PAT_ID to insert into Order_Status table");
-error_log($query);
+// error_log("PatientController.Getting PAT_ID to insert into Order_Status table");
+// error_log($query);
             $result = $this->Patient->query($query);
             if (! empty($result[0]['PAT_ID'])) {
                 $PAT_ID = $result[0]['PAT_ID'];
-                error_log("Got PAT_ID = $PAT_ID");
+// error_log("Got PAT_ID = $PAT_ID");
             }
-            else {
-                error_log("No PAT_ID - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR");
-            }
+//            else {
+// error_log("No PAT_ID - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR");
+// }
 
 
 
@@ -745,13 +745,7 @@ error_log($query);
          */
         private function _insertTherapyOrders( $therapies, $infusionMap, $dateStarted, $template, $cycle, $patientId, $formData ) {
             
-            // error_log( "_insertTherapyOrders - Entry Point - " . count( $therapies ) ); // get here (counts are 3 for Pre,4 for Post,3 for Therapy)
-            //var_dump($therapies);
-            //echo "|||Therapies||";
-            //var_dump($infusionMap);
-            //echo "|||Infusion Map||";
-            //var_dump($formData);
-            //echo "|||FormData||";
+// error_log( "_insertTherapyOrders - Entry Point - " . count( $therapies ) ); // get here (counts are 3 for Pre,4 for Post,3 for Therapy)
             foreach ( $therapies as $therapy ) {
                 
                 $adminDays = $therapy[ "adminDay" ];
@@ -820,7 +814,7 @@ error_log($query);
                     
                     $startDate = new DateTime( $dateStarted );
                     
-                    // error_log( "_insertTherapyOrders - Looping DaysArray - " . count( $daysArray ) ); // Get here, daysArray = 28
+// error_log( "_insertTherapyOrders - Looping DaysArray - " . count( $daysArray ) ); // Get here, daysArray = 28
                     for ( $index = 0; $index < count( $daysArray ); $index++ ) {
                         $daysDiff = 0;
                         if ( $index > 0 ) {
@@ -829,7 +823,7 @@ error_log($query);
                             $daysDiff = ( $daysArray[ $index ] ) - 1;
                         }
                         date_add( $startDate, new DateInterval( 'P' . $daysDiff . 'D' ) );
-                        // error_log( "_insertTherapyOrders - _insertTemplate" );
+// error_log( "_insertTherapyOrders - _insertTemplate" );
                         $templateId = $this->_insertTemplate( $template, $daysArray[ $index ], $startDate->format( 'Y-m-d' ), $cycle, $patientId );
                         if ( empty( $templateId ) ) {
                             return;
@@ -844,10 +838,10 @@ error_log($query);
                             $this->_insertRegimens( $therapy, $templateId[ 0 ][ 'lookupid' ], $orderId );
                         }
                     }
-                    // error_log( "_insertTherapyOrders - Looping DaysArray END LOOP" );
+// error_log( "_insertTherapyOrders - Looping DaysArray END LOOP" );
                 }
             }
-            // error_log( "_insertTherapyOrders - EXIT Point - " );
+// error_log( "_insertTherapyOrders - EXIT Point - " );
         }
         
         /**
@@ -972,7 +966,7 @@ error_log($query);
          * @todo Get Hydrations, Infusions, Regimens, etc, from a model not a view
          */
         private function createOEMRecords( $formData ) {
-            // error_log( "createOEMRecords - (PatientController)" );
+// error_log( "createOEMRecords - (PatientController)" );
             $templateId = $formData->TemplateID;
             $lookup     = new LookUp();
             $templates  = $lookup->getTopLevelTemplateDataById( $templateId, '' );
@@ -995,18 +989,18 @@ error_log($query);
             $dateStarted = $formData->DateStarted;
             $patientId   = $formData->PatientID;
             
-            // error_log( "createOEMRecords - Cycles = " . $template[ 'CourseNumMax' ] ); // Get here
+// error_log( "createOEMRecords - Cycles = " . $template[ 'CourseNumMax' ] ); // Get here
             for ( $cycle = 1; $cycle <= $template[ 'CourseNumMax' ]; $cycle++ ) {
                 if ( !$this->checkForErrors( 'Failed to get prehydrations', $preHydrations ) && !empty( $preHydrations ) ) {
-                    // error_log( "createOEMRecords - InsertTherapyOrders - Pre" ); // get here twice (should get here 4 times)
+// error_log( "createOEMRecords - InsertTherapyOrders - Pre" ); // get here twice (should get here 4 times)
                     $this->_insertTherapyOrders( $preHydrations, $preInfusionMap, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 if ( !$this->checkForErrors( 'Failed to get posthydrations', $postHydrations ) && !empty( $postHydrations ) ) {
-                    // error_log( "createOEMRecords - InsertTherapyOrders - Post" ); // get here twice (should get here 4 times)
+// error_log( "createOEMRecords - InsertTherapyOrders - Post" ); // get here twice (should get here 4 times)
                     $this->_insertTherapyOrders( $postHydrations, $postInfusionMap, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 if ( !$this->checkForErrors( 'Failed to get regimens', $regimens ) && !empty( $regimens ) ) {
-                    // error_log( "createOEMRecords - InsertTherapyOrders - Therapy" ); // get here ONCE (should get here 4 times)
+// error_log( "createOEMRecords - InsertTherapyOrders - Therapy" ); // get here ONCE (should get here 4 times)
                     $this->_insertTherapyOrders( $regimens, null, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 $dateStarted = $this->_formatDate( $dateStarted, $template[ "CycleLengthUnit" ], $template[ "length" ] );
@@ -1057,8 +1051,8 @@ error_log($query);
                 $this->set( 'oemrecords', null );
                 $this->set( 'masterRecord', null );
                 $this->set( 'frameworkErr', null );
-                // error_log("No Records for  - $id");
-                // error_log(json_encode($templateId));
+// error_log("No Records for  - $id");
+// error_log(json_encode($templateId));
                 return;
             }
             
@@ -1070,7 +1064,7 @@ error_log($query);
             
             if ( $this->checkForErrors( 'Get Top Level Template Data Failed. ', $masterRecord ) ) {
                 $this->set( 'masterRecord', null );
-                // error_log( "Get Top Level Template Data Failed. $masterRecord" );
+// error_log( "Get Top Level Template Data Failed. $masterRecord" );
                 return;
             }
             
@@ -1079,7 +1073,7 @@ error_log($query);
             $Disease = $lookup->selectByNameAndDesc( 'DiseaseType', $masterRecord[ 0 ][ 'Disease' ] );
             if ( $this->checkForErrors( 'Get Disease Info Failed. ', $Disease ) ) {
                 $this->set( 'templatedata', null );
-                // error_log( "Get Disease Info Failed. $Disease" );
+// error_log( "Get Disease Info Failed. $Disease" );
                 return;
             }
             $masterRecord[ 0 ][ 'DiseaseRecord' ] = $Disease;
@@ -1088,7 +1082,7 @@ error_log($query);
             $oemrecords = $this->Patient->getTopLevelOEMRecords( $id, $templateId[ 0 ][ 'id' ] );
             if ( $this->checkForErrors( 'Get Top Level OEM Data Failed. ', $oemrecords ) ) {
                 $this->set( 'oemrecords', null );
-                // error_log( "Get Top Level OEM Data Failed. $oemrecords" );
+// error_log( "Get Top Level OEM Data Failed. $oemrecords" );
                 return;
             }
             $this->set( 'oemrecords', $oemrecords );
@@ -1101,7 +1095,7 @@ error_log($query);
                 $retVal = $this->Hydrations( 'pre', $oemrecord[ 'TemplateID' ] );
                 if ( $this->checkForErrors( 'Get Pre Therapy Failed. ', $retVal ) ) {
                     $this->set( 'oemrecords', null );
-                    // error_log( "Get Pre Therapy Failed. - $retVal" );
+// error_log( "Get Pre Therapy Failed. - $retVal" );
                     return;
                 }
                 $oemDetails[ 'PreTherapy' ]          = $this->get( 'prehydrations' );
@@ -1110,7 +1104,7 @@ error_log($query);
                 $retVal = $this->Hydrations( 'post', $oemrecord[ 'TemplateID' ] );
                 if ( $this->checkForErrors( 'Get Post Therapy Failed. ', $retVal ) ) {
                     $this->set( 'oemrecords', null );
-                    // error_log("Get Post Therapy Failed. - $retVal");
+// error_log("Get Post Therapy Failed. - $retVal");
                     return;
                 }
                 
@@ -1120,7 +1114,7 @@ error_log($query);
                 $retVal = $this->Regimens( $oemrecord[ 'TemplateID' ] );
                 if ( $this->checkForErrors( 'Get Therapy Failed. ', $retVal ) ) {
                     $this->set( 'oemrecords', null );
-                    // error_log("Get Therapy Failed. - $retVal");
+// error_log("Get Therapy Failed. - $retVal");
                     return;
                 }
                 
@@ -1177,8 +1171,8 @@ error_log($query);
         function PrePostTherapy( $hydrations, $infusions ) {
             $HydrationArray = array( );
             foreach ( $hydrations as $hydration ) {
-                // error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydration));
-                // error_log("---------------------------");
+// error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydration));
+// error_log("---------------------------");
                 $HydrationRecord = array( );
                 $status          = $hydration[ "Status" ] ? $hydration[ "Status" ] : "";
                 
@@ -1328,9 +1322,9 @@ error_log($query);
                         $OneRecord[ "TherapyInstr" ]     = $oemrecord[ "TherapyInstr" ];
                         $OneRecord[ "PostTherapyInstr" ] = $oemrecord[ "PostTherapyInstr" ];
                         $OneRecord[ "PreTherapy" ]       = $this->PrePostTherapy( $oemDetails[ "PreTherapy" ], $oemDetails[ "PreTherapyInfusions" ] );
-                        //error_log("OneRecord vvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
-                        //error_log(json_encode($OneRecord["PreTherapy"]));
-                        //error_log("OneRecord ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+// error_log("OneRecord vvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+// error_log(json_encode($OneRecord["PreTherapy"]));
+// error_log("OneRecord ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                         
                         
                         
@@ -1338,9 +1332,9 @@ error_log($query);
                         $OneRecord[ "PostTherapy" ] = $this->PrePostTherapy( $oemDetails[ "PostTherapy" ], $oemDetails[ "PostTherapyInfusions" ] );
                         
                         
-                        //error_log("ALL RECORDS vvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
-                        //error_log(json_encode($OneRecord));
-                        //error_log("ALL RECORDS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+// error_log("ALL RECORDS vvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+// error_log(json_encode($OneRecord));
+// error_log("ALL RECORDS ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
                         $allRecords[ ] = $OneRecord;
                     }
                     $preRecord[ "OEMRecords" ] = $allRecords;
@@ -1409,14 +1403,14 @@ error_log($query);
             } else if ( $form_data ) {
                 $this->Patient->beginTransaction();
                 $this->set( 'oemrecords', null );
-error_log("PatientController.OEM - Begin Transaction");
-error_log(json_encode($form_data));
+// error_log("PatientController.OEM - Begin Transaction");
+// error_log(json_encode($form_data));
 
 
 
                 $retVal = $this->Patient->updateOEMRecord( $form_data );
-error_log("PatientController.OEM - UpdatedOEMRecord - ");
-error_log(json_encode($retVal));
+// error_log("PatientController.OEM - UpdatedOEMRecord - ");
+// error_log(json_encode($retVal));
 
                 if ( null != $retVal && array_key_exists( 'apperror', $retVal ) ) {
                     $errorMsg = $retVal[ 'apperror' ];
@@ -1448,8 +1442,8 @@ error_log(json_encode($retVal));
 
                 if ( !empty( $form_data->Reason ) && !empty( $form_data->Order_ID ) ) {
 
-error_log("PatientController.OEM - Workflow");
-error_log(json_encode($form_data));
+// error_log("PatientController.OEM - Workflow");
+// error_log(json_encode($form_data));
 
                     if ( $form_data->Reason == Workflow::REASON_CANCELLED ) {
                         $this->Patient->updateOrderStatus( $form_data->Order_ID, Orders::STATUS_CANCELLED );
@@ -1460,13 +1454,13 @@ error_log(json_encode($form_data));
                         // Update order status of this order if number of steps for
                         // the given reason is greater than 1
                         $workflows = $workflow->getWorkflowsByReasonNo( $form_data->Reason );
-error_log("PatientController.OEM - getWorkflowsByReasonNo - ");
-error_log(json_encode($workflows));
+// error_log("PatientController.OEM - getWorkflowsByReasonNo - ");
+// error_log(json_encode($workflows));
 
 
                         if ( !empty( $workflows[ 0 ][ 'NoSteps' ] ) && $workflows[ 0 ][ 'NoSteps' ] > 1 ) {
                             $this->Patient->updateOrderStatus( $form_data->Order_ID, Orders::STATUS_INCOORDINATION );
-error_log("PatientController.OEM - Update Order Status - ");
+// error_log("PatientController.OEM - Update Order Status - ");
                         }
                         
                         // Update order status for all instances of this drug for
@@ -1474,7 +1468,7 @@ error_log("PatientController.OEM - Update Order Status - ");
                         $patientIds = $this->Patient->getPatientIdByOrderId( $form_data->Order_ID );
                         if ( !empty( $form_data->InfusionMethod ) && !empty( $patientIds[ 0 ][ 'Patient_ID' ] ) && $form_data->InfusionMethod == 'Oral' ) {
                             $this->Patient->updateOrderStatusByPatientIdAndDrugName( $patientIds[ 0 ][ 'Patient_ID' ], $form_data->Med, Orders::STATUS_INCOORDINATION, $form_data->Order_ID );
-error_log("PatientController.OEM - update Order Status By Patient Id And DrugName- ");
+// error_log("PatientController.OEM - update Order Status By Patient Id And DrugName- ");
                         }
                     }
                 }
@@ -1526,7 +1520,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 $this->Patient->beginTransaction();
                 
                 $saveVitals = $this->Patient->saveVitals( $form_data, null );
-                error_log("Model call to saveVitals - " . json_encode($saveVitals));
+// error_log("Model call to saveVitals - " . json_encode($saveVitals));
 
                 if ( null != $saveVitals && array_key_exists( 'apperror', $saveVitals ) ) {
                     $errorMsg                = $saveVitals[ 'apperror' ];
@@ -1593,7 +1587,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 try {
                     return $OrderStatus[ 0 ][ "Order_Status" ];
                 } catch (Exception $e) {
-                    error_log("PatientController.getOrderStatus query = $query");
+// error_log("PatientController.getOrderStatus query = $query");
                     return "";
                 }
             }
@@ -1815,9 +1809,9 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
                 $query         = "delete from LookUp where Lookup_Type = 30 and Name = '$patientID'";
                 $TreatmentData = $this->Patient->query( $query );
-                // error_log("Deleting old records");
-                // error_log($query);
-                // error_log(json_encode($TreatmentData));
+// error_log("Deleting old records");
+// error_log($query);
+// error_log(json_encode($TreatmentData));
                 
                 $Amputations = $form_data->Amputations;
                 $this->Patient->beginTransaction();
@@ -2027,7 +2021,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                         FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
                     }
                 }
-                // error_log("DischargeInstructions Query - $query");
+// error_log("DischargeInstructions Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
@@ -2173,8 +2167,8 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                             $jsonRecord[ 'success' ] = false;
                             $jsonRecord[ 'msg' ]     = "Patient Information Unavailable - " . $this->get( 'frameworkErr' );
                         } else {
-                            //error_log("$patInfoQuery");
-                            //error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
+// error_log("$patInfoQuery");
+// error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
                             /* Parse data into Proper Form Input structure */
                             if ( count( $retVal ) > 0 ) {
                                 $data                  = array( );
@@ -2289,7 +2283,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
         function _AddRecordMed2CumList($CumDoseMeds, &$aMed) {
             foreach($CumDoseMeds as $aCumMed) {
                 if ($aCumMed['MedID'] == $aMed['MedID']) {
-                    error_log(json_encode($aCumMed));
+// error_log(json_encode($aCumMed));
                     $aMed['MaxCumulativeDoseAmt'] = $aCumMed['CumulativeDoseAmt'];
                     $aMed['MaxCumulativeDoseUnits'] = $aCumMed['CumulativeDoseUnits'];
                     return;
@@ -2312,10 +2306,9 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
             $lookupController = new $controller('Lookup', 'lookup', null);
             $query = $lookupController->_getAllCumulativeDoseMeds(null);
             $CumDoseMeds = $this->Patient->query( $query );
-            error_log("PatientController.CumulativeDoseTracking - Cumulative Meds List");
-            error_log(json_encode($CumDoseMeds));
-
-            error_log("CumulativeDoseTracking - GET");
+// error_log("PatientController.CumulativeDoseTracking - Cumulative Meds List");
+// error_log(json_encode($CumDoseMeds));
+// error_log("CumulativeDoseTracking - GET");
                 if ( $PatientID ) {
                     $partialQuery = "SELECT 
                    dt.CumulativeDoseAmt, 
@@ -2336,7 +2329,7 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                         $query = $partialQuery;
                     }
                 }
-                error_log("CumulativeDoseTracking Query - $query");
+// error_log("CumulativeDoseTracking Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
 
@@ -2353,16 +2346,16 @@ error_log("PatientController.OEM - update Order Status By Patient Id And DrugNam
                 $jsonRecord[ 'success' ] = 'true';
                 $CumMedsList = array( );
                 if ( count( $PatientsCumMeds ) > 0 ) {
-error_log("Patient.Controller.CumulativeDoseTracking.Walking Patients Meds - ");
+// error_log("Patient.Controller.CumulativeDoseTracking.Walking Patients Meds - ");
                     $Lifetime = 0;
                     $LastKey = "";
                     foreach ($PatientsCumMeds as $aMed) {
-error_log("Patient. Med - ");
-error_log(json_encode($aMed));
+// error_log("Patient. Med - ");
+// error_log(json_encode($aMed));
                         $rec = $aMed;
                         $this->_AddRecordMed2CumList($CumDoseMeds, $rec);
-error_log("Array Key does NOT exist - ");
-error_log(json_encode($CumMedsList));
+// error_log("Array Key does NOT exist - ");
+// error_log(json_encode($CumMedsList));
                         if (!array_key_exists ( $aMed['MedID'] , $CumMedsList )) {
                             if("" != $LastKey) {
                                 $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
@@ -2384,14 +2377,14 @@ error_log(json_encode($CumMedsList));
                         $CumMedsList[$aMed['MedID']]['Patient'][] = $newRec;
                         // $CumMedsList[$aMed['MedID']]['Patient']['Src'] =
                         // $CumMedsList[$aMed['MedID']]['Patient']['Author'] = $rec['Author'];
-error_log("A specific Med - ");
-error_log(json_encode($rec));
+// error_log("A specific Med - ");
+// error_log(json_encode($rec));
 
 //                        $CumMedsList[] = $rec;
                     }
                     if("" != $LastKey) {
                         $CumMedsList[$LastKey]['LifetimeAmt'] += $Lifetime;
-error_log("Patient. LastKey = $LastKey; Lifetime Total = $Lifetime");
+// error_log("Patient. LastKey = $LastKey; Lifetime Total = $Lifetime");
                     }
                     unset( $jsonRecord[ 'msg' ] );
                     $recs = array();
@@ -2403,49 +2396,60 @@ error_log("Patient. LastKey = $LastKey; Lifetime Total = $Lifetime");
                     $jsonRecord[ 'records' ] = $recs;
                 }
                 else {
-error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
+// error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
                 }
- error_log("CumMedsList");
- error_log(json_encode($CumMedsList));
+// error_log("CumMedsList");
+// error_log(json_encode($CumMedsList));
 
                 $this->set( 'jsonRecord', $jsonRecord );
                 return;
 
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-
+// error_log("Patient Controller - CumulativeDoseTracking - POST - 2415");
+                $MedID                 = "";
+                $MedName               = "";
+                $Source                = "";
+                $CumulativeDoseUnits   = "";
+                $CumulativeDoseUnitsID = "";
 
                 parse_str( file_get_contents( "php://input" ), $post_vars );
                 $lookup = new LookUp();
+// error_log("Input - " . json_encode($post_vars));
 
                 if ( isset( $post_vars[ "MedName" ] ) ) {
                     $MedName = $post_vars[ "MedName" ];
                     $MedName = $this->NTD_StripLeadingFromDrugName($MedName);
 
                     $retVal = $lookup->getLookupIdByNameAndType($MedName, 2);
-                    error_log(json_encode($retVal));
+// error_log(json_encode($retVal));
                     $MedID = $retVal[0]["id"];
                 }
+// error_log("Grabbing MedName 1 - MedID = $MedID, MedName = $MedName");
 
-
-/*** MedID is wrong, doesn't match Lookup Table value.
+/*** MedID is wrong, doesn't match Lookup Table value. **/
                 if ( isset( $post_vars[ "value" ] ) ) {
                     $MedID = $post_vars[ "value" ];
                 }
-***/
+// error_log("Grabbing MedName 2 - MedID = $MedID, MedName = $MedName");
+
                 if ( isset( $post_vars[ "LifetimeDose" ] ) ) {
                     $CumulativeDoseAmt = $post_vars[ "LifetimeDose" ];
                 }
 
                 if ( isset( $post_vars[ "UnitName" ] ) ) {
                     $CumulativeDoseUnits = $post_vars[ "UnitName" ];
-                } else if ( isset( $post_vars[ "Units" ] ) ) {
-                    $CumulativeDoseUnits = $post_vars[ "Units" ];
                 }
-                if ("" !== $CumulativeDoseUnits) {
+                if ( isset( $post_vars[ "Units" ] ) ) {
+                    $CumulativeDoseUnitsID = $post_vars[ "Units" ];
+                }
+                if ("" !== $CumulativeDoseUnits && "" === $CumulativeDoseUnitsID) {
                     $retVal = $lookup->getLookupIdByNameAndType($CumulativeDoseUnits, 11);
-                    error_log(json_encode($retVal));
+// error_log("Lookup for CumulativeDoseUnits - $CumulativeDoseUnits; returns: " . json_encode($retVal));
                     $CumulativeDoseUnitsID = $retVal[0]["id"];
-                    error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
+// error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
+                }
+                else {
+// error_log("Have CumulativeDoseUnitsID = $CumulativeDoseUnitsID");
                 }
 
                 if ( isset( $post_vars[ "Source" ] ) ) {
@@ -2455,7 +2459,7 @@ error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
 
 
 
-                //error_log("CumulativeDoseTracking - POST");
+// error_log("CumulativeDoseTracking - POST");
                 /*********************************************************************************
                 Sample POST
                 URL: http://coms-mwb.dbitpro.com:355/Patient/CumulativeDoseTracking/C4A968D0-06F3-E311-AC08-000C2935B86F
@@ -2478,7 +2482,7 @@ error_log("Patient.Controller.CumulativeDoseTracking.NO Patients Meds - ");
                 '$Source'
             )";
 
-error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUnitsID - QUERY - $query");
+// error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUnitsID - QUERY - $query");
                 $retVal = $this->Patient->query( $query );
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
                     $this->Patient->rollbackTransaction();
@@ -2507,9 +2511,9 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
                 if ("" !== $CumulativeDoseUnits) {
                     $lookup = new LookUp();
                     $retVal = $lookup->getLookupIdByNameAndType($CumulativeDoseUnits, 11);
-                    error_log(json_encode($retVal));
+// error_log(json_encode($retVal));
                     $CumulativeDoseUnitsID = $retVal[0]["id"];
-                    error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
+// error_log("Units = $CumulativeDoseUnits; ID = $CumulativeDoseUnitsID");
                 }
 
                 if ( isset( $post_vars[ "Source" ] ) ) {
@@ -2592,9 +2596,9 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
             $fAdmin_Date        = $formData->Admin_Date;
             // $fOrder_ID          = $formData->Order_ID;
             $fOrders            = $formData->Orders;
-//            error_log("UpdateAdminDate - Template_ID = $Template_ID, Admin_Date = $Admin_Date, FormAdmin_Date = $fAdmin_Date");
-//            error_log("UpdateAdminDate - Orders = ");
-//            error_log(json_encode($fOrders));
+// error_log("UpdateAdminDate - Template_ID = $Template_ID, Admin_Date = $Admin_Date, FormAdmin_Date = $fAdmin_Date");
+// error_log("UpdateAdminDate - Orders = ");
+// error_log(json_encode($fOrders));
 
             $Pre = $fOrders->PreTherapy;
             $Therapy = $fOrders->Therapy;
@@ -2633,8 +2637,8 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
         function MedReminders( $TemplateID = null, $MR_ID = null ) {
             $inputData = file_get_contents( 'php://input' );
             $post_vars = json_decode( $inputData );
-            // error_log( "MedReminders Input - $inputData" );
-            // error_log( "MedReminders post_vars - " . $this->varDumpToString( $post_vars ) );
+// error_log( "MedReminders Input - $inputData" );
+// error_log( "MedReminders post_vars - " . $this->varDumpToString( $post_vars ) );
             
             
             
@@ -2725,14 +2729,14 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
         and dtLocked is not null 
         and dtUnLocked is null";
             
-            // error_log( "_getLockedState = $query" );
+// error_log( "_getLockedState = $query" );
             $retVal = $this->Patient->query( $query );
             return $retVal;
         }
         
         function _isSiteLocked( $Patient_ID = null, $Section = null ) {
             $retVal = $this->_getLockedState( $Patient_ID, $Section );
-            // error_log( "_isSiteLocked = " . count( $retVal ) );
+// error_log( "_isSiteLocked = " . count( $retVal ) );
             return ( count( $retVal ) > 0 );
         }
         
@@ -2743,7 +2747,7 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
         
         function Lock( $Patient_ID = null, $Section = null, $State = null ) {
             
-            // error_log( "Lock = $Patient_ID, $Section, $State" );
+// error_log( "Lock = $Patient_ID, $Section, $State" );
             
             
             
@@ -2754,7 +2758,7 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
             if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
                 /* Additional check for "" takes care of just a trailing slash at the end of the request URI */
                 if ( ( null === $Patient_ID || "" === $Patient_ID ) && null === $Section && null === $State ) {
-                    // error_log( "Get info on all locked records" );
+// error_log( "Get info on all locked records" );
                     $query = "select 
                 el.id, 
                 el.Patient_ID, 
@@ -2791,12 +2795,12 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
                     return;
                 }
             } else if ( "POST" == $_SERVER[ "REQUEST_METHOD" ] ) {
-                // error_log( "Lock = POST" );
+// error_log( "Lock = POST" );
                 $LockState = $this->_isSiteLocked( $Patient_ID, $Section );
                 
                 if ( $LockState ) {
                     /* Site is already locked, return info on who has it locked */
-                    // error_log( "Site is locked" );
+// error_log( "Site is locked" );
                     $records                 = $this->_getLockedState( $Patient_ID, $Section );
                     $jsonRecord[ "success" ] = false;
                     $jsonRecord[ "total" ]   = count( $records );
@@ -2805,22 +2809,22 @@ error_log("Patient.Controller.CumulativeDoseTracking - POST - $CumulativeDoseUni
                     return;
                 }
                 
-                // error_log( "Site is NOT locked" );
+// error_log( "Site is NOT locked" );
                 $User  = $_SESSION[ "dname" ];
                 $MR_ID = $this->Patient->newGUID();
                 $query = "INSERT INTO EditLockout
 (id, Patient_ID, Section, UserName, dtLocked)
 VALUES
 ('$MR_ID','$Patient_ID', '$Section', '$User', GETDATE())";
-                // error_log( "POST - $query" );
+// error_log( "POST - $query" );
                 $records = $this->Patient->query( $query );
                 
-                // error_log( "Lock - POST - " . $this->varDumpToString( $records ) );
+// error_log( "Lock - POST - " . $this->varDumpToString( $records ) );
                 
                 $query   = "select * from EditLockout where id = '$MR_ID'";
                 $records = $this->Patient->query( $query );
                 
-                // error_log( "Lock - getLocked - " . $this->varDumpToString( $records ) );
+// error_log( "Lock - getLocked - " . $this->varDumpToString( $records ) );
                 
                 
                 $jsonRecord[ "success" ] = true;
@@ -2830,7 +2834,7 @@ VALUES
                 $this->set( "jsonRecord", $jsonRecord );
                 return;
             } else if ( "PUT" == $_SERVER[ "REQUEST_METHOD" ] ) {
-                // error_log( "Unlocking locked record" );
+// error_log( "Unlocking locked record" );
                 if ( null === $Patient_ID || "" === $Patient_ID ) {
                     $jsonRecord[ "success" ] = false;
                     $jsonRecord[ "msg" ]     = "No record ID to unlock";
