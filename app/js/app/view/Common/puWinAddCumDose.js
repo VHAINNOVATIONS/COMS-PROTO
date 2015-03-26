@@ -2,7 +2,6 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinAddCumDose",
 	"title" : "Historical Cumulative Medication Dose Entry",
-//	"closeAction" : "destroy",
 	"closeAction" : "hide",
 	"autoShow" : true,
 	"width" : 820,
@@ -59,4 +58,3 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 		}
 	]
 });
-

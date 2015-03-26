@@ -1988,9 +1988,14 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	// var h = Ext.In2Meters(PatientInfo.Height);	// Height (in Metres)
+	if (!PatientInfo.hasOwnProperty("Height") || !PatientInfo.hasOwnProperty("Weight") || !PatientInfo.hasOwnProperty("Gender") ||
+	   ("" === PatientInfo.Height || "" === PatientInfo.Weight)
+	) {
+		PatientInfo.BSA_Weight = "";
+		return "";
+	}
 	var h = PatientInfo.Height; // Height (in Inches)
 	var w = PatientInfo.Weight; // Ext.Pounds2Kilos(PatientInfo.Weight);
-//	var t = PatientInfo.BSA_Method; // BSA Method (string)
 	var g = PatientInfo.Gender; // Gender (M/F)
 	var CalcWeight = w;
 
@@ -2015,6 +2020,7 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	PatientInfo.BSA_Weight = CalcWeight;
 	return CalcWeight;
 };
+
 
 Ext.BSA_Calc = function (PatientInfo) {
 
@@ -7521,13 +7527,13 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
-        "{[this.tempCalc(values, parent)]}",
+		"{[this.tempCalc(values, parent)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
 
 			"<tr>",		// Pulse, BP, Respiration, 
 				"<th rowspan=\"2\">Date</th>",
 				"<th rowspan=\"2\">Temp<br />&deg;F/&deg;C</th>",
-                "<th rowspan=\"2\">Temp Taken</th>",
+				"<th rowspan=\"2\">Temp Taken</th>",
 				"<th rowspan=\"2\">Pulse</th>",
 				"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
 				"<th rowspan=\"2\"><abbr title=\"Respiration in breaths per minute\">Resp</abbr></th>",
@@ -7559,7 +7565,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					"<td>{[this.HeightCalc(values, parent)]}</td>",
 					"<td>{[this.WeightCalc(values, parent)]}</td>",
 					"<td>{WeightFormula}</td>",
-					"<td>{[this.BSA_WeightCalc(values)]}</td>",
+					"<td>{[this.BSA_WeightCalc(values, parent)]}</td>",
     				"<td>{BSA_Method}</td>",
 					"<td>{[this.BSACalc(values, parent, xindex)]}</td>",
 				"</tr>",
@@ -7577,7 +7583,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
 				for (i = vLen-1; i >= 0; i--) {
 					v = Vitals[i];
-
+/*
 					if ("" == v.Height || "-" == v.Height || !("Height" in v)) {
 						v.Height = h;
 					}
@@ -7591,6 +7597,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					else {
 						w = v.Weight;
 					}
+*/
 					if ("" == v.BSA_Method || "-" == v.BSA_Method || !("BSA_Method" in v)) {
 						v.BSA_Method = bm;
 					}
@@ -7614,27 +7621,11 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			BSA_WeightCalc: function (data) {
-				var i;
-				return Ext.BSAWeight(data);
-/***
-				if (("WeightFormula" in data) && ("Weight" in data)) {
-					if ("" == data.Weight || "" == data.Height) {
-						for (i = pDataIndex-1; i < pDataLen; i++) {
-							if ("" !== pData.Vitals[i].Height) {
-								data.Height = pData.Vitals[i].Height;
-							}
-							if ("" !== pData.Vitals[i].Weight) {
-								data.Weight = pData.Vitals[i].Weight;
-								if ("" !== data.Height) {
-									return Ext.BSAWeight(data);
-								}
-							}
-						}
-					}
+			BSA_WeightCalc: function (data, pData) {
+				if ("" == data.Gender) {
+					data.Gender = pData.Gender;
 				}
-				return "";
-***/
+				return Ext.BSAWeight(data);
 			},
 
 			BPCalc: function (data, pData) {
@@ -7660,7 +7651,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			HeightCalc: function (data, pData) {
-				if (data.Height) {
+				if (data.hasOwnProperty("Height")) {
 					if ("" == data.Height) {
 						return "";
 					}
@@ -7672,9 +7663,9 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			WeightCalc: function (data, pData) {
-				if (data.Weight) {
+				if (data.hasOwnProperty("Weight")) {
 					if ("" == data.Weight) {
-						return data.Weight;
+						return "";
 					}
 					var weight = data.Weight;
 					var mWeight = Ext.Pounds2Kilos(weight);
@@ -7684,16 +7675,24 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			BSACalc: function (data, pData, pDataIndex) {
-				if (1 === pDataIndex) {
-					/* MWB - 3/18/2015 - Add functionality to push BSA Info into PatientInfo panel once calculated */
-				}
-				if (data.WeightFormula && data.BSA_Method) {
+				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+
+				if (
+					(data.hasOwnProperty("BSA")           && "" !== data.BSA           ) && 
+					(data.hasOwnProperty("BSA_Method")    && "" !== data.BSA_Method    && 0 !== data.BSA_Method) && 
+					(data.hasOwnProperty("BSA_Weight")    && "" !== data.BSA_Weight    && 0 !== data.BSA_Weight) && 
+					(data.hasOwnProperty("WeightFormula") && "" !== data.WeightFormula && 0 !== data.WeightFormula) && 
+					(data.hasOwnProperty("Height")        && "" !== data.Height        && 0 !== data.Height) && 
+					(data.hasOwnProperty("Weight")        && "" !== data.Weight        && 0 !== data.Weight)
+				) {
 					data.Amputations = pData.Amputations;
-					if ("" === data.WeightFormula || "" === data.BSA_Method) {
-						return "<abbr title=\"Not Available\">N/A</abbr>";
-					}
 					var BSA = Ext.BSA_Calc(data);
 					if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
+						if (1 === pDataIndex) {
+							pData.BSA = BSA;
+						}
 						return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " + 
 							"weight=\"" + data.Weight + "\" " + 
 							"height=\"" + data.Height + "\" " + 
@@ -7703,7 +7702,10 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 						">" + BSA + "</button> m<sup>2</sup>");
 					}
 				}
-				return "<abbr title=\"Not Available\">N/A</abbr>";
+				if (1 === pDataIndex) {
+					pData.BSA = NAMsg;
+				}
+				return NAMsg;
 			}
 		}
 	)
@@ -7713,7 +7715,6 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinAddCumDose",
 	"title" : "Historical Cumulative Medication Dose Entry",
-//	"closeAction" : "destroy",
 	"closeAction" : "hide",
 	"autoShow" : true,
 	"width" : 820,
@@ -7770,8 +7771,6 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 		}
 	]
 });
-
-
 
 Ext.define("COMS.view.Common.puWinChangeAdminDate", {
 	"extend" : "Ext.window.Window",
@@ -15222,14 +15221,26 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						return x;
 					},
 
-					BSA_Cell : function (values, parent) {
-						if ("" === values.BSA_Method || "" === values.WeightFormula) {
-							return "<abbr title=\"Not Available\">N/A</abbr>";
+					BSA_Cell : function (data) {
+						var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+						var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+						if (
+							(data.hasOwnProperty("BSA")           && "" !== data.BSA           ) && 
+							(data.hasOwnProperty("BSA_Method")    && "" !== data.BSA_Method    && 0 !== data.BSA_Method) && 
+							(data.hasOwnProperty("BSA_Weight")    && "" !== data.BSA_Weight    && 0 !== data.BSA_Weight) && 
+							(data.hasOwnProperty("WeightFormula") && "" !== data.WeightFormula && 0 !== data.WeightFormula) && 
+							(data.hasOwnProperty("Height")        && "" !== data.Height        && 0 !== data.Height) && 
+							(data.hasOwnProperty("Weight")        && "" !== data.Weight        && 0 !== data.Weight)
+						) {
+							var BSA = Ext.BSA_Calc(data);
+							if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
+								data.BSA = BSA;
+								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  "</span>" + btnBuf;
+							}
 						}
-						var buf = "<span id=\"PatientInfoTableBSA_Display\">" + values.BSA +  "</span>" + 
-						"<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
-						"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
-						return buf;
+						data.BSA = NAMsg;
+						return NAMsg;
 					},
 
 					AddEditBtns : function (btnName, values, parent) {
@@ -20157,11 +20168,6 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 	],
 
 	init: function() {
-		/*
-		this.application.on(
-			{ LoadOEMData : this.scratch, scope : this }
-		);
-		*/
 		this.control({
 			"MedRemindersForm button[text=\"Save\"]" : {
 				click : this.SaveForm
@@ -20169,21 +20175,10 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 		});
 	},
 
-	/*
-	scratch : function() {
-	},
-	*/
-
-	xxxxxSaveForm : function(btn) {
-		// debugger;
-		var form = btn.up("form");
-		form.save();
-	},
 
 
 	clickCancel : function(theBtn, theEvent, eOpts) {
 		theBtn.up('form').getForm().reset();
-		//this.getTheGrid().getSelectionModel().deselectAll();
 	},
 
 
@@ -21424,7 +21419,6 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 	},
 
 	AssignVerify2SignHandler : function(tableView, cellElement, cellIdx, record, rowElement, rowIndex, evt, opts) {
-		// debugger;
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
@@ -22778,8 +22772,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 	clickRolesSave : function ( theButton, eOpts) {
 		this.application.loadMask("Please wait; Saving User Role Information");
-
-debugger;
 		var msg = this.getSelVistAUserNoMatch();
 		msg.html = "";
 		msg.hide();
@@ -29303,9 +29295,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 		var VSHTemplateDataBtns;
 		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
-		    var newCtl = this.getController("NewPlan.NewPlanTab");
+			var newCtl = this.getController("NewPlan.NewPlanTab");
 			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
 			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
+			var piTableInfo = newCtl.getPatientInfoTableInformation();
+			piTableInfo.update(this.application.Patient);
 		}
 	},
 
@@ -33207,15 +33201,39 @@ console.log("Loading Allergy Info - Finished");
 		},
 
 		parseVPR : function (vData) {
-			var rec, i, len = vData.length;
-			var flg;
+			var rec, i, flg, vals, theVPRData, age, name, dob, yr, mon, m, day, birthDate, rootObj, 
+				gc = "", 
+				today=new Date(),
+				len = vData.length;
 			this.Allergies = [];
 			this.Vitals = [];
 			this.Labs = [];
 			this.Problems = [];
+			
 
 			for (i = 0; i < len; i++) {
 				rec = vData[i];
+				if (rec.hasOwnProperty("genderCode")) {
+					rootObj = rec;
+					name = rootObj.fullName;
+					dob = rootObj.dateOfBirth.toString();
+					yr = dob.slice(0, 4);
+					mon = dob.slice(4, 6);
+					day = dob.slice(6, 8);
+					dob = mon + "/" + day + "/" + yr;
+					birthDate = new Date(dob);
+					age = today.getFullYear() - birthDate.getFullYear();
+					m = today.getMonth() - birthDate.getMonth();
+					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+						age--;
+					}
+					// "urn:va:pat-gender:M"
+					vals = rec.genderCode.split(':');
+					gc = vals[vals.length-1];
+					rootObj.dob = dob;
+					rootObj.age = age;
+					rootObj.gender = gc;
+				}
 				flg = this.extractVitals(rec);
 				if (!flg) {
 					flg = this.extractAllergies(rec);
@@ -33229,7 +33247,7 @@ console.log("Loading Allergy Info - Finished");
 			}
 			var theVitals = this.ConvertAssocArray(this.Vitals);
 
-			theVPRData = { Allergies : this.Allergies, Vitals : theVitals, Labs : this.Labs, Problems : this.Problems };
+			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : rootObj };
 			return theVPRData;
 		}
 	},
@@ -33382,6 +33400,7 @@ console.log("Loading Allergy Info - Finished");
 				}
 			}
 
+			var tmpGender = this.application.Patient.Gender;
 
 			for (key in SQLRecords) {
 				if (SQLRecords.hasOwnProperty(key)) {
@@ -33398,6 +33417,7 @@ console.log("Loading Allergy Info - Finished");
 			var retVitals = [];
 			for (key in VPR_vitals) {
 				if (VPR_vitals.hasOwnProperty(key)) {
+					VPR_vitals[key].Gender = tmpGender;
 					retVitals.push(VPR_vitals[key]);
 				}
 			}
@@ -33797,20 +33817,25 @@ console.log("Loading Allergy Info - Finished");
 
 
 		this.application.Patient = piData;
-		this.application.Patient.ParsedVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
-		this.application.Patient.Allergies = this.application.Patient.ParsedVPR.Allergies;
-		this.application.Patient.Vitals    = this.application.Patient.ParsedVPR.Vitals;
+		var pVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
+		this.application.Patient.ParsedVPR = pVPR;
+		this.application.Patient.Allergies = pVPR.Allergies;
+		this.application.Patient.Vitals    = pVPR.Vitals;
+		this.application.Patient.name      = pVPR.rootObj.fullName;
+		this.application.Patient.Gender    = pVPR.rootObj.gender;
+		this.application.Patient.Age       = pVPR.rootObj.age;
+		this.application.Patient.DOB       = pVPR.rootObj.dob;
 
 		// Get a handle to the frameset itself
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var fs = thisCtl.getPatientInfo();
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var fs = thisCtl.getPatientInfo();
 
-        // Update the legend (via the setTitle method) of the Frameset and expand it
-        fs.setTitle("<h2>Patient Information for - " + this.application.Patient.name + "</h2>");
-        fs.show();
-        fs.expand();
+		// Update the legend (via the setTitle method) of the Frameset and expand it
+		fs.setTitle("<h2>Patient Information for - " + this.application.Patient.name + "</h2>");
+		fs.show();
+		fs.expand();
 
-        // Display the selected patient's info in the table via it's template
+		// Display the selected patient's info in the table via it's template
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].show();
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
 
@@ -33831,11 +33856,11 @@ console.log("Loading Allergy Info - Finished");
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
 		var piTable = thisCtl.getPatientInfoTable();
-        piTable.update("");
+		piTable.update("");
 		piTable.collapse();
 
 		var piTable1 = thisCtl.getPatientInfoTableInformation();
-        piTable1.update("");
+		piTable1.update("");
 
 		if ("1" === SessionTemplateAuthoring) {
 			var CTOSData = thisCtl.getCTOSDataDsp();

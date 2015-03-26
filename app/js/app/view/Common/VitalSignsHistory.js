@@ -5,13 +5,13 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	autoScroll : true,
 
 	tpl : new Ext.XTemplate(
-        "{[this.tempCalc(values, parent)]}",
+		"{[this.tempCalc(values, parent)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
 
 			"<tr>",		// Pulse, BP, Respiration, 
 				"<th rowspan=\"2\">Date</th>",
 				"<th rowspan=\"2\">Temp<br />&deg;F/&deg;C</th>",
-                "<th rowspan=\"2\">Temp Taken</th>",
+				"<th rowspan=\"2\">Temp Taken</th>",
 				"<th rowspan=\"2\">Pulse</th>",
 				"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
 				"<th rowspan=\"2\"><abbr title=\"Respiration in breaths per minute\">Resp</abbr></th>",
@@ -43,7 +43,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					"<td>{[this.HeightCalc(values, parent)]}</td>",
 					"<td>{[this.WeightCalc(values, parent)]}</td>",
 					"<td>{WeightFormula}</td>",
-					"<td>{[this.BSA_WeightCalc(values)]}</td>",
+					"<td>{[this.BSA_WeightCalc(values, parent)]}</td>",
     				"<td>{BSA_Method}</td>",
 					"<td>{[this.BSACalc(values, parent, xindex)]}</td>",
 				"</tr>",
@@ -61,7 +61,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
 				for (i = vLen-1; i >= 0; i--) {
 					v = Vitals[i];
-
+/*
 					if ("" == v.Height || "-" == v.Height || !("Height" in v)) {
 						v.Height = h;
 					}
@@ -75,6 +75,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					else {
 						w = v.Weight;
 					}
+*/
 					if ("" == v.BSA_Method || "-" == v.BSA_Method || !("BSA_Method" in v)) {
 						v.BSA_Method = bm;
 					}
@@ -98,27 +99,11 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			BSA_WeightCalc: function (data) {
-				var i;
-				return Ext.BSAWeight(data);
-/***
-				if (("WeightFormula" in data) && ("Weight" in data)) {
-					if ("" == data.Weight || "" == data.Height) {
-						for (i = pDataIndex-1; i < pDataLen; i++) {
-							if ("" !== pData.Vitals[i].Height) {
-								data.Height = pData.Vitals[i].Height;
-							}
-							if ("" !== pData.Vitals[i].Weight) {
-								data.Weight = pData.Vitals[i].Weight;
-								if ("" !== data.Height) {
-									return Ext.BSAWeight(data);
-								}
-							}
-						}
-					}
+			BSA_WeightCalc: function (data, pData) {
+				if ("" == data.Gender) {
+					data.Gender = pData.Gender;
 				}
-				return "";
-***/
+				return Ext.BSAWeight(data);
 			},
 
 			BPCalc: function (data, pData) {
@@ -144,7 +129,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			HeightCalc: function (data, pData) {
-				if (data.Height) {
+				if (data.hasOwnProperty("Height")) {
 					if ("" == data.Height) {
 						return "";
 					}
@@ -156,9 +141,9 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			WeightCalc: function (data, pData) {
-				if (data.Weight) {
+				if (data.hasOwnProperty("Weight")) {
 					if ("" == data.Weight) {
-						return data.Weight;
+						return "";
 					}
 					var weight = data.Weight;
 					var mWeight = Ext.Pounds2Kilos(weight);
@@ -168,16 +153,24 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			BSACalc: function (data, pData, pDataIndex) {
-				if (1 === pDataIndex) {
-					/* MWB - 3/18/2015 - Add functionality to push BSA Info into PatientInfo panel once calculated */
-				}
-				if (data.WeightFormula && data.BSA_Method) {
+				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
+								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
+
+				if (
+					(data.hasOwnProperty("BSA")           && "" !== data.BSA           ) && 
+					(data.hasOwnProperty("BSA_Method")    && "" !== data.BSA_Method    && 0 !== data.BSA_Method) && 
+					(data.hasOwnProperty("BSA_Weight")    && "" !== data.BSA_Weight    && 0 !== data.BSA_Weight) && 
+					(data.hasOwnProperty("WeightFormula") && "" !== data.WeightFormula && 0 !== data.WeightFormula) && 
+					(data.hasOwnProperty("Height")        && "" !== data.Height        && 0 !== data.Height) && 
+					(data.hasOwnProperty("Weight")        && "" !== data.Weight        && 0 !== data.Weight)
+				) {
 					data.Amputations = pData.Amputations;
-					if ("" === data.WeightFormula || "" === data.BSA_Method) {
-						return "<abbr title=\"Not Available\">N/A</abbr>";
-					}
 					var BSA = Ext.BSA_Calc(data);
 					if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
+						if (1 === pDataIndex) {
+							pData.BSA = BSA;
+						}
 						return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " + 
 							"weight=\"" + data.Weight + "\" " + 
 							"height=\"" + data.Height + "\" " + 
@@ -187,7 +180,10 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 						">" + BSA + "</button> m<sup>2</sup>");
 					}
 				}
-				return "<abbr title=\"Not Available\">N/A</abbr>";
+				if (1 === pDataIndex) {
+					pData.BSA = NAMsg;
+				}
+				return NAMsg;
 			}
 		}
 	)

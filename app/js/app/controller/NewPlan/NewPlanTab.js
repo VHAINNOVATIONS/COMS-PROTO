@@ -1754,15 +1754,39 @@ console.log("Loading Allergy Info - Finished");
 		},
 
 		parseVPR : function (vData) {
-			var rec, i, len = vData.length;
-			var flg;
+			var rec, i, flg, vals, theVPRData, age, name, dob, yr, mon, m, day, birthDate, rootObj, 
+				gc = "", 
+				today=new Date(),
+				len = vData.length;
 			this.Allergies = [];
 			this.Vitals = [];
 			this.Labs = [];
 			this.Problems = [];
+			
 
 			for (i = 0; i < len; i++) {
 				rec = vData[i];
+				if (rec.hasOwnProperty("genderCode")) {
+					rootObj = rec;
+					name = rootObj.fullName;
+					dob = rootObj.dateOfBirth.toString();
+					yr = dob.slice(0, 4);
+					mon = dob.slice(4, 6);
+					day = dob.slice(6, 8);
+					dob = mon + "/" + day + "/" + yr;
+					birthDate = new Date(dob);
+					age = today.getFullYear() - birthDate.getFullYear();
+					m = today.getMonth() - birthDate.getMonth();
+					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+						age--;
+					}
+					// "urn:va:pat-gender:M"
+					vals = rec.genderCode.split(':');
+					gc = vals[vals.length-1];
+					rootObj.dob = dob;
+					rootObj.age = age;
+					rootObj.gender = gc;
+				}
 				flg = this.extractVitals(rec);
 				if (!flg) {
 					flg = this.extractAllergies(rec);
@@ -1776,7 +1800,7 @@ console.log("Loading Allergy Info - Finished");
 			}
 			var theVitals = this.ConvertAssocArray(this.Vitals);
 
-			theVPRData = { Allergies : this.Allergies, Vitals : theVitals, Labs : this.Labs, Problems : this.Problems };
+			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : rootObj };
 			return theVPRData;
 		}
 	},
@@ -1929,6 +1953,7 @@ console.log("Loading Allergy Info - Finished");
 				}
 			}
 
+			var tmpGender = this.application.Patient.Gender;
 
 			for (key in SQLRecords) {
 				if (SQLRecords.hasOwnProperty(key)) {
@@ -1945,6 +1970,7 @@ console.log("Loading Allergy Info - Finished");
 			var retVitals = [];
 			for (key in VPR_vitals) {
 				if (VPR_vitals.hasOwnProperty(key)) {
+					VPR_vitals[key].Gender = tmpGender;
 					retVitals.push(VPR_vitals[key]);
 				}
 			}
@@ -2344,20 +2370,25 @@ console.log("Loading Allergy Info - Finished");
 
 
 		this.application.Patient = piData;
-		this.application.Patient.ParsedVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
-		this.application.Patient.Allergies = this.application.Patient.ParsedVPR.Allergies;
-		this.application.Patient.Vitals    = this.application.Patient.ParsedVPR.Vitals;
+		var pVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
+		this.application.Patient.ParsedVPR = pVPR;
+		this.application.Patient.Allergies = pVPR.Allergies;
+		this.application.Patient.Vitals    = pVPR.Vitals;
+		this.application.Patient.name      = pVPR.rootObj.fullName;
+		this.application.Patient.Gender    = pVPR.rootObj.gender;
+		this.application.Patient.Age       = pVPR.rootObj.age;
+		this.application.Patient.DOB       = pVPR.rootObj.dob;
 
 		// Get a handle to the frameset itself
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var fs = thisCtl.getPatientInfo();
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var fs = thisCtl.getPatientInfo();
 
-        // Update the legend (via the setTitle method) of the Frameset and expand it
-        fs.setTitle("<h2>Patient Information for - " + this.application.Patient.name + "</h2>");
-        fs.show();
-        fs.expand();
+		// Update the legend (via the setTitle method) of the Frameset and expand it
+		fs.setTitle("<h2>Patient Information for - " + this.application.Patient.name + "</h2>");
+		fs.show();
+		fs.expand();
 
-        // Display the selected patient's info in the table via it's template
+		// Display the selected patient's info in the table via it's template
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].show();
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
 
@@ -2378,11 +2409,11 @@ console.log("Loading Allergy Info - Finished");
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
 		var piTable = thisCtl.getPatientInfoTable();
-        piTable.update("");
+		piTable.update("");
 		piTable.collapse();
 
 		var piTable1 = thisCtl.getPatientInfoTableInformation();
-        piTable1.update("");
+		piTable1.update("");
 
 		if ("1" === SessionTemplateAuthoring) {
 			var CTOSData = thisCtl.getCTOSDataDsp();

@@ -895,8 +895,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 	clickRolesSave : function ( theButton, eOpts) {
 		this.application.loadMask("Please wait; Saving User Role Information");
-
-debugger;
 		var msg = this.getSelVistAUserNoMatch();
 		msg.html = "";
 		msg.hide();
