@@ -17,7 +17,7 @@ class NodeVista{
   public function post($url, $data=false){
       $ret = $this->call("POST", $url, $data);
       error_log("NodeVista Class - Post - URL - " . $url);
-      error_log("NodeVista Class - Post - DATA - " . $data);
+      // error_log("NodeVista Class - Post - DATA - " . json_encode($data));
       error_log("NodeVista Class - Post - RET - " . $ret);
       return $ret;
   }
@@ -29,7 +29,8 @@ class NodeVista{
   private function call($method, $url, $data = false)
   {
       $curl = curl_init();
-      
+      error_log("NodeVista Class - Basic Call Function Method = $method");
+      // error_log("NodeVista Class - Basic Call Function Data = " . json_encode($data));
       switch ($method) {
             case "POST":
                 curl_setopt($curl, CURLOPT_POST, 1);
@@ -46,7 +47,7 @@ class NodeVista{
                 }
         }
 
-      error_log("NodeVista Class - Basic Call Function SESSION Variables- " . json_encode($_SESSION));
+//      error_log("NodeVista Class - Basic Call Function SESSION Variables- " . json_encode($_SESSION));
 
       // Authentication to Node Vista
         // 'X-ACCESS-CODE: '.NV_ACCESS_CODE,
