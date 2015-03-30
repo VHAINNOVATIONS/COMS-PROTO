@@ -19,6 +19,11 @@ $theTable2 = "        </td></tr>
     </table>";
 
 
+if (!isset($LoginError)) {
+    error_log("Initializing LoginError");
+    $LoginError = "";
+}
+
 $theFormErr = "        <tr><td>
             <table align='center'>
                 <tr><td style=\"font-weight:bold; color:red;\">$LoginError</td></tr>
@@ -26,7 +31,9 @@ $theFormErr = "        <tr><td>
         </td></tr>";
 
     echo $theTable1;
+    error_log("Login - ]" . $LoginError . "[");
     if("" === $LoginError) {
+        error_log("Login - string is empty");
         echo $theForm;
     }
     else if ($ErrMsg1 === $LoginError) {
