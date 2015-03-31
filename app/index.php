@@ -2,7 +2,7 @@
     $FirstLogin = null;
     $LastLogin  = null;
     $AccessCode = null;
-    $LoginError = null;
+    $LoginError = "";
 
      $_SESSION[ 'USE_NODE' ] = "Test";
 
@@ -59,6 +59,7 @@
         //PostTrack($_SESSION['ruser'],$_POST['AccessCode'],$point,0,$_SESSION['sessionid']);
         //PostSession($_SESSION['sessionid'],$_POST['AccessCode'],$winauth,$point,1);
         $NWLoginR                 = NWLogin( $_SESSION[ 'AccessCode' ], $_SESSION[ 'VerifyCode' ] );
+        $LoginError               = $NWLoginR;
         $_SESSION[ 'NWLoginR' ]   = $NWLoginR;
     } else {
         $point  = "Pre Check";
@@ -66,7 +67,7 @@
         PostTrack( $_SESSION[ 'ruser' ], $notset, $point, 0, $_SESSION[ 'sessionid' ] );
     }
     
-    if ( $_SESSION[ 'NWLogin' ] === 355 ) {
+    if ( array_key_exists("NWLogin", $_SESSION) && $_SESSION[ 'NWLogin' ] === 355 ) {
         
         $ipcheck        = gethostbyaddr( $_SERVER[ 'REMOTE_ADDR' ] );
         $sessionid      = $_SESSION[ 'sessionid' ];
@@ -103,10 +104,10 @@
         
         
         if ( $LastLogin1 > $TimeOutMax ) {
-           $LoginError        = "BadName1";
+           $LoginError        = "Session Timeout";
            include "login.php";
         } elseif ( $FirstLogin === 0 ) {
-            $LoginError        = "BadName2";
+            $LoginError        = "No Previous Login";
             include "login.php";
         } else {
             $query = "SELECT TOP 1 sessionid
@@ -259,7 +260,6 @@
                         $rid               = $_SESSION[ 'rid' ];
                         $role              = $_SESSION[ 'role' ];
                         $page2Open         = $urlArray[ 0 ];
-                        $LoginError        = null;
                         include_once "main.php";
                     }
                 } else {
@@ -270,13 +270,11 @@
                     $role              = $_SESSION[ 'role' ];
                     $TemplateAuthoring = $_SESSION[ 'TemplateAuthoring' ];
                     $page2Open         = $urlArray[ 0 ];
-                    $LoginError        = null;
                     include_once "main.php";
                 }
             }
         }
     } else {
-        $LoginError        = "BadName";
         include "login.php";
     }
 ?>
