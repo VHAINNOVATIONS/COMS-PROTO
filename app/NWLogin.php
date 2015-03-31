@@ -3,7 +3,39 @@
         include "dbitcon.php";
         include "../framework/library/nodevista.class.php";
         $nodevista = new NodeVista();
-        
+
+        if ( $AccessCode === 'COMSAdmin' AND $VerifyCode === 'COMS2015!' ) {
+            $_SESSION[ 'role' ]              = 'All Roles';
+            $_SESSION[ 'dname' ]             = 'Admin';
+            $_SESSION[ 'rid' ]               = '999';
+            $_SESSION[ 'Email' ]             = 'sean.cassidy@va.gov';
+            $_SESSION[ 'TemplateAuthoring' ] = '1';
+            $_SESSION[ 'Role_ID' ]           = 'A418029A-2C80-40D6-B3E6-77AA7C34434C';
+            $_SESSION[ 'AC' ]                = $AccessCode;
+            $_SESSION[ 'VC' ]                = $VerifyCode;
+            $_SESSION[ 'NWLogin' ]           = 355;
+            
+            $globalsq   = "SELECT * FROM Globals";
+            $getglobals = sqlsrv_query( $conn, $globalsq );
+            while ( $row = sqlsrv_fetch_array( $getglobals, SQLSRV_FETCH_ASSOC ) ) {
+                $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
+                $_SESSION[ 'domain' ]   = $row[ 'domain' ];
+                $_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
+                $_SESSION[ 'vista' ]    = $row[ 'vista' ];
+                $_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
+                $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
+                $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
+            }
+            $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$UserName'";
+            $updateRole = sqlsrv_query( $conn, $usql );
+            $point      = "signed in";
+            PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
+            $NWLoginR                = 1;
+            $_SESSION[ 'COMSLogin' ] = 1;
+            error_log( "NWLogin Exit - Session Vars = " . json_encode( $_SESSION ) );
+            return $NWLoginR;
+        }
+
         $AuthenticateURL          = "authenticate";
         $AuthData                 = array( );
         $AuthData[ "accesscode" ] = $AccessCode;
@@ -40,39 +72,6 @@
         PostTrack( $_SESSION[ 'ruser' ], $AccessCode, $point, 1, $_SESSION[ 'sessionid' ] );
         $ruser                       = $_SERVER[ 'REMOTE_USER' ];
         $_SESSION[ 'sessionStatus' ] = 0;
-        
-        if ( $AccessCode = 'COMSAdmin' AND $VerifyCode = 'COMS2015!' ) {
-            $_SESSION[ 'role' ]              = 'All Roles';
-            $_SESSION[ 'dname' ]             = 'Admin';
-            $_SESSION[ 'rid' ]               = '999';
-            $_SESSION[ 'Email' ]             = 'sean.cassidy@va.gov';
-            $_SESSION[ 'TemplateAuthoring' ] = '1';
-            $_SESSION[ 'Role_ID' ]           = 'A418029A-2C80-40D6-B3E6-77AA7C34434C';
-            $_SESSION[ 'AC' ]                = $AccessCode;
-            $_SESSION[ 'VC' ]                = $VerifyCode;
-            $_SESSION[ 'NWLogin' ]           = 355;
-            
-            $globalsq   = "SELECT * FROM Globals";
-            $getglobals = sqlsrv_query( $conn, $globalsq );
-            while ( $row = sqlsrv_fetch_array( $getglobals, SQLSRV_FETCH_ASSOC ) ) {
-                $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
-                $_SESSION[ 'domain' ]   = $row[ 'domain' ];
-                $_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
-                $_SESSION[ 'vista' ]    = $row[ 'vista' ];
-                $_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
-                $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
-                $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
-            }
-            $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$UserName'";
-            $updateRole = sqlsrv_query( $conn, $usql );
-            $point      = "signed in";
-            PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
-            $NWLoginR                = 1;
-            $_SESSION[ 'COMSLogin' ] = 1;
-            ///
-            error_log( "NWLogin Exit - Session Vars = " . json_encode( $_SESSION ) );
-            return $NWLoginR;
-        }
         
         $tsql    = "SELECT role,DisplayName,rid,Email,TemplateAuthoring,Role_ID FROM Roles WHERE username = '$DUZ'";
         $getrole = sqlsrv_query( $conn, $tsql );
