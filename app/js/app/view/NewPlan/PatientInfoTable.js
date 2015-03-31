@@ -149,11 +149,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							var BSA = Ext.BSA_Calc(data);
 							if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
 								data.BSA = BSA;
-								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  "</span>" + btnBuf;
+								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  " m<sup>2</sup></span>" + btnBuf;
 							}
 						}
 						data.BSA = NAMsg;
-						return NAMsg;
+						return "<span id=\"PatientInfoTableBSA_Display\">" + NAMsg + "</span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {

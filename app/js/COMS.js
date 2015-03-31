@@ -7529,8 +7529,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	tpl : new Ext.XTemplate(
 		"{[this.tempCalc(values, parent)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
-
-			"<tr>",		// Pulse, BP, Respiration, 
+			"<tr>",
 				"<th rowspan=\"2\">Date</th>",
 				"<th rowspan=\"2\">Temp<br />&deg;F/&deg;C</th>",
 				"<th rowspan=\"2\">Temp Taken</th>",
@@ -7544,13 +7543,13 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<th rowspan=\"2\">Weight<br />in lbs/kg</th>",
 				"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
 			"</tr>",
-			"<tr>",		// Pulse, BP, Respiration, 
+			"<tr>",
 				"<th ><abbr title=\"Body Surface Area Weight Formula\">Weight Form.</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Weight \">Weight</abbr> in KG</th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
 			"</tr>",
-			"{[this.getLastHWBSAInfo(values, parent, xindex, xcount)]}",
+			"{[this.getLastHWBSAInfo(values)]}",
 			"<tpl for=\"Vitals\">",
 				"<tr>",
 					"<td>{DateTaken}</td>",
@@ -7578,26 +7577,28 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			tempCalc: function (data, pData) {
 				// debugger;
 			},
-			getLastHWBSAInfo: function (data, pData, pDataIndex, pDataLen) {
+			getLastHWBSAInfo: function (data) {
 				var Vitals = data.Vitals, vLen = data.Vitals.length;
 				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
 				for (i = vLen-1; i >= 0; i--) {
 					v = Vitals[i];
-/*
+
 					if ("" == v.Height || "-" == v.Height || !("Height" in v)) {
-						v.Height = h;
+//						v.Height = h;
 					}
 					else {
 						h = v.Height;
 					}
 
 					if ("" == v.Weight || "-" == v.Weight || !("Weight" in v)) {
-						v.Weight = w;
+//						v.Weight = w;
 					}
 					else {
 						w = v.Weight;
 					}
-*/
+
+
+
 					if ("" == v.BSA_Method || "-" == v.BSA_Method || !("BSA_Method" in v)) {
 						v.BSA_Method = bm;
 					}
@@ -7617,6 +7618,33 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					else {
 						wf = v.WeightFormula;
 					}
+				}
+
+				v = Vitals[0];
+				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
+				if (v.hasOwnProperty("BSA") && "" !== v.BSA && 0 !== v.BSA && NAMsg !== v.BSA) {
+					data.BSA = v.BSA;
+					data.BSA_Method = v.BSA_Method;
+					data.BSA_Weight = v.BSA_Weight;
+					data.WeightFormula = v.WeightFormula;
+					data.Weight = w;
+					data.Height = h;
+					if (thepiTag) {
+						thepiTag.setHTML(v.BSA + " m<sup>2</sup>");
+					}
+				}
+				if (globalAppPatientScope) {
+					var gPat = globalAppPatientScope.application.Patient;
+					gPat.BSA = v.BSA;
+					gPat.BSA_Method = v.BSA_Method;
+					gPat.BSA_Weight = v.BSA_Weight;
+					gPat.WeightFormula = v.WeightFormula;
+					gPat.Weight = w;
+					gPat.Height = h;
+
+					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
+					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
 				}
 				return "";
 			},
@@ -7710,6 +7738,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		}
 	)
 });
+
 
 Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
@@ -11738,274 +11767,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DualDosingVerification" ,{
 	]
 });
 
-Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsTable", {
-    // extend: "Ext.container.Container",
-	extend: "Ext.form.Panel",
-    alias: "widget.VitalSignsEntryForm",
-    name: "NursingDocs.VitalSignsEntryForm",
-    cls : "VitalSignsEntryForm",
-		height : 100,
-		border: false,
-
-    layout: {
-        type: "table",
-        tableAttrs: {
-            border: 1
-        },
-        columns: 4
-    },
-    defaults: {
-        labelAlign: "right",
-        labelWidth: 60,
-        cellCls : "InformationTable"
-    },
-    items: [
-        // Row 1 - Col 1
-        {
-            xtype: "container",
-            layout: "hbox",
-            defaults: {
-                labelAlign: "right"
-            },
-            width: 370,
-            margin: "3 0 0 0",
-            items: [{
-                    xtype: "textfield",
-                    maskRe: /[0-9\.]/,
-                    name: "ndVitalsTempF",
-                    fieldLabel: "Temp.",
-                    labelWidth: 60,
-                    width: 100,
-                    labelClsExtra: "NursingDocs-label"
-                }, {
-                    xtype: "container",
-                    html: "&deg;F",
-                    margin: "4 5 0 4"
-                }, {
-                    xtype: "displayfield",
-                    name: "ndVitalsTempC",
-                    labelSeparator: "",
-                    value: " (  &deg;C)",
-                    labelWidth: 5,
-                    width: 60
-                },
-                {
-                    xtype: 'combo',
-                    width: 170,
-                    name: "ndVitalsTempLoc",
-                    fieldLabel: "Taken",
-                    labelWidth: 45,
-                    margin: "0 0 0 5",
-                    labelClsExtra: "NursingDocs-label",
-                    store: "TemperatureLocation",
-                    valueField: 'name',
-                    displayField: 'name',
-                    triggerAction: 'all',
-                    editable: false
-                }
-            ]
-        },
-        // Row 1 - Col 2
-        {
-            xtype: "textfield",
-            maskRe: /[0-9]/,
-            name: "ndVitalsPulse",
-            fieldLabel: "Pulse",
-            labelWidth: 50,
-            width: 90,
-            margin: "0 10 0 0",
-            labelClsExtra: "NursingDocs-label"
-        },
-
-        // Row 1 - Col 3
-        {
-            xtype: "fieldcontainer",
-            name: "ndVitalsBP",
-            width: 170,
-            margin: "5 0 0 0",
-            fieldLabel: "<abbr title=\"Blood Pressure\">BP</abbr>",
-            labelWidth: 50,
-            labelClsExtra: "NursingDocs-label",
-            defaults: {
-                hideLabel: true
-            },
-            layout: "hbox",
-            items: [{
-                xtype: "textfield",
-                maskRe: /[0-9]/,
-                name: "ndVitalsSystolic",
-                width: 30
-            }, {
-                xtype: "displayfield",
-                value: " / "
-            }, {
-                xtype: "textfield",
-                maskRe: /[0-9]/,
-                name: "ndVitalsDiastolic",
-                width: 30
-            }]
-        },
-
-        // Row 1 - Col 4
-        {
-            xtype: "displayfield",
-            name: "ndVitalsGender",
-            fieldLabel: "Patient Gender",
-            labelWidth: 110,
-            labelClsExtra: "NursingDocs-label",
-            labelAlign: "right",
-            width: 160,
-            margin: "0 10 4 0"
-        },
-        // Row 2 ----------------------------------------------------------------------------------
-        {
-            xtype: "container",
-            layout: "hbox",
-            defaults: {
-                labelAlign: "right"
-            },
-            // width : 280,
-            margin: "3 0 0 0",
-            items: [{
-                xtype: "textfield",
-                maskRe: /[0-9\.]/,
-                name: "ndVitalsHeightIN",
-                fieldLabel: "Height",
-                labelWidth: 60,
-                width: 105,
-                labelClsExtra: "NursingDocs-label"
-            }, {
-                    xtype: "container",
-                    html: "inches",
-                    margin: "4 5 0 4"
-                }, {
-                xtype: "displayfield",
-                name: "ndVitalsHeightCM",
-                labelSeparator: "",
-                value: " (  cm)",
-                width: 50
-            }
-/*****
-				, {
-					xtype : "container",
-					html: "Last Recorded:",
-					margin: "4 5 0 4"
-                }, {
-                xtype: "displayfield",
-                name: "ndVitalsHeightLastRecorded",
-                labelSeparator: "",
-                value: "in/cm",
-                width: 90
-			}
-*****/
-			]
-        }, {
-            xtype: "textfield",
-            maskRe: /[0-9]/,
-            name: "ndVitalsResp",
-            fieldLabel: "<abbr title=\"Respiration - in Breaths per minute\">Resp</abbr>",
-            labelWidth: 50,
-            width: 90,
-            margin: "0 10 0 0",
-            labelClsExtra: "NursingDocs-label"
-        }, {
-            xtype: "numberfield",
-            name: "ndVitalsO2Level",
-            fieldLabel: "<abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr>",
-            labelWidth: 60,
-            width: 100,
-            hideTrigger: true,
-            margin: "0 10 0 0",
-            minValue: 0,
-            maxValue: 100,
-            labelClsExtra: "NursingDocs-label"
-        }, {
-            xtype: "displayfield",
-            name: "ndVitalsAge",
-            fieldLabel: "Age",
-            labelWidth: 50,
-            width: 90,
-            margin: "0 10 0 0",
-            labelClsExtra: "NursingDocs-label"
-        },
-
-        // Row 3 ----------------------------------------------------------------------------------
-        {
-            xtype: "container",
-            layout: "hbox",
-            defaults: {
-                labelAlign: "right"
-            },
-            // width : 280,
-            margin: "3 0 0 0",
-            items: [{
-                xtype: "textfield",
-                maskRe: /[0-9\.]/,
-                name: "ndVitalsWeightP",
-                fieldLabel: "Weight",
-                labelWidth: 60,
-                width: 105,
-                labelClsExtra: "NursingDocs-label"
-            }, 
-                {
-                    xtype: "container",
-                    html: "lbs",
-                    margin: "4 5 0 4"
-                },
-            {
-                xtype: "displayfield",
-                name: "ndVitalsWeightKG",
-                labelSeparator: "",
-                value: " (  kg)",
-                width: 50
-            }
-/*****				,  
-                {
-                    xtype: "container",
-                    html: "Last Recorded:",
-                    margin: "4 5 0 4"
-                },
-            {
-                xtype: "displayfield",
-                name: "ndVitalsWeightLastRecorded",
-                labelSeparator: "",
-                value: "lbs/kg",
-                width: 90
-            }
-*****/
-			]
-        }, {
-            xtype: "numberfield",
-            maxValue: 10,
-            minValue: 0,
-            name: "ndVitalsPain",
-            fieldLabel: "Pain",
-            labelWidth: 50,
-            width: 100,
-            margin: "0 50 0 0",
-            hideTrigger: true,
-            labelClsExtra: "NursingDocs-label"
-        }, {
-            xtype: "container",
-            layout: "hbox",
-            colspan: 2,
-            defaults: {
-                labelAlign: "right"
-            },
-            items: [{
-                xtype: "displayfield",
-                name: "ndVitalsBSA",
-                fieldLabel: "<abbr title=\"Body Surface Area\">BSA</abbr>",
-                labelWidth: 60,
-                width: 105,
-                margin: "0 5 0 0",
-                labelClsExtra: "NursingDocs-label"
-            }, 
-			{ "xtype" : "button", "baseCls" : "anchor", "name" : "AddVitals_PatientInfoPanel", "text" : "Calculations" }
-            ]
-        }
-    ]
-});
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 	extend: "Ext.form.FieldSet",
@@ -15236,11 +14997,11 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							var BSA = Ext.BSA_Calc(data);
 							if ("" !== BSA && 0 !== BSA && "0.00" !== BSA) {
 								data.BSA = BSA;
-								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  "</span>" + btnBuf;
+								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  " m<sup>2</sup></span>" + btnBuf;
 							}
 						}
 						data.BSA = NAMsg;
-						return NAMsg;
+						return "<span id=\"PatientInfoTableBSA_Display\">" + NAMsg + "</span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {
@@ -21299,11 +21060,9 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 	},
 
 
-
 	updatePITable : function(Patient) {
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		var piTableInfo = thisCtl.getPatientInfoTableInformation();
-		piTableInfo.update(this.application.Patient);
+		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
 	},
 
 	Save : function(btn) {
@@ -28473,7 +28232,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	views: [
 		"Common.VitalSignsHistory", "NewPlan.CTOS.NursingDocs.Chemotherapy"
-// , "NewPlan.CTOS.NursingDocs.VitalSignsEntryForm" <--- To be worked on MWB 30 July 2014
 	],
 
 	refs: [
@@ -28569,37 +28327,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			ref : "ND_PT_TabLabInfo",
 			selector : "NursingDocs_GenInfo [name=\"ND_PT_LabInfo\"]"
 		}
-
-/*
-		{
-			"ref" : "CycleInfo",
-			"selector" : "NursingDocs_Chemotherapy [name=\"ndctCycleInfo\"]"
-		},
-		{
-			"ref" : "ndctRegimen",
-			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]"
-		},
-		{
-			"ref" : "ndctCycle",
-			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctCycle\"]"
-		},
-		{
-			"ref" : "ndctDay",
-			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctDay\"]"
-		},
-		{
-			"ref" : "ndctDate",
-			"selector" : "NursingDocs_Chemotherapy displayfield[name=\"ndctDate\"]"
-		},
-		{
-			"ref" : "FNLPanel",
-			"selector" : "NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]"
-		},
-		{
-			"ref" : "EmoPanel",
-			"selector" : "NursingDocs_Chemotherapy [name=\"EmesisInfo\"]"
-		}
-*/
 	],
 
 
@@ -28774,7 +28501,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var IDESpec = this.application.IntelligentDataElements,
 			IDESpecLen = IDESpec.length, i,
 			fldName = fld.name, fldNameMap = [],
-			validity = true;
+			validity = true,
+			FldProcessed = false;
 
 		fldNameMap = [];
 		fldNameMap.ndVitalsTempF = "Temperature";
@@ -28793,30 +28521,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 					validity = this.procIDE(fld, IDESpec[i]);
 					if (validity) {
 						if ("ndVitalsTempF" === fldName ) {
+							FldProcessed = true;
 							this.ConvertTemp(fld, eOpts);
 						}
 						else if ("ndVitalsHeightIN" === fldName) {
+							FldProcessed = true;
 							this.ConvertHeight(fld, eOpts);
 						}
 						else if ("ndVitalsWeightP" === fldName) {
+							FldProcessed = true;
 							this.ConvertWeight(fld, eOpts);
 						}
 					}
 				}
-				else {
-					if ("ndVitalsTempF" === fldName ) {
-						this.ConvertTemp(fld, eOpts);
-					}
-					else if ("ndVitalsHeightIN" === fldName) {
-						this.ConvertHeight(fld, eOpts);
-					}
-					else if ("ndVitalsWeightP" === fldName) {
-						this.ConvertWeight(fld, eOpts);
-					}
-				}
 			}
 		}
-		else {
+
+		if (IDESpecLen <= 0 || !FldProcessed) {
 			if ("ndVitalsTempF" === fldName ) {
 				this.ConvertTemp(fld, eOpts);
 			}
@@ -28830,11 +28551,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		return validity;
 	},
 
-/*
-	ndctRender : function( panel ) {
-		Ext.togglePanelOnTitleBarClick(panel);
-	},
-*/
 	AuthenticateUser : function (button) {
 		var win = button.up('window');
 		var SigNameField = win.SigName;
@@ -28932,7 +28648,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
-	ClearTabData : function() {
+ClearTabData : function(obj) {
+		// obj.ClearNDTabs()
+		// obj.PopulateNDTabs()
+		// obj.scope
+
         var thisCtl;
 		try {
 			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
@@ -28944,26 +28664,34 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			Ext.MessageBox.alert("Loading Error", "ND - ClearTabData() - Error - " + e.message );
 		}
 		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
-		thisCtl.getNdVitalsTempF().setValue("");
-		thisCtl.getNdVitalsTempC().setValue("");
-		thisCtl.getNdVitalsTempLoc().setValue("");
-		thisCtl.getNdVitalsPulse().setValue("");
-		thisCtl.getNdVitalsSystolic().setValue("");
-		thisCtl.getNdVitalsGender().setValue("");
-		thisCtl.getNdVitalsHeightIN().setValue("");
-		thisCtl.getNdVitalsHeightCM().setValue("");
-		thisCtl.getNdVitalsResp().setValue("");
-		thisCtl.getNdVitalsDiastolic().setValue("");
-		thisCtl.getNdVitalsAge().setValue("");
-		thisCtl.getNdVitalsWeightP().setValue("");
-		thisCtl.getNdVitalsWeightKG().setValue("");
-		thisCtl.getNdVitalsPain().setValue("");
-		thisCtl.getNdVitalsO2Level().setValue("");
-		thisCtl.getNdVitalsBSA().setValue("");
+		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
+		var afLen = allForms.length;
+		var f, i;
+		var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
+		for (i = 0; i < afLen; i++) {
+			f = allForms[i].getForm();
+			f.setValues(clearedFields);
+		}
+		if (this.application.Patient) {
+			this.initVitalSignsEntryForm(this.application.Patient);
+		}
 
 		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
 		thisCtl.ClearTabData();
 	},
+
+	initVitalSignsEntryForm : function(Patient) {
+		debugger;
+		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
+		var afLen = allForms.length;
+		var f, i;
+		var clearedFields = {"ndVitalsGender" : "XX", "ndVitalsAge" : "99" };
+		for (i = 0; i < afLen; i++) {
+			f = allForms[i].getForm();
+			f.setValues(clearedFields);
+		}
+	},
+
 
 
 
@@ -29272,6 +29000,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		LaboratoryInfo.update( Patient.History );
 
 		var VitalSigns = thisCtl.getVitalSignsHistory();
+		globalAppPatientScope = this;
 		VitalSigns.update( Patient );
 
 		NDVitalsGender.setValue((("M" === Patient.Gender) ? "Male" : "Female"));
@@ -29315,26 +29044,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	},
 
 	ndgiUpdateBSA : function(fld) {
-        var Parent = fld.up(".VitalSignsEntryForm");
-        var HeightEditFieldValue = Parent.query("container [name=\"ndVitalsHeightIN\"]")[0].getValue();
-        var WeightEditFieldValue = Parent.query("container [name=\"ndVitalsWeightP\"]")[0].getValue();
+		var Parent = fld.up(".VitalSignsEntryForm");
+		var HeightEditFieldValue = Parent.query("container [name=\"ndVitalsHeightIN\"]")[0].getValue();
+		var WeightEditFieldValue = Parent.query("container [name=\"ndVitalsWeightP\"]")[0].getValue();
+		var VitalsBSAField = Parent.query("displayfield[name=\"ndVitalsBSA\"]")[0];
 
-        var Patient = this.application.Patient;
+		var Patient = this.application.Patient;
 		var params = {};
 		params = Ext.apply(params, Patient);
 
 		params.Weight = WeightEditFieldValue;
 		params.Height = HeightEditFieldValue;
-        
-        if ("" !== params.Weight && "" !== params.Height) {
+
+		if ("" !== params.Weight && "" !== params.Height) {
 			Patient.Height = params.Height;
 			Patient.Weight = params.Weight;
 			params.BSA = Ext.BSA_Calc(params);
-			this.getNdVitalsBSA().setValue(params.BSA);
+			VitalsBSAField.setValue(params.BSA + " m<sup>2</sup>");
 		}
-        else {
-            this.getNdVitalsBSA().setValue("");
-        }
+		else {
+			VitalsBSAField.setValue("");
+		}
 	}
 
 });
@@ -30232,56 +29962,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 	views: [
 		"NewPlan.CTOS.NursingDocs.VitalSignsEntryForm"
 	],
-
-	refs: [
-		{
-			ref: "ndVitalSignsForm",
-			selector: "VitalSignsEntryForm"
-		},
-
-		{
-			ref: "ndVitalsTempF",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsTempF\"]"
-		},
-		{
-			ref: "ndVitalsTempLoc",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsTempLoc\"]"
-		},
-		{
-			ref: "ndVitalsPulse",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsPulse\"]"
-		},
-		{
-			ref: "ndVitalsSystolic",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsSystolic\"]"
-		},
-		{
-			ref: "ndVitalsHeightIN",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]"
-		},
-		{
-			ref: "ndVitalsResp",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsResp\"]"
-		},
-		{
-			ref: "ndVitalsDiastolic",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]"
-		},
-		{
-			ref: "ndVitalsWeightP",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsWeightP\"]"
-		},
-		{
-			ref: "ndVitalsPain",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsPain\"]"
-		},
-		{
-			ref: "ndVitalsO2Level",
-			selector: "VitalSignsEntryForm [name=\"ndVitalsO2Level\"]"
-		}
-	],
-
-
 	init: function () {
 
 		this.application.on( 
@@ -30291,88 +29971,44 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 				scope : this 
 			} 
 		);
-	
 
 		this.control({
+			"VitalSignsEntryForm" : {
+				"beforerender" : this.initForm
+			},
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsPulse\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsSystolic\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsResp\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsO2Level\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsWeightP\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
-				"blur" : this.VitalsFieldValidation
+				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			}
 		});
 	},
-
-	VitalsFieldValidation : function(fld, evt, eOpts) {
-		var IDESpec = this.application.IntelligentDataElements,
-			IDESpecLen = IDESpec.length, i,
-			fldName = fld.name, fldNameMap = [],
-			validity = true;
-
-		fldNameMap = [];
-		fldNameMap.ndVitalsTempF = "Temperature";
-		fldNameMap.ndVitalsPulse = "Pulse";
-		fldNameMap.ndVitalsSystolic = "BP_Systolic";
-		fldNameMap.ndVitalsDiastolic = "BP_Diastolic";
-		fldNameMap.ndVitalsHeightIN = "Height";
-		fldNameMap.ndVitalsResp = "Respiration";
-		fldNameMap.ndVitalsO2Level = "SP_O2";
-		fldNameMap.ndVitalsWeightP = "Weight";
-		fldNameMap.ndVitalsPain = "Pain";
-
-		if (IDESpecLen > 0) {
-			for (i = 0; i < IDESpecLen; i++) {
-				if (IDESpec[i].Vital2Check === fldNameMap[fldName]) {
-					validity = this.procIDE(fld, IDESpec[i]);
-					if (validity) {
-						if ("ndVitalsTempF" === fldName ) {
-							this.ConvertTemp(fld, eOpts);
-						}
-						else if ("ndVitalsHeightIN" === fldName) {
-							this.ConvertHeight(fld, eOpts);
-						}
-						else if ("ndVitalsWeightP" === fldName) {
-							this.ConvertWeight(fld, eOpts);
-						}
-					}
-				}
-			}
-		}
-		else {
-			if ("ndVitalsTempF" === fldName ) {
-				this.ConvertTemp(fld, eOpts);
-			}
-			else if ("ndVitalsHeightIN" === fldName) {
-				this.ConvertHeight(fld, eOpts);
-			}
-			else if ("ndVitalsWeightP" === fldName) {
-				this.ConvertWeight(fld, eOpts);
-			}
-		}
-		return validity;
+	initForm : function() {
+		debugger;
+		this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
 	}
-
 });
 
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
@@ -30627,7 +30263,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel", {
 // Expects a POST data consistent with the EndTreatmentSummary Model
 //
 Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
-    extend : "Ext.app.Controller",
+	extend : "Ext.app.Controller",
 	EoTSData : {},		// This is used for storing the EoTS Data calculated within this controller rather than passing a variable around.
 						// This will be the record stored on the back end when saving the EoTS
 						// 
@@ -30646,16 +30282,16 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 						//	EndReason - FinishUpReason4Change()
 						// }
 
-    stores : [
-    ],
+	stores : [
+	],
 
 	models : ["EndTreatmentSummary"],
 
-    views : [
+	views : [
 		"NewPlan.EndTreatmentSummary"
-    ],
+	],
 
-    refs: [
+	refs: [
 		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableHeader", selector: "EndTreatmentSummary [name=\"PatientInfoTableHeader\"]"},
 		{ ref: "PatientInfoTableBody", selector: "EndTreatmentSummary [name=\"PatientInfoTableBody\"]"},
@@ -30680,61 +30316,61 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		{ ref: "FollowUpAppointments", selector: "EndTreatmentSummary [name=\"FollowUpAppointments\"]"},
 
 
-	    {
-		    ref: "AdministeredMedsGrid",
+		{
+			ref: "AdministeredMedsGrid",
 			selector: "EndTreatmentSummary [name=\"AdministeredMedsGrid\"]"
-	    },
+		},
 
-	    {
-		    ref: "DiseaseResponseGrid",
+		{
+			ref: "DiseaseResponseGrid",
 			selector: "EndTreatmentSummary [name=\"DiseaseResponseGrid\"]"
-	    },
-	    {
-		    ref: "ToxicityGrid",
+		},
+		{
+			ref: "ToxicityGrid",
 			selector: "EndTreatmentSummary [name=\"ToxicityGrid\"]"
-	    },
-	    {
-		    ref: "OtherGrid",
+		},
+		{
+			ref: "OtherGrid",
 			selector: "EndTreatmentSummary [name=\"OtherGrid\"]"
-	    },
-	    {
-		    ref: "SaveBtn",
+		},
+		{
+			ref: "SaveBtn",
 			selector: "EndTreatmentSummary button[action=\"save\"]"
 		},
-	    {
-		    ref: "CancelBtn",
+		{
+			ref: "CancelBtn",
 			selector: "EndTreatmentSummary button[action=\"cancel\"]"
 		}
 
 	],
 
-    Start_EOTS1 : function() {
-        wccConsoleLog("Start_EOTS1");
-    },
-    Start_EOTS2 : function() {
-        wccConsoleLog("Start_EOTS2");
-    },
-    Start_EOTS3 : function() {
-        wccConsoleLog("Start_EOTS3");
-    },
+	Start_EOTS1 : function() {
+		wccConsoleLog("Start_EOTS1");
+	},
+	Start_EOTS2 : function() {
+		wccConsoleLog("Start_EOTS2");
+	},
+	Start_EOTS3 : function() {
+		wccConsoleLog("Start_EOTS3");
+	},
 
-    init: function() {  // called at application initialization time
-        wccConsoleLog("Initialized End of Treatment Summary Controller!");
-        this.control({
-            "EndTreatmentSummary" : {
-                beforeactivate: this.Start_EOTS3,
-                beforerender: this.Start_EOTS2,
-                beforeshow: this.Start_EOTS1,
+	init: function() {  // called at application initialization time
+		wccConsoleLog("Initialized End of Treatment Summary Controller!");
+		this.control({
+			"EndTreatmentSummary" : {
+				beforeactivate: this.Start_EOTS3,
+				beforerender: this.Start_EOTS2,
+				beforeshow: this.Start_EOTS1,
 				afterrender : this.AfterRenderWindow,
 				close : this.CloseEoTSWin, 
 				resize : this.ResizeTable
-            },
-            "EndTreatmentSummary button[action=\"save\"]": {
-                click: this.SaveEoTS
-            },
-            "EndTreatmentSummary button[action=\"cancel\"]": {
-                click: this.CancelEoTS
-            },
+			},
+			"EndTreatmentSummary button[action=\"save\"]": {
+				click: this.SaveEoTS
+			},
+			"EndTreatmentSummary button[action=\"cancel\"]": {
+				click: this.CancelEoTS
+			},
 				// Change Button in one of the 3 Radio Groups
 			"EndTreatmentSummary [name=\"Reason4EOTSAnswer\"]" : {
 				change : this.Reason4Change1
@@ -30758,8 +30394,8 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 				blur : this.Reason4ChangeDone,
 				specialkey : this.Look4Enter
 			}
-        });
-    },
+		});
+	},
 
 	Look4Enter : function( theField, evt, eOpts ) {
 		var theKey = evt.getKey();
@@ -30940,10 +30576,10 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 
 	parseFSData4EoTS : function( tType, dName, tDataStore, EoTS_DataStore, data ) {
 		var thisCtl = this.getController("NewPlan.EndTreatmentSummary"),
-		    i, el, tmp, bl,
-		    buf = [], 
-		    HasDataFlag = false,
-		    tmpEoTS;
+			i, el, tmp, bl,
+			buf = [], 
+			HasDataFlag = false,
+			tmpEoTS;
 		for (i in data) {
 			if (data.hasOwnProperty(i) && "&nbsp;" !== i && "label" !== i) {
 				el = data[i];
@@ -30953,11 +30589,11 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 						if (el.indexOf("Write</button") < 0) {
 							var el2=el.replace(/<button class="anchor .*data="/,"").replace(/".*$/, "");
 							if (unescape) {
-                                el = unescape(el2);
-                            }
-                            else {
-                                el = decodeURI(el2);
-                            }
+								el = unescape(el2);
+							}
+							else {
+								el = decodeURI(el2);
+							}
 							el = el.replace(/\n/g, "<br />");
 							if ("" === el2) {
 								el = "No entry recorded";
@@ -31273,7 +30909,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	SaveEoTS : function(button) {
 		// this.application.loadMask("Saving record of changes");
 		
-        var win = button.up('window');
+		var win = button.up('window');
 
 win.setLoading( "Saving End of Treatment Summary", false ) ;
 
@@ -31288,17 +30924,17 @@ win.setLoading( "Saving End of Treatment Summary", false ) ;
 		delete EoTSSaveRecord.LastVitals;
 		delete EoTSSaveRecord.FirstVitals;
 
-        var EoTSRecord = Ext.create(Ext.COMSModels.EoTS, EoTSSaveRecord );
+		var EoTSRecord = Ext.create(Ext.COMSModels.EoTS, EoTSSaveRecord );
 
 		EoTSRecord.save({
-            scope: this,
-            success: function (data) {
-                wccConsoleLog("Saved EoTS " );
-                if (win.widget ) {
-                    Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
-                }
+			scope: this,
+			success: function (data) {
+				wccConsoleLog("Saved EoTS " );
+				if (win.widget ) {
+					Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
+				}
 				win.setLoading( false, false ) ;
-		        win.close();
+				win.close();
 				// alert("Update History display with to display EoTS via ID returned in data");
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
 				var Patient = this.application.Patient;
@@ -31314,15 +30950,15 @@ Patient.TreatmentStart = "";
 			},
 			failure : function (arg0, arg1) {
 				alert("End of Treatment Summary Failure to save record...");
-		        win.close();
+				win.close();
 			}
 		});
 
 	},
 
 	CancelEoTS : function(button) {
-        var win = button.up('window');
-        win.close();
+		var win = button.up('window');
+		win.close();
 	},
 
 
@@ -31417,26 +31053,26 @@ Patient.TreatmentStart = "";
 
 	buildEoTSGrid : function (theGrid, storeID, gFields, gCols, gData ) {
 		var store = Ext.create('Ext.data.Store', {
-		    storeId: storeID,
-		    fields: gFields,
-		    data: { storeID : gData },
-		    proxy: {
-		        type: 'memory',
-		        reader: {
-		            type: 'json',
-		            root: storeID
-		        }
-		    }
+			storeId: storeID,
+			fields: gFields,
+			data: { storeID : gData },
+			proxy: {
+				type: 'memory',
+				reader: {
+					type: 'json',
+					root: storeID
+				}
+			}
 		});
 
 		theGrid = Ext.create('Ext.grid.Panel', {
-		    renderTo: theGrid.getEl(),
+			renderTo: theGrid.getEl(),
 			autoScroll: 'y',
 			columnLines: true,
 			viewConfig: { stripeRows: true, forceFit: true },
 
-		    store: Ext.data.StoreManager.lookup(storeID),
-		    columns: gCols
+			store: Ext.data.StoreManager.lookup(storeID),
+			columns: gCols
 		});
 
 		theGrid.on("afterlayout", function() {
@@ -31747,6 +31383,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	   this.InitIntelligentDataElementStore();
        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
+
+	updatePITable : function(PatientData) {
+		var piTable = this.getPatientInfoTable();
+		if (!PatientData) {
+			piTable.update("");
+		}
+		else {
+			piTable.update(PatientData);
+		}
+		return piTable;
+	},
+
 
 	MaskPITPanelOnExpand : function (p, ani, opts) {
 //		if ("Patient Information" !== p.title ) {
@@ -33437,6 +33085,9 @@ console.log("Loading Allergy Info - Finished");
 		pVitalsModel.load(pVitalsModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
+				if (!RetCode) {
+					RetCode = "Update Vitals";
+				}
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
 					var mergedVitals = this.MergeWithVPR_Array(rawData.records);
@@ -33446,6 +33097,9 @@ console.log("Loading Allergy Info - Finished");
 				this.PatientDataLoadComplete(RetCode);
 			},
 			failure : function (err, response) {
+				if (!RetCode) {
+					RetCode = "Update Vitals";
+				}
 				this.DataLoadCountDecrement("loadVitals FAIL");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
 			}
@@ -33855,8 +33509,8 @@ console.log("Loading Allergy Info - Finished");
 
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
-		var piTable = thisCtl.getPatientInfoTable();
-		piTable.update("");
+		var piTable = thisCtl.updatePITable("");
+
 		piTable.collapse();
 
 		var piTable1 = thisCtl.getPatientInfoTableInformation();
@@ -34144,12 +33798,12 @@ console.log("Loading Allergy Info - Finished");
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
-			return;
 		}
 
 		if ("Update Vitals" === Loaded) {
 			var ND_VitalSignsHistory = Ext.ComponentQuery.query("NursingDocs_GenInfo fieldset[title=\"Vital Signs - Historical\"] VitalSignsHistory")[0];
 			if (ND_VitalSignsHistory) {
+				globalAppPatientScope = this;
 				ND_VitalSignsHistory.update(Patient);
 			}
 
@@ -34173,13 +33827,13 @@ console.log("Loading Allergy Info - Finished");
 
 			COMS.Patient = this.application.Patient;
 			COMS.Application = this.application;
-			return;
 		}
 
 
-		if (this.Modules2Load.length > 0) {
-			var Module = this.Modules2Load.pop();
-			func2Call = Ext.bind(Module.func, this);
+		var Modules2Load = this.Modules2Load;
+		if (Modules2Load.length > 0) {
+			var Module = Modules2Load.pop();
+			var func2Call = Ext.bind(Module.func, this);
 			// console.log("Running " + Module.name);
 			func2Call();
 		}
@@ -34206,7 +33860,9 @@ console.log("Loading Allergy Info - Finished");
 
 			thisCtl.getPatientInfo().expand();
 
-			piTable = thisCtl.getPatientInfoTable();
+			// piTable = thisCtl.getPatientInfoTable();
+			piTable = thisCtl.updatePITable(Patient);
+
 			piTable.show();
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();

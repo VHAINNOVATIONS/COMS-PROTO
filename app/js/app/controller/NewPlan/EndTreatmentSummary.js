@@ -14,7 +14,7 @@
 // Expects a POST data consistent with the EndTreatmentSummary Model
 //
 Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
-    extend : "Ext.app.Controller",
+	extend : "Ext.app.Controller",
 	EoTSData : {},		// This is used for storing the EoTS Data calculated within this controller rather than passing a variable around.
 						// This will be the record stored on the back end when saving the EoTS
 						// 
@@ -33,16 +33,16 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 						//	EndReason - FinishUpReason4Change()
 						// }
 
-    stores : [
-    ],
+	stores : [
+	],
 
 	models : ["EndTreatmentSummary"],
 
-    views : [
+	views : [
 		"NewPlan.EndTreatmentSummary"
-    ],
+	],
 
-    refs: [
+	refs: [
 		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableHeader", selector: "EndTreatmentSummary [name=\"PatientInfoTableHeader\"]"},
 		{ ref: "PatientInfoTableBody", selector: "EndTreatmentSummary [name=\"PatientInfoTableBody\"]"},
@@ -67,61 +67,61 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		{ ref: "FollowUpAppointments", selector: "EndTreatmentSummary [name=\"FollowUpAppointments\"]"},
 
 
-	    {
-		    ref: "AdministeredMedsGrid",
+		{
+			ref: "AdministeredMedsGrid",
 			selector: "EndTreatmentSummary [name=\"AdministeredMedsGrid\"]"
-	    },
+		},
 
-	    {
-		    ref: "DiseaseResponseGrid",
+		{
+			ref: "DiseaseResponseGrid",
 			selector: "EndTreatmentSummary [name=\"DiseaseResponseGrid\"]"
-	    },
-	    {
-		    ref: "ToxicityGrid",
+		},
+		{
+			ref: "ToxicityGrid",
 			selector: "EndTreatmentSummary [name=\"ToxicityGrid\"]"
-	    },
-	    {
-		    ref: "OtherGrid",
+		},
+		{
+			ref: "OtherGrid",
 			selector: "EndTreatmentSummary [name=\"OtherGrid\"]"
-	    },
-	    {
-		    ref: "SaveBtn",
+		},
+		{
+			ref: "SaveBtn",
 			selector: "EndTreatmentSummary button[action=\"save\"]"
 		},
-	    {
-		    ref: "CancelBtn",
+		{
+			ref: "CancelBtn",
 			selector: "EndTreatmentSummary button[action=\"cancel\"]"
 		}
 
 	],
 
-    Start_EOTS1 : function() {
-        wccConsoleLog("Start_EOTS1");
-    },
-    Start_EOTS2 : function() {
-        wccConsoleLog("Start_EOTS2");
-    },
-    Start_EOTS3 : function() {
-        wccConsoleLog("Start_EOTS3");
-    },
+	Start_EOTS1 : function() {
+		wccConsoleLog("Start_EOTS1");
+	},
+	Start_EOTS2 : function() {
+		wccConsoleLog("Start_EOTS2");
+	},
+	Start_EOTS3 : function() {
+		wccConsoleLog("Start_EOTS3");
+	},
 
-    init: function() {  // called at application initialization time
-        wccConsoleLog("Initialized End of Treatment Summary Controller!");
-        this.control({
-            "EndTreatmentSummary" : {
-                beforeactivate: this.Start_EOTS3,
-                beforerender: this.Start_EOTS2,
-                beforeshow: this.Start_EOTS1,
+	init: function() {  // called at application initialization time
+		wccConsoleLog("Initialized End of Treatment Summary Controller!");
+		this.control({
+			"EndTreatmentSummary" : {
+				beforeactivate: this.Start_EOTS3,
+				beforerender: this.Start_EOTS2,
+				beforeshow: this.Start_EOTS1,
 				afterrender : this.AfterRenderWindow,
 				close : this.CloseEoTSWin, 
 				resize : this.ResizeTable
-            },
-            "EndTreatmentSummary button[action=\"save\"]": {
-                click: this.SaveEoTS
-            },
-            "EndTreatmentSummary button[action=\"cancel\"]": {
-                click: this.CancelEoTS
-            },
+			},
+			"EndTreatmentSummary button[action=\"save\"]": {
+				click: this.SaveEoTS
+			},
+			"EndTreatmentSummary button[action=\"cancel\"]": {
+				click: this.CancelEoTS
+			},
 				// Change Button in one of the 3 Radio Groups
 			"EndTreatmentSummary [name=\"Reason4EOTSAnswer\"]" : {
 				change : this.Reason4Change1
@@ -145,8 +145,8 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 				blur : this.Reason4ChangeDone,
 				specialkey : this.Look4Enter
 			}
-        });
-    },
+		});
+	},
 
 	Look4Enter : function( theField, evt, eOpts ) {
 		var theKey = evt.getKey();
@@ -327,10 +327,10 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 
 	parseFSData4EoTS : function( tType, dName, tDataStore, EoTS_DataStore, data ) {
 		var thisCtl = this.getController("NewPlan.EndTreatmentSummary"),
-		    i, el, tmp, bl,
-		    buf = [], 
-		    HasDataFlag = false,
-		    tmpEoTS;
+			i, el, tmp, bl,
+			buf = [], 
+			HasDataFlag = false,
+			tmpEoTS;
 		for (i in data) {
 			if (data.hasOwnProperty(i) && "&nbsp;" !== i && "label" !== i) {
 				el = data[i];
@@ -340,11 +340,11 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 						if (el.indexOf("Write</button") < 0) {
 							var el2=el.replace(/<button class="anchor .*data="/,"").replace(/".*$/, "");
 							if (unescape) {
-                                el = unescape(el2);
-                            }
-                            else {
-                                el = decodeURI(el2);
-                            }
+								el = unescape(el2);
+							}
+							else {
+								el = decodeURI(el2);
+							}
 							el = el.replace(/\n/g, "<br />");
 							if ("" === el2) {
 								el = "No entry recorded";
@@ -660,7 +660,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	SaveEoTS : function(button) {
 		// this.application.loadMask("Saving record of changes");
 		
-        var win = button.up('window');
+		var win = button.up('window');
 
 win.setLoading( "Saving End of Treatment Summary", false ) ;
 
@@ -675,17 +675,17 @@ win.setLoading( "Saving End of Treatment Summary", false ) ;
 		delete EoTSSaveRecord.LastVitals;
 		delete EoTSSaveRecord.FirstVitals;
 
-        var EoTSRecord = Ext.create(Ext.COMSModels.EoTS, EoTSSaveRecord );
+		var EoTSRecord = Ext.create(Ext.COMSModels.EoTS, EoTSSaveRecord );
 
 		EoTSRecord.save({
-            scope: this,
-            success: function (data) {
-                wccConsoleLog("Saved EoTS " );
-                if (win.widget ) {
-                    Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
-                }
+			scope: this,
+			success: function (data) {
+				wccConsoleLog("Saved EoTS " );
+				if (win.widget ) {
+					Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
+				}
 				win.setLoading( false, false ) ;
-		        win.close();
+				win.close();
 				// alert("Update History display with to display EoTS via ID returned in data");
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
 				var Patient = this.application.Patient;
@@ -701,15 +701,15 @@ Patient.TreatmentStart = "";
 			},
 			failure : function (arg0, arg1) {
 				alert("End of Treatment Summary Failure to save record...");
-		        win.close();
+				win.close();
 			}
 		});
 
 	},
 
 	CancelEoTS : function(button) {
-        var win = button.up('window');
-        win.close();
+		var win = button.up('window');
+		win.close();
 	},
 
 
@@ -804,26 +804,26 @@ Patient.TreatmentStart = "";
 
 	buildEoTSGrid : function (theGrid, storeID, gFields, gCols, gData ) {
 		var store = Ext.create('Ext.data.Store', {
-		    storeId: storeID,
-		    fields: gFields,
-		    data: { storeID : gData },
-		    proxy: {
-		        type: 'memory',
-		        reader: {
-		            type: 'json',
-		            root: storeID
-		        }
-		    }
+			storeId: storeID,
+			fields: gFields,
+			data: { storeID : gData },
+			proxy: {
+				type: 'memory',
+				reader: {
+					type: 'json',
+					root: storeID
+				}
+			}
 		});
 
 		theGrid = Ext.create('Ext.grid.Panel', {
-		    renderTo: theGrid.getEl(),
+			renderTo: theGrid.getEl(),
 			autoScroll: 'y',
 			columnLines: true,
 			viewConfig: { stripeRows: true, forceFit: true },
 
-		    store: Ext.data.StoreManager.lookup(storeID),
-		    columns: gCols
+			store: Ext.data.StoreManager.lookup(storeID),
+			columns: gCols
 		});
 
 		theGrid.on("afterlayout", function() {

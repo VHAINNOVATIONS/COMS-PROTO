@@ -7,8 +7,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	tpl : new Ext.XTemplate(
 		"{[this.tempCalc(values, parent)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
-
-			"<tr>",		// Pulse, BP, Respiration, 
+			"<tr>",
 				"<th rowspan=\"2\">Date</th>",
 				"<th rowspan=\"2\">Temp<br />&deg;F/&deg;C</th>",
 				"<th rowspan=\"2\">Temp Taken</th>",
@@ -22,13 +21,13 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<th rowspan=\"2\">Weight<br />in lbs/kg</th>",
 				"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
 			"</tr>",
-			"<tr>",		// Pulse, BP, Respiration, 
+			"<tr>",
 				"<th ><abbr title=\"Body Surface Area Weight Formula\">Weight Form.</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Weight \">Weight</abbr> in KG</th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
 			"</tr>",
-			"{[this.getLastHWBSAInfo(values, parent, xindex, xcount)]}",
+			"{[this.getLastHWBSAInfo(values)]}",
 			"<tpl for=\"Vitals\">",
 				"<tr>",
 					"<td>{DateTaken}</td>",
@@ -56,26 +55,28 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			tempCalc: function (data, pData) {
 				// debugger;
 			},
-			getLastHWBSAInfo: function (data, pData, pDataIndex, pDataLen) {
+			getLastHWBSAInfo: function (data) {
 				var Vitals = data.Vitals, vLen = data.Vitals.length;
 				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
 				for (i = vLen-1; i >= 0; i--) {
 					v = Vitals[i];
-/*
+
 					if ("" == v.Height || "-" == v.Height || !("Height" in v)) {
-						v.Height = h;
+//						v.Height = h;
 					}
 					else {
 						h = v.Height;
 					}
 
 					if ("" == v.Weight || "-" == v.Weight || !("Weight" in v)) {
-						v.Weight = w;
+//						v.Weight = w;
 					}
 					else {
 						w = v.Weight;
 					}
-*/
+
+
+
 					if ("" == v.BSA_Method || "-" == v.BSA_Method || !("BSA_Method" in v)) {
 						v.BSA_Method = bm;
 					}
@@ -95,6 +96,33 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					else {
 						wf = v.WeightFormula;
 					}
+				}
+
+				v = Vitals[0];
+				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
+				if (v.hasOwnProperty("BSA") && "" !== v.BSA && 0 !== v.BSA && NAMsg !== v.BSA) {
+					data.BSA = v.BSA;
+					data.BSA_Method = v.BSA_Method;
+					data.BSA_Weight = v.BSA_Weight;
+					data.WeightFormula = v.WeightFormula;
+					data.Weight = w;
+					data.Height = h;
+					if (thepiTag) {
+						thepiTag.setHTML(v.BSA + " m<sup>2</sup>");
+					}
+				}
+				if (globalAppPatientScope) {
+					var gPat = globalAppPatientScope.application.Patient;
+					gPat.BSA = v.BSA;
+					gPat.BSA_Method = v.BSA_Method;
+					gPat.BSA_Weight = v.BSA_Weight;
+					gPat.WeightFormula = v.WeightFormula;
+					gPat.Weight = w;
+					gPat.Height = h;
+
+					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
+					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
 				}
 				return "";
 			},

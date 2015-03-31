@@ -102,11 +102,9 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 	},
 
 
-
 	updatePITable : function(Patient) {
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		var piTableInfo = thisCtl.getPatientInfoTableInformation();
-		piTableInfo.update(this.application.Patient);
+		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
 	},
 
 	Save : function(btn) {

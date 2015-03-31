@@ -301,6 +301,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
        wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
     },
 
+	updatePITable : function(PatientData) {
+		var piTable = this.getPatientInfoTable();
+		if (!PatientData) {
+			piTable.update("");
+		}
+		else {
+			piTable.update(PatientData);
+		}
+		return piTable;
+	},
+
+
 	MaskPITPanelOnExpand : function (p, ani, opts) {
 //		if ("Patient Information" !== p.title ) {
 //			this.MaskPITable("Loading Patient Information");
@@ -1990,6 +2002,9 @@ console.log("Loading Allergy Info - Finished");
 		pVitalsModel.load(pVitalsModelParam, {
 			scope : this,
 			success : function( patientInfo, response ) {
+				if (!RetCode) {
+					RetCode = "Update Vitals";
+				}
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
 					var mergedVitals = this.MergeWithVPR_Array(rawData.records);
@@ -1999,6 +2014,9 @@ console.log("Loading Allergy Info - Finished");
 				this.PatientDataLoadComplete(RetCode);
 			},
 			failure : function (err, response) {
+				if (!RetCode) {
+					RetCode = "Update Vitals";
+				}
 				this.DataLoadCountDecrement("loadVitals FAIL");
 				this.PatientDataLoadComplete(RetCode + " - FAILED Loading");
 			}
@@ -2408,8 +2426,8 @@ console.log("Loading Allergy Info - Finished");
 
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
-		var piTable = thisCtl.getPatientInfoTable();
-		piTable.update("");
+		var piTable = thisCtl.updatePITable("");
+
 		piTable.collapse();
 
 		var piTable1 = thisCtl.getPatientInfoTableInformation();
@@ -2697,12 +2715,12 @@ console.log("Loading Allergy Info - Finished");
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
-			return;
 		}
 
 		if ("Update Vitals" === Loaded) {
 			var ND_VitalSignsHistory = Ext.ComponentQuery.query("NursingDocs_GenInfo fieldset[title=\"Vital Signs - Historical\"] VitalSignsHistory")[0];
 			if (ND_VitalSignsHistory) {
+				globalAppPatientScope = this;
 				ND_VitalSignsHistory.update(Patient);
 			}
 
@@ -2726,13 +2744,13 @@ console.log("Loading Allergy Info - Finished");
 
 			COMS.Patient = this.application.Patient;
 			COMS.Application = this.application;
-			return;
 		}
 
 
-		if (this.Modules2Load.length > 0) {
-			var Module = this.Modules2Load.pop();
-			func2Call = Ext.bind(Module.func, this);
+		var Modules2Load = this.Modules2Load;
+		if (Modules2Load.length > 0) {
+			var Module = Modules2Load.pop();
+			var func2Call = Ext.bind(Module.func, this);
 			// console.log("Running " + Module.name);
 			func2Call();
 		}
@@ -2759,7 +2777,9 @@ console.log("Loading Allergy Info - Finished");
 
 			thisCtl.getPatientInfo().expand();
 
-			piTable = thisCtl.getPatientInfoTable();
+			// piTable = thisCtl.getPatientInfoTable();
+			piTable = thisCtl.updatePITable(Patient);
+
 			piTable.show();
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
