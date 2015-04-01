@@ -16,13 +16,16 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
                     element : 'el', 
                     fn : function() {
                         var thePanel = Ext.ComponentQuery.query("PatientHistory container[name=\"AddVitals\"]")[0];
+						var theVitalSignsForm = Ext.ComponentQuery.query("PatientHistory VitalSignsEntryForm")[0];
                         var theButton = Ext.ComponentQuery.query("PatientHistory button[name=\"Show_Hide_Add_Vitals\"]")[0];
 
                         if (thePanel.hidden) {
                             thePanel.show();
+							theVitalSignsForm.show();
                             theButton.setText("Hide Add Vitals");
                         } else {
                             thePanel.hide();
+							theVitalSignsForm.hide();
                             theButton.setText("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add Vitals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                         }
                     },

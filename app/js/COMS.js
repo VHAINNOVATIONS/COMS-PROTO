@@ -5332,17 +5332,18 @@ Ext.define("COMS.store.LabInfo", {
 });
 
 Ext.define('COMS.store.Lockout', {
-				extend : 'Ext.data.Store',
-				fields:["id", "Patient_ID", "Section", "UserName", "dtLocked", "dtUnLocked", "Last_Name", "First_Name", "Middle_Name", "Prefix", "Suffix", "Match"],
-				proxy: {
-					type: 'rest',
-					url : "/Patient/Lock",
-					reader: {
-						type: 'json',
-						root : 'records'
-					}
-				}
-			});
+	extend : 'Ext.data.Store',
+	fields:["id", "Patient_ID", "Section", "UserName", "dtLocked", "dtUnLocked", "Patient_DFN"],
+	proxy: {
+		type: 'rest',
+		url : "/Patient/Lock",
+		reader: {
+			type: 'json',
+			root : 'records'
+		}
+	}
+});
+
 
 Ext.define('COMS.store.LookupStore', {
 	extend : 'Ext.data.Store',
@@ -6955,12 +6956,12 @@ Ext.define('COMS.view.Authoring.References' ,{
 		{ text: 'Remove Reference', title: 'RemoveReference', disabled: true },
 		{ text: 'Edit Reference', title: 'EditReference', disabled: true}
 	],
-	buttonAlign: 'left'
-//	initComponent: function() {
-//		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
-//		this.plugins = [cellEditing];
-//		this.callParent(arguments);
-//	}
+	buttonAlign: 'left',
+	initComponent: function() {
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
+		this.plugins = [cellEditing];
+		this.callParent(arguments);
+	}
 });
 
 
@@ -9292,18 +9293,8 @@ Ext.define("COMS.view.Management.Lockout", {
 			},
 			"columns": [
 				{
-					"text": "Name",
-					"dataIndex": "Last_Name",
-					"renderer" : function(value, metaData, record, row, col, store, gridView) {
-						// debugger;
-						var theData = record.getData();
-						var theName = theData.Last_Name + " " + 
-							theData.Suffix + ", " + 
-							theData.First_Name + " " + 
-							theData.Middle_Name + 
-							" (" + theData.Match + ")";
-						return theName.trim();
-					},
+					"text": "Patient DFN",
+					"dataIndex": "Patient_DFN",
 					"flex": 2
 				},
 				{
@@ -12959,7 +12950,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                     xtype: "displayfield",
                     name: "ndVitalsTempC",
                     labelSeparator: "",
-                    value: " (  &deg;C)",
+                    value: "",
                     labelWidth: 5,
                     width: 60
                 },
@@ -13056,7 +13047,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                 xtype: "displayfield",
                 name: "ndVitalsHeightCM",
                 labelSeparator: "",
-                value: " (  cm)",
+                value: "",
                 width: 90
             }]
         }, {
@@ -13116,7 +13107,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                 xtype: "displayfield",
                 name: "ndVitalsWeightKG",
                 labelSeparator: "",
-                value: " (  kg)",
+                value: "",
                 width: 90
             }]
         }, {
@@ -14777,13 +14768,16 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
                     element : 'el', 
                     fn : function() {
                         var thePanel = Ext.ComponentQuery.query("PatientHistory container[name=\"AddVitals\"]")[0];
+						var theVitalSignsForm = Ext.ComponentQuery.query("PatientHistory VitalSignsEntryForm")[0];
                         var theButton = Ext.ComponentQuery.query("PatientHistory button[name=\"Show_Hide_Add_Vitals\"]")[0];
 
                         if (thePanel.hidden) {
                             thePanel.show();
+							theVitalSignsForm.show();
                             theButton.setText("Hide Add Vitals");
                         } else {
                             thePanel.hide();
+							theVitalSignsForm.hide();
                             theButton.setText("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add Vitals&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                         }
                     },
@@ -21704,17 +21698,16 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 	{
-		ref : "RoleUserName",
-		selector : "AdminTab Roles [name=\"name\"]"
-	},
-
-	{
-		ref : "RoleUserEmail",
-		selector : "AdminTab Roles [name=\"email\"]"
+		ref : "RoleLastName",
+		selector : "AdminTab Roles [name=\"LastName\"]"
 	},
 	{
-		ref : "RoleUserAccessCode",
-		selector : "AdminTab Roles [name=\"AccessCode\"]"
+		ref : "RoleFirstName",
+		selector : "AdminTab Roles [name=\"FirstName\"]"
+	},
+	{
+		ref : "RoleSelVistAUser",
+		selector : "AdminTab Roles [name=\"SelVistAUser\"]"
 	},
 	{
 		ref : "RoleUserRole",
@@ -22487,18 +22480,35 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 	RolesUserInfo : {},
-	selectRolesGridRow : function(theRowModel, record, index, eOpts) {
+selectRolesGridRow : function(theRowModel, record, index, eOpts) {
 		/* "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Email", "TemplateAuthoring", "Role_ID", "Last_SessionID" ], */
 		this.RolesUserInfo = record.getData();
+		var r = this.RolesUserInfo;
+		var n = r.DisplayName.split(",");		// n[1] = First, n[0] = Last
 
-		var NameField = this.getRoleUserName();
-		NameField.setValue(this.RolesUserInfo.DisplayName);
+/***
+RolesUserInfo: {
+DisplayName: "Tdnurse,Five"
+Last_SessionID: null
+Role_ID: "A802B9E4-ADCD-E411-9444-000C2935B86F"
+TemplateAuthoring: 0
+id: undefined		// ignore
+lastlogin: null		// ignore
+rid: 9		// pKey
+role: "Nurse"
+username: "10000000065"		// aka DUZ
+vcode: null		// ignore
+	}
+	***/
 
-		var EmailField = this.getRoleUserEmail();
-		EmailField.setValue(this.RolesUserInfo.Email);
+		var LastNameField = this.getRoleLastName();
+		LastNameField.setValue(n[0]);
 
-		var ACField = this.getRoleUserAccessCode();
-		ACField.setValue(this.RolesUserInfo.username);
+		var FirstNameField = this.getRoleFirstName();
+		FirstNameField.setValue(n[1]);
+
+		var RoleSelVistAUser = this.getRoleSelVistAUser();
+		RoleSelVistAUser.setValue(r.DisplayName);
 
 		var RoleField = this.getRoleUserRole();
 		RoleField.setValue(this.RolesUserInfo.role);
@@ -22509,6 +22519,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.enable();
 		DelBtn.show();
+
+		this.getRoleGetUsersCombo().show();
+		this.getRoleUserRole().show();
+		this.getRoleUserTemplateAuthoring().show();
 	},
 
 	RolesLoadGrid : function (panel) {
@@ -22517,6 +22531,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.disable();
 		DelBtn.show();
+		this.getRoleGetUsersCombo().hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
+
 		this.application.loadMask("Please wait; Loading User Roles");
 		var theGrid = this.getRolesGrid();
 		theGrid.getStore().load();
@@ -22527,6 +22545,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	clickRolesCancel : function ( theButton, eOpts) {
 		delete this.RolesUserInfo;
 		theButton.up('form').getForm().reset();
+		this.getRoleGetUsersCombo().hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
 	},
 
 	clickRolesSave : function ( theButton, eOpts) {
@@ -28378,6 +28399,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
 
+			"VitalSignsEntryForm" : {
+				"beforerender" : this.initForm,
+				"show" : this.initForm
+			},
+
+
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.VitalsFieldValidation
 			},
@@ -28407,6 +28434,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			}
 		});
 	},
+	initForm : function(theForm) {
+		if (this.application.Patient) {
+			this.initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+
 	procIDE : function(fld, IDESpec) {
 		var fldName = fld.name, 
 			fldValue = parseFloat(fld.getValue()), 
@@ -28667,13 +28700,15 @@ ClearTabData : function(obj) {
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
-		var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
-		for (i = 0; i < afLen; i++) {
-			f = allForms[i].getForm();
-			f.setValues(clearedFields);
-		}
 		if (this.application.Patient) {
 			this.initVitalSignsEntryForm(this.application.Patient);
+		}
+		else {
+			var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
+			for (i = 0; i < afLen; i++) {
+				f = allForms[i].getForm();
+				f.setValues(clearedFields);
+			}
 		}
 
 		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
@@ -28685,7 +28720,26 @@ ClearTabData : function(obj) {
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
-		var clearedFields = {"ndVitalsGender" : "XX", "ndVitalsAge" : "99" };
+		var clearedFields = {
+			"displayfield-1212-inputEl" : "",
+			"ndVitalsAge" : Patient.Age, 
+			"ndVitalsBSA" : "",
+			"ndVitalsDiastolic" : "", 
+			"ndVitalsGender" : Patient.Gender, 
+			"ndVitalsHeightCM" : "",
+			"ndVitalsHeightIN" : "",
+			"ndVitalsO2Level" : "",
+			"ndVitalsPain" : "",
+			"ndVitalsPulse" : "", 
+			"ndVitalsResp" : "", 
+			"ndVitalsSystolic" : "", 
+			"ndVitalsTempC" : "",
+			"ndVitalsTempF" : "", 
+			"ndVitalsTempLoc" : "",
+			"ndVitalsWeightKG" : "",
+			"ndVitalsWeightP" : ""
+		};
+
 		for (i = 0; i < afLen; i++) {
 			f = allForms[i].getForm();
 			f.setValues(clearedFields);
@@ -28821,6 +28875,10 @@ ClearTabData : function(obj) {
 		record.Pain = Pain.getValue();
 		record.SPO2 = SPO2.getValue();
 		record.BSA = BSA.getValue();
+
+		record.BSA = record.BSA.split(" ")[0];
+
+
 		record.BP = Systolic.getValue() + " / " + Diastolic.getValue();
 
 		var flg1 = "" === record.Temperature;
@@ -29018,9 +29076,9 @@ ClearTabData : function(obj) {
 		NDVitalsDiastolic.setValue("");
 		NDVitalsResp.setValue("");
 		NDVitalsHeightIN.setValue("");
-		NDVitalsHeightCM.setValue("( cm)");
+		NDVitalsHeightCM.setValue("");
 		NDVitalsWeightP.setValue("");
-		NDVitalsWeightKG.setValue("( kg)");
+		NDVitalsWeightKG.setValue("");
 
 		var VSHTemplateDataBtns;
 		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
@@ -29957,6 +30015,7 @@ this.AdminDate = today;
 });
 
 
+/********************************
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 	extend: "Ext.app.Controller",
 	views: [
@@ -29974,7 +30033,40 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 
 		this.control({
 			"VitalSignsEntryForm" : {
-				"beforerender" : this.initForm
+				"beforerender" : this.initForm1,
+				"afterrender" : this.initForm2
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPulse\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsSystolic\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsResp\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsO2Level\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsWeightP\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
+				"blur" : this.Validate
+			}
+/ **************
+			"VitalSignsEntryForm" : {
+				"beforerender" : this.initForm,
+				"afterrender" : function() { console.log("Vitals Rendered"); }
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
@@ -30003,13 +30095,29 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
 				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			}
+************** /
 		});
 	},
-	initForm : function() {
+	initForm1 : function(theForm) {
 		debugger;
-		this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		if (this.application.Patient) {
+			this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+	initForm2 : function(theForm) {
+		debugger;
+		if (this.application.Patient) {
+			this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+
+	Validate : function(fld, evt, eOpts) {
+		debugger;
+		this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation(fld, evt, eOpts);
 	}
+
 });
+*************************/
 
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
 	"extend" : "Ext.app.Controller",

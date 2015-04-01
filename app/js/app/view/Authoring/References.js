@@ -16,12 +16,12 @@ Ext.define('COMS.view.Authoring.References' ,{
 		{ text: 'Remove Reference', title: 'RemoveReference', disabled: true },
 		{ text: 'Edit Reference', title: 'EditReference', disabled: true}
 	],
-	buttonAlign: 'left'
-//	initComponent: function() {
-//		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
-//		this.plugins = [cellEditing];
-//		this.callParent(arguments);
-//	}
+	buttonAlign: 'left',
+	initComponent: function() {
+		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
+		this.plugins = [cellEditing];
+		this.callParent(arguments);
+	}
 });
 
 

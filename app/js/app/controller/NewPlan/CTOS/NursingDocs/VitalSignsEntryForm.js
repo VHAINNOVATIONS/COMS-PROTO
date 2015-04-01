@@ -1,3 +1,4 @@
+/********************************
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 	extend: "Ext.app.Controller",
 	views: [
@@ -15,7 +16,40 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 
 		this.control({
 			"VitalSignsEntryForm" : {
-				"beforerender" : this.initForm
+				"beforerender" : this.initForm1,
+				"afterrender" : this.initForm2
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPulse\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsSystolic\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsDiastolic\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsHeightIN\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsResp\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsO2Level\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsWeightP\"]" : {
+				"blur" : this.Validate
+			},
+			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
+				"blur" : this.Validate
+			}
+/ **************
+			"VitalSignsEntryForm" : {
+				"beforerender" : this.initForm,
+				"afterrender" : function() { console.log("Vitals Rendered"); }
 			},
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
@@ -44,10 +78,26 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 			"VitalSignsEntryForm [name=\"ndVitalsPain\"]" : {
 				"blur" : this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation	// this.VitalsFieldValidation
 			}
+************** /
 		});
 	},
-	initForm : function() {
+	initForm1 : function(theForm) {
 		debugger;
-		this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		if (this.application.Patient) {
+			this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+	initForm2 : function(theForm) {
+		debugger;
+		if (this.application.Patient) {
+			this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+
+	Validate : function(fld, evt, eOpts) {
+		debugger;
+		this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab").VitalsFieldValidation(fld, evt, eOpts);
 	}
+
 });
+*************************/

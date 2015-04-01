@@ -68,17 +68,16 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 	{
-		ref : "RoleUserName",
-		selector : "AdminTab Roles [name=\"name\"]"
-	},
-
-	{
-		ref : "RoleUserEmail",
-		selector : "AdminTab Roles [name=\"email\"]"
+		ref : "RoleLastName",
+		selector : "AdminTab Roles [name=\"LastName\"]"
 	},
 	{
-		ref : "RoleUserAccessCode",
-		selector : "AdminTab Roles [name=\"AccessCode\"]"
+		ref : "RoleFirstName",
+		selector : "AdminTab Roles [name=\"FirstName\"]"
+	},
+	{
+		ref : "RoleSelVistAUser",
+		selector : "AdminTab Roles [name=\"SelVistAUser\"]"
 	},
 	{
 		ref : "RoleUserRole",
@@ -851,18 +850,35 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 	RolesUserInfo : {},
-	selectRolesGridRow : function(theRowModel, record, index, eOpts) {
+selectRolesGridRow : function(theRowModel, record, index, eOpts) {
 		/* "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Email", "TemplateAuthoring", "Role_ID", "Last_SessionID" ], */
 		this.RolesUserInfo = record.getData();
+		var r = this.RolesUserInfo;
+		var n = r.DisplayName.split(",");		// n[1] = First, n[0] = Last
 
-		var NameField = this.getRoleUserName();
-		NameField.setValue(this.RolesUserInfo.DisplayName);
+/***
+RolesUserInfo: {
+DisplayName: "Tdnurse,Five"
+Last_SessionID: null
+Role_ID: "A802B9E4-ADCD-E411-9444-000C2935B86F"
+TemplateAuthoring: 0
+id: undefined		// ignore
+lastlogin: null		// ignore
+rid: 9		// pKey
+role: "Nurse"
+username: "10000000065"		// aka DUZ
+vcode: null		// ignore
+	}
+	***/
 
-		var EmailField = this.getRoleUserEmail();
-		EmailField.setValue(this.RolesUserInfo.Email);
+		var LastNameField = this.getRoleLastName();
+		LastNameField.setValue(n[0]);
 
-		var ACField = this.getRoleUserAccessCode();
-		ACField.setValue(this.RolesUserInfo.username);
+		var FirstNameField = this.getRoleFirstName();
+		FirstNameField.setValue(n[1]);
+
+		var RoleSelVistAUser = this.getRoleSelVistAUser();
+		RoleSelVistAUser.setValue(r.DisplayName);
 
 		var RoleField = this.getRoleUserRole();
 		RoleField.setValue(this.RolesUserInfo.role);
@@ -873,6 +889,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.enable();
 		DelBtn.show();
+
+		this.getRoleGetUsersCombo().show();
+		this.getRoleUserRole().show();
+		this.getRoleUserTemplateAuthoring().show();
 	},
 
 	RolesLoadGrid : function (panel) {
@@ -881,6 +901,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.disable();
 		DelBtn.show();
+		this.getRoleGetUsersCombo().hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
+
 		this.application.loadMask("Please wait; Loading User Roles");
 		var theGrid = this.getRolesGrid();
 		theGrid.getStore().load();
@@ -891,6 +915,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	clickRolesCancel : function ( theButton, eOpts) {
 		delete this.RolesUserInfo;
 		theButton.up('form').getForm().reset();
+		this.getRoleGetUsersCombo().hide();
+		this.getRoleUserRole().hide();
+		this.getRoleUserTemplateAuthoring().hide();
 	},
 
 	clickRolesSave : function ( theButton, eOpts) {

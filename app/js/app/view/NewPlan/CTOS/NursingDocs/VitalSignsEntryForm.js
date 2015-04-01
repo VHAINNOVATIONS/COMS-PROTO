@@ -44,7 +44,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                     xtype: "displayfield",
                     name: "ndVitalsTempC",
                     labelSeparator: "",
-                    value: " (  &deg;C)",
+                    value: "",
                     labelWidth: 5,
                     width: 60
                 },
@@ -141,7 +141,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                 xtype: "displayfield",
                 name: "ndVitalsHeightCM",
                 labelSeparator: "",
-                value: " (  cm)",
+                value: "",
                 width: 90
             }]
         }, {
@@ -201,7 +201,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
                 xtype: "displayfield",
                 name: "ndVitalsWeightKG",
                 labelSeparator: "",
-                value: " (  kg)",
+                value: "",
                 width: 90
             }]
         }, {

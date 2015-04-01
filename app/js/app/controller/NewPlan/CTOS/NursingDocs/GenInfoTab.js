@@ -188,6 +188,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
 
+			"VitalSignsEntryForm" : {
+				"beforerender" : this.initForm,
+				"show" : this.initForm
+			},
+
+
 			"VitalSignsEntryForm [name=\"ndVitalsTempF\"]" : {
 				"blur" : this.VitalsFieldValidation
 			},
@@ -217,6 +223,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			}
 		});
 	},
+	initForm : function(theForm) {
+		if (this.application.Patient) {
+			this.initVitalSignsEntryForm(this.application.Patient);
+		}
+	},
+
 	procIDE : function(fld, IDESpec) {
 		var fldName = fld.name, 
 			fldValue = parseFloat(fld.getValue()), 
@@ -477,13 +489,15 @@ ClearTabData : function(obj) {
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
-		var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
-		for (i = 0; i < afLen; i++) {
-			f = allForms[i].getForm();
-			f.setValues(clearedFields);
-		}
 		if (this.application.Patient) {
 			this.initVitalSignsEntryForm(this.application.Patient);
+		}
+		else {
+			var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
+			for (i = 0; i < afLen; i++) {
+				f = allForms[i].getForm();
+				f.setValues(clearedFields);
+			}
 		}
 
 		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
@@ -495,7 +509,26 @@ ClearTabData : function(obj) {
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
-		var clearedFields = {"ndVitalsGender" : "XX", "ndVitalsAge" : "99" };
+		var clearedFields = {
+			"displayfield-1212-inputEl" : "",
+			"ndVitalsAge" : Patient.Age, 
+			"ndVitalsBSA" : "",
+			"ndVitalsDiastolic" : "", 
+			"ndVitalsGender" : Patient.Gender, 
+			"ndVitalsHeightCM" : "",
+			"ndVitalsHeightIN" : "",
+			"ndVitalsO2Level" : "",
+			"ndVitalsPain" : "",
+			"ndVitalsPulse" : "", 
+			"ndVitalsResp" : "", 
+			"ndVitalsSystolic" : "", 
+			"ndVitalsTempC" : "",
+			"ndVitalsTempF" : "", 
+			"ndVitalsTempLoc" : "",
+			"ndVitalsWeightKG" : "",
+			"ndVitalsWeightP" : ""
+		};
+
 		for (i = 0; i < afLen; i++) {
 			f = allForms[i].getForm();
 			f.setValues(clearedFields);
@@ -631,6 +664,10 @@ ClearTabData : function(obj) {
 		record.Pain = Pain.getValue();
 		record.SPO2 = SPO2.getValue();
 		record.BSA = BSA.getValue();
+
+		record.BSA = record.BSA.split(" ")[0];
+
+
 		record.BP = Systolic.getValue() + " / " + Diastolic.getValue();
 
 		var flg1 = "" === record.Temperature;
@@ -828,9 +865,9 @@ ClearTabData : function(obj) {
 		NDVitalsDiastolic.setValue("");
 		NDVitalsResp.setValue("");
 		NDVitalsHeightIN.setValue("");
-		NDVitalsHeightCM.setValue("( cm)");
+		NDVitalsHeightCM.setValue("");
 		NDVitalsWeightP.setValue("");
-		NDVitalsWeightKG.setValue("( kg)");
+		NDVitalsWeightKG.setValue("");
 
 		var VSHTemplateDataBtns;
 		if (VitalSigns && VitalSigns.rendered) {		// Make sure the Vital Signs in the ND/GenInfo tab are rendered before trying to attach.
