@@ -32,17 +32,20 @@ Ext.define("COMS.view.Management.Lockout", {
 			},
 			"columns": [
 				{
-					"text": "Name",
-					"dataIndex": "Last_Name",
+					"text": "Patient DFN",
+					"dataIndex": "Patient_DFN",
 					"renderer" : function(value, metaData, record, row, col, store, gridView) {
 						// debugger;
 						var theData = record.getData();
+						/*
 						var theName = theData.Last_Name + " " + 
 							theData.Suffix + ", " + 
 							theData.First_Name + " " + 
 							theData.Middle_Name + 
 							" (" + theData.Match + ")";
 						return theName.trim();
+						*/
+						return theData.Patient_DFN
 					},
 					"flex": 2
 				},

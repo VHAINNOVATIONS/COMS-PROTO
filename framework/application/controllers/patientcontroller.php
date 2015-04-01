@@ -2759,6 +2759,7 @@ $this->Patient->query( $query );
                 /* Additional check for "" takes care of just a trailing slash at the end of the request URI */
                 if ( ( null === $Patient_ID || "" === $Patient_ID ) && null === $Section && null === $State ) {
 // error_log( "Get info on all locked records" );
+/***********************
                     $query = "select 
                 el.id, 
                 el.Patient_ID, 
@@ -2776,7 +2777,22 @@ $this->Patient->query( $query );
                 join Patient p on p.Patient_ID = el.Patient_ID
                 where el.dtLocked is not null 
                 and el.dtUnLocked is null";
-                    
+***********************/
+
+                    $query = "select 
+                el.id, 
+                el.Patient_ID, 
+                el.Section, 
+                el.UserName, 
+                CONVERT(varchar,el.dtLocked,100) as dtLocked, 
+                CONVERT(varchar,el.dtUnLocked,100) as dtUnLocked, 
+                DFN as Patient_DFN
+                from EditLockout el 
+                join Patient p on p.Patient_ID = el.Patient_ID
+                where el.dtLocked is not null 
+                and el.dtUnLocked is null";
+
+
                     $records                 = $this->Patient->query( $query );
                     $jsonRecord[ "success" ] = true;
                     $jsonRecord[ "total" ]   = count( $records );
