@@ -1,17 +1,22 @@
 <?php
 session_start();
 $username = get_current_user();
-$_SESSION['chkTrack']= 1;
 $_SESSION['sessionid'] = session_id();
 $sessionid = $_SESSION['sessionid'];
 
 function sessionkill(){
-     session_unset();
-    session_destroy();
-    session_write_close();
-    setcookie(session_name(),'',0,'/');
-    session_regenerate_id(true);
+
+	$_SESSION = array();
+	if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+	}
+	session_destroy();
 	header("location:login.php");
+
 
 }
 ?>

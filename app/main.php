@@ -6,9 +6,9 @@
     $ProjType = "Release 1.2 March 13, 2015";
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
-/* <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> */
 ?>
 <!DOCTYPE HTML>
+
 <!--[if lt IE 7 ]> <html class="no-js ie6" lang="en"> <![endif]-->
 <!--[if IE 7 ]><html class="no-js ie7" lang="en"> <![endif]-->
 <!--[if IE 8 ]><html class="no-js ie8" lang="en"> <![endif]-->
@@ -63,7 +63,7 @@
     /* User name of user currently logged into the domain */
     echo "var Sessionrid = '$rid';\n";
     echo "var Sessionrole = '$role';\n";
-    echo "var SessionDisplayName = '" . $_SESSION[ 'displayName' ] . "';\n";
+    echo "var SessionDisplayName = '" . $_SESSION[ 'dname' ] . "';\n";
     echo "var SessionTemplateAuthoring = '$TemplateAuthoring';\n";
     echo "var AuthType = '" . $_SESSION[ "winauth" ] . "';\n";
     if ( isset( $FirstParam ) ) {

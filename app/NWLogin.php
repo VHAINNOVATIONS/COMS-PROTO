@@ -21,16 +21,12 @@ error_log("Using special Admin Access");
             while ( $row = sqlsrv_fetch_array( $getglobals, SQLSRV_FETCH_ASSOC ) ) {
                 $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
                 $_SESSION[ 'domain' ]   = $row[ 'domain' ];
-                $_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
                 $_SESSION[ 'vista' ]    = $row[ 'vista' ];
-                $_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
-                $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
-                $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
             }
             $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$UserName'";
             $updateRole = sqlsrv_query( $conn, $usql );
             $point      = "signed in";
-            PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
+            //PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
             $NWLoginR                = 1;
             $_SESSION[ 'COMSLogin' ] = 1;
             error_log( "NWLogin Exit - Session Vars = " . json_encode( $_SESSION ) );
@@ -70,7 +66,7 @@ error_log("Using special Admin Access");
         $DUZ        = $jdUserInfo->{"duz"};
         
         $point = "NWlogin";
-        PostTrack( $_SESSION[ 'ruser' ], $AccessCode, $point, 1, $_SESSION[ 'sessionid' ] );
+        //PostTrack( $_SESSION[ 'ruser' ], $AccessCode, $point, 1, $_SESSION[ 'sessionid' ] );
         $ruser                       = $_SERVER[ 'REMOTE_USER' ];
         $_SESSION[ 'sessionStatus' ] = 0;
         
@@ -89,6 +85,7 @@ error_log("Using special Admin Access");
             $_SESSION[ 'AC' ]                = $AccessCode;
             $_SESSION[ 'VC' ]                = $VerifyCode;
             $_SESSION[ 'NWLogin' ]           = 355;
+			$_SESSION[ 'LoginTime']			 = microtime(true);
         }
         if ( $flg ) {
             error_log( "Got User - '$AccessCode', '$VerifyCode' - '$DUZ'" );
@@ -97,16 +94,13 @@ error_log("Using special Admin Access");
             while ( $row = sqlsrv_fetch_array( $getglobals, SQLSRV_FETCH_ASSOC ) ) {
                 $_SESSION[ 'sitelist' ] = $row[ 'sitelist' ];
                 $_SESSION[ 'domain' ]   = $row[ 'domain' ];
-                $_SESSION[ 'mdws' ]     = $row[ 'mdws' ];
                 $_SESSION[ 'vista' ]    = $row[ 'vista' ];
-                $_SESSION[ 'sshusr' ]   = $row[ 'sshusr' ];
-                $_SESSION[ 'sshpwd' ]   = $row[ 'sshpwd' ];
-                $_SESSION[ 'sshusr2' ]  = $row[ 'sshusr2' ];
+                $_SESSION[ 'port' ]    = $row[ 'port' ];
             }
             $usql       = "Update Roles set Last_SessionID = '" . $_SESSION[ 'sessionid' ] . "' where username = '$DUZ'";
             $updateRole = sqlsrv_query( $conn, $usql );
             $point      = "signed in";
-            PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
+            //PostTrack( $_SESSION[ 'ruser' ], $_SESSION[ 'AC' ], $point, 99, $_SESSION[ 'sessionid' ] );
             $NWLoginR                = 1;
             $_SESSION[ 'COMSLogin' ] = 1;
             
