@@ -27,7 +27,7 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 		$date2 = date("F j, Y");
 		//Insert into SQL
 		$tsql1 = "INSERT INTO COMS_Track (id,ip,compname,ref,username,winauth,point,pointno,time,date2,sessionid,page) VALUES ($newid,'$ip_vistor','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$sessionid','$page')";
-		$posttrack = sqlsrv_query($conn, $tsql1);
+		//$posttrack = sqlsrv_query($conn, $tsql1);
 		
 		//Write Session Variables
 		$dname = $_SESSION['dname'];
@@ -50,15 +50,13 @@ function PostTrack($ruser,$AccessCode,$point,$pointno,$sessionid){
 		$NWLoginR = $_SESSION['NWLoginR'];
 		$COMSLogin = $_SESSION['COMSLogin'];
 		$mdws = $_SESSION['mdws'];
-		$AC = $_SESSION['AC'];
-		$VC = $_SESSION['VC'];
+		//$AC = $_SESSION['AC'];
+		//$VC = $_SESSION['VC'];
 		//Insert into SQL
-		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,Domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws,AC,VC) VALUES
-           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$Domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws','$AC','$VC')";
+		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,Domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws) VALUES
+           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$Domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws')";
 		   
-		//$tsql2 = "INSERT INTO COMS_Sessions (sessionid,ip,compname,ref,username,winauth,point,pointno,time,date2,page) VALUES ('$sessionid','$ip_vistor','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page')";
-		//echo $tsql2;
-		$postsession = sqlsrv_query($conn, $tsql2);
+		//$postsession = sqlsrv_query($conn, $tsql2);
 	}
 	
 function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
@@ -91,16 +89,13 @@ function PostSession($sessionid,$ruser,$AccessCode,$point,$pointno){
 		$NWLoginR = $_SESSION['NWLoginR'];
 		$COMSLogin = $_SESSION['COMSLogin'];
 		$mdws = $_SESSION['mdws'];
-		$AC = $_SESSION['AC'];
-		$VC = $_SESSION['VC'];
+		//$AC = $_SESSION['AC'];
+		//$VC = $_SESSION['VC'];
 		$chkTrack = $_SESSION['chkTrack'];
 		//Insert into SQL
-		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws,AC,VC) VALUES
-           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws','$AC','$VC')";
-		   
-		//$tsql2 = "INSERT INTO COMS_Sessions (sessionid,ip,compname,ref,username,winauth,point,pointno,time,date2,page) VALUES ('$sessionid','$ip_vistor','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page')";
-		//echo $tsql2;
-		$postsession = sqlsrv_query($conn, $tsql2);
+		$tsql2 = "INSERT INTO COMS_Sessions (sessionid,compname,ref,username,winauth,point,pointno,time,date2,page,text,chkTrack,dname,role,rid,sitelist,Email,domain,sessionStatus,TemplateAuthoring,Role_ID,ip_vistor,ip,ruser,NWLoginR,COMSLogin,mdws) VALUES
+           ('$sessionid','$compname','$url','$AccessCode','$ruser','$point','$pointno','$time','$date2','$page','test','$chkTrack','$dname','$role','$rid','$sitelist','$Email','$domain','$sessionStatus','$TemplateAuthoring','$Role_ID','$ip_vistor','$ip','$ruser','$NWLoginR','$COMSLogin','$mdws')";
+		//$postsession = sqlsrv_query($conn, $tsql2);
 	}
 
 function PostSQLQuery($query){

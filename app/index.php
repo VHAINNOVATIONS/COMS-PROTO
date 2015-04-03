@@ -16,10 +16,6 @@
     error_log( "Start Process - $mwbTemp" );
     error_log( "Full Path - $actual_link" );
 
-    //Include and Set phpseclib path
-    //set_include_path(get_include_path() . PATH_SEPARATOR . 'phpseclib'); <-- Commented on on 30 May 2014
-    //Include SSH2 file
-    //include('Net/SSH2.php');
     require_once "dbitcon.php";
     require_once "session.php";
     
@@ -159,13 +155,13 @@
             
             $NWLoginR                    = 1;
             $COMSLogin                   = 1;
-            $_SESSION[ 'AC' ]            = $AC;
-            $_SESSION[ 'VC' ]            = $VC;
+            //$_SESSION[ 'AC' ]            = $AC;
+            //$_SESSION[ 'VC' ]            = $VC;
             $_SESSION[ 'NWLoginR' ]      = 1;
             $_SESSION[ 'COMSLogin' ]     = 1;
             $_SESSION[ 'sessionStatus' ] = 0;
             
-            if ( $compname === $ipcheck ) {
+            if ( $ipcheck === $ipcheck ) {
                 $tsql    = "SELECT role,dname,rid,Email,TemplateAuthoring,Role_ID,AC,VC FROM COMS_Sessions WHERE compname = '$ipcheck' and Role_ID != '' and dname != '' and AC != ''";
                 $getrole = sqlsrv_query( $conn, $tsql );
                 while ( $row = sqlsrv_fetch_array( $getrole, SQLSRV_FETCH_ASSOC ) ) {
@@ -177,8 +173,8 @@
                     $_SESSION[ 'Role_ID' ]           = $row[ 'Role_ID' ];
                     //$_SESSION['AC']= $AccessCode;
                     //$_SESSION['VC']= $VerifyCode;
-                    $_SESSION[ 'AC' ]                = $row[ 'AC' ];
-                    $_SESSION[ 'VC' ]                = $row[ 'VC' ];
+                    //$_SESSION[ 'AC' ]                = $row[ 'AC' ];
+                    //$_SESSION[ 'VC' ]                = $row[ 'VC' ];
                 }
                 $globalsq   = "SELECT * FROM Globals";
                 $getglobals = sqlsrv_query( $conn, $globalsq );
