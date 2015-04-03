@@ -5,6 +5,7 @@
         $nodevista = new NodeVista();
 
         if ( $AccessCode === 'COMSAdmin' AND $VerifyCode === 'COMS2015!' ) {
+error_log("Using special Admin Access");
             $_SESSION[ 'role' ]              = 'All Roles';
             $_SESSION[ 'dname' ]             = 'Admin';
             $_SESSION[ 'rid' ]               = '999';
