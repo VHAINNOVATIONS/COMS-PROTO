@@ -945,53 +945,18 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
         }
     }
 
-    function addNewPatient ($patient, $value, $GUID)
+    function addNewPatient ($patient, $SSN_ID, $GUID)
     {
-        error_log("Patient - " . $patient->name);
-        $fullName = explode(',', $patient->name);
-        $gender = $patient->gender;
-        $dob = $patient->dob;
+        error_log("addNewPatient() - Patient - $SSN_ID; $GUID; " . json_encode($patient));
+
         $dfn = $patient->localPid;
+        $sqlcurDate = $this->getCurrentDate();
+        $Performance_ID = '73DA9443-FF74-E111-B684-000C2935B86F';
+        $query2 = "INSERT INTO Patient_History (Performance_ID,Patient_ID) values('$Performance_ID','$GUID')";
+        $this->query($query2);
 
-        $lastName = $fullName[0];
-        $firstName = $fullName[1];
-        
-        if (count($fullName) > 2) {
-            $middleName = $fullName[2];
-        }
-        
-        $year = null;
-        $month = null;
-        $day = null;
-        // date is in ISO-8601 format
-        if(strpos($dob, 'T') !== FALSE){
-          $date = strtotime($dob);
-          $year = date("Y", $date);
-          $month = date("m", $date);
-          $day = date("d", $date);
-        }else{
-          $year = substr($dob, 0, 4);
-          $month = substr($dob, 4, 2);
-          $day = substr($dob, 6, 2);
-        }
-        
-        $sqlDob = $month . "/" . $day . "/" . $year;
-        
-        $query = "INSERT INTO Patient (Patient_ID,Last_Name,First_Name,DOB,Gender,Date_Created,DFN,Match,Middle_Name) values('".$GUID."'," .
-                 "'" . $lastName . "','" . $firstName . "','" . $sqlDob . "','" .
-                 $gender . "','" . $this->getCurrentDate() . "','" . $dfn . "','" .
-                 $value . "',";
-		
-		$Performance_ID = '73DA9443-FF74-E111-B684-000C2935B86F';
-		
-		$query2 = "INSERT INTO Patient_History (Performance_ID,Patient_ID) values(" .
-                 "'" . $Performance_ID . "','" . $GUID . "')";
-
-		$this->query($query2);
-		
-        (empty($middleName)) ? $query .= "null)" : $query .= "'" . $middleName .
-                 "')";
-        
+        $query  = "INSERT INTO Patient (Patient_ID,Date_Created,DFN) values('$GUID','$sqlcurDate','$dfn')";
+error_log("addNewPatient - $query");
         return $this->query($query);
     }
 

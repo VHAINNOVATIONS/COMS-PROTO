@@ -270,7 +270,7 @@ error_log("CalcAUCDose - GFR =  ($GFR +25) * $AUC = $Dose");
         $Patient                      = new Patient;
         $Patient->SerumCreatinine     = "";
         $Patient->Temp                = "98";
-        $Patient->Age                 = "79";
+        $Patient->Age                 = "61";
         $Patient->AppliedTemplateID   = "EEFB3BB2-3134-41B9-BFFE-E05554783DDD";
         $Patient->BSA                 = "1.79";
         $Patient->BSAFormula          = "DuBois";

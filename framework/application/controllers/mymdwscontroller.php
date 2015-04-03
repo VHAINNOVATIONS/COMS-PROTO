@@ -64,6 +64,22 @@ class mymdwscontroller extends Controller {
         $detail[ 'TreatmentStatus' ] = $status;
         return $detail;
     }
+
+    private function createEmptyTemplateArray() {
+        $details                               = array( );
+        $details[ 0 ][ 'TemplateID' ]          = '';
+        $details[ 0 ][ 'TemplateName' ]        = '';
+        $details[ 0 ][ 'TemplateDescription' ] = '';
+        $details[ 0 ][ 'TreatmentStart' ]      = '';
+        $details[ 0 ][ 'TreatmentEnd' ]        = '';
+        $details[ 0 ][ 'TreatmentStatus' ]     = '';
+        $details[ 0 ][ 'Goal' ]                = '';
+        $details[ 0 ][ 'ClinicalTrial' ]       = '';
+        $details[ 0 ][ 'WeightFormula' ]       = '';
+        $details[ 0 ][ 'BSAFormula' ]          = '';
+        $details[ 0 ][ 'PerformanceStatus' ]   = '';
+        return $details;
+    }
     
     public function Match( $lastFour ) {
         $jsonRecord = array( );
@@ -92,6 +108,15 @@ class mymdwscontroller extends Controller {
             return $jsonRecord;
         }
 
+        if (count($patient) > 0) {
+            error_log("Have one or more Patient Records");
+        }
+        else { 
+            error_log("NO Patient Records");
+        }
+
+
+
         error_log("Got Patient By DFN (" . $this->_dfn . "), No Errors - " . json_encode($patient));
         $patient = $comspatientModel->selectByPatientId( $patient[ 0 ][ 'id' ] );
         if ( $this->checkForErrors( 'Get Patient Info Failed. ', $patient ) ) {
@@ -119,18 +144,8 @@ class mymdwscontroller extends Controller {
                 return $jsonRecord;
             }
         } else {
-            $details                               = array( );
-            $details[ 0 ][ 'TemplateID' ]          = '';
-            $details[ 0 ][ 'TemplateName' ]        = '';
-            $details[ 0 ][ 'TemplateDescription' ] = '';
-            $details[ 0 ][ 'TreatmentStart' ]      = '';
-            $details[ 0 ][ 'TreatmentEnd' ]        = '';
-            $details[ 0 ][ 'TreatmentStatus' ]     = '';
-            $details[ 0 ][ 'Goal' ]                = '';
-            $details[ 0 ][ 'ClinicalTrial' ]       = '';
-            $details[ 0 ][ 'WeightFormula' ]       = '';
-            $details[ 0 ][ 'BSAFormula' ]          = '';
-            $details[ 0 ][ 'PerformanceStatus' ]   = '';
+            $details = $this->createEmptyTemplateArray();
+
         }
         error_log("Got Patient Details " . json_encode($details));
         
@@ -198,111 +213,81 @@ class mymdwscontroller extends Controller {
     }
     
     public function MdwsSetup( $isSSN, $value ) {
-        $client = null;
+error_log("MdwsSetup() - Entry point");
         $username   = get_current_user();
         $jsonRecord = array( );
         $roles      = $this->Mymdws->getRoleInfo( $username );
-        
+
         if ( $this->checkForErrors( 'Get Role Info Failed. ', $roles ) ) {
             $jsonRecord[ 'success' ] = false;
             $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
             return $jsonRecord;
         }
+
+        $nodevista = new NodeVista();
+        $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
+        $nvpatient = $nvpatient[ 0 ];
+        $pName     = explode( ",", $nvpatient[ "name" ] );
+        $name      = $pName[ 1 ] . " " . $pName[ 0 ];
+        $DFNcoms   = $nvpatient[ 'dfn' ];
         
-        if ( null == $this->mdwsBase ) {
-            $this->mdwsBase = new MdwsBase();
+        $mdwspatients            = array( );
+        $mdwspatients[ 'count' ] = 0;
+        if ( isset( $nvpatient ) ) {
+            $mdwspatients[ 'UseNode' ]             = "true";
+            $mdwspatients[ 'patients' ]            = new stdClass();
+            $mdwspatients[ 'patients' ]->PatientTO = (object) $nvpatient;
+            $mdwspatients[ 'count' ]               = 1;
         }
-        if ( true === $isSSN ) {
-            $records = $this->Mymdws->checkPatientCOMS( $value );
-            foreach ( $records as $record ) {
-                $Match = $record[ 'Match' ];
-                $name  = "";
-                if ( array_key_exists( "First_Name", $record ) ) {
-                    $name = $name . $record[ 'First_Name' ];
-                }
-                if ( array_key_exists( "Last_Name", $record ) ) {
-                    $name = $name . " " . $record[ 'Last_Name' ] . "";
-                }
-                $DFNcoms               = $record[ 'DFN' ];
-                $_SESSION[ 'COMSchk' ] = 1;
-            }
-            
-            if ( trim( $Match ) === $value ) {
-                $this->_dfn = $DFNcoms;
-                return ( $name );
-            } else {
-                // NODE Vista, this is the least intrusive way to do this
-                if ( $_SESSION[ 'USE_NODE' ] ) {
-                    $nodevista = new NodeVista();
-                    $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
-                    $nvpatient = $nvpatient[ 0 ];
-                    $pName     = explode( ",", $nvpatient[ "name" ] );
-                    $name      = $pName[ 1 ] . " " . $pName[ 0 ];
-                    $DFNcoms   = $nvpatient[ 'dfn' ];
-                    
-                    $mdwspatients            = array( );
-                    $mdwspatients[ 'count' ] = 0;
-                    if ( isset( $nvpatient ) ) {
-                        $mdwspatients[ 'UseNode' ]             = "true";
-                        $mdwspatients[ 'patients' ]            = new stdClass();
-                        $mdwspatients[ 'patients' ]->PatientTO = (object) $nvpatient;
-                        $mdwspatients[ 'count' ]               = 1;
-                    }
-                    $mdwspatients = (object) $mdwspatients;
-                } else {
-                    $mdwspatients = $this->MDWSMatchPatient( $client, $value );
-                }
-            }
-            
-            if ( null != $mdwspatients && 1 < $mdwspatients->count ) {
-                $jsonRecord[ 'success' ] = false;
-                $jsonRecord[ 'message' ] = 'More than 1 Patient with SSN matching ' . $value;
-                
-                return $jsonRecord;
-            } elseif ( null == $mdwspatients || 0 == $mdwspatients->count ) {
-                $jsonRecord[ 'success' ] = false;
-                $jsonRecord[ 'message' ] = 'No Patients found with SSN matching ' . $value;
-                
-                return $jsonRecord;
-            }
-            
-            $mdwspatient = $mdwspatients->patients->PatientTO;
-            $this->_dfn  = $mdwspatient->localPid;
-        }
-        if ( $_SESSION[ 'USE_NODE' ] ) {
-            $nodevista   = new NodeVista();
-            $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
-        } else {
-            $mdwspatient = $this->MDWSSelectPatientByDFN( $client, $this->_dfn );
-        }
-        if ( null === $mdwspatient ) {
+        $mdwspatients = (object) $mdwspatients;
+
+        if ( null != $mdwspatients && 1 < $mdwspatients->count ) {
             $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = 'No Patients found with SSN matching ' . $value;
+            $jsonRecord[ 'message' ] = "More than 1 Patient with SSN matching $value";
+            return $jsonRecord;
+        } elseif ( null == $mdwspatients || 0 == $mdwspatients->count ) {
+            $jsonRecord[ 'success' ] = false;
+            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $value";
             return $jsonRecord;
         }
-        
+
+        $mdwspatient = $mdwspatients->patients->PatientTO;
+        $this->_dfn  = $mdwspatient->localPid;
+error_log("MdwsSetup - got DFN = " . $this->_dfn);
+
+        $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
+
+        if ( null === $mdwspatient ) {
+            $jsonRecord[ 'success' ] = false;
+            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $value";
+error_log("MdwsSetup - VistA says no patients with matching SSN, yet we got the DFN from VistA");
+            return $jsonRecord;
+        }
+
+error_log("MdwsSetup - getting Patient By DFN from SQL");
         $comspatientModel = new Patient();
         $patient          = $comspatientModel->getPatientIdByDFN( $this->_dfn );
         
         if ( null == $patient || empty( $patient ) ) {
+error_log("MdwsSetup - Patient with DFN does not exist in SQL; Creating one");
             $this->Mymdws->beginTransaction();
             $query = "SELECT NEWID()";
             $GUID  = $this->Mymdws->query( $query );
             $GUID  = $GUID[ 0 ][ "" ];
-            
+error_log("MdwsSetup - Creating new patient for - " . json_encode($mdwspatient));
             $retVal = $comspatientModel->addNewPatient( $mdwspatient, $value, $GUID );
             
             if ( $this->checkForErrors( 'Add New Patient from MDWS Failed. ', $retVal ) ) {
                 $jsonRecord[ 'success' ] = false;
                 $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
                 $this->Mymdws->rollbackTransaction();
-                
+error_log("MdwsSetup - addNewPatient() failed - " . $this->get( 'frameworkErr' ));
                 return $jsonRecord;
             }
-            
+
             $this->Mymdws->endTransaction();
         }
-        return $client;
+        return null;
     }
     
     /**

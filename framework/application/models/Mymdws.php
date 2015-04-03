@@ -6,11 +6,12 @@ class Mymdws extends Model {
         return $roles;
     }
 
-    function checkPatientCOMS($lastFour){
-        $query = "SELECT Match,First_Name as fname,Last_Name as lname,Middle_Name,DFN,Patient_ID as id FROM Patient WHERE Match = '$lastFour'";
-        $query = "SELECT DFN,Patient_ID as id FROM Patient WHERE DFN = '$lastFour'";
-error_log("checkPatientCOMS - $lastFour = $query");
+    function checkPatientCOMS($PatientDFN){
+        // $query = "SELECT Match,First_Name as fname,Last_Name as lname,Middle_Name,DFN,Patient_ID as id FROM Patient WHERE Match = '$lastFour'";
+        $query = "SELECT DFN,Patient_ID as id FROM Patient WHERE DFN = '$PatientDFN'";
+error_log("checkPatientCOMS - $PatientDFN = $query");
         $result = $this->query($query); 
+
         $query2 = "SELECT PAT_ID
         ,Patient_ID
         ,Template_ID
@@ -34,7 +35,7 @@ error_log("checkPatientCOMS - $lastFour = $query");
     }
 
     function getDFNByPatientID($patientId){
-        $query = "SELECT DFN as dfn from Patient where Patient_ID = '".$patientId."'";
+        $query = "SELECT DFN as dfn from Patient where Patient_ID = '$patientId'";
         $dfn = $this->query($query);
         if (null != $patientId && array_key_exists('error', $dfn)) {
             return $dfn;
