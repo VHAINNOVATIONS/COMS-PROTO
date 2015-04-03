@@ -6,10 +6,6 @@ exports.logger = bunyan.createLogger({
     {
       level: 'error',
       stream: process.stdout            // log INFO and above to stdout
-    },
-    {
-      level: 'trace',
-      path: 'coms-vista-rpc.log'  // log ERROR and above to a file
     }
   ]
 });
