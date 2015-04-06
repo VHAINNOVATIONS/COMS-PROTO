@@ -30,7 +30,7 @@ Ext.define("COMS.view.NewPlan.PatientInfo" ,{
 		{ xtype : "PatientTemplates" },
 		{ xtype : "PatientHistory" },		// Panel Title = "Patient Vitals"
 		{ xtype : "LabInfo" },
-		{ xtype : "KnownProblems" },
+		{ xtype : "KnownProblems", hidden: true },
 		{ xtype : "CTOS" }
 	]
 });

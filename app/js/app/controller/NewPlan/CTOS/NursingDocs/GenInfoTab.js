@@ -505,7 +505,6 @@ ClearTabData : function(obj) {
 	},
 
 	initVitalSignsEntryForm : function(Patient) {
-		debugger;
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
@@ -653,6 +652,7 @@ ClearTabData : function(obj) {
 		var record = {};
 		record.patientId = Patient.id;
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
+		record.DateTaken = Ext.Date.format(dt, "m/d/Y");		// Ignore timestamp till we can get an accurate time from VistA
 		record.Temperature = Temperature.getValue();
         record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();

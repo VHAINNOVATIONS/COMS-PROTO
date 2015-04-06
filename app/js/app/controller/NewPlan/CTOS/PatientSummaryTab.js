@@ -46,21 +46,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 		// Ensures 
 	TabContentsCleared : true,
 
-
-
-	createChildren : function( component, eOpts ) {
-		var Patient = this.application.Patient;
-		if ("" === Patient.TemplateID) {
-			return;		// No Template assigned to this patient
-		}
-		try {
-
-		}
-		catch (err) {
-			// debugger;
-		}
-	},
-
 	/**********************
 	 *
 	 *	Called when the "PatientSelected" event is triggered from the top of the NewTab Panel Select Patient drop down

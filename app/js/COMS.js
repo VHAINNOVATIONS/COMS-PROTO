@@ -11219,32 +11219,6 @@ Ext.define("COMS.view.NewPlan.CTOS.KnowledgeBase" ,{
 	}
 });
 
-/****************
-Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
-    extend: "Ext.form.FieldSet",
-    alias : "widget.NursingDocs_Chemotherapy",
-	name : "NursingDocs.Chemotherapy",
-	title : "Chemotherapy / Biotherapy",
-
-	items : [ 
-		{ "xtype" : "displayfield", "name" : "ndctRegimen", "fieldLabel" : "Regimen", "labelClsExtra" : "NursingDocs-label" },
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "NeutropeniaInfo", "title" : ""}, 
-		{ "xtype" : "panel", "collapsible" : true, "collapsed" : true, "margin" : "0 0 10 0", "bodyPadding" : "10", "name" : "EmesisInfo", "title" : ""}, 
-		{ "xtype" : "box", "name" : "ndctWarning"}, 
-		{ 
-			xtype : "container", 
-			name : "ndctCycleInfo",
-			layout : "hbox",
-			defaults : {
-				labelAlign: "right",
-				xtype : "displayfield",
-				labelClsExtra : "NursingDocs-label"
-			},
-			items : [ { name : "ndctCycle", fieldLabel : "Cycle" }, { name : "ndctDay", fieldLabel : "Day"}, { name : "ndctDate", fieldLabel : "Date" } ]
-		}
-	]
-});
-********************/
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.NursingDocs",
@@ -14834,7 +14808,7 @@ Ext.define("COMS.view.NewPlan.PatientInfo" ,{
 		{ xtype : "PatientTemplates" },
 		{ xtype : "PatientHistory" },		// Panel Title = "Patient Vitals"
 		{ xtype : "LabInfo" },
-		{ xtype : "KnownProblems" },
+		{ xtype : "KnownProblems", hidden: true },
 		{ xtype : "CTOS" }
 	]
 });
@@ -28560,7 +28534,6 @@ ClearTabData : function(obj) {
 	},
 
 	initVitalSignsEntryForm : function(Patient) {
-		debugger;
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
@@ -28708,6 +28681,7 @@ ClearTabData : function(obj) {
 		var record = {};
 		record.patientId = Patient.id;
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
+		record.DateTaken = Ext.Date.format(dt, "m/d/Y");		// Ignore timestamp till we can get an accurate time from VistA
 		record.Temperature = Temperature.getValue();
         record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();
@@ -30109,21 +30083,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 
 		// Ensures 
 	TabContentsCleared : true,
-
-
-
-	createChildren : function( component, eOpts ) {
-		var Patient = this.application.Patient;
-		if ("" === Patient.TemplateID) {
-			return;		// No Template assigned to this patient
-		}
-		try {
-
-		}
-		catch (err) {
-			// debugger;
-		}
-	},
 
 	/**********************
 	 *
@@ -33363,6 +33322,8 @@ console.log("Loading Allergy Info - Finished");
 					this.getEmoLevelInfo(theData.ELevelName);
 					this.getFNRiskInfo(theData.FNRisk);
 					this.manageOrderRecordsAfterLoading(theData);
+					var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+					thisCtl.ChemoBioSectionHandler(true);
 
 				}
 				catch (err) {

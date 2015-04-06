@@ -2328,6 +2328,8 @@ console.log("Loading Allergy Info - Finished");
 					this.getEmoLevelInfo(theData.ELevelName);
 					this.getFNRiskInfo(theData.FNRisk);
 					this.manageOrderRecordsAfterLoading(theData);
+					var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
+					thisCtl.ChemoBioSectionHandler(true);
 
 				}
 				catch (err) {
