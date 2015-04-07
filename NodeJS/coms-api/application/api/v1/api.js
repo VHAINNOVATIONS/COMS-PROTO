@@ -10,7 +10,7 @@ var user = require('./user');
 var vitals = require('./vitals');
 var medication = require('./medication');
 var order = require('./order');
-
+var utilities = require('./utilities');
 /**
 * List of valid API keys and secrets
 *
@@ -515,7 +515,28 @@ router.post('/order/new', function(req, res){
   order.saveOrder(loginOptions, req.body, callback);
 });
 
-
+router.get('/current/date', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  
+  utilities.currentDate(loginOptions, callback);
+  
+});
 
 
 module.exports = router;
