@@ -440,6 +440,8 @@ function convertReason2ID($Reason) {
                 return $retVal;
             }
         }
+
+
         if (empty($dateTaken)) {
             $dateTaken = $this->getCurrentDate();
         }
@@ -455,7 +457,50 @@ function convertReason2ID($Reason) {
             return $existingHistory;
         }
         *****************/
-        
+
+
+                $nodevista = new NodeVista();
+                $VistATime = $nodevista->get("current/date");
+
+                $vts = json_decode($VistATime);
+                $vtsDateStr = $vts->{'date'};
+error_log("VistA Time = $VistATime" . $vts->{'date'} . " DateTaken from SQL - " . $dateTaken);
+
+
+	  $theCenturyMultiplier = substr($vtsDateStr, 0, 1);
+	  $theCentury = 1700 + (100 * $theCenturyMultiplier);
+	  $theYear = substr($vtsDateStr, 1, 2);
+	  $y = intval($theCentury, 10) + intval($theYear, 10);
+	  $theMonth = substr($vtsDateStr, 3, 2);
+	  $theDay = substr($vtsDateStr, 5, 2);
+	  $theHr = intval(substr($vtsDateStr, 8, 2), 10);
+	  $AmPm = "";
+	  if ($theHr > 12) {
+		  $theHr = $theHr - 12;
+		  $AmPm = "PM";
+	  }
+      if ($theHr < 10) {
+          $theHr = "0$theHr";
+      }
+	  $theMin = substr($vtsDateStr, 10, 2);
+	  $theDateTimeStr = "$theMonth/$theDay/$y $theHr:$theMin $AmPm";
+
+error_log("VistA Time = $VistATime, " . $vts->{'date'} . " - $theDateTimeStr");
+
+$theDateTime = new DateTime($theDateTimeStr);
+
+$observed = $theDateTime->format(DateTime::ISO8601);
+
+$dateTaken = date_format($theDateTime, 'Y-m-d H:i:s');
+
+
+error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed"); //  DateTaken from SQL - $dateTaken");
+//                $retVal = array();
+//                $retVal['apperror'] = "VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed";
+//                return $retVal;        
+
+
+
         if (isset($form_data->{'OEMRecordID'})) {
             $oemRecordId = $form_data->{'OEMRecordID'};
         } else {
