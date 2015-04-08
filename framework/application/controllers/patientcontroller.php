@@ -1496,6 +1496,11 @@ $this->Patient->query( $query );
         }
         
         function Vitals( $id = null, $dateTaken = null ) {
+            $jsonRecord              = array( );
+            $jsonRecord[ "success" ] = true;
+            $records                 = array( );
+            $msg                     = "Disease type and stage have been saved";
+
             $form_data = json_decode( file_get_contents( 'php://input' ) );
             
             if ( $id != NULL ) {
@@ -1503,7 +1508,10 @@ $this->Patient->query( $query );
                 $records = $this->Patient->getMeasurements_v1( $id, $dateTaken );
                 
                 if ( $this->checkForErrors( 'Get Patient Vitals Failed. ', $records ) ) {
-                    $this->set( 'jsonRecord', null );
+                    $jsonRecord[ "success" ] = false;
+                    $msg                     = "Get Patient Vitals Failed. ";
+                    $jsonRecord[ "msg" ]     = $msg . $this->get( "frameworkErr" );
+                    $this->set( "jsonRecord", $jsonRecord );
                     return;
                 }
                 
@@ -1518,7 +1526,6 @@ $this->Patient->query( $query );
                 $this->set( 'frameworkErr', null );
             } else if ( $form_data ) {
                 $this->Patient->beginTransaction();
-                
                 $saveVitals = $this->Patient->saveVitals( $form_data, null );
 // error_log("Model call to saveVitals - " . json_encode($saveVitals));
 
