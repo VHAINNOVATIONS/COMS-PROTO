@@ -619,7 +619,7 @@ error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - 
             }
         }
 
-
+/*****************
         $spo2 = $form_data->{'SPO2'};
         if ($spo2 && $spo2 !== "") {
             $spo2 = strval($spo2);
@@ -636,12 +636,15 @@ error_log("Saving Pulse Oximetry - Data = $PatientData");
                 $spo2 = "";
             }
         }
+*****************/
+        
         if (count($errMsgList) > 0) {
             $errors = implode("\n\r", $errMsgList);
             $AppErr = array();
             $AppErr['apperror'] = $errors;
             return $AppErr;
         }
+
 
 error_log("No VistA Errors...");
 

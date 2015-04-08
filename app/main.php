@@ -2,8 +2,9 @@
     /* 
     $ProjType = "Release 1.0 February 27, 2015"; 
     $ProjType = "Release 1.1 March 6, 2015"; 
-    */
     $ProjType = "Release 1.2 March 13, 2015";
+    */
+    $ProjType = "Release 1.3 April 10, 2015";
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
 ?>
