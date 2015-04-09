@@ -112,7 +112,7 @@ function checkAV($AccessCode,$VerifyCode) {
         
         $jdUserInfo = json_decode( $UserInfo );
         $DisplayName        = $jdUserInfo->{"name"};
-		return "Success";
+		return $DisplayName;
 		
 	}
 	

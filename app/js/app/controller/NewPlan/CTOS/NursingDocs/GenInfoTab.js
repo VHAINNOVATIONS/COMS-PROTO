@@ -61,6 +61,21 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 
 		{
+			ref: "ndct_PatientID", 
+			selector: "NursingDocs_GenInfo NursingDocs_PatientID"
+		},
+
+		{
+			ref: "ndct_PatientTeaching", 
+			selector: "NursingDocs_GenInfo NursingDocs_PatientTeaching"
+		},
+
+		{
+			ref: "ndct_DualDosing", 
+			selector: "NursingDocs_GenInfo NursingDocs_DualDosingVerification"
+		},
+
+		{
 			ref: "ndVitalSignsForm",
 			selector: "VitalSignsEntryForm"
 		},
@@ -486,6 +501,20 @@ ClearTabData : function(obj) {
 			Ext.MessageBox.alert("Loading Error", "ND - ClearTabData() - Error - " + e.message );
 		}
 		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+
+		var f1 = thisCtl.getNdct_PatientID();
+		Ext.each(f1.query('field'), function(field) { 
+			field.reset(); 
+		}); 
+		var f2 = thisCtl.getNdct_PatientTeaching();
+		Ext.each(f2.query('field'), function(field) { 
+			field.reset(); 
+		});
+		var f3 = thisCtl.getNdct_DualDosing();
+		Ext.each(f3.query('field'), function(field) { 
+			field.reset(); 
+		});
+
 		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
 		var afLen = allForms.length;
 		var f, i;
