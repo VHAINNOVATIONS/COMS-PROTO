@@ -400,7 +400,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 						var resp = Ext.JSON.decode( text );
 						if (resp.success && "Failed" !== resp.records) {
 							win.close();
-							SigField.setValue(values.AccessCode);
+							SigField.setValue(resp.records);
 						}
 						else {
 							Ext.MessageBox.alert("Authentication Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");

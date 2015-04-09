@@ -84,25 +84,36 @@ class Session extends Model {
 	}
 	
 function checkAV($AccessCode,$VerifyCode) {
-		
-		$query = "SELECT * FROM Roles WHERE username = '$AccessCode' AND vcode = '$VerifyCode'";
-		$result = $this->query($query);
-		foreach($result as $row){
-			$DisplayName= $row['DisplayName'];
-		}
-		$this->query($query);
-		
-		if ($DisplayName === null){
-		$checkstatus = "Failed";
-		}else{
-		$checkstatus = "Success";
-		}
-		return $checkstatus;
+		$nodevista = new NodeVista();
+
+        $AuthenticateURL          = "authenticate";
+        $AuthData                 = array( );
+        $AuthData[ "accesscode" ] = $AccessCode;
+        $AuthData[ "verifycode" ] = $VerifyCode;
+        $AuthenticateReturn       = $nodevista->post( $AuthenticateURL, json_encode( $AuthData ) );
+        $aRet       = json_decode( $AuthenticateReturn );
+        $LoginError = "";
+        if ( array_key_exists( "error", $aRet ) ) {
+            $retErr     = $aRet->{"error"};
+            $LoginError = "Unk";
+            if ( "Not a valid ACCESS CODE/VERIFY CODE pair." === $retErr ) {
+                $LoginError = "Authentication failed! Please click \"OK\" and enter your proper Access and Verify Codes";
+                $LoginError = "Authentication failed! Please enter your proper Access and Verify Codes below and click \"Login\"";
+            }
+            else {
+                $LoginError = "Authentication failed! Unknown Error - $retErr!<br>Please contact your COMS support personnel";
+            }
+            error_log( "NWLogin - Authentication Check - $LoginError" );
+            return "Failed";
+        }
+
+        $UserInfo = $nodevista->get( "user/info" );
+        error_log( "NWLogin - User Info Check - $UserInfo" );
+        
+        $jdUserInfo = json_decode( $UserInfo );
+        $DisplayName        = $jdUserInfo->{"name"};
+		return "Success";
 		
 	}
 	
 }
-
-
-
-?>

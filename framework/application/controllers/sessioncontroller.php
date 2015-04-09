@@ -67,28 +67,16 @@ class SessionController extends Controller {
     }
 
     function Authenticate(){
-        
-		$form_data = json_decode(file_get_contents('php://input'));
-        //$AccessCode = $form_data->AccessCode;
-        //$VerifyCode = $form_data->VerifyCode;
-		
-		$AccessCode = $_GET["Access"];
-		$VerifyCode = $_GET["Verify"];
-		//$AccessCode = '1programmer';
-		//$VerifyCode = 'programmer1';
-		
+        $form_data = json_decode(file_get_contents('php://input'));
+        $AccessCode = $_GET["Access"];
+        $VerifyCode = $_GET["Verify"];
         $jsonRecord = array();
-        
-        //$records = $this->Session->checkmdwsconnect($AccessCode,$VerifyCode);
-        $records = $this->Session->checkAV($AccessCode,$VerifyCode);
+        $Status = $this->Session->checkAV($AccessCode,$VerifyCode);
                
         $jsonRecord['success'] = 'true';            
-        $jsonRecord['total'] = count($records);
-
-        $jsonRecord['records'] = $records;
-
+        $jsonRecord['total'] = 1;
+        $jsonRecord['records'] = $Status;
         $this->set('jsonRecord', $jsonRecord);
-        
     }
 }
 

@@ -157,6 +157,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				var resp = Ext.JSON.decode( text );
 				if (resp.success && "Failed" !== resp.records) {
 					win.close();
+					curTreatmentRecord.set("AccessCode", "");
+					curTreatmentRecord.set("User", resp.records);
+					curTreatmentRecord.set("VerifyCode", "");
 					this.SaveTreatmentRecord (curTreatmentRecord);
 				}
 				else {
