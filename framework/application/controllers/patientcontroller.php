@@ -3054,6 +3054,19 @@ VALUES
  left join DiseaseStaging ds on ds.ID = pdh.DiseaseStage_ID
  order by p.Gender";
 
+            $query = "select 
+ pdh.Patient_ID, 
+ pdh.Disease_ID, 
+ case when pdh.DiseaseStage_ID is null then null else pdh.DiseaseStage_ID end as Stage_ID,
+ lu.name as Cancer,
+ case when ds.Stage is null then '' else ds.Stage end as Stage,
+ p.DFN as gender
+ from PatientDiseaseHistory pdh
+ join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
+ join Patient p on p.Patient_ID = pdh.Patient_ID
+ left join DiseaseStaging ds on ds.ID = pdh.DiseaseStage_ID
+ order by p.DFN";
+
 
             $retVal = $this->Patient->query( $query );
             if ( $this->checkForErrors( 'Patterns of Care Determination failed.', $retVal ) ) {
@@ -3139,9 +3152,36 @@ VALUES
             $this->set( "jsonRecord", $jsonRecord );
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         /* Patterns of Care Determination (PCD) */
         /* Cancer Types & Applied Templates */
-        function PCD_CancerByGender2() {
+        function _______________PCD_CancerByGender2() {
             $jsonRecord              = array( );
             $jsonRecord[ "success" ] = true;
             $records                 = array( );

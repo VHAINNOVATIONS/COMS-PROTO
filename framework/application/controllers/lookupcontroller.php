@@ -423,14 +423,43 @@ class LookupController extends Controller {
     where pat.Template_ID = '$templateID'
     and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
 
-    // error_log("Patients4Template - $query");
+    $query = "select 
+    pat.Patient_ID,
+    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
+    CONVERT(VARCHAR(10), pat.Date_Ended, 101) as Est_End_Date,
+    mt.Template_ID,
+    p.DFN as DFN
+    from Patient_Assigned_Templates pat
+    join Master_Template mt on mt.Template_ID = pat.Template_ID
+    join Patient p on p.Patient_ID = pat.Patient_ID
+    where pat.Template_ID = '$templateID'
+    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null
+    order by p.DFN";
+
+error_log("getPatients4Template - $templateID; ");
+error_log($query);
 
         $retVal = $this->LookUp->query($query);
         if (null !== $retVal) {
+            $LastPatient = "";
+            if (count($retVal) <= 0) {
+error_log("getPatients4Template - No Data Returned from SQL");
+                return $Patients;
+            }
             foreach ($retVal as $Patient) {
-                $Patient["Name"] = $Patient["First_Name"] . " " . $Patient["Last_Name"];
+error_log("Patient - " . json_encode($Patient));
+                $DFN = $Patient["DFN"];
+                if ("" == $LastPatient || $LastPatient !== $DFN) {
+                    $PatientInfo = $this->getPatientInfoFromVistA($DFN);
+error_log("PatientInfo - " . json_encode($PatientInfo));
+                    $Patient["Name"] = $PatientInfo["Name"];
+                    $LastPatient = $DFN;
+                }
                 $Patients[] = $Patient;
             }
+        }
+        else {
+error_log("getPatients4Template - SQL returned NULL");
         }
         return $Patients;
     }
@@ -2388,6 +2417,26 @@ where l1.MedID = '$EMedID'";
         $this->set("jsonRecord", $jsonRecord);
     }
 
+    function getPatientInfoFromVistA($DFN) {
+        $PatientObj = null;
+        $nodevista  = new NodeVista();
+        $URL    = "patient/$DFN";
+        $Info      = $nodevista->get( $URL );
+        if ($Info) {
+            $obj        = json_decode( $Info );
+            $PatObj = array();
+            if ($obj) {
+                $PatObj["Name"] = $obj->{"name"};
+                $PatObj["Gender"] = $obj->{"gender"};
+                $PatObj["DOB"] = $obj->{"dob"};
+                $PatObj["SSN"] = $obj->{"ssn"};
+                $PatObj["Age"] = $obj->{"age"};
+                $PatObj["DFN"] = $DFN;
+                $PatObj["SSID"] = $obj->{"ssn"};
+            }
+        }
+        return $PatObj;
+    }
 
     function getDrugInfoFromVistA($drugName) {
 error_log("getDrugInfoFromVistA - $drugName");

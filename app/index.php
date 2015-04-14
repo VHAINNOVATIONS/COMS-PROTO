@@ -1,4 +1,23 @@
 <?php
+	// set to lower case to avoid errors, check to see if http_user_agent is set
+	$navigator_user_agent = ( isset( $_SERVER['HTTP_USER_AGENT'] ) ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+
+	if (stristr($navigator_user_agent, "msie")) {
+		$browser = 'msie'; 
+	}
+
+error_log("Browser Info = " . json_encode($navigator_user_agent));
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     $FirstLogin = null;
     $LastLogin  = null;
     $AccessCode = null;

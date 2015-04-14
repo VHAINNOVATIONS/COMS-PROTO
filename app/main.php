@@ -121,7 +121,7 @@
             -->
                 <li style="display: inline;"><a href="support/" target='_blank'>Help</a></li>
                 <!--<li style="display: inline;"><a href="COMSv1.1.zip">Files</a></li>-->
-                <li style="display: inline;"><button class="anchor" id="LogoutBtn"><b>Logout</b></button>
+                <li style="display: inline;"><button type="button" class="anchor" id="LogoutBtn"><b>Logout</b></button>
                 <!--<li style="display: inline;"><a href="Issues/" target='_blank'>Backlogs and Defects</a></li>
                 
                 <li style="display: inline;"><a href="Track/" target='_blank'>Access History</a></li>
