@@ -16,9 +16,9 @@ class NodeVista{
   */
   public function post($url, $data=false){
       $ret = $this->call("POST", $url, $data);
-      error_log("NodeVista Class - Post - URL - " . $url);
+      // error_log("NodeVista Class - Post - URL - " . $url);
       // error_log("NodeVista Class - Post - DATA - " . json_encode($data));
-      error_log("NodeVista Class - Post - RET - " . $ret);
+      // error_log("NodeVista Class - Post - RET - " . $ret);
       return $ret;
   }
 
@@ -29,7 +29,7 @@ class NodeVista{
   private function call($method, $url, $data = false)
   {
       $curl = curl_init();
-      error_log("NodeVista Class - Basic Call Function Method = $method");
+      // error_log("NodeVista Class - Basic Call Function Method = $method");
       // error_log("NodeVista Class - Basic Call Function Data = " . json_encode($data));
       switch ($method) {
             case "POST":
@@ -61,7 +61,7 @@ class NodeVista{
       ));
       curl_setopt($curl, CURLOPT_URL, NV_BASE_URL.'/'.$url);
 
-error_log("NodeVista Class URL = " . NV_BASE_URL.'/'.$url);
+// error_log("NodeVista Class URL = " . NV_BASE_URL.'/'.$url);
 
 
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -72,7 +72,7 @@ error_log("NodeVista Class URL = " . NV_BASE_URL.'/'.$url);
       $contentType = curl_getinfo($curl, CURLINFO_CONTENT_TYPE);
       curl_close($curl);
 
-error_log("NodeVista Result Set = $result");
+// error_log("NodeVista Result Set = $result");
 
       return $result;
   }

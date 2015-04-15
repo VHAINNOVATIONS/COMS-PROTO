@@ -3,6 +3,11 @@
      * @property Patient $Patient
      *
      */
+function PoCD_Cmp($a, $b) {
+//    error_log("First = " . json_encode($a) . "; Secondt = " . json_encode($b));
+    return strcmp($a["SortKey"], $b["SortKey"]);
+}
+
     class PatientController extends Controller {
         
         function checkForErrors( $errorMsg, $retVal ) {
@@ -3034,6 +3039,8 @@ VALUES
 
 
 
+
+
 /* Patterns of Care Determination (PCD) List Types of Cancer by Gender */
         function PCD_CancerByGender() {
             $jsonRecord              = array( );
@@ -3060,7 +3067,7 @@ VALUES
  case when pdh.DiseaseStage_ID is null then null else pdh.DiseaseStage_ID end as Stage_ID,
  lu.name as Cancer,
  case when ds.Stage is null then '' else ds.Stage end as Stage,
- p.DFN as gender
+ p.DFN as DFN
  from PatientDiseaseHistory pdh
  join LookUp lu on lu.Lookup_ID = pdh.Disease_ID
  join Patient p on p.Patient_ID = pdh.Patient_ID
@@ -3077,75 +3084,65 @@ VALUES
                 return;
             }
 
+// error_log("PoCD SQL Query complete - " . count($retVal) . " records");
+
             $Gender = "";
             $Cancer = "";
             $retRec = array();
             $records = array();
+            $controller = 'LookupController';
+            $lookupController = new $controller('Lookup', 'lookup', null);
+            $rslt1 = array();
             foreach($retVal as $aRecord) {
-				$aCancer = $aRecord["Cancer"];
-				if ($aRecord["Stage"] != "") {
-					$aCancer = $aCancer . " / " . $aRecord["Stage"];
-				}
+                $PatientInfo = $lookupController->getPatientInfoFromVistA($aRecord["DFN"]);
+                $aRecord["Gender"] = $PatientInfo["Gender"];
+                $aCancer = $aRecord["Cancer"];
+                if ($aRecord["Stage"] != "") {
+                    $aCancer = $aCancer . " / " . $aRecord["Stage"];
+                }
+                $aRecord["Cancer"] = $Cancer;
+                $aRecord["SortKey"] = $PatientInfo["Gender"] . " - " . $aCancer;
+                $rslt1[] = $aRecord;
 
-                // echo $aRecord["Gender"] . " - " . $aRecord["Cancer"] . "<br>";
+            }
+            usort($rslt1, "PoCD_Cmp");
+            foreach($rslt1 as $aRecord) {
+                $aCancer = $aRecord["Cancer"];
                 if ("" == $Gender) {
                     $Gender = $aRecord["Gender"];
-                    // reset and CountCancerType
                     $Cancer = $aCancer;
                     $ThisCancer = 1;
-                    // echo "Reset and CountCancerType 1<br>";
                 }
                 else if ($Gender == $aRecord["Gender"]) {
                     if ("" == $Cancer) {
-                        // reset and CountCancerType
-						$Cancer = $aCancer;
+                        $Cancer = $aCancer;
                         $ThisCancer = 1;
-                        // echo "Reset and CountCancerType 2<br>";
                     }
                     else if ($Cancer == $aCancer) {
-                        // Count CancerType
                         $ThisCancer = $ThisCancer + 1;
-                        // echo "CountCancerType (matching cancer)<br>";
                     }
                     else {
-                        // echo "Total up previous Cancers - $Gender; $Cancer; $ThisCancer<br>";
                         $retRec["Gender"] = $Gender;
-	                    $Cancer = $aCancer;
+                        $Cancer = $aCancer;
                         $retRec["count"] = $ThisCancer;
-                        // echo json_encode($retRec) . "<br>";
                         $records[] = $retRec;
-                        // echo json_encode($records) . "<br>";
-                        // echo "Total Up CancerType 1<br>";
                         $Cancer = $aCancer;
                         $ThisCancer = 1;
                     }
                 }
                 else {
-                    // echo "Total up previous Cancers and terminate Gender";
-                    // echo "End of Gender - $Gender; Switching Cancer from $Cancer<br>";
                     $Gender = $aRecord["Gender"];
-                    // reset and CountCancerType
                     $Cancer = $aCancer;
                     $ThisCancer = 1;
                 }
-
-
-            $retRec["Gender"] = $Gender;
-            $retRec["Cancer"] = $Cancer;
-            $retRec["count"] = $ThisCancer;
-// echo "$Gender; $Cancer; $ThisCancer <br>\n";
-
+                $retRec["Gender"] = $Gender;
+                $retRec["Cancer"] = $Cancer;
+                $retRec["count"] = $ThisCancer;
             }
-
-//			echo $Cancer . "<br>";
             $retRec["Gender"] = $Gender;
             $retRec["Cancer"] = $Cancer;
             $retRec["count"] = $ThisCancer;
-//echo json_encode($retRec) . "<br>\n";
             $records[] = $retRec;
-//            echo "Total Up CancerType 2<br>";
-
-
             $this->set( 'frameworkErr', null );
             $jsonRecord[ "total" ]   = count( $records );
             $jsonRecord[ "records" ] = $records;

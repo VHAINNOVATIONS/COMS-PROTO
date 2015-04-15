@@ -436,22 +436,22 @@ class LookupController extends Controller {
     and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null
     order by p.DFN";
 
-error_log("getPatients4Template - $templateID; ");
-error_log($query);
+// error_log("getPatients4Template - $templateID; ");
+// error_log($query);
 
         $retVal = $this->LookUp->query($query);
         if (null !== $retVal) {
             $LastPatient = "";
             if (count($retVal) <= 0) {
-error_log("getPatients4Template - No Data Returned from SQL");
+// error_log("getPatients4Template - No Data Returned from SQL");
                 return $Patients;
             }
             foreach ($retVal as $Patient) {
-error_log("Patient - " . json_encode($Patient));
+// error_log("Patient - " . json_encode($Patient));
                 $DFN = $Patient["DFN"];
                 if ("" == $LastPatient || $LastPatient !== $DFN) {
                     $PatientInfo = $this->getPatientInfoFromVistA($DFN);
-error_log("PatientInfo - " . json_encode($PatientInfo));
+// error_log("PatientInfo - " . json_encode($PatientInfo));
                     $Patient["Name"] = $PatientInfo["Name"];
                     $LastPatient = $DFN;
                 }
@@ -459,7 +459,7 @@ error_log("PatientInfo - " . json_encode($PatientInfo));
             }
         }
         else {
-error_log("getPatients4Template - SQL returned NULL");
+// error_log("getPatients4Template - SQL returned NULL");
         }
         return $Patients;
     }
