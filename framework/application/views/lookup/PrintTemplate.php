@@ -181,9 +181,18 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Cancer Chemotherapy IV Order Sheet</title>
-	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1RC1/resources/css/ext-all.css">
-	<link rel="stylesheet" type="text/css" href="/js/UAT_18June2012/COMS.css">
+	<title>
+    <?php 
+    if (is_null($templatedata)) {
+        echo "COMS Treatment Template - Error";
+    }
+    else {
+        echo "COMS Treatment Template - " . $templatedata[0]['description'];
+    }
+    ?>
+    </title>
+	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
+	<link rel="stylesheet" type="text/css" href="/app/js/COMS.css">
 	<style>
 	div.desc { font-weight: normal; font-style: italic;background:none; }
 	.OEMRecord_Element .header th {
@@ -192,9 +201,11 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 	td.drug {
 		font-weight: bold!important;
 	}
-	th h2 {
+	h1 {
 		font-size:200%;
-		/* margin-top: 1em; */
+	}
+	th h2 {
+		font-size:150%;
 	}
 	th { 
 		text-align: right; 
@@ -213,7 +224,14 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 <body style="background: white;">
 <div id="application" style="width:98%;margin: 1em auto;border:none;">
 	<header role="banner">
-	<h1>Cancer Chemotherapy IV Order Sheet</h1>
+	<h1><?php 
+    if (is_null($templatedata)) {
+        echo "COMS Treatment Template - Error";
+    }
+    else {
+        echo "COMS Treatment Template - " . $templatedata[0]['description'];
+    }
+    ?></h1>
 	</header>
 
 	<section class="CCOrderSheet">

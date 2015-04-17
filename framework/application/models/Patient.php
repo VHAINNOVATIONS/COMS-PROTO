@@ -32,13 +32,29 @@ class Patient extends Model
                      "DOB = CONVERT(VARCHAR(10), DOB, 101), Gender, Last_Name as lname, First_Name as fname, p.DFN as DFN " .
                      "FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '" .
                      $patientId . "'";
-
-
             $query = "SELECT id = Patient_ID, name = '', Age = '', DOB = '', p.DFN as DFN FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '$patientId'";
-
         }    
-error_log("Patient Model - selectByPatientId - $query");        
-        return $this->query($query);
+error_log("Patient Model - selectByPatientId - $query");
+$retVal = $this->query($query);
+$DFN = $retVal[0]["DFN"];
+                $nodevista = new NodeVista();
+                $PatientInfo = $nodevista->get("patient/$DFN");
+                $pi = json_decode($PatientInfo);
+
+$dob = new DateTime($pi->{'dob'});
+$dobString = date_format($dob, 'd/m/Y');
+
+                $retVal[0]["name"] = $pi->{'name'};
+                $retVal[0]["Age"] = $pi->{'age'};
+                $retVal[0]["DOB"] = $dobString;
+                $retVal[0]["Gender"] = $pi->{'gender'};
+
+error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal[0]));
+
+
+// {"name":"FIVEHUNDREDONE,PATIENT","gender":"M","dob":"1935-04-07T04:00:00.000Z","ssn":"666000501","age":"80","localPid":"100500"}
+
+        return $retVal;
     }
 
     function selectHistory ($patiendId)

@@ -9021,7 +9021,7 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 		{ 
 			xtype: "CheckCombo", 
 			name: "IV_FluidTypeMulti", 
-			fieldLabel : "Select IV Fluid Type (one or more)", labelAlign: "right", labelWidth: 200,  width: 450, 
+			fieldLabel : "Select IV Fluid Type", labelAlign: "right", labelWidth: 200,  width: 450, 
 			displayField : "name", valueField : "id",
 			store : Ext.create('Ext.data.Store', {
 				model : 'COMS.model.GenericLookupModel',
@@ -9038,22 +9038,30 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 				}
 			})
 		},
+
+	{ "xtype" : "ManagementBtns"},
+
 		{  
 			xtype : "grid",  name: "IV_FluidTypesList", title: "IV Fluid Types", store : "IVFluidType",
 			forceFit : true,
 			overflowY : "scroll",
 			resizable : true,
 			minHeight : 500,
+			selModel: {  allowDeselect: true },
 			columns : [ 
 				{ text : "Medication", dataIndex : "MedName", width: 540 }, 
 				{ text : "IV Fluid Type", dataIndex : "FluidType" }
 			]
 		}
-	],
+	]
+/**		
+	,
+
 	buttons : [ 
 		{ text : "Save", action : "save" }, 
 		{ text : "Cancel", scope : this } 
 	]
+ **/
 });
 
 
@@ -21464,6 +21472,24 @@ Ext.define('COMS.controller.Management.AdminTab', {
     },
 
 
+
+
+	{
+		ref : "IV_Fluid_Types_DeleteBtn",
+		selector : "form[name=\"IV_Fluid_Types\"] button[text=\"Delete\"]"
+	},
+
+
+
+
+
+
+
+
+
+
+
+
 	{
 		ref : "RoleLastName",
 		selector : "AdminTab Roles [name=\"LastName\"]"
@@ -21702,7 +21728,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 			"form [name=\"IV_FluidTypesList\"]" : {
-				select: this.selectIVFluidTypeGridRow
+				select: this.selectIVFluidTypeGridRow,
+				deselect: this.deselectIVFluidTypeGridRow
+
 			},
 			"form[name=\"IV_Fluid_Types\"]" : {
 				beforerender: this.FluidTypeLoadGrid
@@ -21713,6 +21741,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"form[name=\"IV_Fluid_Types\"] button[text=\"Save\"]" : {
 				click: this.clickFluidTypeSave
 			},
+			"form[name=\"IV_Fluid_Types\"] button[text=\"Refresh\"]" : {
+				click: this.clickFluidTypeRefresh
+			},
+
 
 
 			"Roles grid" : {
@@ -22399,11 +22431,13 @@ vcode: null		// ignore
 	},
 
 
+	clickFluidTypeRefresh : function (theButton, eOpts) {
+		this.FluidTypeLoadGrid();
+	},
 
-
-	FluidTypeLoadGrid : function (panel) {
-		this.application.loadMask("Please wait; Loading Fluid Types");
+	FluidTypeLoadGrid : function () {
 		var theGrid = this.getIVFluidTypesGrid();
+		theGrid.setLoading( "Please wait; Loading Fluid Types", false );
 		theGrid.getStore().load();
 
 		var theMedField = this.getIV_Medication();
@@ -22411,28 +22445,58 @@ vcode: null		// ignore
 
 		var theFluidTypeField = this.getIV_FluidTypeMulti();
 		theFluidTypeField.getStore().load();
-		this.application.unMask();
+
+
+
+		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
+		// DelBtn.enable();
+		DelBtn.disable();
+		DelBtn.show();
+
+
+		theGrid.setLoading( false, false );
 		return true;
 	},
 
+	deselectIVFluidTypeGridRow : function(theRowModel, record, index, eOpts) {
+		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
+		// DelBtn.enable();
+		DelBtn.disable();
+		DelBtn.show();
+	},
+
 	selectIVFluidTypeGridRow : function(theRowModel, record, index, eOpts) {
-		var Fluid = record.get("FluidType");
-		var FluidID = record.get("FluidType_ID");
 		var Med = record.get("MedName");
 		var MedID = record.get("Med_ID");
 		var theMedField = this.getIV_Medication();
-		var theFluidTypeField = this.getIV_FluidTypeMulti();
 		theMedField.setValue(MedID);
+
+		var Fluid = record.get("FluidType");
+		var FluidID = record.get("FluidType_ID");
+		var theFluidTypeField = this.getIV_FluidTypeMulti();
 		theFluidTypeField.setValue(FluidID);
+
+		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
+		DelBtn.enable();
+		// DelBtn.disable();
+		DelBtn.show();
 	},
 
 	clickFluidTypeCancel : function ( theButton, eOpts) {
 		theButton.up('form').getForm().reset();
+		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
+		// DelBtn.enable();
+		DelBtn.disable();
+		DelBtn.show();
 	},
 
 	clickFluidTypeSave : function ( theButton, eOpts) {
 		var theForm = theButton.up('form').getForm();
 		var thisCtl = this.getController("Management.AdminTab");
+		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
+		// DelBtn.enable();
+		DelBtn.disable();
+		DelBtn.show();
 
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();

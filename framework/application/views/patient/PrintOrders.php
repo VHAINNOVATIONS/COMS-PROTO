@@ -302,13 +302,25 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 <?php
 }
 ?>
+
+
+
+
+
+
+
+
+
+
+<?php error_log("Patient/PrintOrders - " . json_encode($pInfo)); ?>
 <!doctype html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Order Entry Management Information - for <?php echo $pInfo['name']; ?></title>
-	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1RC1/resources/css/ext-all.css">
-	<link rel="stylesheet" type="text/css" href="/js/UAT_18June2012/COMS.css">
+    
+	<title>COMS Chemotherapy Orders for <?php echo $pInfo['name']; ?></title>
+	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
+	<link rel="stylesheet" type="text/css" href="/app/js/COMS.css">
 	<style>
 	div.desc { font-weight: normal; font-style: italic;background:none; }
 	.OEMRecord_Element .header th {
@@ -317,8 +329,11 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 	td.drug {
 		font-weight: bold!important;
 	}
-	th h2 {
+    h1 {
 		font-size:200%;
+    }
+	th h2 {
+		font-size:150%;
 		margin-top: 1em;
 	}
 	th { 
@@ -333,14 +348,14 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 <body style="background: white;">
 <div id="application" style="width:98%;margin: 1em auto;border:none;">
 	<header role="banner">
-	<h1>Order Entry Management (OEM) Information</h1>
+	<h1>COMS Chemotherapy Orders for <br><?php echo $pInfo['name']; ?></h1>
 
 	
 	
 	<?php
 		if($mRecord) {
 	?>
-	<h2>Patient: <?php echo $pInfo['name']; ?></h2>
+	<!-- <h2>Patient: <?php echo $pInfo['name']; ?></h2> -->
 	</header>
 
 	<section>
