@@ -29,10 +29,9 @@ Ext.define("COMS.view.Management.Roles", {
 				{
 					"xtype" : "textfield",
 					"name" : "FirstName",
-					"fieldLabel" : "First Name <em class=\"required-field\">*</em>",
+					"fieldLabel" : "First Name",
 					"labelWidth": 80,
-					"width": 190,
-					"allowBlank" : false
+					"width": 190
 				}, 
 				{
 					"xtype" : "button",
@@ -68,16 +67,16 @@ Ext.define("COMS.view.Management.Roles", {
 						}
 					}
 				},
-			{
+				{
 					"xtype" : "box", "name" : "SelVistAUserNoMatch", "html" : "No match for name entered, please select from choices provided", "hidden" : true 
-			},
+				},
 				{
 					"xtype": "combo",
 					"name": "Role",
 					"hidden" : true,
 					"fieldLabel": "Role <em class=\"required-field\">*</em>",
 					"labelWidth": 40,
-					"width": 120,
+					"width": 160,
 					"queryMode": "local",
 					"displayField": "name",
 					"valueField": "name",
@@ -90,6 +89,14 @@ Ext.define("COMS.view.Management.Roles", {
 							{ "name": "Pharmacist" }
 						]
 					})
+				},
+				{ 
+					"xtype" : "checkbox",
+					"name" : "Preceptor",
+					"labelWidth" : 55,
+					"fieldLabel" : "Preceptor",
+					"checked" : false,
+					"hidden": true
 				},
 				{ 
 					"xtype" : "checkbox",
@@ -118,7 +125,7 @@ Ext.define("COMS.view.Management.Roles", {
 			"store" : {
 				"autoLoad" : false,
 					// username, role, displayname, email, templateAuthoring
-				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
+				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Preceptor", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
 				"proxy" : {
 					"type" : "rest",
 					"url" : "/Admin/UserRoles",
@@ -142,6 +149,17 @@ Ext.define("COMS.view.Management.Roles", {
 				{
 					"header" : "Role",
 					"dataIndex" : "role",
+					"width" : 120
+				},
+				{
+					"header" : "Preceptor",
+					"dataIndex" : "Preceptor",
+					"renderer" : function (value, p, record) {
+						if (value) {
+							return "Yes";
+						}
+						return "No";
+					},
 					"width" : 120
 				},
 				{

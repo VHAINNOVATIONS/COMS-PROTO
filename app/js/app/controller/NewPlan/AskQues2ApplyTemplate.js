@@ -8,7 +8,8 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
 		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
-		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"}
+		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
+		{ ref: "CTOS_Tab",						selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
@@ -22,6 +23,9 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 			},
 			"AskQues2ApplyTemplate button[text=\"Cancel\"]": {
 				click: this.cancelApply
+			},
+			"AskQues2ApplyTemplate radiogroup[name=\"ConcurRadTherapyRadio\"]":{
+				change : this.ConcurRadTherapySelected
 			},
 			"AskQues2ApplyTemplate radiogroup[name=\"clinicalTrialRadio\"]":{
 				change : this.ClinicalTrialTypeSelected
@@ -58,6 +62,10 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
             this.getAmputeeType().hide();
         }
     },
+
+	ConcurRadTherapySelected: function (rbtn, newValue, oldValue, eOpts ) {
+		debugger;
+	},
 
     ClinicalTrialTypeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Clinical Trial Type");
@@ -146,40 +154,45 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				break;
 		}
 		var RegimenDuration = CycleLength * MaxCycles;
-        var future;
+		var future;
 
-        win.close();
+		win.close();
+debugger;
+var theParentTab = this.getCTOS_Tab();
+// theWin.setLoading( "Loading Drug Information");
+		Ext.MessageBox.show({
+			msg: 'Applying template, please wait...',
+			progressText: 'Applying...',
+			width:300,
+			wait:true,
+			waitConfig: {interval:200},
+			icon:'ext-mb-download' //custom class in COMS.css
+		});
 
-        Ext.MessageBox.show({
-            msg: 'Applying template, please wait...',
-            progressText: 'Applying...',
-            width:300,
-            wait:true,
-            waitConfig: {interval:200},
-            icon:'ext-mb-download' //custom class in COMS.css
-        });
+		startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
+		today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
+		future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
 
-        startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
-        future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
+		var newCtl = this.getController("NewPlan.NewPlanTab");
 
-        var newCtl = this.getController("NewPlan.NewPlanTab");
+		var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
+			PatientID: this.application.Patient.id,
+			TemplateID: this.application.Patient.Template.id,
+			DateApplied : today,
+			DateStarted : startDate,
+			DateEnded : future,
+			Goal : values.Goal,
+			ClinicalTrial: values.TypeOfTrial,
+			PerformanceStatus: values.PerfStatus,
+			WeightFormula: values.BSA_FormulaWeight,
+			BSAFormula: values.BSA_Formula,
+			BSA_Method: values.BSA_Formula,
+			Amputations: amputations,
+			ConcurRadTherapy: values.ConcurRadTherapy
+		});
 
-        var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
-            PatientID: this.application.Patient.id,
-            TemplateID: this.application.Patient.Template.id,
-            DateApplied : today,
-            DateStarted : startDate,
-            DateEnded : future,
-            Goal : values.Goal,
-            ClinicalTrial: values.TypeOfTrial,
-            PerformanceStatus: values.PerfStatus,
-            WeightFormula: values.BSA_FormulaWeight,
-            BSAFormula: values.BSA_Formula,
-            BSA_Method: values.BSA_Formula,
-            Amputations: amputations
-        });
-
+debugger;
+/***
 		patientTemplate.save({
 			scope: this,
 			success: function (data) {
@@ -190,7 +203,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				PatientSelection.collapse();
 				thisCtl.resetPanels(thisCtl, "", "", "");
 
-				/**********
+				**********
 				 *	data.data = {
 				 *	Amputations :  []
 				 *	BSAFormula :  "DuBois"
@@ -205,7 +218,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				 *	WeightFormula :  "Actual Weight"
 				 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
 				 *	}
-				 ***********/
+				 ***********
 				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
 				Ext.MessageBox.alert('Success', 'Template applied to Patient ');
 			},
@@ -215,5 +228,6 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
 			}
 		});
+***/
 	}
 });

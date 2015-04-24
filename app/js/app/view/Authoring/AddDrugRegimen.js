@@ -33,7 +33,6 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"fieldLabel" : "Medication Type",
 						"afterLabelTextTpl" : "<img class=\"HelpIcon\" alt=\"Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List\" title=\"Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List\" >",
 						"labelWidth" : 115,
-						"itemId" : "patientRadios",
 						"columns" : 2,
 						"items" : [
 							{
