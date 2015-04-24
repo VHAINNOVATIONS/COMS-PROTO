@@ -35,7 +35,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							fieldLabel: 'Medication Type',
 							labelWidth: 115,
 							'afterLabelTextTpl' : '<img class="HelpIcon" alt="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" title="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" >',
-							itemId: 'patientRadios',
 							columns: 2,
 							items: [{
 								boxLabel: 'Inpatient',

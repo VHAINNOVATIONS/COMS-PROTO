@@ -16,7 +16,6 @@ Ext.define('COMS.view.Authoring.HydrationSequence', {
                             {
                                 xtype: 'radiogroup',
                                 fieldLabel: 'You have entered a duplicate sequence number. Would you like to',
-                                itemId: 'sequenceRadios',
                                 columns: 1,
                                 items: [
                                             { boxLabel  : 'Apply Next Sequence Number', name : 'ApplySequence', inputValue: '0'  }, 

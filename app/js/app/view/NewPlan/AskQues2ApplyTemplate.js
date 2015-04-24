@@ -123,7 +123,6 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "goalRadio",
 					"layout" : "hbox",
 					"fieldLabel" : "Select the goal for this Regimen <em>*</em>",
-					"itemId" : "goalRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Curative",
@@ -139,11 +138,30 @@ var theMainItemsList = function(itemsInGroup) {
 				}, 
 				{
 					"xtype" : "radiogroup",
+					"name" : "ConcurRadTherapyRadio",
+					"labelAlign" : "top",
+					"layout" : "hbox",
+					"fieldLabel" : "Patient undergoing concurrent radiation treatment <em>*</em>",
+					"columns" : 1,
+					"items" : [{
+						"boxLabel" : "Yes",
+						"name" : "ConcurRadTherapy",
+						"inputValue" : true,
+						"width" : 100
+					}, {
+						"boxLabel" : "No",
+						"name" : "ConcurRadTherapy",
+						"inputValue" : false,
+						"width" : 125,
+						"checked" : true
+					}]
+				}, 
+				{
+					"xtype" : "radiogroup",
 					"name" : "clinicalTrialRadio",
 					"labelAlign" : "top",
 					"layout" : "hbox",
 					"fieldLabel" : "Specify the type of clinical trial <em>*</em>",
-					"itemId" : "clinicalRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -171,7 +189,6 @@ var theMainItemsList = function(itemsInGroup) {
 					"labelAlign" : "top",
 					"layout" : "hbox",
 					"fieldLabel" : "Is the Patient an Amputee? <em>*</em>",
-					"itemId" : "amputeeRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",

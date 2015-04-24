@@ -4666,43 +4666,42 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 	}
 });
 
-Ext.define('COMS.model.PatientTemplates', {
-	extend: 'Ext.data.Model',
-    queryMode: 'local',
+Ext.define("COMS.model.PatientTemplates", {
+	extend: "Ext.data.Model",
+	queryMode: "local",
 	fields: [
-		'id',		
-                'PatientID',
-                'TemplateID',
-		'DateApplied',
-		'DateStarted',
-                'DateEnded',
-                'DateEndedActual',
-                'Goal',
-                'ClinicalTrial',
-                'PerformanceStatus',
-                'WeightFormula',
-                'BSAFormula',
-		'Amputations',
-		'msg',
+		"id",
+		"PatientID",
+		"TemplateID",
+		"DateApplied",
+		"DateStarted",
+		"DateEnded",
+		"DateEndedActual",
+		"Goal",
+		"ConcurRadTherapy",
+		"ClinicalTrial",
+		"PerformanceStatus",
+		"WeightFormula",
+		"BSAFormula",
+		"Amputations",
+		"msg",
 		"EotsID"
-
 	],
-    proxy: {
-        type: 'rest',
-        api: {
-                read: Ext.URLs.PatientTemplate,
-                create: Ext.URLs.AddPatientTemplate		
-        },
-        
-        reader: {
-            type: 'json',
-            root : 'records',
-			successProperty : 'success',
-			messageProperty: 'msg'
-        }
-    }
-});
+	proxy: {
+		type: "rest",
+		api: {
+			read: Ext.URLs.PatientTemplate,
+			create: Ext.URLs.AddPatientTemplate		
+		},
 
+		reader: {
+			type: "json",
+			root : "records",
+			successProperty : "success",
+			messageProperty: "msg"
+		}
+	}
+});
 
 /* Note: This model may have to be refactored once we identify what type of info is held in the Radiation History */
 Ext.define('COMS.model.RadiationHistory', {
@@ -5701,7 +5700,6 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"fieldLabel" : "Medication Type",
 						"afterLabelTextTpl" : "<img class=\"HelpIcon\" alt=\"Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List\" title=\"Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List\" >",
 						"labelWidth" : 115,
-						"itemId" : "patientRadios",
 						"columns" : 2,
 						"items" : [
 							{
@@ -5977,7 +5975,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							fieldLabel: 'Medication Type',
 							labelWidth: 115,
 							'afterLabelTextTpl' : '<img class="HelpIcon" alt="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" title="Indicates whether Medication comes from Inpatient Medication List or Outpatient Medication List" >',
-							itemId: 'patientRadios',
 							columns: 2,
 							items: [{
 								boxLabel: 'Inpatient',
@@ -6734,7 +6731,6 @@ Ext.define('COMS.view.Authoring.HydrationSequence', {
                             {
                                 xtype: 'radiogroup',
                                 fieldLabel: 'You have entered a duplicate sequence number. Would you like to',
-                                itemId: 'sequenceRadios',
                                 columns: 1,
                                 items: [
                                             { boxLabel  : 'Apply Next Sequence Number', name : 'ApplySequence', inputValue: '0'  }, 
@@ -8401,7 +8397,6 @@ Ext.define("COMS.view.Management.AddLookups" ,{
 			"items" : [
 				{
 					"xtype" : "SelectLookups",
-					"itemId" : "lookupType",
 					"name" : "id",
 					"labelWidth" : 130
 				},
@@ -8862,7 +8857,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				"xtype" : "radiogroup",
 				"name" : "patientRadio",
 				"fieldLabel" : "Medication Type",
-				"itemId" : "patientRadios",
 				"columns" : 2,
 				"items" : [{
 					"boxLabel" : "InPatient",
@@ -9038,30 +9032,20 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 				}
 			})
 		},
-
-	{ "xtype" : "ManagementBtns"},
-
-		{  
+		{ "xtype" : "ManagementBtns"},
+		{
 			xtype : "grid",  name: "IV_FluidTypesList", title: "IV Fluid Types", store : "IVFluidType",
 			forceFit : true,
 			overflowY : "scroll",
 			resizable : true,
 			minHeight : 500,
-			selModel: {  allowDeselect: true },
+			selModel: { allowDeselect: true },
 			columns : [ 
 				{ text : "Medication", dataIndex : "MedName", width: 540 }, 
 				{ text : "IV Fluid Type", dataIndex : "FluidType" }
 			]
 		}
 	]
-/**		
-	,
-
-	buttons : [ 
-		{ text : "Save", action : "save" }, 
-		{ text : "Cancel", scope : this } 
-	]
- **/
 });
 
 
@@ -9525,10 +9509,9 @@ Ext.define("COMS.view.Management.Roles", {
 				{
 					"xtype" : "textfield",
 					"name" : "FirstName",
-					"fieldLabel" : "First Name <em class=\"required-field\">*</em>",
+					"fieldLabel" : "First Name",
 					"labelWidth": 80,
-					"width": 190,
-					"allowBlank" : false
+					"width": 190
 				}, 
 				{
 					"xtype" : "button",
@@ -9564,16 +9547,16 @@ Ext.define("COMS.view.Management.Roles", {
 						}
 					}
 				},
-			{
+				{
 					"xtype" : "box", "name" : "SelVistAUserNoMatch", "html" : "No match for name entered, please select from choices provided", "hidden" : true 
-			},
+				},
 				{
 					"xtype": "combo",
 					"name": "Role",
 					"hidden" : true,
 					"fieldLabel": "Role <em class=\"required-field\">*</em>",
 					"labelWidth": 40,
-					"width": 120,
+					"width": 160,
 					"queryMode": "local",
 					"displayField": "name",
 					"valueField": "name",
@@ -9586,6 +9569,14 @@ Ext.define("COMS.view.Management.Roles", {
 							{ "name": "Pharmacist" }
 						]
 					})
+				},
+				{ 
+					"xtype" : "checkbox",
+					"name" : "Preceptor",
+					"labelWidth" : 55,
+					"fieldLabel" : "Preceptor",
+					"checked" : false,
+					"hidden": true
 				},
 				{ 
 					"xtype" : "checkbox",
@@ -9614,7 +9605,7 @@ Ext.define("COMS.view.Management.Roles", {
 			"store" : {
 				"autoLoad" : false,
 					// username, role, displayname, email, templateAuthoring
-				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
+				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Preceptor", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
 				"proxy" : {
 					"type" : "rest",
 					"url" : "/Admin/UserRoles",
@@ -9638,6 +9629,17 @@ Ext.define("COMS.view.Management.Roles", {
 				{
 					"header" : "Role",
 					"dataIndex" : "role",
+					"width" : 120
+				},
+				{
+					"header" : "Preceptor",
+					"dataIndex" : "Preceptor",
+					"renderer" : function (value, p, record) {
+						if (value) {
+							return "Yes";
+						}
+						return "No";
+					},
 					"width" : 120
 				},
 				{
@@ -10330,7 +10332,6 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "goalRadio",
 					"layout" : "hbox",
 					"fieldLabel" : "Select the goal for this Regimen <em>*</em>",
-					"itemId" : "goalRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Curative",
@@ -10346,11 +10347,30 @@ var theMainItemsList = function(itemsInGroup) {
 				}, 
 				{
 					"xtype" : "radiogroup",
+					"name" : "ConcurRadTherapyRadio",
+					"labelAlign" : "top",
+					"layout" : "hbox",
+					"fieldLabel" : "Patient undergoing concurrent radiation treatment <em>*</em>",
+					"columns" : 1,
+					"items" : [{
+						"boxLabel" : "Yes",
+						"name" : "ConcurRadTherapy",
+						"inputValue" : true,
+						"width" : 100
+					}, {
+						"boxLabel" : "No",
+						"name" : "ConcurRadTherapy",
+						"inputValue" : false,
+						"width" : 125,
+						"checked" : true
+					}]
+				}, 
+				{
+					"xtype" : "radiogroup",
 					"name" : "clinicalTrialRadio",
 					"labelAlign" : "top",
 					"layout" : "hbox",
 					"fieldLabel" : "Specify the type of clinical trial <em>*</em>",
-					"itemId" : "clinicalRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -10378,7 +10398,6 @@ var theMainItemsList = function(itemsInGroup) {
 					"labelAlign" : "top",
 					"layout" : "hbox",
 					"fieldLabel" : "Is the Patient an Amputee? <em>*</em>",
-					"itemId" : "amputeeRadios",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -10500,7 +10519,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
 		var ApplyBtn = { xtype : "container", name : "Apply", html : "", hidden : true, margin: '0 0 10 50' };
-		if ("Provider" === Sessionrole) {
+		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 			ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' };
 		}
 
@@ -21404,11 +21423,10 @@ Ext.define("COMS.controller.Management.AddLookups", {
 
 
 Ext.define('COMS.controller.Management.AdminTab', {
-    extend : 'Ext.app.Controller',
-    stores : [ 'Lockout', 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging', 'InventoryConsumption'],
-    views : [ 
+	extend : 'Ext.app.Controller',
+	stores : [ 'Lockout', 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging', 'InventoryConsumption'],
+	views : [ 
 		'Management.AdminTab',
-		// 'Management.AddLookups',
 		'Management.SelectLookups',
 		'Management.EditLookup',
 		'Management.DeleteTemplate', 
@@ -21434,62 +21452,40 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.PatternsOfCareTab',
 		'Management.Roles'
 	],
-    models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
-    refs: [
-    {
-        ref: 'Lookup', 
-        selector: 'AdminTab AddLookups'
-    },
-    {
-        ref: 'LookupGrid', 
-        selector: 'AdminTab AddLookups grid'
-    },
-    {
-        ref: 'Globals', 
-        selector: 'AdminTab Globals grid'
-    },	
-    {
-        ref: 'MedsNonRounded', 
-        selector: 'AdminTab MedsNonRounded grid'
-    },
-/***************
-    {
-        ref: 'Users', 
-        selector: 'AdminTab Users grid'
-    },
-***************/
-    {
-        ref: 'RolesForm', 
-        selector: 'AdminTab Roles'
-    },
+	models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
+	refs: [
 	{
-        ref: 'RolesGrid', 
-        selector: 'AdminTab Roles grid'
-    },
+		ref: 'Lookup', 
+		selector: 'AdminTab AddLookups'
+	},
 	{
-        ref: 'SelVistAUserNoMatch', 
-        selector: 'AdminTab Roles [name=\"SelVistAUserNoMatch\"]'
-    },
-
-
-
-
+		ref: 'LookupGrid', 
+		selector: 'AdminTab AddLookups grid'
+	},
+	{
+		ref: 'Globals', 
+		selector: 'AdminTab Globals grid'
+	},	
+	{
+		ref: 'MedsNonRounded', 
+		selector: 'AdminTab MedsNonRounded grid'
+	},
+	{
+		ref: 'RolesForm', 
+		selector: 'AdminTab Roles'
+	},
+	{
+		ref: 'RolesGrid', 
+		selector: 'AdminTab Roles grid'
+	},
+	{
+		ref: 'SelVistAUserNoMatch', 
+		selector: 'AdminTab Roles [name=\"SelVistAUserNoMatch\"]'
+	},
 	{
 		ref : "IV_Fluid_Types_DeleteBtn",
 		selector : "form[name=\"IV_Fluid_Types\"] button[text=\"Delete\"]"
 	},
-
-
-
-
-
-
-
-
-
-
-
-
 	{
 		ref : "RoleLastName",
 		selector : "AdminTab Roles [name=\"LastName\"]"
@@ -21505,6 +21501,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "RoleUserRole",
 		selector : "AdminTab Roles [name=\"Role\"]"
+	},
+	{
+		ref : "RoleUserPreceptor",
+		selector : "AdminTab Roles [name=\"Preceptor\"]"
 	},
 	{
 		ref : "RoleUserTemplateAuthoring",
@@ -21524,66 +21524,52 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		ref : "RoleGetUsersCombo",
 		selector : "AdminTab Roles [name=\"SelVistAUser\"]"
 	},
+	{
+		ref: 'ActiveWorkflows', 
+		selector: 'AdminTab ActiveWorkflows grid'
+	},
+	{
+		ref: 'RemoveLookup', 
+		selector: 'AdminTab AddLookups button[title=\"RemoveLookup\"]'
+	}, 
+	{
+		ref: 'EditLookup', 
+		selector: 'AdminTab AddLookups button[title=\"EditLookup\"]'
+	},
 
+	{
+		ref: 'Template', 
+		selector: 'AdminTab DeleteTemplate'
+	},
+	{
+		ref: 'TemplateGrid', 
+		selector: 'AdminTab DeleteTemplate grid'
+	},
+	{
+		ref: 'RemoveTemplate', 
+		selector: 'AdminTab DeleteTemplate button[title=\"RemoveTemplate\"]'
+	},
+	{
+		ref: 'ShowAllTemplates', 
+		selector: 'AdminTab DeleteTemplate button[title=\"AllTemplates"]'
+	},
+	{
+		ref: 'RoundingRulesForm', 
+		selector: 'form[title=\"Rounding Rules\"]'
+	},
+	{
+		ref: 'RBRoundingRules', 
+		selector: 'form[title=\"Rounding Rules\"] radiogroup'
+	},
 
-
-
-
-
-
-
-
-
-
-
-
-
-    {
-        ref: 'ActiveWorkflows', 
-        selector: 'AdminTab ActiveWorkflows grid'
-    },	
-    {
-        ref: 'RemoveLookup', 
-        selector: 'AdminTab AddLookups button[title=\"RemoveLookup\"]'
-    }, 
-    {
-        ref: 'EditLookup', 
-        selector: 'AdminTab AddLookups button[title=\"EditLookup\"]'
-    },
-
-    {
-        ref: 'Template', 
-        selector: 'AdminTab DeleteTemplate'
-    },
-    {
-        ref: 'TemplateGrid', 
-        selector: 'AdminTab DeleteTemplate grid'
-    },
-    {
-        ref: 'RemoveTemplate', 
-        selector: 'AdminTab DeleteTemplate button[title=\"RemoveTemplate\"]'
-    },
-    {
-        ref: 'ShowAllTemplates', 
-        selector: 'AdminTab DeleteTemplate button[title=\"AllTemplates"]'
-    },
-    {
-        ref: 'RoundingRulesForm', 
-        selector: 'form[title=\"Rounding Rules\"]'
-    },
-    {
-        ref: 'RBRoundingRules', 
-        selector: 'form[title=\"Rounding Rules\"] radiogroup'
-    },
-
-    {
-        ref: 'MedHoldForm', 
-        selector: 'form[title=\"Medication Holds\"]'
-    },
-    {
-        ref: 'RBMedHold', 
-        selector: 'form[title=\"Medication Holds\"] radiogroup'
-    },
+	{
+		ref: 'MedHoldForm', 
+		selector: 'form[title=\"Medication Holds\"]'
+	},
+	{
+		ref: 'RBMedHold', 
+		selector: 'form[title=\"Medication Holds\"] radiogroup'
+	},
 	{
 		ref : "IVFluidTypesGrid",
 		selector : "form [name=\"IV_FluidTypesList\"]"
@@ -21653,84 +21639,57 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		ref : "MedRisks_Details",
 		selector : "MedRisks [name=\"Details\"]"
 	}
-    ],
-    
+	],
+	
 
-    init: function() {
-        wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
-        this.control({
+	init: function() {
+		wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
+		this.control({
 
 			"AdminTab Roles [name=\"SelVistAUser\"]" : {
 				"select" : this.selectVistAUser
 			},
 			"AdminTab Roles button[name=\"GetUserList\"]" : {
-                click : this.GetUsersFromVistA
-            },
+				click : this.GetUsersFromVistA
+			},
 
-            'form[title=\"Rounding Rules\"]' : {
-                beforeshow : this.RoundingRulesFormRenderSetValues
-            },
-            'form[title=\"Medication Holds\"]' : {
-                beforeshow : this.MedHoldFormRenderSetValues
-            },
+			'form[title=\"Rounding Rules\"]' : {
+				beforeshow : this.RoundingRulesFormRenderSetValues
+			},
+			'form[title=\"Medication Holds\"]' : {
+				beforeshow : this.MedHoldFormRenderSetValues
+			},
 
-//            'AddLookups SelectLookups' : {
-//                select : this.LookupSelected
-//            },
-            'DeleteTemplate selDisease' : {
-                select : this.TemplateSelected
-            },
-//            'AddLookups button[action=save]' :{
-//                click : this.updateLookup
-//            },
-//            'AdminTab AddLookups grid' : {
-//                itemclick: this.enableEditLookup
-//            },
-            'AdminTab Globals grid' : {
-                itemclick: this.enableEditGlobal
-            },
-            'AdminTab DeleteTemplate grid' : {
-                itemclick: this.enableRemoveTemplate
-            },
-            'AdminTab DeleteTemplate button[title=\"RemoveTemplate\"]': {
-                click: this.removeTemplate
-            },
-            'AdminTab DeleteTemplate button[title=\"AllTemplates"]': {
-                click: this.showAllTemplates
-            },
-//            'AdminTab AddLookups button[title=\"RemoveLookup\"]': {
-//                click: this.removeLookup
-//            },
-//            'AdminTab AddLookups button[title=\"EditLookup\"]': {
-//                click: this.editLookup
-//            },
-//            'EditLookup button[action="save"]': {
-//                click: this.clickSaveLookup
-//            },
-//            'EditLookup button[action="cancel"]': {
-//                click: this.clickCancelLookup
-//            },
-
-            "form[title=\"Medication Holds\"] button[text=\"Save\"]" : {
-                click: this.clickMedHoldSave
-            },
-            "form[title=\"Medication Holds\"] button[text=\"Cancel\"]" : {
-                click: this.clickMedHoldCancel
-            },
-
-            "form[title=\"Rounding Rules\"] button[text=\"Save\"]" : {
-                click: this.clickRoundingRuleSave
-            },
-            "form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
-                click: this.clickRoundingRuleCancel
-            },
-
-
-
+			'DeleteTemplate selDisease' : {
+				select : this.TemplateSelected
+			},
+			'AdminTab Globals grid' : {
+				itemclick: this.enableEditGlobal
+			},
+			'AdminTab DeleteTemplate grid' : {
+				itemclick: this.enableRemoveTemplate
+			},
+			'AdminTab DeleteTemplate button[title=\"RemoveTemplate\"]': {
+				click: this.removeTemplate
+			},
+			'AdminTab DeleteTemplate button[title=\"AllTemplates"]': {
+				click: this.showAllTemplates
+			},
+			"form[title=\"Medication Holds\"] button[text=\"Save\"]" : {
+				click: this.clickMedHoldSave
+			},
+			"form[title=\"Medication Holds\"] button[text=\"Cancel\"]" : {
+				click: this.clickMedHoldCancel
+			},
+			"form[title=\"Rounding Rules\"] button[text=\"Save\"]" : {
+				click: this.clickRoundingRuleSave
+			},
+			"form[title=\"Rounding Rules\"] button[text=\"Cancel\"]" : {
+				click: this.clickRoundingRuleCancel
+			},
 			"form [name=\"IV_FluidTypesList\"]" : {
 				select: this.selectIVFluidTypeGridRow,
 				deselect: this.deselectIVFluidTypeGridRow
-
 			},
 			"form[name=\"IV_Fluid_Types\"]" : {
 				beforerender: this.FluidTypeLoadGrid
@@ -21744,9 +21703,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"form[name=\"IV_Fluid_Types\"] button[text=\"Refresh\"]" : {
 				click: this.clickFluidTypeRefresh
 			},
-
-
-
 			"Roles grid" : {
 				select: this.selectRolesGridRow,
 				beforerender: this.RolesLoadGrid
@@ -21763,7 +21719,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"Roles button[text=\"Refresh\"]" : {
 				click: this.clickRolesRefresh
 			},
-
+			"Roles [name=\"Role\"]" : {
+				select: this.selectRoleChange
+			},
 
 
 /* Medication Documentation */
@@ -21862,13 +21820,14 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			msg.show();
 			theDUZ = "";
 		}
-		// theCombo.fireEvent('select', theCombo, theRecord);
 
 		theStore.proxy.url = "";		// /LookUp/VistAUsers";
 		theCombo.setValue(theDUZ);
 		theCombo.show();
 		this.getRoleUserRole().show();
 		this.getRoleUserTemplateAuthoring().show();
+		// If role is "Provider" or "All Roles" then show
+		this.getRoleUserPreceptor().show();
 	},
 
 	GetUsersFromVistA : function(btn) {
@@ -21876,6 +21835,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		theCombo.hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
+		this.getRoleUserPreceptor().hide();
 
 		this.getRolesForm().setLoading( "Getting User Data from VistA", false );
 		var msg = this.getSelVistAUserNoMatch();
@@ -22277,9 +22237,19 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		theBtn.up('form').getForm().reset();
 	},
 
+	selectRoleChange : function( combo, records, eOpts ) {
+		var selectedRole = records[0].getData().name;
+		if ("Provider" === selectedRole || "All Roles" == selectedRole) {
+			this.getRoleUserPreceptor().show();
+		}
+		else {
+			this.getRoleUserPreceptor().hide();
+		}
+	},
 
 	RolesUserInfo : {},
-selectRolesGridRow : function(theRowModel, record, index, eOpts) {
+
+	selectRolesGridRow : function(theRowModel, record, index, eOpts) {
 		/* "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Email", "TemplateAuthoring", "Role_ID", "Last_SessionID" ], */
 		this.RolesUserInfo = record.getData();
 		var r = this.RolesUserInfo;
@@ -22315,13 +22285,25 @@ vcode: null		// ignore
 		var TAField = this.getRoleUserTemplateAuthoring();
 		TAField.setValue(this.RolesUserInfo.TemplateAuthoring);
 
+		var PrecepField = this.getRoleUserPreceptor();
+		PrecepField.setValue(this.RolesUserInfo.Preceptor);
+
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.enable();
 		DelBtn.show();
 
 		this.getRoleGetUsersCombo().show();
-		this.getRoleUserRole().show();
-		this.getRoleUserTemplateAuthoring().show();
+		var theRoleCombo = this.getRoleUserRole();
+		var theRole = theRoleCombo.value;
+		theRoleCombo.show();
+		TAField.show();
+
+		if ("Provider" === theRole || "All Roles" === theRole) {
+			PrecepField.show();
+		}
+		else {
+			PrecepField.hide();
+		}
 	},
 
 	RolesLoadGrid : function (panel) {
@@ -22333,6 +22315,7 @@ vcode: null		// ignore
 		this.getRoleGetUsersCombo().hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
+		this.getRoleUserPreceptor().hide();
 
 		this.application.loadMask("Please wait; Loading User Roles");
 		var theGrid = this.getRolesGrid();
@@ -22347,25 +22330,40 @@ vcode: null		// ignore
 		this.getRoleGetUsersCombo().hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
+		this.getRoleUserPreceptor().hide();
 	},
 
 	clickRolesSave : function ( theButton, eOpts) {
+		var msg, theCombo, comboStore, duz, Name, theDUZ, theRec;
+
 		this.application.loadMask("Please wait; Saving User Role Information");
-		var msg = this.getSelVistAUserNoMatch();
+		msg = this.getSelVistAUserNoMatch();
 		msg.html = "";
 		msg.hide();
 
+		theCombo = this.getRoleGetUsersCombo();
+		comboStore = theCombo.getStore();
 
-		var theCombo = this.getRoleGetUsersCombo();
-		var duz = theCombo.getValue();
-		var Name = theCombo.getRawValue();
+		Name = theCombo.getRawValue();
+
+		theRec = comboStore.findRecord("name", Name);
+		if (theRec) {
+			theDUZ = theRec.getData().duz;
+			duz = theDUZ;
+		}
+		else {
+			duz = this.RolesUserInfo.username;
+		}
+
 		theCombo.hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
+		this.getRoleUserPreceptor().hide();
 
 
 		var Role = this.getRoleUserRole().getValue();
 		var TA = this.getRoleUserTemplateAuthoring().getValue();
+		var Precep = this.getRoleUserPreceptor().getValue();
 		var theGrid = this.getRolesGrid();
 		var theStore = theGrid.getStore();
 		var CMD = "POST";
@@ -22374,7 +22372,7 @@ vcode: null		// ignore
 			CMD = "PUT";
 			rid = this.RolesUserInfo.rid;
 		}
-		var RoleData = { "rid" : rid, "username" : duz, "role" : Role, "DisplayName" : Name, "TemplateAuthoring" : TA };
+		var RoleData = { "rid" : rid, "username" : duz, "role" : Role, "DisplayName" : Name, "TemplateAuthoring" : TA, "Preceptor" : Precep };
 
 		delete this.RolesUserInfo;
 		Ext.Ajax.request({
@@ -22430,7 +22428,6 @@ vcode: null		// ignore
 		this.RolesLoadGrid();
 	},
 
-
 	clickFluidTypeRefresh : function (theButton, eOpts) {
 		this.FluidTypeLoadGrid();
 	},
@@ -22446,13 +22443,9 @@ vcode: null		// ignore
 		var theFluidTypeField = this.getIV_FluidTypeMulti();
 		theFluidTypeField.getStore().load();
 
-
-
 		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
-		// DelBtn.enable();
 		DelBtn.disable();
 		DelBtn.show();
-
 
 		theGrid.setLoading( false, false );
 		return true;
@@ -22460,7 +22453,6 @@ vcode: null		// ignore
 
 	deselectIVFluidTypeGridRow : function(theRowModel, record, index, eOpts) {
 		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
-		// DelBtn.enable();
 		DelBtn.disable();
 		DelBtn.show();
 	},
@@ -22485,7 +22477,6 @@ vcode: null		// ignore
 	clickFluidTypeCancel : function ( theButton, eOpts) {
 		theButton.up('form').getForm().reset();
 		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
-		// DelBtn.enable();
 		DelBtn.disable();
 		DelBtn.show();
 	},
@@ -22494,7 +22485,6 @@ vcode: null		// ignore
 		var theForm = theButton.up('form').getForm();
 		var thisCtl = this.getController("Management.AdminTab");
 		var DelBtn = this.getIV_Fluid_Types_DeleteBtn();
-		// DelBtn.enable();
 		DelBtn.disable();
 		DelBtn.show();
 
@@ -22545,415 +22535,415 @@ vcode: null		// ignore
 	
 	
 	RoundingRulesFormRenderSetValues : function(scope, eOpts) {
-        this.application.loadMask("Please wait; Loading Rounding Rules State");
-        Ext.Ajax.request({
-            url: Ext.URLs.RoundingRule,
-            method: "GET",
-            scope : this,
-            success: function(response, opts) {
-                var data = Ext.JSON.decode(response.responseText);
-                var thisCtl = this.getController('Management.AdminTab');
-                var rbGroup = thisCtl.getRBRoundingRules();
-                rbGroup.setValue({"RoundingRule" : data.RoundingRule});
-                this.application.unMask();
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-                this.application.unMask();
-            }
-        });
-    },
+		this.application.loadMask("Please wait; Loading Rounding Rules State");
+		Ext.Ajax.request({
+			url: Ext.URLs.RoundingRule,
+			method: "GET",
+			scope : this,
+			success: function(response, opts) {
+				var data = Ext.JSON.decode(response.responseText);
+				var thisCtl = this.getController('Management.AdminTab');
+				var rbGroup = thisCtl.getRBRoundingRules();
+				rbGroup.setValue({"RoundingRule" : data.RoundingRule});
+				this.application.unMask();
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+				this.application.unMask();
+			}
+		});
+	},
 
-    clickRoundingRuleSave: function() {
-        var thisCtl = this.getController('Management.AdminTab');
-        var rrButtons = thisCtl.getRBRoundingRules().getValue();
-        var allowRounding = rrButtons.RoundingRule;
-        this.application.loadMask("Please wait; Saving Rounding Rules State");
-        this.application.SiteConfig.RoundingRule  = allowRounding;
-        Ext.Ajax.request({
-            url: Ext.URLs.RoundingRule,
-            method: "POST",
-            scope : this,
-            jsonData : { "RoundingRule" : allowRounding },
-            success: function(response, opts) {
-                this.application.unMask();
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-                this.application.unMask();
-            }
-        });
-    },
+	clickRoundingRuleSave: function() {
+		var thisCtl = this.getController('Management.AdminTab');
+		var rrButtons = thisCtl.getRBRoundingRules().getValue();
+		var allowRounding = rrButtons.RoundingRule;
+		this.application.loadMask("Please wait; Saving Rounding Rules State");
+		this.application.SiteConfig.RoundingRule  = allowRounding;
+		Ext.Ajax.request({
+			url: Ext.URLs.RoundingRule,
+			method: "POST",
+			scope : this,
+			jsonData : { "RoundingRule" : allowRounding },
+			success: function(response, opts) {
+				this.application.unMask();
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+				this.application.unMask();
+			}
+		});
+	},
 
-    clickRoundingRuleCancel: function(theBtn) {
-        theBtn.up('form').getForm().reset();
-    },
+	clickRoundingRuleCancel: function(theBtn) {
+		theBtn.up('form').getForm().reset();
+	},
 
-    MedHoldFormRenderSetValues : function(scope, eOpts) {
-        this.application.loadMask("Please wait; Loading Medication Hold State");
-        Ext.Ajax.request({
-            url: Ext.URLs.MedHold,
-            method: "GET",
-            scope : this,
-            success: function(response, opts) {
-                var data = Ext.JSON.decode(response.responseText);
-                var thisCtl = this.getController('Management.AdminTab');
-                var rbGroup = thisCtl.getRBMedHold();
-                var State = ("1" === data.MedHold);
-                rbGroup.setValue({"AllowMedHolds" : State});
-                this.application.unMask();
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-                this.application.unMask();
-            }
-        });
-    },
+	MedHoldFormRenderSetValues : function(scope, eOpts) {
+		this.application.loadMask("Please wait; Loading Medication Hold State");
+		Ext.Ajax.request({
+			url: Ext.URLs.MedHold,
+			method: "GET",
+			scope : this,
+			success: function(response, opts) {
+				var data = Ext.JSON.decode(response.responseText);
+				var thisCtl = this.getController('Management.AdminTab');
+				var rbGroup = thisCtl.getRBMedHold();
+				var State = ("1" === data.MedHold);
+				rbGroup.setValue({"AllowMedHolds" : State});
+				this.application.unMask();
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+				this.application.unMask();
+			}
+		});
+	},
 
-    clickMedHoldSave: function() {
-        var thisCtl = this.getController('Management.AdminTab');
-        var mhButtons = thisCtl.getRBMedHold().getValue();
-        var allowMedHold = mhButtons.AllowMedHolds;
-        this.application.loadMask("Please wait; Saving Medication Hold State");
-        this.application.SiteConfig.MedHold = allowMedHold;
-        Ext.Ajax.request({
-            url: Ext.URLs.MedHold,
-            method: "POST",
-            scope : this,
-            jsonData : { "AllowMedHolds" : allowMedHold },
-            success: function(response, opts) {
-                this.application.unMask();
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-                this.application.unMask();
-            }
-        });
-    },
+	clickMedHoldSave: function() {
+		var thisCtl = this.getController('Management.AdminTab');
+		var mhButtons = thisCtl.getRBMedHold().getValue();
+		var allowMedHold = mhButtons.AllowMedHolds;
+		this.application.loadMask("Please wait; Saving Medication Hold State");
+		this.application.SiteConfig.MedHold = allowMedHold;
+		Ext.Ajax.request({
+			url: Ext.URLs.MedHold,
+			method: "POST",
+			scope : this,
+			jsonData : { "AllowMedHolds" : allowMedHold },
+			success: function(response, opts) {
+				this.application.unMask();
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+				this.application.unMask();
+			}
+		});
+	},
 
-    clickMedHoldCancel: function(theBtn) {
-        theBtn.up('form').getForm().reset();
-    },
-
-
-    TemplateSelected: function(combo, recs, eOpts){
-        wccConsoleLog('Admin Tab, Template Selected');
-        var theData = recs[0].data.id;
-        var thisCtl = this.getController('Management.AdminTab');
-        var theStore = thisCtl.getTemplateGrid().getStore();
-        var theURL = Ext.URLs.Templates + "/Cancer/" + theData;
-        theStore.load({
-            url:theURL
-        });
-            
-    },
-    showAllTemplates: function(combo, recs, eOpts){
-        wccConsoleLog('Admin Tab, Template Selected');
-        var thisCtl = this.getController('Management.AdminTab');
-        var theStore = thisCtl.getTemplateGrid().getStore();
-        theStore.removeAll();
-        var theURL = Ext.URLs.Templates;
-        theStore.load({
-            url:theURL
-        });
-            
-    },
-    clickSaveLookup: function(button){
-        var grid = Ext.ComponentQuery.query('AdminTab AddLookups grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
-        var store = grid.getStore();
-        var win = button.up('window');
-        var form = win.down('form');
-        var values = form.getValues();
-
-        var record = form.getRecord();
-        var rowNum = store.indexOf(record);
-        var existingRecord = null;
-
-        if (this.getSelectedRecord(false, 'AdminTab AddLookups grid').hasRecord) {
-            existingRecord = this.getSelectedRecord(false, 'AdminTab AddLookups grid').record;
-        }
-                
-        if(existingRecord){
-                    
-            var lookupRecord = Ext.create(Ext.COMSModels.LookupTable, {
-                lookupid: existingRecord.get('id'),
-                value: values.name,
-                description: values.description
-            });
-
-            lookupRecord.save({
-                scope: this,
-                waitMsg: 'Saving Data...',
-                success: function (data) {
-                    wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
-                    var ref = Ext.create(Ext.COMSModels.GenericLookup, {
-                        id: data.data.lookupid,
-                        name: data.data.value,
-                        description: data.data.description
-                    });
-                    if (-1 === rowNum) {
-                        store.insert(0, ref);
-                    } else {
-                        store.removeAt(rowNum);
-                        store.insert(rowNum, ref);
-                    }
-                    this.getRemoveLookup().disable();
-                    this.getEditLookup().disable();
-                    win.close();
-                },
-                failure: function (err) {
-
-                    this.getRemoveLookup().disable();
-                    this.getEditLookup().disable();
-                    win.close();
-                    Ext.MessageBox.alert('Invalid', 'This lookup already exists.');
-                                    
-                }
-            });
-
-        }
+	clickMedHoldCancel: function(theBtn) {
+		theBtn.up('form').getForm().reset();
+	},
 
 
-            
-    },
-    clickCancelLookup: function(button){
-        var win = button.up('window');
-        this.getRemoveLookup().disable();
-        this.getEditLookup().disable();
-        win.close();
-    },
-    // Used in both the Hydration and Refernce Grids
-    getSelectedRecord: function (destroy, query) {
-        var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex, records;
+	TemplateSelected: function(combo, recs, eOpts){
+		wccConsoleLog('Admin Tab, Template Selected');
+		var theData = recs[0].data.id;
+		var thisCtl = this.getController('Management.AdminTab');
+		var theStore = thisCtl.getTemplateGrid().getStore();
+		var theURL = Ext.URLs.Templates + "/Cancer/" + theData;
+		theStore.load({
+			url:theURL
+		});
+			
+	},
+	showAllTemplates: function(combo, recs, eOpts){
+		wccConsoleLog('Admin Tab, Template Selected');
+		var thisCtl = this.getController('Management.AdminTab');
+		var theStore = thisCtl.getTemplateGrid().getStore();
+		theStore.removeAll();
+		var theURL = Ext.URLs.Templates;
+		theStore.load({
+			url:theURL
+		});
+			
+	},
+	clickSaveLookup: function(button){
+		var grid = Ext.ComponentQuery.query('AdminTab AddLookups grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
+		var store = grid.getStore();
+		var win = button.up('window');
+		var form = win.down('form');
+		var values = form.getValues();
 
-        theGrid = Ext.ComponentQuery.query(query)[0];
-        theView = theGrid.getView();
-        theSelModel = theView.getSelectionModel();
-        HasSelection = theSelModel.hasSelection();
-        if (HasSelection) {
-            selRows = theSelModel.getSelection();
-            theRecord = selRows[0];
-            records = selRows;
-            theStore = theView.getStore();
-            theIndex = theStore.indexOf(theRecord);
-            if (destroy) {
-                theStore.removeAt(theIndex);
-                return {};
-            }
-        }
-        return {
-            hasRecord: HasSelection,
-            record: theRecord,
-            rowNum: theIndex,
-            multiRecord: records
-        };
-    },
+		var record = form.getRecord();
+		var rowNum = store.indexOf(record);
+		var existingRecord = null;
 
-/**        
-    enableEditLookup : function(grid, record){
-        this.getRemoveLookup().enable();
-        this.getEditLookup().enable();
-    },
+		if (this.getSelectedRecord(false, 'AdminTab AddLookups grid').hasRecord) {
+			existingRecord = this.getSelectedRecord(false, 'AdminTab AddLookups grid').record;
+		}
+				
+		if(existingRecord){
+					
+			var lookupRecord = Ext.create(Ext.COMSModels.LookupTable, {
+				lookupid: existingRecord.get('id'),
+				value: values.name,
+				description: values.description
+			});
+
+			lookupRecord.save({
+				scope: this,
+				waitMsg: 'Saving Data...',
+				success: function (data) {
+					wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
+					var ref = Ext.create(Ext.COMSModels.GenericLookup, {
+						id: data.data.lookupid,
+						name: data.data.value,
+						description: data.data.description
+					});
+					if (-1 === rowNum) {
+						store.insert(0, ref);
+					} else {
+						store.removeAt(rowNum);
+						store.insert(rowNum, ref);
+					}
+					this.getRemoveLookup().disable();
+					this.getEditLookup().disable();
+					win.close();
+				},
+				failure: function (err) {
+
+					this.getRemoveLookup().disable();
+					this.getEditLookup().disable();
+					win.close();
+					Ext.MessageBox.alert('Invalid', 'This lookup already exists.');
+									
+				}
+			});
+
+		}
+
+
+			
+	},
+	clickCancelLookup: function(button){
+		var win = button.up('window');
+		this.getRemoveLookup().disable();
+		this.getEditLookup().disable();
+		win.close();
+	},
+	// Used in both the Hydration and Refernce Grids
+	getSelectedRecord: function (destroy, query) {
+		var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex, records;
+
+		theGrid = Ext.ComponentQuery.query(query)[0];
+		theView = theGrid.getView();
+		theSelModel = theView.getSelectionModel();
+		HasSelection = theSelModel.hasSelection();
+		if (HasSelection) {
+			selRows = theSelModel.getSelection();
+			theRecord = selRows[0];
+			records = selRows;
+			theStore = theView.getStore();
+			theIndex = theStore.indexOf(theRecord);
+			if (destroy) {
+				theStore.removeAt(theIndex);
+				return {};
+			}
+		}
+		return {
+			hasRecord: HasSelection,
+			record: theRecord,
+			rowNum: theIndex,
+			multiRecord: records
+		};
+	},
+
+/**		
+	enableEditLookup : function(grid, record){
+		this.getRemoveLookup().enable();
+		this.getEditLookup().enable();
+	},
 **/
-    enableGlobalLookup : function(grid, record){
-        this.getRemoveLookup().enable();
-        this.getEditLookup().enable();
-    },
+	enableGlobalLookup : function(grid, record){
+		this.getRemoveLookup().enable();
+		this.getEditLookup().enable();
+	},
 	
-    enableRemoveTemplate : function(grid, record){
-        this.getRemoveTemplate().enable();
-    },
-        
+	enableRemoveTemplate : function(grid, record){
+		this.getRemoveTemplate().enable();
+	},
+		
 /**
-    removeLookup : function(button){
-        var ckRec = this.getSelectedRecord(false, 'AdminTab AddLookups grid');
-        if (ckRec.hasRecord) {
-            wccConsoleLog('Remove Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
-            var reference = Ext.create(Ext.COMSModels.LookupTable, {
-                value: ckRec.record.get('name'),
-                description: ckRec.record.get('description'),
-                lookupid: ckRec.record.get('id')
-            });
+	removeLookup : function(button){
+		var ckRec = this.getSelectedRecord(false, 'AdminTab AddLookups grid');
+		if (ckRec.hasRecord) {
+			wccConsoleLog('Remove Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
+			var reference = Ext.create(Ext.COMSModels.LookupTable, {
+				value: ckRec.record.get('name'),
+				description: ckRec.record.get('description'),
+				lookupid: ckRec.record.get('id')
+			});
 
-            reference.destroy({
-                scope: this,
-                success: function (data) {
-                    this.getSelectedRecord(true, 'AdminTab AddLookups grid'); // remove the selected record from the current store
-                    this.getRemoveLookup().disable();
-                    this.getEditLookup().disable();
-                }
-            });
-        } else {
-            Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
-        }
-    },
+			reference.destroy({
+				scope: this,
+				success: function (data) {
+					this.getSelectedRecord(true, 'AdminTab AddLookups grid'); // remove the selected record from the current store
+					this.getRemoveLookup().disable();
+					this.getEditLookup().disable();
+				}
+			});
+		} else {
+			Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
+		}
+	},
 **/
-    removeTemplate : function(button){
-        var ckRec = this.getSelectedRecord(false, 'AdminTab DeleteTemplate grid');
+	removeTemplate : function(button){
+		var ckRec = this.getSelectedRecord(false, 'AdminTab DeleteTemplate grid');
 		var mytemplate;
-        if (ckRec.hasRecord) {
-            var adminCtl = this.getController("Management.AdminTab");
+		if (ckRec.hasRecord) {
+			var adminCtl = this.getController("Management.AdminTab");
 
-            if(ckRec.multiRecord.length > 1){
-                wccConsoleLog('Remove Template - ' + ckRec.multiRecord[0].get('id') + ' - ' + ckRec.multiRecord[0].get('description'));
-                mytemplate = Ext.create(Ext.COMSModels.Templates, {
-                    id: ckRec.multiRecord[0].get('id'),
-                    description: ckRec.multiRecord[0].get('description'),
-                    force: 'false'
-                });
+			if(ckRec.multiRecord.length > 1){
+				wccConsoleLog('Remove Template - ' + ckRec.multiRecord[0].get('id') + ' - ' + ckRec.multiRecord[0].get('description'));
+				mytemplate = Ext.create(Ext.COMSModels.Templates, {
+					id: ckRec.multiRecord[0].get('id'),
+					description: ckRec.multiRecord[0].get('description'),
+					force: 'false'
+				});
 
-                Ext.MessageBox.show({
-                    title: 'Information',
-                    msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
-                    width:300,
-                    buttons: Ext.MessageBox.OKCANCEL,
-                    fn: function(buttonId){
-                        if('ok'==buttonId){
-                            adminCtl.deleteTemplateCall(mytemplate,ckRec);
-                        }
-                    }
-                });
-                
-            }else{
-                wccConsoleLog('Remove Template - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('description'));
-                mytemplate = Ext.create(Ext.COMSModels.Templates, {
-                    id: ckRec.record.get('id'),
-                    description: ckRec.record.get('description'),
-                    force: 'false'
-                });
-                
-                Ext.MessageBox.show({
-                    title: 'Information',
-                    msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
-                    width:300,
-                    buttons: Ext.MessageBox.OKCANCEL,
-                    fn: function(buttonId){
-                        if('ok'==buttonId){
-                            adminCtl.deleteTemplateCall(mytemplate,ckRec);
-                        }
-                    }
-                });
-                
-            }
-            
-        } 
-            
-    },
-    
-    deleteTemplateCall: function(mytemplate,ckRec){
-        mytemplate.destroy({
-            scope: this,
-            success: function (record, op) {
-                this.getSelectedRecord(true, 'AdminTab DeleteTemplate grid'); // remove the selected record from the current store
-                this.getRemoveTemplate().disable();
-                var adminCtl = this.getController("Management.AdminTab");
-                //Ext.MessageBox.alert('Success', 'Template ' + ckRec.record.get('description') + ' was deleted from the system.');
-                Ext.MessageBox.show({
-                    title: 'Success',
-                    msg:  'Template ' + ckRec.record.get('description') + ' was deleted from the system.',
-                    width:300,
-                    buttons: Ext.MessageBox.OK,
-                    fn: function(buttonId){
-                        if('ok'==buttonId){
-                            adminCtl.removeTemplate();
-                            
-                        }
-                    }
-                });
-                
-            },
-            failure: function (record, op) {
-                wccConsoleLog("Delete Template Failed");
-                this.getRemoveTemplate().disable();
-                this.application.unMask();
-                var adminCtl = this.getController("Management.AdminTab");
-                Ext.MessageBox.show({
-                    title: 'Information',
-                    msg: 'Template was not deleted: ' + op.request.scope.reader.jsonData.frameworkErr + '. Would you like to delete it and remove all references?',
-                    width:300,
-                    buttons: Ext.MessageBox.OKCANCEL,
-                    fn: function(buttonId){
-                        if('ok'==buttonId){
-                            mytemplate.data.force = 'true';
-                            adminCtl.deleteTemplateCall(mytemplate,ckRec);
-                        }
-                    }
-                });
+				Ext.MessageBox.show({
+					title: 'Information',
+					msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
+					width:300,
+					buttons: Ext.MessageBox.OKCANCEL,
+					fn: function(buttonId){
+						if('ok'==buttonId){
+							adminCtl.deleteTemplateCall(mytemplate,ckRec);
+						}
+					}
+				});
+				
+			}else{
+				wccConsoleLog('Remove Template - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('description'));
+				mytemplate = Ext.create(Ext.COMSModels.Templates, {
+					id: ckRec.record.get('id'),
+					description: ckRec.record.get('description'),
+					force: 'false'
+				});
+				
+				Ext.MessageBox.show({
+					title: 'Information',
+					msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
+					width:300,
+					buttons: Ext.MessageBox.OKCANCEL,
+					fn: function(buttonId){
+						if('ok'==buttonId){
+							adminCtl.deleteTemplateCall(mytemplate,ckRec);
+						}
+					}
+				});
+				
+			}
+			
+		} 
+			
+	},
+	
+	deleteTemplateCall: function(mytemplate,ckRec){
+		mytemplate.destroy({
+			scope: this,
+			success: function (record, op) {
+				this.getSelectedRecord(true, 'AdminTab DeleteTemplate grid'); // remove the selected record from the current store
+				this.getRemoveTemplate().disable();
+				var adminCtl = this.getController("Management.AdminTab");
+				//Ext.MessageBox.alert('Success', 'Template ' + ckRec.record.get('description') + ' was deleted from the system.');
+				Ext.MessageBox.show({
+					title: 'Success',
+					msg:  'Template ' + ckRec.record.get('description') + ' was deleted from the system.',
+					width:300,
+					buttons: Ext.MessageBox.OK,
+					fn: function(buttonId){
+						if('ok'==buttonId){
+							adminCtl.removeTemplate();
+							
+						}
+					}
+				});
+				
+			},
+			failure: function (record, op) {
+				wccConsoleLog("Delete Template Failed");
+				this.getRemoveTemplate().disable();
+				this.application.unMask();
+				var adminCtl = this.getController("Management.AdminTab");
+				Ext.MessageBox.show({
+					title: 'Information',
+					msg: 'Template was not deleted: ' + op.request.scope.reader.jsonData.frameworkErr + '. Would you like to delete it and remove all references?',
+					width:300,
+					buttons: Ext.MessageBox.OKCANCEL,
+					fn: function(buttonId){
+						if('ok'==buttonId){
+							mytemplate.data.force = 'true';
+							adminCtl.deleteTemplateCall(mytemplate,ckRec);
+						}
+					}
+				});
 
-                //Ext.MessageBox.alert('Failure', 'Template was not deleted: ' + op.request.scope.reader.jsonData["frameworkErr"]);
-            }
-        });
-        
-    }
+				//Ext.MessageBox.alert('Failure', 'Template was not deleted: ' + op.request.scope.reader.jsonData["frameworkErr"]);
+			}
+		});
+		
+	}
 
 /*************
-    editLookup : function(button){
-        var ckRec = this.getSelectedRecord(false, 'AdminTab grid');
-        if (ckRec.hasRecord) {
-            wccConsoleLog('Editing Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
-            var view = Ext.widget('EditLookup'); // Creates an instance of the "Add Reference" pop-up window
-            view.down('form').loadRecord(ckRec.record);
-        } else {
-            Ext.MessageBox.alert('Invalid', 'Please select a Row in the Lookup Grid.');
-        }
-    },
+	editLookup : function(button){
+		var ckRec = this.getSelectedRecord(false, 'AdminTab grid');
+		if (ckRec.hasRecord) {
+			wccConsoleLog('Editing Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
+			var view = Ext.widget('EditLookup'); // Creates an instance of the "Add Reference" pop-up window
+			view.down('form').loadRecord(ckRec.record);
+		} else {
+			Ext.MessageBox.alert('Invalid', 'Please select a Row in the Lookup Grid.');
+		}
+	},
 
 
 	// Load the grid's store to see all the values for the selected type
-    LookupSelected : function ( combo, recs, eOpts ) {
-        wccConsoleLog('Admin Tab, Lookup Selected');
-        var theData = recs[0].data.value;
-        var thisCtl = this.getController('Management.AdminTab');
-        var theStore = thisCtl.getLookupGrid().getStore();
-        var theURL = Ext.URLs.BaseView + "/" + theData;
-        theStore.load({
-            url:theURL
-        });
-    },
+	LookupSelected : function ( combo, recs, eOpts ) {
+		wccConsoleLog('Admin Tab, Lookup Selected');
+		var theData = recs[0].data.value;
+		var thisCtl = this.getController('Management.AdminTab');
+		var theStore = thisCtl.getLookupGrid().getStore();
+		var theURL = Ext.URLs.BaseView + "/" + theData;
+		theStore.load({
+			url:theURL
+		});
+	},
 
-    updateLookup: function(button){
-        wccConsoleLog('clicked Save button');
-        var grid = Ext.ComponentQuery.query('AdminTab grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
-        var store = grid.getStore();
+	updateLookup: function(button){
+		wccConsoleLog('clicked Save button');
+		var grid = Ext.ComponentQuery.query('AdminTab grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
+		var store = grid.getStore();
 
-        var form = button.up('form');
-            
-        var values = form.form.getValues();
-            
-            
-        var lookupRecord = Ext.create('COMS.model.LookupTable', {
-            id: values.id,
-            value: values.value,
-            description: values.description
-        });
+		var form = button.up('form');
+			
+		var values = form.form.getValues();
+			
+			
+		var lookupRecord = Ext.create('COMS.model.LookupTable', {
+			id: values.id,
+			value: values.value,
+			description: values.description
+		});
 
-        lookupRecord.save({
-            scope : this,
-            waitMsg : 'Saving Data...',
-            success: function(data) {
-                wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
-                    
-                var ref = Ext.create(Ext.COMSModels.GenericLookup, {
-                    id: data.data.lookupid,
-                    name: data.data.value,
-                    description: data.data.description
-                });
+		lookupRecord.save({
+			scope : this,
+			waitMsg : 'Saving Data...',
+			success: function(data) {
+				wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
+					
+				var ref = Ext.create(Ext.COMSModels.GenericLookup, {
+					id: data.data.lookupid,
+					name: data.data.value,
+					description: data.data.description
+				});
 
-                store.insert(0, ref);
-                    
-                var thisCtl = this.getController('Management.AdminTab');
-                var addLookups = thisCtl.getLookup();
-                addLookups.form.findField('value').setValue('');
-                addLookups.form.findField('id').setValue('');
+				store.insert(0, ref);
+					
+				var thisCtl = this.getController('Management.AdminTab');
+				var addLookups = thisCtl.getLookup();
+				addLookups.form.findField('value').setValue('');
+				addLookups.form.findField('id').setValue('');
 
-                addLookups.form.findField('description').setValue('');
-            },
-            failure: function(err){
-                Ext.MessageBox.alert('Invalid', 'This reference already exists.');
-            }
-        });
-            
-    }
+				addLookups.form.findField('description').setValue('');
+			},
+			failure: function(err){
+				Ext.MessageBox.alert('Invalid', 'This reference already exists.');
+			}
+		});
+			
+	}
 ***************/
 });
 
@@ -24644,7 +24634,8 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
 		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
-		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"}
+		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
+		{ ref: "CTOS_Tab",						selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
@@ -24658,6 +24649,9 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 			},
 			"AskQues2ApplyTemplate button[text=\"Cancel\"]": {
 				click: this.cancelApply
+			},
+			"AskQues2ApplyTemplate radiogroup[name=\"ConcurRadTherapyRadio\"]":{
+				change : this.ConcurRadTherapySelected
 			},
 			"AskQues2ApplyTemplate radiogroup[name=\"clinicalTrialRadio\"]":{
 				change : this.ClinicalTrialTypeSelected
@@ -24694,6 +24688,10 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
             this.getAmputeeType().hide();
         }
     },
+
+	ConcurRadTherapySelected: function (rbtn, newValue, oldValue, eOpts ) {
+		debugger;
+	},
 
     ClinicalTrialTypeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Clinical Trial Type");
@@ -24782,40 +24780,45 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				break;
 		}
 		var RegimenDuration = CycleLength * MaxCycles;
-        var future;
+		var future;
 
-        win.close();
+		win.close();
+debugger;
+var theParentTab = this.getCTOS_Tab();
+// theWin.setLoading( "Loading Drug Information");
+		Ext.MessageBox.show({
+			msg: 'Applying template, please wait...',
+			progressText: 'Applying...',
+			width:300,
+			wait:true,
+			waitConfig: {interval:200},
+			icon:'ext-mb-download' //custom class in COMS.css
+		});
 
-        Ext.MessageBox.show({
-            msg: 'Applying template, please wait...',
-            progressText: 'Applying...',
-            width:300,
-            wait:true,
-            waitConfig: {interval:200},
-            icon:'ext-mb-download' //custom class in COMS.css
-        });
+		startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
+		today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
+		future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
 
-        startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
-        future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
+		var newCtl = this.getController("NewPlan.NewPlanTab");
 
-        var newCtl = this.getController("NewPlan.NewPlanTab");
+		var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
+			PatientID: this.application.Patient.id,
+			TemplateID: this.application.Patient.Template.id,
+			DateApplied : today,
+			DateStarted : startDate,
+			DateEnded : future,
+			Goal : values.Goal,
+			ClinicalTrial: values.TypeOfTrial,
+			PerformanceStatus: values.PerfStatus,
+			WeightFormula: values.BSA_FormulaWeight,
+			BSAFormula: values.BSA_Formula,
+			BSA_Method: values.BSA_Formula,
+			Amputations: amputations,
+			ConcurRadTherapy: values.ConcurRadTherapy
+		});
 
-        var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
-            PatientID: this.application.Patient.id,
-            TemplateID: this.application.Patient.Template.id,
-            DateApplied : today,
-            DateStarted : startDate,
-            DateEnded : future,
-            Goal : values.Goal,
-            ClinicalTrial: values.TypeOfTrial,
-            PerformanceStatus: values.PerfStatus,
-            WeightFormula: values.BSA_FormulaWeight,
-            BSAFormula: values.BSA_Formula,
-            BSA_Method: values.BSA_Formula,
-            Amputations: amputations
-        });
-
+debugger;
+/***
 		patientTemplate.save({
 			scope: this,
 			success: function (data) {
@@ -24826,7 +24829,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				PatientSelection.collapse();
 				thisCtl.resetPanels(thisCtl, "", "", "");
 
-				/**********
+				**********
 				 *	data.data = {
 				 *	Amputations :  []
 				 *	BSAFormula :  "DuBois"
@@ -24841,7 +24844,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				 *	WeightFormula :  "Actual Weight"
 				 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
 				 *	}
-				 ***********/
+				 ***********
 				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
 				Ext.MessageBox.alert('Success', 'Template applied to Patient ');
 			},
@@ -24851,6 +24854,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
 			}
 		});
+***/
 	}
 });
 
@@ -31983,12 +31987,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         if(this.getCTOSDataDsp().hidden==false){
             this.getCTOSDataDsp().hide();
             if ("1" === SessionTemplateAuthoring) {
-				if ("Provider" === Sessionrole) {
+				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 					this.getApplyTemplateBtn().hide();
 				}
-				if ("1" === SessionTemplateAuthoring) {
-					this.getEditTemplateBtn().hide();
-				}
+				this.getEditTemplateBtn().hide();
             }
             this.application.selTemplate=null;
 
@@ -33307,7 +33309,7 @@ console.log("Loading Allergy Info - Finished");
 	//		The end of this event handler fires off a "PatientSelected" event which is intercepted throughout the application
 	//		When we change from a Combo Box to an Edit Field to enter Patient ID this should be the only place which needs to get changed.
 	//
-    PatientSelected : function(combo, recs, eOpts) {
+	PatientSelected : function(combo, recs, eOpts) {
 		wccConsoleLog("NewPlanTab - Patient Selected has changed or been refreshed");
 		if(null === recs){		// MWB 10 Feb 2012 - If the recs come back as null then something's wrong, exit the function
 			return;
@@ -33374,14 +33376,11 @@ console.log("Loading Allergy Info - Finished");
 			var CTOSData = thisCtl.getCTOSDataDsp();
 			CTOSData.update("");
 			CTOSData.hide();
-			if ("Provider" === Sessionrole) {
-				this.getApplyTemplateBtn().hide();
-			}
-			if ("1" === SessionTemplateAuthoring) {
-				this.getEditTemplateBtn().hide();
-			}
+			this.getEditTemplateBtn().hide();
 		}
-
+		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+			this.getApplyTemplateBtn().hide();
+		}
 
 		this.application.PatientSelectedRecs = recs;
 		this.application.PatientSelectedOpts = eOpts;
@@ -34039,14 +34038,13 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 					CTOSData.show();
 					if ("1" === SessionTemplateAuthoring) {
-						if ("Provider" === Sessionrole) {
-							this.getApplyTemplateBtn().disable();	// Template is already applied to patient
-							this.getApplyTemplateBtn().hide();	// so no need to have it available.
-						}
-						if ("1" === SessionTemplateAuthoring) {
-							this.getEditTemplateBtn().show();
-						}
+						this.getEditTemplateBtn().show();
 					}
+					if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+						this.getApplyTemplateBtn().disable();	// Template is already applied to patient
+						this.getApplyTemplateBtn().hide();	// so no need to have it available.
+					}
+
 					this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.
 					this.application.unMask(); // MWB 19 Jan 2012 - Unmask the screen
 
@@ -34092,18 +34090,16 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
                 var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
 
 				if ("1" === SessionTemplateAuthoring) {
-					if ("Provider" === Sessionrole) {
-						if(patientAppliedTemplates.getValue()){
-							this.getApplyTemplateBtn().disable();
-		                }else{
-							this.getApplyTemplateBtn().enable();
-						}
-						this.getApplyTemplateBtn().show();
+					this.getEditTemplateBtn().show();
+				}
+				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+					if(patientAppliedTemplates.getValue()){
+						this.getApplyTemplateBtn().disable();
+					}else{
+						this.getApplyTemplateBtn().enable();
 					}
-					if ("1" === SessionTemplateAuthoring) {
-						this.getEditTemplateBtn().show();
-					}
-                }
+					this.getApplyTemplateBtn().show();
+				}
 
 
 

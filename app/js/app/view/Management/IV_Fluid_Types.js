@@ -25,7 +25,7 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 		{ 
 			xtype: "CheckCombo", 
 			name: "IV_FluidTypeMulti", 
-			fieldLabel : "Select IV Fluid Type (one or more)", labelAlign: "right", labelWidth: 200,  width: 450, 
+			fieldLabel : "Select IV Fluid Type", labelAlign: "right", labelWidth: 200,  width: 450, 
 			displayField : "name", valueField : "id",
 			store : Ext.create('Ext.data.Store', {
 				model : 'COMS.model.GenericLookupModel',
@@ -42,20 +42,18 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 				}
 			})
 		},
-		{  
+		{ "xtype" : "ManagementBtns"},
+		{
 			xtype : "grid",  name: "IV_FluidTypesList", title: "IV Fluid Types", store : "IVFluidType",
 			forceFit : true,
 			overflowY : "scroll",
 			resizable : true,
 			minHeight : 500,
+			selModel: { allowDeselect: true },
 			columns : [ 
 				{ text : "Medication", dataIndex : "MedName", width: 540 }, 
 				{ text : "IV Fluid Type", dataIndex : "FluidType" }
 			]
 		}
-	],
-	buttons : [ 
-		{ text : "Save", action : "save" }, 
-		{ text : "Cancel", scope : this } 
 	]
 });

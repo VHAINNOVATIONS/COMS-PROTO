@@ -21,7 +21,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
 		var ApplyBtn = { xtype : "container", name : "Apply", html : "", hidden : true, margin: '0 0 10 50' };
-		if ("Provider" === Sessionrole) {
+		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 			ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' };
 		}
 

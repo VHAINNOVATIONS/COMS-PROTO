@@ -14,7 +14,6 @@ Ext.define("COMS.view.Management.AddLookups" ,{
 			"items" : [
 				{
 					"xtype" : "SelectLookups",
-					"itemId" : "lookupType",
 					"name" : "id",
 					"labelWidth" : 130
 				},

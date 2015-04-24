@@ -1048,12 +1048,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         if(this.getCTOSDataDsp().hidden==false){
             this.getCTOSDataDsp().hide();
             if ("1" === SessionTemplateAuthoring) {
-				if ("Provider" === Sessionrole) {
+				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 					this.getApplyTemplateBtn().hide();
 				}
-				if ("1" === SessionTemplateAuthoring) {
-					this.getEditTemplateBtn().hide();
-				}
+				this.getEditTemplateBtn().hide();
             }
             this.application.selTemplate=null;
 
@@ -2372,7 +2370,7 @@ console.log("Loading Allergy Info - Finished");
 	//		The end of this event handler fires off a "PatientSelected" event which is intercepted throughout the application
 	//		When we change from a Combo Box to an Edit Field to enter Patient ID this should be the only place which needs to get changed.
 	//
-    PatientSelected : function(combo, recs, eOpts) {
+	PatientSelected : function(combo, recs, eOpts) {
 		wccConsoleLog("NewPlanTab - Patient Selected has changed or been refreshed");
 		if(null === recs){		// MWB 10 Feb 2012 - If the recs come back as null then something's wrong, exit the function
 			return;
@@ -2439,14 +2437,11 @@ console.log("Loading Allergy Info - Finished");
 			var CTOSData = thisCtl.getCTOSDataDsp();
 			CTOSData.update("");
 			CTOSData.hide();
-			if ("Provider" === Sessionrole) {
-				this.getApplyTemplateBtn().hide();
-			}
-			if ("1" === SessionTemplateAuthoring) {
-				this.getEditTemplateBtn().hide();
-			}
+			this.getEditTemplateBtn().hide();
 		}
-
+		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+			this.getApplyTemplateBtn().hide();
+		}
 
 		this.application.PatientSelectedRecs = recs;
 		this.application.PatientSelectedOpts = eOpts;
@@ -3104,14 +3099,13 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 					CTOSData.show();
 					if ("1" === SessionTemplateAuthoring) {
-						if ("Provider" === Sessionrole) {
-							this.getApplyTemplateBtn().disable();	// Template is already applied to patient
-							this.getApplyTemplateBtn().hide();	// so no need to have it available.
-						}
-						if ("1" === SessionTemplateAuthoring) {
-							this.getEditTemplateBtn().show();
-						}
+						this.getEditTemplateBtn().show();
 					}
+					if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+						this.getApplyTemplateBtn().disable();	// Template is already applied to patient
+						this.getApplyTemplateBtn().hide();	// so no need to have it available.
+					}
+
 					this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.
 					this.application.unMask(); // MWB 19 Jan 2012 - Unmask the screen
 
@@ -3157,18 +3151,16 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
                 var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
 
 				if ("1" === SessionTemplateAuthoring) {
-					if ("Provider" === Sessionrole) {
-						if(patientAppliedTemplates.getValue()){
-							this.getApplyTemplateBtn().disable();
-		                }else{
-							this.getApplyTemplateBtn().enable();
-						}
-						this.getApplyTemplateBtn().show();
+					this.getEditTemplateBtn().show();
+				}
+				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
+					if(patientAppliedTemplates.getValue()){
+						this.getApplyTemplateBtn().disable();
+					}else{
+						this.getApplyTemplateBtn().enable();
 					}
-					if ("1" === SessionTemplateAuthoring) {
-						this.getEditTemplateBtn().show();
-					}
-                }
+					this.getApplyTemplateBtn().show();
+				}
 
 
 

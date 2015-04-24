@@ -38,7 +38,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				"xtype" : "radiogroup",
 				"name" : "patientRadio",
 				"fieldLabel" : "Medication Type",
-				"itemId" : "patientRadios",
 				"columns" : 2,
 				"items" : [{
 					"boxLabel" : "InPatient",
