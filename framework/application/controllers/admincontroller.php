@@ -82,13 +82,15 @@ class AdminController extends Controller {
             $DisplayName = $form_data->{'DisplayName'};
             $Email = $form_data->{'Email'};
             $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
+            $Preceptor = $form_data->{'Preceptor'};
 
 $query = "Update Roles 
             set username = '$username',
             role ='$role', 
             DisplayName ='$DisplayName', 
             Email = '$Email',
-            TemplateAuthoring ='$TemplateAuthoring'
+            TemplateAuthoring ='$TemplateAuthoring',
+            Preceptor = '$Preceptor'
             where rid = '$rid'";
 error_log("UPDATE Record - $query");
             $records = $this->Admin->query( $query );
@@ -107,7 +109,8 @@ error_log("UPDATE Record - $query");
             $DisplayName = $form_data->{'DisplayName'};
             $Email = $form_data->{'Email'};
             $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
-            $query = "INSERT into Roles (rid, username, role, DisplayName, Email, TemplateAuthoring) VALUES ('$rid', '$username','$role', '$DisplayName', '$Email','$TemplateAuthoring')";
+            $Preceptor = $form_data->{'Preceptor'};
+            $query = "INSERT into Roles (rid, username, role, DisplayName, Email, TemplateAuthoring, Preceptor) VALUES ('$rid', '$username','$role', '$DisplayName', '$Email','$TemplateAuthoring','$Preceptor')";
 error_log("POST Record - $query");
             $records = $this->Admin->query( $query );
             if ($this->checkForErrors('Save New User Failed. ', $records)) {

@@ -162,9 +162,6 @@ class EndTreatmentSummary extends Model
 
     public function saveEoTS($form_data)
     {
-        ChromePhp::log("saveEoTS() Start");
-
-        //$this->_lastId = trim(com_create_guid(), '{}');
 		$newidquery = "SELECT NEWID()";
 		$GUID = $this->query($newidquery);
 		$GUID = $GUID[0][""];
@@ -184,15 +181,14 @@ class EndTreatmentSummary extends Model
         $ProviderReport = $form_data->ProviderReport;
         $FollowUpAppointments = $form_data->FollowUpAppointments;
         $patId = (!empty($form_data->PAT_ID)) ? $form_data->PAT_ID : null;
+        if (!$patId) {
+            $query = "select PAT_ID from Patient_Assigned_Templates where Patient_ID = '$Patient_ID'";
+            $retVal = $this->query($query);
+            error_log("Get PAT_ID = " . json_encode($retVal[0]));
+            $patId = $retVal[0]["PAT_ID"];
+        }
         $ClinicalTrial = $form_data->ClinicalTrial;
-		
-		$query = "SELECT match FROM Patient WHERE Patient_ID = '$Patient_ID'";
-		$nmatch = $this->query($query);
-		foreach($nmatch as $row){
-			$nmatch= $row['match'];
-        }	
-		$PR = strip_tags($ProviderReport);
-		ProgressNote($PR,$nmatch);
+
 
         $query = 
             "INSERT INTO EoTS (
@@ -234,7 +230,6 @@ class EndTreatmentSummary extends Model
             ) ";
         // error_log($query);
         // echo ($query);
-        // ChromePhp::log($query);
 
         $result = $this->query($query);
         
@@ -250,7 +245,6 @@ class EndTreatmentSummary extends Model
                 Is_Active = 1
             WHERE PAT_ID = '$patId'
         ";
-        ChromePhp::log("Update Assigned Templates - $query");
         $this->query($query);
         
 		$newidquery = "SELECT NEWID()";
@@ -258,7 +252,6 @@ class EndTreatmentSummary extends Model
 		$GUID = $GUID[0][""];
 		
         if (is_array($form_data->Meds)) {
-            //$result = $this->_saveMeds($this->_lastId, $form_data->Meds);
             $result = $this->_saveMeds($GUID, $form_data->Meds);
             if (!empty($result['error'])) {
                 return $result;
@@ -268,8 +261,7 @@ class EndTreatmentSummary extends Model
         if (is_array($form_data->DiseaseResponse)) {
             $newidquery = "SELECT NEWID()";
 		$GUID = $this->query($newidquery);
-		$GUID = $GUID[0][""];			
-			//$result = $this->_saveDiseaseResponse($this->_lastId, $form_data->DiseaseResponse);
+		$GUID = $GUID[0][""];
             $result = $this->_saveDiseaseResponse($GUID, $form_data->DiseaseResponse);
             if (!empty($result['error'])) {
                 return $result;
@@ -408,7 +400,7 @@ class EndTreatmentSummary extends Model
                     '{$vital->BSA}',
                     '{$vital->PSID}',
                     '{$vital->PS}',
-                    {$vital->Age},
+                    '{$vital->Age}',
                     '{$vital->Gender}',
                     '$GUID',
                     '{$vital->Respiration}',

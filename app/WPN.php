@@ -13,7 +13,7 @@
 	$patientsearch = $match;
 	
 	function ProgressNote($note,$match){
-
+return;
 	$orderday = date('m_d_Y');
 	//Set Variables
 	$host = '54.83.44.110';
