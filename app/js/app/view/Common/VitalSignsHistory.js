@@ -1,6 +1,6 @@
 Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	extend : "Ext.container.Container",
-    alias : "widget.VitalSignsHistory",
+	alias : "widget.VitalSignsHistory",
 	name : "NursingDocs.VitalSignsHistory",
 	autoScroll : true,
 
@@ -32,7 +32,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<tr>",
 					"<td>{DateTaken}</td>",
 					"<td>{[this.TempCalc(values, parent)]}</td>",
-                    "<td>{TemperatureLocation}</td>",
+					"<td>{TemperatureLocation}</td>",
 					"<td>{Pulse}</td>",
 					"<td>{[this.BPCalc(values, parent)]}</td>",
 					"<td>{Respiration}</td>",
@@ -43,7 +43,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					"<td>{[this.WeightCalc(values, parent)]}</td>",
 					"<td>{WeightFormula}</td>",
 					"<td>{[this.BSA_WeightCalc(values, parent)]}</td>",
-    				"<td>{BSA_Method}</td>",
+					"<td>{BSA_Method}</td>",
 					"<td>{[this.BSACalc(values, parent, xindex)]}</td>",
 				"</tr>",
 			"</tpl>",
@@ -101,6 +101,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				v = Vitals[0];
 				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
 				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
+				/**
 				if (v.hasOwnProperty("BSA") && "" !== v.BSA && 0 !== v.BSA && NAMsg !== v.BSA) {
 					data.BSA = v.BSA;
 					data.BSA_Method = v.BSA_Method;
@@ -112,18 +113,36 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 						thepiTag.setHTML(v.BSA + " m<sup>2</sup>");
 					}
 				}
-				if (globalAppPatientScope) {
-					var gPat = globalAppPatientScope.application.Patient;
-					gPat.BSA = v.BSA;
-					gPat.BSA_Method = v.BSA_Method;
-					gPat.BSA_Weight = v.BSA_Weight;
-					gPat.WeightFormula = v.WeightFormula;
-					gPat.Weight = w;
-					gPat.Height = h;
+				**/
 
+				
+				if (globalAppPatientScope) {
+					/**
+					// Only set the Patient variables if they're not already set.
+					var gPat = globalAppPatientScope.application.Patient;
+					if ("" === gPat.BSA) {
+						gPat.BSA = v.BSA;
+					}
+					if ("" === gPat.BSA_Method) {
+						gPat.BSA_Method = v.BSA_Method;
+					}
+					if ("" === gPat.BSA_Weight) {
+						gPat.BSA_Weight = v.BSA_Weight;
+					}
+					if ("" === gPat.WeightFormula) {
+						gPat.WeightFormula = v.WeightFormula;
+					}
+					if ("" === gPat.Weight) {
+						gPat.Weight = w;
+					}
+					if ("" === gPat.Height) {
+						gPat.Height = h;
+					}
+					**/
 					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
 					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
 				}
+				
 				return "";
 			},
 

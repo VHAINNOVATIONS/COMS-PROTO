@@ -72,7 +72,12 @@ Ext.define("COMS.model.PatientInfo", {
 		"DOB",
 		"Gender",
 		"Age",
-		// "Measurements",		// Array of measurements
+		"ApprovedByUser",
+		"AssignedByUser",
+		"ConcurRadTherapy",
+		"Goal",
+		"PerformanceStatus",
+
 		"DFN",				// Data File Name which links to MDWS
 		"Disease",			// Array of diseases
 
@@ -80,9 +85,8 @@ Ext.define("COMS.model.PatientInfo", {
 		"TemplateDescription",
 		"TemplateID",
 		"PAT_ID",				// This is really the "Treatemen ID" but for now just using the existing SQL Field name.
-		// "TreatmentID",		// ID of the record containing this Treatment. This ID acts as a link for all records for this treatment process.
 		"TreatmentStart",
-        "TreatmentEnd",
+		"TreatmentEnd",
 		"TreatmentStatus",
 		"ClinicalTrial",
 
@@ -99,8 +103,6 @@ Ext.define("COMS.model.PatientInfo", {
 	hasMany : [
 		{ model : "COMS.model.PatientInfoDiseases", name : "Disease" },
 		{ model : "COMS.model.PatientInfoAmputee", name : "Amputations" }
-
-		// ,{ model : "COMS.model.PatientInfoMeasurements", name : "Measurements" }
 	],
 	proxy: {
 		type: 'rest',
@@ -115,5 +117,5 @@ Ext.define("COMS.model.PatientInfo", {
 			successProperty : 'success',
 			messageProperty: 'message'
 		}
-	}        
+	}
 });

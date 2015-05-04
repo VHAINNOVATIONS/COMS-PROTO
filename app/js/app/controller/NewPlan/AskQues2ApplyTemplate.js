@@ -5,11 +5,11 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		],
 	refs: [ 
 		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
-		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
-		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
+		{ ref: "Goal",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
+		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
-		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
-		{ ref: "CTOS_Tab",						selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
+		{ ref: "AmputeeNo",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
+		{ ref: "CTOS_Tab",					selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
@@ -64,7 +64,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
     },
 
 	ConcurRadTherapySelected: function (rbtn, newValue, oldValue, eOpts ) {
-		debugger;
+
 	},
 
     ClinicalTrialTypeSelected: function (rbtn, newValue, oldValue, eOpts ) {
@@ -138,6 +138,30 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 
         var startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
         var today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
+
+		// Is this template pending approval?
+		var thePatient = this.application.Patient, 
+			TemplatePending, 
+			ExistingRecordID, 
+			ApprovedByUser, 
+			OriginalAppliedDate, 
+			PAT_ID,
+			theRecord;
+		if (thePatient.CurrentTemplatesApplied2Patient && thePatient.CurrentTemplatesApplied2Patient.length >= 1) {
+			TemplatePending = thePatient.CurrentTemplatesApplied2Patient[0];
+			ExistingRecordID = TemplatePending.id;
+			ApprovedByUser = TemplatePending.ApprovedByUser;
+			OriginalAppliedDate = TemplatePending.DateApplied;
+			PAT_ID = thePatient.PAT_ID;
+			if ("" === ApprovedByUser) {
+				today = OriginalAppliedDate;
+			}
+		}
+
+
+
+
+
 		var TemplateInfo = this.application.CurrentTemplate.data;
 		var MaxCycles = TemplateInfo.CourseNumMax;
 		var CycleLength = TemplateInfo.CycleLength; // (need to convert to days... 8 == weeks...
@@ -157,53 +181,48 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		var future;
 
 		win.close();
-debugger;
-var theParentTab = this.getCTOS_Tab();
-// theWin.setLoading( "Loading Drug Information");
-		Ext.MessageBox.show({
-			msg: 'Applying template, please wait...',
-			progressText: 'Applying...',
-			width:300,
-			wait:true,
-			waitConfig: {interval:200},
-			icon:'ext-mb-download' //custom class in COMS.css
-		});
-
-		startDate = Ext.Date.dateFormat(new Date(values.startdate), 'Y-m-j');		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-		today = Ext.Date.dateFormat(new Date(), 'Y-m-j');
+		Ext.ComponentQuery.query("form[name=\"NewPlan_CTOS_Form\"]")[0].setLoading("Applying template, please wait...", false);
 		future = Ext.Date.dateFormat(Ext.Date.add(new Date(values.startdate), Ext.Date.DAY, RegimenDuration),'Y-m-j');
-
 		var newCtl = this.getController("NewPlan.NewPlanTab");
 
-		var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, {
-			PatientID: this.application.Patient.id,
-			TemplateID: this.application.Patient.Template.id,
+	theRecord = {
+			PatientID: thePatient.id,
 			DateApplied : today,
 			DateStarted : startDate,
 			DateEnded : future,
 			Goal : values.Goal,
+			ConcurRadTherapy : values.ConcurRadTherapy,
 			ClinicalTrial: values.TypeOfTrial,
 			PerformanceStatus: values.PerfStatus,
 			WeightFormula: values.BSA_FormulaWeight,
 			BSAFormula: values.BSA_Formula,
 			BSA_Method: values.BSA_Formula,
-			Amputations: amputations,
-			ConcurRadTherapy: values.ConcurRadTherapy
-		});
+			Amputations: amputations
+		};
 
-debugger;
-/***
+		if (thePatient.TemplateID) {
+			theRecord.TemplateID = thePatient.TemplateID;
+		}
+		else {
+			theRecord.TemplateID = thePatient.Template.id;
+		}
+
+		if (ExistingRecordID) {
+			theRecord.id = ExistingRecordID;
+		}
+		var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, theRecord);
 		patientTemplate.save({
 			scope: this,
 			success: function (data) {
-				wccConsoleLog("Apply Template SUCCESS" );
-				Ext.MessageBox.hide();
+				// wccConsoleLog("Apply Template SUCCESS" );
+				// Ext.MessageBox.hide();
+				Ext.ComponentQuery.query("form[name=\"NewPlan_CTOS_Form\"]")[0].setLoading(false, false);
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
 				var PatientSelection = thisCtl.getPatientSelectionPanel();
 				PatientSelection.collapse();
 				thisCtl.resetPanels(thisCtl, "", "", "");
 
-				**********
+				/**********
 				 *	data.data = {
 				 *	Amputations :  []
 				 *	BSAFormula :  "DuBois"
@@ -218,16 +237,22 @@ debugger;
 				 *	WeightFormula :  "Actual Weight"
 				 *	id :  "519C8379-AAA6-E111-903E-000C2935B86F" <-- TreatmentID for linking all records together
 				 *	}
-				 ***********
+				 ***********/
 				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
-				Ext.MessageBox.alert('Success', 'Template applied to Patient ');
+				if ("1" == SessionPreceptee) {
+					Ext.MessageBox.alert('Success', 'Template applied to Patient - Panding Cosigner Approval');
+				}
+				else {
+					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
+				}
 			},
 			failure : function(record, op) {
 				wccConsoleLog("Apply Template Failed");
-				Ext.MessageBox.hide();
+				// Ext.MessageBox.hide();
+				Ext.ComponentQuery.query("form[name=\"NewPlan_CTOS_Form\"]")[0].setLoading(false, false);
 				Ext.MessageBox.alert('Failure', 'Template not applied to Patient. <br />' + op.error);     // op.request.scope.reader.jsonData["frameworkErr"]);
 			}
 		});
-***/
+
 	}
 });

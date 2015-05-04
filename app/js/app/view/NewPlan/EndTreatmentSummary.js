@@ -1,3 +1,4 @@
+
 Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	extend: 'Ext.window.Window',
 	alias : 'widget.EndTreatmentSummary',
@@ -111,14 +112,18 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 								"<tpl for=\"Disease\">",
 									"<div>{Type}&nbsp;-&nbsp;{Stage}</div>",
 								"</tpl>",
-							"</td></tr>",
+							"</td>",
+							"<th>Regimen Goal:</th><td>{Goal}</td>",
+							"</tr>",
 							"<tr><th>Allergies: </th><td colspan=3>",
 								"<table width=\"100%\" class=\"centerHead\"><tr><th>Name</th><th>Type</th><th>Comment</th></tr>",
 								"<tpl for=\"Allergies\">",
 									"<tr><td>{name}</td><td>{type}</td><td>{comment}</td>",
 								"</tpl>",
 								"</table>",
-							"</td></tr>",
+							"</td>",
+
+							"</tr>",
 							"<tr><th>Clinical Trial: </th><td colspan=3>{Trial}</td></tr>",
 							"<tr><th colspan=\"4\" style=\"text-align: center\">Initial Vital Signs</th></tr>",
 							"<tr><td colspan=\"4\">",

@@ -1,6 +1,6 @@
 Ext.define('COMS.store.DiseaseStage', {
 	extend : 'Ext.data.Store',
-        autoDestroy: true,
+        // autoDestroy: true,
         autoLoad: false,
         listeners: {
             'beforeload' : function(store, options){

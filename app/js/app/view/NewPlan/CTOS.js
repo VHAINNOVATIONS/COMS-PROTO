@@ -9,7 +9,7 @@
  */
 Ext.define("COMS.view.NewPlan.CTOS", {
 	extend: "Ext.tab.Panel",
-    alias : "widget.CTOS",
+	alias : "widget.CTOS",
 
 	name : "CTOS Tabs",
 
@@ -17,17 +17,32 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	plain : true,
 	autoEl : { tag : 'nav' },
 
-
 	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
 		var ApplyBtn = { xtype : "container", name : "Apply", html : "", hidden : true, margin: '0 0 10 50' };
+		var EditBtn = { xtype : "container", name : "Edit", html : "", hidden : true, margin: '0 0 10 50' };
+		var What2DoBtns;
+		
 		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
-			ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' };
+			if ("1" == SessionPreceptee) {
+				ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient - Requires Cosigner", hidden : true, margin: '0 0 10 50' };
+				What2DoBtns = [ 
+					{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'}, 
+					{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'}
+				];
+			}
+			else {
+				ApplyBtn = { xtype : "button", name : "Apply", text : "Apply Template to Patient", hidden : true, margin: '0 0 10 50' };
+				What2DoBtns = [ 
+					{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'}, 
+					{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'},
+					{ boxLabel  : 'Approve Pending Template', name  : 'NewPlan_What2Do', inputValue: '2', hidden: true}
+				];
+			}
+			if("1" === SessionTemplateAuthoring) {
+				EditBtn = { xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' };
+			}
 		}
-
-		// Based on the "Sessionrole" set in main.php ($role = $_SESSION['role'];)
-		// determine who can see what tabs.
-		// The same process can be used to show/hide various other elements such as buttons 
 
 		if ("Administrator" === Sessionrole || "All Roles" === Sessionrole || "1" === SessionTemplateAuthoring) {
 			this.items = [
@@ -38,18 +53,14 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 							{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns', hidden: true,
 								fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 								defaultType: 'radiofield', defaults: { flex: 1 },
-								items: [ 
-									{ boxLabel  : 'Select Template currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
-									{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
-								]
+								items: What2DoBtns
 							},
 							{ xtype : 'selTemplate', name : 'MyTemplates'},		/* Select Existing Template */
 							{ xtype : "selCTOSTemplate", hidden : true },
 							{ xtype : 'dspTemplateData'},
-							ApplyBtn,
-							{ xtype : "button", name : "Edit", text : "Edit Template", hidden : true, margin: '0 0 10 5' }
-						]
-						}
+							ApplyBtn, 
+							EditBtn
+						]}
 					]
 				},
 
@@ -65,19 +76,13 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{
 					title: "Chemotherapy Template Order Source",
 					items : [
-/***/
 						{ xtype : 'fieldcontainer', name : 'NewPlan_What2Do_Btns', hidden: true,
 							fieldLabel : "What do you want to do?", labelAlign: "right", labelWidth : 180,
 							defaultType: 'radiofield', defaults: { flex: 1 },
-							items: [ 
-								{ boxLabel  : 'Select from Templates currently applied to this patient', name : 'NewPlan_What2Do', inputValue: '0'  }, 
-								{ boxLabel  : 'Select an existing standard template', name  : 'NewPlan_What2Do', inputValue: '1'  }
-							]
+							items: What2DoBtns
 						},
-/***/
 						{ xtype : 'selTemplate', name : 'MyTemplates'},
 						{ xtype : "selCTOSTemplate", hidden : true },
-//						{ xtype : "selCTOSTemplate" },
 						{ xtype : 'dspTemplateData'}
 					]
 				},

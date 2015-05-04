@@ -959,18 +959,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }
     },
 	afterFindTemplate : function(templateRecord,controller,template){
-        var templateRecords = [];
+		var templateRecords = [];
+		this.collapseCombo(template,null);
+		this.collapseCombo(this.getDiseaseStage(),null);
+		templateRecords.push(templateRecord);
+		controller.getTemplate().setRawValue(templateRecord.data.description);
+		controller.selTemplateChange(controller.getTemplate(),templateRecords,null);
 
-        this.collapseCombo(template,null);
-        this.collapseCombo(this.getDiseaseStage(),null);
-
-        templateRecords.push(templateRecord);
-
-        controller.getTemplate().setRawValue(templateRecord.data.description);
-
-        controller.selTemplateChange(controller.getTemplate(),templateRecords,null);
-
-		//        this.getNavigationTabs().setActiveTab(1);
+		// this.getNavigationTabs().setActiveTab(1);
 		// MWB - 5/29/2012 - With the addition of the "Orders" tab and the fact that the Orders tab might NOT be visible to all users
 		// we need to get the index of the "Template Authoring" tab by walking the titles of the tabs.
 		var allTabs = this.getNavigationTabs().items;
@@ -980,58 +976,171 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		},
 		this );
-    },
+	},
+
+	initAskQues2ApplyTemplateFields : function (theFields, fieldName, fieldLabel) {
+		var i, j, aField, afName, theLabel, fieldIsSet;
+		if(Ext.isArray(fieldLabel)) {		// Handles Amputations Array
+			for (j = 0; j < fieldLabel.length; j++) {
+				fieldIsSet = fieldLabel[j].description;
+				for (i = theFields.length-1; i >= 0; i--) {
+					aField = theFields[i];
+					afName = aField.name;
+					if (afName === fieldName && fieldIsSet == afName) {
+						return true;
+					}
+				}
+			}
+		}
+		else {		// Handles Performance Status radio buttons list
+			for (i = theFields.length-1; i >= 0; i--) {
+				aField = theFields[i];
+				if (aField.name === fieldName) {
+					theLabel = aField.boxLabel[0];
+					if (theLabel == fieldLabel) {
+						return aField.inputValue;
+					}
+				}
+			}
+		}
+		return "";
+	},
 
 
-    ShowAskQues2ApplyTemplate : function(records, operation, success) {
-        var i, itemsInGroup = [];	// new Array();
-        for (i = 0; i < records.length; i++ ){
-            var record = records[i];
-            if(record.data.value !== '5' ){
-                itemsInGroup.push({
-                    boxLabel : record.data.value + ' - ' + record.data.description,
-                    name : 'PerfStatus',
-                    inputValue : record.data.id,
-                    width : 450
-                });
-            }
-        }
+	ShowAskQues2ApplyTemplate : function(records, operation, success) {
+		var i, itemsInGroup = [];	// new Array();
+		var TemplateApplied = this.application.Patient.TemplateID;
+		var TemplateApproved = false;
 
-		if(this.application.Patient.TemplateID){
+		for (i = 0; i < records.length; i++ ){
+			var record = records[i];
+			if(record.data.value !== '5' ){
+				itemsInGroup.push({
+					boxLabel : record.data.value + ' - ' + record.data.description,
+					name : 'PerfStatus',
+					inputValue : record.data.id,
+					width : 450
+				});
+			}
+		}
+
+		if(TemplateApplied && TemplateApproved){
 			Ext.MessageBox.show({
 				title: 'Information',
 				msg: 'Template already applied. Would you like to archive existing template and apply current selection?',
 				width:300,
 				buttons: Ext.MessageBox.OKCANCEL,
-                scope: this,
+				scope: this,
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
-                        try {
-// console.log("Generating EoTS then creating new instance of Widget");
-                            var fncName = "Generate End of Treatment Summary";
-                            this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
-                            this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
-                            this.application.Patient.EoTS_Type = "Generate";
-                            Ext.widget("EndTreatmentSummary", { widget : "AskQues2ApplyTemplate", itemsInGroup: itemsInGroup, ChangeTemplate: true });
-                            fncName = "";
-                        }
-                        catch (err) {
-                            alert("Failure to Add Date Widget");
-                        }
+						try {
+							var fncName = "Generate End of Treatment Summary";
+							this.application.Patient.EoTS_TemplateID = this.application.Patient.AppliedTemplate.id;
+							this.application.Patient.EoTS_TemplateName = this.application.Patient.AppliedTemplate.Description;
+							this.application.Patient.EoTS_Type = "Generate";
+							Ext.widget("EndTreatmentSummary", { widget : "AskQues2ApplyTemplate", itemsInGroup: itemsInGroup, ChangeTemplate: true });
+							fncName = "";
+						}
+						catch (err) {
+							alert("Failure to Add Date Widget");
+						}
 					}
 				}
 			});
-        }
-		else{
-			var haveWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
-			if (haveWidget.length > 0) {
-				haveWidget[0].show();
+		}
+		else {
+			var theWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
+			if (theWidget.length > 0) {
+				theWidget[0].show();
 			}
 			else {
-				var theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false});
+				theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false, scope:this});
 			}
+
+			var theForm = theWidget.items.items[0].getForm();
+			/*
+			"id",
+			"name",
+			"DOB",
+			"Gender",
+			"Age",
+			"ApprovedByUser",
+			"AssignedByUser",
+			"ConcurRadTherapy",
+			"Goal",
+			"PerformanceStatus",
+
+			// "Measurements",		// Array of measurements
+			"DFN",				// Data File Name which links to MDWS
+			"Disease",			// Array of diseases
+
+			"TemplateName",		// Info on the currently active template
+			"TemplateDescription",
+			"TemplateID",
+			"PAT_ID",				// This is really the "Treatemen ID" but for now just using the existing SQL Field name.
+			// "TreatmentID",		// ID of the record containing this Treatment. This ID acts as a link for all records for this treatment process.
+			"TreatmentStart",
+			"TreatmentEnd",
+			"TreatmentStatus",
+			"ClinicalTrial",
+
+			"WeightFormula",
+			"BSA_Method",
+			"BSA_Weight",
+			"BSA",
+			"BSAFormula",
+
+			"Amputations",
+			 */
+
+			var PatientDetails = this.application.Patient;
+			// theForm.getFields().items[35].boxLabel[0]
+			var theFields = theForm.getFields().items;
+			/***
+			var i, aField, theLabel, thePerfStat;
+			for (i = theFields.length-1; i >= 0; i--) {
+				aField = theFields[i];
+				if (aField.name === "PerfStatus") {
+					theLabel = aField.boxLabel[0];
+					if (theLabel == PatientDetails.PerformanceStatus) {
+						thePerfStat = aField.inputValue;
+						break;
+					}
+				}
+			}
+			***/
+			var theValues2Set = {
+				"startdate"              : PatientDetails.TreatmentStart, 
+				"BSA_FormulaWeight"      : PatientDetails.BSA_Method,
+				"BSA_Formula"            : PatientDetails.BSAFormula,
+				"Goal"                   : PatientDetails.Goal,
+				"ConcurRadTherapy"       : PatientDetails.ConcurRadTherapy,
+				"ClinicalTrial"          : PatientDetails.ClinicalTrial !== "",
+				"TypeOfTrial"            : PatientDetails.ClinicalTrial,
+				"amputations"            : PatientDetails.Amputations,
+				"Upper Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Upper Left Arm", PatientDetails.Amputations),
+				"Lower Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Arm", PatientDetails.Amputations),
+				"Left Hand and Fingers"  : this.initAskQues2ApplyTemplateFields(theFields, "Left Hand and Fingers", PatientDetails.Amputations),
+				"Left Thigh"             : this.initAskQues2ApplyTemplateFields(theFields, "Left Thigh", PatientDetails.Amputations),
+				"Lower Left Leg"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Leg", PatientDetails.Amputations),
+				"Left Foot"              : this.initAskQues2ApplyTemplateFields(theFields, "Left Foot", PatientDetails.Amputations),
+				"Upper Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Upper Right Arm", PatientDetails.Amputations),
+				"Lower Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Arm", PatientDetails.Amputations),
+				"Right Hand and Fingers" : this.initAskQues2ApplyTemplateFields(theFields, "Right Hand and Fingers", PatientDetails.Amputations),
+				"Right Thigh"            : this.initAskQues2ApplyTemplateFields(theFields, "Right Thigh", PatientDetails.Amputations),
+				"Lower Right Leg"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Leg", PatientDetails.Amputations),
+				"Right Foot"             : this.initAskQues2ApplyTemplateFields(theFields, "Right Foot", PatientDetails.Amputations),
+				"PerfStatus"             : this.initAskQues2ApplyTemplateFields(theFields, "PerfStatus", PatientDetails.PerformanceStatus),
+				"WeightFormula"          : PatientDetails.WeightFormula
+			};
+
+			theForm.setValues(theValues2Set);
+
 		}
-    },
+	},
+
+
+
 
     applyTemplateToPatient : function(button){
         var startDate = new Date(this.application.Patient.TreatmentStart);
@@ -1081,14 +1190,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var selCTOSTemplateObj = this.getSelCTOSTemplate();
 		this.application.Patient.AppliedTemplateID = null;
 		var i;
-
+		var theParentPanel = rbtn.up("panel");
 		var What2Do = rbtn.inputValue;
+
 		if( newValue ) {
 			if ("0" === What2Do) {
 				var current = this.application.Patient.AllTemplatesApplied2Patient.get("current");
 				if (current) {
 					var theTemplate = current[0].TemplateID;
-					this.CTOS_DataLoad(theTemplate);
+					this.CTOS_DataLoad(theTemplate, theParentPanel);
 				}
 				
 				this.clearCTOS(What2Do);
@@ -1100,16 +1210,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var theController = this.getController("Common.selCTOSTemplate");
 				theController.resetTemplateSrc(selCTOSTemplateObj);
 				selCTOSTemplateObj.show();
-
-				// var theController = this.getController("Common.selCTOSTemplate");
-				// var selCTOSTemplateObj = rbtn.up("selCTOSTemplate");
-				// theController.resetTemplateSrc(selCTOSTemplateObj);
-			
 			}
 		}
-
-
-
 	},
 
 
@@ -2433,14 +2535,21 @@ console.log("Loading Allergy Info - Finished");
 		var piTable1 = thisCtl.getPatientInfoTableInformation();
 		piTable1.update("");
 
+		var btn;
 		if ("1" === SessionTemplateAuthoring) {
 			var CTOSData = thisCtl.getCTOSDataDsp();
 			CTOSData.update("");
 			CTOSData.hide();
-			this.getEditTemplateBtn().hide();
+			btn = this.getEditTemplateBtn();
+			if (btn) {
+				btn.hide();
+			}
 		}
 		if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
-			this.getApplyTemplateBtn().hide();
+			btn = this.getApplyTemplateBtn();
+			if (btn) {
+				btn.hide();
+			}
 		}
 
 		this.application.PatientSelectedRecs = recs;
@@ -3127,43 +3236,60 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 
 // Load the selected template - This is done by browsing through the available templates and selecting one from the drop down.
-	CTOS_DataLoad : function(TemplateID) {
-        this.application.loadMask("Loading Selected Template");	// MWB 19 Jan 2012 - Mask the screen
+	CTOS_DataLoad : function(TemplateID, thePanel) {
+		if (thePanel) {
+			thePanel.setLoading("Loading Selected Template", false);
+		}
+		var CTOSModel = this.getModel("CTOS");
+		var CTOSModelParam = TemplateID;
+		wccConsoleLog("Template Params = " + CTOSModelParam );
 
-        var CTOSModel = this.getModel("CTOS");
-        var CTOSModelParam = TemplateID;
-        wccConsoleLog("Template Params = " + CTOSModelParam );
-
-        CTOSModel.load(CTOSModelParam, {
-            scope : this,
-            success : function( CTOSTemplateData, response ) {
-                wccConsoleLog("CTOS Loaded - Processing");
-                var thisCtl = this.getController("NewPlan.NewPlanTab");
-                var CTOSData = thisCtl.getCTOSDataDsp();
+		CTOSModel.load(CTOSModelParam, {
+			scope : this,
+			thePanel : thePanel,
+			success : function( CTOSTemplateData, response ) {
+				wccConsoleLog("CTOS Loaded - Processing");
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				var CTOSData = thisCtl.getCTOSDataDsp();
+				var ApplyBtn = this.getApplyTemplateBtn();
+				var TemplateApplied;
 
 
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
-                CTOSData.update( CTOSTemplateData.data );
-                if(CTOSData.hidden){
-                    CTOSData.show();
-                }
+				CTOSData.update( CTOSTemplateData.data );
+				if(CTOSData.hidden){
+					CTOSData.show();
+				}
 
-                var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
+				var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
+				TemplateApplied = patientAppliedTemplates.getValue();
 
 				if ("1" === SessionTemplateAuthoring) {
 					this.getEditTemplateBtn().show();
 				}
 				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
-					if(patientAppliedTemplates.getValue()){
-						this.getApplyTemplateBtn().disable();
-					}else{
-						this.getApplyTemplateBtn().enable();
+					// Reset default button text.
+					if ("0" === SessionPreceptee) {
+						ApplyBtn.setText("Apply Template to Patient");
 					}
-					this.getApplyTemplateBtn().show();
+					else {
+						ApplyBtn.setText("Apply Template to Patient - Requires Cosigner");
+					}
+					
+					if(TemplateApplied){
+						ApplyBtn.disable();
+					}else{
+						ApplyBtn.enable();
+					}
+					if (TemplateApplied &&
+						"0" === SessionPreceptee && 
+						"" === this.application.Patient.CurrentTemplatesApplied2Patient[0].ApprovedByUser && 
+						"" !== this.application.Patient.CurrentTemplatesApplied2Patient[0].AssignedByUser) {
+						ApplyBtn.setText("Approve Regimen");
+						ApplyBtn.enable();
+					}
+					ApplyBtn.show();
 				}
-
-
-
 
 				/* Manage the Med Reminders Panel for the CTOS Template Display... */
 				var theTemplateID2Pass2MedReminders = CTOSTemplateData.internalId;
@@ -3180,22 +3306,24 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 				if (mrForm) {
 					mrForm.show();
 				}
-
-
 				this.application.CurrentTemplate = CTOSData;	// MWB - 5/21/2012 - Hang onto the current template data for use in calculating the proper end date when applying the template.
-				this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 
-            },
-            failure : function (err, response) {
-                wccConsoleLog("Laboratory Info failed to load properly");
-                var thisCtl = this.getController("NewPlan.NewPlanTab");
-                var CTOSData = thisCtl.getCTOSDataDsp();
-                CTOSData.update( "<h2 class='errMsg'>No information available for Template " + this.application.Patient.Template.name + "</h2>" );
-				this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
-            }
-        });
+				if (response.thePanel) {
+					response.thePanel.setLoading(false, false);
+				}
+			},
+
+			failure : function (err, response) {
+				wccConsoleLog("Laboratory Info failed to load properly");
+				var thisCtl = this.getController("NewPlan.NewPlanTab");
+				var CTOSData = thisCtl.getCTOSDataDsp();
+				CTOSData.update( "<h2 class='errMsg'>No information available for Template " + this.application.Patient.Template.name + "</h2>" );
+				if (response.thePanel) {
+					response.thePanel.setLoading(false, false);
+				}
+			}
+		});
 	},
-
 
 
 	LoadSpecifiedTemplate : function(TemplateID, module) {
@@ -3229,7 +3357,7 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 	ShowSelectedTemplate : function(theTemplate) {
 		this.application.Patient.Template = theTemplate;
 		combo.hiddenValue = this.application.Patient.Template.description;
-		this.CTOS_DataLoad(this.application.Patient.Template.id);
+		this.CTOS_DataLoad(this.application.Patient.Template.id, null);
 	},
 
 	selTemplateChange : function(combo, recs, eOpts) {

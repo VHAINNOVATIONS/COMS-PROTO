@@ -23,7 +23,8 @@ Ext.define("COMS.model.PatientTemplates", {
 		type: "rest",
 		api: {
 			read: Ext.URLs.PatientTemplate,
-			create: Ext.URLs.AddPatientTemplate		
+			create: Ext.URLs.AddPatientTemplate,
+			update: Ext.URLs.AddPatientTemplate
 		},
 
 		reader: {

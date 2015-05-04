@@ -204,7 +204,24 @@ var theMainItemsList = function(itemsInGroup) {
 					}]
 				}, 
 				{ xtype : "AmputationSelection", "hidden" : true },
-				IIG_Panel
+				// IIG_Panel
+{
+		xtype: "panel",
+		title : "Performance Status <em>*</em>",
+		name : "perfStatus",
+		defaults : { labelAlign : "right", labelWidth: 300},
+		items : [
+			{
+				xtype: 'radiogroup',
+				name: 'perfStatusRadio',
+				labelAlign: 'top',
+				id: 'performanceRadios',
+				margin: '5 5 25 5',
+				columns: 1,
+				items: itemsInGroup
+			}
+		]
+	}
 			]
 		}
 	];
