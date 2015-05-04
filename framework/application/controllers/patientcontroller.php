@@ -260,9 +260,7 @@ function PoCD_Cmp($a, $b) {
          * savePatientTemplate action
          */
         public function savePatientTemplate( ) {
-// error_log( "PatientController - savePatientTemplate - Entry Point" );
             $formData = json_decode( file_get_contents( 'php://input' ) );
-            
             $this->Patient->beginTransaction();
             $returnVal = $this->Patient->savePatientTemplate( $formData );
             if ( $this->checkForErrors( 'Apply Patient Template Failed. ', $returnVal ) ) {
@@ -271,12 +269,13 @@ function PoCD_Cmp($a, $b) {
                 return;
             }
             $this->Patient->endTransaction();
-// error_log( "PatientController - savePatientTemplate - createOEMRecords" ); // get here
-            $this->createOEMRecords( $formData );
-// error_log( "PatientController - savePatientTemplate - Terminating" ); // Never get here...
+            $AssignedByUser = $_SESSION["AccessCode"];
+            if (!$_SESSION[ 'Preceptee' ]) {
+                $ApprovedByUser = $_SESSION["AccessCode"];
+                $this->createOEMRecords( $formData );
+            }
             $this->set( 'patientTemplateId', $returnVal[ 0 ][ 'id' ] );
             $this->set( 'frameworkErr', null );
-// error_log( "PatientController - savePatientTemplate - Exit" );
         }
         
         /**
@@ -372,25 +371,20 @@ function PoCD_Cmp($a, $b) {
                     
                     $details = $retVal;
 // error_log("Details Count - " . count($details));
-// error_log("Why are there so many detail records for a single patient?");
                     if ( count( $details ) > 0 ) {
                         foreach ( $details as $d ) {
                             $detail = $this->TreatmentStatus( $d );
-                            
-// error_log("BSA");
-// error_log(json_encode($patientBSA));
                             if ( isset( $patientBSA ) && count( $patientBSA ) > 0 ) {
-// error_log("Got BSA Data from BSA_Info Table");
                                 $a                         = $patientBSA[ 0 ][ "WeightFormula" ];
                                 $b                         = $patientBSA[ 0 ][ "BSAFormula" ];
                                 $detail[ "WeightFormula" ] = $a;
                                 $detail[ "BSAFormula" ]    = $b;
                             }
-                            
-                            
                             if ( $detail[ "TreatmentStatus" ] != 'Ended' ) {
                                 $patientDetailMap[ $patient[ 'ID' ] ] = $detail;
                             }
+
+error_log("viewAll - The Details - " . json_encode($detail));
                         }
                     } else {
 // error_log("No Details, so build one");
@@ -401,6 +395,9 @@ function PoCD_Cmp($a, $b) {
                         $detail[ "TreatmentStart" ]      = "";
                         $detail[ "TreatmentEnd" ]        = "";
                         $detail[ "TreatmentStatus" ]     = "";
+                        $detail[ "ConcurRadTherapy" ]    = "";
+                        $detail[ "AssignedByUser" ]      = "";
+                        $detail[ "ApprovedByUser" ]      = "";
                         $detail[ "Goal" ]                = "";
                         $detail[ "ClinicalTrial" ]       = "";
                         $detail[ "PAT_ID" ]              = "";

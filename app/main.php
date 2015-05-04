@@ -65,6 +65,7 @@
     echo "var Sessionrid = '$rid';\n";
     echo "var Sessionrole = '$role';\n";
     echo "var SessionDisplayName = '" . $_SESSION[ 'dname' ] . "';\n";
+    echo "var SessionPreceptee = '" . $_SESSION[ 'Preceptee' ] . "';\n";
     echo "var SessionTemplateAuthoring = '$TemplateAuthoring';\n";
     echo "var AuthType = '" . $_SESSION[ "winauth" ] . "';\n";
     if ( isset( $FirstParam ) ) {

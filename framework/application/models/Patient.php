@@ -87,34 +87,14 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
      * @param stdClass $formData            
      * @return array
      */
-    public function savePatientTemplate($formData) {
-        $patientId = $formData->PatientID;
-        $templateId = $formData->TemplateID;
-        $dateApplied = $formData->DateApplied;
-        $dateStarted = $formData->DateStarted;
-        $dateEnded = $formData->DateEnded;
-        $goal = $formData->Goal;
-        $performanceStatus = $formData->PerformanceStatus;
-        $weightFormula = $formData->WeightFormula;
-        $bsaFormula = $formData->BSAFormula;
-        $clinicalTrial = $formData->ClinicalTrial;
 
-        /* MWB - 3/12/2015 - Need to track who assigned the template for submitting the orders */
-        /* Also provider who applied the template might need a second signature so keeping that in mind as well */
-        $AssignedByRoleID = $_SESSION["rid"];
-        $AssignedByUser = $_SESSION["AccessCode"] . "/" . $_SESSION["VerifyCode"];
-        $ApprovedByUser = $_SESSION["AccessCode"] . "/" . $_SESSION["VerifyCode"];
-
-        $isActive = 0;
-        if ("" !== $ApprovedByUser) {
-            $isActive = 1;
-        }
-        
+    public function terminateOutstandingRegimens($patientId, $templateId) {
         $query = "
             SELECT PAT_ID AS id, Template_ID AS Template_ID 
             FROM Patient_Assigned_Templates 
             WHERE Date_Ended_Actual is null and Patient_ID = '$patientId'
         ";
+    error_log("savePatientTemplate $query");
         $results = $this->query($query);
 
         if ($results) {
@@ -127,86 +107,141 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
                         Date_Ended_Actual = $dateEndedValue
                     WHERE PAT_ID = '$id'
                 ";
-                
-                $this->query($query);
-                
-                /**
-                 *
-                 * @todo This should be handled by the controller or some
-                 *       "Order" model
-                 */
+    error_log("savePatientTemplate $query");
+    /////////////$this->query($query);
+        
+        /**
+         *
+         * @todo This should be handled by the controller or some
+         *       "Order" model
+         */
                 $query = "
                     UPDATE Order_Status SET 
                         Order_Status = 'Cancelled'
                     WHERE Patient_ID = '$patientId' 
                         AND Template_ID = '$templateId'
                 ";
-                $this->query($query);
+    error_log("savePatientTemplate $query");
+    /////////////$this->query($query);
+            }
+        }
+    }
+
+    public function savePatientTemplate($formData) {
+error_log("savePatientTemplate Form - " . json_encode($formData));
+
+
+        $patientId = $formData->PatientID;
+        $templateId = $formData->TemplateID;
+        $dateApplied = $formData->DateApplied;
+        $dateStarted = $formData->DateStarted;
+        $dateEnded = $formData->DateEnded;
+        $goal = $formData->Goal;
+        $ConcurRadTherapy = $formData->ConcurRadTherapy;
+        $performanceStatus = $formData->PerformanceStatus;
+        $weightFormula = $formData->WeightFormula;
+        $bsaFormula = $formData->BSAFormula;
+        $clinicalTrial = $formData->ClinicalTrial;
+        $id = $formData->id;
+        $isActive = 0;
+        $ApprovedByUser = "";
+
+        $AssignedByRoleID = $_SESSION["rid"];
+        $AssignedByUser = $_SESSION["AccessCode"];
+        if (!$_SESSION[ 'Preceptee' ]) {
+            $ApprovedByUser = $_SESSION["AccessCode"];
+            $isActive = 1;
+        }
+
+        if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+            if ($ApprovedByUser != "") {
+                $this->terminateOutstandingRegimens($patientId, $templateId);
+            }
+            $query = "
+                INSERT INTO Patient_Assigned_Templates (
+                    Patient_ID,
+                    Template_ID,
+                    Date_Applied,
+                    Date_Started,
+                    Date_Ended,
+                    Is_Active,
+                    AssignedByRoleID,
+                    AssignedByUser,
+                    ApprovedByUser,
+                    Goal,
+                    ConcurRadTherapy,
+                    Status,
+                    Perf_Status_ID,
+                    Weight_Formula,
+                    BSA_Method,
+                    Clinical_Trial
+                ) values (
+                    '$patientId',
+                    '$templateId',
+                    '$dateApplied',
+                    '$dateStarted',
+                    '$dateEnded',
+                    $isActive,
+                    '$AssignedByRoleID',
+                    '$AssignedByUser',
+                    '$ApprovedByUser',
+                    '$goal',
+                    '$ConcurRadTherapy',
+                    'Ordered',
+                    '$performanceStatus',
+                    '$weightFormula',
+                    '$bsaFormula',
+                    '$clinicalTrial'
+                )";
+            $retValue = $this->query($query);
+
+            /**
+             * OrdersNotify in app/workflow.php
+             */
+            if ($ApprovedByUser != "") {
+                OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, $dateEnded, $goal, $clinicalTrial, $performanceStatus);
+            }
+        }
+        else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+            if ($ApprovedByUser != "") {
+                $this->terminateOutstandingRegimens($patientId, $templateId);
+                $query = "select AssignedByUser from Patient_Assigned_Templates where PAT_ID = '$id'";
+                $retValue = $this->query($query);
+                $abu = $retValue[0]['AssignedByUser'];
+                if ($abu !== "") {
+                    $AssignedByUser = $abu;
+                }
+            }
+
+            $query = "
+                UPDATE Patient_Assigned_Templates SET 
+                    Patient_ID = '$patientId',
+                    Template_ID = '$templateId',
+                    Date_Applied = '$dateApplied',
+                    Date_Started = '$dateStarted',
+                    Date_Ended = '$dateEnded',
+                    Is_Active = $isActive,
+                    AssignedByRoleID = '$AssignedByRoleID',
+                    AssignedByUser = '$AssignedByUser',
+                    ApprovedByUser = '$ApprovedByUser',
+                    Goal = '$goal',
+                    ConcurRadTherapy = '$ConcurRadTherapy',
+                    Status = 'Ordered',
+                    Perf_Status_ID = '$performanceStatus',
+                    Weight_Formula = '$weightFormula',
+                    BSA_Method = '$bsaFormula',
+                    Clinical_Trial = '$clinicalTrial'
+                    where PAT_ID = '$id'";
+            $retValue = $this->query($query);
+            if ($ApprovedByUser != "") {
+                OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, $dateEnded, $goal, $clinicalTrial, $performanceStatus);
             }
         }
 
-
-        $query = "
-            INSERT INTO Patient_Assigned_Templates (
-                Patient_ID,
-                Template_ID,
-                Date_Applied,
-                Date_Started,
-                Date_Ended,
-                Is_Active,
-                AssignedByRoleID,
-                AssignedByUser,
-                ApprovedByUser,
-                Goal,
-                Status,
-                Perf_Status_ID,
-                Weight_Formula,
-                BSA_Method,
-                Clinical_Trial
-            ) values (
-                '$patientId',
-                '$templateId',
-                '$dateApplied',
-                '$dateStarted',
-                '$dateEnded',
-                $isActive,
-                '$AssignedByRoleID',
-                '$AssignedByUser',
-                '$ApprovedByUser',
-                '$goal',
-                'Ordered',
-                '$performanceStatus',
-                '$weightFormula',
-                '$bsaFormula',
-                '$clinicalTrial'
-            )";
-        $retValue = $this->query($query);
-
-        /**
-         * OrdersNotify in app/workflow.php
-         *
-         * @todo This should be handled by the controller not the model
-         */
-        OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, $dateEnded, $goal, $clinicalTrial, $performanceStatus);
-        
         $lookup = new LookUp();
         foreach ($formData->Amputations as $amputation) {
             $lookup->save(30, $patientId, $amputation);
         }
-        
-        /*
-         * Should the most recent record in Patient History be updated with the
-         * new Performance Status an BSA Info? $query = "SELECT
-         * Patient_History_ID as historyId, Performance_ID as perfId from
-         * Patient_History where Patient_ID = '" .$patientId."' order by
-         * Date_Taken desc"; $historyRecord = $this->query($query); $query =
-         * "UPDATE Patient_History set Performance_ID =
-         * '".$performanceStatus."',Weight_Formula =
-         * '".$weightFormula."',BSA_Method ='".$bsaFormula."' ". "where
-         * Patient_History_ID = '".$historyRecord[0]['historyId']."'"; $retVal =
-         * $this->query($query); if (null != $retVal &&
-         * array_key_exists('error', $retVal)) { return $retVal; }
-         */
 
         $query = "
             SELECT PAT_ID AS id 
@@ -241,6 +276,8 @@ function convertReason2ID($Reason) {
             ,case when l1.Description is not null then l1.Description else '' end as TemplateName
             ,case when l2.Description is not null then l2.Description else '' end as TemplateDescription
             ,EoTS_ID as EotsID
+            ,pat.AssignedByUser
+            ,pat.ApprovedByUser
             FROM Patient_Assigned_Templates pat
             INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID
             INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID
@@ -299,36 +336,27 @@ function convertReason2ID($Reason) {
     function getPatientDetailInfo ($id)
     {
         if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT case when mt.Template_ID is not null then mt.Template_ID else '' end as TemplateID," .
-                     "case when l2.Description is not null then l2.Description else '' end as TemplateDescription," .
-                     "case when l1.Description is not null then l1.Description else '' end as TemplateName," .
-                     "case when pat.Date_Started is not null then CONVERT(VARCHAR(10), pat.Date_Started, 101) else '' end as TreatmentStart," .
-                    // "case when pat.Date_Applied is not null then
-                    // CONVERT(VARCHAR(10), pat.Date_Applied, 101) else '' end
-                    // as DateTaken,".
-                    "case when pat.Date_Ended is not null then CONVERT(VARCHAR(10), pat.Date_Ended, 101) else '' end as TreatmentEnd, " .
-                    "case when pat.Date_Ended_Actual is not null then CONVERT(VARCHAR(10), pat.Date_Ended_Actual, 101) else '' end as TreatmentEndActual, " .
-                     "case when pat.Goal is not null then pat.Goal else '' end as Goal," .
-                     "case when pat.Clinical_Trial is not null then pat.Clinical_Trial else '' end as ClinicalTrial," .
-                     "case when pat.Weight_Formula is not null then pat.Weight_Formula else '' end as WeightFormula," .
-                     "case when pat.BSA_Method is not null then pat.BSA_Method else '' end as BSAFormula," .
-                     "case when l3.Name is not null then l3.Name else '' end as PerformanceStatus, " .
-                     "case when pat.PAT_ID is not null then pat.PAT_ID else '' end as PAT_ID " .
-                     "FROM Patient_Assigned_Templates pat " .
-                     "INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID " .
-                     "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
-                     "INNER JOIN LookUp l3 ON l3.Lookup_ID = pat.Perf_Status_ID " .
-                     "LEFT OUTER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID) " .
-                     "WHERE pat.Patient_ID = '" . $id . "' ";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT mt.Template_ID as templateId, l2.Description as templatedescription, l1.Description as templatename, " .
-                     "date_format(pat.Date_Started, '%m/%d/%Y') as started, date_format(pat.Date_Applied, '%m/%d/%Y') as datetaken, " .
-                     "date_format(pat.Date_Ended, '%m/%d/%Y') as ended " .
-                     "FROM Patient_Assigned_Templates pat " .
-                     "INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID " .
-                     "INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID " .
-                     "LEFT OUTER JOIN LookUp l2 ON l2.Name = mt.Regimen_ID " .
-                     "WHERE pat.Patient_ID = '" . $id . "' ";
+            $query = "SELECT case when mt.Template_ID is not null then mt.Template_ID else '' end as TemplateID, 
+case when l2.Description is not null then l2.Description else '' end as TemplateDescription, 
+case when l1.Description is not null then l1.Description else '' end as TemplateName, 
+case when pat.Date_Started is not null then CONVERT(VARCHAR(10), pat.Date_Started, 101) else '' end as TreatmentStart, 
+case when pat.Date_Ended is not null then CONVERT(VARCHAR(10), pat.Date_Ended, 101) else '' end as TreatmentEnd, 
+case when pat.Date_Ended_Actual is not null then CONVERT(VARCHAR(10), pat.Date_Ended_Actual, 101) else '' end as TreatmentEndActual, 
+case when pat.Goal is not null then pat.Goal else '' end as Goal, 
+case when pat.Clinical_Trial is not null then pat.Clinical_Trial else '' end as ClinicalTrial, 
+case when pat.Weight_Formula is not null then pat.Weight_Formula else '' end as WeightFormula, 
+case when pat.BSA_Method is not null then pat.BSA_Method else '' end as BSAFormula, 
+case when l3.Name is not null then l3.Name else '' end as PerformanceStatus,  
+case when pat.PAT_ID is not null then pat.PAT_ID else '' end as PAT_ID,  
+case when pat.ConcurRadTherapy is not null then pat.ConcurRadTherapy else '' end as ConcurRadTherapy,  
+case when pat.AssignedByUser is not null then pat.AssignedByUser else '' end as AssignedByUser,  
+case when pat.ApprovedByUser is not null then pat.ApprovedByUser else '' end as ApprovedByUser  
+FROM Patient_Assigned_Templates pat  
+INNER JOIN Master_Template mt ON mt.Template_ID = pat.Template_ID  
+INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Regimen_ID  
+INNER JOIN LookUp l3 ON l3.Lookup_ID = pat.Perf_Status_ID  
+LEFT OUTER JOIN LookUp l2 ON l2.Name = convert(nvarchar(max),mt.Regimen_ID)  
+WHERE pat.Patient_ID = '$id'";
         }
         
         return $this->query($query);

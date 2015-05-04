@@ -629,13 +629,15 @@ class LookupController extends Controller {
 
     function TemplateData($id = NULL) {
         if ($id != NULL) {
-// error_log("Lookup Controller - TemplateData - ID = $id");
+error_log("Lookup Controller - TemplateData - ID = $id");
 
             $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
+
+error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
             $Regimen_ID = $retVal[0]["Regimen_ID"];
             $retVal = $this->LookUp->getTopLevelTemplateDataById($id, $Regimen_ID);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
@@ -643,6 +645,7 @@ class LookupController extends Controller {
                 return;
             }
 
+error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
             $EmoLevel = $retVal[0]["emoLevelNum"];
             $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
 

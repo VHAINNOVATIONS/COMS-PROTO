@@ -47,6 +47,11 @@
                             //"\"DateTaken\":\"".$detail['datetaken']."\",";
                             "\"TreatmentEnd\":\"".$detail['TreatmentEnd']."\",".
                             "\"Goal\":\"".$detail['Goal']."\",".
+
+                            "\"ConcurRadTherapy\":\"".$detail['ConcurRadTherapy']."\",".
+                            "\"AssignedByUser\":\"".$detail['AssignedByUser']."\",".
+                            "\"ApprovedByUser\":\"".$detail['ApprovedByUser']."\",".
+
                             "\"ClinicalTrial\":\"".$detail['ClinicalTrial']."\",".
                             "\"WeightFormula\":\"".$detail['WeightFormula']."\",".
                             "\"BSAFormula\":\"".$detail['BSAFormula']."\",".
@@ -62,6 +67,10 @@
 						"\"TreatmentStart\":\"\", ".
 						"\"TreatmentEnd\":\"\", ".
 						"\"Goal\":\"\", ".
+                        "\"ConcurRadTherapy\":\"\", ".
+                        "\"AssignedByUser\":\"\", ".
+                        "\"ApprovedByUser\":\"\", ".
+
 						"\"ClinicalTrial\":\"\", ".
 						"\"WeightFormula\":\"\", ".
 						"\"BSAFormula\":\"\", ".

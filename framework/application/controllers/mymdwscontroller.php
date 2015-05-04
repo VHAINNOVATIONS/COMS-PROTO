@@ -213,10 +213,10 @@ class mymdwscontroller extends Controller {
     }
     
     public function MdwsSetup( $isSSN, $value ) {
-error_log("MdwsSetup() - Entry point");
+error_log("MdwsSetup() Now using NodeVistA - Entry point");
         $username   = get_current_user();
         $jsonRecord = array( );
-        $roles      = $this->Mymdws->getRoleInfo( $username );
+        $roles      = $this->Mymdws->getRoleInfo( $username );      // from SQL
 
         if ( $this->checkForErrors( 'Get Role Info Failed. ', $roles ) ) {
             $jsonRecord[ 'success' ] = false;
@@ -253,7 +253,7 @@ error_log("MdwsSetup() - Entry point");
 
         $mdwspatient = $mdwspatients->patients->PatientTO;
         $this->_dfn  = $mdwspatient->localPid;
-error_log("MdwsSetup - got DFN = " . $this->_dfn);
+error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
 
         $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
 

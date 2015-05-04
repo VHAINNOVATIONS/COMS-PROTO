@@ -70,7 +70,7 @@ error_log("Using special Admin Access");
         $ruser                       = $_SERVER[ 'REMOTE_USER' ];
         $_SESSION[ 'sessionStatus' ] = 0;
         
-        $tsql    = "SELECT role,DisplayName,rid,Email,TemplateAuthoring,Role_ID FROM Roles WHERE username = '$DUZ'";
+        $tsql    = "SELECT * FROM Roles WHERE username = '$DUZ'";
         $getrole = sqlsrv_query( $conn, $tsql );
         $flg     = false;
         while ( $row = sqlsrv_fetch_array( $getrole, SQLSRV_FETCH_ASSOC ) ) {
@@ -80,8 +80,10 @@ error_log("Using special Admin Access");
             $_SESSION[ 'dname' ]             = $row[ 'DisplayName' ];
             $_SESSION[ 'rid' ]               = $row[ 'rid' ];
             $_SESSION[ 'Email' ]             = $row[ 'Email' ];
-            $_SESSION[ 'TemplateAuthoring' ] = $row[ 'TemplateAuthoring' ];
+            $_SESSION[ 'TemplateAuthoring' ] = $row[ 'TemplateAuthoring' ] === 1 ? 1 : 0;   // Take into account default of NULL to ensure proper status
             $_SESSION[ 'Role_ID' ]           = $row[ 'Role_ID' ];
+            $_SESSION[ 'Preceptee' ]         = $row[ 'Preceptee' ] === 0 ? 0 : 1;
+            $_SESSION[ 'Preceptor' ]         = $row[ 'Preceptor' ] === 1 ? 1 : 0;
             $_SESSION[ 'AC' ]                = $AccessCode;
             $_SESSION[ 'VC' ]                = $VerifyCode;
             $_SESSION[ 'NWLogin' ]           = 355;

@@ -82,7 +82,7 @@ class AdminController extends Controller {
             $DisplayName = $form_data->{'DisplayName'};
             $Email = $form_data->{'Email'};
             $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
-            $Preceptor = $form_data->{'Preceptor'};
+            $Preceptee = $form_data->{'Preceptee'};
 
 $query = "Update Roles 
             set username = '$username',
@@ -90,7 +90,7 @@ $query = "Update Roles
             DisplayName ='$DisplayName', 
             Email = '$Email',
             TemplateAuthoring ='$TemplateAuthoring',
-            Preceptor = '$Preceptor'
+            Preceptee = '$Preceptee'
             where rid = '$rid'";
 error_log("UPDATE Record - $query");
             $records = $this->Admin->query( $query );
@@ -109,8 +109,8 @@ error_log("UPDATE Record - $query");
             $DisplayName = $form_data->{'DisplayName'};
             $Email = $form_data->{'Email'};
             $TemplateAuthoring = $form_data->{'TemplateAuthoring'};
-            $Preceptor = $form_data->{'Preceptor'};
-            $query = "INSERT into Roles (rid, username, role, DisplayName, Email, TemplateAuthoring, Preceptor) VALUES ('$rid', '$username','$role', '$DisplayName', '$Email','$TemplateAuthoring','$Preceptor')";
+            $Preceptee = $form_data->{'Preceptee'};
+            $query = "INSERT into Roles (rid, username, role, DisplayName, Email, TemplateAuthoring, Preceptee) VALUES ('$rid', '$username','$role', '$DisplayName', '$Email','$TemplateAuthoring','$Preceptee')";
 error_log("POST Record - $query");
             $records = $this->Admin->query( $query );
             if ($this->checkForErrors('Save New User Failed. ', $records)) {
