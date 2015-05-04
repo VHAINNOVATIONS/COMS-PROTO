@@ -79,8 +79,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		selector : "AdminTab Roles [name=\"Role\"]"
 	},
 	{
-		ref : "RoleUserPreceptor",
-		selector : "AdminTab Roles [name=\"Preceptor\"]"
+		ref : "RoleUserPreceptee",
+		selector : "AdminTab Roles [name=\"Preceptee\"]"
 	},
 	{
 		ref : "RoleUserTemplateAuthoring",
@@ -403,7 +403,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		this.getRoleUserRole().show();
 		this.getRoleUserTemplateAuthoring().show();
 		// If role is "Provider" or "All Roles" then show
-		this.getRoleUserPreceptor().show();
+		this.getRoleUserPreceptee().show();
 	},
 
 	GetUsersFromVistA : function(btn) {
@@ -411,7 +411,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		theCombo.hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
-		this.getRoleUserPreceptor().hide();
+		this.getRoleUserPreceptee().hide();
 
 		this.getRolesForm().setLoading( "Getting User Data from VistA", false );
 		var msg = this.getSelVistAUserNoMatch();
@@ -816,10 +816,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	selectRoleChange : function( combo, records, eOpts ) {
 		var selectedRole = records[0].getData().name;
 		if ("Provider" === selectedRole || "All Roles" == selectedRole) {
-			this.getRoleUserPreceptor().show();
+			this.getRoleUserPreceptee().show();
 		}
 		else {
-			this.getRoleUserPreceptor().hide();
+			this.getRoleUserPreceptee().hide();
 		}
 	},
 
@@ -861,8 +861,8 @@ vcode: null		// ignore
 		var TAField = this.getRoleUserTemplateAuthoring();
 		TAField.setValue(this.RolesUserInfo.TemplateAuthoring);
 
-		var PrecepField = this.getRoleUserPreceptor();
-		PrecepField.setValue(this.RolesUserInfo.Preceptor);
+		var PrecepField = this.getRoleUserPreceptee();
+		PrecepField.setValue(this.RolesUserInfo.Preceptee);
 
 		var DelBtn = this.getRoleDeleteBtn();
 		DelBtn.enable();
@@ -891,7 +891,7 @@ vcode: null		// ignore
 		this.getRoleGetUsersCombo().hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
-		this.getRoleUserPreceptor().hide();
+		this.getRoleUserPreceptee().hide();
 
 		this.application.loadMask("Please wait; Loading User Roles");
 		var theGrid = this.getRolesGrid();
@@ -906,7 +906,7 @@ vcode: null		// ignore
 		this.getRoleGetUsersCombo().hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
-		this.getRoleUserPreceptor().hide();
+		this.getRoleUserPreceptee().hide();
 	},
 
 	clickRolesSave : function ( theButton, eOpts) {
@@ -934,12 +934,12 @@ vcode: null		// ignore
 		theCombo.hide();
 		this.getRoleUserRole().hide();
 		this.getRoleUserTemplateAuthoring().hide();
-		this.getRoleUserPreceptor().hide();
+		this.getRoleUserPreceptee().hide();
 
 
 		var Role = this.getRoleUserRole().getValue();
 		var TA = this.getRoleUserTemplateAuthoring().getValue();
-		var Precep = this.getRoleUserPreceptor().getValue();
+		var Precep = this.getRoleUserPreceptee().getValue();
 		var theGrid = this.getRolesGrid();
 		var theStore = theGrid.getStore();
 		var CMD = "POST";
@@ -948,7 +948,7 @@ vcode: null		// ignore
 			CMD = "PUT";
 			rid = this.RolesUserInfo.rid;
 		}
-		var RoleData = { "rid" : rid, "username" : duz, "role" : Role, "DisplayName" : Name, "TemplateAuthoring" : TA, "Preceptor" : Precep };
+		var RoleData = { "rid" : rid, "username" : duz, "role" : Role, "DisplayName" : Name, "TemplateAuthoring" : TA, "Preceptee" : Precep };
 
 		delete this.RolesUserInfo;
 		Ext.Ajax.request({

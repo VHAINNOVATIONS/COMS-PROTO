@@ -92,10 +92,10 @@ Ext.define("COMS.view.Management.Roles", {
 				},
 				{ 
 					"xtype" : "checkbox",
-					"name" : "Preceptor",
+					"name" : "Preceptee",
 					"labelWidth" : 55,
-					"fieldLabel" : "Preceptor",
-					"checked" : false,
+					"fieldLabel" : "Preceptee",
+					"checked" : true,
 					"hidden": true
 				},
 				{ 
@@ -125,7 +125,7 @@ Ext.define("COMS.view.Management.Roles", {
 			"store" : {
 				"autoLoad" : false,
 					// username, role, displayname, email, templateAuthoring
-				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Preceptor", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
+				"fields" : [ "rid", "username", "vcode", "role", "lastlogin", "DisplayName", "Preceptee", "TemplateAuthoring", "Role_ID", "Last_SessionID" ],
 				"proxy" : {
 					"type" : "rest",
 					"url" : "/Admin/UserRoles",
@@ -152,8 +152,8 @@ Ext.define("COMS.view.Management.Roles", {
 					"width" : 120
 				},
 				{
-					"header" : "Preceptor",
-					"dataIndex" : "Preceptor",
+					"header" : "Preceptee",
+					"dataIndex" : "Preceptee",
 					"renderer" : function (value, p, record) {
 						if (value) {
 							return "Yes";
