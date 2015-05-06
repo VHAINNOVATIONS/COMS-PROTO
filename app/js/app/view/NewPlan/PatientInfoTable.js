@@ -160,8 +160,8 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  " m<sup>2</sup></span>" + btnBuf;
 							}
 						}
-						data.BSA = NAMsg;
-						return "<span id=\"PatientInfoTableBSA_Display\">" + NAMsg + "</span>";
+						data.BSA = "N/A";
+						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title=\"Not Available\">N/A</abbr></span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {

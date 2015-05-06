@@ -101,44 +101,8 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				v = Vitals[0];
 				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
 				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
-				/**
-				if (v.hasOwnProperty("BSA") && "" !== v.BSA && 0 !== v.BSA && NAMsg !== v.BSA) {
-					data.BSA = v.BSA;
-					data.BSA_Method = v.BSA_Method;
-					data.BSA_Weight = v.BSA_Weight;
-					data.WeightFormula = v.WeightFormula;
-					data.Weight = w;
-					data.Height = h;
-					if (thepiTag) {
-						thepiTag.setHTML(v.BSA + " m<sup>2</sup>");
-					}
-				}
-				**/
 
-				
 				if (globalAppPatientScope) {
-					/**
-					// Only set the Patient variables if they're not already set.
-					var gPat = globalAppPatientScope.application.Patient;
-					if ("" === gPat.BSA) {
-						gPat.BSA = v.BSA;
-					}
-					if ("" === gPat.BSA_Method) {
-						gPat.BSA_Method = v.BSA_Method;
-					}
-					if ("" === gPat.BSA_Weight) {
-						gPat.BSA_Weight = v.BSA_Weight;
-					}
-					if ("" === gPat.WeightFormula) {
-						gPat.WeightFormula = v.WeightFormula;
-					}
-					if ("" === gPat.Weight) {
-						gPat.Weight = w;
-					}
-					if ("" === gPat.Height) {
-						gPat.Height = h;
-					}
-					**/
 					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
 					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
 				}

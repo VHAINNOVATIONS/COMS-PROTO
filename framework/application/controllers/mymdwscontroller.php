@@ -191,8 +191,69 @@ class mymdwscontroller extends Controller {
         $patient[ 0 ][ 'Amputations' ] = $tmpAmputations;
 
         $nodevista = new NodeVista();
-        $VPR = $nodevista->get("patient/details/" . $this->_dfn);
+//        $VPR = $nodevista->get("patient/details/" . $this->_dfn);
+        $VPR = $nodevista->get("patient/vitals/" . $this->_dfn);
         $patient[0]['VPR'] = json_decode($VPR);
+
+        // $VPR1 = $nodevista->get("patient/details/" . $this->_dfn);
+        // $patient[0]['VPR1'] = json_decode($VPR1);
+        $VPR_New = array();
+        $VPR_Data = array();
+        $VPR_Data_Items = array();
+
+        $NameInfo = array();
+        $NameInfo["Name"] = $this->_Name;
+        $NameInfo["pName"] = $this->_pName;
+        $NameInfo["fullName"] = $this->_fullName;
+        $NameInfo["briefId"] = $lastFour;
+        $NameInfo["dateOfBirth"] = $this->_dob;
+        $NameInfo["genderCode"] = "urn:va:pat-gender:M";
+        $NameInfo["gender"] = $this->_gender;
+        $NameInfo["age"] = $this->_age;
+        $NameInfo["dfn"] = $this->_dfn;
+        $NameInfo["ssn"] = $this->_ssn;
+
+        $this->_fullName = $nvpatientInfo["gender"];
+        $this->_dob = $nvpatientInfo["dob"];
+        $this->_ssn = $nvpatientInfo["ssn"];
+        $this->_age = $nvpatientInfo["age"];
+        $this->_dfn = $nvpatientInfo["localPid"];
+
+
+        $fullname = array();
+        $fullname[] = $NameInfo;
+
+        // $VPR_Data_Items = array_merge( $VPR_Data_Items, json_decode($VPR), $NameInfo, json_encode($VPR1) );
+        $VPR_Data_Items = array_merge( $VPR_Data_Items, $fullname, json_decode($VPR) );
+
+/*
+error_log("VPR = $VPR");
+error_log("VPR = " . json_encode($VPR));
+error_log("VPR = " . json_decode($VPR));
+error_log("----------------------------------------------");
+
+error_log("NameInfo = " . json_encode($NameInfo));
+
+error_log("VPR1 = $VPR1");
+error_log("VPR1 = " . json_encode($VPR1));
+error_log("VPR1 = " . json_decode($VPR1));
+**/
+
+        $VPR_Data["items"] = $VPR_Data_Items;
+        $VPR_New["data"] = $VPR_Data;
+
+// error_log("VPR_Data_Items = " . json_encode($VPR_Data_Items));
+// error_log("Items = " . json_encode($VPR_Data));
+// error_log("data = " . json_encode($VPR_New));
+
+
+
+//        $patient[0]["VistA_Name"] = $this->_Name;
+//        $patient[0]["VistA_pName"] = $this->_pName;
+        // $patient[0]["VPR_New"] = json_encode($VPR_New);
+        // $patient[0]["VPR_New1"] = json_decode($VPR_New);
+        // $patient[0]["VPR_New2"] = $VPR_New;
+        $patient[0]["VPR"] = $VPR_New;
 
         $jsonRecord[ 'success' ] = true;
         $jsonRecord[ 'total' ]   = '1';
@@ -213,7 +274,7 @@ class mymdwscontroller extends Controller {
     }
     
     public function MdwsSetup( $isSSN, $value ) {
-error_log("MdwsSetup() Now using NodeVistA - Entry point");
+// error_log("MdwsSetup() Now using NodeVistA - Entry point");
         $username   = get_current_user();
         $jsonRecord = array( );
         $roles      = $this->Mymdws->getRoleInfo( $username );      // from SQL
@@ -226,10 +287,24 @@ error_log("MdwsSetup() Now using NodeVistA - Entry point");
 
         $nodevista = new NodeVista();
         $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
+
         $nvpatient = $nvpatient[ 0 ];
         $pName     = explode( ",", $nvpatient[ "name" ] );
         $name      = $pName[ 1 ] . " " . $pName[ 0 ];
         $DFNcoms   = $nvpatient[ 'dfn' ];
+        $this->_Name = $name;
+        $this->_pName = $pName;
+
+
+        $nvpatientInfo = json_decode( $nodevista->get( "patient/$DFNcoms" ), true );
+// error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
+        $this->_fullName = $nvpatientInfo["name"];
+        $this->_gender = $nvpatientInfo["gender"];
+        $this->_dob = $nvpatientInfo["dob"];
+        $this->_ssn = $nvpatientInfo["ssn"];
+        $this->_age = $nvpatientInfo["age"];
+        $this->_dfn = $nvpatientInfo["localPid"];
+
         
         $mdwspatients            = array( );
         $mdwspatients[ 'count' ] = 0;
@@ -253,35 +328,35 @@ error_log("MdwsSetup() Now using NodeVistA - Entry point");
 
         $mdwspatient = $mdwspatients->patients->PatientTO;
         $this->_dfn  = $mdwspatient->localPid;
-error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
+// error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
 
         $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
 
         if ( null === $mdwspatient ) {
             $jsonRecord[ 'success' ] = false;
             $jsonRecord[ 'message' ] = "No Patients found with SSN matching $value";
-error_log("MdwsSetup - VistA says no patients with matching SSN, yet we got the DFN from VistA");
+// error_log("MdwsSetup - VistA says no patients with matching SSN, yet we got the DFN from VistA");
             return $jsonRecord;
         }
 
-error_log("MdwsSetup - getting Patient By DFN from SQL");
+// error_log("MdwsSetup - getting Patient By DFN from SQL");
         $comspatientModel = new Patient();
         $patient          = $comspatientModel->getPatientIdByDFN( $this->_dfn );
         
         if ( null == $patient || empty( $patient ) ) {
-error_log("MdwsSetup - Patient with DFN does not exist in SQL; Creating one");
+// error_log("MdwsSetup - Patient with DFN does not exist in SQL; Creating one");
             $this->Mymdws->beginTransaction();
             $query = "SELECT NEWID()";
             $GUID  = $this->Mymdws->query( $query );
             $GUID  = $GUID[ 0 ][ "" ];
-error_log("MdwsSetup - Creating new patient for - " . json_encode($mdwspatient));
+// error_log("MdwsSetup - Creating new patient for - " . json_encode($mdwspatient));
             $retVal = $comspatientModel->addNewPatient( $mdwspatient, $value, $GUID );
             
             if ( $this->checkForErrors( 'Add New Patient from MDWS Failed. ', $retVal ) ) {
                 $jsonRecord[ 'success' ] = false;
                 $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
                 $this->Mymdws->rollbackTransaction();
-error_log("MdwsSetup - addNewPatient() failed - " . $this->get( 'frameworkErr' ));
+// error_log("MdwsSetup - addNewPatient() failed - " . $this->get( 'frameworkErr' ));
                 return $jsonRecord;
             }
 

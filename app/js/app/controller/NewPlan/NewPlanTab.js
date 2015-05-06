@@ -1657,17 +1657,12 @@ console.log("Loading Allergy Info - Finished");
 
 
 
-
-
-
-
-
-
 	convertVPR : {
 		Allergies : [],
 		Vitals : [],
 		Labs : [],
 		Problems : [],
+		RootObj : [],
 		vHeight : "",
 		vWeight : "",
 		vIdx : "",
@@ -1677,17 +1672,11 @@ console.log("Loading Allergy Info - Finished");
 		theVPRData : {},
 
 		extractDate : function(aDate) {
-			aDate = String(aDate);
-			var d1 = "", d2 = "";
-			if (aDate.length >= 14 ) {
-				d1 = aDate.substring(8,10) + ":" + aDate.substring(10,12) + ":" + aDate.substring(12, 14);
-			}
-			d2 = aDate.substring(4,6) + "/" + aDate.substring(6,8) + "/" + aDate.substring(0,4);
-			if (d1 !== "") {
-				d2 += " " + d1;
-			}
-			return (d2);
+			return (aDate.substring(5,7) + "/" + aDate.substring(8,10) + "/" + aDate.substring(0,4));
 		},
+
+
+
 		getObserved : function(aDate) {
 			var d1 = aDate.split(" ");
 			var d2 = d1[0].split("/");
@@ -1789,78 +1778,90 @@ console.log("Loading Allergy Info - Finished");
 			}
 		},
 
+
 		extractVitals : function(rec) {
-			var typeUID, nIdx, typeName, data, DateTaken;
-			if (rec.uid) {
-				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
-				if ("vital" === typeUID.toLowerCase()) {
-					nIdx = rec.observed.toString();
-					if (this.vIdx !== nIdx) {
-						this.vIdx = nIdx;
-						DateTaken = this.extractDate(nIdx);
-						this.Vitals[this.vIdx] = {Observed : nIdx, DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
-					}
-					switch (rec.typeName) {
-					case "BLOOD PRESSURE":
-						data = "BP";
-						break;
-					case "PULSE":
-						data = "Pulse";
-						break;
-					case "PAIN":
-						data = "Pain";
-						break;
-					case "RESPIRATION":
-						data = "Respiration";
-						break;
-					case "TEMPERATURE":
+			var nIdx, vIdx, DateTaken;
+			if (rec.hasOwnProperty("type")) {
+				nIdx = rec.date.split("T")[0];
+				if (this.vIdx !== nIdx) {
+					this.vIdx = nIdx;
+					DateTaken = this.extractDate(nIdx);
+					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
+				}
+				switch( rec.type ) {
+					case "T":
 						data = "Temperature";
 						units = "Temperature_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
-						if ("c" == rec.units) {
-							// convert to F
-						}
-						loc = "TemperatureLocation";
-						if (rec.qualifiers) {
-							this.Vitals[this.vIdx][loc] = rec.qualifiers[0].name;
-						}
 						break;
-					case "WEIGHT":
-						data = "Weight";
-						units = "Weight_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
-						if ("kg" == rec.units) {
-							// convert to lbs
-						}
-						if (this.application && this.application.Patient) {
-							if ("" === this.application.Patient.Weight) {
-								this.application.Patient.Weight = rec.result;
-							}
-						}
-						break;
-					case "HEIGHT":
+					case "HT":
 						data = "Height";
 						units = "Height_Units";
 						this.Vitals[this.vIdx][units] = rec.units;
-						if ("cm" == rec.units) {
-							// convert to inches
-						}
-						if ("m" == rec.units) {
-							// convert to inches
-						}
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Height) {
-								this.application.Patient.Height = rec.result;
+								this.application.Patient.Height = rec.value;
 							}
 						}
 						break;
-					default:
-						data = rec.typeName;
+					case "WT":
+						data = "Weight";
+						units = "Weight_Units";
+						this.Vitals[this.vIdx][units] = rec.units;
+						if (this.application && this.application.Patient) {
+							if ("" === this.application.Patient.Weight) {
+								this.application.Patient.Weight = rec.value;
+							}
+						}
 						break;
-					}
-					this.Vitals[this.vIdx][data] = rec.result;
-					return true;
+
+					case "BP":
+						data = "BP";
+						break;
+					case "P":
+						data = "Pulse";
+						break;
+					case "PN":
+						data = "Pain";
+						break;
+					case "R":
+						data = "Respiration";
+						break;
+					default:
+						data = rec.type;
+						break;
 				}
+				this.Vitals[this.vIdx][data] = rec.value;
+				return true;
+			}
+			return false;
+		},
+
+		extractRoot : function(rec) {
+			if (rec.hasOwnProperty("genderCode")) {
+				var rootObj = rec;
+				var name = rootObj.fullName;
+				var dob = rootObj.dateOfBirth.toString();
+				var yr = dob.slice(0, 4);
+				var mon = dob.slice(5, 7);
+				var day = dob.slice(8, 10);
+				dob = mon + "/" + day + "/" + yr;
+				var birthDate = new Date(dob);
+				if (!rootObj.hasOwnProperty("gender")) {
+					// "urn:va:pat-gender:M"
+					var vals = rec.genderCode.split(':');
+					var gc = vals[vals.length-1];
+					rootObj.gender = gc;
+				}
+				if (!rootObj.hasOwnProperty("age")) {
+					age = today.getFullYear() - birthDate.getFullYear();
+					m = today.getMonth() - birthDate.getMonth();
+					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+						age--;
+					}
+				}
+				rootObj.dob = dob;
+				this.RootObj = rootObj;
+				return true;
 			}
 			return false;
 		},
@@ -1874,109 +1875,33 @@ console.log("Loading Allergy Info - Finished");
 			this.Vitals = [];
 			this.Labs = [];
 			this.Problems = [];
-			
+			this.RootObj = [];
 
 			for (i = 0; i < len; i++) {
 				rec = vData[i];
-				if (rec.hasOwnProperty("genderCode")) {
-					rootObj = rec;
-					name = rootObj.fullName;
-					dob = rootObj.dateOfBirth.toString();
-					yr = dob.slice(0, 4);
-					mon = dob.slice(4, 6);
-					day = dob.slice(6, 8);
-					dob = mon + "/" + day + "/" + yr;
-					birthDate = new Date(dob);
-					age = today.getFullYear() - birthDate.getFullYear();
-					m = today.getMonth() - birthDate.getMonth();
-					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-						age--;
-					}
-					// "urn:va:pat-gender:M"
-					vals = rec.genderCode.split(':');
-					gc = vals[vals.length-1];
-					rootObj.dob = dob;
-					rootObj.age = age;
-					rootObj.gender = gc;
-				}
-				flg = this.extractVitals(rec);
+				flg = this.extractRoot(rec);
 				if (!flg) {
-					flg = this.extractAllergies(rec);
+					flg = this.extractVitals(rec);
 					if (!flg) {
-						theLabs = this.extractLabs(rec);
+						flg = this.extractAllergies(rec);
 						if (!flg) {
-							flg = this.extractProblems(rec);
+							theLabs = this.extractLabs(rec);
+							if (!flg) {
+								flg = this.extractProblems(rec);
+							}
 						}
 					}
 				}
 			}
 			var theVitals = this.ConvertAssocArray(this.Vitals);
-
-			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : rootObj };
+			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : this.RootObj };
 			return theVPRData;
 		}
 	},
 
-	copyNonVitals2Vitals : function(SQLRec) {
-		/**
-		var j, vRec, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
-		for (j = 0; j < vLen; j++) {
-			if (SQLRec.DateTaken === vitals[j].DateTaken) {
-				// console.log("Found Vital Match - " + SQLRec.DateTaken + " - Merging records");
-				vRec = vitals[j];
-				if ("N/C" !== SQLRec.PSID) {
-					vRec.PSID = SQLRec.PSID;
-					vRec.PS = SQLRec.PS;
-				}
-				//if (!vRec.MostRecent) {
-					//vRec.MostRecent = true;
-					if (!vRec.BSA) {
-						vRec.BSA = SQLRec.BSA;
-					}
-					if (!vRec.BSA_Method) {
-						vRec.BSA_Method = SQLRec.BSA_Method;
-					}
-					if (!vRec.BSA_Weight) {
-						vRec.BSA_Weight = SQLRec.BSA_Weight;
-					}
-					if (!vRec.WeightFormula) {
-						vRec.WeightFormula = SQLRec.WeightFormula;
-					}
-					if (!vRec.PS) {
-						vRec.PS = SQLRec.PS;
-					}
-					if (!vRec.PSID) {
-						vRec.PSID = SQLRec.PSID;
-					}
-					if (!vRec.TemperatureLocation) {
-						vRec.TemperatureLocation = SQLRec.TemperatureLocation
-					}
-**/
-						/***
-					vRec.BSA = SQLRec.BSA;
-					vRec.BSA_Method = SQLRec.BSA_Method;
-					vRec.BSA_Weight = SQLRec.BSA_Weight;
-					vRec.WeightFormula = SQLRec.WeightFormula;
-					vRec.PS = SQLRec.PS;
-					vRec.PSID = SQLRec.PSID;
-					vRec.TemperatureLocation = SQLRec.TemperatureLocation
-						 ***/
-				//}
-/**
-				return;
-			}
-			else {
-				if ("N/C" !== SQLRec.PSID) {
-					vRec = [];
-					vRec.PSID = SQLRec.PSID;
-					vRec.PS = SQLRec.PS;
-					vRec.DateTaken = SQLRec.DateTaken;
-					vitals.push(vRec);
-				}
-			}
-		}
-**/
-	},
+
+
+
 
 	Convert2AssocArray : function(theData) {
 		var i, k, rec, key, key1, key2, recLen = theData.length, assocRec, assocArray = [];

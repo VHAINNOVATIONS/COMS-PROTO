@@ -240,7 +240,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				 ***********/
 				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
 				if ("1" == SessionPreceptee) {
-					Ext.MessageBox.alert('Success', 'Template applied to Patient - Panding Cosigner Approval');
+					Ext.MessageBox.alert('Success', 'Template applied to Patient - Pending Cosigner Approval');
 				}
 				else {
 					Ext.MessageBox.alert('Success', 'Template applied to Patient ');

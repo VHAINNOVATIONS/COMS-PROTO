@@ -4550,33 +4550,6 @@ Ext.define("COMS.model.PatientInfoMeasurements", {
 });
 ***************/
 
-
-/***
-		Age: ""
-// Amputations: []
-ApprovedByUser: ""
-AssignedByUser: "CPRS1234"
-BSAFormula: "DuBois"
-BSA_Method: "DuBois"
-ClinicalTrial: ""
-ConcurRadTherapy: "0"
-DFN: "100506"
-DOB: ""
-Gender: ""
-Goal: "Curative"
-PAT_ID: "434C1B0F-57EF-E411-9353-000C2935B86F"
-PerformanceStatus: "0"
-TemplateDescription: "COMS Testing"
-TemplateID: "EEFB3BB2-3134-41B9-BFFE-E05554783DDD"
-TemplateName: "2014-1-0001-ABCD-CARBOPLATIN INJ   250CISPLATIN INJ,SOLN   300DIPHENHYDRAMINE CAP,ORAL   75-20140605"
-TreatmentEnd: "08/20/2015"
-TreatmentStart: "04/30/2015"
-TreatmentStatus: "On-Going - Admin Day"
-WeightFormula: "Actual Weight"
-id: "70E179F1-DBEA-4C18-B384-7F67E9B3EDFD"
-name: ""
- ***/
-
 Ext.define("COMS.model.PatientInfo", {
 	extend: "Ext.data.Model",
 	idProperty : "id",
@@ -4592,7 +4565,6 @@ Ext.define("COMS.model.PatientInfo", {
 		"Goal",
 		"PerformanceStatus",
 
-		// "Measurements",		// Array of measurements
 		"DFN",				// Data File Name which links to MDWS
 		"Disease",			// Array of diseases
 
@@ -4600,9 +4572,8 @@ Ext.define("COMS.model.PatientInfo", {
 		"TemplateDescription",
 		"TemplateID",
 		"PAT_ID",				// This is really the "Treatemen ID" but for now just using the existing SQL Field name.
-		// "TreatmentID",		// ID of the record containing this Treatment. This ID acts as a link for all records for this treatment process.
 		"TreatmentStart",
-        "TreatmentEnd",
+		"TreatmentEnd",
 		"TreatmentStatus",
 		"ClinicalTrial",
 
@@ -4619,8 +4590,6 @@ Ext.define("COMS.model.PatientInfo", {
 	hasMany : [
 		{ model : "COMS.model.PatientInfoDiseases", name : "Disease" },
 		{ model : "COMS.model.PatientInfoAmputee", name : "Amputations" }
-
-		// ,{ model : "COMS.model.PatientInfoMeasurements", name : "Measurements" }
 	],
 	proxy: {
 		type: 'rest',
@@ -4635,7 +4604,7 @@ Ext.define("COMS.model.PatientInfo", {
 			successProperty : 'success',
 			messageProperty: 'message'
 		}
-	}        
+	}
 });
 
 Ext.define("COMS.model.PatientInfoMDWSDiseases", {
@@ -5047,7 +5016,7 @@ Ext.define('COMS.store.DischargeInstruction', {
 
 Ext.define('COMS.store.DiseaseStage', {
 	extend : 'Ext.data.Store',
-//        autoDestroy: true,
+        // autoDestroy: true,
         autoLoad: false,
         listeners: {
             'beforeload' : function(store, options){
@@ -5583,7 +5552,6 @@ Ext.define("COMS.store.Templates", {
 	"extend" : "Ext.data.Store",
 	"autoLoad" : false,
 	"model" : Ext.COMSModels.Templates
-//	"autoDestroy" : true
 });
 
 Ext.define('COMS.store.TimeFrameUnit', {
@@ -5628,17 +5596,14 @@ Ext.define('COMS.store.ToxGridStore', {
 	},
 ***/
 	onCreateRecords: function(records, operation, success) {
-		console.log("Load Adverse Events History - 1");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	},
 
 	onUpdateRecords: function(records, operation, success) {
-		console.log("Load Adverse Events History - 2");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	},
 
 	onDestroyRecords: function(records, operation, success) {
-		console.log("Load Adverse Events History - 3");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	}
 });
@@ -7505,7 +7470,7 @@ Ext.define("COMS.view.Common.SelectAdverseReactionAlerts", {
 
 Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	extend : "Ext.container.Container",
-    alias : "widget.VitalSignsHistory",
+	alias : "widget.VitalSignsHistory",
 	name : "NursingDocs.VitalSignsHistory",
 	autoScroll : true,
 
@@ -7537,7 +7502,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<tr>",
 					"<td>{DateTaken}</td>",
 					"<td>{[this.TempCalc(values, parent)]}</td>",
-                    "<td>{TemperatureLocation}</td>",
+					"<td>{TemperatureLocation}</td>",
 					"<td>{Pulse}</td>",
 					"<td>{[this.BPCalc(values, parent)]}</td>",
 					"<td>{Respiration}</td>",
@@ -7548,7 +7513,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 					"<td>{[this.WeightCalc(values, parent)]}</td>",
 					"<td>{WeightFormula}</td>",
 					"<td>{[this.BSA_WeightCalc(values, parent)]}</td>",
-    				"<td>{BSA_Method}</td>",
+					"<td>{BSA_Method}</td>",
 					"<td>{[this.BSACalc(values, parent, xindex)]}</td>",
 				"</tr>",
 			"</tpl>",
@@ -7606,44 +7571,8 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				v = Vitals[0];
 				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
 				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
-				/**
-				if (v.hasOwnProperty("BSA") && "" !== v.BSA && 0 !== v.BSA && NAMsg !== v.BSA) {
-					data.BSA = v.BSA;
-					data.BSA_Method = v.BSA_Method;
-					data.BSA_Weight = v.BSA_Weight;
-					data.WeightFormula = v.WeightFormula;
-					data.Weight = w;
-					data.Height = h;
-					if (thepiTag) {
-						thepiTag.setHTML(v.BSA + " m<sup>2</sup>");
-					}
-				}
-				**/
 
-				
 				if (globalAppPatientScope) {
-					/**
-					// Only set the Patient variables if they're not already set.
-					var gPat = globalAppPatientScope.application.Patient;
-					if ("" === gPat.BSA) {
-						gPat.BSA = v.BSA;
-					}
-					if ("" === gPat.BSA_Method) {
-						gPat.BSA_Method = v.BSA_Method;
-					}
-					if ("" === gPat.BSA_Weight) {
-						gPat.BSA_Weight = v.BSA_Weight;
-					}
-					if ("" === gPat.WeightFormula) {
-						gPat.WeightFormula = v.WeightFormula;
-					}
-					if ("" === gPat.Weight) {
-						gPat.Weight = w;
-					}
-					if ("" === gPat.Height) {
-						gPat.Height = h;
-					}
-					**/
 					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
 					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
 				}
@@ -7740,7 +7669,6 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		}
 	)
 });
-
 
 Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
@@ -10506,7 +10434,6 @@ Ext.define("COMS.view.NewPlan.AskQues2ApplyTemplate", {
 	width: 500,
 	initComponent : function() {
 		this.items = theMainItemsList(this.itemsInGroup);
-
 		this.buttons = theButtons;
 		this.callParent(arguments);
 	}
@@ -10581,14 +10508,13 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
  */
 Ext.define("COMS.view.NewPlan.CTOS", {
 	extend: "Ext.tab.Panel",
-    alias : "widget.CTOS",
+	alias : "widget.CTOS",
 
 	name : "CTOS Tabs",
 
 	margin : '0 0 20 0',
 	plain : true,
 	autoEl : { tag : 'nav' },
-
 
 	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
@@ -13796,6 +13722,7 @@ Ext.define('COMS.view.NewPlan.DiagImage' ,{
 	html: '<h2 class=\'Development\'>To Be Developed</h2>'
 });
 
+
 Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	extend: 'Ext.window.Window',
 	alias : 'widget.EndTreatmentSummary',
@@ -14180,6 +14107,7 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 		{ "xtype" : "ProgrammerBtns" },
 		{ "xtype" : "PatientInfo" }
 	],
+
 	initComponent: function() {
 		wccConsoleLog("New Plan Tab View - Initialization");
 		this.callParent(arguments);
@@ -15030,8 +14958,8 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 								return "<span id=\"PatientInfoTableBSA_Display\">" + BSA +  " m<sup>2</sup></span>" + btnBuf;
 							}
 						}
-						data.BSA = NAMsg;
-						return "<span id=\"PatientInfoTableBSA_Display\">" + NAMsg + "</span>";
+						data.BSA = "N/A";
+						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title=\"Not Available\">N/A</abbr></span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {
@@ -15346,7 +15274,7 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 						"</tpl>",
 
 						"<tpl if=\"'' === ApprovedByUser && '' !== AssignedByUser && '1' !== SessionPreceptee\">",
-							"<td colspan='2'><button class=\"anchor\" name=\"ApproveRequest2ApplyTemplate\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Approve Request to Apply Template</button></td>",
+							"<td colspan='2'><button class=\"anchor\" name=\"ApproveRequest2ApplyTemplate\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Approve Regimen</button></td>",
 						"</tpl>",
 						"<tpl if=\"'' !== ApprovedByUser && '' !== AssignedByUser\">",
 							"<td><button class=\"anchor\" name=\"ShowTemplateDetails\" EotsID=\"{EotsID}\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Show Details</button></td>",
@@ -23055,7 +22983,6 @@ vcode: null		// ignore
 ***************/
 });
 
-
 Ext.define('COMS.controller.Management.CumulativeDosing', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.CumulativeDosing' ],
@@ -24739,11 +24666,11 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		],
 	refs: [ 
 		{ ref: "TypeOfTrial",					selector: "AskQues2ApplyTemplate textfield[name=\"TypeOfTrial\"]"},
-		{ ref: "Goal",							selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
-		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},	// checkboxgroup[name=\"amputations\"]"},
+		{ ref: "Goal",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"goalRadio\"]"},
+		{ ref: "AmputeeType",					selector: "AskQues2ApplyTemplate form AmputationSelection"},
 		{ ref: "AmputeeYes",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"Yes\"]"},
-		{ ref: "AmputeeNo",						selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
-		{ ref: "CTOS_Tab",						selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
+		{ ref: "AmputeeNo",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
+		{ ref: "CTOS_Tab",					selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
 	],
 	init: function() {
 		// this.application.btnEditTemplatClicked=false;
@@ -24931,9 +24858,8 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 			WeightFormula: values.BSA_FormulaWeight,
 			BSAFormula: values.BSA_Formula,
 			BSA_Method: values.BSA_Formula,
-			Amputations: amputations,
-			ConcurRadTherapy: values.ConcurRadTherapy
-		}
+			Amputations: amputations
+		};
 
 		if (thePatient.TemplateID) {
 			theRecord.TemplateID = thePatient.TemplateID;
@@ -24975,7 +24901,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 				 ***********/
 				thisCtl.PatientModelLoadSQLPostTemplateApplied(data.data.PatientID, data.data.id);
 				if ("1" == SessionPreceptee) {
-					Ext.MessageBox.alert('Success', 'Template applied to Patient - Panding Cosigner Approval');
+					Ext.MessageBox.alert('Success', 'Template applied to Patient - Pending Cosigner Approval');
 				}
 				else {
 					Ext.MessageBox.alert('Success', 'Template applied to Patient ');
@@ -25904,7 +25830,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		this.Saving = false;
 
 		this.releaseLock(this.getAddRecordPanel(theForm));
-		console.log("Load Adverse Events History - 4");
 		this.application.fireEvent("loadAdverseEventsHistory");
 	},
 
@@ -31459,7 +31384,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
             Btns.on("click", this.handlePatientSelectionClickEvent, this);
         }
 		if ("Programmer" === dName ) {
-			this.getProgrammerBtns().show();
+			// this.getProgrammerBtns().show();
 		}
         Ext.togglePanelOnTitleBarClick(panel);
     },
@@ -32033,18 +31958,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
         }
     },
 	afterFindTemplate : function(templateRecord,controller,template){
-        var templateRecords = [];
+		var templateRecords = [];
+		this.collapseCombo(template,null);
+		this.collapseCombo(this.getDiseaseStage(),null);
+		templateRecords.push(templateRecord);
+		controller.getTemplate().setRawValue(templateRecord.data.description);
+		controller.selTemplateChange(controller.getTemplate(),templateRecords,null);
 
-        this.collapseCombo(template,null);
-        this.collapseCombo(this.getDiseaseStage(),null);
-
-        templateRecords.push(templateRecord);
-
-        controller.getTemplate().setRawValue(templateRecord.data.description);
-
-        controller.selTemplateChange(controller.getTemplate(),templateRecords,null);
-
-		//        this.getNavigationTabs().setActiveTab(1);
+		// this.getNavigationTabs().setActiveTab(1);
 		// MWB - 5/29/2012 - With the addition of the "Orders" tab and the fact that the Orders tab might NOT be visible to all users
 		// we need to get the index of the "Template Authoring" tab by walking the titles of the tabs.
 		var allTabs = this.getNavigationTabs().items;
@@ -32054,9 +31975,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		},
 		this );
-    },
-
-
+	},
 
 	initAskQues2ApplyTemplateFields : function (theFields, fieldName, fieldLabel) {
 		var i, j, aField, afName, theLabel, fieldIsSet;
@@ -32086,23 +32005,23 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		return "";
 	},
 
-    ShowAskQues2ApplyTemplate : function(records, operation, success) {
-        var i, itemsInGroup = [];	// new Array();
+
+	ShowAskQues2ApplyTemplate : function(records, operation, success) {
+		var i, itemsInGroup = [];	// new Array();
 		var TemplateApplied = this.application.Patient.TemplateID;
 		var TemplateApproved = false;
 
-        for (i = 0; i < records.length; i++ ){
-            var record = records[i];
-            if(record.data.value !== '5' ){
-                itemsInGroup.push({
-                    boxLabel : record.data.value + ' - ' + record.data.description,
-                    name : 'PerfStatus',
-                    inputValue : record.data.id,
-                    width : 450
-                });
-            }
-        }
-
+		for (i = 0; i < records.length; i++ ){
+			var record = records[i];
+			if(record.data.value !== '5' ){
+				itemsInGroup.push({
+					boxLabel : record.data.value + ' - ' + record.data.description,
+					name : 'PerfStatus',
+					inputValue : record.data.id,
+					width : 450
+				});
+			}
+		}
 
 		if(TemplateApplied && TemplateApproved){
 			Ext.MessageBox.show({
@@ -32110,7 +32029,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				msg: 'Template already applied. Would you like to archive existing template and apply current selection?',
 				width:300,
 				buttons: Ext.MessageBox.OKCANCEL,
-                scope: this,
+				scope: this,
 				fn: function(buttonId) {
 					if("ok" === buttonId) {
 						try {
@@ -32129,93 +32048,98 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			});
 		}
 		else {
-			var haveWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
-			if (haveWidget.length > 0) {
-				haveWidget[0].show();
+			var theWidget = Ext.ComponentQuery.query("AskQues2ApplyTemplate");
+			if (theWidget.length > 0) {
+				theWidget[0].show();
 			}
 			else {
-				var theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false, scope:this});
+				theWidget = Ext.widget("AskQues2ApplyTemplate",{itemsInGroup: itemsInGroup, ChangeTemplate: false, scope:this});
 			}
+
+			var theForm = theWidget.items.items[0].getForm();
+			/*
+			"id",
+			"name",
+			"DOB",
+			"Gender",
+			"Age",
+			"ApprovedByUser",
+			"AssignedByUser",
+			"ConcurRadTherapy",
+			"Goal",
+			"PerformanceStatus",
+
+			// "Measurements",		// Array of measurements
+			"DFN",				// Data File Name which links to MDWS
+			"Disease",			// Array of diseases
+
+			"TemplateName",		// Info on the currently active template
+			"TemplateDescription",
+			"TemplateID",
+			"PAT_ID",				// This is really the "Treatemen ID" but for now just using the existing SQL Field name.
+			// "TreatmentID",		// ID of the record containing this Treatment. This ID acts as a link for all records for this treatment process.
+			"TreatmentStart",
+			"TreatmentEnd",
+			"TreatmentStatus",
+			"ClinicalTrial",
+
+			"WeightFormula",
+			"BSA_Method",
+			"BSA_Weight",
+			"BSA",
+			"BSAFormula",
+
+			"Amputations",
+			 */
+
+			var PatientDetails = this.application.Patient;
+			// theForm.getFields().items[35].boxLabel[0]
+			var theFields = theForm.getFields().items;
+			/***
+			var i, aField, theLabel, thePerfStat;
+			for (i = theFields.length-1; i >= 0; i--) {
+				aField = theFields[i];
+				if (aField.name === "PerfStatus") {
+					theLabel = aField.boxLabel[0];
+					if (theLabel == PatientDetails.PerformanceStatus) {
+						thePerfStat = aField.inputValue;
+						break;
+					}
+				}
+			}
+			***/
+			var theValues2Set = {
+				"startdate"              : PatientDetails.TreatmentStart, 
+				"BSA_FormulaWeight"      : PatientDetails.BSA_Method,
+				"BSA_Formula"            : PatientDetails.BSAFormula,
+				"Goal"                   : PatientDetails.Goal,
+				"ConcurRadTherapy"       : PatientDetails.ConcurRadTherapy,
+				"ClinicalTrial"          : PatientDetails.ClinicalTrial !== "",
+				"TypeOfTrial"            : PatientDetails.ClinicalTrial,
+				"amputations"            : PatientDetails.Amputations,
+				"Upper Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Upper Left Arm", PatientDetails.Amputations),
+				"Lower Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Arm", PatientDetails.Amputations),
+				"Left Hand and Fingers"  : this.initAskQues2ApplyTemplateFields(theFields, "Left Hand and Fingers", PatientDetails.Amputations),
+				"Left Thigh"             : this.initAskQues2ApplyTemplateFields(theFields, "Left Thigh", PatientDetails.Amputations),
+				"Lower Left Leg"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Leg", PatientDetails.Amputations),
+				"Left Foot"              : this.initAskQues2ApplyTemplateFields(theFields, "Left Foot", PatientDetails.Amputations),
+				"Upper Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Upper Right Arm", PatientDetails.Amputations),
+				"Lower Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Arm", PatientDetails.Amputations),
+				"Right Hand and Fingers" : this.initAskQues2ApplyTemplateFields(theFields, "Right Hand and Fingers", PatientDetails.Amputations),
+				"Right Thigh"            : this.initAskQues2ApplyTemplateFields(theFields, "Right Thigh", PatientDetails.Amputations),
+				"Lower Right Leg"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Leg", PatientDetails.Amputations),
+				"Right Foot"             : this.initAskQues2ApplyTemplateFields(theFields, "Right Foot", PatientDetails.Amputations),
+				"PerfStatus"             : this.initAskQues2ApplyTemplateFields(theFields, "PerfStatus", PatientDetails.PerformanceStatus),
+				"WeightFormula"          : PatientDetails.WeightFormula
+			};
+
+			theForm.setValues(theValues2Set);
+
 		}
-		var theForm = theWidget.items.items[0].getForm();
-		/*
-		"id",
-		"name",
-		"DOB",
-		"Gender",
-		"Age",
-		"ApprovedByUser",
-		"AssignedByUser",
-		"ConcurRadTherapy",
-		"Goal",
-		"PerformanceStatus",
-
-		// "Measurements",		// Array of measurements
-		"DFN",				// Data File Name which links to MDWS
-		"Disease",			// Array of diseases
-
-		"TemplateName",		// Info on the currently active template
-		"TemplateDescription",
-		"TemplateID",
-		"PAT_ID",				// This is really the "Treatemen ID" but for now just using the existing SQL Field name.
-		// "TreatmentID",		// ID of the record containing this Treatment. This ID acts as a link for all records for this treatment process.
-		"TreatmentStart",
-        "TreatmentEnd",
-		"TreatmentStatus",
-		"ClinicalTrial",
-
-		"WeightFormula",
-		"BSA_Method",
-		"BSA_Weight",
-		"BSA",
-		"BSAFormula",
-
-		"Amputations",
-		 */
-
-		var PatientDetails = this.application.Patient;
-theForm.getFields().items[35].boxLabel[0]
-var theFields = theForm.getFields().items;
-/***
-var i, aField, theLabel, thePerfStat;
-for (i = theFields.length-1; i >= 0; i--) {
-	aField = theFields[i];
-	if (aField.name === "PerfStatus") {
-		theLabel = aField.boxLabel[0];
-		if (theLabel == PatientDetails.PerformanceStatus) {
-			thePerfStat = aField.inputValue;
-			break;
-		}
-	}
-}
-***/
-	var theValues2Set = {
-			"startdate"              : PatientDetails.TreatmentStart, 
-			"BSA_FormulaWeight"      : PatientDetails.BSA_Method,
-			"BSA_Formula"            : PatientDetails.BSAFormula,
-			"Goal"                   : PatientDetails.Goal,
-			"ConcurRadTherapy"       : PatientDetails.ConcurRadTherapy,
-			"ClinicalTrial"          : PatientDetails.ClinicalTrial !== "",
-			"TypeOfTrial"            : PatientDetails.ClinicalTrial,
-			"amputations"            : PatientDetails.Amputations,
-			"Upper Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Upper Left Arm", PatientDetails.Amputations),
-			"Lower Left Arm"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Arm", PatientDetails.Amputations),
-			"Left Hand and Fingers"  : this.initAskQues2ApplyTemplateFields(theFields, "Left Hand and Fingers", PatientDetails.Amputations),
-			"Left Thigh"             : this.initAskQues2ApplyTemplateFields(theFields, "Left Thigh", PatientDetails.Amputations),
-			"Lower Left Leg"         : this.initAskQues2ApplyTemplateFields(theFields, "Lower Left Leg", PatientDetails.Amputations),
-			"Left Foot"              : this.initAskQues2ApplyTemplateFields(theFields, "Left Foot", PatientDetails.Amputations),
-			"Upper Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Upper Right Arm", PatientDetails.Amputations),
-			"Lower Right Arm"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Arm", PatientDetails.Amputations),
-			"Right Hand and Fingers" : this.initAskQues2ApplyTemplateFields(theFields, "Right Hand and Fingers", PatientDetails.Amputations),
-			"Right Thigh"            : this.initAskQues2ApplyTemplateFields(theFields, "Right Thigh", PatientDetails.Amputations),
-			"Lower Right Leg"        : this.initAskQues2ApplyTemplateFields(theFields, "Lower Right Leg", PatientDetails.Amputations),
-			"Right Foot"             : this.initAskQues2ApplyTemplateFields(theFields, "Right Foot", PatientDetails.Amputations),
-			"PerfStatus"             : this.initAskQues2ApplyTemplateFields(theFields, "PerfStatus", PatientDetails.PerformanceStatus),
-			"WeightFormula"          : PatientDetails.WeightFormula
-		};
-
-		theForm.setValues(theValues2Set);
 	},
+
+
+
 
     applyTemplateToPatient : function(button){
         var startDate = new Date(this.application.Patient.TreatmentStart);
@@ -32732,17 +32656,12 @@ console.log("Loading Allergy Info - Finished");
 
 
 
-
-
-
-
-
-
 	convertVPR : {
 		Allergies : [],
 		Vitals : [],
 		Labs : [],
 		Problems : [],
+		RootObj : [],
 		vHeight : "",
 		vWeight : "",
 		vIdx : "",
@@ -32752,17 +32671,11 @@ console.log("Loading Allergy Info - Finished");
 		theVPRData : {},
 
 		extractDate : function(aDate) {
-			aDate = String(aDate);
-			var d1 = "", d2 = "";
-			if (aDate.length >= 14 ) {
-				d1 = aDate.substring(8,10) + ":" + aDate.substring(10,12) + ":" + aDate.substring(12, 14);
-			}
-			d2 = aDate.substring(4,6) + "/" + aDate.substring(6,8) + "/" + aDate.substring(0,4);
-			if (d1 !== "") {
-				d2 += " " + d1;
-			}
-			return (d2);
+			return (aDate.substring(5,7) + "/" + aDate.substring(8,10) + "/" + aDate.substring(0,4));
 		},
+
+
+
 		getObserved : function(aDate) {
 			var d1 = aDate.split(" ");
 			var d2 = d1[0].split("/");
@@ -32864,78 +32777,90 @@ console.log("Loading Allergy Info - Finished");
 			}
 		},
 
+
 		extractVitals : function(rec) {
-			var typeUID, nIdx, typeName, data, DateTaken;
-			if (rec.uid) {
-				typeUID = rec.uid.split(":")[2];		// uid = "urn:va:vital:9E5A:100500:7990"
-				if ("vital" === typeUID.toLowerCase()) {
-					nIdx = rec.observed.toString();
-					if (this.vIdx !== nIdx) {
-						this.vIdx = nIdx;
-						DateTaken = this.extractDate(nIdx);
-						this.Vitals[this.vIdx] = {Observed : nIdx, DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
-					}
-					switch (rec.typeName) {
-					case "BLOOD PRESSURE":
-						data = "BP";
-						break;
-					case "PULSE":
-						data = "Pulse";
-						break;
-					case "PAIN":
-						data = "Pain";
-						break;
-					case "RESPIRATION":
-						data = "Respiration";
-						break;
-					case "TEMPERATURE":
+			var nIdx, vIdx, DateTaken;
+			if (rec.hasOwnProperty("type")) {
+				nIdx = rec.date.split("T")[0];
+				if (this.vIdx !== nIdx) {
+					this.vIdx = nIdx;
+					DateTaken = this.extractDate(nIdx);
+					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
+				}
+				switch( rec.type ) {
+					case "T":
 						data = "Temperature";
 						units = "Temperature_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
-						if ("c" == rec.units) {
-							// convert to F
-						}
-						loc = "TemperatureLocation";
-						if (rec.qualifiers) {
-							this.Vitals[this.vIdx][loc] = rec.qualifiers[0].name;
-						}
 						break;
-					case "WEIGHT":
-						data = "Weight";
-						units = "Weight_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
-						if ("kg" == rec.units) {
-							// convert to lbs
-						}
-						if (this.application && this.application.Patient) {
-							if ("" === this.application.Patient.Weight) {
-								this.application.Patient.Weight = rec.result;
-							}
-						}
-						break;
-					case "HEIGHT":
+					case "HT":
 						data = "Height";
 						units = "Height_Units";
 						this.Vitals[this.vIdx][units] = rec.units;
-						if ("cm" == rec.units) {
-							// convert to inches
-						}
-						if ("m" == rec.units) {
-							// convert to inches
-						}
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Height) {
-								this.application.Patient.Height = rec.result;
+								this.application.Patient.Height = rec.value;
 							}
 						}
 						break;
-					default:
-						data = rec.typeName;
+					case "WT":
+						data = "Weight";
+						units = "Weight_Units";
+						this.Vitals[this.vIdx][units] = rec.units;
+						if (this.application && this.application.Patient) {
+							if ("" === this.application.Patient.Weight) {
+								this.application.Patient.Weight = rec.value;
+							}
+						}
 						break;
-					}
-					this.Vitals[this.vIdx][data] = rec.result;
-					return true;
+
+					case "BP":
+						data = "BP";
+						break;
+					case "P":
+						data = "Pulse";
+						break;
+					case "PN":
+						data = "Pain";
+						break;
+					case "R":
+						data = "Respiration";
+						break;
+					default:
+						data = rec.type;
+						break;
 				}
+				this.Vitals[this.vIdx][data] = rec.value;
+				return true;
+			}
+			return false;
+		},
+
+		extractRoot : function(rec) {
+			if (rec.hasOwnProperty("genderCode")) {
+				var rootObj = rec;
+				var name = rootObj.fullName;
+				var dob = rootObj.dateOfBirth.toString();
+				var yr = dob.slice(0, 4);
+				var mon = dob.slice(5, 7);
+				var day = dob.slice(8, 10);
+				dob = mon + "/" + day + "/" + yr;
+				var birthDate = new Date(dob);
+				if (!rootObj.hasOwnProperty("gender")) {
+					// "urn:va:pat-gender:M"
+					var vals = rec.genderCode.split(':');
+					var gc = vals[vals.length-1];
+					rootObj.gender = gc;
+				}
+				if (!rootObj.hasOwnProperty("age")) {
+					age = today.getFullYear() - birthDate.getFullYear();
+					m = today.getMonth() - birthDate.getMonth();
+					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+						age--;
+					}
+				}
+				rootObj.dob = dob;
+				this.RootObj = rootObj;
+				return true;
 			}
 			return false;
 		},
@@ -32949,109 +32874,33 @@ console.log("Loading Allergy Info - Finished");
 			this.Vitals = [];
 			this.Labs = [];
 			this.Problems = [];
-			
+			this.RootObj = [];
 
 			for (i = 0; i < len; i++) {
 				rec = vData[i];
-				if (rec.hasOwnProperty("genderCode")) {
-					rootObj = rec;
-					name = rootObj.fullName;
-					dob = rootObj.dateOfBirth.toString();
-					yr = dob.slice(0, 4);
-					mon = dob.slice(4, 6);
-					day = dob.slice(6, 8);
-					dob = mon + "/" + day + "/" + yr;
-					birthDate = new Date(dob);
-					age = today.getFullYear() - birthDate.getFullYear();
-					m = today.getMonth() - birthDate.getMonth();
-					if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-						age--;
-					}
-					// "urn:va:pat-gender:M"
-					vals = rec.genderCode.split(':');
-					gc = vals[vals.length-1];
-					rootObj.dob = dob;
-					rootObj.age = age;
-					rootObj.gender = gc;
-				}
-				flg = this.extractVitals(rec);
+				flg = this.extractRoot(rec);
 				if (!flg) {
-					flg = this.extractAllergies(rec);
+					flg = this.extractVitals(rec);
 					if (!flg) {
-						theLabs = this.extractLabs(rec);
+						flg = this.extractAllergies(rec);
 						if (!flg) {
-							flg = this.extractProblems(rec);
+							theLabs = this.extractLabs(rec);
+							if (!flg) {
+								flg = this.extractProblems(rec);
+							}
 						}
 					}
 				}
 			}
 			var theVitals = this.ConvertAssocArray(this.Vitals);
-
-			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : rootObj };
+			theVPRData = { "Allergies" : this.Allergies, "Vitals" : theVitals, "Labs" : this.Labs, "Problems" : this.Problems, "rootObj" : this.RootObj };
 			return theVPRData;
 		}
 	},
 
-	copyNonVitals2Vitals : function(SQLRec) {
-		/**
-		var j, vRec, vitals = this.application.Patient.Vitals, vLen = this.application.Patient.Vitals.length;
-		for (j = 0; j < vLen; j++) {
-			if (SQLRec.DateTaken === vitals[j].DateTaken) {
-				// console.log("Found Vital Match - " + SQLRec.DateTaken + " - Merging records");
-				vRec = vitals[j];
-				if ("N/C" !== SQLRec.PSID) {
-					vRec.PSID = SQLRec.PSID;
-					vRec.PS = SQLRec.PS;
-				}
-				//if (!vRec.MostRecent) {
-					//vRec.MostRecent = true;
-					if (!vRec.BSA) {
-						vRec.BSA = SQLRec.BSA;
-					}
-					if (!vRec.BSA_Method) {
-						vRec.BSA_Method = SQLRec.BSA_Method;
-					}
-					if (!vRec.BSA_Weight) {
-						vRec.BSA_Weight = SQLRec.BSA_Weight;
-					}
-					if (!vRec.WeightFormula) {
-						vRec.WeightFormula = SQLRec.WeightFormula;
-					}
-					if (!vRec.PS) {
-						vRec.PS = SQLRec.PS;
-					}
-					if (!vRec.PSID) {
-						vRec.PSID = SQLRec.PSID;
-					}
-					if (!vRec.TemperatureLocation) {
-						vRec.TemperatureLocation = SQLRec.TemperatureLocation
-					}
-**/
-						/***
-					vRec.BSA = SQLRec.BSA;
-					vRec.BSA_Method = SQLRec.BSA_Method;
-					vRec.BSA_Weight = SQLRec.BSA_Weight;
-					vRec.WeightFormula = SQLRec.WeightFormula;
-					vRec.PS = SQLRec.PS;
-					vRec.PSID = SQLRec.PSID;
-					vRec.TemperatureLocation = SQLRec.TemperatureLocation
-						 ***/
-				//}
-/**
-				return;
-			}
-			else {
-				if ("N/C" !== SQLRec.PSID) {
-					vRec = [];
-					vRec.PSID = SQLRec.PSID;
-					vRec.PS = SQLRec.PS;
-					vRec.DateTaken = SQLRec.DateTaken;
-					vitals.push(vRec);
-				}
-			}
-		}
-**/
-	},
+
+
+
 
 	Convert2AssocArray : function(theData) {
 		var i, k, rec, key, key1, key2, recLen = theData.length, assocRec, assocArray = [];
@@ -33944,6 +33793,7 @@ console.log("Loading Allergy Info - Finished");
 			var len, tmp;
 			var piTable;
 			var PatientHistoryVitalStats;
+
 			if (Ext.Date.isEqual(new Date(Patient.TreatmentStart), new Date(new Date().toDateString()))) {
 				var PostStatus = " - Rest Day";
 				if (Patient.TreatmentStatus.search("Admin Day") >= 0) {
@@ -34398,7 +34248,6 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 			}
 		});
 	},
-
 
 
 	LoadSpecifiedTemplate : function(TemplateID, module) {

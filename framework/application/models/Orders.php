@@ -359,15 +359,24 @@ error_log("Orders Model - LookupPatientName - Query = $query");
                 $LK_Match      = $row[ 'LK_Match' ];
                 $LK_DFN        = $row[ 'DFN' ];
             }
-            $nodevista  = new NodeVista();
-            $URL    = "patient/details/$LK_DFN";
-            $PatientInfo      = $nodevista->get( $URL );
-            $obj        = json_decode( $PatientInfo );
-error_log("Orders Model - LookupPatientName - Patient Info = $PatientInfo");
-            $data     = $obj->{"data"}->{"items"}[0];
-error_log("Orders Model - LookupPatientName - Data - " . json_encode($data));
-            $WName = $data->{"fullName"};
-error_log("Orders Model - LookupPatientName - FullName  - $WName");
+            $nodevista        = new NodeVista();
+            // $URL    = "patient/details/$LK_DFN";
+            // $URL              = "patient/lastfive/$LK_DFN";
+            // $PatientInfo      = $nodevista->get( $URL );
+            // $obj              = json_decode( $PatientInfo );
+// error_log("Orders Model - LookupPatientName - Patient Info = $PatientInfo");
+            // $data     = $obj->{"data"}->{"items"}[0];
+// error_log("Orders Model - LookupPatientName - Data - " . json_encode($data));
+            // $WName = $data->{"fullName"};
+// error_log("Orders Model - LookupPatientName - FullName  - $WName");
+
+
+        $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$LK_DFN" ), true );
+        $nvpatient = $nvpatient[ 0 ];
+        $pName     = explode( ",", $nvpatient[ "name" ] );
+        $WName    = $pName[ 0 ] . "," . $pName[ 1 ];
+        // $this->_Name = $name;
+        // $this->_pName = $pName;
 
 
             

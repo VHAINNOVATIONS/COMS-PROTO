@@ -61,7 +61,7 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 						"</tpl>",
 
 						"<tpl if=\"'' === ApprovedByUser && '' !== AssignedByUser && '1' !== SessionPreceptee\">",
-							"<td colspan='2'><button class=\"anchor\" name=\"ApproveRequest2ApplyTemplate\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Approve Request to Apply Template</button></td>",
+							"<td colspan='2'><button class=\"anchor\" name=\"ApproveRequest2ApplyTemplate\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Approve Regimen</button></td>",
 						"</tpl>",
 						"<tpl if=\"'' !== ApprovedByUser && '' !== AssignedByUser\">",
 							"<td><button class=\"anchor\" name=\"ShowTemplateDetails\" EotsID=\"{EotsID}\" templateName=\"{TemplateName}\" templateID=\"{TemplateID}\">Show Details</button></td>",
