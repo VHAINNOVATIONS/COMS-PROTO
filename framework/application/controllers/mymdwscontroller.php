@@ -330,7 +330,8 @@ error_log("VPR1 = " . json_decode($VPR1));
         $this->_dfn  = $mdwspatient->localPid;
 // error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
 
-        $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
+        // $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
+        $mdwspatient = $nvpatientInfo;
 
         if ( null === $mdwspatient ) {
             $jsonRecord[ 'success' ] = false;

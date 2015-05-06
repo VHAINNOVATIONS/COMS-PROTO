@@ -91,14 +91,14 @@
         
         function FinalizeMedicationDosing( $form_data )
         {
-            error_log( "OrdersModel.grabOrders - Order Cleared" );
-            error_log( json_encode( $form_data ) );
+            // error_log( "OrdersModel.grabOrders - Order Cleared" );
+            // error_log( json_encode( $form_data ) );
             
             $DoseF = $form_data->{'dose'};
             $UnitF = strtolower( $form_data->{'unit'} );
             $PIDF  = $form_data->{'patientID'};
             
-            error_log( "OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF" );
+            // error_log( "OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF" );
             if ( "auc" == $UnitF || "mg/kg" == $UnitF || "mg/m2" == $UnitF || "units / m2" == $UnitF || "units / kg" == $UnitF ) {
                 // Calculate Dose based on BSA
                 $controller        = 'PatientController';
@@ -107,13 +107,13 @@
                 $w                 = $BSA[ 0 ][ "WeightFormula" ];
                 $b                 = $BSA[ 0 ][ "BSAFormula" ];
                 
-                error_log( "BSA Formula - $w; $b" );
+                // error_log( "BSA Formula - $w; $b" );
                 
                 $mrHW = $this->getMostRecentVitals( $PIDF );
-                error_log( "Most Recent = " . $mrHW[ "Height" ] . " " . $mrHW[ "Weight" ] . " " . $mrHW[ "Age" ] . " " . $mrHW[ "Gender" ] );
+                // error_log( "Most Recent = " . $mrHW[ "Height" ] . " " . $mrHW[ "Weight" ] . " " . $mrHW[ "Age" ] . " " . $mrHW[ "Gender" ] );
                 
                 $ampu = $this->getAmputationPct( $PIDF );
-                error_log( "TOTAL Pct BSA Reduction due to amputation = $ampu" );
+                // error_log( "TOTAL Pct BSA Reduction due to amputation = $ampu" );
                 
                 $controller = 'BSACalcController';
                 $BSACalcs   = new $controller( 'BSACalc', 'bsacalc', null );
@@ -128,7 +128,7 @@
                 } else if ( "Lean Weight" == $w ) {
                     $BSAWeight = $BSACalcs->LeanWeight( $mrHW[ "Weight" ], $mrHW[ "Height" ], $mrHW[ "Gender" ] ); // Height in Inches, weight in pounds
                 }
-                error_log( "Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW[ "Weight" ] . "/$WeightInKG; Weight Method = $w; BSAWeight = $BSAWeight" );
+                // error_log( "Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW[ "Weight" ] . "/$WeightInKG; Weight Method = $w; BSAWeight = $BSAWeight" );
                 
                 $BSA = 0;
                 if ( "Mosteller" == $b ) {
@@ -149,12 +149,12 @@
                     $Patient[ "Weight" ]          = $mrHW[ "Weight" ];
                     $Patient[ "SerumCreatinine" ] = 1;
                     $CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
-                    error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     $form_data->{'unit'} = "mg";
                 } else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
                     $CalculatedDose = $DoseF * $WeightInKG;
-                    error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/kg" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
@@ -163,7 +163,7 @@
                     }
                 } else {
                     $CalculatedDose = $DoseF * $BSA;
-                    error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/m2" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
@@ -185,7 +185,7 @@
         // Otherwise the "PatientID" is sufficient.
         function grabOrders( $patientID, $AdminDate, $Dispensed = null )
         {
-            error_log( "OrdersController.grabOrders.ENTRY POINT - patientID = $patientID, AdminDate = $AdminDate, Dispensed = $Dispensed" );
+            // error_log( "OrdersController.grabOrders.ENTRY POINT - patientID = $patientID, AdminDate = $AdminDate, Dispensed = $Dispensed" );
             /* for a POST to update an order the form has the patientID and the orderid */
             
             $form_data  = json_decode( file_get_contents( 'php://input' ) );
@@ -193,8 +193,8 @@
             
             if ( $form_data != NULL ) {
                 $this->Orders->beginTransaction();
-                error_log( "OrdersController.grabOrders.HasFormData - " );
-                error_log( json_encode( $form_data ) );
+                // error_log( "OrdersController.grabOrders.HasFormData - " );
+                // error_log( json_encode( $form_data ) );
                 
                 $OrderStatusF = $form_data->{'orderstatus'};
                 $PIDF         = $form_data->{'patientID'};
@@ -214,8 +214,8 @@
             $controller        = 'LookupController';
             $lookupController  = new $controller( 'Lookup', 'lookup', null );
             $DrugInfo          = $lookupController->getDrugInfoFromVistA( $drugName );
-error_log("grabOrders function has DrugInfo from Lookup");
-error_log(json_encode($DrugInfo));
+// error_log("grabOrders function has DrugInfo from Lookup");
+// error_log(json_encode($DrugInfo));
 
 
 
@@ -233,21 +233,21 @@ $RouteInfoID = $RouteInfo[1];
 $VistA_Route = array();
 $VistA_Route["ien"] = $RouteInfoID;
 foreach ($theRoutes as $route) {
-error_log("Walking Routes - $RouteInfoID - " . json_encode($route));
+// error_log("Walking Routes - $RouteInfoID - " . json_encode($route));
     $theRouteID = $route->{"ien"};
     if ($theRouteID === $RouteInfoID) {
         $VistA_Route["code"] = $route->{"code"};
     }
     else {
-error_log("Walking Routes - $RouteInfoID - Not Found");
+// error_log("Walking Routes - $RouteInfoID - Not Found");
     }
 }
-error_log("Walking Routes - FINISHED");
+// error_log("Walking Routes - FINISHED");
 
 
 
-error_log("Finalizing an Order - ");
-error_log(json_encode($form_data));
+// error_log("Finalizing an Order - ");
+// error_log(json_encode($form_data));
 /****
 {
     "patientID": "8D196340-1092-421A-A5A1-30168FC86FA1",
@@ -271,7 +271,7 @@ error_log(json_encode($form_data));
     "id": null
 }
  ****/
-error_log(json_encode($_SESSION));
+// error_log(json_encode($_SESSION));
 /****
 {
     "chkTrack": 1,
@@ -329,9 +329,9 @@ $VistA_Order["dosage"] = $form_data->{'dose'} . " " . $form_data->{'unit'};
 $VistA_Order["route"] = $VistA_Route;
 $VistA_Order["administration_days"] = $AdminDays;
 
-error_log("===========================================================");
-error_log("Have Order Data = ");
-error_log(json_encode($VistA_Order));
+// error_log("===========================================================");
+// error_log("Have Order Data = ");
+// error_log(json_encode($VistA_Order));
 
 //            $drugURL  = "medication/name/$drugName";
 //            $MedID    = $nodevista->get( $drugURL );
@@ -340,11 +340,11 @@ error_log(json_encode($VistA_Order));
             $orderURL    = "order/new";
             $OrderReturn = $nodevista->post( $orderURL, json_encode($VistA_Order) );
 
-error_log("Order Sent - ");
-error_log(json_encode($OrderReturn));
+// error_log("Order Sent - ");
+// error_log(json_encode($OrderReturn));
 
 
-error_log("===========================================================");
+// error_log("===========================================================");
 
 /*********
 
@@ -368,14 +368,14 @@ POST Data:
  ****************/
                 }
 
-                error_log( "OrdersController.grabOrders.HasFormData - POST FINALIZEATION!" );
-                error_log( json_encode( $form_data ) );
+                // error_log( "OrdersController.grabOrders.HasFormData - POST FINALIZEATION!" );
+                // error_log( json_encode( $form_data ) );
                 
                 $returnVal = null;
                 $returnVal = $this->Orders->updateOrderStatus( $form_data );
                 
                 if ( $this->checkForErrors( 'Update Order Status Values Failed. ', $returnVal ) ) {
-                    error_log( "orders 1 - " . json_encode( $returnVal ) );
+                    // error_log( "orders 1 - " . json_encode( $returnVal ) );
                     $this->Orders->rollbackTransaction();
                     $jsonRecord[ 'success' ] = 'false';
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
@@ -391,7 +391,7 @@ POST Data:
                 
             } else {
                 if ( $patientID && $AdminDate ) {
-                    error_log( "OrdersController.grabOrders - Have PatientID and Date - " );
+                    // error_log( "OrdersController.grabOrders - Have PatientID and Date - " );
                     
                     $query = "SELECT
        os.Order_Status as orderstatus
@@ -468,7 +468,7 @@ End as orderstatus
       where os.PAT_ID = '$patientID' and os.Admin_Date='$AdminDate'";
                         
                     }
-                    error_log( "Orders - $query" );
+                    // error_log( "Orders - $query" );
                     $TreatmentData = $this->Orders->query( $query );
                     if ( $this->checkForErrors( 'Get Patient Templates Failed. ', $TreatmentData ) ) {
                         $jsonRecord[ 'success' ] = 'false';
@@ -546,7 +546,7 @@ End as orderstatus
                     $this->set( 'jsonRecord', $retData );
                     return;
                 }
-                error_log( "OrdersController.grabOrders - Do NOT Have PatientID and Date - " );
+                // error_log( "OrdersController.grabOrders - Do NOT Have PatientID and Date - " );
                 
                 
                 $finalOrders      = array( );
@@ -583,8 +583,8 @@ End as orderstatus
                 
                 foreach ( $patientTemplates as $patient ) {
                     $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays( $patient[ 'patientID' ], $patient[ 'templateID' ] );
-                    error_log( "Orders.Controller.grabOrders - OEM Records for a given Patient (" . $patient[ 'patientID' ] . ") and Template (" . $patient[ 'templateID' ] . ")" );
-                    error_log( json_encode( $oemrecords ) );
+                    // error_log( "Orders.Controller.grabOrders - OEM Records for a given Patient (" . $patient[ 'patientID' ] . ") and Template (" . $patient[ 'templateID' ] . ")" );
+                    // error_log( json_encode( $oemrecords ) );
                     
                     
                     if ( $this->checkForErrors( 'Get Top Level OEM Data Failed. ', $oemrecords ) ) {
@@ -595,7 +595,7 @@ End as orderstatus
                     }
                     
 
-error_log("Get Last Name for Patient - " .  $patient[ 'patientID' ]); 
+// error_log("Get Last Name for Patient - " .  $patient[ 'patientID' ]); 
                     $Last_Name = $this->Orders->LookupPatientName( $patient[ 'patientID' ] );
                     if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
                         $patient[ 'Last_Name' ] = $Last_Name;
@@ -695,7 +695,7 @@ error_log("Get Last Name for Patient - " .  $patient[ 'patientID' ]);
                 $jsonRecord[ 'records' ] = $finalOrders;
                 $this->set( 'jsonRecord', $jsonRecord );
             }
-error_log( "Orders.Controller.grabOrders END OF SERVICE CALL!" );
+// error_log( "Orders.Controller.grabOrders END OF SERVICE CALL!" );
         }
 
 

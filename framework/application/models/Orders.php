@@ -24,7 +24,7 @@
             
             $query = "SELECT pat.Template_ID as id, pat.Patient_ID as Patient_ID, pat.Date_Started as Date_Started, tr.Drug_ID as Drug_ID, " . "tr.Regimen_Dose as Regimen_Dose, tr.Regimen_Dose_Unit_ID as Regimen_Dose_Unit_ID, tr.Route_ID as Route_ID, " . "tr.Admin_Day as Admin_Day, tr.Infusion_Time as Infusion_Time, tr.Flow_Rate as Flow_Rate, tr.Instructions as Instructions, mh.MH_ID as MH_ID, " . "mh.Drug_ID as MH_Drug_ID, mh.Pre_or_Post as MH_Pre_or_Post, mh.Description as MH_Description, mh.Flow_Rate as MH_Flow_Rate, " . "mh.Admin_Day as MH_Admin_Day, mh.Infusion_Time as MH_Infusion_Time, mh.Fluid_Vol as MH_Fluid_Vol, mh.Admin_Time as MH_Admin_Time, mhi.Infusion_Unit_ID as MHI_Infusion_Unit_ID " . "FROM Patient_Assigned_Templates pat " . "LEFT OUTER JOIN Template_Regimen tr ON tr.Template_ID = pat.Template_ID " . "LEFT OUTER JOIN Medication_Hydration mh ON mh.Template_ID = pat.Template_ID " . "LEFT OUTER JOIN MH_Infusion mhi ON mhi.MH_ID = mh.MH_ID " . "WHERE pat.Date_Ended_Actual is not NULL";
             
-            error_log( "getOrders - $query" );
+            // error_log( "getOrders - $query" );
             return $this->query( $query );
         }
         
@@ -164,8 +164,8 @@
         
         function updateOrderStatus( $form_data )
         {
-            error_log( "OrdersModel.updateOrderStatus ENTRY POINT" );
-            error_log( json_encode( $form_data ) );
+            // error_log( "OrdersModel.updateOrderStatus ENTRY POINT" );
+            // error_log( json_encode( $form_data ) );
             
             $Template_IDF = $form_data->{'templateID'};
             $OrderStatusF = $form_data->{'orderstatus'};
@@ -198,7 +198,7 @@
             } elseif ( $OrderStatusF === "Hold" ) {
                 $this->updateOrderStatusHold( $Template_IDF, $PIDF, $typeF, $routeF );
             }
-            error_log( "OrdersModel.updateOrderStatus EXIT POINT" );
+            // error_log( "OrdersModel.updateOrderStatus EXIT POINT" );
             return $this->query( $query );
         }
         
@@ -238,8 +238,8 @@
             $query = "SELECT Template_ID as Template_ID_CHK, Drug_Name as Drug_Name_CHK, Order_Type as Order_Typechk, Order_Status as Order_Statuschk " . "FROM Order_Status " . "WHERE Order_ID = '" . $OrderID . "'";
             //"WHERE Template_ID = '".$TID."' " .
             //"AND Drug_Name = '".$Drug_Name."'";
-error_log( "Orders.Model.updateOrderStatusIn - $Notes" );
-error_log( $query );
+// error_log( "Orders.Model.updateOrderStatusIn - $Notes" );
+// error_log( $query );
             //echo $query;
             $queryq = $this->query( $query );
             foreach ( $queryq as $row ) {
@@ -350,7 +350,7 @@ $Notes = 'Line 266';
             
             $query  = "SELECT Last_Name as LK_Last_Name, First_Name as LK_First_Name, Match as LK_Match FROM Patient WHERE Patient_ID = '" . $PID . "'";
             $query  = "SELECT DFN, LK_Last_Name = '', LK_First_Name = '', LK_Match = '' FROM Patient WHERE Patient_ID = '$PID'";
-error_log("Orders Model - LookupPatientName - Query = $query");
+// error_log("Orders Model - LookupPatientName - Query = $query");
 
             $queryq = $this->query( $query );
             foreach ( $queryq as $row ) {
@@ -359,32 +359,9 @@ error_log("Orders Model - LookupPatientName - Query = $query");
                 $LK_Match      = $row[ 'LK_Match' ];
                 $LK_DFN        = $row[ 'DFN' ];
             }
-            $nodevista        = new NodeVista();
-            // $URL    = "patient/details/$LK_DFN";
-            // $URL              = "patient/lastfive/$LK_DFN";
-            // $PatientInfo      = $nodevista->get( $URL );
-            // $obj              = json_decode( $PatientInfo );
-// error_log("Orders Model - LookupPatientName - Patient Info = $PatientInfo");
-            // $data     = $obj->{"data"}->{"items"}[0];
-// error_log("Orders Model - LookupPatientName - Data - " . json_encode($data));
-            // $WName = $data->{"fullName"};
-// error_log("Orders Model - LookupPatientName - FullName  - $WName");
-
-
-        $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$LK_DFN" ), true );
-        $nvpatient = $nvpatient[ 0 ];
-        $pName     = explode( ",", $nvpatient[ "name" ] );
-        $WName    = $pName[ 0 ] . "," . $pName[ 1 ];
-        // $this->_Name = $name;
-        // $this->_pName = $pName;
-
-
-            
-            // $WName = $LK_Last_Name . " " . $LK_First_Name;
-            
-            return $WName;
-            //return $this->query($query);
-            
+            $nodevista         = new NodeVista();
+            $nvpatient         = json_decode( $nodevista->get( "patient/$LK_DFN" ), true );
+            return $nvpatient[ "name" ];
         }
         
         function LookupDescriptionIn( $LID )
@@ -517,7 +494,7 @@ error_log("Orders Model - LookupPatientName - Query = $query");
                     $queryTIDs  = $this->query( $queryTIDsq );
 
 
-error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c - Walking queryTIDs Rows - " . count($queryTIDs));
+// error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c - Walking queryTIDs Rows - " . count($queryTIDs));
 // error_log($queryTIDsq);
                     foreach ( $queryTIDs as $row ) {
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Each Loop");
