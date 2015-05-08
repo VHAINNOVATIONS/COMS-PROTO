@@ -15404,7 +15404,8 @@ Ext.define("COMS.view.NewPlan.SelectPatient" ,{
 	name : "Select Patient Control",
 	hidden : true,
 	items : [
-		{ xtype : "container", name : "Confirm", tpl : "Please click here to confirm this is the patient you want : <tpl for=\".\"><button class=\"anchor\" name=\"PatientConfirm\" pid=\"{Patient_ID}\" pn=\"{Patient_Name}\">{Patient_Name}</button></tpl>", hidden : true},
+		{ xtype : "container", name : "Confirm", tpl : "Please click here to confirm this is the patient you want : <tpl for=\".\"><button class=\"anchor\" name=\"PatientConfirm\" pid=\"{Patient_ID}\" pn=\"{Patient_Name}\">{Patient_Name}</button>{NoPatientFound}</tpl>", hidden : true},
+		{ xtype : "box", name : "NoPatient", html : "<div style=\"text-align: center; font-weight:bold; font-size:larger\">No Patient by that ID can be found in <abbr title=\"Computerized Patient Record System\">CPRS</abbr></div>", hidden : true},
 		{ xtype : "combobox", 
 			name : "Select", 
 			hidden : true,
@@ -29582,7 +29583,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var drug = curTreatmentRecord.get("drug");
 		var res = drug.replace(/^\d+\. /, "");
 		curTreatmentRecord.set("drug", drug);
-		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("AccessCode"));
+		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("User"));
 		curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
 		curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
 		curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
@@ -31200,6 +31201,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientSelectionPanel",			selector: "NewPlanTab PatientSelection"},
 		{ ref: "SelectPatient",					selector: "NewPlanTab SelectPatient combobox"},
 		{ ref: "ConfirmPatient",				selector: "NewPlanTab SelectPatient container[name=\"Confirm\"]"},
+		{ ref: "NoPatient",						selector: "NewPlanTab SelectPatient box[name=\"NoPatient\"]"},
+			
 
 		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
 		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
@@ -32289,6 +32292,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var query = "";
 				var SSN= "";
 				var PatientInfo = {}, Patient_ID, Patient_Name;
+				Patient_Name = "";
 				if (CPRS_QueryString) {
 					query = CPRS_QueryString.getValue();
 				}
@@ -32313,14 +32317,22 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var SelectPatientSection = thisCtl.getSelectPatientSection();
 					var SelectPatient = thisCtl.getSelectPatient();
 					var ConfirmPatient = thisCtl.getConfirmPatient();
+
+
 					SelectPatientSection.show();
 					SelectPatient.hide();
 					if (flag) {
 						PatientInfo.Patient_Name = Patient_Name;
 						PatientInfo.Patient_ID = Patient_ID;
 						ConfirmPatient.update( PatientInfo );
-						// CPRS_QueryString.setValue("");
-						ConfirmPatient.show();
+						if ("" === Patient_Name) {
+							thisCtl.getNoPatient().show();
+							ConfirmPatient.hide();
+						}
+						else {
+							thisCtl.getNoPatient().hide();
+							ConfirmPatient.show();
+						}
 						ConfirmPatient.el.select("button").on("click", this.ConfirmPatientClick, this);
 					}
 					else {
@@ -32359,7 +32371,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var CPRS_QueryString = Ext.ComponentQuery.query("NewPlanTab PatientSelection [name=\"CPRS_QueryString\"]")[0];
 				var query = "";
 				var SSN= "";
-				var PatientInfo = {}, Patient_ID, Patient_Name;
+				var PatientInfo = {}, Patient_ID, Patient_Name, NoPatientFound;
 				if (CPRS_QueryString) {
 					query = CPRS_QueryString.getValue();
 				}
@@ -32367,8 +32379,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				if ("" !== query) {
 					var record = patientInfo.data;
 					Patient_ID = record.id;
+					NoPatientFound = "";
+					Patient_Name = "";
 					// Patient_Name = record.name;
-					Patient_Name = record.VPR.data.items[0].fullName;
+					if (record.VPR.data.items) {
+						Patient_Name = record.VPR.data.items[0].fullName;
+					}
+					else {
+						NoPatientFound = "No patient by that ID can be found in VistA";
+					}
 					var data = record;
 					this.application.TempPatient = record;
 
@@ -32378,11 +32397,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var SelectPatient = thisCtl.getSelectPatient();
 					var ConfirmPatient = thisCtl.getConfirmPatient();
 					SelectPatientSection.show();
-					SelectPatient.hide();
+
 					PatientInfo.Patient_Name = Patient_Name;
 					PatientInfo.Patient_ID = Patient_ID;
 					ConfirmPatient.update( PatientInfo );
-					ConfirmPatient.show();
+
+					if ("" === Patient_Name) {
+						thisCtl.getNoPatient().show();
+						ConfirmPatient.hide();
+					}
+					else {
+						thisCtl.getNoPatient().hide();
+						ConfirmPatient.show();
+					}
+
 					ConfirmPatient.el.select("button").on("click", this.ConfirmPatientClick, this);
 				}
             },

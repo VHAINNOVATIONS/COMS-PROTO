@@ -38,8 +38,8 @@
                 $Patient_ID   = $row[ 'Patient_ID' ];
                 $Date_Started = $row[ 'Date_Started' ];
                 $Goal         = $row[ 'Goal' ];
-                echo "<br><br>****START NEW TEMPLATE****<br>";
-                echo "<br>TemplateID:" . $Template_ID . "<br>";
+                // echo "<br><br>****START NEW TEMPLATE****<br>";
+                // echo "<br>TemplateID:" . $Template_ID . "<br>";
                 
                 //Pull From Template_Regimen
                 //echo "<br><br>****Template Regimen Drugs**** for ".$Template_ID."<br><br>";
@@ -56,7 +56,7 @@
                     $Flow_Rate            = $row[ 'Flow_Rate' ];
                     $Instructions         = $row[ 'Instructions' ];
                     
-                    
+                    /**
                     echo "Drug_ID: " . $Drug_ID . "<br>";
                     echo "Regimen_Dose: " . $Regimen_Dose . ",";
                     echo " Regimen_Dose_Unit_ID" . $Regimen_Dose_Unit_ID . ",";
@@ -66,6 +66,7 @@
                     echo "Infusion_Time " . $Infusion_Time . "<br>";
                     echo "Flow_Rate: " . $Flow_Rate . "<br>";
                     echo "Instructions " . $Instructions . "<br><br>";
+                    **/
                 }
                 
                 $queryMHq = "select MH_ID as MH_ID, Drug_ID as Drug_ID, Template_ID as Template_ID,Pre_or_Post as Pre_or_Post,Description as Description,Flow_Rate as Flow_Rate,Admin_Day as Admin_Day,Infusion_Time as Infusion_Time, Fluid_Vol as Fluid_Vol, Admin_Time as Admin_Time from Medication_Hydration WHERE Template_ID = '$Template_ID'";
@@ -86,7 +87,7 @@
                     foreach ( $queryDr as $row ) {
                         $MHDrugName = $row[ 'Name' ];
                     }
-                    
+                    /**
                     echo "<br>****MH**** for " . $Template_ID . "<br><br>";
                     echo "MH_ID: " . $MH_ID . "<br>";
                     echo "Drug ID: " . $Drug_ID . "<br>";
@@ -98,7 +99,7 @@
                     echo "Infusion_Time: " . $Infusion_Time . "<br>";
                     echo "Fluid_Vol: " . $Fluid_Vol . "<br>";
                     echo "Admin_Time: " . $Admin_Time . "<br><br>";
-                    
+                    **/
                     //Pull from MH_Infusion
                     //echo "<br>****MHI**** for ".$Template_ID."<br><br>";
                     //echo $MH_ID;
@@ -122,7 +123,7 @@
                         $MHI_Flow_Rate        = $row[ 'Flow_Rate' ];
                         $MHI_Infusion_Time    = $row[ 'Infusion_Time' ];
                         
-                        
+                        /**
                         echo "MHI_Infusion_Unit_ID: " . $MHI_Infusion_Unit_ID . "<br>";
                         echo "MHI_Infusion_Type_ID: " . $MHI_Infusion_Type_ID . "<br>";
                         echo "MHI_Infusion_Amt: " . $MHI_Infusion_Amt . "<br>";
@@ -130,6 +131,7 @@
                         echo "MHI_BSA_Dose: " . $MHI_BSA_Dose . "<br>";
                         echo "MHI_Fluid_Vol: " . $MHI_Fluid_Vol . "<br>";
                         echo "MHI_Infusion_Time: " . $MHI_Infusion_Time . "<br><br>";
+                        **/
                     }
                 }
             }
@@ -249,29 +251,15 @@
             }
 // error_log( "Orders.Model.updateOrderStatusIn - Finished Loop1" );
             if ( $Template_IDchk === NULL ) {
-                //echo "empty sring";
 $Notes = "Line 253, order.php, empty string";
                 $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Ordered in VistA','$Drug_Name','$Order_Type','$PID','$Notes') ";
             } elseif ( $Order_Statuschk = 'Finalized' ) {
-                //echo "HERE"
-                //update Order to Dispensed until VistA Order Reading is in place.
 $Notes = 'Line 258';
                 $query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " . "WHERE Order_ID = '" . $OrderID . "' ";
-                //"where Template_ID = '".$TID."' " .
-                //"AND Drug_Name = '".$Drug_Name."' ".
-                //"AND Order_ID = '".$OrderID."' ".
-                //"AND Patient_ID = '".$PID."'";	
-                //echo $query;
             } else {
 $Notes = 'Line 266';
                 $query = "Update Order_Status set Order_Status = 'Dispensed', Notes = '$Notes' " . "WHERE Order_ID = '" . $OrderID . "'";
-                //"where Template_ID = '".$TID."' " .
-                //"AND Drug_Name = '".$Drug_Name."' ".
-                //"AND Patient_ID = '".$PID."'";	
             }
-// error_log( "Orders.Model.updateOrderStatusIn - End of Update IF - $Notes" );
-// error_log( $query );
-
             $this->query( $query );
         }
         
@@ -333,22 +321,18 @@ $Notes = 'Line 266';
             $this->query( $query );
         }
         
-        function LookupNameIn( $LID )
-        {
-            
+        function LookupNameIn( $LID ) {
             $query  = "SELECT Name as LK_Name FROM LookUp WHERE Lookup_ID = '" . $LID . "'";
             $queryq = $this->query( $query );
+            $LK_Name = "";
             foreach ( $queryq as $row ) {
                 $LK_Name = $row[ 'LK_Name' ];
             }
             return $LK_Name;
-            
         }
         
         function LookupPatientName( $PID )
         {
-            
-            $query  = "SELECT Last_Name as LK_Last_Name, First_Name as LK_First_Name, Match as LK_Match FROM Patient WHERE Patient_ID = '" . $PID . "'";
             $query  = "SELECT DFN, LK_Last_Name = '', LK_First_Name = '', LK_Match = '' FROM Patient WHERE Patient_ID = '$PID'";
 // error_log("Orders Model - LookupPatientName - Query = $query");
 
@@ -379,27 +363,7 @@ $Notes = 'Line 266';
         
         function sendCPRSOrderIn( $TID, $PID, $typeF, $routeF, $OrderID )
         {
-// error_log("Orders Model - sendCPRSOrderIn Entry Point - TID = $TID, PID = $PID, typeF = $typeF, routeF = $routeF, OrderID = $OrderID");
-
             $Regimen_Dose_Unit = ""; // Avoids error reported in log for line 935 but need to really find out. MWB 2/12/2015
-            
-            /*echo $TID;
-            echo "||";
-            echo $PID;
-            echo "||";
-            echo $typeF;
-            echo "||";
-            echo $routeF;
-            echo "||";
-            echo $OrderID;
-            echo "||";
-            */
-            
-            $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
-            $queryPI  = $this->query( $queryPIq );
-            foreach ( $queryPI as $row ) {
-                $match = $row[ 'Match' ];
-            }
 
 // error_log("Orders Model - sendCPRSOrderIn CkPoint 1");
             if ( $routeF === 'Oral' ) {
@@ -436,19 +400,9 @@ $Notes = 'Line 266';
                         $TR_Description          = $this->LookupDescriptionIn( $TR_Drug_ID );
                         $Regimen_Dose_Unit       = $this->LookupNameIn( $TR_Regimen_Dose_Unit_ID );
                         $TR_Route_ID_Name        = $this->LookupNameIn( $TR_Route_ID );
-                        //echo " || ".$TR_Drug_ID_Name." || ";
-                        //echo "TR_Drug_ID: || ".$TR_Drug_ID." || ";
-                        //echo " || ".$TR_Route_ID_Name." || ";
-                        //yes, this one
-                        // NewOrderPatient( $TR_Drug_ID_Name, $TR_Regimen_Dose, $Regimen_Dose_Unit, $TR_Description, $match, 1 );
                         $this->updateOrderStatusIn( $TID, $TR_Drug_ID_Name, 'TH CprsOrdered', $PID, 'sendCPRSOrderIn() - Line 435', $OrderID );
-                        /////trytihs							
-                        //$this->updateOrderStatus($TID,$TR_Drug_ID_Name,'TR',$PID);
-                        // $this->valuecheck( "" . $match . "End and Done" );
-                        
                     }
-                    //echo "Final RECT: ".$recct."";
-                    echo "Total Therapy Records" . $recct . " *** ";
+                    // echo "Total Therapy Records" . $recct . " *** ";
                     
                     $queryDDnameq = "select DISTINCT tr.Drug_ID as TR_Drug_ID " . "FROM Master_Template as mt " . "INNER JOIN Template_Regimen tr ON tr.Template_ID = mt.Template_ID " . "WHERE Patient_ID = '$PID'";
                     $queryDDname  = $this->query( $queryDDnameq );
@@ -458,7 +412,7 @@ $Notes = 'Line 266';
                         
                         $TR_Drug_ID      = $row[ 'TR_Drug_ID' ];
                         $TR_Drug_ID_Name = $this->LookupNameIn( $TR_Drug_ID );
-                        echo $TR_Drug_ID_Name;
+                        // echo $TR_Drug_ID_Name;
                         
                         $queryCTDq     = "select tr.Drug_ID as TR_Drug_ID " . "FROM Master_Template as mt " . "INNER JOIN Template_Regimen tr ON tr.Template_ID = mt.Template_ID " . "WHERE Patient_ID = '$PID' " . "AND Drug_ID = '$TR_Drug_ID' ";
                         $queryCTD      = $this->query( $queryCTDq );
@@ -466,12 +420,9 @@ $Notes = 'Line 266';
                         foreach ( $queryCTD as $row ) {
                             $NumberofDoses = $NumberofDoses + 1;
                         }
-                        echo "NumberofDoses: " . $NumberofDoses . "  |||| ";
-                        //yes, this one
-                        // NewOrderPatient( $TR_Drug_ID_Name, $TR_Regimen_Dose, $Regimen_Dose_Unit, $TR_Description, $match, $NumberofDoses );
-                        
+                        // echo "NumberofDoses: " . $NumberofDoses . "  |||| ";
                     }
-                    echo "DDrecct: " . $DDrecct . "";
+                    // echo "DDrecct: " . $DDrecct . "";
                     
                     
                     
@@ -530,24 +481,17 @@ $Notes = 'Line 266';
                             $MHI_MH_Dose = $row[ 'MHICHK_Infusion_Amt' ];
                         }
                         $OrderType = "MH " . $MH_Pre_Or_Post . "";
-                        //yes, this one
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Calling - NewOrderPatient()");
-                        // NewOrderPatient( $MH_Drug_ID_Name, $MHI_MH_Dose, $Regimen_Dose_Unit, $MH_Description, $match, 1 );
-
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Calling - writeOrderDebug()");
-                        $this->writeOrderDebug( $match, $MH_Drug_ID_Name, $MH_ID, $MH_Pre_Or_Post, $MH_Description, $MH_Flow_Rate, $MH_Admin_Day, $MH_Infusion_Time, $MH_Sequence_Number, $MH_Fluid_Vol, $MH_Admin_Time );
 
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Calling - updateOrderStatusIn()");
                         $this->updateOrderStatusIn( $TID, $MH_Drug_ID_Name, $OrderType, $PID, 'sendCPRSOrderIn - Line 539', $OrderID );
 
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Calling - valuecheck()");
-                        // $this->valuecheck( "" . $match . "End and Done" );
 
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c Next Row");
                     }
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c - Walking queryTIDs Rows Complete - " . count($queryTIDs));
 
-                    echo "Total Therapy Records" . $recct . " *** ";
+                    // echo "Total Therapy Records" . $recct . " *** ";
                     
                     $queryDDnameq = "select DISTINCT mh.Drug_ID as MH_Drug_ID " . "FROM Master_Template as mt " . "INNER JOIN Medication_Hydration mh ON mh.Template_ID = mt.Template_ID " . "WHERE Patient_ID = '$PID'";
                     $queryDDname  = $this->query( $queryDDnameq );
@@ -558,7 +502,7 @@ $Notes = 'Line 266';
                         
                         $MH_Drug_ID      = $row[ 'MH_Drug_ID' ];
                         $MH_Drug_ID_Name = $this->LookupNameIn( $MH_Drug_ID );
-                        echo $MH_Drug_ID_Name;
+                        // echo $MH_Drug_ID_Name;
                         
                         $queryCTDq     = "select mh.Drug_ID as MH_Drug_ID " . "FROM Master_Template as mt " . "INNER JOIN Medication_Hydration mh ON mh.Template_ID = mt.Template_ID " . "WHERE Patient_ID = '$PID' " . "AND Drug_ID = '$MH_Drug_ID' ";
                         $queryCTD      = $this->query( $queryCTDq );
@@ -566,21 +510,18 @@ $Notes = 'Line 266';
                         foreach ( $queryCTD as $row ) {
                             $NumberofDoses = $NumberofDoses + 1;
                         }
-                        echo "NumberofDoses: " . $NumberofDoses . "  |||| ";
-                        //yes, this one
-                        // NewOrderPatient( $MH_Drug_ID_Name, $MHI_Infusion_Amt, $MHI_Infusion_Unit_ID_Name, $MH_Description, $match, $NumberofDoses );
-                        
+                        // echo "NumberofDoses: " . $NumberofDoses . "  |||| ";
                     }
 
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy CkPoint 1c - Walking queryDDnameq Rows II COMPLETE - " . count($queryDDname));
                     
-                    echo "DDrecct: " . $DDrecct . "";
+                    // echo "DDrecct: " . $DDrecct . "";
                     
 // error_log("Orders Model - sendCPRSOrderIn CkPoint 1d");
                 }
                 else {
 // error_log("Orders Model - sendCPRSOrderIn CkPoint 1e");
-                    echo "nothing";
+                    // echo "nothing";
                 }
             } else {
 // error_log("Orders Model - sendCPRSOrderIn CkPoint 1f");
@@ -595,16 +536,14 @@ $Notes = 'Line 266';
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Non-Oral Therapy");
                     
                     $queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
+error_log("Orders Model - getting Templates - $queryTIDsq");
                     $queryTIDs  = $this->query( $queryTIDsq );
                     foreach ( $queryTIDs as $row ) {
                         $TID      = $row[ 'Template_ID' ];
                         $RID      = $row[ 'Regimen_ID' ];
-                        $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
+                        $queryPIq = "select * from Patient WHERE Patient_ID ='$PID'";
                         $queryPI  = $this->query( $queryPIq );
-                        foreach ( $queryPI as $row ) {
-                            $match = $row[ 'Match' ];
-                        }
-                        if ( $match != '' ) {
+                        if ( count($queryPI) > 0 ) {
                             $queryTRq = "select Patient_Regimen_ID as TR_Patient_Regimen_ID, Template_ID as TR_Template_ID, Drug_ID as TR_Drug_ID, Regimen_Number as TR_Regimen_Number, " . "Regimen_Dose as TR_Regimen_Dose, Regimen_Dose_Unit_ID as TR_Regimen_Dose_Unit_ID, Regimen_Dose_Pct as TR_Regimen_Dose_Pct, Regimen_Reason as TR_Regimen_Reason, " . "Patient_Dose as TR_Patient_Dose, Patient_Dose_Unit_ID as TR_Patient_Dose_Unit_ID, Route_ID as TR_Route_ID, Admin_Day as TR_Admin_Day, Infusion_Time as TR_Infusion_Time, " . "Fl_Vol_Unit_ID as TR_Fl_Vol_Unit_ID, Fl_Vol_Description as TR_Fl_Vol_Description, Date_Created as TR_Date_Created, Created_By as TR_Created_By, Flow_Rate as TR_Flow_Rate, " . "Instructions as TR_Instructions, Fluid_Vol as TR_Fluid_Vol, Sequence_Number as TR_Sequence_Number, Admin_Time as TR_Admin_Time, BSA_Dose as TR_BSA_Dose, " . "Fluid_Type as TR_Fluid_Type " . "from Template_Regimen " . "WHERE Template_ID ='$TID'";
                             $queryTR  = $this->query( $queryTRq );
                             foreach ( $queryTR as $row ) {
@@ -639,19 +578,7 @@ $Notes = 'Line 266';
                                 $TR_Description          = $this->LookupDescriptionIn( $TR_Drug_ID );
                                 $Regimen_Dose_Unit       = $this->LookupNameIn( $TR_Regimen_Dose_Unit_ID );
                                 $TR_Route_ID_Name        = $this->LookupNameIn( $TR_Route_ID );
-                                /*
-                                echo $TR_Drug_ID_Name;
-                                echo " || ";
-                                echo $TR_Regimen_Dose;
-                                echo " || ";
-                                echo $PID;
-                                echo " || ";
-                                echo $OrderID;
-                                */
-                                // NewOrderPatient( $TR_Drug_ID_Name, $TR_Regimen_Dose, $Regimen_Dose_Unit, $TR_Description, $match, 1 );
                                 $this->updateOrderStatusIn( $TID, $TR_Drug_ID_Name, 'TR', $PID, 'sendCPRSOrderIn() - Line 652', $OrderID );
-                                // $this->valuecheck( "" . $match . "End and Done" );
-                                
                             }
                             //Medication_Hydration
                             $queryMHq = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " . "Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " . "Fluid_Vol as MH_Fluid_Vol, Admin_Time as MH_Admin_Time " . "from Medication_Hydration WHERE Template_ID ='$TID'";
@@ -682,17 +609,12 @@ $Notes = 'Line 266';
                                     $MHI_MH_Dose = $row[ 'MHICHK_Infusion_Amt' ];
                                 }
                                 $OrderType = "MH " . $MH_Pre_Or_Post . "";
-                                //yes, this one
-                                // NewOrderPatient( $MH_Drug_ID_Name, $MHI_MH_Dose, $Regimen_Dose_Unit, $MH_Description, $match, 1 );
-                                $this->writeOrderDebug( $match, $MH_Drug_ID_Name, $MH_ID, $MH_Pre_Or_Post, $MH_Description, $MH_Flow_Rate, $MH_Admin_Day, $MH_Infusion_Time, $MH_Sequence_Number, $MH_Fluid_Vol, $MH_Admin_Time );
                                 $this->updateOrderStatusIn( $TID, $MH_Drug_ID_Name, $OrderType, $PID, 'sendCPRSOrderIn() - Line 686', $OrderID );
-                                
-                                
                             }
                             
                         } else {
                             
-                            echo "missing match";
+                            // echo "missing match - Therapy";
                             
                         }
                         
@@ -703,25 +625,21 @@ $Notes = 'Line 266';
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy");
                     
                     $queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy - Query");
+error_log("Orders Model - getting Templates - $queryTIDsq");
 // error_log("queryTIDsq");
                     $queryTIDs  = $this->query( $queryTIDsq );
 // error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy Walking Rows - " . count($queryTIDs));
                     foreach ( $queryTIDs as $row ) {
                         $TID = $row[ 'Template_ID' ];
                         $RID = $row[ 'Regimen_ID' ];
-                        
+
                         //echo "Non Oral - Pre Therapy";
                         //echo "PID".$PID." || ";
                         //echo "TID".$TID." || ";
                         //echo "RID".$RID." || ";
-                        $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
+                        $queryPIq = "select * from Patient WHERE Patient_ID ='$PID'";
                         $queryPI  = $this->query( $queryPIq );
-                        foreach ( $queryPI as $row ) {
-                            $match = $row[ 'Match' ];
-                            //echo "match: ".$match."";
-                        }
-                        if ( $match != '' ) {
+                        if ( count($queryPI) > 0 ) {
                             //Medication_Hydration
                             $queryMHq = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " . "Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " . "Fluid_Vol as MH_Fluid_Vol, Admin_Time as MH_Admin_Time " . "from Medication_Hydration WHERE Template_ID ='$TID'";
                             $queryMH  = $this->query( $queryMHq );
@@ -748,48 +666,38 @@ $Notes = 'Line 266';
                     CONVERT(nvarchar(max), CONVERT(decimal(10,1), Infusion_Amt))
              END as MHICHK_Infusion_Amt " . "from MH_Infusion WHERE MH_ID ='$MH_ID'";
                                 $queryMHILKMH  = $this->query( $queryMHILKMHq );
-                                //echo $queryMHILKMHq;
                                 foreach ( $queryMHILKMH as $row ) {
                                     $MHI_MH_Dose = $row[ 'MHICHK_Infusion_Amt' ];
                                 }
                                 $OrderType = "MH " . $MH_Pre_Or_Post . "";
-                                // NewOrderPatient( $MH_Drug_ID_Name, $MHI_MH_Dose, $Regimen_Dose_Unit, $MH_Description, $match, 1 );
-                                $this->writeOrderDebug( $match, $MH_Drug_ID_Name, $MH_ID, $MH_Pre_Or_Post, $MH_Description, $MH_Flow_Rate, $MH_Admin_Day, $MH_Infusion_Time, $MH_Sequence_Number, $MH_Fluid_Vol, $MH_Admin_Time );
                                 $this->updateOrderStatusIn( $TID, $MH_Drug_ID_Name, $OrderType, $PID, 'sendCPRSOrderIn() - Line 804', $OrderID );
-                                // $this->valuecheck( "" . $match . "End and Done" );
                             }
                         }
                         else {
-                            echo "missing match";
+                            // echo "missing match - Pre";
                         }
                     }
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Pre Therapy END of walking Rows");
+
+
+
+
+
+
                 } elseif ( $typeF === 'Post Therapy' ) {
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Post Therapy");
-                    
-                    
                     $queryTIDsq = "select Template_ID as Template_ID, Patient_ID as Patient_ID, Regimen_ID as Regimen_ID from Master_Template WHERE Template_ID = '$TID'";
+error_log("Orders Model - getting Templates - $queryTIDsq");
                     $queryTIDs  = $this->query( $queryTIDsq );
                     foreach ( $queryTIDs as $row ) {
                         $TID = $row[ 'Template_ID' ];
                         $RID = $row[ 'Regimen_ID' ];
-                        
-                        //echo "NonOral - POST THERPY";
-                        //echo "PID".$PID." || ";
-                        //echo "TID".$TID." || ";
-                        //echo "RID".$RID." || ";
-                        $queryPIq = "select Match as Match from Patient WHERE Patient_ID ='$PID'";
+                        $queryPIq = "select * from Patient WHERE Patient_ID ='$PID'";
                         $queryPI  = $this->query( $queryPIq );
-                        foreach ( $queryPI as $row ) {
-                            $match = $row[ 'Match' ];
-                            //echo "match: ".$match."";
-                        }
-                        if ( $match != '' ) {
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Post Therapy - Match = $match");
+                        if ( count($queryPI) > 0 ) {
                             //Medication_Hydration
                             $queryMHq = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " . "Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " . "Fluid_Vol as MH_Fluid_Vol, Admin_Time as MH_Admin_Time " . "from Medication_Hydration WHERE Template_ID ='$TID'";
                             $queryMH  = $this->query( $queryMHq );
                             foreach ( $queryMH as $row ) {
+error_log("Orders Model - Getting match - " . json_encode($row));
                                 $MH_Drug_ID         = $row[ 'MH_Drug_ID' ];
                                 $MH_ID              = $row[ 'MH_ID' ];
                                 $MH_Pre_Or_Post     = $row[ 'MH_Pre_Or_Post' ];
@@ -816,19 +724,12 @@ $Notes = 'Line 266';
                                     $MHI_MH_Dose = $row[ 'MHICHK_Infusion_Amt' ];
                                 }
                                 $OrderType = "MH " . $MH_Pre_Or_Post . "";
-                                //yes, this one
-                                // NewOrderPatient( $MH_Drug_ID_Name, $MHI_MH_Dose, $Regimen_Dose_Unit, $MH_Description, $match, 1 );
-                                $this->writeOrderDebug( $match, $MH_Drug_ID_Name, $MH_ID, $MH_Pre_Or_Post, $MH_Description, $MH_Flow_Rate, $MH_Admin_Day, $MH_Infusion_Time, $MH_Sequence_Number, $MH_Fluid_Vol, $MH_Admin_Time );
                                 $this->updateOrderStatusIn( $TID, $MH_Drug_ID_Name, $OrderType, $PID, 'sendCPRSOrderIn() - Line 818', $OrderID );
-                                // $this->valuecheck( "" . $match . "End and Done" );
-                                
-                                
                             }
                         }
                         
                         else {
-// error_log("Orders Model - sendCPRSOrderIn CkPoint Post Therapy - NO Match = $match");
-                            echo "missing match";
+                            // echo "missing match POST";
                             
                         }
                         
@@ -840,7 +741,7 @@ $Notes = 'Line 266';
                 
                 
                 else {
-                    echo "nothing";
+                    // echo "nothing";
                 }
                 
                 
@@ -869,9 +770,7 @@ $Notes = 'Line 266';
             
             $query   = "select Drug_ID as MH_Drug_ID, MH_ID as MH_ID, Pre_Or_Post as MH_Pre_Or_Post, Description as MH_Description, " . "Flow_Rate as MH_Flow_Rate, Admin_Day as MH_Admin_Day, Infusion_Time as MH_Infusion_Time, Sequence_Number as MH_Sequence_Number, " . "Fluid_Vol as MH_Fluid_Vol, Admin_Time as MH_Admin_Time " . "from Medication_Hydration WHERE Template_ID ='$TID'";
             $results = $this->query( $query );
-            echo $query;
-            
-            // NewOrderPatient( $TR_Drug_ID_Name, $TR_Regimen_Dose, $Regimen_Dose_Unit, $TR_Description, $match, 1 );
+            // echo $query;
         }
         
         

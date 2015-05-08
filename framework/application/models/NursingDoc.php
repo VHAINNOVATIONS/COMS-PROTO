@@ -171,7 +171,7 @@ WHERE nt.PAT_ID = '$id'";
 
         $Comments = $this->escapeString($data->Comments);
 
-        $Treatment_User = $data->Treatment_User;
+        $Treatment_User = $data->Treatment_User == "" ? $data->User : $data->Treatment_User;
         $Treatment_Date = $data->Treatment_Date;
         $Drug_OriginalValue = $data->drug_originalValue;
         $Dose_OriginalValue = $data->dose_originalValue;

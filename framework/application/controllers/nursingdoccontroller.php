@@ -483,10 +483,12 @@
         }
         
         public function Treatment( $id = null ) {
+error_log("NursingDoc Controller - Treatment Entry");
             $form_data  = json_decode( file_get_contents( 'php://input' ) );
             $jsonRecord = array( );
             
             if ( $form_data != null ) {
+error_log("NursingDoc Controller - Update Treatment");
                 $this->NursingDoc->beginTransaction();
                 
                 $returnVal = $this->NursingDoc->updateTreatment( $form_data );
@@ -501,6 +503,7 @@
                     $jsonRecord[ 'success' ] = 'false';
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
+error_log("NursingDoc Controller - Update Treatment - ERROR");
                     return;
                 }
                 
@@ -508,9 +511,11 @@
                 
                 $jsonRecord[ 'success' ] = 'true';
                 $jsonRecord[ 'total' ]   = 1;
-                $jsonRecord[ 'records' ] = array_merge( array(
-                     'Treatment_ID' => $this->NursingDoc->getTreatmentId() 
-                ), get_object_vars( $form_data ) );
+                $jsonRecord[ 'records' ] = array_merge( array( 'Treatment_ID' => $this->NursingDoc->getTreatmentId() ), get_object_vars( $form_data ) );
+                $jsonRecord[ 'records' ]['Treatment_User'] = $jsonRecord[ 'records' ]['User'];
+
+error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]));
+
                 $this->set( 'jsonRecord', $jsonRecord );
                 
             } else {
