@@ -1040,8 +1040,10 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
     function addNewPatient ($patient, $SSN_ID, $GUID)
     {
         error_log("addNewPatient() - Patient - $SSN_ID; $GUID; " . json_encode($patient));
+//        error_log("addNewPatient() - localPID = " . $patient->localPid);
+//        error_log("addNewPatient() - localPID = " . $patient['localPid']);
 
-        $dfn = $patient->localPid;
+        $dfn = $patient['localPid'];
         $sqlcurDate = $this->getCurrentDate();
         $Performance_ID = '73DA9443-FF74-E111-B684-000C2935B86F';
         $query2 = "INSERT INTO Patient_History (Performance_ID,Patient_ID) values('$Performance_ID','$GUID')";

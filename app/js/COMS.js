@@ -5596,14 +5596,17 @@ Ext.define('COMS.store.ToxGridStore', {
 	},
 ***/
 	onCreateRecords: function(records, operation, success) {
+		// --- // console.log("ToxGridStore Create Records - loadAdverseEventsHistory");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	},
 
 	onUpdateRecords: function(records, operation, success) {
+		// --- // console.log("ToxGridStore Update Records - loadAdverseEventsHistory");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	},
 
 	onDestroyRecords: function(records, operation, success) {
+		// --- // console.log("ToxGridStore Destroy Records - loadAdverseEventsHistory");
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	}
 });
@@ -15110,7 +15113,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 					CalcBSA : function( data, parent ) {
 						try {
-							if ("" === data.BSA) {
+							if ("" === data.BSA || "<abbr title=\"Not Available\">N/A</abbr>" === data.BSA) {
 								data.BSA = Ext.BSA_Calc(data);
 								data.Vitals[0].BSA = data.BSA;
 							}
@@ -20252,7 +20255,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						this.application.Patient.CumulativeDoseTracking = recs;
 						var thisCtl = this.getController("NewPlan.NewPlanTab");
 						var thePITable = thisCtl.getPatientInfoTableInformation();
-						thePITable.update( this.application.Patient );
+						thePITable.update( this.application.Patient );		//--//
 						this.UpdateCumDoseInfo();
 					}
 				}
@@ -20755,7 +20758,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 						Patient.BSAFormula = theData.BSAFormula;
 						Patient.BSA_Method = theData.BSAFormula;
 						var piTableInfo = thisCtl.getPatientInfoTableInformation();
-						piTableInfo.update(Patient);
+						piTableInfo.update(Patient);		//--//
 					}
 				},
 				failure : function( response, opts ) {
@@ -24408,7 +24411,9 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 	],
 	"init" : function() {
 		wccConsoleLog("Initialized AdverseEventsHistory Controller!");
+		// --- // console.log("AdverseEventsHistory PatientSelected Event");
 		this.application.on({ PatientSelected : this.loadAdverseEventsHistory, scope : this });
+		// --- // console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
 		this.application.on({ loadAdverseEventsHistory : this.loadAdverseEventsHistory, scope : this });
 		this.control({
 		});
@@ -24480,6 +24485,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 },
 
 	loadAdverseEventsHistory : function(recs, eOpts) {
+		// --- // console.log("Loading Adverse Events History");
 		var theModule = this.getAdverseEventsHistory();
 
 		theModule.setTitle("Adverse Events History (No Adverse Events Recorded)");
@@ -25831,6 +25837,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		this.Saving = false;
 
 		this.releaseLock(this.getAddRecordPanel(theForm));
+		// --- // console.log("FS_Toxicity - Loading Adverse Events");
 		this.application.fireEvent("loadAdverseEventsHistory");
 	},
 
@@ -25928,6 +25935,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 				delete this.theForm;
 				delete this.RowIdx;
 				delete this.theGrid;
+				// --- // console.log("FS_Toxicity Delete Record Last Record has been deleted - Loading Adverse Events");
 				theApp.fireEvent("loadAdverseEventsHistory");
 		}
 	},
@@ -26647,6 +26655,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	"LoadToxicityHistory" : function() {
+		// --- // console.log("Flowsheet Tab - Loading Adverse Events Event Handler");
 		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
 	},
 
@@ -26658,6 +26667,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var theGrid = this.getFlowSheetGrid();
 		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
 		this.getOptionalInfoData(this.application.Patient.PAT_ID);
+// --- // console.log("Flowsheet Tab - getToxicityHistoryData - updateFlowsheetPanel");
 		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
 /**
  **/
@@ -26756,6 +26766,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 	getToxicityHistoryData : function(PAT_ID) {
+		// --- // console.log("Flowsheet Tab - getToxicityHistoryData - Loading Adverse Events");
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
 		var theModule = this.getFS_ToxicityHistory();
 		this.maskFlowSheetPanels(theModule, "Toxicity History");
@@ -26766,7 +26777,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-
+// --- // console.log("Flowsheet Tab - getToxicityHistoryData - request complete");
 				if (resp.success) {
 					if (resp.records) {
 						var i, len, rec;
@@ -27042,6 +27053,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 				}
 				else {
 					var theTable2Update = "TheTable2Update";
+					// --- // console.log("CTOS.NursingDocs.AssessmentTab - loadAdverseEventsHistory");
 					theApp.fireEvent("loadAdverseEventsHistory", theTable2Update);
 					Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 					Patient.AssessmentRecordID = resp.AssessmentID;
@@ -29011,7 +29023,7 @@ ClearTabData : function(obj) {
 			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
 			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
 			var piTableInfo = newCtl.getPatientInfoTableInformation();
-			piTableInfo.update(this.application.Patient);
+			piTableInfo.update(this.application.Patient);	//--// 2
 		}
 	},
 
@@ -29407,6 +29419,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 					Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - " + resp.msg );
 				}
 				else {
+					// --- // console.log("CTOS.NursingDocs.React_AssessTab - loadAdverseEventsHistory");
 					theApp.fireEvent("loadAdverseEventsHistory");
 					Ext.MessageBox.alert("Infusion Reactions", "Infusion Reactions Section, Save complete" );
 					Patient.InfuseReactionRecordID = resp.InfuseReactionRecordID;
@@ -30729,7 +30742,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		var PatientInfo = this.application.Patient;
 		var PITableHdr = this.getPatientInfoTableHeader();
 		var PITable = this.getPatientInfoTable();
-
+// debugger;
 		PITableHdr.update( this.EoTSData );
 
 		PITable.update( this.EoTSData );
@@ -31271,8 +31284,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
                 afterrender: this.handlePatientSelectionRender
             },
             "NewPlanTab PatientInfo PatientInfoTable" : {
-                afterrender: Ext.togglePanelOnTitleBarClick,
-				expand : this.MaskPITPanelOnExpand
+                afterrender: Ext.togglePanelOnTitleBarClick
             },
             "NewPlanTab PatientInfo PatientTemplates" : {
                 afterrender: Ext.togglePanelOnTitleBarClick
@@ -31309,21 +31321,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			piTable.update("");
 		}
 		else {
-			piTable.update(PatientData);
+			piTable.update(PatientData);//--//2
 		}
 		return piTable;
 	},
-
-
-	MaskPITPanelOnExpand : function (p, ani, opts) {
-//		if ("Patient Information" !== p.title ) {
-//			this.MaskPITable("Loading Patient Information");
-//		}
-//		else {
-//			this.MaskPITable(false);
-//		}
-	},
-
+/*******************************
 	MaskPITable : function (msg) {
 //		var PITablePanel = this.getPatientInfoTable();
 //		if (msg) {
@@ -31335,7 +31337,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 //			PITablePanel.setLoading(false, false);
 //		}
 	},
-
+*********************************/
 	clickPatientListCount : function( evt, itemClicked ) {
 		if ("anchor PatientList" == itemClicked.className) {
 			var thePatients = this.application.CurrentTemplate.data.PatientList;
@@ -32575,39 +32577,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
 		this.DataLoadCountDecrement("loadMDWSData Pass");
 		this.PatientDataLoadComplete("MDWS Mega Call");
-/****************
-		var PatientInfo = this.application.Patient;
-		var URLParam = "/DFN/" + PatientInfo.DFN;
-		if (this.application.PatientSSN_ID) {
-			URLParam = "/SSN/" + this.application.PatientSSN_ID;
-		}
-
-		Ext.Ajax.request({
-			scope : this,
-			url: Ext.URLs.MegaMDWS + URLParam,
-			success: function( response, opts ){
-// wccConsoleLog("MDWS Data - Load Complete");
-console.log("Loading MDWS Data - Finished");
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				if (resp.success) {
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].hide();
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
-					this.DataLoadCountDecrement("loadMDWSData Pass");
-					this.PatientDataLoadComplete("MDWS Mega Call");
-				}
-				else {
-					alert("loadMDWSData() - Error");
-				}
-			},
-			failure : function( response, opts ) {
-				this.DataLoadCountDecrement("loadMDWSData FAIL");
-				this.PatientDataLoadComplete("MDWS Mega Call");
-				alert("MDWS Data Load Failed...");
-			}
-		});
-**************/
 	},
 
 
@@ -32624,33 +32593,7 @@ console.log("Loading MDWS Data - Finished");
 		// console.log("Loading Allergy Info - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadAllergyInfo PASS");
 		this.PatientDataLoadComplete("Allergy Info");
-
-/******************
-        var liModel = this.getModel("Allergies");
-        var liModelParam = this.application.Patient.id;
-
-		liModel.load(liModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
-                wccConsoleLog("Allergy Info Loaded - Processing");
-console.log("Loading Allergy Info - Finished");
-// wccConsoleLog("Allergies Model - Load Complete");
-                var rawData = Ext.JSON.decode(response.response.responseText);
-				var tmp = "0 Records";
-				this.application.Patient.Allergies = rawData.records;
-
-					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.DataLoadCountDecrement("loadAllergyInfo PASS");
-				this.PatientDataLoadComplete("Allergy Info");
-
-            },
-            failure : function (err, response) {
-                this.DataLoadCountDecrement("loadAllergyInfo FAIL");
-				this.PatientDataLoadComplete("Allergy Info - FAILED Loading");
-            }
-        });
-***************/
-    },
+	},
 
 
 	loadCumulativeMedDosing : function() {
@@ -32807,10 +32750,15 @@ console.log("Loading Allergy Info - Finished");
 
 
 		extractVitals : function(rec) {
-			var nIdx, vIdx, DateTaken;
+			var nIdx, vIdx, DateTaken, data, units;
 			if (rec.hasOwnProperty("type")) {
 				nIdx = rec.date.split("T")[0];
 				if (this.vIdx !== nIdx) {
+					this.vIdx = nIdx;
+					DateTaken = this.extractDate(nIdx);
+					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
+				}
+				else if (!this.Vitals[this.vIdx]) {
 					this.vIdx = nIdx;
 					DateTaken = this.extractDate(nIdx);
 					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
@@ -33868,110 +33816,10 @@ console.log("Loading Allergy Info - Finished");
 			patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
 			patientTemplates.show();
 
-
-
 			this.loadOrderRecords();
 // console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
-/**
-this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
-
-			// If BSA_Dose is empty then calculate it for each record and save that record back.
-			// BUT we need to calculate the BSA value and BSA_Weight before we load the records...
-			// Then walk through theData.OEMRecords;
-			var a, b, c, aRec, bRec, bRecUnits, calcDose, updateRecord = false, tmpDose, Dose, Units,
-				theRecords, oRecLen,
-				tRecords, oTherapyLen;
-
-			if (this.application.Patient && this.application.Patient.OEMRecords && this.application.Patient.OEMRecords.OEMRecords) {
-				theRecords = this.application.Patient.OEMRecords.OEMRecords;
-				oRecLen = theRecords.length;
-				for (a = 0; a < oRecLen; a++) {
-					aRec = theRecords[a];
-					if (aRec.Therapy) {
-						oTherapyLen = aRec.Therapy.length;
-						for (b = 0; b < oTherapyLen; b++) {
-							bRec = aRec.Therapy[b];
-							bRecUnits = bRec.DoseUnits.toUpperCase();
-							calcDose = false;
-
-							if (bRecUnits.search("M2") > 0 || bRecUnits.search("KG") > 0 || bRecUnits.search("AUC") >= 0 ) {
-								calcDose = true;
-							}
-
-							if (calcDose) {
-								if ("" === bRec.BSA_Dose || "NaN mg" === bRec.BSA_Dose) {
-									if (bRecUnits.search("M2") > 0) {
-										Dose = bRec.Dose * Patient.BSA;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										bRec.BSA_Dose = Dose + " " + Units;
-										updateRecord = true;
-									}
-									else if	(bRecUnits.search("KG") > 0) {
-										Dose = bRec.Dose * Patient.BSA_Weight;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										bRec.BSA_Dose = Dose + " " + Units;
-										updateRecord = true;
-									}
-									else if (bRecUnits.search("AUC") >= 0) {
-										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
-										bRec.BSA_Dose = Dose;
-										updateRecord = true;
-									}
-								}
-								else {
-									// MWB - 7/12/2012 - Fix to update Dosage Calculations every time patient info is loaded.
-									// DO NOT IMPLEMENT until further notice...
-									// Implement as per SIC's e-mail - 7/12/2012 08:56 AM
-
-									if (bRecUnits.search("M2") > 0) {
-										Dose = bRec.Dose * Patient.BSA;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										tmpDose = Dose + " " + Units;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-									else if	(bRecUnits.search("KG") > 0) {
-										Dose = bRec.Dose * Patient.BSA_Weight;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										tmpDose = Dose + " " + Units;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-									else if (bRecUnits.search("AUC") >= 0) {
-										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
-										tmpDose = Dose;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-
-								}
-							}
-						}
-					}
-					else {
-						oTherapyLen = aRec.Therapy.length;
-						for (b = 0; b < oTherapyLen; b++) {
-							bRec = aRec.Therapy[b];
-							this.UpdateOEMRecords(aRec, bRec);
-						}
-					}
-				}
-			}
-********************/
-
-
-
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
+			// --- // console.log("PatientSelected event, launches LoadAdverse Events");
 			this.application.fireEvent("PatientSelected", this.application.PatientSelectedRecs, this.application.PatientSelectedOpts);	// MWB 10 Feb 2012 - Added additional parameters
 		}
 	},
@@ -36905,7 +36753,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							var aRec = theScope.PostedRecs.pop();
 							if (aRec) {
 								var tmpData = aRec.getData();
-								console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
+								// --- // console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
 								aRec.save({
 									scope: theScope,
 									success: ResponseAlertGood,
@@ -37006,9 +36854,9 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 	init: function () {
 		this.control({
 			"scope" : this,
-			"ProgrammerBtns button[text=\"Mask PI Table\"]" : {
-				"click" : this.ClickMaskTest
-			},
+			//"ProgrammerBtns button[text=\"Mask PI Table\"]" : {
+			//	"click" : this.ClickMaskTest
+			//},
 			"ProgrammerBtns button[text=\"Debugger\"]" : {
 				"click" : this.ClickDebugger
 			},
@@ -37055,10 +36903,10 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 	},
 
 
-	ClickMaskTest : function() {
-		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		thisCtl.MaskPITable("Test");
-	},
+	// ClickMaskTest : function() {
+		// var thisCtl = this.getController("NewPlan.NewPlanTab");
+		// thisCtl.MaskPITable("Test");
+	// },
 
 	ClickLoadVitals : function() {
 		if (this.PatientCheck()) {
