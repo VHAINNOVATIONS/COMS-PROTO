@@ -16,9 +16,9 @@ class NodeVista{
   */
   public function post($url, $data=false){
       $ret = $this->call("POST", $url, $data);
-      // error_log("NodeVista Class - Post - URL - " . $url);
-      // error_log("NodeVista Class - Post - DATA - " . json_encode($data));
-      // error_log("NodeVista Class - Post - RET - " . $ret);
+      error_log("NodeVista Class - Post - URL - " . $url);
+      error_log("NodeVista Class - Post - DATA - " . json_encode($data));
+      error_log("NodeVista Class - Post - RET - " . $ret);
       return $ret;
   }
 

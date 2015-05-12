@@ -51,6 +51,7 @@
 <?php
     
     /* Initializing of global JavaScript variables */
+    echo "var ShowProgrammerBtns = '" . $_GET["programmer"] . "';\n";
     echo "var AccessibilityMode = '" . $_SESSION[ "BrowserMode" ] . "';\n";
     echo "var Page2Open = '$page2Open';\n";
     echo "var theJSPath = '$Version/';\n";

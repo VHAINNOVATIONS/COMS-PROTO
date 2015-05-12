@@ -1,3 +1,17 @@
+/*******************
+ *	Look for the following for updating patient info
+ *
+ *	PITable.update( this.EoTSData );
+ *	PITable.update( this.EoTSData );
+ *	piTableInfo.update("");
+ *	piTableInfo.update(PatientData);//--//2
+ *	piTableInfo.update("");
+  *	piTableInfo.update(Patient);		//--//
+ *	piTableInfo.update(Patient);		//--//
+ *	piTableInfo.update(Patient);		//--//
+ *	piTableInfo.update(this.application.Patient);	//--// 2
+ *	piTableInfo.update( this.application.Patient );		//--//
+ */
 /***
  *
  *	Console Logging Code
@@ -7479,6 +7493,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 
 	tpl : new Ext.XTemplate(
 		"{[this.tempCalc(values, parent)]}",
+		"{[this.getLastHWBSAInfo(values)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
 			"<tr>",
 				"<th rowspan=\"2\">Date</th>",
@@ -7500,7 +7515,6 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
 			"</tr>",
-			"{[this.getLastHWBSAInfo(values)]}",
 			"<tpl for=\"Vitals\">",
 				"<tr>",
 					"<td>{DateTaken}</td>",
@@ -7529,8 +7543,10 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				// debugger;
 			},
 			getLastHWBSAInfo: function (data) {
+
 				var Vitals = data.Vitals, vLen = data.Vitals.length;
 				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
+/************************
 				for (i = vLen-1; i >= 0; i--) {
 					v = Vitals[i];
 
@@ -7570,16 +7586,33 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 						wf = v.WeightFormula;
 					}
 				}
+******************/
 
-				v = Vitals[0];
-				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
 
 				if (globalAppPatientScope) {
+					var PatientInfo = globalAppPatientScope.application.Patient;
+					v = Vitals[0];
+					if (v.hasOwnProperty("Height") && PatientInfo.Height == "") {
+						PatientInfo.Height = v.Height;
+					}
+					if (v.hasOwnProperty("Weight") && PatientInfo.Weight == "") {
+						PatientInfo.Weight = v.Weight;
+					}
+					if (v.hasOwnProperty("BSA_Method") && PatientInfo.BSA_Method == "") {
+						PatientInfo.BSA_Method = v.BSA_Method;
+					}
+					if (v.hasOwnProperty("BSA_Weight") && PatientInfo.BSA_Weight == "") {
+						PatientInfo.BSA_Weight = v.BSA_Weight;
+					}
+					if (v.hasOwnProperty("WeightFormula") && PatientInfo.WeightFormula == "") {
+						PatientInfo.WeightFormula = v.WeightFormula;
+					}
+					PatientInfo.BSA = Ext.BSA_Calc(PatientInfo);
 					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
-					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
+					thisCtl.updatePITable( PatientInfo );
 				}
-				
 				return "";
 			},
 
@@ -7637,7 +7670,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 			},
 
 			BSACalc: function (data, pData, pDataIndex) {
-				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 				var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
 								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 
@@ -14783,9 +14816,9 @@ Ext.define("COMS.view.NewPlan.PatientInfo" ,{
 
 
 	items : [
-		{ xtype : "container", hidden : true, name : "UpdateMDWSDataContainer", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from MDWS" },
-		{ xtype : "container", hidden : true, name : "DisplayMDWSDataContainer", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from MDWS" },
-		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from MDWS" },
+		{ xtype : "container", hidden : true, name : "UpdateMDWSDataContainer", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
+		{ xtype : "container", hidden : true, name : "DisplayMDWSDataContainer", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
+		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
 		{ xtype : "PatientInfoTable" },
 
 		{ xtype : "MedRemindersPanel" },
@@ -14927,7 +14960,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					// XTemplate Configuration
 					disableFormats: true,
 					DebuggerFcn : function ( values ) {
-						// debugger;
+						debugger;
 					},
 
 					DeleteCancer : function (out, values, parent, xindex, xcount) {
@@ -14944,7 +14977,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					},
 
 					BSA_Cell : function (data) {
-						var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+						var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 						var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
 								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						if (
@@ -14962,7 +14995,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							}
 						}
 						data.BSA = "N/A";
-						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title=\"Not Available\">N/A</abbr></span>";
+						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title='Not Available'>N/A</abbr></span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {
@@ -15113,7 +15146,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 					CalcBSA : function( data, parent ) {
 						try {
-							if ("" === data.BSA || "<abbr title=\"Not Available\">N/A</abbr>" === data.BSA) {
+							if ("" === data.BSA || "<abbr title='Not Available'>N/A</abbr>" === data.BSA) {
 								data.BSA = Ext.BSA_Calc(data);
 								data.Vitals[0].BSA = data.BSA;
 							}
@@ -16390,7 +16423,7 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	"alias" : "widget.ProgrammerBtns",
 	"name" : "ProgrammerBtns",
 	"margin" : "10",
-	"hidden" : true,
+	"hidden" : (ShowProgrammerBtns === "" ? true : (ShowProgrammerBtns === "1" ? false : true)),
 	
 	"items" : [
 		{ "xtype" : "container", "layout" : "hbox", "defaults" : { "margin" : 2 }, 
@@ -20254,8 +20287,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						recs = resp.records; 
 						this.application.Patient.CumulativeDoseTracking = recs;
 						var thisCtl = this.getController("NewPlan.NewPlanTab");
-						var thePITable = thisCtl.getPatientInfoTableInformation();
-						thePITable.update( this.application.Patient );		//--//
+						var piTableInfo = thisCtl.getPatientInfoTableInformation();
+						piTableInfo.update( this.application.Patient );		//--//
 						this.UpdateCumDoseInfo();
 					}
 				}
@@ -24486,10 +24519,10 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 
 	loadAdverseEventsHistory : function(recs, eOpts) {
 		// --- // console.log("Loading Adverse Events History");
-		var theModule = this.getAdverseEventsHistory();
+		var AdverseEventsHistoryPanel = this.getAdverseEventsHistory();
 
-		theModule.setTitle("Adverse Events History (No Adverse Events Recorded)");
-		theModule.update({});
+		AdverseEventsHistoryPanel.setTitle("Adverse Events History (No Adverse Events Recorded)");
+		AdverseEventsHistoryPanel.update({});
 		
 		if ("" !== this.application.Patient.PAT_ID) {
 			var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
@@ -24510,11 +24543,11 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 							this.application.Patient.Reactions = resp.records.ReactAssessments;
 							this.application.Patient.TotalAdverseEvents = resp.totalEvents;
 							var data = this.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
-							theModule.update(data.list);
+							AdverseEventsHistoryPanel.update(data.list);
 							if (data.numAlerts > 0) {
 								alertText = " - <span style=\"color:red;\">" + data.numAlerts + " flagged to trigger an Alert</span>";
 							}
-							theModule.setTitle("Adverse Events History - (" + data.totEvents + " Adverse Events Recorded" + alertText + ")");
+							AdverseEventsHistoryPanel.setTitle("Adverse Events History - (" + data.totEvents + " Adverse Events Recorded" + alertText + ")");
 						}
 					}
 					else {
@@ -26768,8 +26801,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	getToxicityHistoryData : function(PAT_ID) {
 		// --- // console.log("Flowsheet Tab - getToxicityHistoryData - Loading Adverse Events");
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
-		var theModule = this.getFS_ToxicityHistory();
-		this.maskFlowSheetPanels(theModule, "Toxicity History");
+		var FS_ToxicityHistoryPanel = this.getFS_ToxicityHistory();
+		this.maskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 
 		Ext.Ajax.request({
 			scope : this,
@@ -26786,16 +26819,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 						this.application.Patient.TotalAdverseEvents = resp.totalEvents;
 						var theController = this.getController("NewPlan.AdverseEventsHistory");
 						var data = theController.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
-						theModule.update(data.list);
+						FS_ToxicityHistoryPanel.update(data.list);
 					}
 				}
 				else {
 					alert("load Flow Sheet Toxicity History - Error");
 				}
-				this.unMaskFlowSheetPanels(theModule, "Toxicity History");
+				this.unMaskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 			},
 			failure : function( response, opts ) {
-				this.unMaskFlowSheetPanels(theModule, "Toxicity History");
+				this.unMaskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 				alert("Flow Sheet Toxicity History Data Load Failed...");
 			}
 		});
@@ -26811,17 +26844,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			success : function( response) {
 				var obj = Ext.decode(response.responseText);
 
-				var Panel = this.getDiseaseResponsePanel();
-				Panel.update(obj);
-				this.unMaskFlowSheetPanels(Panel, "Disease Response");
+				var DiseaseResponsePanel = this.getDiseaseResponsePanel();
+				DiseaseResponsePanel.update(obj);
+				this.unMaskFlowSheetPanels(DiseaseResponsePanel, "Disease Response");
 
-				Panel = this.getOtherInfoPanel();
-				Panel.update(obj);
-				this.unMaskFlowSheetPanels(Panel, "Additional General Information");
+				var OtherInfoPanel = this.getOtherInfoPanel();
+				OtherInfoPanel.update(obj);
+				this.unMaskFlowSheetPanels(OtherInfoPanel, "Additional General Information");
 			},
 
 			failure : function( ) {
-				this.unMaskFlowSheetPanels(Panel, "Disease Response - Failed to load Disease Response Information");
+				this.unMaskFlowSheetPanels(FlowSheetPanels, "Disease Response - Failed to load Disease Response Information");
 				alert("Attempt to load Flow Sheet data failed.");
 				// console.log("Restoring Disease Response ERROR");
 			}
@@ -28371,15 +28404,19 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			systolic, 
 			diastolic, 
 			Valid = true,
-			Vitals = this.application.Patient.Vitals,
+			Vitals,
 			min, max, Msg, LastVital, pct, pctLast, valu;
-		if (Vitals.length > 0) {
-			LastVitals = Vitals[0];
-			if (LastVitals.BP) {
-				var BP = LastVitals.BP.split("/");
-				if (BP.length > 0) {
-					systolic = BP[0];
-					diastolic = BP[1];
+
+		if (!Ext.isEmpty(this.application.Patient.Vitals)) {
+			Vitals = this.application.Patient.Vitals;
+			if (Vitals.length > 0) {
+				LastVitals = Vitals[0];
+				if (LastVitals.BP) {
+					var BP = LastVitals.BP.split("/");
+					if (BP.length > 0) {
+						systolic = BP[0];
+						diastolic = BP[1];
+					}
 				}
 			}
 		}
@@ -28455,10 +28492,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	VitalsFieldValidation : function(fld, evt, eOpts) {
 		var IDESpec = this.application.IntelligentDataElements,
-			IDESpecLen = IDESpec.length, i,
+			IDESpecLen = 0, i,
 			fldName = fld.name, fldNameMap = [],
 			validity = true,
 			FldProcessed = false;
+		if (IDESpec) {
+			IDESpecLen = IDESpec.length;
+		}
+		
 
 		fldNameMap = [];
 		fldNameMap.ndVitalsTempF = "Temperature";
@@ -28689,6 +28730,7 @@ ClearTabData : function(obj) {
 
 
 	_saveVitals2DB : function(record, parent) {
+		debugger;
 		this.application.loadMask("One moment please, saving Patient Vitals...");
 		record.DFN = this.application.Patient.DFN;
 
@@ -28728,6 +28770,8 @@ ClearTabData : function(obj) {
 	_saveVitalsPOST : function(record) {
 		this.SavingVitals = true;
 		var params = Ext.encode(record);
+		// this.application.unMask();
+/**************/
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.AddVitals,
@@ -28755,6 +28799,7 @@ ClearTabData : function(obj) {
 				Ext.MessageBox.alert("Saving Vitals ERROR", "Vitals Information Section, Save Error - <br>" + resp.msg );
 			}
 		});
+/****************/
 	},
 
 	SaveVitals : function(parent) {
@@ -28833,12 +28878,12 @@ ClearTabData : function(obj) {
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return false;
 		}
-//
-//		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
-//            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-//			return true;
-//		}
-//
+
+		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
+			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+			return true;
+		}
+
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;
@@ -31316,14 +31361,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
     },
 
 	updatePITable : function(PatientData) {
-		var piTable = this.getPatientInfoTable();
+		var piTableInfo = this.getPatientInfoTable();
 		if (!PatientData) {
-			piTable.update("");
+			piTableInfo.update("");
 		}
 		else {
-			piTable.update(PatientData);//--//2
+			piTableInfo.update(PatientData);//--//2
 		}
-		return piTable;
+		return piTableInfo;
 	},
 /*******************************
 	MaskPITable : function (msg) {
@@ -32115,7 +32160,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			***/
 			var theValues2Set = {
 				"startdate"              : PatientDetails.TreatmentStart, 
-				"BSA_FormulaWeight"      : PatientDetails.BSA_Method,
+				"BSA_FormulaWeight"      : PatientDetails.WeightFormula,
 				"BSA_Formula"            : PatientDetails.BSAFormula,
 				"Goal"                   : PatientDetails.Goal,
 				"ConcurRadTherapy"       : PatientDetails.ConcurRadTherapy,
@@ -32753,6 +32798,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			var nIdx, vIdx, DateTaken, data, units;
 			if (rec.hasOwnProperty("type")) {
 				nIdx = rec.date.split("T")[0];
+				DateTaken = this.extractDate(nIdx);
+				if (this.Vitals.hasOwnProperty(nIdx)) {
+				}
+				else {
+					this.Vitals[nIdx] = {DateTaken : DateTaken, BSA : "", BSA_Method: "", BSA_Weight : "", WeightFormula : "", PS : "No Change", PSID : "N/C"};
+				}
+/**********
 				if (this.vIdx !== nIdx) {
 					this.vIdx = nIdx;
 					DateTaken = this.extractDate(nIdx);
@@ -32763,6 +32815,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					DateTaken = this.extractDate(nIdx);
 					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
 				}
+*************/
 				switch( rec.type ) {
 					case "T":
 						data = "Temperature";
@@ -32771,7 +32824,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					case "HT":
 						data = "Height";
 						units = "Height_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
+						this.Vitals[nIdx][units] = rec.units;
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Height) {
 								this.application.Patient.Height = rec.value;
@@ -32781,7 +32834,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					case "WT":
 						data = "Weight";
 						units = "Weight_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
+						this.Vitals[nIdx][units] = rec.units;
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Weight) {
 								this.application.Patient.Weight = rec.value;
@@ -32805,7 +32858,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 						data = rec.type;
 						break;
 				}
-				this.Vitals[this.vIdx][data] = rec.value;
+				this.Vitals[nIdx][data] = rec.value;
 				return true;
 			}
 			return false;
@@ -33313,6 +33366,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 // console.log("Loading Orders - Start");
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
+/*************** RESTORE CODE - MWB 5/12/2015 **/
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
@@ -33357,6 +33411,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 //				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
+/******************************/
 	},
 
     //-------------------------------------------------------------------------
@@ -33432,8 +33487,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		piTable.collapse();
 
-		var piTable1 = thisCtl.getPatientInfoTableInformation();
-		piTable1.update("");
+		var piTableInfo = thisCtl.getPatientInfoTableInformation();
+		piTableInfo.update("");
 
 		var btn;
 		if ("1" === SessionTemplateAuthoring) {
@@ -33717,7 +33772,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		if ("Update BSA" === Loaded) {
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
-			piTableInfo.update(Patient);
+			piTableInfo.update(Patient);		//--//
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
@@ -33789,7 +33844,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			piTable.show();
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
-			piTableInfo.update(Patient);
+			piTableInfo.update(Patient);		//--//
 			piTableInfo.show();
 
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
@@ -34248,11 +34303,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	LoadOEM_OrderData : function() {
 		// console.log("Loading OEM Data");
+/*************** RESTORE CODE - MWB 5/12/2015 */
 		if (this.application.Patient) {
 			this.application.DataLoadCount = 1;
 			this.loadOrderRecords();
 			// console.log("Load Order Records from - LoadOEM_OrderData");
 		}
+/****************************************************************/
 	},
 
 
@@ -34519,6 +34576,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 	DisplayOEMRecordData : function( PatientInfo ) {
+/*************** RESTORE CODE - MWB 5/12/2015 */
 		this.MaskOEMData(true);
 
 		var PatientID = this.application.Patient.id;
@@ -34543,6 +34601,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
+/******************/
 	},
 
 	displayOEM_Data : function( PatientInfo ) {
