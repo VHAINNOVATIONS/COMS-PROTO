@@ -663,24 +663,25 @@ error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - 
             }
         }
 
-/*****************
+
         $spo2 = $form_data->{'SPO2'};
         if ($spo2 && $spo2 !== "") {
             $spo2 = strval($spo2);
-error_log("Saving Pulse Oximetry - $spo2");
+
+/**********
             $VitalObj = array('type' => "PO2", 'value' => $spo2, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
 error_log("Saving Pulse Oximetry - Data = $PatientData");
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
-
             $eRet1 = json_decode( $postRet, true );
             if (array_key_exists("error", $eRet1)) {
                 $errMsgList[] = "Error saving SPO2 to VistA - " . $eRet1["error"];
                 $spo2 = "";
             }
+************/
         }
-*****************/
+
         
         if (count($errMsgList) > 0) {
             $errors = implode("\n\r", $errMsgList);
