@@ -10613,8 +10613,8 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{ xtype : "OEM" },
 				{ xtype : "NursingDocs" },
 				{ xtype : "FlowSheet" },
-				{ xtype : "Chronology" },
-				{ xtype : "KnowledgeBase" }
+				{ xtype : "Chronology", hidden : true },
+				{ xtype : "KnowledgeBase", hidden : true }
 			];
 		}
 		this.callParent(arguments);

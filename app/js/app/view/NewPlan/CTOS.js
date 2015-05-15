@@ -68,7 +68,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{ xtype : "NursingDocs" },
 				{ xtype : "FlowSheet" },
 				{ xtype : "Chronology", hidden : true },
-				{ xtype : "KnowledgeBase", hidden : true }		// MWB - 7/16/2012 - Per e-mail from Sean this date, do not show KBase Tab, used "hidden" in case any functions expect the tab to be there
+				{ xtype : "KnowledgeBase", hidden : true }
 			];
 		}
 		else {
@@ -90,8 +90,8 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{ xtype : "OEM" },
 				{ xtype : "NursingDocs" },
 				{ xtype : "FlowSheet" },
-				{ xtype : "Chronology" },
-				{ xtype : "KnowledgeBase" }
+				{ xtype : "Chronology", hidden : true },
+				{ xtype : "KnowledgeBase", hidden : true }
 			];
 		}
 		this.callParent(arguments);
