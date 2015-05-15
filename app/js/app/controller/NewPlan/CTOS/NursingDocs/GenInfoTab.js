@@ -252,15 +252,19 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			systolic, 
 			diastolic, 
 			Valid = true,
-			Vitals = this.application.Patient.Vitals,
+			Vitals,
 			min, max, Msg, LastVital, pct, pctLast, valu;
-		if (Vitals.length > 0) {
-			LastVitals = Vitals[0];
-			if (LastVitals.BP) {
-				var BP = LastVitals.BP.split("/");
-				if (BP.length > 0) {
-					systolic = BP[0];
-					diastolic = BP[1];
+
+		if (!Ext.isEmpty(this.application.Patient.Vitals)) {
+			Vitals = this.application.Patient.Vitals;
+			if (Vitals.length > 0) {
+				LastVitals = Vitals[0];
+				if (LastVitals.BP) {
+					var BP = LastVitals.BP.split("/");
+					if (BP.length > 0) {
+						systolic = BP[0];
+						diastolic = BP[1];
+					}
 				}
 			}
 		}
@@ -336,10 +340,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 	VitalsFieldValidation : function(fld, evt, eOpts) {
 		var IDESpec = this.application.IntelligentDataElements,
-			IDESpecLen = IDESpec.length, i,
+			IDESpecLen = 0, i,
 			fldName = fld.name, fldNameMap = [],
 			validity = true,
 			FldProcessed = false;
+		if (IDESpec) {
+			IDESpecLen = IDESpec.length;
+		}
+		
 
 		fldNameMap = [];
 		fldNameMap.ndVitalsTempF = "Temperature";
@@ -584,9 +592,9 @@ ClearTabData : function(obj) {
 		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
 		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
-        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
-        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
-        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+		var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+		var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+		var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
 
 		Temperature.setValue("");
 		TemperatureLocation.setValue("");
@@ -599,9 +607,9 @@ ClearTabData : function(obj) {
 		Pain.setValue("");
 		SPO2.setValue("");
 		BSA.setValue("");
-        NDVitalsWeightKG.setValue("");
-        NDVitalsHeightCM.setValue("");
-        NDVitalsTempC.setValue("");
+		NDVitalsWeightKG.setValue("");
+		NDVitalsHeightCM.setValue("");
+		NDVitalsTempC.setValue("");
 
 		this._saveVitalsPOST(record);
 	},
@@ -614,7 +622,7 @@ ClearTabData : function(obj) {
 			url: Ext.URLs.AddVitals,
 			method : "POST",
 			jsonData : params,
-			success: function( response, opts ){
+			success : function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.SavingVitals = false;
@@ -673,9 +681,9 @@ ClearTabData : function(obj) {
 
 		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
-        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
-        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
-        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+		var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+		var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+		var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
 
 		var dt = new Date();
 		var record = {};
@@ -683,7 +691,7 @@ ClearTabData : function(obj) {
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y");		// Ignore timestamp till we can get an accurate time from VistA
 		record.Temperature = Temperature.getValue();
-        record.TemperatureLocation = TemperatureLocation.getValue();
+		record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();
 		record.Systolic = Systolic.getValue();
 		record.Diastolic = Diastolic.getValue();
@@ -693,14 +701,11 @@ ClearTabData : function(obj) {
 		record.Pain = Pain.getValue();
 		record.SPO2 = SPO2.getValue();
 		record.BSA = BSA.getValue();
-
 		record.BSA = record.BSA.split(" ")[0];
-
-
 		record.BP = Systolic.getValue() + " / " + Diastolic.getValue();
 
 		var flg1 = "" === record.Temperature;
-        var flg1a = "" === record.TemperatureLocation;
+		var flg1a = "" === record.TemperatureLocation;
 		var flg2 = "" === record.Pulse;
 		var flg3 = "" === record.Systolic;
 		var flg4 = "" === record.Height;
@@ -714,12 +719,11 @@ ClearTabData : function(obj) {
 		if (flg1 && flg1a && flg2 && flg3 && flg4 && flg5 && flg6 && flg7 && flg8 && flg9 && flg10) {
 			return false;
 		}
-//
-//		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
-//            Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
-//			return true;
-//		}
-//
+
+		if (record.SPO2 && (record.SPO2 <= 0 || record.SPO2 > 100)) {
+			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
+			return true;
+		}
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;

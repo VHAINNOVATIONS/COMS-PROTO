@@ -48,7 +48,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							var aRec = theScope.PostedRecs.pop();
 							if (aRec) {
 								var tmpData = aRec.getData();
-								console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
+								// --- //console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
 								aRec.save({
 									scope: theScope,
 									success: ResponseAlertGood,

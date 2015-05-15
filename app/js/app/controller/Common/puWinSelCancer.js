@@ -16,12 +16,17 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 				select: this.onDiseaseStageChange
 			},
 			"puWinSelCancer button[text=\"Cancel\"]" : {
-				click: this.Cancel
+				click: this.CancelDiseaseType
 			},
 			"puWinSelCancer button[text=\"Save\"]" : {
-				click: this.Save
+				click: this.SaveDiseaseType
 			}
 		});
+	},
+
+	updatePITable : function(Patient) {
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
 	},
 
 	onDiseaseSelected: function (combo, recs, eOpts) {
@@ -101,13 +106,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		});
 	},
 
-
-	updatePITable : function(Patient) {
-		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
-	},
-
-	Save : function(btn) {
+	SaveDiseaseType : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();
@@ -152,7 +151,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			this.Close();
 		}
 	},
-	Cancel : function(btn) {
+	CancelDiseaseType : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').hide();
 		this.Close();

@@ -176,7 +176,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.PatientCumulativeDosing + "/" + this.application.Patient.id,
-			success: function( response, opts ){
+			success : function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success) {
@@ -185,8 +185,8 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 						recs = resp.records; 
 						this.application.Patient.CumulativeDoseTracking = recs;
 						var thisCtl = this.getController("NewPlan.NewPlanTab");
-						var thePITable = thisCtl.getPatientInfoTableInformation();
-						thePITable.update( this.application.Patient );
+						var piTableInfo = thisCtl.getPatientInfoTableInformation();
+						piTableInfo.update( this.application.Patient );		//--//
 						this.UpdateCumDoseInfo();
 					}
 				}

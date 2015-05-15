@@ -157,7 +157,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		"NewPlan.EndTreatmentSummary"
 	],
 
-    refs: [
+	refs: [
 		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
 
 		{ ref: "CTOS",							selector: "NewPlanTab CTOS"},
@@ -165,7 +165,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "EditTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Edit\"]"},
 		{ ref: "What2DoBtns",				    selector: "NewPlanTab CTOS [name=\"NewPlan_What2Do_Btns\"]"},
 		{ ref: "NewPlan_CTOS_Form",			    selector: "NewPlanTab CTOS form[name=\"NewPlan_CTOS_Form\"]"},
-
 
 		{ ref: "PatientInfo",					selector: "NewPlanTab PatientInfo"},
 
@@ -201,20 +200,21 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "PatientSelectionPanel",			selector: "NewPlanTab PatientSelection"},
 		{ ref: "SelectPatient",					selector: "NewPlanTab SelectPatient combobox"},
 		{ ref: "ConfirmPatient",				selector: "NewPlanTab SelectPatient container[name=\"Confirm\"]"},
+		{ ref: "NoPatient",						selector: "NewPlanTab SelectPatient box[name=\"NoPatient\"]"},
 
 		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
 		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
 
 		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
 		{ ref: "ProgrammerBtns",				selector: "ProgrammerBtns"}
-    ],
+	],
 
 	Modules2Load : [],		// Used to track which modules are in the process of being loaded and to load modules synchronously rather than asyncronously which works more efficiently on the back end.
 
 
-    init: function() {
-        wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
-        this.application.btnEditTemplatClicked=false;
+	init: function() {
+		wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
+		this.application.btnEditTemplatClicked=false;
 		this.application.on({ LoadOEMData : this.LoadOEM_OrderData, scope : this });
 
 		this.application.on({ UpdateBSAWeightHeight : function(opts, tab2Switch2) {
@@ -235,7 +235,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
  			this.ShowBSACalcsPUWin(opts, tab2Switch2);
 		}, scope : this });
 
-        this.control({
+		this.control({
 			"NewPlanTab PatientInfo MedRemindersPanel grid" : {
 				select: this.selectMedReminderGridRow
 			},
@@ -244,94 +244,72 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			"NewPlanTab PatientInfo CTOS dspTemplateData" : {
 				afterrender : this.tabRendered
 			},
-            "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
-                change : this.TemplateTypeSelected
-            },
+			"NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
+				change : this.TemplateTypeSelected
+			},
 
 			"NewPlanTab PatientSelection textfield[name=\"CPRS_QueryString\"]" : {
 				specialkey : this.QSEnter
 			},
-            "NewPlanTab SelectPatient combobox" : {
-                select : this.PatientSelected
-            },
+			"NewPlanTab SelectPatient combobox" : {
+				select : this.PatientSelected
+			},
 
-            "NewPlanTab CTOS button[name=\"Apply\"]" : {
-                click: this.applyTemplateToPatient
-            },
-            "NewPlanTab CTOS button[name=\"Edit\"]" : {
-                click: this.editTemplate
-            },
+			"NewPlanTab CTOS button[name=\"Apply\"]" : {
+				click: this.applyTemplateToPatient
+			},
+			"NewPlanTab CTOS button[name=\"Edit\"]" : {
+				click: this.editTemplate
+			},
 			"NewPlanTab MedRemindersPanel" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
 
-            "NewPlanTab PatientSelection" : {
-                afterrender: this.handlePatientSelectionRender
-            },
-            "NewPlanTab PatientInfo PatientInfoTable" : {
-                afterrender: Ext.togglePanelOnTitleBarClick,
-				expand : this.MaskPITPanelOnExpand
-            },
-            "NewPlanTab PatientInfo PatientTemplates" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo PatientHistory" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo LabInfo" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo KnownProblems" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo AdverseEventsHistory" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab ToxicitySideEffectsPanel" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
-                click: this.SaveVitals
-            },
-            "PatientHistory [name=\"AddVitals\"] button[text=\"Cancel\"]" : {
-                click: this.CancelVitals
-            }
-       });
-	   this.InitIntelligentDataElementStore();
-       wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
-    },
+			"NewPlanTab PatientSelection" : {
+				afterrender: this.handlePatientSelectionRender
+			},
+			"NewPlanTab PatientInfo PatientInfoTable" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo PatientTemplates" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo PatientHistory" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo LabInfo" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo KnownProblems" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo AdverseEventsHistory" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab ToxicitySideEffectsPanel" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
+				click: this.SaveVitals
+			},
+			"PatientHistory [name=\"AddVitals\"] button[text=\"Cancel\"]" : {
+				click: this.CancelVitals
+			}
+		});
+		this.InitIntelligentDataElementStore();
+		wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
+	},
 
-	updatePITable : function(PatientData) {
-		var piTable = this.getPatientInfoTable();
+	updatePITable : function(PatientData) {	// This is part of the "NewPlan.NewPlanTab" controller so no need to get it.
+		var theController = this.getController("NewPlan.NewPlanTab");
+		var piTableInfo;
+		piTableInfo = this.getPatientInfoTableInformation();
 		if (!PatientData) {
-			piTable.update("");
+			piTableInfo.update("");
 		}
 		else {
-			piTable.update(PatientData);
+			piTableInfo.update(PatientData);
 		}
-		return piTable;
-	},
-
-
-	MaskPITPanelOnExpand : function (p, ani, opts) {
-//		if ("Patient Information" !== p.title ) {
-//			this.MaskPITable("Loading Patient Information");
-//		}
-//		else {
-//			this.MaskPITable(false);
-//		}
-	},
-
-	MaskPITable : function (msg) {
-//		var PITablePanel = this.getPatientInfoTable();
-//		if (msg) {
-//			PITablePanel.setTitle("Patient Information - " + msg);
-//			PITablePanel.setLoading(msg, false);
-//		}
-//		else {
-//			PITablePanel.setTitle("Patient Information");
-//			PITablePanel.setLoading(false, false);
-//		}
 	},
 
 	clickPatientListCount : function( evt, itemClicked ) {
@@ -371,24 +349,24 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		btn.up('form').getForm().reset();
 	},
 
-    SaveVitals : function() {
-        var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-        if (theController) {
-            theController.SaveVitals("PatientHistory");
-        }
-    },
+	SaveVitals : function() {
+		var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+		if (theController) {
+			theController.SaveVitals("PatientHistory");
+		}
+	},
 
 
-    handlePatientSelectionRender : function( panel ) {
-        var Btns = Ext.select("button.anchor.QueryCPRS4Patient");
-        if (Btns) {
-            Btns.on("click", this.handlePatientSelectionClickEvent, this);
-        }
+	handlePatientSelectionRender : function( panel ) {
+		var Btns = Ext.select("button.anchor.QueryCPRS4Patient");
+		if (Btns) {
+			Btns.on("click", this.handlePatientSelectionClickEvent, this);
+		}
 		if ("Programmer" === dName ) {
 			// this.getProgrammerBtns().show();
 		}
-        Ext.togglePanelOnTitleBarClick(panel);
-    },
+		Ext.togglePanelOnTitleBarClick(panel);
+	},
 
 	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
@@ -478,15 +456,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fncName = "";
 				break;
 			case "GenerateEoTS":
-                fncName = "Generate End of Treatment Summary";
-                this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
-                this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
-                // Have TemplateID = this.application.Patient.AppliedTemplateID
-                // TemplateName = this.application.Patient.AppliedTemplate.Description
-                this.application.Patient.EoTS_Type = "Generate";
-                Ext.widget("EndTreatmentSummary");
-                fncName = "";
-                break;
+				fncName = "Generate End of Treatment Summary";
+				this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
+				this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
+				// Have TemplateID = this.application.Patient.AppliedTemplateID
+				// TemplateName = this.application.Patient.AppliedTemplate.Description
+				this.application.Patient.EoTS_Type = "Generate";
+				Ext.widget("EndTreatmentSummary");
+				fncName = "";
+				break;
 
 			case "ShowEoTS":
 				fncName = "Show End of Treatment Summary";
@@ -494,7 +472,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
 				this.application.Patient.EoTS_ID = element.getAttribute("EotsID");
 				this.application.Patient.EoTS_Type = "Show";
-		        this.application.loadMask("Loading End of Treatment Summary Information...");
+				this.application.loadMask("Loading End of Treatment Summary Information...");
 				delete(this.application.Patient.EoTS);	// Clear out any previous EoTS info just in case...
 
 				Ext.Ajax.request({
@@ -700,8 +678,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	// MWB 30 Jan 2012 - Added additional functionality
 	// MWB 31 Jan 2012 - Added control for the BSA Anchor
 	// MWB 09 Feb 2012 - Added additional param - DateTaken
-    // MWB 08 Apr 2014 - Added functionality for Add/Edit BSA and Amputations
-    //
+	// MWB 08 Apr 2014 - Added functionality for Add/Edit BSA and Amputations
+	//
 	HandleAnchorClicks : function (event, element) {
 		wccConsoleLog("HandleAnchorClicks - PatientInfoTable - " + element.getAttribute("tabtype"));
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
@@ -722,11 +700,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
 			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
-			    title: 'Patient Info',
-			    height: 800,
-			    width: 950,
+				title: 'Patient Info',
+				height: 800,
+				width: 950,
 				autoScroll : true,
-			    html : htmlData
+				html : htmlData
 			}).show();
 
 		} else if("BSA" === tab2switch2) {
@@ -741,7 +719,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			templateID = element.getAttribute("templateid");
 			this.CTOS_DataLoad2(templateID);
 			CTOSTabs = this.getCTOS();
-	        CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
+			CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
 		} 
 		else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
@@ -753,211 +731,211 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-    //KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
-    loadCombo : function(picker, eOpts){
-        var originalHiddenVal=null;
-        picker.hiddenValue = picker.getRawValue();
-        picker.clearValue();
+	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
+	loadCombo : function(picker, eOpts){
+		var originalHiddenVal=null;
+		picker.hiddenValue = picker.getRawValue();
+		picker.clearValue();
 
-        var URI,id;
+		var URI,id;
 
-        if("Select Disease Stage Control" == picker.name){
-            URI = Ext.URLs.DiseaseStage + "/";
-            if(eOpts && eOpts.length && eOpts.length > 0){
-                id = eOpts;
-            }else{
-                id = this.application.Patient.Disease.id;
-            }
-        } else if (picker.name == "selDisease"){
-            if(eOpts && eOpts.length && "Refresh" === eOpts){
-                URI = Ext.URLs.DiseaseType;
-                id = '';
-            }else if(null != this.application.Patient.TemplateType.id){
-                URI = Ext.URLs.DiseaseType + "/Source/";
-                id = this.application.Patient.TemplateType.id;
-            }
-        }
+		if("Select Disease Stage Control" == picker.name){
+			URI = Ext.URLs.DiseaseStage + "/";
+			if(eOpts && eOpts.length && eOpts.length > 0){
+				id = eOpts;
+			}else{
+				id = this.application.Patient.Disease.id;
+			}
+		} else if (picker.name == "selDisease"){
+			if(eOpts && eOpts.length && "Refresh" === eOpts){
+				URI = Ext.URLs.DiseaseType;
+				id = '';
+			}else if(null != this.application.Patient.TemplateType.id){
+				URI = Ext.URLs.DiseaseType + "/Source/";
+				id = this.application.Patient.TemplateType.id;
+			}
+		}
 
-        picker.getStore().load({
-            params: {
-                URL : URI,
-                ID  : id
-            },
-            callback: function(records,operation,success){
-                if(success){
-                    if(null!=originalHiddenVal){
-                        picker.setRawValue(originalHiddenVal);
-                    }
-                }
-            }
-        });
+		picker.getStore().load({
+			params: {
+				URL : URI,
+				ID  : id
+			},
+			callback: function(records,operation,success){
+				if(success){
+					if(null!=originalHiddenVal){
+						picker.setRawValue(originalHiddenVal);
+					}
+				}
+			}
+		});
 
-    },
+	},
 
-    collapseCombo : function(picker,eOpts){
-        if(picker.getValue() == null && picker.hiddenValue != null){
-            picker.setRawValue(picker.hiddenValue);		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        }
+	collapseCombo : function(picker,eOpts){
+		if(picker.getValue() == null && picker.hiddenValue != null){
+			picker.setRawValue(picker.hiddenValue);		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
+		}
 
-    },
+	},
 
 	resetTemplateFilter : function(button){
 
-        if(null != this.application.Patient.Template){
-            this.getTemplate().setRawValue(this.application.Patient.Template.description);
-        }
+		if(null != this.application.Patient.Template){
+			this.getTemplate().setRawValue(this.application.Patient.Template.description);
+		}
 
-        this.application.ResetClicked=true;
-        this.loadCombo(this.getTemplate());
-        this.loadCombo(this.getDisease(),"Refresh");
+		this.application.ResetClicked=true;
+		this.loadCombo(this.getTemplate());
+		this.loadCombo(this.getDisease(),"Refresh");
 
 		this.getDiseaseAndStage().hide();
-        this.getTemplate().show();
+		this.getTemplate().show();
 		button.hide();
 		this.getAllTemplatesShownMsg().show();
-    },
+	},
 
 
-    editTemplate : function(button){
-        this.application.loadMask("Edit Template");
+	editTemplate : function(button){
+		this.application.loadMask("Edit Template");
 
-        this.application.btnEditTemplatClicked=true;
+		this.application.btnEditTemplatClicked=true;
 
-        var disease = this.getDisease();
+		var disease = this.getDisease();
 
-        var diseaseRecord = disease.getStore().getById(disease.getValue());
+		var diseaseRecord = disease.getStore().getById(disease.getValue());
 
-        if(0 == this.getSelTemplateType().getStore().count()){
-            this.getSelTemplateType().getStore().load();
-        }
-
-
-        if(null === diseaseRecord){
-            var newPlanCtl = this.getController("NewPlan.NewPlanTab");
-            disease.getStore().load({
-                params: {
-                        URL: Ext.URLs.DiseaseType + "/",
-                        ID: disease.getValue()
-                },
-                callback: function (records, operation, success) {
-                        if (success) {
-                            var diseaseRecord = disease.getStore().getById(disease.getValue());
-                            newPlanCtl.afterFindDisease(diseaseRecord);
-                        }else{
-                            Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
-                        }
-                }
-            });
-
-        }else {
-            this.afterFindDisease(diseaseRecord);
-        }
-    },
-
-    afterFindDisease : function(diseaseRecord){
-        var thisCtl = this.getController("Authoring.AuthoringTab");
-        var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
+		if(0 == this.getSelTemplateType().getStore().count()){
+			this.getSelTemplateType().getStore().load();
+		}
 
 
-        var template=null;
-        var templateTypeModel, templateType = this.getSelTemplateType();
+		if(null === diseaseRecord){
+			var newPlanCtl = this.getController("NewPlan.NewPlanTab");
+			disease.getStore().load({
+				params: {
+						URL: Ext.URLs.DiseaseType + "/",
+						ID: disease.getValue()
+				},
+				callback: function (records, operation, success) {
+						if (success) {
+							var diseaseRecord = disease.getStore().getById(disease.getValue());
+							newPlanCtl.afterFindDisease(diseaseRecord);
+						}else{
+							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
+						}
+				}
+			});
 
-        if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
-            /*
-             * Assigning the template type to a Local Template. Not correct logic
-             * but just something to get past the error when editing a template.
-             */
-            templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
-            templateType.setValue(templateTypeModel);
-            template = this.getMyTemplates();
-        }else if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].getValue()){
-            template = this.getTemplate();
-        }
+		}else {
+			this.afterFindDisease(diseaseRecord);
+		}
+	},
 
-        if(null == template){
-            /*
-             * Assigning the template type to a Local Template. Not correct logic
-             * but just something to get past the error when editing a template.
-             */
-            templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
-            templateType.setValue(templateTypeModel);
-            template = this.getMyTemplates();
-        }
-        existingTemplate.setValue(true);
-
-        var rbtn = Ext.create(Ext.form.Radio,{
-            inputValue : 0
-        });
-
-        thisCtl.AuthorTypeSelected(rbtn,true,null,null);
-        thisCtl.getPatientNameField().setValue(this.application.Patient.name);
-        thisCtl.getPatientNameField().show();
-
-        var templateSourceRecord = this.getSelTemplateType().getStore().findBy(
-
-            function (record, id) {
-
-                    if(record.data.id == templateType.getValue()){
-                        return true;
-                    }
-
-                    return false;
-            });
-
-        var templateSourceRecords = [];
-
-        var tmp = templateType.getStore().getAt(templateSourceRecord);
-        templateSourceRecords.push(tmp);
-        thisCtl.getTemplateSource().setValue(tmp);
-        thisCtl.onTemplateTypeChange(null,templateSourceRecords,null);
-
-        var diseaseRecords = [];
-        diseaseRecords.push(diseaseRecord);
-
-        thisCtl.getExistingDisease().setRawValue(diseaseRecord.data.name);
-        thisCtl.DiseaseSelected(thisCtl.getExistingDisease(),diseaseRecords,null);
-
-        var diseaseStage = this.getDiseaseStage();
-        var diseaseStageRecord = diseaseStage.getStore().getById(diseaseStage.value.id);
-        var diseaseStageRecords = [];
+	afterFindDisease : function(diseaseRecord){
+		var thisCtl = this.getController("Authoring.AuthoringTab");
+		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
 
 
-        if(null != diseaseStageRecord){
-	        diseaseStageRecords.push(diseaseStageRecord);
+		var template=null;
+		var templateTypeModel, templateType = this.getSelTemplateType();
+
+		if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
+			/*
+			 * Assigning the template type to a Local Template. Not correct logic
+			 * but just something to get past the error when editing a template.
+			 */
+			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			templateType.setValue(templateTypeModel);
+			template = this.getMyTemplates();
+		}else if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].getValue()){
+			template = this.getTemplate();
+		}
+
+		if(null == template){
+			/*
+			 * Assigning the template type to a Local Template. Not correct logic
+			 * but just something to get past the error when editing a template.
+			 */
+			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			templateType.setValue(templateTypeModel);
+			template = this.getMyTemplates();
+		}
+		existingTemplate.setValue(true);
+
+		var rbtn = Ext.create(Ext.form.Radio,{
+			inputValue : 0
+		});
+
+		thisCtl.AuthorTypeSelected(rbtn,true,null,null);
+		thisCtl.getPatientNameField().setValue(this.application.Patient.name);
+		thisCtl.getPatientNameField().show();
+
+		var templateSourceRecord = this.getSelTemplateType().getStore().findBy(
+
+			function (record, id) {
+
+					if(record.data.id == templateType.getValue()){
+						return true;
+					}
+
+					return false;
+			});
+
+		var templateSourceRecords = [];
+
+		var tmp = templateType.getStore().getAt(templateSourceRecord);
+		templateSourceRecords.push(tmp);
+		thisCtl.getTemplateSource().setValue(tmp);
+		thisCtl.onTemplateTypeChange(null,templateSourceRecords,null);
+
+		var diseaseRecords = [];
+		diseaseRecords.push(diseaseRecord);
+
+		thisCtl.getExistingDisease().setRawValue(diseaseRecord.data.name);
+		thisCtl.DiseaseSelected(thisCtl.getExistingDisease(),diseaseRecords,null);
+
+		var diseaseStage = this.getDiseaseStage();
+		var diseaseStageRecord = diseaseStage.getStore().getById(diseaseStage.value.id);
+		var diseaseStageRecords = [];
+
+
+		if(null != diseaseStageRecord){
+			diseaseStageRecords.push(diseaseStageRecord);
 			thisCtl.getExistingDiseaseStage().setRawValue(diseaseStageRecord.data.name);
-		    thisCtl.onDiseaseStageChange(thisCtl.getExistingDiseaseStage(),diseaseStageRecords,null);
-        }else{
-            thisCtl.getExistingDiseaseStage().setRawValue('');
-        }
+			thisCtl.onDiseaseStageChange(thisCtl.getExistingDiseaseStage(),diseaseStageRecords,null);
+		}else{
+			thisCtl.getExistingDiseaseStage().setRawValue('');
+		}
 
-        var templateRecord;
-        if(null!=this.application.Patient.AppliedTemplateID){
-            templateRecord = template.getStore().getById(this.application.Patient.AppliedTemplateID);
-        }else{
-            templateRecord = template.getStore().getById(this.application.Patient.Template.id);
-        }
+		var templateRecord;
+		if(null!=this.application.Patient.AppliedTemplateID){
+			templateRecord = template.getStore().getById(this.application.Patient.AppliedTemplateID);
+		}else{
+			templateRecord = template.getStore().getById(this.application.Patient.Template.id);
+		}
 
-        template.clearValue();
+		template.clearValue();
 
-        if(null==templateRecord){
-            var newPlanCtl = this.getController("NewPlan.NewPlanTab");
-            template.getStore().load({
-                params: {
-                    URL: Ext.URLs.Templates + "/",
-                    ID: (null == this.application.Patient.Template) ? this.application.Patient.AppliedTemplateID : this.application.Patient.Template.id
-                },
-                callback: function(records,operation,success){
-                    if(success){
-                        templateRecord = this.getAt(0);
-                        newPlanCtl.afterFindTemplate(templateRecord,thisCtl,template);
-                    }
-                }
-            });
+		if(null==templateRecord){
+			var newPlanCtl = this.getController("NewPlan.NewPlanTab");
+			template.getStore().load({
+				params: {
+					URL: Ext.URLs.Templates + "/",
+					ID: (null == this.application.Patient.Template) ? this.application.Patient.AppliedTemplateID : this.application.Patient.Template.id
+				},
+				callback: function(records,operation,success){
+					if(success){
+						templateRecord = this.getAt(0);
+						newPlanCtl.afterFindTemplate(templateRecord,thisCtl,template);
+					}
+				}
+			});
 
-        }else{
-            this.afterFindTemplate(templateRecord,thisCtl,template);
-        }
-    },
+		}else{
+			this.afterFindTemplate(templateRecord,thisCtl,template);
+		}
+	},
 	afterFindTemplate : function(templateRecord,controller,template){
 		var templateRecords = [];
 		this.collapseCombo(template,null);
@@ -1111,7 +1089,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			***/
 			var theValues2Set = {
 				"startdate"              : PatientDetails.TreatmentStart, 
-				"BSA_FormulaWeight"      : PatientDetails.BSA_Method,
+				"BSA_FormulaWeight"      : PatientDetails.WeightFormula,
 				"BSA_Formula"            : PatientDetails.BSAFormula,
 				"Goal"                   : PatientDetails.Goal,
 				"ConcurRadTherapy"       : PatientDetails.ConcurRadTherapy,
@@ -1142,48 +1120,48 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-    applyTemplateToPatient : function(button){
-        var startDate = new Date(this.application.Patient.TreatmentStart);
-        var dateEnded = new Date(this.application.Patient.TreatmentEnd);
-        var today = new Date();
+	applyTemplateToPatient : function(button){
+		var startDate = new Date(this.application.Patient.TreatmentStart);
+		var dateEnded = new Date(this.application.Patient.TreatmentEnd);
+		var today = new Date();
 
-        this.getStore('PerfStatStore').load({ 
-            scope : this,
-            callback : this.ShowAskQues2ApplyTemplate
-        });
-    },
+		this.getStore('PerfStatStore').load({ 
+			scope : this,
+			callback : this.ShowAskQues2ApplyTemplate
+		});
+	},
 
-    clearCTOS : function(button){
-        if(this.getCTOSDataDsp().hidden==false){
-            this.getCTOSDataDsp().hide();
-            if ("1" === SessionTemplateAuthoring) {
+	clearCTOS : function(button){
+		if(this.getCTOSDataDsp().hidden==false){
+			this.getCTOSDataDsp().hide();
+			if ("1" === SessionTemplateAuthoring) {
 				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 					this.getApplyTemplateBtn().hide();
 				}
 				this.getEditTemplateBtn().hide();
-            }
-            this.application.selTemplate=null;
+			}
+			this.application.selTemplate=null;
 
-            if(!button){
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-            }else if("2" === button){
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-                if(this.getPatientInfo().hidden == false){
-                    this.getLaboratoryInfo().hide();
-                    this.getPatientHistory().hide();
-                    this.getPatientTemplates().hide();
-                    this.getPatientInfoTable().hide();
-                    this.getPatientInfo().hide();
-                    this.getSelectPatient().setValue('');
-                    this.getSelectPatient().getStore().removeAll();
-                    this.getSelectPatient().lastQuery = null;
-                    this.getCTOS().hide();
-                }
-            }
-        }
-    },
+			if(!button){
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
+			}else if("2" === button){
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
+				if(this.getPatientInfo().hidden == false){
+					this.getLaboratoryInfo().hide();
+					this.getPatientHistory().hide();
+					this.getPatientTemplates().hide();
+					this.getPatientInfoTable().hide();
+					this.getPatientInfo().hide();
+					this.getSelectPatient().setValue('');
+					this.getSelectPatient().getStore().removeAll();
+					this.getSelectPatient().lastQuery = null;
+					this.getCTOS().hide();
+				}
+			}
+		}
+	},
 
 	TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
 		wccConsoleLog("What to do has been selected");
@@ -1253,16 +1231,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.DataLoadCount = 5;		// Count of # of modules to load
 				this.loadMDWSData();					// module 1
 				this.loadTemplates("Templates");					// module 5
-                this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
-				this.loadOrderRecords();				// module 6
-// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
-                if (this.application.Patient.TemplateID) {
-                    this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
-                }
-                else {
+				this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
+				this.loadOrderRecords("Calling Loc = pModel.load - Success");				// module 6
+
+				if (this.application.Patient.TemplateID) {
+					this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
+				}
+				else {
 					this.DataLoadCountDecrement("pModelLoad - PASS");
 					this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-                }
+				}
 
 				var theRealID = this.application.Patient.id;
 				this.LoadAllData4PatientByMDWSGUID( theRealID );
@@ -1290,6 +1268,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var query = "";
 				var SSN= "";
 				var PatientInfo = {}, Patient_ID, Patient_Name;
+				Patient_Name = "";
 				if (CPRS_QueryString) {
 					query = CPRS_QueryString.getValue();
 				}
@@ -1320,8 +1299,14 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 						PatientInfo.Patient_Name = Patient_Name;
 						PatientInfo.Patient_ID = Patient_ID;
 						ConfirmPatient.update( PatientInfo );
-						// CPRS_QueryString.setValue("");
-						ConfirmPatient.show();
+						if ("" === Patient_Name) {
+							thisCtl.getNoPatient().show();
+							ConfirmPatient.hide();
+						}
+						else {
+							thisCtl.getNoPatient().hide();
+							ConfirmPatient.show();
+						}
 						ConfirmPatient.el.select("button").on("click", this.ConfirmPatientClick, this);
 					}
 					else {
@@ -1333,18 +1318,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	PatientModelLoadMDWS : function(query) {
-        // Load Patient Information via /Mymdws/Match/ Service Call
+		// Load Patient Information via /Mymdws/Match/ Service Call
 		// console.log("Loading Patient Info MDWS Model from PatientModelLoadMDWS function");
-        var pModel = this.getModel("PatientInfoMDWS");
-        var pModelParam = query;
+		var pModel = this.getModel("PatientInfoMDWS");
+		var pModelParam = query;
 		this.application.PatientSSN_ID = query;
 		this.application.loadMask("One moment please, retrieving Patient Information for " + query + "...");
 
-        pModel.load(pModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
+		pModel.load(pModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
 // wccConsoleLog("PatientModelLoadMDWS - Load Complete");
-                wccConsoleLog("Patient Info Loaded - Processing");
+				wccConsoleLog("Patient Info Loaded - Processing");
 				this.application.unMask();
 
 				/* We now have a Match of data including the VPR */
@@ -1360,7 +1345,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var CPRS_QueryString = Ext.ComponentQuery.query("NewPlanTab PatientSelection [name=\"CPRS_QueryString\"]")[0];
 				var query = "";
 				var SSN= "";
-				var PatientInfo = {}, Patient_ID, Patient_Name;
+				var PatientInfo = {}, Patient_ID, Patient_Name, NoPatientFound;
 				if (CPRS_QueryString) {
 					query = CPRS_QueryString.getValue();
 				}
@@ -1368,8 +1353,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				if ("" !== query) {
 					var record = patientInfo.data;
 					Patient_ID = record.id;
+					NoPatientFound = "";
+					Patient_Name = "";
 					// Patient_Name = record.name;
-					Patient_Name = record.VPR.data.items[0].fullName;
+					if (record.VPR.data.items) {
+						Patient_Name = record.VPR.data.items[0].fullName;
+					}
+					else {
+						NoPatientFound = "No patient by that ID can be found in VistA";
+					}
 					var data = record;
 					this.application.TempPatient = record;
 
@@ -1379,21 +1371,31 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var SelectPatient = thisCtl.getSelectPatient();
 					var ConfirmPatient = thisCtl.getConfirmPatient();
 					SelectPatientSection.show();
-					SelectPatient.hide();
+
 					PatientInfo.Patient_Name = Patient_Name;
 					PatientInfo.Patient_ID = Patient_ID;
 					ConfirmPatient.update( PatientInfo );
-					ConfirmPatient.show();
+
+					if ("" === Patient_Name) {
+						thisCtl.getNoPatient().show();
+						ConfirmPatient.hide();
+					}
+					else {
+						thisCtl.getNoPatient().hide();
+						ConfirmPatient.show();
+					}
+
 					ConfirmPatient.el.select("button").on("click", this.ConfirmPatientClick, this);
 				}
-            },
-            failure : function (record, operation) {
+			},
+			failure : function (record, operation) {
 				this.application.unMask();
-	            Ext.MessageBox.alert('Error', 'Patient Info failed to load properly.<br />' + operation.error);
-                wccConsoleLog("Patient Info failed to load properly");
-            }
-        });
+				Ext.MessageBox.alert('Error', 'Patient Info failed to load properly.<br />' + operation.error);
+				wccConsoleLog("Patient Info failed to load properly");
+			}
+		});
 	},
+
 
 
 
@@ -1507,7 +1509,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	handlePatientSelectionClickEvent : function( evt, theBtn ) {
-        // console.log("handlePatientSelectionClickEvent");
+		// console.log("handlePatientSelectionClickEvent");
 		wccConsoleLog("handlePatientSelectionClickEvent - PatientInfoTable!");
 
 		//---------------------------------
@@ -1542,45 +1544,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-
 	loadMDWSData : function() {
 		// console.log("Loading MDWS Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
 		this.DataLoadCountDecrement("loadMDWSData Pass");
 		this.PatientDataLoadComplete("MDWS Mega Call");
-/****************
-		var PatientInfo = this.application.Patient;
-		var URLParam = "/DFN/" + PatientInfo.DFN;
-		if (this.application.PatientSSN_ID) {
-			URLParam = "/SSN/" + this.application.PatientSSN_ID;
-		}
-
-		Ext.Ajax.request({
-			scope : this,
-			url: Ext.URLs.MegaMDWS + URLParam,
-			success: function( response, opts ){
-// wccConsoleLog("MDWS Data - Load Complete");
-console.log("Loading MDWS Data - Finished");
-				var text = response.responseText;
-				var resp = Ext.JSON.decode( text );
-				if (resp.success) {
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"UpdateMDWSDataContainer\"]")[0].hide();
-					Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"DisplayMDWSDataContainer\"]")[0].hide();
-					this.DataLoadCountDecrement("loadMDWSData Pass");
-					this.PatientDataLoadComplete("MDWS Mega Call");
-				}
-				else {
-					alert("loadMDWSData() - Error");
-				}
-			},
-			failure : function( response, opts ) {
-				this.DataLoadCountDecrement("loadMDWSData FAIL");
-				this.PatientDataLoadComplete("MDWS Mega Call");
-				alert("MDWS Data Load Failed...");
-			}
-		});
-**************/
 	},
 
 
@@ -1593,37 +1561,11 @@ console.log("Loading MDWS Data - Finished");
 //
 //------------------------------------------------------------------------------------------------------------------------------
 
-    loadAllergyInfo : function() {
+	loadAllergyInfo : function() {
 		// console.log("Loading Allergy Info - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadAllergyInfo PASS");
 		this.PatientDataLoadComplete("Allergy Info");
-
-/******************
-        var liModel = this.getModel("Allergies");
-        var liModelParam = this.application.Patient.id;
-
-		liModel.load(liModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
-                wccConsoleLog("Allergy Info Loaded - Processing");
-console.log("Loading Allergy Info - Finished");
-// wccConsoleLog("Allergies Model - Load Complete");
-                var rawData = Ext.JSON.decode(response.response.responseText);
-				var tmp = "0 Records";
-				this.application.Patient.Allergies = rawData.records;
-
-					// MWB - 5/16/2012 - Used to make sure all data sets are loaded before continuing
-				this.DataLoadCountDecrement("loadAllergyInfo PASS");
-				this.PatientDataLoadComplete("Allergy Info");
-
-            },
-            failure : function (err, response) {
-                this.DataLoadCountDecrement("loadAllergyInfo FAIL");
-				this.PatientDataLoadComplete("Allergy Info - FAILED Loading");
-            }
-        });
-***************/
-    },
+	},
 
 
 	loadCumulativeMedDosing : function() {
@@ -1648,11 +1590,11 @@ console.log("Loading Allergy Info - Finished");
 	},
 
 
-    loadLabInfo : function() {
+	loadLabInfo : function() {
 		// console.log("Loading Lab Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadLabInfo PASS");
 		this.PatientDataLoadComplete("Lab Info");
-    },
+	},
 
 
 
@@ -1778,16 +1720,17 @@ console.log("Loading Allergy Info - Finished");
 			}
 		},
 
-
 		extractVitals : function(rec) {
-			var nIdx, vIdx, DateTaken;
+			var nIdx, vIdx, DateTaken, data, units;
 			if (rec.hasOwnProperty("type")) {
 				nIdx = rec.date.split("T")[0];
-				if (this.vIdx !== nIdx) {
-					this.vIdx = nIdx;
-					DateTaken = this.extractDate(nIdx);
-					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
+				DateTaken = this.extractDate(nIdx);
+				if (this.Vitals.hasOwnProperty(nIdx)) {
 				}
+				else {
+					this.Vitals[nIdx] = {DateTaken : DateTaken, BSA : "", BSA_Method: "", BSA_Weight : "", WeightFormula : "", PS : "No Change", PSID : "N/C"};
+				}
+
 				switch( rec.type ) {
 					case "T":
 						data = "Temperature";
@@ -1796,7 +1739,7 @@ console.log("Loading Allergy Info - Finished");
 					case "HT":
 						data = "Height";
 						units = "Height_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
+						this.Vitals[nIdx][units] = rec.units;
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Height) {
 								this.application.Patient.Height = rec.value;
@@ -1806,7 +1749,7 @@ console.log("Loading Allergy Info - Finished");
 					case "WT":
 						data = "Weight";
 						units = "Weight_Units";
-						this.Vitals[this.vIdx][units] = rec.units;
+						this.Vitals[nIdx][units] = rec.units;
 						if (this.application && this.application.Patient) {
 							if ("" === this.application.Patient.Weight) {
 								this.application.Patient.Weight = rec.value;
@@ -1830,7 +1773,7 @@ console.log("Loading Allergy Info - Finished");
 						data = rec.type;
 						break;
 				}
-				this.Vitals[this.vIdx][data] = rec.value;
+				this.Vitals[nIdx][data] = rec.value;
 				return true;
 			}
 			return false;
@@ -2077,57 +2020,57 @@ console.log("Loading Allergy Info - Finished");
 				});
 	},
 
-    /**
-     *
-     * Gets the current and historical templates applied to the patient from the "Patient_Assigned_Templates", "Master_Template", "EoTS" and "Lookup" tables
-     *
-     **/
-    loadAllTemplatesApplied2Patient : function() {
+	/**
+	 *
+	 * Gets the current and historical templates applied to the patient from the "Patient_Assigned_Templates", "Master_Template", "EoTS" and "Lookup" tables
+	 *
+	 **/
+	loadAllTemplatesApplied2Patient : function() {
 // console.log("Loading All Templates Applied 2 Patient - Start");
-        // console.log("loadAllTemplatesApplied2Patient Entry Point");
-        var phModel = this.getModel("AllTemplatesApplied2Patient");
-        var phModelParam = this.application.Patient.id;
-        phModel.load(phModelParam, {
-            scope : this,
-            success : function( AllTemplatesApplied2Patient, response ) {
+		// console.log("loadAllTemplatesApplied2Patient Entry Point");
+		var phModel = this.getModel("AllTemplatesApplied2Patient");
+		var phModelParam = this.application.Patient.id;
+		phModel.load(phModelParam, {
+			scope : this,
+			success : function( AllTemplatesApplied2Patient, response ) {
 // console.log("Loading All Templates Applied 2 Patient - Finished");
-                this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
-                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
-                this.PatientDataLoadComplete("All Templates Applied");
-                var current = AllTemplatesApplied2Patient.get("current");
-                if (current && current[0]) {
-                    current = current[0];
-                    if (current.TemplateID) {
-                        this.LoadSpecifiedTemplate(current.TemplateID, "loadAllTemplatesApplied2Patient");
-                    }
-                    else {
-                        this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 2 - PASS");
-                        this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-                    }
-                }
-            },
-            failure : function (err, response) {
-                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - FAIL");
-                this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
-            }
-        });
-    },
+				this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
+				this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
+				this.PatientDataLoadComplete("All Templates Applied");
+				var current = AllTemplatesApplied2Patient.get("current");
+				if (current && current[0]) {
+					current = current[0];
+					if (current.TemplateID) {
+						this.LoadSpecifiedTemplate(current.TemplateID, "loadAllTemplatesApplied2Patient");
+					}
+					else {
+						this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 2 - PASS");
+						this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+					}
+				}
+			},
+			failure : function (err, response) {
+				this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - FAIL");
+				this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
+			}
+		});
+	},
 
 
 
 
 	loadTemplates : function() {
 // console.log("Loading Templates - Start");
-        var phModel = this.getModel("PatientTemplates");
-        var phModelParam = this.application.Patient.id;
-        phModel.load(phModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
+		var phModel = this.getModel("PatientTemplates");
+		var phModelParam = this.application.Patient.id;
+		phModel.load(phModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
 // console.log("Loading Templates - Finished");
 // wccConsoleLog("PatientTemplates Model - Load Complete");
 				var rawData = Ext.JSON.decode(response.response.responseText);
-                // First take all the data received and put it into a local JSON object for the TPL to process
-                wccConsoleLog("Patient Templates Loaded - Processing");
+				// First take all the data received and put it into a local JSON object for the TPL to process
+				wccConsoleLog("Patient Templates Loaded - Processing");
 
 				this.application.Patient.TemplateHistory = rawData.records;
 
@@ -2138,15 +2081,15 @@ console.log("Loading Allergy Info - Finished");
 				this.PatientDataLoadComplete("Templates");
 
 
-            },
-            failure : function (err, response) {
+			},
+			failure : function (err, response) {
 // wccConsoleLog("PatientTemplates Model - Load FAILED - " + response.error);
-                wccConsoleLog("PatientHistory store failed to load properly - " + response.error);
+				wccConsoleLog("PatientHistory store failed to load properly - " + response.error);
 				this.DataLoadCountDecrement("loadTemplates FAIL");
 
 				this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
-            }
-        });
+			}
+		});
 //
 //	List of Templates for patient
 //
@@ -2334,15 +2277,16 @@ console.log("Loading Allergy Info - Finished");
 //			}
 	},
 
-	loadOrderRecords : function( ) {
+	loadOrderRecords : function( CallingLoc ) {
 // console.log("Loading Orders - Start");
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
+		// console.log("loadOrderRecords - called from multiple locations - " + CallingLoc);
+/*************** RESTORE CODE - MWB 5/12/2015 */
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
-			success: function (TemplateData, response) {
+			success : function (TemplateData, response) {
 				try {
-// console.log("Loading Orders - Finished");
 					wccConsoleLog("Template Data Loaded - Processing");
 					var theData = TemplateData.data;
 					theData.PatientName = this.application.Patient.name;
@@ -2355,7 +2299,6 @@ console.log("Loading Allergy Info - Finished");
 					this.manageOrderRecordsAfterLoading(theData);
 					var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
 					thisCtl.ChemoBioSectionHandler(true);
-
 				}
 				catch (err) {
 					var errMsg1 = "ERROR in parsing data for Template " + this.application.Patient.TemplateName;
@@ -2363,33 +2306,20 @@ console.log("Loading Allergy Info - Finished");
 					wccConsoleLog(errMsg1);
 					wccConsoleLog(err.message + " @ Line# " + err.lineNo);
 				}
-
-//				this.DataLoadCountDecrement("loadOrderRecords PASS");
-//				this.PatientDataLoadComplete("OEM Records");
-
-//				if (this.application.DataLoadCount <= 0) {
-//					PatientInfo = this.application.Patient;
-//					PatientInfo.OEMDataRendered = false;
-//					this.application.fireEvent("DisplayOEMData", PatientInfo);
-//				}
-
-
 			},
-			failure: function (err) {
+			failure : function (err) {
 				wccConsoleLog("Template Data failed to load properly");
-				// alert("Warning - No Order Information available for Patient " + this.application.Patient.name);
-//				this.DataLoadCountDecrement("loadOrderRecords FAIL");
-//				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
+/******************************/
 	},
 
-    //-------------------------------------------------------------------------
-    //
-    //	Patient Selected - Phase 1 for this panel
-    //	Causes Patient Info
-    //	(including Patient History, Laboratory Information and CTOS Tabset) to be displayed
-    //
+	//-------------------------------------------------------------------------
+	//
+	//	Patient Selected - Phase 1 for this panel
+	//	Causes Patient Info
+	//	(including Patient History, Laboratory Information and CTOS Tabset) to be displayed
+	//
 	//	MWB 10 Feb 2012 - Made several minor changes for code cleanup and
 	//		sorted the PatientMeasurements for disply of most recent measurements first
 	//
@@ -2418,11 +2348,11 @@ console.log("Loading Allergy Info - Finished");
 		var pVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
 		this.application.Patient.ParsedVPR = pVPR;
 		this.application.Patient.Allergies = pVPR.Allergies;
-		this.application.Patient.Vitals    = pVPR.Vitals;
-		this.application.Patient.name      = pVPR.rootObj.fullName;
-		this.application.Patient.Gender    = pVPR.rootObj.gender;
-		this.application.Patient.Age       = pVPR.rootObj.age;
-		this.application.Patient.DOB       = pVPR.rootObj.dob;
+		this.application.Patient.Vitals	= pVPR.Vitals;
+		this.application.Patient.name	  = pVPR.rootObj.fullName;
+		this.application.Patient.Gender	= pVPR.rootObj.gender;
+		this.application.Patient.Age	   = pVPR.rootObj.age;
+		this.application.Patient.DOB	   = pVPR.rootObj.dob;
 
 		// Get a handle to the frameset itself
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -2453,12 +2383,11 @@ console.log("Loading Allergy Info - Finished");
 
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
-		var piTable = thisCtl.updatePITable("");
+		this.updatePITable("");
+		this.getPatientInfoTable().collapse();
 
-		piTable.collapse();
-
-		var piTable1 = thisCtl.getPatientInfoTableInformation();
-		piTable1.update("");
+		var piTableInfo = thisCtl.getPatientInfoTableInformation();
+		piTableInfo.update("");
 
 		var btn;
 		if ("1" === SessionTemplateAuthoring) {
@@ -2495,8 +2424,6 @@ console.log("Loading Allergy Info - Finished");
 		 *	Current Applied Template Loaded --- Yes this module is called twice for some reason, need to find out why.
 		 */
 
-// wccConsoleLog("Loading Patient Records");
-		// this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
 		this.Modules2Load.push({func : this.loadAllergyInfo, name : "loadAllergyInfo"});
 		this.Modules2Load.push({func : this.loadLabInfo, name : "loadLabInfo"});
 		this.Modules2Load.push({func : this.loadMDWSData, name : "LoadMDWSData"});
@@ -2507,36 +2434,23 @@ console.log("Loading Allergy Info - Finished");
 		this.Modules2Load.push({func : this.loadTemplates, name : "loadTemplates - Templates"});
 		this.Modules2Load.push({func : this.loadVitals, name : "loadVitals - Vitals"});
 
-
-
-			/**
-		this.loadMDWSData();					// module 1
-		this.loadLabInfo();						// module 2
-		this.loadAllergyInfo();					// module 3
-		this.loadVitals("Vitals");				// module 4
-		this.loadTemplates("Templates");		// module 5
-		this.loadAllTemplatesApplied2Patient("PatientSelected");
-		this.loadOrderRecords();				// module 6
-		this.loadCumulativeMedDosing();
-			**/
-
 		var puWinSelCancerCtl = this.getController("Common.puWinSelCancer");
 		puWinSelCancerCtl.getDiseaseHistory(this.application.Patient);
 
-        if (this.application.Patient.TemplateID) {
-            this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
-        }
-        else {
-            this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
-            this.DataLoadCountDecrement("PatientSelected No Current Template Applied Second decrement of DataLoadCount");
-            this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-        }
-    },
-    //
-    //
-    //	END Patient Selected
-    //
-    //-------------------------------------------------------------------------
+		if (this.application.Patient.TemplateID) {
+			this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
+		}
+		else {
+			this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
+			this.DataLoadCountDecrement("PatientSelected No Current Template Applied Second decrement of DataLoadCount");
+			this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+		}
+	},
+	//
+	//
+	//	END Patient Selected
+	//
+	//-------------------------------------------------------------------------
 
 
 
@@ -2598,35 +2512,35 @@ console.log("Loading Allergy Info - Finished");
 /**********************/
 
 	buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
-        var TemplateInfo, 
-            patientTemplates = thisCtl.getPatientTemplates(),
-            currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
-            historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
-            numRecords = 0;
-        
-        if (currentTemplates) {
-            numRecords += currentTemplates.length;
-        }
-        if (historicalTemplates) {
-            numRecords += historicalTemplates.length;
-        }
+		var TemplateInfo, 
+			patientTemplates = thisCtl.getPatientTemplates(),
+			currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
+			historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
+			numRecords = 0;
+		
+		if (currentTemplates) {
+			numRecords += currentTemplates.length;
+		}
+		if (historicalTemplates) {
+			numRecords += historicalTemplates.length;
+		}
 
-        TemplateInfo = {};
-        TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
-        TemplateInfo.Current = this.application.Patient.CurrentTemplatesApplied2Patient;
+		TemplateInfo = {};
+		TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
+		TemplateInfo.Current = this.application.Patient.CurrentTemplatesApplied2Patient;
 
-        // Render # of templates for initial display of the panel - MWB - 11/11/2013
-        patientTemplates.update( TemplateInfo );
+		// Render # of templates for initial display of the panel - MWB - 11/11/2013
+		patientTemplates.update( TemplateInfo );
 
-        var strRecs = "No Records Available";
-        if (1 === numRecords ) {
-            strRecs = numRecords + " Record";
-        }
-        else if (numRecords > 1) {
-            strRecs = numRecords + " Records";
-        }
-        this.resetTRSPanel(thisCtl, strRecs);
-        return patientTemplates;
+		var strRecs = "No Records Available";
+		if (1 === numRecords ) {
+			strRecs = numRecords + " Record";
+		}
+		else if (numRecords > 1) {
+			strRecs = numRecords + " Records";
+		}
+		this.resetTRSPanel(thisCtl, strRecs);
+		return patientTemplates;
 	},
 
 	DataLoadCountDecrement : function(module) {
@@ -2792,7 +2706,6 @@ console.log("Loading Allergy Info - Finished");
 
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
-			var piTable;
 			var PatientHistoryVitalStats;
 
 			if (Ext.Date.isEqual(new Date(Patient.TreatmentStart), new Date(new Date().toDateString()))) {
@@ -2808,13 +2721,11 @@ console.log("Loading Allergy Info - Finished");
 
 			thisCtl.getPatientInfo().expand();
 
-			// piTable = thisCtl.getPatientInfoTable();
-			piTable = thisCtl.updatePITable(Patient);
-
-			piTable.show();
+//			this.updatePITable(Patient);
+			this.getPatientInfoTable().show();
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
-			piTableInfo.update(Patient);
+			piTableInfo.update(Patient);		//--//
 			piTableInfo.show();
 
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
@@ -2841,108 +2752,10 @@ console.log("Loading Allergy Info - Finished");
 			patientTemplates = this.buildTemplateInfo(thisCtl, Patient, "PatientDataLoadComplete AND DataLoadCount < 0");
 			patientTemplates.show();
 
-
-
-			this.loadOrderRecords();
-// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
-/**
-this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"});
-
-			// If BSA_Dose is empty then calculate it for each record and save that record back.
-			// BUT we need to calculate the BSA value and BSA_Weight before we load the records...
-			// Then walk through theData.OEMRecords;
-			var a, b, c, aRec, bRec, bRecUnits, calcDose, updateRecord = false, tmpDose, Dose, Units,
-				theRecords, oRecLen,
-				tRecords, oTherapyLen;
-
-			if (this.application.Patient && this.application.Patient.OEMRecords && this.application.Patient.OEMRecords.OEMRecords) {
-				theRecords = this.application.Patient.OEMRecords.OEMRecords;
-				oRecLen = theRecords.length;
-				for (a = 0; a < oRecLen; a++) {
-					aRec = theRecords[a];
-					if (aRec.Therapy) {
-						oTherapyLen = aRec.Therapy.length;
-						for (b = 0; b < oTherapyLen; b++) {
-							bRec = aRec.Therapy[b];
-							bRecUnits = bRec.DoseUnits.toUpperCase();
-							calcDose = false;
-
-							if (bRecUnits.search("M2") > 0 || bRecUnits.search("KG") > 0 || bRecUnits.search("AUC") >= 0 ) {
-								calcDose = true;
-							}
-
-							if (calcDose) {
-								if ("" === bRec.BSA_Dose || "NaN mg" === bRec.BSA_Dose) {
-									if (bRecUnits.search("M2") > 0) {
-										Dose = bRec.Dose * Patient.BSA;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										bRec.BSA_Dose = Dose + " " + Units;
-										updateRecord = true;
-									}
-									else if	(bRecUnits.search("KG") > 0) {
-										Dose = bRec.Dose * Patient.BSA_Weight;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										bRec.BSA_Dose = Dose + " " + Units;
-										updateRecord = true;
-									}
-									else if (bRecUnits.search("AUC") >= 0) {
-										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
-										bRec.BSA_Dose = Dose;
-										updateRecord = true;
-									}
-								}
-								else {
-									// MWB - 7/12/2012 - Fix to update Dosage Calculations every time patient info is loaded.
-									// DO NOT IMPLEMENT until further notice...
-									// Implement as per SIC's e-mail - 7/12/2012 08:56 AM
-
-									if (bRecUnits.search("M2") > 0) {
-										Dose = bRec.Dose * Patient.BSA;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										tmpDose = Dose + " " + Units;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-									else if	(bRecUnits.search("KG") > 0) {
-										Dose = bRec.Dose * Patient.BSA_Weight;
-										Dose = Ext.GeneralRounding2Digits(Dose);
-										Units = bRec.DoseUnits.substr(0, bRecUnits.search("/"));
-										tmpDose = Dose + " " + Units;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-									else if (bRecUnits.search("AUC") >= 0) {
-										Dose = Ext.CalcAUCDose(Patient, bRec.Dose);
-										tmpDose = Dose;
-										if (tmpDose != bRec.BSA_Dose) {
-											bRec.BSA_Dose = tmpDose;
-											updateRecord = true;
-										}
-									}
-
-								}
-							}
-						}
-					}
-					else {
-						oTherapyLen = aRec.Therapy.length;
-						for (b = 0; b < oTherapyLen; b++) {
-							bRec = aRec.Therapy[b];
-							this.UpdateOEMRecords(aRec, bRec);
-						}
-					}
-				}
+			var thePatientInfo = this.application.Patient;
+			if (thePatientInfo.CurrentTemplatesApplied2Patient.length > 0) {
+				this.loadOrderRecords("CallingLoc = PatientDataLoadComplete");
 			}
-********************/
-
-
 
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
 			this.application.fireEvent("PatientSelected", this.application.PatientSelectedRecs, this.application.PatientSelectedOpts);	// MWB 10 Feb 2012 - Added additional parameters
@@ -2956,15 +2769,6 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 
 	HandleVSHCalcDoseButtons : function( event, element ) {
-	/******* Button definition in view\Common\VitalSignsHistory.js
-				return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " +
-					"weight=\"" + data.Weight + "\" " +
-					"height=\"" + data.Height + "\" " +
-					"weightFormula=\"" + data.WeightFormula + "\" " +
-					"bsa_Weight=\"" + data.BSA_Weight + "\" " +
-					"bsa_Method=\"" + data.BSA_Method + "\" " +
-				">" + data.BSA + "</button> m<sup>2</sup>");
-	********/
 		var btnTitle = element.getAttribute("title");
 		if ("Show Dosage Calculation" === btnTitle) {
 			var Patient = this.application.Patient;
@@ -3033,63 +2837,60 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 	},
 
 
-    //-------------------------------------------------------------------------
-    //
-    //	Template Source (National/Local/Personal) Selected - Phase 1 of the CTOS Tab
-    //
-    //
-    onTemplateTypeChange : function(combo, recs, eOpts) {
-        wccConsoleLog("Select Template Type");
-        this.application.Patient.TemplateType = recs[0].data;
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var obj = thisCtl.getDiseaseAndStage();
-        obj.show();
-        this.getResetButton().show();
-    },
+	//-------------------------------------------------------------------------
+	//
+	//	Template Source (National/Local/Personal) Selected - Phase 1 of the CTOS Tab
+	//
+	//
+	onTemplateTypeChange : function(combo, recs, eOpts) {
+		wccConsoleLog("Select Template Type");
+		this.application.Patient.TemplateType = recs[0].data;
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var obj = thisCtl.getDiseaseAndStage();
+		obj.show();
+		this.getResetButton().show();
+	},
 
 	//
-    //
-    //	END Template Source Selected
-    //
-    //-------------------------------------------------------------------------
+	//
+	//	END Template Source Selected
+	//
+	//-------------------------------------------------------------------------
 
 
-    //-------------------------------------------------------------------------
-    //
-    //	Disease Type Selected - Phase 2 of the CTOS Tab
-    //
-    //
-    DiseaseSelected : function(combo, recs, eOpts) {
-        wccConsoleLog("Disease Type has been selected");
+	//-------------------------------------------------------------------------
+	//
+	//	Disease Type Selected - Phase 2 of the CTOS Tab
+	//
+	//
+	DiseaseSelected : function(combo, recs, eOpts) {
+		wccConsoleLog("Disease Type has been selected");
 
-        if(this.application.Patient.Disease != recs[0].data){
-            this.application.ResetClicked=false;
-        }
+		if(this.application.Patient.Disease != recs[0].data){
+			this.application.ResetClicked=false;
+		}
 
-        this.application.Patient.Disease = recs[0].data;
+		this.application.Patient.Disease = recs[0].data;
 
-        var obj = this.getTemplate();	// MWB 19 Jan 2012 - Added per customer request to not require selecting Disease Stage before displaying list of templates
-        obj.show();
-        // this.getResetButton().show();
+		var obj = this.getTemplate();
+		obj.show();
+	},
+	//-------------------------------------------------------------------------
+	//
+	//	Disease Stage Selected - Phase 2 of the CTOS Tab
+	//
+	//
+	onDiseaseStageChange : function(combo, recs, eOpts) {
+		wccConsoleLog("Disease Type and Stage has been selected");
 
-    },
-    //-------------------------------------------------------------------------
-    //
-    //	Disease Stage Selected - Phase 2 of the CTOS Tab
-    //
-    //
-    onDiseaseStageChange : function(combo, recs, eOpts) {
-        wccConsoleLog("Disease Type and Stage has been selected");
+		this.application.Patient.DiseaseStage = recs[0].data;
 
-        this.application.Patient.DiseaseStage = recs[0].data;
+		combo.hiddenValue = recs[0].data.name;
 
-        combo.hiddenValue = recs[0].data.name;
-
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var obj = thisCtl.getTemplate();
-        obj.show();
-        // this.getResetButton().show();
-    },
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var obj = thisCtl.getTemplate();
+		obj.show();
+	},
 
 
 
@@ -3102,7 +2903,7 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 // Load the selected template - Called when user clicks on the "Show Template" in the Patient Info Table via the "HandleAnchorClicks - PatientInfoTable!" function above.
 // This template is one which is currently applied to the patient.
 	CTOS_DataLoad2 : function(TemplateID) {
-	        this.application.loadMask("CTOS DataLoad2"); // MWB 19 Jan 2012 - Mask the screen
+			this.application.loadMask("CTOS DataLoad2"); // MWB 19 Jan 2012 - Mask the screen
 			var CTOSModel = this.getModel("CTOS");
 			var CTOSModelParam = TemplateID;
 
@@ -3110,7 +2911,7 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 			this.clearCTOS();
 
-	        CTOSModel.load(CTOSModelParam, {
+			CTOSModel.load(CTOSModelParam, {
 				scope: this,
 				success: function (CTOSTemplateData, response) {
 					wccConsoleLog("CTOS Loaded - Processing");
@@ -3119,7 +2920,6 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
 					var CTOSData = thisCtl.getCTOSDataDsp();
 
-// MWB - 6/7/2012 - Need to add Template Timing info to the data object
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					CTOSData.update(CTOSTemplateData.data);
 					this.getDisease().setValue(CTOSTemplateData.data.Disease);
@@ -3154,7 +2954,7 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 
 					this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 				}
-	        });
+			});
 	},
 
 
@@ -3372,11 +3172,9 @@ this.Modules2Load.push({func : this.loadOrderRecords, name : "loadOrderRecords"}
 	},
 
 	LoadOEM_OrderData : function() {
-		// console.log("Loading OEM Data");
 		if (this.application.Patient) {
 			this.application.DataLoadCount = 1;
-			this.loadOrderRecords();
-			// console.log("Load Order Records from - LoadOEM_OrderData");
+			this.loadOrderRecords("CallingLoc = LoadOEM_OrderData");
 		}
 	},
 

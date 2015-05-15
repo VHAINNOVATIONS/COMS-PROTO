@@ -190,14 +190,11 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 
 	DisplayOEMRecordData : function( PatientInfo ) {
 		this.MaskOEMData(true);
-
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
-		//this.application.loadMask("Loading OEM Records...");
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
 			success: function (TemplateData, response) {
-				// this.application.unMask();
 				this.MaskOEMData(false);
 				var i, vvv = TemplateData.OEMRecordsStore.data.items, vvvLen = vvv.length;
 				var newArray = [];
@@ -689,7 +686,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 			this.application.Patient.Template = TemplateObj;
 
 			var NewPlanTabCtl = this.getController("NewPlan.NewPlanTab");
-			NewPlanTabCtl.loadOrderRecords();
+			NewPlanTabCtl.loadOrderRecords("Calling Loc = getAndRenderTemplateData");
 		}
 	},
 

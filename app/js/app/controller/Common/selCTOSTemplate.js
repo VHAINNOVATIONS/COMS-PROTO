@@ -19,11 +19,6 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 				select : this.DiseaseSelected,
 				"beforequery" : this.clearSelDiseaseComboStore
 			},
-/**
-			"selCTOSTemplate selDiseaseStage" : {
-				select : this.onDiseaseStageChange
-			},
-**/
 			"selCTOSTemplate selTemplate" : {
 				select : this.selTemplateChange,
 				"beforequery" : this.clearSelTemplateComboStore
@@ -148,11 +143,6 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 			this.getSelTemplateCombo(selCTOSTemplateObj).show();
 		}
 	},
-/**
-	onDiseaseStageChange : function(a, b, c) {
-//		debugger;
-	},
-**/
 	selTemplateChange : function(combo, recs) {
 		var theController, theTemplate, parent, parentName;
 		theTemplate = recs[0].data;

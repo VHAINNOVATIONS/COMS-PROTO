@@ -1,17 +1,3 @@
-/*******************
- *	Look for the following for updating patient info
- *
- *	PITable.update( this.EoTSData );
- *	PITable.update( this.EoTSData );
- *	piTableInfo.update("");
- *	piTableInfo.update(PatientData);//--//2
- *	piTableInfo.update("");
-  *	piTableInfo.update(Patient);		//--//
- *	piTableInfo.update(Patient);		//--//
- *	piTableInfo.update(Patient);		//--//
- *	piTableInfo.update(this.application.Patient);	//--// 2
- *	piTableInfo.update( this.application.Patient );		//--//
- */
 /***
  *
  *	Console Logging Code
@@ -713,7 +699,7 @@ Ext.define('Ext.ux.CheckColumn', {
 
     tdCls: Ext.baseCSSPrefix + 'grid-cell-checkcolumn',
 
-    constructor : function() {
+    constructor: function() {
         this.addEvents(
             /**
              * @event beforecheckchange
@@ -740,7 +726,7 @@ Ext.define('Ext.ux.CheckColumn', {
      * @private
      * Process and refire events routed from the GridView's processEvent method.
      */
-    processEvent : function(type, view, cell, recordIndex, cellIndex, e, record, row) {
+    processEvent: function(type, view, cell, recordIndex, cellIndex, e, record, row) {
         var me = this,
             key = type === 'keydown' && e.getKey(),
             mousedown = type == 'mousedown';
@@ -812,17 +798,17 @@ Ext.define('Ext.ux.CheckCombo', {
     listeners:
     {
 /* uncomment if you want to reload store on every combo expand
-        beforequery : function(qe)
+        beforequery: function(qe)
         {
             this.store.removeAll();
             delete qe.combo.lastQuery;
         },
 */
-        focus : function(cpt)
+        focus: function(cpt)
         {
             cpt.oldValue = cpt.getValue();
         },
-        keydown : function(cpt, e, eOpts)
+        keydown: function(cpt, e, eOpts)
         {
             var    value = cpt.getRawValue(),
                 oldValue = cpt.oldValue;
@@ -830,7 +816,7 @@ Ext.define('Ext.ux.CheckCombo', {
             if(value != oldValue) cpt.setValue('');
         }
     },
-    createPicker : function() 
+    createPicker: function() 
     {
         var    me = this,
             picker,
@@ -902,14 +888,14 @@ Ext.define('Ext.ux.CheckCombo', {
 
         return picker;
     },
-    reset : function()
+    reset: function()
     {
         var    me = this;
 
 
         me.setValue('');
     },
-    setValue : function(value)
+    setValue: function(value)
     {
         this.value = value;
         if(!value)
@@ -955,16 +941,16 @@ Ext.define('Ext.ux.CheckCombo', {
         }
         else return this.callParent(arguments);
     },
-    getValue : function()
+    getValue: function()
     {
         if(typeof this.value == 'object') return this.value.join(',');
         else return this.value;
     },
-    getSubmitValue : function()
+    getSubmitValue: function()
     {
         return this.getValue();
     },
-    expand : function()
+    expand: function()
     {
         var    me = this,
             bodyEl, picker, collapseIf;
@@ -1040,7 +1026,7 @@ Ext.define('Ext.ux.CheckCombo', {
             me.onExpand();
         }
     },
-    alignPicker : function()
+    alignPicker: function()
     {    
         var me = this,
             picker = me.getPicker();
@@ -1056,7 +1042,7 @@ Ext.define('Ext.ux.CheckCombo', {
             picker.getEl().setStyle('height', height+'px');
         }
     },
-    onListSelectionChange : function(list, selectedRecords)
+    onListSelectionChange: function(list, selectedRecords)
     {
         var    me = this,
             isMulti = me.multiSelect,
@@ -1126,7 +1112,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
 
     sortable: false,
     btns: [],
-    constructor : function(config) {
+    constructor: function(config) {
 
         var me = this,
         cfg = Ext.apply({}, config),
@@ -1222,7 +1208,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         };
     },
 
-    createGridButton : function(value, id, record, cls, fn, hide, iconCls) {
+    createGridButton: function(value, id, record, cls, fn, hide, iconCls) {
         var target = Ext.get(id);
         if (target !== null) {
             var btn = new Ext.Button({
@@ -1238,7 +1224,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         }
     },
 
-    destroy : function() {
+    destroy: function() {
         delete this.items;
         delete this.renderer;
         this.btns.each(function(btn){
@@ -1247,13 +1233,13 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         return this.callParent(arguments);
     },
 
-    cascade : function(fn, scope) {
+    cascade: function(fn, scope) {
         fn.call(scope||this, this);
     },
 
     // Private override because this cannot function as a Container, and it has an items property which is an Array,
     // NOT a MixedCollection.
-    getRefItems : function() {
+    getRefItems: function() {
         return [];
     }
 });
@@ -1374,7 +1360,7 @@ Ext.COMS_LockoutAjaxCall = function(fcn, rid, section, callback, params) {
 		scope: this,
 		lockCallback : callback,
 		params : params,
-		success : function( response, opts ){
+		success: function( response, opts ){
 			var text = response.responseText;
 			var resp = Ext.JSON.decode( text );
 			if (resp.records) {
@@ -1547,14 +1533,14 @@ Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, or
 		"</table>", {
 			// XTemplate Configuration
 			disableFormats: true,
-			WeightInKG : function (x) {
+			WeightInKG: function (x) {
 				if ("" === x.Weight) {
 					return "";
 				}
 				var x1 = Ext.Pounds2Kilos(x.Weight);
 				return (" = " + x1 + " kg");
 			},
-			calcDose : function (x) {
+			calcDose: function (x) {
 				var kg = Ext.Pounds2Kilos(x.Weight);
 				var dose = x.origDose;
 				return x.origDose + "&nbsp;*&nbsp;" + kg + "kg&nbsp;=&nbsp;" + (1*kg*dose) + x.units;
@@ -1581,7 +1567,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 		"</table>", {
 			// XTemplate Configuration
 			disableFormats: true,
-			HeightInCM : function (x) {
+			HeightInCM: function (x) {
 				if ("" === x.Height) {
 					return "";
 				}
@@ -1589,7 +1575,7 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				return (" = " + x1 + " cm");
 			},
 
-			WeightInKG : function (x) {
+			WeightInKG: function (x) {
 				if ("" === x.Weight) {
 					return "";
 				}
@@ -1597,18 +1583,18 @@ Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 				return (" = " + x1 + " kg");
 			},
 
-			Serum : function (x) {
+			Serum: function (x) {
 				var sc = x.SerumCreatinine || 1;
 				return sc;
 			},
-			AUC : function (x) {
+			AUC: function (x) {
 				var auc = x.dose.split(" ")[0];
 				return auc;
 			},
 
 
 
-			calcGFR : function (x) {
+			calcGFR: function (x) {
 				var gender = x.Gender;
 				var kg = Ext.Pounds2Kilos(x.Weight);
 				// var dose = x.dose.split(" ")[0];
@@ -1804,7 +1790,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 			// XTemplate Configuration
 			disableFormats: true,
 			// locPatient : "",
-			HeightInCM : function (x) {
+			HeightInCM: function (x) {
 				if ("" === x.Height) {
 					return "";
 				}
@@ -1812,27 +1798,27 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 				return (" = " + x1 + " cm");
 			},
 
-			WeightInKG : function (x) {
+			WeightInKG: function (x) {
 				if ("" === x.Weight) {
 					return "";
 				}
 				var x1 = Ext.Pounds2Kilos(x.Weight);
 				return (" = " + x1 + " kg");
 			},
-			HasAmputations : function (x) {
+			HasAmputations: function (x) {
 				if (0 === x.Amputations.length) {
 					return false;
 				}
 				return true;
 			},
 
-			NoAmputations : function (x) {
+			NoAmputations: function (x) {
 				if (0 === x.Amputations.length) {
 					return true;
 				}
 				return false;
 			},
-			BSAReduction : function (values, parent) {
+			BSAReduction: function (values, parent) {
 				if ("" !== values.description) {
 					var y = values.description;
 					var x = Ext.Amputations;
@@ -1847,7 +1833,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 				}
 				return "None Identified";
 			},
-			dspWeightFormula : function (x) {
+			dspWeightFormula: function (x) {
 				var tmp = "";
 				if ("" === x.WeightFormula) {
 					return "&nbsp;";
@@ -1891,7 +1877,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 
 
 
-			showBSACalc : function (x) {
+			showBSACalc: function (x) {
 				var strFormula, BSA_Value;
 				if ("" === x.BSA_Method) {
 					return "";
@@ -1972,7 +1958,7 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 			},
 
 
-			finalBSA : function (v) {
+			finalBSA: function (v) {
 				return ("= " + Ext.BSA_Calc(v) + " m<sup>2</sup>");
 			},
 
@@ -2033,7 +2019,6 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	default:
 		PatientInfo.BSA_Weight = "";
 		return "";
-		break;
 	}
 
 	CalcWeight = Ext.FormatNumber(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2));
@@ -2370,7 +2355,7 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 Ext.define('COMS.Ajax', {
 	extend: 'Ext.data.Connection',
 	singleton: true,
-	onComplete : function (request) {
+	onComplete: function (request) {
 		var me = this;
 		var options = request.options;
 		var result = (!request.timedout && request.xhr.status) ? me.parseStatus(request.xhr.status) : null;
@@ -2399,19 +2384,19 @@ Ext.define('COMS.Ajax', {
  * http://www.learnsomethings.com/2011/10/25/ext-grid-grouping-summary-collapse-all-expand-all-and-collapse-all-but-the-top-group-overrides-for-extjs4/ 
  */
 Ext.override(Ext.grid.feature.Grouping, {
-	collapseAll : function() {
+	collapseAll: function() {
 		var self = this, groups = this.view.el.query('.x-grid-group-body');
 		Ext.Array.forEach(groups, function (group) {        
 			self.collapse(Ext.get(group.id));    
 		});
 	},
-	expandAll : function() {
+	expandAll: function() {
 		var self = this, groups = this.view.el.query('.x-grid-group-body');   
 		Ext.Array.forEach(groups, function (group) {    
 			self.expand(Ext.get(group.id));    
 		});
 	},
-	collapseAllButTop : function() {
+	collapseAllButTop: function() {
 		var self = this, groups = this.view.el.query('.x-grid-group-body');
 		Ext.Array.forEach(groups, function (group) {        
 			self.collapse(Ext.get(group.id));    
@@ -2503,7 +2488,7 @@ Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
     clicksToEdit: 1,
     listeners : {
         scope: this,
-        beforeedit : function(e, options) {
+        beforeedit: function(e, options) {
 			if ("Administered" === options.record.getData().orderstatus || "Dispensed" === options.record.getData().orderstatus) {
 				return true;
 			}
@@ -2530,7 +2515,7 @@ Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
     clicksToEdit: 1,
     listeners : {
         scope: this,
-        beforeedit : function(e, options) {
+        beforeedit: function(e, options) {
 			if ("Administered" === options.record.getData().orderstatus || "Dispensed" === options.record.getData().orderstatus) {
 				return true;
 			}
@@ -2584,7 +2569,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
 
     sortable: false,
     btns: [],
-    constructor : function(config) {
+    constructor: function(config) {
 		var ActionBtnClickHandler = function(item) {
                         var eventName = 'actionbuttonclick';
                         if (typeof item.eventName != 'undefined') {
@@ -2681,7 +2666,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         };
     },
 
-    createGridButton : function(value, id, record, cls, fn, hide, iconCls) {
+    createGridButton: function(value, id, record, cls, fn, hide, iconCls) {
         var target = Ext.get(id);
         if (target !== null) {
             var btn = new Ext.Button({
@@ -2697,7 +2682,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         }
     },
 
-    destroy : function() {
+    destroy: function() {
         delete this.items;
         delete this.renderer;
         this.btns.each(function(btn){
@@ -2706,13 +2691,13 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         return this.callParent(arguments);
     },
 
-    cascade : function(fn, scope) {
+    cascade: function(fn, scope) {
         fn.call(scope||this, this);
     },
 
     // Private override because this cannot function as a Container, and it has an items property which is an Array,
     // NOT a MixedCollection.
-    getRefItems : function() {
+    getRefItems: function() {
         return [];
     }
 });
@@ -4905,7 +4890,7 @@ Ext.define('COMS.store.ActiveWorkflowsStore', {
                     }                
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.Lookups;
                 }
@@ -4937,7 +4922,7 @@ Ext.define('COMS.store.CTOS', {
                     }
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.CTOS;
                 }
@@ -5111,7 +5096,7 @@ Ext.define('COMS.store.DrugStore', {
             }
         },
         
-        'load' : function(store, options) {
+        'load': function(store, options) {
             if(store!=null){
                 store.sort('name','ASC');
             }
@@ -5194,7 +5179,7 @@ Ext.define('COMS.store.GlobalStore', {
                     }                
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.Lookups;
                 }
@@ -5210,7 +5195,7 @@ Ext.define('COMS.store.HydrationStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Hydration,
         listeners: {
-                    'load' : function(store, options) {
+                    'load': function(store, options) {
                         if(store!=null){
                             store.sort('Sequence','ASC');
                         }
@@ -5327,7 +5312,7 @@ Ext.define('COMS.store.LookupStore', {
                     }                
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.Lookups;
                 }
@@ -5407,7 +5392,7 @@ Ext.define('COMS.store.MedsNonRounded', {
                     }                
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.Lookups;
                 }
@@ -5601,20 +5586,10 @@ Ext.define('COMS.store.ToxGridStore', {
 	autoSync : true,
 	model : Ext.COMSModels.ToxGridModel,
 	groupField: "tDate",
-	// sortInfo: { field: "tDate", direction: "DESC" },
 
 	sortOnLoad: true,
 	sorters: { property: 'tDate', direction : 'DESC' },
-/***
-	listeners : {
-		load: {
-			fn : function(theStore, records, successful, eOpts) {
-				Ext.getCmp("FS_ToxicityGrid").getView().getFeature("FS_ToxGridSummary").collapseAllButTop();
-			},
-			scope : this
-		}
-	},
-***/
+
 	onCreateRecords : function(records, operation, success) {
 		Ext.loadAdverseEventsHistoryLaunchLoc = "onCreateRecords from ToxGridStore";
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
@@ -5678,7 +5653,7 @@ Ext.define('COMS.store.UsersStore', {
                     }                
                 }
             },
-            'load' : function(store, records, success) {
+            'load': function(store, records, success) {
                 if(success){
                     store.proxy.api.read = Ext.URLs.Lookups;
                 }
@@ -5950,7 +5925,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 		]
 	}],
 
-	initComponent : function () {
+	initComponent: function () {
 		this.buttons = [{
 			text: "Save",
 			action: "save"
@@ -5980,7 +5955,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 	width: 820,
 	modal: true,
 
-	initComponent : function () {
+	initComponent: function () {
 		this.items = [
 			{
 				xtype: 'form',
@@ -6236,7 +6211,7 @@ Ext.define('COMS.view.Authoring.AddReference', {
 	autoShow: true,
 	width: 600,
 
-	initComponent : function() {
+	initComponent: function() {
 		this.items = [ {
 			xtype: 'form',
 			defaults : { labelAlign: 'right', width: 580, margin: '5 0 5 0'	},
@@ -6349,7 +6324,7 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 		}
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		this.callParent(arguments);
 	}
 });
@@ -6483,7 +6458,7 @@ Ext.define('COMS.view.Authoring.DrugRegimen' ,{
                                 {header : 'Dosage<br/>Amount', dataIndex : 'Amt', width: 50, align: 'center' },
                                 {header : 'Units', dataIndex : 'Units', width: 50, align: 'center' },
                                 {header : 'Route', dataIndex : 'Route', width: 50, align: 'center',
-									renderer : function (value, p, record) {
+									renderer: function (value, p, record) {
 										if (value.indexOf(" : ") > 0) {
 											return value.split(" : ")[0];
 										}
@@ -6552,7 +6527,7 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					width: 60,
 					sortable: true,
 					align: 'center',
-					renderer : function (value, p, record) {
+					renderer: function (value, p, record) {
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -6562,7 +6537,7 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					width: 80,
 					sortable: false,
 					align: 'center',
-					renderer : function (value, p, record) {
+					renderer: function (value, p, record) {
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -6572,7 +6547,7 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					width: 60,
 					sortable: false,
 					align: 'center',
-					renderer : function (value, p, record) {
+					renderer: function (value, p, record) {
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -6582,7 +6557,7 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					width: 100,
 					sortable: false,
 					align: 'center',
-					renderer : function (value, p, record) {
+					renderer: function (value, p, record) {
 						return Ext.String.format('{0}', value);
 					}
 				},
@@ -6648,7 +6623,7 @@ Ext.define('COMS.view.Authoring.Hydration', {
 					width: 217,
 					sortable: false,
 					align: 'center',
-					renderer : function (value, p, record) {
+					renderer: function (value, p, record) {
 						return Ext.String.format('{0}', value);
 					}
 				}
@@ -6748,7 +6723,7 @@ Ext.define('COMS.view.Authoring.HydrationSequence', {
 	width: 440,
     height: 150,
 
-	initComponent : function() {
+	initComponent: function() {
 		this.items = [ {
 			xtype: 'form',
 			defaults : { labelAlign: 'top', margin: '5'},
@@ -6818,7 +6793,7 @@ Ext.define('COMS.view.Template.PostHydration' ,{
 
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		this.store = {
 			fields: ['Drug', 'Unit', 'Comments']
 		};
@@ -6847,7 +6822,7 @@ Ext.define('COMS.view.Template.PostHydration' ,{
 					xtype: 'button',
 					text: 'Remove Drug',
 					disabled: true,
-					handler : function(){
+					handler: function(){
 						//addReferenceRow();
 					}
 				}
@@ -6927,7 +6902,7 @@ Ext.define('COMS.view.Authoring.References' ,{
 		{ text: 'Edit Reference', title: 'EditReference', disabled: true}
 	],
 	buttonAlign: 'left',
-	initComponent : function() {
+	initComponent: function() {
 		var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 });
 		this.plugins = [cellEditing];
 		this.callParent(arguments);
@@ -6955,7 +6930,7 @@ Ext.define('COMS.view.Template.selDrug' ,{
 	labelWidth: 150,
 	displayField: 'Drug',
 	valueField: 'Drug',
-    initComponent : function() {
+    initComponent: function() {
         this.store = {
             fields: ['Drug', 'Unit', 'Comments'],
             data  : [
@@ -7006,16 +6981,16 @@ Ext.define('Ext.ux.CheckCombo', {
 	oldValue: '',
 	listeners: {
 		/* uncomment if you want to reload store on every combo expand
-        beforequery : function(qe)
+        beforequery: function(qe)
         {
             this.store.removeAll();
             delete qe.combo.lastQuery;
         },
 */
-		focus : function (cpt) {
+		focus: function (cpt) {
 			cpt.oldValue = cpt.getValue();
 		},
-		keydown : function (cpt, e, eOpts) {
+		keydown: function (cpt, e, eOpts) {
 			var value = cpt.getRawValue(),
 				oldValue = cpt.oldValue;
 
@@ -7024,7 +6999,7 @@ Ext.define('Ext.ux.CheckCombo', {
 			}
 		}
 	},
-	createPicker : function () {
+	createPicker: function () {
 		var me = this,
 			picker,
 			menuCls = Ext.baseCSSPrefix + 'menu',
@@ -7093,13 +7068,13 @@ Ext.define('Ext.ux.CheckCombo', {
 
 		return picker;
 	},
-	reset : function () {
+	reset: function () {
 		var me = this;
 
 
 		me.setValue('');
 	},
-	setValue : function (value) {
+	setValue: function (value) {
 		this.value = value;
 		if (!value) {
 			if (this.allSelector != false) {
@@ -7141,16 +7116,16 @@ Ext.define('Ext.ux.CheckCombo', {
 		}
 		return this.callParent(arguments);
 	},
-	getValue : function () {
+	getValue: function () {
 		if (typeof this.value == 'object') {
 			return this.value.join(',');
 		}
 		return this.value;
 	},
-	getSubmitValue : function () {
+	getSubmitValue: function () {
 		return this.getValue();
 	},
-	expand : function () {
+	expand: function () {
 		var me = this,
 			bodyEl, picker, collapseIf;
 
@@ -7223,7 +7198,7 @@ Ext.define('Ext.ux.CheckCombo', {
 			me.onExpand();
 		}
 	},
-	alignPicker : function () {
+	alignPicker: function () {
 		var height,
 			me = this,
 			picker = me.getPicker();
@@ -7239,7 +7214,7 @@ Ext.define('Ext.ux.CheckCombo', {
 				.setStyle('height', height + 'px');
 		}
 	},
-	onListSelectionChange : function (list, selectedRecords) {
+	onListSelectionChange: function (list, selectedRecords) {
 		var me = this,
 			isMulti = me.multiSelect,
 			hasRecords = selectedRecords.length > 0;
@@ -7408,7 +7383,7 @@ Ext.define("COMS.view.Common.MedRemindersGrid", {
 		{ text: 'Remove Reminder', title: 'RemoveReminder', disabled: true }
 	],
 
-	initComponent : function () {
+	initComponent: function () {
 		var me = this;
 
 		var theStore = Ext.create("COMS.store.MedReminders");
@@ -7717,6 +7692,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		}
 	)
 });
+
 
 Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
@@ -8240,7 +8216,7 @@ Ext.define('COMS.view.Common.selSequence' ,{
         allowBlank: false,
 	margin: '5 0 5 0',
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog(this.name + " - Initialization start...");
 		this.callParent(arguments);
 		wccConsoleLog(this.name + " - Initialization complete...");
@@ -8318,7 +8294,7 @@ Ext.define('COMS.view.ExistingPlan.ExistingPlanTab' ,{
 	margin : '10',
 	autoEl : { tag : 'section' },
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog(this.name + " - Initialization start...");
 		this.items = [{ xtype : 'container', html : "Content for " + this.name }];
 		this.callParent(arguments);
@@ -8334,7 +8310,7 @@ Ext.define('COMS.view.KnowledgeBase.KnowledgeBaseTab' ,{
 	margin : '10',
 	autoEl : { tag : 'section' },
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog(this.name + " - Initialization start...");
 		this.items = [{ xtype : 'container', html : "Content for " + this.name }];
 		this.callParent(arguments);
@@ -8829,7 +8805,7 @@ Ext.define('COMS.view.Management.EditLookup', {
 	autoShow: true,
 	width: 640,
 
-	initComponent : function() {
+	initComponent: function() {
 		this.items = [ {
 			xtype: 'form',
             layout: 'hbox',
@@ -9951,7 +9927,7 @@ Ext.define('COMS.view.Messages.MessagesTab', {
 	bbar: [
 		{
 			text: 'Refresh',
-			handler : function () {
+			handler: function () {
 				var grid = Ext.ComponentQuery.query('MessagesTab')[0];
 				var mystore = grid.getStore();
 				mystore.removeAll(true);
@@ -10076,7 +10052,7 @@ Ext.define('COMS.view.NavigationTabs' ,{
 		}]
 	},
 ************/
-    initComponent : function() {
+    initComponent: function() {
         wccConsoleLog("Navigation Tabs View - Initialization");
 
         // Based on the "Sessionrole" set in main.php ($role = $_SESSION['role'];)
@@ -10564,7 +10540,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	plain : true,
 	autoEl : { tag : 'nav' },
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Chemotherapy Template Order Source View - Initialization");
 		var ApplyBtn = { xtype : "container", name : "Apply", html : "", hidden : true, margin: '0 0 10 50' };
 		var EditBtn = { xtype : "container", name : "Edit", html : "", hidden : true, margin: '0 0 10 50' };
@@ -10738,7 +10714,7 @@ Ext.define("COMS.view.NewPlan.CTOS.Chronology" ,{
 	items : [ { xtype : "ChronologyOverview" }, { xtype : "ChronologyBody" }],
 
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Chronology Tab View - Initialization");
 		this.callParent(arguments);
 	}
@@ -11243,7 +11219,7 @@ Ext.define("COMS.view.NewPlan.CTOS.KnowledgeBase" ,{
 
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Knowledge Base Tab View - Initialization");
 		this.callParent(arguments);
 	}
@@ -11350,7 +11326,7 @@ Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
     autoShow: true,
     width: 400,
 
-    initComponent : function () {
+    initComponent: function () {
         this.items = [ {
             xtype: 'form',
             cls: 'custom-form',
@@ -11894,7 +11870,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 		{
 				// XTemplate Configuration
 			disableFormats: true,
-			tempCalc : function (data) {
+			tempCalc: function (data) {
 				// debugger;
 			}
 		}
@@ -12867,10 +12843,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 		},
 		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature },
 		{ header : "", width : 40, xtype: 'actioncolumn', hideable: false, 
-			handler : function (grid, rowIndex, colIndex, node, e, record, rowNode) {
+			handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record : record, scope : this });
 			},
-			getClass : function(v, meta, rec, row, col, store) {
+			getClass: function(v, meta, rec, row, col, store) {
 				if ("Administered" === rec.get("orderstatus")) {
 					this.items[0].tooltip = "Make addendum";
 					return "EditCell";
@@ -13710,7 +13686,7 @@ Ext.define("COMS.view.NewPlan.CTOS.PatientSummary" ,{
 ***************/
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Patient Summary Tab View - Initialization");
 		this.callParent(arguments);
 	}
@@ -13876,8 +13852,8 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 			// layout : "fit",
 			// defaults : { layout : "fit" },
 			margin: "0 10 10 10", 
-			items : [
-				{ xtype: "container", name: "PatientInfoTable", hidden : true, tpl: 
+			items : [		// EOTS Section
+				{ xtype: "container", name: "EoTS_PatientInfoTable", hidden : true, tpl: 
 					new Ext.XTemplate(
 						"<table border=\"1\" class=\"InformationTable\">",
 							"<tr><th>Type(s) of Cancer: </th><td colspan=3>",
@@ -13971,7 +13947,13 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 									"<td colspan=\"12\">{LastVitals.PSID} - {LastVitals.PS}</td></tr>",
 								"</table>",
 							"</td></tr>",
-						"</table>"
+						"</table>",
+						{
+							disableFormats: true,
+							DebuggerFcn : function ( values ) {
+								// debugger;
+							}
+						}
 					)
 				},
 
@@ -14090,7 +14072,7 @@ Ext.define('COMS.view.NewPlan.LabInfo' ,{
 		{ header: 'Sample', dataIndex : 'sample' },
 		// { header: 'Info', dataIndex : 'specInfo' },
 		{ header: "Result", dataIndex : "result", 
-			renderer : function(value, p, record) {
+			renderer: function(value, p, record) {
 				return (value + " " + record.getData().units);
 			}
 		},
@@ -14156,7 +14138,7 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 		{ "xtype" : "PatientInfo" }
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("New Plan Tab View - Initialization");
 		this.callParent(arguments);
 	}
@@ -14489,17 +14471,17 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
-				SiteConfig : {},
+                SiteConfig : {},
 				debuggerFcn : function ( current, prev ) {
 					// debugger;
 				},
 
-				showReason : function(values, parent) {
-					if ("" !== values.Reason) {
-						return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
-					}
-					return "";
-				},
+                showReason : function(values, parent) {
+                    if ("" !== values.Reason) {
+                        return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
+                    }
+                    return "";
+                },
 
 				calcRoute : function(data) {
 					var route = data.AdminMethod1 ? data.AdminMethod1 : data.AdminMethod;
@@ -14568,10 +14550,10 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				},
 
 
-				hasData : function (instr) {
+				hasData: function (instr) {
 					return ("" !== instr);
 				},
-				hasNOData : function (instr) {
+				hasNOData: function (instr) {
 					return ("" === instr);
 				},
 				hasDrug : function (therapy) {
@@ -14799,7 +14781,7 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 		{ xtype : "VitalSignsHistory" }
 	],
 
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Patient History View - Initialization");
 		this.callParent(arguments);
 	}
@@ -14807,27 +14789,26 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 
 
 Ext.define("COMS.view.NewPlan.PatientInfo" ,{
-    extend: "Ext.form.FieldSet",
-    alias : "widget.PatientInfo",
+	extend: "Ext.form.FieldSet",
+	alias : "widget.PatientInfo",
 	name : "Patient Information",
 
 	cls : "xPandablePanel",
 
 	collapsed : true,
 
-    resizable : true,
-    autoScroll : true,
-    autoHeight: true,
-    layout: {
-        type: "vbox",
-        align: "stretch"
-    },
-    defaults : {
-        margin: "5 0 5 10"
-    },
+	resizable : true,
+	autoScroll : true,
+	autoHeight: true,
+	layout: {
+		type: "vbox",
+		align: "stretch"
+	},
+	defaults : {
+		margin: "5 0 5 10"
+	},
 
-
-	items : [
+items : [
 		{ xtype : "container", hidden : true, name : "UpdateMDWSDataContainer", html : "<button class=\"anchor\" name=\"UpdateMDWSData\">Update</button> Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
 		{ xtype : "container", hidden : true, name : "DisplayMDWSDataContainer", html : "<button class=\"anchor\" name=\"DisplayMDWSData\">Show</button> Updated Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
 		{ xtype : "container", hidden : true, name : "MDWSStatus", html : "Updating Patient Info from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>" },
@@ -14855,7 +14836,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	collapsible : true,
 	collapsed : true,
 
-	items: [
+	items: [		// Patient Information Table
 		{ xtype: "container", name: "PatientInfoTable", cls: "PI_PatientInformationTable", tpl: 
 			new Ext.XTemplate(
 				"{[this.DebuggerFcn(values)]}",
@@ -14882,7 +14863,6 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							"<br />{TemplateDescription}",
 						"</tpl>",
 						"{[this.Links(values.TemplateName, values.TemplateID)]}",
-						//"<button class=\"anchor ShowAllPatientData\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button>",
 						"</td>",
 					"</tr>",
 
@@ -14895,7 +14875,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Regimen Goal:</th><td>{Goal}</td>",
 						"<th>Concurrent Radiation:</th><td>",
-							"<tpl if=\"'0' === ConcurRadTherapy\">No<tpl else>Yes</tpl>",
+							"{[this.ConcurRadTherapy(values.ConcurRadTherapy)]}",
 						"</td>",
 						"<td colspan=2>&nbsp;</td>",
 					"</tr>",
@@ -14907,8 +14887,9 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<td colspan=5>",
 							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Recorded on</th><th>User</th><th>Delete</th></tr>",
 							"<tpl for=\"Disease\">",
+								"{[this.DebuggerFcn(values)]}",
 								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td><td>",
-		"{[this.DeleteCancer(out, values, parent, xindex, xcount)]}",
+									"{[this.DeleteCancer(out, values, parent, xindex, xcount)]}",
 								"</td></tr>",
 							"</tpl>",
 							"</table>",
@@ -14939,17 +14920,12 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"</td>",
 					"</tr>",
 
-
 					"<tr>",
 						"<th>Clinical Trial: </th>",
 						"<td colspan=5>",
 							"{[this.clinicalTrial(values)]}",
 						"</td>",
 					"</tr>",
-
-
-
-
 
 					"<tr>",
 						"<th style=\"vertical-align: top;\">Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
@@ -14973,6 +14949,18 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					disableFormats: true,
 					DebuggerFcn : function ( values ) {
 						// debugger;
+					},
+
+					ConcurRadTherapy : function (ConcurRadTherapy) {
+						if ('0' === ConcurRadTherapy) {
+							return "No";
+						}
+						else if ('' === ConcurRadTherapy) {
+							return "";
+						}
+						else {
+							return "Yes";
+						}
 					},
 
 					DeleteCancer : function (out, values, parent, xindex, xcount) {
@@ -15507,9 +15495,7 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 						"<th>Regimen End Date:</th><td>{TreatmentEnd}",
 						"</td>",
 					"</tr>",
-//				"</table>",
 
-				// "<table border=\"1\" class=\"InformationTable\">",
 					"<tr><th colspan=\"2\">Type(s) of Cancer: </th><td colspan=\"4\">",
 						"<tpl for=\"Disease\">",
 							"<div>{Type}&nbsp;-&nbsp;{Stage}</div>",
@@ -15527,74 +15513,57 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 					"<tr><th colspan=\"6\" style=\"text-align: center;\">Patient Vitals</th></tr>",
 					"<tr><td colspan=\"6\" style=\"padding:0;\">",
 
+						"<table style=\"margin:0 auto; width:100%;\" class=\"PatHistResults InformationTable\">",
 
-
-
-
-		"<table style=\"margin:0 auto; width:100%;\" class=\"PatHistResults InformationTable\">",
-
-			"<tr>",		// Pulse, BP, Respiration, 
-				"<th rowspan=\"2\">Date</th>",
-				"<th rowspan=\"2\">Temp</th>",
-				"<th rowspan=\"2\">Pulse</th>",
-				"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
-				"<th rowspan=\"2\"><abbr title=\"Respiration in breaths per minute\">Resp</abbr></th>",
-				"<th rowspan=\"2\">Pain</th>",
-				"<th rowspan=\"2\"><abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub></abbr></th>",
-				"<th rowspan=\"2\"><abbr title=\"Performance Status - Using the ECOG (Eastern Cooperative Oncology Group) Scale\">PS</abbr></th>",
-				"<th rowspan=\"2\">Height<br />in Inches</th>",
-				"<th rowspan=\"2\">Weight<br />in lbs.</th>",
-				"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
-			"</tr>",
-			"<tr>",		// Pulse, BP, Respiration, 
-				"<th ><abbr title=\"Body Surface Area Weight Formula\">Weight Form.</abbr></th>",
-				"<th ><abbr title=\"Body Surface Area Weight \">Weight</abbr> in KG</th>",
-				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
-				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
-			"</tr>",
-			"<tpl for=\"Vitals\">",
-				"<tr>",
-					"<td>{DateTaken}</td>",
-					"<td>{Temperature}</td>",
-					"<td>{Pulse}</td>",
-					"<td>{BP}</td>",
-					"<td>{Respiration}</td>",
-					"<td>{Pain}</td>",
-					"<td>{SPO2}</td>",
-					"<td><abbr title=\"{PS}\">{PSID}</abbr></td>",
-					"<td>{Height}</td>",
-					"<td>{Weight}</td>",
-					"<td>{WeightFormula}</td>",
-					"<td>{BSA_Weight}</td>",
-					"<td>{BSA_Method}</td>",
-					"<td>{[this.BSACalc(values, parent)]}</td>",
-				"</tr>",
-			"</tpl>",
-		"</table>",
-
-
-
-
-
-
-
-
+							"<tr>",		// Pulse, BP, Respiration, 
+								"<th rowspan=\"2\">Date</th>",
+								"<th rowspan=\"2\">Temp</th>",
+								"<th rowspan=\"2\">Pulse</th>",
+								"<th rowspan=\"2\"><abbr title=\"Blood Pressure\">BP</abbr></th>",
+								"<th rowspan=\"2\"><abbr title=\"Respiration in breaths per minute\">Resp</abbr></th>",
+								"<th rowspan=\"2\">Pain</th>",
+								"<th rowspan=\"2\"><abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub></abbr></th>",
+								"<th rowspan=\"2\"><abbr title=\"Performance Status - Using the ECOG (Eastern Cooperative Oncology Group) Scale\">PS</abbr></th>",
+								"<th rowspan=\"2\">Height<br />in Inches</th>",
+								"<th rowspan=\"2\">Weight<br />in lbs.</th>",
+								"<th colspan=\"4\"><abbr title=\"Body Surface Area\">BSA</abbr></th>",
+							"</tr>",
+							"<tr>",		// Pulse, BP, Respiration, 
+								"<th ><abbr title=\"Body Surface Area Weight Formula\">Weight Form.</abbr></th>",
+								"<th ><abbr title=\"Body Surface Area Weight \">Weight</abbr> in KG</th>",
+								"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
+								"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
+							"</tr>",
+							"<tpl for=\"Vitals\">",
+								"<tr>",
+									"<td>{DateTaken}</td>",
+									"<td>{Temperature}</td>",
+									"<td>{Pulse}</td>",
+									"<td>{BP}</td>",
+									"<td>{Respiration}</td>",
+									"<td>{Pain}</td>",
+									"<td>{SPO2}</td>",
+									"<td><abbr title=\"{PS}\">{PSID}</abbr></td>",
+									"<td>{Height}</td>",
+									"<td>{Weight}</td>",
+									"<td>{WeightFormula}</td>",
+									"<td>{BSA_Weight}</td>",
+									"<td>{BSA_Method}</td>",
+									"<td>{[this.BSACalc(values, parent)]}</td>",
+								"</tr>",
+							"</tpl>",
+						"</table>",
 					"</td></tr>",
 
-
-
-
-
-
 				"</table>",
-
-
-
 
 				"<br /><br />",
 				{
 					// XTemplate Configuration
 					disableFormats: true,
+					DebuggerFcn : function ( values ) {
+						 // debugger;
+					},
 					name : function(v, p) {
 						return (v.name);
 					},
@@ -15633,7 +15602,7 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 						}
 						return(retBuf);
 					},
-				BSACalc : function (data, pData) {
+				BSACalc: function (data, pData) {
 					data.Amputations = pData.Amputations;
 					var BSA = Ext.BSA_Calc(data);
 					if ("" !== BSA && 0 !== BSA) {
@@ -15654,7 +15623,7 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 	buttons : [
 		{ text: "Close", action: "cancel" }
 	],
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("Treatment Details View - Initialization");
 		this.callParent(arguments);
 	}
@@ -15918,7 +15887,7 @@ Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 	buttons : [
 		{ text: "Close", action: "cancel" }
 	],
-	initComponent : function() {
+	initComponent: function() {
 		wccConsoleLog("End of Treatment Summary View - Initialization");
 		this.callParent(arguments);
 	}
@@ -16093,7 +16062,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			debuggerFcn : function ( current, prev ) {
 				// debugger;
 			},
-			optionalData : function (data, data2) {
+			optionalData: function (data, data2) {
 				if ("" !== data) {
 					return ("<br /><em>" + data + " " + data2 + "</em>");
 				}
@@ -16353,7 +16322,7 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		dataIndex: "dose",
 		xtype: "numbercolumn", 
 		format:"0.00",
-		renderer : function(v) {
+		renderer: function(v) {
 			var fltValue = parseFloat(v);
 			var intValue = parseInt(v);
 			if (intValue == Number.NaN) {
@@ -16378,7 +16347,7 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 		width: 50,
 		sortable: false,
 		align: "left",
-		renderer : function(v) {
+		renderer: function(v) {
 			if (v.indexOf(" : ") > 0) {
 				v = v.split(" : ")[0];
 			}
@@ -16611,7 +16580,7 @@ Ext.define("COMS.view.TemplatePromotion.TemplatePromotionTab", {
 		{ "text" : "User-Friendly Name", dataIndex: "description", flex: 1 },
 		{ "text" : "Disease Type", dataIndex: "DiseaseName", hidden: true },
 		{ "text" : "Location", dataIndex: "Location", editor: TemplateLocationCombo,
-			renderer : function(v, a, b, c) {
+			renderer: function(v, a, b, c) {
 				var Records = TemplateLocationStore.getRange();
 				for (i = 0; i < Records.length; i++) {
 					if (Records[i].getData().id == v) {
@@ -16668,7 +16637,7 @@ Ext.define("COMS.view.Testing.TestTab" ,{
 // var tmpRecord; MWB - 28 Dec 2011; Eliminated need for global variable by using the "getSelectedRecord()" function below
 // Also cleaned up code below to not require the tmpRecord variable
 Ext.apply(Ext.data.validations, {
-	regimenVal : function (config, value) {
+	regimenVal: function (config, value) {
 		var druggrid = Ext.ComponentQuery.query('AuthoringTab TemplateDrugRegimen grid')[0];
 		var drugstore = druggrid.getStore();
 
@@ -16880,7 +16849,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	],
 
 	// Ext.ComponentQuery.query("AddReference combo[name=\"CycleLength\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 		this.control({
 
@@ -17030,7 +16999,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				URL: Ext.URLs.CTOS,
 				id: theTemplate.id
 			},
-			callback : function (records, operation, success) {
+			callback: function (records, operation, success) {
 				if (success) {
 					mytemplate = this.getAt(0);
 					authoringCtl.afterCTOSLoaded(mytemplate);
@@ -17045,7 +17014,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 	// User has selected what they want to do...
-	TemplateTypeSelected : function (rbtn, newValue, oldValue, eOpts) {
+	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
 		wccConsoleLog("User has selected what to do");
 		var theController = this.getController("Common.selCTOSTemplate");
 		var radioType = rbtn.inputValue;
@@ -17071,7 +17040,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 
-	clearTemplate : function (button) {
+	clearTemplate: function (button) {
 
 		// var NewTemplateObj = this.getNewTemplate();
 		// var CTOSTemplateSelectionObj = this.getCTOSTemplateSelection();
@@ -17129,14 +17098,14 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		postMHgrid.getView().refresh(true);
 	},
 
-	clearValue : function (field) {
+	clearValue: function (field) {
 		if (field && (field.getValue() || field.getRawValue())) {
 			field.reset();
 		}
 	},
 
 	// Used in both the Hydration and Refernce Grids
-	getSelectedRecord : function (destroy, query) {
+	getSelectedRecord: function (destroy, query) {
 		var theGrid, theView, theSelModel, HasSelection = false,
 			selRows, theRecord, theStore, theIndex;
 
@@ -17162,7 +17131,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
-	ShowPatientListInfo : function () {
+	ShowPatientListInfo: function () {
 		var Temp = this.SelectedTemplate;
 		var thePatients = Temp.getData().PatientList;
 		var theTemplateDesc = Temp.getData().Description;
@@ -17171,7 +17140,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
-	afterCTOSLoaded : function (template) {
+	afterCTOSLoaded: function (template) {
 		wccConsoleLog("CTOS Loaded - Processing");
 		this.SelectedTemplate = template;
 		this.getAnyMedReminders4Template( template.internalId );
@@ -17190,7 +17159,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 						URL: Ext.URLs.DiseaseType + "/",
 						ID: SelectedDiseaseID
 				},
-				callback : function (records, operation, success) {
+				callback: function (records, operation, success) {
 						if (success) {
 							diseaseRecord = disease.getStore().getById(disease.getValue());
 							authorCtl.LoadFormWithExistingData(template);
@@ -17296,13 +17265,13 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 
-	saveTemplateAs : function (button) {
+	saveTemplateAs: function (button) {
 		alert("Saving Template with new name...");
 		var Template = this.PrepareTemplate2Save();
 		this.SaveTemplate2DB(Template, button);
 	},
 
-    isDuplicateDescription : function(description, alias) {
+    isDuplicateDescription: function(description, alias) {
         if (description === alias) {
             return true;
         }
@@ -17314,7 +17283,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
         return false;
     },
     
-    saveTemplate : function (button) {
+    saveTemplate: function (button) {
         var UserAlias = this.getTemplateAlias().getValue();
         var haveDuplicate = false;
         var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
@@ -17327,7 +17296,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
             url: Ext.URLs.TemplateAlias,
             scope: this,
             alias: UserAlias,
-            success : function(response, opts) {
+            success: function(response, opts) {
                 var obj = Ext.decode(response.responseText);
                 var Records = obj.records;
                 var i, matchingRecord, record2Flag, Template,
@@ -17381,14 +17350,14 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				}
 
             },
-            failure : function(response, opts) {
+            failure: function(response, opts) {
                 wccConsoleLog('server-side failure with status code ' + response.status);
             }
         });
         return;
 	},
 
-    flagTemplateInactive : function (record2FlagID) {
+    flagTemplateInactive: function (record2FlagID) {
         var id2LookFor = record2FlagID;
         Ext.Ajax.request({
             url: Ext.URLs.FlagTemplateInactive,
@@ -17397,18 +17366,18 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
                 id : id2LookFor
             },
             scope: this,
-            success : function(response, opts) {
+            success: function(response, opts) {
                 var obj = Ext.decode(response.responseText);
                 var Records = obj.records;
                 var i, alias = opts.alias, dupCount = 0;
             },
-            failure : function(response, opts) {
+            failure: function(response, opts) {
                 wccConsoleLog('server-side failure with status code ' + response.status);
             }
         });
     },
 
-	PrepareTemplate2Save : function (KeepAlive) {
+	PrepareTemplate2Save: function (KeepAlive) {
 		var diseaseId = null;
 		var diseaseStageId = null;
 
@@ -17611,10 +17580,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
-	SaveTemplate2DB : function (template, button) {
+	SaveTemplate2DB: function (template, button) {
 		template.save({
 			scope: this,
-			success : function (data) {
+			success: function (data) {
 				wccConsoleLog("Saved Template ");
 				// this.getNewPlanTemplate().getStore().removeAll(true);
 				// this.getNewPlanTemplate().getStore().load();
@@ -17629,7 +17598,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				this.application.unMask();
 
 			},
-			failure : function (record, op) {
+			failure: function (record, op) {
 				wccConsoleLog("Save Template Failed");
 				this.application.unMask();
 				var ErrMsg = "Unknown Framework Error when attempting to save Template";
@@ -17719,7 +17688,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				method : CMD,
 				scope: this,
 				records : theRecords,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.deleteRecord(opts.records);
 				},
 				failure : function( response, opts ) {
@@ -17862,14 +17831,14 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			return referencesArray;
 	},
 
-	ReferenceSelected : function (combo, recs, eOpts) {
+	ReferenceSelected: function (combo, recs, eOpts) {
 		wccConsoleLog('Reference Selected - ' + recs[0].data.name);
 		var piData = recs[0].data;
 		this.getReferenceName().setValue(piData.name);
 		this.getReferenceLink().setValue(piData.description);
 	},
 
-	removeReference : function (button) {
+	removeReference: function (button) {
 		var ckRec = this.getSelectedRecord(false, 'AuthoringTab TemplateReferences');
 		if (ckRec.hasRecord) {
 			wccConsoleLog('Remove Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
@@ -17882,7 +17851,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 			reference.destroy({
 				scope: this,
-				success : function (data) {
+				success: function (data) {
 					this.getSelectedRecord(true, 'AuthoringTab TemplateReferences'); // remove the selected record from the current store
 					this.getRemoveReference().disable();
 					this.getEditReference().disable();
@@ -17893,7 +17862,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}
 	},
 
-	editReference : function (grid, record) {
+	editReference: function (grid, record) {
 		var ckRec = this.getSelectedRecord(false, 'AuthoringTab TemplateReferences');
 		if (ckRec.hasRecord) {
 			wccConsoleLog('Editing Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
@@ -17906,17 +17875,17 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}
 	},
 
-	clickAddReference : function (button) {
+	clickAddReference: function (button) {
 		var view = Ext.widget('AddReference'); // Creates an instance of the "Add Reference" pop-up window
 		view.setTitle("Add Reference");
 	},
 
-	clickUpdateReference : function (grid, record) {
+	clickUpdateReference: function (grid, record) {
 		this.getRemoveReference().enable();
 		this.getEditReference().enable();
 	},
 
-	clickCancelReference : function (button) {
+	clickCancelReference: function (button) {
 		var win = button.up('window');
 		this.getRemoveReference().disable();
 		this.getEditReference().disable();
@@ -17924,7 +17893,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	},
 
-	clickSaveReference : function (button) {
+	clickSaveReference: function (button) {
 		// Click on the "Save" button in the Reference PopUp window.
 		// var grid = Ext.widget('TemplateReferences');		// Note: this gets a new instance of a particular widget by it's xtype, NOT an existing instance
 		var grid = Ext.ComponentQuery.query('AuthoringTab TemplateReferences')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
@@ -17972,7 +17941,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		reference.save({
 			scope: this,
 			waitMsg: 'Saving Data...',
-			success : function (data) {
+			success: function (data) {
 				wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
 				var ref = Ext.create(Ext.COMSModels.References, {
 					id: data.data.lookupid,
@@ -17999,7 +17968,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				win.close();
 				this.application.unMask();
 			},
-			failure : function (record, op) {
+			failure: function (record, op) {
 				var thisCtl = this.getController('Authoring.AuthoringTab');
 				var comboStore = this.getReferenceCombo().getStore();
 
@@ -18098,19 +18067,19 @@ Ext.routeRequiresFluid = function (route) {
 };
 
 Ext.apply(Ext.data.validations, {
-	fluidVolregimen : function (config, value) {
+	fluidVolregimen: function (config, value) {
 		return Ext.StdRouteValidation(config, value);
 	},
 
-	adminTimeregimen : function (config, value) {
+	adminTimeregimen: function (config, value) {
 		return Ext.StdRouteValidation(config, value);
 	},
 
-	flowRateregimen : function (config, value) {
+	flowRateregimen: function (config, value) {
 		return Ext.StdRouteValidation(config, value);
 	},
 
-	fluidTyperegimen : function (config, value) {
+	fluidTyperegimen: function (config, value) {
 		return Ext.StdRouteValidation(config, value);
 	}
 });
@@ -18197,7 +18166,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
     ],
 
 	// Ext.ComponentQuery.query("AuthoringTab TemplateDrugRegimen grid")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Drug Regimen Controller!");
 		this.control({
 			"AddDrugRegimen" : {
@@ -18241,7 +18210,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				expand: this.loadCombo
 			},
 			"AddDrugRegimen combo[name=\"FluidType1\"]": {
-				beforequery : function (queryEvent) {
+				beforequery: function (queryEvent) {
 					delete queryEvent.combo.lastQuery;
 				},
 				expand: this.FluidTypeRouteSelected
@@ -18269,11 +18238,11 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			url: URL,
 			scope: this,
 			fnc : fnc,
-			success : function(response, opts) {
+			success: function(response, opts) {
 				var respObj = Ext.decode(response.responseText);
 				opts.fnc(respObj, this);
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				var theWin = this.getAddDrugPUWindow();
 				if (theWin) {
 					theWin.setLoading( false );
@@ -18316,13 +18285,13 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
 	},
 
-//	collapseCombo : function (picker, eOpts) {
+//	collapseCombo: function (picker, eOpts) {
 //		if (picker.getValue() == null && picker.hiddenValue != null) {
 //			picker.setRawValue(picker.hiddenValue); // MWB 15 Feb 2012 - Added missing ";" as per JSLint
 //		}
 //	},
 
-	loadCombo : function (picker, eOpts) {
+	loadCombo: function (picker, eOpts) {
 
 		if (picker.getStore()) { // MWB - 6/19/2012 - Added to remove the filter added to the store
 			picker.getStore().clearFilter();
@@ -18346,7 +18315,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				URL: URI,
 				ID: id
 			},
-			callback : function (records, operation, success) {
+			callback: function (records, operation, success) {
 				if (success) {
 					if (null != originalHiddenVal) {
 						picker.setRawValue(originalHiddenVal);
@@ -18356,7 +18325,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 
 	},
-	calcInfusionTime : function (field, eOpts) {
+	calcInfusionTime: function (field, eOpts) {
 		var fluidVol = this.getDrugRegimenFluidVol().getValue();
 		var flowRate = this.getDrugRegimenFlowRate().getValue();
 		if ("" != flowRate && "" != fluidVol) {
@@ -18366,7 +18335,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	},
 
 	/* Determine fluid Type allowed based on Medication selected */
-	FluidTypeRouteSelected : function (combo, recs, eOpts) {
+	FluidTypeRouteSelected: function (combo, recs, eOpts) {
 		var theDrug = combo.up("form").down("combo[name=\"Drug\"]").valueModels[0].data;
 		var theDrugID = theDrug.id;
 
@@ -18380,7 +18349,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 
 
-	routeSelected : function (combo, recs, eOpts) {
+	routeSelected: function (combo, recs, eOpts) {
 		var route = null;
 
 		if (null != recs) {
@@ -18407,7 +18376,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 	},
 
-	SaveSequence : function (button) {
+	SaveSequence: function (button) {
 
 		var drugRegimen = Ext.ComponentQuery.query("AddDrugRegimen")[0];
 
@@ -18466,13 +18435,13 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 	},
 
-	onCtxHandler : function onCtxHandler(grid, record, item, index, event) {
+	onCtxHandler: function onCtxHandler(grid, record, item, index, event) {
 		event.stopEvent();
 		var menu = new Ext.menu.Menu({
 			items: [{
 				id: "inc",
 				text: "Increase Sequence",
-				handler : function () {
+				handler: function () {
 					var theStore = grid.getStore();
 					var currRecord = theStore.getAt(index); // SelectionModel might not give you one single row!
 					var prevRecord = theStore.getAt(index - 1);
@@ -18492,7 +18461,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
             }, {
 				id: "dec",
 				text: "Decrease Sequence",
-				handler : function () {
+				handler: function () {
 					var theStore = grid.getStore();
 					var currRecord = theStore.getAt(index); // SelectionModel might not give you one single row!
 					var nextRecord = theStore.getAt(index + 1);
@@ -18522,7 +18491,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	},
 
 
-	clickSaveDrug : function (button) {
+	clickSaveDrug: function (button) {
 		var win = button.up("window");
 		var form = win.down("form");
 		var values = form.getValues();
@@ -18536,11 +18505,11 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		lookupRecord.save({
 			scope: this,
 			waitMsg: "Saving Data...",
-			success : function (data) {
+			success: function (data) {
 				wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
 				win.close();
 			},
-			failure : function (err) {
+			failure: function (err) {
 
 				Ext.MessageBox.alert("Invalid", "This Drug already exists.");
 
@@ -18548,12 +18517,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
-	clickCancelDrug : function (button) {
+	clickCancelDrug: function (button) {
 		var win = button.up("window");
 		win.close();
 	},
 
-	getSelectedRecord : function (destroy) {
+	getSelectedRecord: function (destroy) {
 		var i, theGrid, theView, theSelModel, HasSelection = false,
 			selRows, theRecord, theStore, theIndex, currRecord, prvRecord;
 
@@ -18586,7 +18555,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		};
 	},
 
-	insertNewDrugRegimenRecord : function (win, theStore, recNum, data) {
+	insertNewDrugRegimenRecord: function (win, theStore, recNum, data) {
 		var newRecord;
 		var dupRecord = -1;
 		var dupSequence = -1;
@@ -18647,7 +18616,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 					msg: msg,
 					width: 300,
 					buttons: Ext.MessageBox.YESNO,
-					fn : function (buttonId) {
+					fn: function (buttonId) {
 						if ("no" === buttonId) {
 							win.close();
 							return;
@@ -18688,7 +18657,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 
 	},
-	addRecord : function (existingRecord, newRecord, data, theStore) {
+	addRecord: function (existingRecord, newRecord, data, theStore) {
 
 
 		if ((data.Sequence - 1) == existingRecord) {
@@ -18712,7 +18681,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 	},
 
-	validateRecord : function (data) {
+	validateRecord: function (data) {
 
 		var newRecord = Ext.create(Ext.COMSModels.DrugRegimen, {
 			Drug: data.Drug,
@@ -18744,7 +18713,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		return newRecord;
 	},
 
-	addToSequenceStore : function (combo, theQuery, addSequence) {
+	addToSequenceStore: function (combo, theQuery, addSequence) {
 		var i, tmpModel, store;
 		var theGrid = Ext.ComponentQuery.query(theQuery)[0];
 		var theStore = theGrid.getStore();
@@ -18774,7 +18743,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	//--------------------------------------------------------------------------------
 	//	Drug Regimen Grid Handlers
 	//
-	RemoveSelectedDrug : function (btn, text) {
+	RemoveSelectedDrug: function (btn, text) {
 		if ("yes" === btn) {
 			this.getSelectedRecord(true); // bool param will either destroy (true) or return (false) the selected record
 		} else {
@@ -18784,7 +18753,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			}
 		}
 	},
-	DrugRegimenBtns : function (button) { // Handles the onclick event of all the buttons for the Drug Regimen grid
+	DrugRegimenBtns: function (button) { // Handles the onclick event of all the buttons for the Drug Regimen grid
 		var ckRec = this.getSelectedRecord(false);
 		var theQuery = "AuthoringTab TemplateDrugRegimen grid";
 		var exist, view, puWin;
@@ -18851,12 +18820,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		this.getEditDrugRegimen().disable();
 	},
 
-	clickDrugRegimenGrid : function (grid, record) {
+	clickDrugRegimenGrid: function (grid, record) {
 		this.getRemoveDrugRegimen().enable();
 		this.getEditDrugRegimen().enable();
 	},
 
-	SaveDrugRegimen : function (button) { // Called when clicking on the "Save" button in the Pop-Up Window
+	SaveDrugRegimen: function (button) { // Called when clicking on the "Save" button in the Pop-Up Window
 		var win = button.up("window");
 		wccConsoleLog("Adding new Drug Regimen");
 		var theGrid = this.getDrugRegimenGrid(); // Ext.ComponentQuery.query(query)[0];
@@ -18892,7 +18861,7 @@ Ext.HydrationRouteValidation = function(config, value){
 	return true;
 };
 Ext.apply(Ext.data.validations,{
-			amt1hydration : function(config, value) {
+			amt1hydration: function(config, value) {
 				var values = Ext.getHydrationFormValues(config, value);
 				if(('' === values.Amt1) && ('' === value)){
 					return false;
@@ -18903,7 +18872,7 @@ Ext.apply(Ext.data.validations,{
 				return true;
 			},
 
-			unit1hydration : function(config, value){
+			unit1hydration: function(config, value){
 				var values = Ext.getHydrationFormValues(config, value);
 				if('' === value && ('' !== values.Amt1 || values.Infusion1 && '' !== values.Infusion1)){
 					return false;
@@ -18912,7 +18881,7 @@ Ext.apply(Ext.data.validations,{
 				}
 			},
 
-			route1hydration : function(config, value){
+			route1hydration: function(config, value){
 				var values = Ext.getHydrationFormValues(config, value);
 				if('' === value && ('' !== values.Amt1 || values.Units1 && '' !== values.Units1)){
 					return false;
@@ -18920,16 +18889,16 @@ Ext.apply(Ext.data.validations,{
 					return true;
 				}
 			},
-			fluidVol1hydration : function(config, value){
+			fluidVol1hydration: function(config, value){
 				return Ext.HydrationRouteValidation(config, value);
 			},
-			adminTimehydration : function(config, value){
+			adminTimehydration: function(config, value){
 				return Ext.HydrationRouteValidation(config, value);
 			},
-			flowRate1hydration : function(config, value){
+			flowRate1hydration: function(config, value){
 				return Ext.HydrationRouteValidation(config, value);
 			},
-			fluidType1hydration : function(config, value){
+			fluidType1hydration: function(config, value){
 				return Ext.HydrationRouteValidation(config, value);
 			}
 		});
@@ -19040,7 +19009,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 
 	// Ext.ComponentQuery.query('TemplatePreHydration button[text="Add Drug"]')[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 		this.control({
 			"AddHydrationDrug" : {
@@ -19075,7 +19044,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 				expand : this.loadCombo
 			},
 			"AddHydrationDrug combo[name=\"FluidType1\"]" : {
-				beforequery : function(queryEvent) {
+				beforequery: function(queryEvent) {
 					delete queryEvent.combo.lastQuery;
 				},
 				expand: this.FluidTypeRouteSelected
@@ -19104,11 +19073,11 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			url: URL,
 			scope: this,
 			fnc : fnc,
-			success : function(response, opts) {
+			success: function(response, opts) {
 				var respObj = Ext.decode(response.responseText);
 				opts.fnc(respObj, this);
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				var theWin = this.getAddDrugPUWindow();
 				if (theWin) {
 					theWin.setLoading( false );
@@ -19162,7 +19131,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 //		}
 //	},
 
-	loadCombo : function (picker, eOpts) {
+	loadCombo: function (picker, eOpts) {
 		if (picker.getStore()) {		// MWB - 6/19/2012 - Added to remove the filter added to the store
 			picker.getStore().clearFilter();
 		}
@@ -19183,7 +19152,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 					URL: URI,
 					ID: id
 				},
-				callback : function (records, operation, success) {
+				callback: function (records, operation, success) {
 					if (success) {
 						if (null !== originalHiddenVal) {
 							picker.setRawValue(originalHiddenVal);
@@ -19193,7 +19162,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		});
 	},
 
-	calcInfusionTime : function(field, eOpts){
+	calcInfusionTime: function(field, eOpts){
 
 		var index = field.name.length - 1;
 		var lastChar = field.name.substring(index,field.name.length);
@@ -19210,7 +19179,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 	},
 
-	FluidTypeRouteSelected : function(combo, recs, eOpts){
+	FluidTypeRouteSelected: function(combo, recs, eOpts){
 				/* MWB - 4/17/2014 - for new requirement (*IV Fluid Type Choices Issue #80) need to get the drug to determine which fluid types are allowable */
 				// var theDrug = combo.up("form").down("combo[name=\"Drug\"]");
 				var theDrug = combo.up("form").down("combo[name=\"Drug\"]").valueModels[0].data;
@@ -19224,7 +19193,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 				});
 	},
 
-	routeSelected : function(combo, recs, eOpts){
+	routeSelected: function(combo, recs, eOpts){
 		var route=null;
 		if(null !== recs){
 			route = recs[0].data.name;
@@ -19253,7 +19222,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		}
 	},
 
-	SaveSequence : function(button, opts){		// MWB - 7/19/2012 - Changes...
+	SaveSequence: function(button, opts){		// MWB - 7/19/2012 - Changes...
 		wccConsoleLog("SaveSequence()");
 		var addHydrationDrug = Ext.ComponentQuery.query('AddHydrationDrug')[0];
 
@@ -19306,13 +19275,13 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 	},
 
-	onCtxHandler : function onCtxHandler(grid,record,item,index,event) {
+	onCtxHandler: function onCtxHandler(grid,record,item,index,event) {
 		event.stopEvent();
 		var menu = new Ext.menu.Menu({
 			items: [{
 				id: 'inc',
 				text: 'Increase Sequence',
-				handler : function() {
+				handler: function() {
 
 					var theStore = grid.getStore();
 					var currRecord = theStore.getAt(index); // SelectionModel might not give you one single row!
@@ -19337,7 +19306,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 			}, {
 				id: 'dec',
 				text: 'Decrease Sequence',
-				handler : function() {
+				handler: function() {
 					var theStore = grid.getStore();
 					var currRecord = theStore.getAt(index); // SelectionModel might not give you one single row!
 
@@ -19374,7 +19343,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 
 	// Used in both the Hydration and Refernce Grids
-	getSelectedRecord : function (destroy) {
+	getSelectedRecord: function (destroy) {
 		var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex;
 
 		theGrid = Ext.ComponentQuery.query(this.theQuery)[0];
@@ -19407,7 +19376,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 	},
 
 
-	insertNewHydrationRecord : function (win, theStore, HydrationType, recNum, data) {
+	insertNewHydrationRecord: function (win, theStore, HydrationType, recNum, data) {
 		var newRecord;
 		var dupRecord = -1;
 		var dupSequence = -1;
@@ -19462,7 +19431,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 					msg: msg,
 					width:300,
 					buttons: Ext.MessageBox.YESNO,
-					fn : function(buttonId, Opts) {
+					fn: function(buttonId, Opts) {
 						if("no" === buttonId) {
 								return;
 						}else{
@@ -19495,7 +19464,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		win.close();
 	},
 
-	validateRecord : function(data,HydrationType){
+	validateRecord: function(data,HydrationType){
 		var newRecord = Ext.create(Ext.COMSModels.Hydration, {
 			hydrationType: HydrationType,
 			Sequence: data.Sequence,
@@ -19524,7 +19493,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		return newRecord;
 	},
 
-	addRecord : function(existingRecord,newRecord,data,theStore){
+	addRecord: function(existingRecord,newRecord,data,theStore){
 		if((data.Sequence-1) === existingRecord){
 			theStore.removeAt(existingRecord);
 			theStore.insert(existingRecord, newRecord);
@@ -19543,7 +19512,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		}
 	},
 
-	SaveHydrationDrug : function (button) { // Called when clicking on the "Save" button in the Hydration Drug Pop-Up Window
+	SaveHydrationDrug: function (button) { // Called when clicking on the "Save" button in the Hydration Drug Pop-Up Window
 
 		wccConsoleLog("SaveHydrationDrug()");
 		var win = button.up('window');
@@ -19566,7 +19535,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 
 	// MWB 28 Dec 2011 - Added the Pre/Post Hydration Add Drug functionality...
-	clickUpdateHydration : function (grid, record) {
+	clickUpdateHydration: function (grid, record) {
 		var panel = grid.up("container").up("container");
 		var type = panel.type;
 		if ("Pre" === type) {
@@ -19578,7 +19547,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		}
 	},
 
-	addToSequenceStore : function(combo,addSequence){
+	addToSequenceStore: function(combo,addSequence){
 		var theGrid = Ext.ComponentQuery.query(this.theQuery)[0];
 		var theStore = theGrid.getStore();
 		var sequenceCnt = theStore.count();
@@ -19607,7 +19576,7 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 	},
 
-    RemoveSelectedHydrationDrug : function (btn, text) {
+    RemoveSelectedHydrationDrug: function (btn, text) {
         var theQuery = this.theQuery;
         if ("yes" === btn) {
             wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
@@ -19670,7 +19639,7 @@ else {
 		RouteInfoFields.show();
 	},
 
-	HydrationBtns : function (button) { // Handles the onclick event of all the buttons for both the pre and post hydration grids
+	HydrationBtns: function (button) { // Handles the onclick event of all the buttons for both the pre and post hydration grids
 		var panel = button.up("panel").up("container");
 		this.theQuery = "AuthoringTab TemplateHydration[title=\"" + panel.type + " Therapy\"] grid";
 		if ("Add Drug" === button.text) {
@@ -19721,7 +19690,7 @@ Ext.define("COMS.controller.CkBoxTArea", {
 		"CkBoxTArea"
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"CkBoxTArea checkbox" : {
 				"change" : this.ClickCheckbox
@@ -19766,7 +19735,7 @@ Ext.define("COMS.controller.Common.EmeticInfo", {
 	"refs" : [
 		{ ref: "EmeticInfo",				selector: "EmeticInfo"}
 	],
-	init : function() {
+	init: function() {
 		/**
 		this.control({
 			"scope" : this,
@@ -19801,7 +19770,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"MedRemindersForm button[text=\"Save\"]" : {
 				click : this.SaveForm
@@ -19827,7 +19796,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 			clientValidation: true,
 			url: URL,
 			method : CMD,
-			success : function(form, action) {
+			success: function(form, action) {
 				// debugger;
 				var MR_ID, results = Ext.JSON.decode(action.response.responseText);
 				if (results.success) {
@@ -19840,7 +19809,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 				}
 				//this.RefreshPanel();
 			},
-			failure : function(form, action) {
+			failure: function(form, action) {
 				// debugger;
 				var SaveTitle = "Saving Medication Reminder FAILED";
 				//this.RefreshPanel();
@@ -19988,7 +19957,7 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 					method : CMD,
 					scope: this,
 					records : theRecords,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.deleteRecord(opts.records);
 					},
 					failure : function( response, opts ) {
@@ -20124,7 +20093,7 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		{ "ref" : "NewPlanTab",							selector: "NewPlanTab"}
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"puWinAddCumDose" : {
 				"show" : function() {this.Saving=false;},
@@ -20350,11 +20319,11 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		form.submit(
 			{
 				scope : this,
-				success : function(form) {
+				success: function(form) {
 					this.FormSubmitGood(form);
 					this.Close();
 				},
-				failure : function(form, action) {
+				failure: function(form, action) {
 					this.FormSubmitBad(form, action);
 					this.Close();
 				}
@@ -20634,7 +20603,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 				url: URL,
 				method : "PUT",
 				jsonData : JSON_Data,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (resp.success) {
@@ -20677,7 +20646,7 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 
 Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	extend : "Ext.app.Controller",
-	init : function() {
+	init: function() {
 		this.control({
 			"puWinSelAmputation" : {
 				"show" : this.ShowWindow,
@@ -20727,7 +20696,7 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 				method : "POST",
 				jsonData : params,
 				scope : this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.application.unMask();
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
@@ -20766,7 +20735,7 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 
 Ext.define("COMS.controller.Common.puWinSelBSA", {
 	extend : "Ext.app.Controller",
-	init : function() {
+	init: function() {
 		this.control({
 			"puWinSelBSA" : {
 				"close" : this.Close
@@ -20791,7 +20760,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 				url: "/Patient/BSA/" + patient_id,
 				method : "POST",
 				jsonData : theData,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					Ext.COMS_UnLockSection();
@@ -20803,7 +20772,7 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 						Patient.BSAFormula = theData.BSAFormula;
 						Patient.BSA_Method = theData.BSAFormula;
 						var piTableInfo = thisCtl.getPatientInfoTableInformation();
-						piTableInfo.update(Patient);		//--//
+						piTableInfo.update(Patient);
 					}
 				},
 				failure : function( response, opts ) {
@@ -20835,7 +20804,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 	stores : [ "DiseaseType", "DiseaseStage" ],
 	views : [ "Common.selDisease", "Common.selDiseaseStage" ],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"puWinSelCancer" : {
 				"close" : this.Close
@@ -20847,15 +20816,20 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 				select: this.onDiseaseStageChange
 			},
 			"puWinSelCancer button[text=\"Cancel\"]" : {
-				click: this.Cancel
+				click: this.CancelDiseaseType
 			},
 			"puWinSelCancer button[text=\"Save\"]" : {
-				click: this.Save
+				click: this.SaveDiseaseType
 			}
 		});
 	},
 
-	onDiseaseSelected : function (combo, recs, eOpts) {
+	updatePITable : function(Patient) {
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
+	},
+
+	onDiseaseSelected: function (combo, recs, eOpts) {
 		this.application.Cancer = recs[0].data;
 		var stage = combo.next();
 		var stageStore = stage.getStore();
@@ -20870,7 +20844,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		});
 	},
 
-	onDiseaseStageChange : function (combo, recs, eOpts) {
+	onDiseaseStageChange: function (combo, recs, eOpts) {
 		this.application.Cancer.Stage = recs[0].data;
 	},
 
@@ -20880,7 +20854,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			url: URL,
 			method : "GET",
 			scope : this,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (!resp.success) {
@@ -20909,7 +20883,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			url: URL,
 			method : "DELETE",
 			scope : this,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				Ext.COMS_UnLockSection();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -20932,13 +20906,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		});
 	},
 
-
-	updatePITable : function(Patient) {
-		var thisCtl = this.getController("NewPlan.NewPlanTab");
-		var piTableInfo = thisCtl.updatePITable(this.application.Patient);
-	},
-
-	Save : function(btn) {
+	SaveDiseaseType : function(btn) {
 		var theForm = btn.up('form').getForm();
 		if (theForm.isValid()) {
 			var theData = theForm.getValues();
@@ -20957,7 +20925,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 				method : "POST",
 				jsonData : params,
 				scope : this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					theForm.reset();
@@ -20983,7 +20951,7 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 			this.Close();
 		}
 	},
-	Cancel : function(btn) {
+	CancelDiseaseType : function(btn) {
 		btn.up('form').getForm().reset();
 		btn.up('window').hide();
 		this.Close();
@@ -21001,7 +20969,7 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 		{ ref : "AddendumsHistory", selector : "puWinTreatmentAmmend [name=\"AddendumsHistory\"]"},
 		{ ref : "Grid", selector : "puWinTreatmentAmmend [name=\"ModifyData\"]" }
 	],
-	init : function () {
+	init: function () {
 		this.control({
 			"puWinTreatmentAmmend" : { 
 				scope : this,
@@ -21079,7 +21047,7 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	"refs" : [
 		{ ref: "selCTOSTemplate",				selector: "selCTOSTemplate"}
 	],
-	init : function() {
+	init: function() {
 		this.control({
 			// "scope" : this,
 			"selCTOSTemplate button[title=\"ResetFilter\"]" : {
@@ -21309,7 +21277,7 @@ Ext.define("COMS.controller.Management.AddLookups", {
 
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"AddLookups" : {
 				beforerender: this.RefreshPanel
@@ -21396,7 +21364,7 @@ Ext.define("COMS.controller.Management.AddLookups", {
 				{
 					scope : this,
 					waitMsg : "Deleting Data...",
-					success : function(data) {
+					success: function(data) {
 						var theNameField = this.getAddLookupsNameField();
 						var theDescField = this.getAddLookupsDescField();
 						theNameField.setValue("");
@@ -21405,7 +21373,7 @@ Ext.define("COMS.controller.Management.AddLookups", {
 						this.theGridStore.load({url:this.theCurrentLookupURL});
 						this.application.unMask();
 					},
-					failure : function(err){
+					failure: function(err){
 						Ext.MessageBox.alert("Invalid", "This reference has NOT been deleted.");
 						this.application.unMask();
 					}
@@ -21454,7 +21422,7 @@ Ext.define("COMS.controller.Management.AddLookups", {
 			lookupRecord.save({
 				scope : this,
 				waitMsg : "Saving Data...",
-				success : function(data) {
+				success: function(data) {
 					delete this.CurrentGenericLookupRecID;
 					delete this.CurrentGenericLookupRecName;
 					delete this.CurrentGenericLookupRecDesc;
@@ -21465,7 +21433,7 @@ Ext.define("COMS.controller.Management.AddLookups", {
 					theDescField.setValue("");
 					this.theGridStore.load({url:this.theCurrentLookupURL});
 				},
-				failure : function(err){
+				failure: function(err){
 					Ext.MessageBox.alert("Invalid", "This reference already exists.");
 					delete this.CurrentGenericLookupRecID;
 					delete this.CurrentGenericLookupRecName;
@@ -21717,7 +21685,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	],
 	
 
-	init : function() {
+	init: function() {
 		wccConsoleLog('Initialized Admin Tab Panel Navigation Controller!');
 		this.control({
 
@@ -21976,7 +21944,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				method : CMD,
 				jsonData : {"Label" : Label, "Details" : Details },
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentMedRisksRecordID = "";
@@ -22082,7 +22050,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				method : CMD,
 				jsonData : {"Label" : Label, "Details" : Details },
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentClinicInfoRecordID = "";
@@ -22178,7 +22146,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				method : CMD,
 				jsonData : {"Label" : Label, "Details" : Details },
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentDischargeInstructionRecordID = "";
@@ -22273,7 +22241,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					method : "POST",
 					jsonData : { "Documentation" : Documentation },
 					scope: this,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
 						if (!resp.success) {
@@ -22455,11 +22423,11 @@ vcode: null		// ignore
 			method: CMD,
 			scope : this,
 			jsonData : RoleData,
-			success : function(response, opts) {
+			success: function(response, opts) {
 				this.RolesLoadGrid();
 				this.application.unMask();
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				wccConsoleLog('server-side failure with status code ' + response.status);
 				this.application.unMask();
 			}
@@ -22475,7 +22443,7 @@ vcode: null		// ignore
 			width:300,
 			buttons: Ext.MessageBox.OKCANCEL,
 			scope : this,
-			fn : function(buttonId){
+			fn: function(buttonId){
 				if('ok'==buttonId){
 					var RoleData = this.RolesUserInfo;
 					delete this.RolesUserInfo;
@@ -22484,11 +22452,11 @@ vcode: null		// ignore
 						method: "DELETE",
 						scope : this,
 						jsonData : RoleData,
-						success : function(response, opts) {
+						success: function(response, opts) {
 							this.RolesLoadGrid();
 							this.application.unMask();
 						},
-						failure : function(response, opts) {
+						failure: function(response, opts) {
 							wccConsoleLog('server-side failure with status code ' + response.status);
 							this.application.unMask();
 						}
@@ -22570,7 +22538,7 @@ vcode: null		// ignore
 				method : "POST",
 				jsonData : { "IV_FluidTypeMulti" : theData.IV_FluidTypeMulti },
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (!resp.success) {
@@ -22615,21 +22583,21 @@ vcode: null		// ignore
 			url: Ext.URLs.RoundingRule,
 			method: "GET",
 			scope : this,
-			success : function(response, opts) {
+			success: function(response, opts) {
 				var data = Ext.JSON.decode(response.responseText);
 				var thisCtl = this.getController('Management.AdminTab');
 				var rbGroup = thisCtl.getRBRoundingRules();
 				rbGroup.setValue({"RoundingRule" : data.RoundingRule});
 				this.application.unMask();
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				wccConsoleLog('server-side failure with status code ' + response.status);
 				this.application.unMask();
 			}
 		});
 	},
 
-	clickRoundingRuleSave : function() {
+	clickRoundingRuleSave: function() {
 		var thisCtl = this.getController('Management.AdminTab');
 		var rrButtons = thisCtl.getRBRoundingRules().getValue();
 		var allowRounding = rrButtons.RoundingRule;
@@ -22640,17 +22608,17 @@ vcode: null		// ignore
 			method: "POST",
 			scope : this,
 			jsonData : { "RoundingRule" : allowRounding },
-			success : function(response, opts) {
+			success: function(response, opts) {
 				this.application.unMask();
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				wccConsoleLog('server-side failure with status code ' + response.status);
 				this.application.unMask();
 			}
 		});
 	},
 
-	clickRoundingRuleCancel : function(theBtn) {
+	clickRoundingRuleCancel: function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
 
@@ -22660,7 +22628,7 @@ vcode: null		// ignore
 			url: Ext.URLs.MedHold,
 			method: "GET",
 			scope : this,
-			success : function(response, opts) {
+			success: function(response, opts) {
 				var data = Ext.JSON.decode(response.responseText);
 				var thisCtl = this.getController('Management.AdminTab');
 				var rbGroup = thisCtl.getRBMedHold();
@@ -22668,14 +22636,14 @@ vcode: null		// ignore
 				rbGroup.setValue({"AllowMedHolds" : State});
 				this.application.unMask();
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				wccConsoleLog('server-side failure with status code ' + response.status);
 				this.application.unMask();
 			}
 		});
 	},
 
-	clickMedHoldSave : function() {
+	clickMedHoldSave: function() {
 		var thisCtl = this.getController('Management.AdminTab');
 		var mhButtons = thisCtl.getRBMedHold().getValue();
 		var allowMedHold = mhButtons.AllowMedHolds;
@@ -22686,22 +22654,22 @@ vcode: null		// ignore
 			method: "POST",
 			scope : this,
 			jsonData : { "AllowMedHolds" : allowMedHold },
-			success : function(response, opts) {
+			success: function(response, opts) {
 				this.application.unMask();
 			},
-			failure : function(response, opts) {
+			failure: function(response, opts) {
 				wccConsoleLog('server-side failure with status code ' + response.status);
 				this.application.unMask();
 			}
 		});
 	},
 
-	clickMedHoldCancel : function(theBtn) {
+	clickMedHoldCancel: function(theBtn) {
 		theBtn.up('form').getForm().reset();
 	},
 
 
-	TemplateSelected : function(combo, recs, eOpts){
+	TemplateSelected: function(combo, recs, eOpts){
 		wccConsoleLog('Admin Tab, Template Selected');
 		var theData = recs[0].data.id;
 		var thisCtl = this.getController('Management.AdminTab');
@@ -22712,7 +22680,7 @@ vcode: null		// ignore
 		});
 			
 	},
-	showAllTemplates : function(combo, recs, eOpts){
+	showAllTemplates: function(combo, recs, eOpts){
 		wccConsoleLog('Admin Tab, Template Selected');
 		var thisCtl = this.getController('Management.AdminTab');
 		var theStore = thisCtl.getTemplateGrid().getStore();
@@ -22723,7 +22691,7 @@ vcode: null		// ignore
 		});
 			
 	},
-	clickSaveLookup : function(button){
+	clickSaveLookup: function(button){
 		var grid = Ext.ComponentQuery.query('AdminTab AddLookups grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
 		var store = grid.getStore();
 		var win = button.up('window');
@@ -22749,7 +22717,7 @@ vcode: null		// ignore
 			lookupRecord.save({
 				scope: this,
 				waitMsg: 'Saving Data...',
-				success : function (data) {
+				success: function (data) {
 					wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
 					var ref = Ext.create(Ext.COMSModels.GenericLookup, {
 						id: data.data.lookupid,
@@ -22766,7 +22734,7 @@ vcode: null		// ignore
 					this.getEditLookup().disable();
 					win.close();
 				},
-				failure : function (err) {
+				failure: function (err) {
 
 					this.getRemoveLookup().disable();
 					this.getEditLookup().disable();
@@ -22781,14 +22749,14 @@ vcode: null		// ignore
 
 			
 	},
-	clickCancelLookup : function(button){
+	clickCancelLookup: function(button){
 		var win = button.up('window');
 		this.getRemoveLookup().disable();
 		this.getEditLookup().disable();
 		win.close();
 	},
 	// Used in both the Hydration and Refernce Grids
-	getSelectedRecord : function (destroy, query) {
+	getSelectedRecord: function (destroy, query) {
 		var theGrid, theView, theSelModel, HasSelection = false, selRows, theRecord, theStore, theIndex, records;
 
 		theGrid = Ext.ComponentQuery.query(query)[0];
@@ -22842,7 +22810,7 @@ vcode: null		// ignore
 
 			reference.destroy({
 				scope: this,
-				success : function (data) {
+				success: function (data) {
 					this.getSelectedRecord(true, 'AdminTab AddLookups grid'); // remove the selected record from the current store
 					this.getRemoveLookup().disable();
 					this.getEditLookup().disable();
@@ -22872,7 +22840,7 @@ vcode: null		// ignore
 					msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
 					width:300,
 					buttons: Ext.MessageBox.OKCANCEL,
-					fn : function(buttonId){
+					fn: function(buttonId){
 						if('ok'==buttonId){
 							adminCtl.deleteTemplateCall(mytemplate,ckRec);
 						}
@@ -22892,7 +22860,7 @@ vcode: null		// ignore
 					msg: 'You are about to delete template: '+ ckRec.record.get('description') + '. Would you like to delete it and remove all references?',
 					width:300,
 					buttons: Ext.MessageBox.OKCANCEL,
-					fn : function(buttonId){
+					fn: function(buttonId){
 						if('ok'==buttonId){
 							adminCtl.deleteTemplateCall(mytemplate,ckRec);
 						}
@@ -22905,10 +22873,10 @@ vcode: null		// ignore
 			
 	},
 	
-	deleteTemplateCall : function(mytemplate,ckRec){
+	deleteTemplateCall: function(mytemplate,ckRec){
 		mytemplate.destroy({
 			scope: this,
-			success : function (record, op) {
+			success: function (record, op) {
 				this.getSelectedRecord(true, 'AdminTab DeleteTemplate grid'); // remove the selected record from the current store
 				this.getRemoveTemplate().disable();
 				var adminCtl = this.getController("Management.AdminTab");
@@ -22918,7 +22886,7 @@ vcode: null		// ignore
 					msg:  'Template ' + ckRec.record.get('description') + ' was deleted from the system.',
 					width:300,
 					buttons: Ext.MessageBox.OK,
-					fn : function(buttonId){
+					fn: function(buttonId){
 						if('ok'==buttonId){
 							adminCtl.removeTemplate();
 							
@@ -22927,7 +22895,7 @@ vcode: null		// ignore
 				});
 				
 			},
-			failure : function (record, op) {
+			failure: function (record, op) {
 				wccConsoleLog("Delete Template Failed");
 				this.getRemoveTemplate().disable();
 				this.application.unMask();
@@ -22937,7 +22905,7 @@ vcode: null		// ignore
 					msg: 'Template was not deleted: ' + op.request.scope.reader.jsonData.frameworkErr + '. Would you like to delete it and remove all references?',
 					width:300,
 					buttons: Ext.MessageBox.OKCANCEL,
-					fn : function(buttonId){
+					fn: function(buttonId){
 						if('ok'==buttonId){
 							mytemplate.data.force = 'true';
 							adminCtl.deleteTemplateCall(mytemplate,ckRec);
@@ -22976,7 +22944,7 @@ vcode: null		// ignore
 		});
 	},
 
-	updateLookup : function(button){
+	updateLookup: function(button){
 		wccConsoleLog('clicked Save button');
 		var grid = Ext.ComponentQuery.query('AdminTab grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
 		var store = grid.getStore();
@@ -22995,7 +22963,7 @@ vcode: null		// ignore
 		lookupRecord.save({
 			scope : this,
 			waitMsg : 'Saving Data...',
-			success : function(data) {
+			success: function(data) {
 				wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
 					
 				var ref = Ext.create(Ext.COMSModels.GenericLookup, {
@@ -23013,7 +22981,7 @@ vcode: null		// ignore
 
 				addLookups.form.findField('description').setValue('');
 			},
-			failure : function(err){
+			failure: function(err){
 				Ext.MessageBox.alert('Invalid', 'This reference already exists.');
 			}
 		});
@@ -23053,7 +23021,7 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 		}
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"CumulativeDosing" : {
 				beforerender: this.RefreshPanel
@@ -23090,11 +23058,11 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 				clientValidation: true,
 				url: URL,
 				method : CMD,
-				success : function(form, action) {
+				success: function(form, action) {
 					this.RefreshPanel();
 					//this.CancelForm();
 				},
-				failure : function(form, action) {
+				failure: function(form, action) {
 					var SaveTitle = "Saving Cumulative Dose Medication Configuration FAILED";
 					this.RefreshPanel();
 					//this.CancelForm();
@@ -23208,7 +23176,7 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 					method : CMD,
 					scope: this,
 					records : theRecords,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.deleteRecord(opts.records);
 					},
 					failure : function( response, opts ) {
@@ -23282,7 +23250,7 @@ Ext.define('COMS.controller.Management.DiseaseStaging', {
 			selector : "DiseaseStaging button[text=\"Delete\"]"
 		}
 	],
-	init : function() {
+	init: function() {
 		wccConsoleLog('Initialized Disease Staging Elements Panel Navigation Controller!');
 		this.control({
 			"DiseaseStaging" : {
@@ -23320,7 +23288,7 @@ Ext.define('COMS.controller.Management.DiseaseStaging', {
 					method : CMD,
 					scope: this,
 					records : theRecords,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.deleteSelectedRecords(opts.records);
 					},
 					failure : function( response, opts ) {
@@ -23443,11 +23411,11 @@ Ext.define('COMS.controller.Management.DiseaseStaging', {
 			clientValidation: true,
 			url: URL,
 			method : CMD,
-			success : function(form, action) {
+			success: function(form, action) {
 				this.DiseaseStagingLoadPanelRequirements();
 				this.ResetDiseaseStagingPanel();
 			},
-			failure : function(form, action) {
+			failure: function(form, action) {
 				var SaveTitle = "Saving Disease Stage FAILED";
 				this.DiseaseStagingLoadPanelRequirements();
 				this.ResetDiseaseStagingPanel();
@@ -23480,7 +23448,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 
 	],
 
-	init : function() {
+	init: function() {
 
 		this.control({
 			"EmeticMeds " : {
@@ -23616,7 +23584,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 				jsonData : fData,
 				scope: this,
 				theForm: form,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					opts.theForm.reset();
@@ -23627,7 +23595,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 						this.RefreshPanel();
 					}
 				},
-				failure : function( response, opts ) {
+				failure: function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					opts.theForm.reset();
@@ -23667,7 +23635,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 				method : CMD,
 				scope: this,
 				records : theRecords,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.deleteRecord(opts.records);
 				},
 				failure : function( response, opts ) {
@@ -23720,7 +23688,7 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
     ],
     
 
-    init : function() {
+    init: function() {
         wccConsoleLog('Initialized Intelligent Data Elements Panel Navigation Controller!');
 
         this.control({
@@ -23755,11 +23723,11 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 				clientValidation: true,
 				url: URL,
 				method : CMD,
-				success : function(form, action) {
+				success: function(form, action) {
 					this.RefreshPanel();
 					this.CancelForm();
 				},
-				failure : function(form, action) {
+				failure: function(form, action) {
 					var SaveTitle = "Saving Intelligent Data Entry Configuration FAILED";
 					this.RefreshPanel();
 					this.CancelForm();
@@ -23824,7 +23792,7 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 					method : CMD,
 					scope: this,
 					records : theRecords,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.deleteRecord(opts.records);
 					},
 					failure : function( response, opts ) {
@@ -23902,7 +23870,7 @@ Ext.define('COMS.controller.Management.Inventory', {
 	],
 	InvStore : null,
 
-	init : function() {
+	init: function() {
 		this.getStore("InventoryList").on("load", this.StoreLoaded, this);
 
 		this.control({
@@ -23978,7 +23946,7 @@ Ext.define('COMS.controller.Management.Inventory', {
 			method : CMD,
 			scope: this,
 			jsonData : { "LastInvDate" : lastRecDate },
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success) {
@@ -24019,7 +23987,7 @@ Ext.define('COMS.controller.Management.Lockout', {
 		{ ref : "UnlockBtn",             selector : "Lockout button[text=\"Unlock\"]" }
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"Lockout " : {
 				beforerender: this.RefreshPanel
@@ -24072,7 +24040,7 @@ Ext.define('COMS.controller.Management.Lockout', {
 				method : CMD,
 				scope: this,
 				records : theRecords,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.UnlockRecord(opts.records);
 				},
 				failure : function( response, opts ) {
@@ -24115,7 +24083,7 @@ Ext.define('COMS.controller.Management.Toxicity', {
 
 	],
 
-	init : function() {
+	init: function() {
 		this.control({
 			"Toxicity" : {
 				beforerender: this.RefreshPanel
@@ -24199,7 +24167,7 @@ Ext.define('COMS.controller.Management.Toxicity', {
 				method : CMD,
 				scope: this,
 				records : theRecords,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.deleteRecord(opts.records);
 				},
 				failure : function( response, opts ) {
@@ -24254,7 +24222,7 @@ Ext.define('COMS.controller.Management.Toxicity', {
 				jsonData: {"Label" : Label, "Details" : Details, "Grade_Level" : Grade_Level },
 				scope: this,
 				theForm: form,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentToxicityInstructionRecordID = "";
@@ -24268,7 +24236,7 @@ Ext.define('COMS.controller.Management.Toxicity', {
 						theGrid.getStore().load();
 					}
 				},
-				failure : function( response, opts ) {
+				failure: function( response, opts ) {
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentToxicityInstructionRecordID = "";
@@ -24304,7 +24272,7 @@ Ext.define("COMS.controller.Messages.MessagesTab", {
 	views : [ "Messages.MessagesTab" ],
 // INLINE FOR TESTING: 	models : ["Messages"],
 // INLINE FOR TESTING: 	stores : ["Messages"],
-    init : function () {
+    init: function () {
         wccConsoleLog('Initialized Messages Tab Panel Controller!');
 	}
 });
@@ -24329,7 +24297,7 @@ Ext.define('COMS.controller.Navigation', {
 
 	// For this controller the following is mostly for debugging
 	// It should be removed prior to releasing to production
-	init : function () {
+	init: function () {
 		wccConsoleLog('Initialized Navigation Controller!');
 		this.control({
 			'NavigationTabs': {
@@ -24341,7 +24309,7 @@ Ext.define('COMS.controller.Navigation', {
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.SiteConfig,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success) {
@@ -24359,7 +24327,7 @@ Ext.define('COMS.controller.Navigation', {
 		});
 	},
 
-	tabChanged : function (tabPanel, newCard, oldCard, eOpts) {
+	tabChanged: function (tabPanel, newCard, oldCard, eOpts) {
 		var editTemplate = this.application.btnEditTemplatClicked;
 		var newPlanCtl = this.getController("NewPlan.NewPlanTab");
 		var authoringCtl = this.getController("Authoring.AuthoringTab");
@@ -24431,7 +24399,7 @@ Ext.define('COMS.controller.Navigation', {
 		}
 	},
 
-	onPanelRendered : function () {
+	onPanelRendered: function () {
 		wccConsoleLog('Main Navigation Tab Panel has been rendered');
 	}
 });
@@ -24469,7 +24437,6 @@ aSorter : function(a, b) {
 		a = new Date(a.date);
 		b = new Date(b.date);
 		return a>b ? -1 : a<b ? 1 : 0;
-
 },
 
 MergeAssessmentAndReactionLists : function(assessments, reactions) {
@@ -24575,7 +24542,6 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 		}
 	}
 });
-
 
 Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 	"extend" : "Ext.app.Controller",
@@ -24725,7 +24691,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		{ ref: "AmputeeNo",					selector: "AskQues2ApplyTemplate form radiogroup[name=\"amputeeRadio\"] radio[boxLabel=\"No\"]"},
 		{ ref: "CTOS_Tab",					selector: "NewPlan.CTOS form[name:\"NewPlan_CTOS_Form\"]"}
 	],
-	init : function() {
+	init: function() {
 		// this.application.btnEditTemplatClicked=false;
 		this.control({
 			"AskQues2ApplyTemplate" : {
@@ -24749,7 +24715,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 			}
 		});
 	},
-    cancelApply : function(button){
+    cancelApply: function(button){
 		button.up("window").close();
     },
 
@@ -24766,7 +24732,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		}
 	},
 
-    AmputeeSelected : function (rbtn, newValue, oldValue, eOpts ) {
+    AmputeeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Amputee Type");
 
         if (true === newValue.Amputee) {
@@ -24777,11 +24743,11 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
         }
     },
 
-	ConcurRadTherapySelected : function (rbtn, newValue, oldValue, eOpts ) {
+	ConcurRadTherapySelected: function (rbtn, newValue, oldValue, eOpts ) {
 
 	},
 
-    ClinicalTrialTypeSelected : function (rbtn, newValue, oldValue, eOpts ) {
+    ClinicalTrialTypeSelected: function (rbtn, newValue, oldValue, eOpts ) {
         wccConsoleLog("User has selected Clinical Trial Type");
 
         if (true === newValue.ClinicalTrial) {
@@ -24794,7 +24760,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 
 
 	// Save button for the AskQues2ApplyTemplate Widget. This widget is for applying a new template to a patient
-    ApplyTemplate : function(button){
+    ApplyTemplate: function(button){
         var win = button.up('window');
         var form = win.down('form');
         var values = form.getValues();
@@ -24927,7 +24893,7 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 		var patientTemplate = Ext.create(Ext.COMSModels.PatientTemplates, theRecord);
 		patientTemplate.save({
 			scope: this,
-			success : function (data) {
+			success: function (data) {
 				// wccConsoleLog("Apply Template SUCCESS" );
 				// Ext.MessageBox.hide();
 				Ext.ComponentQuery.query("form[name=\"NewPlan_CTOS_Form\"]")[0].setLoading(false, false);
@@ -24998,7 +24964,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Chronology Tab Controller!");
 
 		this.application.on( { PatientSelected : this.PatientSelected, scope : this } );
@@ -25126,10 +25092,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
-				hasData : function (instr) {
+				hasData: function (instr) {
 					return ("" !== instr);
 				},
-				hasNOData : function (instr) {
+				hasNOData: function (instr) {
 					return ("" === instr);
 				},
 				hasDrug : function (therapy) {
@@ -25405,10 +25371,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
-				hasData : function (instr) {
+				hasData: function (instr) {
 					return ("" !== instr);
 				},
-				hasNOData : function (instr) {
+				hasNOData: function (instr) {
 					return ("" === instr);
 				},
 				hasDrug : function (therapy) {
@@ -25588,7 +25554,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 	 *	This adjusts the values in the "Select Applied Template" drop down based on the selected user
 	 *
 	 **********************/
-	PatientSelected : function (combo, recs, eOpts) {
+	PatientSelected: function (combo, recs, eOpts) {
 		var thisCtl = this.getController("NewPlan.CTOS.ChronologyTab");
 		var Overview = thisCtl.getChronologyOverview();
 		var Body = thisCtl.getChronologyBody();
@@ -25632,7 +25598,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.DiseaseResponsePanel", {
 		{ ref: "ToxDetails",				selector: "FlowSheetOptionalQues [name=\"ToxDetails\"]"}
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 			"FlowSheetOptionalQues button[text=\"Save\"]" : {
@@ -25653,7 +25619,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	
 
 
-	init : function () {
+	init: function () {
 		this.control({
 			"FS_Toxicity form" : {
 				validitychange : this.CheckValidation
@@ -25719,7 +25685,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		this.loadGridStore(theGrid);
 	},
 
-	gnrlGetComponent : function(thisComp, str) {
+	gnrlGetComponent: function(thisComp, str) {
 		if (thisComp.owner) {
 			return thisComp.owner.findParentByType("FS_Toxicity").down(str);
 		}
@@ -25883,7 +25849,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 		this.Saving = false;
 
 		this.releaseLock(this.getAddRecordPanel(theForm));
-		// console.log("FS_Toxicity - Loading Adverse Events");
 		this.application.fireEvent("loadAdverseEventsHistory");
 	},
 
@@ -25961,7 +25926,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 				method : CMD,
 				scope: this,
 				records : theRecords,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					this.deleteRecord(opts.records);
 				},
 				failure : function( response, opts ) {
@@ -25981,7 +25946,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 				delete this.theForm;
 				delete this.RowIdx;
 				delete this.theGrid;
-				// console.log("FS_Toxicity Delete Record Last Record has been deleted - Loading Adverse Events");
 				theApp.fireEvent("loadAdverseEventsHistory");
 		}
 	},
@@ -26076,7 +26040,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 				scope: this,
 				combo : qeCombo,
 				store : aStore,
-				callback : function(records, operation, success) {
+				callback: function(records, operation, success) {
 					var data = operation.store.collect('Label');
 					var cStore = operation.combo.getStore();
 					this.loadToxInstrStore(cStore, data);
@@ -26187,7 +26151,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 					scope: this,
 					combo : qeCombo,
 					store : aStore,
-					callback : function(records, operation, success) {
+					callback: function(records, operation, success) {
 						var cStore = operation.combo.getStore();
 						var theRecords = operation.store.getRange();
 						this.loadToxLevelStore(cStore, theRecords);
@@ -26266,7 +26230,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		{ ref: "SaveBtn",					selector: "FlowSheetOptionalQues button[text=\"Save\"]"}
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 			"FlowSheetOptionalQues button[text=\"Save\"]" : {
@@ -26301,14 +26265,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 					"Cycle" : Cycle,
 					"Day" : Day
 				},
-				success : function(form, action) {
+				success: function(form, action) {
 					Ext.Msg.alert('Success', "General Information has been successfully saved");
 					this.application.unMask();
 					theForm.up("window").close();
 					var theCtrlr = this.getController("NewPlan.CTOS.FlowSheetTab");
 					theCtrlr.updateFlowsheetPanel();
 				},
-				failure : function(form, action) {
+				failure: function(form, action) {
 					switch (action.failureType) {
 						case Ext.form.action.Action.CLIENT_INVALID:
 							Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
@@ -26701,7 +26665,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 
 	"LoadToxicityHistory" : function() {
-		// --- // console.log("Flowsheet Tab - Loading Adverse Events Event Handler");
 		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
 	},
 
@@ -26713,7 +26676,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		var theGrid = this.getFlowSheetGrid();
 		this.getFlowSheetData(this.application.Patient.id, this.application.Patient.PAT_ID, theGrid);
 		this.getOptionalInfoData(this.application.Patient.PAT_ID);
-// --- // console.log("Flowsheet Tab - getToxicityHistoryData - updateFlowsheetPanel");
 		this.getToxicityHistoryData(this.application.Patient.PAT_ID);
 /**
  **/
@@ -26811,8 +26773,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		});
 	},
 
+
 	getToxicityHistoryData : function(PAT_ID) {
-		// --- // console.log("Flowsheet Tab - getToxicityHistoryData - Loading Adverse Events");
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
 		var FS_ToxicityHistoryPanel = this.getFS_ToxicityHistory();
 		this.maskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
@@ -26823,7 +26785,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			success : function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-// --- // console.log("Flowsheet Tab - getToxicityHistoryData - request complete");
 				if (resp.success) {
 					if (resp.records) {
 						var i, len, rec;
@@ -26846,6 +26807,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			}
 		});
 	},
+
 
 	getOptionalInfoData : function(PAT_ID) {
 		this.maskFlowSheetPanels(this.getDiseaseResponsePanel(), "Disease Response");
@@ -26875,15 +26837,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 
-    getKeysFromJson : function (obj) {
-        var keys = [];
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                keys.push(key);
-            }
-        }
-        return keys;
-    },
+
+	getKeysFromJson : function (obj) {
+		var keys = [];
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				keys.push(key);
+			}
+		}
+		return keys;
+	},
 
 	createStore : function (json) {
 		var keys = this.getKeysFromJson(json[0]);
@@ -26922,7 +26885,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		}
 		return theCols;
 	},
-	PatientSelected : function (combo, recs, eOpts) {
+	PatientSelected: function (combo, recs, eOpts) {
 	}
 
 });
@@ -26943,7 +26906,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	],
 
 	// Ext.ComponentQuery.query("NursingDocs_PretreatmentAssesment [name=\"ND_PA_CTCAE_TERM_001\"]")[0].getStore()
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Assessmment Tab Controller!");
 
 		this.application.on({
@@ -27090,7 +27053,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 			method : CMD,
 			jsonData : params,
 			scope: this,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				// theApp.unMask();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -27099,7 +27062,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 				}
 				else {
 					var theTable2Update = "TheTable2Update";
-					// console.log("CTOS.NursingDocs.AssessmentTab - loadAdverseEventsHistory");
 					theApp.fireEvent("loadAdverseEventsHistory", theTable2Update);
 					Ext.MessageBox.alert("Pretreatment Assessment", "Pretreatment Assessment Section, Save complete" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 					Patient.AssessmentRecordID = resp.AssessmentID;
@@ -27226,7 +27188,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 
 	
 
-	init : function () {
+	init: function () {
 		this.application.on( 
 			{ 
 				PatientSelected : this.ChemoBioSectionHandler,
@@ -27531,7 +27493,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	],
 
 	// Ext.ComponentQuery.query("DischargeInstructions [name=\"PatientEducation\"] [name=\"PatientEduDetails\"]")[0].getStore()
-	init : function () {
+	init: function () {
 		this.application.on( { DischargeInstructionSelected : this.DischargeInstrSelected, scope : this } );
 		this.control({
 			"scope" : this,
@@ -27641,7 +27603,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				buttons: Ext.Msg.YESNOCANCEL,
 				icon: Ext.Msg.QUESTION,
 				scope : this,
-				fn : function(btn){
+				fn: function(btn){
 					if ("no" === btn){
 						args.SaveCurrent = false;
 						this.application.fireEvent("DischargeInstructionSelected", args);
@@ -27758,7 +27720,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			url: Ext.URLs.TemplateMedDocs + "/" + this.application.Patient.AppliedTemplate.id,
 			scope: this,
 			theMeds : theMeds,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var i, text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				var MedRecords = resp.records;
@@ -27810,7 +27772,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				msg: "You have made changes to this Discharge Instructions Form, are you sure you want to CANCEL this form? All changes will be lost",
 				buttons: Ext.Msg.YESNO,
 				icon: Ext.Msg.QUESTION,
-				fn : function(btn){
+				fn: function(btn){
 					if ("yes" === btn) {
 						var form = theBtn.up('form').getForm();
 						form.reset();
@@ -27853,7 +27815,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			url: URL,
 			method: "GET",
 			scope : this,
-			success : function(form, action) {
+			success: function(form, action) {
 				// If Date of data loaded is today, form can be written to
 				// else form is readonly
 				// process input to show sections of the form
@@ -27880,7 +27842,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				this.application.unMask();
 
 			},
-		    failure : function(form, action) {
+		    failure: function(form, action) {
 				Ext.Msg.alert("Load failed", action.result.errorMessage);
 				this.application.unMask();
 			}
@@ -27901,7 +27863,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 			clientValidation: true,
 			url: URL,
 			method : CMD,
-			success : function(form, action) {
+			success: function(form, action) {
 				Ext.ClearDirtyFlags(form);	/* Undocumented function in app.js */
 				this.application.Patient.DischargeInfoID = action.result.dischargeInfoID;
 				Ext.MessageBox.alert("Discharge Instructions Saved", "Discharge Instructions Saved..." );
@@ -27916,7 +27878,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				// delete qeb.getStore().lastQuery;
 
 			},
-			failure : function(form, action) {
+			failure: function(form, action) {
 				switch (action.failureType) {
 					case Ext.form.action.Action.CLIENT_INVALID:
 						Ext.Msg.alert('Failure', 'Form fields may not be submitted with invalid values');
@@ -27961,7 +27923,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				url: Ext.URLs.DischargeInstruction + "/" + key,
 				method : "GET",
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (!resp.success) {
@@ -28042,7 +28004,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 				url: Ext.URLs.ClinicInfo + "/" + key,
 				method : "GET",
 				scope: this,
-				success : function( response, opts ){
+				success: function( response, opts ){
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					if (!resp.success) {
@@ -28147,7 +28109,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Education Tab Controller!");
 		this.control({
             "NursingDocs_Education button[action=\"save\"]": {
@@ -28320,7 +28282,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	],
 
 
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs General Info Tab Controller!");
 
 		this.application.on( 
@@ -28583,7 +28545,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 				Ext.Ajax.request({
 					scope : this,
 					url: "/Session/Authenticate?Access=" + values.AccessCode + "&Verify=" + values.VerifyCode,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
 						if (resp.success && "Failed" !== resp.records) {
@@ -28757,9 +28719,9 @@ ClearTabData : function(obj) {
 		var Pain = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsPain\"]")[0];
 		var SPO2 = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsO2Level\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
-        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
-        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
-        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+		var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+		var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+		var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
 
 		Temperature.setValue("");
 		TemperatureLocation.setValue("");
@@ -28772,9 +28734,9 @@ ClearTabData : function(obj) {
 		Pain.setValue("");
 		SPO2.setValue("");
 		BSA.setValue("");
-        NDVitalsWeightKG.setValue("");
-        NDVitalsHeightCM.setValue("");
-        NDVitalsTempC.setValue("");
+		NDVitalsWeightKG.setValue("");
+		NDVitalsHeightCM.setValue("");
+		NDVitalsTempC.setValue("");
 
 		this._saveVitalsPOST(record);
 	},
@@ -28782,8 +28744,6 @@ ClearTabData : function(obj) {
 	_saveVitalsPOST : function(record) {
 		this.SavingVitals = true;
 		var params = Ext.encode(record);
-		// this.application.unMask();
-/**************/
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.AddVitals,
@@ -28811,7 +28771,6 @@ ClearTabData : function(obj) {
 				Ext.MessageBox.alert("Saving Vitals ERROR", "Vitals Information Section, Save Error - <br>" + resp.msg );
 			}
 		});
-/****************/
 	},
 
 	SaveVitals : function(parent) {
@@ -28849,9 +28808,9 @@ ClearTabData : function(obj) {
 
 		var TemperatureLocation = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsTempLoc\"]")[0];
 		var BSA = Ext.ComponentQuery.query(parent + " [name=\"ndVitalsBSA\"]")[0];
-        var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
-        var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
-        var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
+		var NDVitalsWeightKG = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsWeightKG\"]")[0];
+		var NDVitalsHeightCM = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsHeightCM\"]")[0];
+		var NDVitalsTempC = Ext.ComponentQuery.query("displayfield[name=\"ndVitalsTempC\"]")[0];
 
 		var dt = new Date();
 		var record = {};
@@ -28859,7 +28818,7 @@ ClearTabData : function(obj) {
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y H:i:s");
 		record.DateTaken = Ext.Date.format(dt, "m/d/Y");		// Ignore timestamp till we can get an accurate time from VistA
 		record.Temperature = Temperature.getValue();
-        record.TemperatureLocation = TemperatureLocation.getValue();
+		record.TemperatureLocation = TemperatureLocation.getValue();
 		record.Pulse = Pulse.getValue();
 		record.Systolic = Systolic.getValue();
 		record.Diastolic = Diastolic.getValue();
@@ -28869,14 +28828,11 @@ ClearTabData : function(obj) {
 		record.Pain = Pain.getValue();
 		record.SPO2 = SPO2.getValue();
 		record.BSA = BSA.getValue();
-
 		record.BSA = record.BSA.split(" ")[0];
-
-
 		record.BP = Systolic.getValue() + " / " + Diastolic.getValue();
 
 		var flg1 = "" === record.Temperature;
-        var flg1a = "" === record.TemperatureLocation;
+		var flg1a = "" === record.TemperatureLocation;
 		var flg2 = "" === record.Pulse;
 		var flg3 = "" === record.Systolic;
 		var flg4 = "" === record.Height;
@@ -28895,7 +28851,6 @@ ClearTabData : function(obj) {
 			Ext.MessageBox.alert("Vital Signs", "Vital Signs cannot be saved. <abbr title=\"Saturation of Peripheral Oxygen\">SP O<sub>2</sub>%</abbr> cannot be &gt; 100%" );		// MWB - 7/20/2012 - New alert to confirm completion of saving.
 			return true;
 		}
-
 
 		if (ThisAdminDay) {
 			record.Cycle = ThisAdminDay.Cycle;
@@ -28969,7 +28924,7 @@ ClearTabData : function(obj) {
 			url: Ext.URLs.AddND_GenInfo,
 			method : "POST",
 			jsonData : params,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				this.SavingGenInfo = false;
@@ -29080,7 +29035,7 @@ ClearTabData : function(obj) {
 			VSHTemplateDataBtns = VitalSigns.el.select("button.dspVSHDoseCalcs");
 			VSHTemplateDataBtns.on("click", newCtl.HandleVSHCalcDoseButtons, this);
 			var piTableInfo = newCtl.getPatientInfoTableInformation();
-			piTableInfo.update(this.application.Patient);	//--// 2
+			piTableInfo.update(this.application.Patient);
 		}
 	},
 
@@ -29155,7 +29110,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Tab Controller!");
 		this.application.on({
 			PatientSelected : this.PatientSelected,
@@ -29217,7 +29172,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Pre Treatment Tab Controller!");
 		this.control({
             "NursingDocs_PreTreatment checkbox" : {
@@ -29278,7 +29233,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs React / Assess Tab Controller!");
 
 		this.application.on({
@@ -29468,7 +29423,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			method : CMD,
 			jsonData : params,
 			scope: this,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				theApp.unMask();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -29476,7 +29431,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 					Ext.MessageBox.alert("Saving Error", "ND - Infusion Reactions Section, Save Error - " + resp.msg );
 				}
 				else {
-					// console.log("CTOS.NursingDocs.React_AssessTab - loadAdverseEventsHistory");
 					theApp.fireEvent("loadAdverseEventsHistory");
 					Ext.MessageBox.alert("Infusion Reactions", "Infusion Reactions Section, Save complete" );
 					Patient.InfuseReactionRecordID = resp.InfuseReactionRecordID;
@@ -29554,7 +29508,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 // Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - 89Patient is undefined
-//	init : function () {
+//	init: function () {
 //	AuthenticateUser : function (button)
 //	abSignHandler : function(grid, rowIndex, colIndex)
 //	CellEditCommit : function (editor, eObj)
@@ -29592,7 +29546,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Treatment button[text=\"Administration Complete\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Treatment Tab Controller!");
 		this.application.on({ 
 				PopulateNDTabs : this.TabRendered,		// Event is fired off from the NursingDocs Tab Controller when the NursingDocs Tab is activated
@@ -29670,7 +29624,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 							var Info = { "MedID" : theData.Drug_ID, "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
 							thisCtl.SaveNewCumDoseInfo( Info );
 				}
-
 				this.application.unMask();
 				if (!operation.success) {
 						Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");
@@ -29706,7 +29659,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		Ext.Ajax.request({
 			scope : this,
 			url: "/Session/Authenticate?Access=" + values.AccessCode + "&Verify=" + values.VerifyCode,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				this.application.unMask();
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -29797,7 +29750,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		Ext.Ajax.request({
 			scope : this,
 			url: Ext.URLs.ReadND_Treatment + "/" + PAT_ID,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var tempData, tsRecord;
 				var obj = Ext.decode(response.responseText);
 				var TreatmentHistoryRecords = obj.records;
@@ -29880,7 +29833,7 @@ this.AdminDate = today;
 		theStore.proxy.api.read = Ext.URLs.ND_TreatmentDispensed + Patient.PAT_ID + "/" + today4URL;
 		theStore.load({
 			scope : this,
-			callback : function(records,operation,success){
+			callback: function(records,operation,success){
 				this.application.unMask();
 				if(success){
 //					var theStore = Ext.getStore("ND_Treatment");
@@ -30000,7 +29953,7 @@ this.AdminDate = today;
 			msg: "Are you finished documenting administration of medications for this patient?",
 			buttons: Ext.Msg.YESNO,
 			icon: Ext.Msg.QUESTION,
-			callback : function(btn, text){
+			callback: function(btn, text){
 				if ("yes" === btn) {
 					Ext.MessageBox.alert("Administration completion", "Administration is complete, Save complete");
 				}
@@ -30045,7 +29998,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 		theStore.proxy.url = "/NursingDoc/ReactAssess/ireact_id/" + nValue;
 		theStore.load({
 			scope: this,
-			callback : function(records, operation, success) {
+			callback: function(records, operation, success) {
 				var i, st, categories = [], rLen = records.length, data = records[0].getData();
 				st = data.sectionTitle;
 				var category = {};
@@ -30098,7 +30051,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.OtherInfoPanel", {
 		{ ref: "ToxDetails",				selector: "FlowSheetOptionalQues [name=\"ToxDetails\"]"}
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 			"FlowSheetOptionalQues button[text=\"Save\"]" : {
@@ -30144,7 +30097,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 
 
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Patient Summary Tab Controller!");
 
 		this.application.on( { PatientSelected : this.PatientSelected, scope : this } );
@@ -30166,7 +30119,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 	 *	This adjusts the values in the "Select Applied Template" drop down based on the selected user
 	 *
 	 **********************/
-	PatientSelected : function (combo, recs, eOpts) {
+	PatientSelected: function (combo, recs, eOpts) {
 		var thisCtl = this.getController("NewPlan.CTOS.PatientSummaryTab");
 		var PSummary = thisCtl.getPatientSummary();
 		if (PSummary) {
@@ -30220,7 +30173,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel", {
 		{ ref: "ToxDetails",				selector: "FlowSheetOptionalQues [name=\"ToxDetails\"]"}
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 			"FlowSheetOptionalQues button[text=\"Save\"]" : {
@@ -30279,7 +30232,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	],
 
 	refs: [
-		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"PatientInfoTable\"]"},
+		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"EoTS_PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableHeader", selector: "EndTreatmentSummary [name=\"PatientInfoTableHeader\"]"},
 		{ ref: "PatientInfoTableBody", selector: "EndTreatmentSummary [name=\"PatientInfoTableBody\"]"},
 		{ ref: "Reason4EOTSHead", selector: "EndTreatmentSummary [name=\"Reason4EOTSHead\"]"},
@@ -30341,7 +30294,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		wccConsoleLog("Start_EOTS3");
 	},
 
-	init : function() {  // called at application initialization time
+	init: function() {  // called at application initialization time
 		wccConsoleLog("Initialized End of Treatment Summary Controller!");
 		this.control({
 			"EndTreatmentSummary" : {
@@ -30799,7 +30752,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 		var PatientInfo = this.application.Patient;
 		var PITableHdr = this.getPatientInfoTableHeader();
 		var PITable = this.getPatientInfoTable();
-// debugger;
+
 		PITableHdr.update( this.EoTSData );
 
 		PITable.update( this.EoTSData );
@@ -30915,7 +30868,7 @@ win.setLoading( "Saving End of Treatment Summary", false ) ;
 
 		EoTSRecord.save({
 			scope: this,
-			success : function (data) {
+			success: function (data) {
 				wccConsoleLog("Saved EoTS " );
 				if (win.widget ) {
 					Ext.widget(win.widget,{itemsInGroup: win.itemsInGroup, ChangeTemplate: win.ChangeTemplate});
@@ -31084,25 +31037,25 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	 *		CancelVitals : function(btn) {
 	 *		SaveVitals : function() {
 	 *		handlePatientSelectionRender : function( panel ) {
-	 *		resetPatientInfoPanel : function(thisCtl) {
-	 *		resetTRSPanel : function(thisCtl, numTemplates) {
-	 *		resetVitalsPanel : function(thisCtl, numVitals) {
-	 *		resetLabInfoPanelPanelTitleBar : function(thisCtl, numLabResults) {
-	 *		resetCTOSPanel : function(thisCtl) {
-	 *		resetPanels : function(thisCtl, numTemplates, numVitals, numLabResults) {
+	 *		resetPatientInfoPanel: function(thisCtl) {
+	 *		resetTRSPanel: function(thisCtl, numTemplates) {
+	 *		resetVitalsPanel: function(thisCtl, numVitals) {
+	 *		resetLabInfoPanelPanelTitleBar: function(thisCtl, numLabResults) {
+	 *		resetCTOSPanel: function(thisCtl) {
+	 *		resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
 	 *
 	 *		HandleTemplateBtnClicks : function (event, element) {
 	 *		ShowBSACalcsPUWin : function(opts, tab2switch2) {
 	 *		afterrender : function(theWin, eOpts) {
 	 *		HandleAnchorClicks : function (event, element) {
 	 *		loadCombo : function(picker, eOpts){
-	 *		callback : function(records,operation,success){
+	 *		callback: function(records,operation,success){
 	 *		collapseCombo : function(picker,eOpts){
 	 *		resetTemplateFilter : function(button){
 	 *		editTemplate : function(button){
-	 *		callback : function (records, operation, success) {
+	 *		callback: function (records, operation, success) {
 	 *		afterFindDisease : function(diseaseRecord){
-	 *		callback : function(records,operation,success){
+	 *		callback: function(records,operation,success){
 	 *		afterFindTemplate : function(templateRecord,controller,template){
 	 *		ShowAskQues2ApplyTemplate : function(records, operation, success) {
 	 *		applyTemplateToPatient : function(button){
@@ -31227,7 +31180,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		"NewPlan.EndTreatmentSummary"
 	],
 
-    refs: [
+	refs: [
 		{ ref: "NewPlanTab",					selector: "NewPlanTab"},
 
 		{ ref: "CTOS",							selector: "NewPlanTab CTOS"},
@@ -31235,7 +31188,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "EditTemplateBtn",				selector: "NewPlanTab CTOS button[name=\"Edit\"]"},
 		{ ref: "What2DoBtns",				    selector: "NewPlanTab CTOS [name=\"NewPlan_What2Do_Btns\"]"},
 		{ ref: "NewPlan_CTOS_Form",			    selector: "NewPlanTab CTOS form[name=\"NewPlan_CTOS_Form\"]"},
-
 
 		{ ref: "PatientInfo",					selector: "NewPlanTab PatientInfo"},
 
@@ -31272,21 +31224,20 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		{ ref: "SelectPatient",					selector: "NewPlanTab SelectPatient combobox"},
 		{ ref: "ConfirmPatient",				selector: "NewPlanTab SelectPatient container[name=\"Confirm\"]"},
 		{ ref: "NoPatient",						selector: "NewPlanTab SelectPatient box[name=\"NoPatient\"]"},
-			
 
 		{ ref: "AuthoringTab",					selector: "AuthoringTab"},
 		{ ref: "NavigationTabs",				selector: "NavigationTabs"},
 
 		{ ref: "NDGI_VitalSigns",				selector: "NursingDocs_GenInfo VitalSignsHistory"},
 		{ ref: "ProgrammerBtns",				selector: "ProgrammerBtns"}
-    ],
+	],
 
 	Modules2Load : [],		// Used to track which modules are in the process of being loaded and to load modules synchronously rather than asyncronously which works more efficiently on the back end.
 
 
-    init : function() {
-        wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
-        this.application.btnEditTemplatClicked=false;
+	init: function() {
+		wccConsoleLog("Initialized New Plan Tab Panel Navigation Controller!");
+		this.application.btnEditTemplatClicked=false;
 		this.application.on({ LoadOEMData : this.LoadOEM_OrderData, scope : this });
 
 		this.application.on({ UpdateBSAWeightHeight : function(opts, tab2Switch2) {
@@ -31307,7 +31258,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
  			this.ShowBSACalcsPUWin(opts, tab2Switch2);
 		}, scope : this });
 
-        this.control({
+		this.control({
 			"NewPlanTab PatientInfo MedRemindersPanel grid" : {
 				select: this.selectMedReminderGridRow
 			},
@@ -31316,85 +31267,74 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			"NewPlanTab PatientInfo CTOS dspTemplateData" : {
 				afterrender : this.tabRendered
 			},
-            "NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
-                change : this.TemplateTypeSelected
-            },
+			"NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]" : {
+				change : this.TemplateTypeSelected
+			},
 
 			"NewPlanTab PatientSelection textfield[name=\"CPRS_QueryString\"]" : {
 				specialkey : this.QSEnter
 			},
-            "NewPlanTab SelectPatient combobox" : {
-                select : this.PatientSelected
-            },
+			"NewPlanTab SelectPatient combobox" : {
+				select : this.PatientSelected
+			},
 
-            "NewPlanTab CTOS button[name=\"Apply\"]" : {
-                click: this.applyTemplateToPatient
-            },
-            "NewPlanTab CTOS button[name=\"Edit\"]" : {
-                click: this.editTemplate
-            },
+			"NewPlanTab CTOS button[name=\"Apply\"]" : {
+				click: this.applyTemplateToPatient
+			},
+			"NewPlanTab CTOS button[name=\"Edit\"]" : {
+				click: this.editTemplate
+			},
 			"NewPlanTab MedRemindersPanel" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
 
-            "NewPlanTab PatientSelection" : {
-                afterrender: this.handlePatientSelectionRender
-            },
-            "NewPlanTab PatientInfo PatientInfoTable" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo PatientTemplates" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo PatientHistory" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo LabInfo" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo KnownProblems" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab PatientInfo AdverseEventsHistory" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "NewPlanTab ToxicitySideEffectsPanel" : {
-                afterrender: Ext.togglePanelOnTitleBarClick
-            },
-            "PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
-                click: this.SaveVitals
-            },
-            "PatientHistory [name=\"AddVitals\"] button[text=\"Cancel\"]" : {
-                click: this.CancelVitals
-            }
-       });
-	   this.InitIntelligentDataElementStore();
-       wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
-    },
+			"NewPlanTab PatientSelection" : {
+				afterrender: this.handlePatientSelectionRender
+			},
+			"NewPlanTab PatientInfo PatientInfoTable" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo PatientTemplates" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo PatientHistory" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo LabInfo" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo KnownProblems" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab PatientInfo AdverseEventsHistory" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"NewPlanTab ToxicitySideEffectsPanel" : {
+				afterrender: Ext.togglePanelOnTitleBarClick
+			},
+			"PatientHistory [name=\"AddVitals\"] button[text=\"Save\"]" : {
+				click: this.SaveVitals
+			},
+			"PatientHistory [name=\"AddVitals\"] button[text=\"Cancel\"]" : {
+				click: this.CancelVitals
+			}
+		});
+		this.InitIntelligentDataElementStore();
+		wccConsoleLog("New Plan Tab Panel Navigation Controller Initialization complete!");
+	},
 
-	updatePITable : function(PatientData) {
-		var piTableInfo = this.getPatientInfoTable();
+	updatePITable : function(PatientData) {	// This is part of the "NewPlan.NewPlanTab" controller so no need to get it.
+		var theController = this.getController("NewPlan.NewPlanTab");
+		var piTableInfo;
+		piTableInfo = this.getPatientInfoTableInformation();
 		if (!PatientData) {
 			piTableInfo.update("");
 		}
 		else {
-			piTableInfo.update(PatientData);//--//2
+			piTableInfo.update(PatientData);
 		}
-		return piTableInfo;
 	},
-/*******************************
-	MaskPITable : function (msg) {
-//		var PITablePanel = this.getPatientInfoTable();
-//		if (msg) {
-//			PITablePanel.setTitle("Patient Information - " + msg);
-//			PITablePanel.setLoading(msg, false);
-//		}
-//		else {
-//			PITablePanel.setTitle("Patient Information");
-//			PITablePanel.setLoading(false, false);
-//		}
-	},
-*********************************/
+
 	clickPatientListCount : function( evt, itemClicked ) {
 		if ("anchor PatientList" == itemClicked.className) {
 			var thePatients = this.application.CurrentTemplate.data.PatientList;
@@ -31412,7 +31352,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var theStore = this.getStore("IDEntry");
 		theStore.load({
 			scope: this,
-			callback : function(records, operation, success) {
+			callback: function(records, operation, success) {
 				var IDE = [], i, len = records.length, rec;
 				for (i = 0; i < len; i++) {
 					rec = records[i].getData();
@@ -31423,7 +31363,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		});
 	},
 
-	cancelApply : function(button){
+	cancelApply: function(button){
 		wccConsoleLog("CancelApplication of Template");
 	},
 
@@ -31432,31 +31372,31 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		btn.up('form').getForm().reset();
 	},
 
-    SaveVitals : function() {
-        var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-        if (theController) {
-            theController.SaveVitals("PatientHistory");
-        }
-    },
+	SaveVitals : function() {
+		var theController = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
+		if (theController) {
+			theController.SaveVitals("PatientHistory");
+		}
+	},
 
 
-    handlePatientSelectionRender : function( panel ) {
-        var Btns = Ext.select("button.anchor.QueryCPRS4Patient");
-        if (Btns) {
-            Btns.on("click", this.handlePatientSelectionClickEvent, this);
-        }
+	handlePatientSelectionRender : function( panel ) {
+		var Btns = Ext.select("button.anchor.QueryCPRS4Patient");
+		if (Btns) {
+			Btns.on("click", this.handlePatientSelectionClickEvent, this);
+		}
 		if ("Programmer" === dName ) {
 			// this.getProgrammerBtns().show();
 		}
-        Ext.togglePanelOnTitleBarClick(panel);
-    },
+		Ext.togglePanelOnTitleBarClick(panel);
+	},
 
-	resetPatientInfoPanel : function(thisCtl) {
+	resetPatientInfoPanel: function(thisCtl) {
 		var PatientInformationPanel = thisCtl.getPatientInfo();
 		PatientInformationPanel.collapse();
 	},
 
-	resetTRSPanel : function(thisCtl, numTemplates) {
+	resetTRSPanel: function(thisCtl, numTemplates) {
 		var TRSPanel = thisCtl.getPatientTemplates(),
 			buf =  "Treatment Regimens & Summaries";
 		if (numTemplates && "" !== numTemplates) {
@@ -31466,7 +31406,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		TRSPanel.setTitle(buf);
 	},
 
-	resetVitalsPanel : function(thisCtl, numVitals) {
+	resetVitalsPanel: function(thisCtl, numVitals) {
 		var VitalsPanel = thisCtl.getPatientHistory(),
 			buf =  "Patient Vitals ";
 		if (numVitals && "" !== numVitals) {
@@ -31476,7 +31416,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		VitalsPanel.setTitle(buf);
 	},
 
-	resetLabInfoPanelPanelTitleBar : function(thisCtl, numLabResults) {
+	resetLabInfoPanelPanelTitleBar: function(thisCtl, numLabResults) {
 		var LabInfoPanel = thisCtl.getLaboratoryInfo(),
 			buf =  "Laboratory Information ";
 		if (numLabResults && "" !== numLabResults) {
@@ -31486,7 +31426,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		LabInfoPanel.setTitle(buf);
 	},
 
-	resetCTOSPanel : function(thisCtl) {
+	resetCTOSPanel: function(thisCtl) {
 		var CTOSPanel = thisCtl.getCTOS();
 		CTOSPanel.setActiveTab(0);
 		try {   /* One or more of the controls may not be available based on role of user */
@@ -31505,7 +31445,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-	resetPanels : function(thisCtl, numTemplates, numVitals, numLabResults) {
+	resetPanels: function(thisCtl, numTemplates, numVitals, numLabResults) {
 		this.resetPatientInfoPanel(thisCtl);
 		this.resetTRSPanel(thisCtl, numTemplates);
 		this.resetVitalsPanel(thisCtl, numVitals);
@@ -31539,15 +31479,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				fncName = "";
 				break;
 			case "GenerateEoTS":
-                fncName = "Generate End of Treatment Summary";
-                this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
-                this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
-                // Have TemplateID = this.application.Patient.AppliedTemplateID
-                // TemplateName = this.application.Patient.AppliedTemplate.Description
-                this.application.Patient.EoTS_Type = "Generate";
-                Ext.widget("EndTreatmentSummary");
-                fncName = "";
-                break;
+				fncName = "Generate End of Treatment Summary";
+				this.application.Patient.EoTS_TemplateID = element.getAttribute("templateid");
+				this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
+				// Have TemplateID = this.application.Patient.AppliedTemplateID
+				// TemplateName = this.application.Patient.AppliedTemplate.Description
+				this.application.Patient.EoTS_Type = "Generate";
+				Ext.widget("EndTreatmentSummary");
+				fncName = "";
+				break;
 
 			case "ShowEoTS":
 				fncName = "Show End of Treatment Summary";
@@ -31555,13 +31495,13 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.Patient.EoTS_TemplateName = element.getAttribute("templatename");
 				this.application.Patient.EoTS_ID = element.getAttribute("EotsID");
 				this.application.Patient.EoTS_Type = "Show";
-		        this.application.loadMask("Loading End of Treatment Summary Information...");
+				this.application.loadMask("Loading End of Treatment Summary Information...");
 				delete(this.application.Patient.EoTS);	// Clear out any previous EoTS info just in case...
 
 				Ext.Ajax.request({
 					scope : this,
 					url: Ext.URLs.EoTS + "/" + this.application.Patient.EoTS_ID,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.application.unMask();
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
@@ -31761,8 +31701,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	// MWB 30 Jan 2012 - Added additional functionality
 	// MWB 31 Jan 2012 - Added control for the BSA Anchor
 	// MWB 09 Feb 2012 - Added additional param - DateTaken
-    // MWB 08 Apr 2014 - Added functionality for Add/Edit BSA and Amputations
-    //
+	// MWB 08 Apr 2014 - Added functionality for Add/Edit BSA and Amputations
+	//
 	HandleAnchorClicks : function (event, element) {
 		wccConsoleLog("HandleAnchorClicks - PatientInfoTable - " + element.getAttribute("tabtype"));
 		var templateName, templateID, CTOSTabs, gender, height, weight, Amputee, DateTaken;
@@ -31783,11 +31723,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			// PatientData = "<div style=\"margin-left: 1em;\"><ul>" + this.getPatientDataAsString() + "</ul></div>";
 			var htmlData = prettyPrint( Patient, { maxDepth : 5 } ).innerHTML;
 			Ext.create('Ext.window.Window', {
-			    title: 'Patient Info',
-			    height: 800,
-			    width: 950,
+				title: 'Patient Info',
+				height: 800,
+				width: 950,
 				autoScroll : true,
-			    html : htmlData
+				html : htmlData
 			}).show();
 
 		} else if("BSA" === tab2switch2) {
@@ -31802,7 +31742,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			templateID = element.getAttribute("templateid");
 			this.CTOS_DataLoad2(templateID);
 			CTOSTabs = this.getCTOS();
-	        CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
+			CTOSTabs.setActiveTab(0);		// Show the CTOS Tab
 		} 
 		else if ("Show Details" === tab2switch2 || "Edit" === tab2switch2) {
 			alert("Function not yet available");
@@ -31814,211 +31754,211 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-    //KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
-    loadCombo : function(picker, eOpts){
-        var originalHiddenVal=null;
-        picker.hiddenValue = picker.getRawValue();
-        picker.clearValue();
+	//KD - 01/23/2012 - This is shared function between Disease stage combo and Select Templates combo
+	loadCombo : function(picker, eOpts){
+		var originalHiddenVal=null;
+		picker.hiddenValue = picker.getRawValue();
+		picker.clearValue();
 
-        var URI,id;
+		var URI,id;
 
-        if("Select Disease Stage Control" == picker.name){
-            URI = Ext.URLs.DiseaseStage + "/";
-            if(eOpts && eOpts.length && eOpts.length > 0){
-                id = eOpts;
-            }else{
-                id = this.application.Patient.Disease.id;
-            }
-        } else if (picker.name == "selDisease"){
-            if(eOpts && eOpts.length && "Refresh" === eOpts){
-                URI = Ext.URLs.DiseaseType;
-                id = '';
-            }else if(null != this.application.Patient.TemplateType.id){
-                URI = Ext.URLs.DiseaseType + "/Source/";
-                id = this.application.Patient.TemplateType.id;
-            }
-        }
+		if("Select Disease Stage Control" == picker.name){
+			URI = Ext.URLs.DiseaseStage + "/";
+			if(eOpts && eOpts.length && eOpts.length > 0){
+				id = eOpts;
+			}else{
+				id = this.application.Patient.Disease.id;
+			}
+		} else if (picker.name == "selDisease"){
+			if(eOpts && eOpts.length && "Refresh" === eOpts){
+				URI = Ext.URLs.DiseaseType;
+				id = '';
+			}else if(null != this.application.Patient.TemplateType.id){
+				URI = Ext.URLs.DiseaseType + "/Source/";
+				id = this.application.Patient.TemplateType.id;
+			}
+		}
 
-        picker.getStore().load({
-            params: {
-                URL : URI,
-                ID  : id
-            },
-            callback : function(records,operation,success){
-                if(success){
-                    if(null!=originalHiddenVal){
-                        picker.setRawValue(originalHiddenVal);
-                    }
-                }
-            }
-        });
+		picker.getStore().load({
+			params: {
+				URL : URI,
+				ID  : id
+			},
+			callback: function(records,operation,success){
+				if(success){
+					if(null!=originalHiddenVal){
+						picker.setRawValue(originalHiddenVal);
+					}
+				}
+			}
+		});
 
-    },
+	},
 
-    collapseCombo : function(picker,eOpts){
-        if(picker.getValue() == null && picker.hiddenValue != null){
-            picker.setRawValue(picker.hiddenValue);		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
-        }
+	collapseCombo : function(picker,eOpts){
+		if(picker.getValue() == null && picker.hiddenValue != null){
+			picker.setRawValue(picker.hiddenValue);		// MWB 15 Feb 2012 - Added missing ";" as per JSLint
+		}
 
-    },
+	},
 
 	resetTemplateFilter : function(button){
 
-        if(null != this.application.Patient.Template){
-            this.getTemplate().setRawValue(this.application.Patient.Template.description);
-        }
+		if(null != this.application.Patient.Template){
+			this.getTemplate().setRawValue(this.application.Patient.Template.description);
+		}
 
-        this.application.ResetClicked=true;
-        this.loadCombo(this.getTemplate());
-        this.loadCombo(this.getDisease(),"Refresh");
+		this.application.ResetClicked=true;
+		this.loadCombo(this.getTemplate());
+		this.loadCombo(this.getDisease(),"Refresh");
 
 		this.getDiseaseAndStage().hide();
-        this.getTemplate().show();
+		this.getTemplate().show();
 		button.hide();
 		this.getAllTemplatesShownMsg().show();
-    },
+	},
 
 
-    editTemplate : function(button){
-        this.application.loadMask("Edit Template");
+	editTemplate : function(button){
+		this.application.loadMask("Edit Template");
 
-        this.application.btnEditTemplatClicked=true;
+		this.application.btnEditTemplatClicked=true;
 
-        var disease = this.getDisease();
+		var disease = this.getDisease();
 
-        var diseaseRecord = disease.getStore().getById(disease.getValue());
+		var diseaseRecord = disease.getStore().getById(disease.getValue());
 
-        if(0 == this.getSelTemplateType().getStore().count()){
-            this.getSelTemplateType().getStore().load();
-        }
-
-
-        if(null === diseaseRecord){
-            var newPlanCtl = this.getController("NewPlan.NewPlanTab");
-            disease.getStore().load({
-                params: {
-                        URL: Ext.URLs.DiseaseType + "/",
-                        ID: disease.getValue()
-                },
-                callback : function (records, operation, success) {
-                        if (success) {
-                            var diseaseRecord = disease.getStore().getById(disease.getValue());
-                            newPlanCtl.afterFindDisease(diseaseRecord);
-                        }else{
-                            Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
-                        }
-                }
-            });
-
-        }else {
-            this.afterFindDisease(diseaseRecord);
-        }
-    },
-
-    afterFindDisease : function(diseaseRecord){
-        var thisCtl = this.getController("Authoring.AuthoringTab");
-        var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
+		if(0 == this.getSelTemplateType().getStore().count()){
+			this.getSelTemplateType().getStore().load();
+		}
 
 
-        var template=null;
-        var templateTypeModel, templateType = this.getSelTemplateType();
+		if(null === diseaseRecord){
+			var newPlanCtl = this.getController("NewPlan.NewPlanTab");
+			disease.getStore().load({
+				params: {
+						URL: Ext.URLs.DiseaseType + "/",
+						ID: disease.getValue()
+				},
+				callback: function (records, operation, success) {
+						if (success) {
+							var diseaseRecord = disease.getStore().getById(disease.getValue());
+							newPlanCtl.afterFindDisease(diseaseRecord);
+						}else{
+							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
+						}
+				}
+			});
 
-        if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
-            /*
-             * Assigning the template type to a Local Template. Not correct logic
-             * but just something to get past the error when editing a template.
-             */
-            templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
-            templateType.setValue(templateTypeModel);
-            template = this.getMyTemplates();
-        }else if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].getValue()){
-            template = this.getTemplate();
-        }
+		}else {
+			this.afterFindDisease(diseaseRecord);
+		}
+	},
 
-        if(null == template){
-            /*
-             * Assigning the template type to a Local Template. Not correct logic
-             * but just something to get past the error when editing a template.
-             */
-            templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
-            templateType.setValue(templateTypeModel);
-            template = this.getMyTemplates();
-        }
-        existingTemplate.setValue(true);
-
-        var rbtn = Ext.create(Ext.form.Radio,{
-            inputValue : 0
-        });
-
-        thisCtl.AuthorTypeSelected(rbtn,true,null,null);
-        thisCtl.getPatientNameField().setValue(this.application.Patient.name);
-        thisCtl.getPatientNameField().show();
-
-        var templateSourceRecord = this.getSelTemplateType().getStore().findBy(
-
-            function (record, id) {
-
-                    if(record.data.id == templateType.getValue()){
-                        return true;
-                    }
-
-                    return false;
-            });
-
-        var templateSourceRecords = [];
-
-        var tmp = templateType.getStore().getAt(templateSourceRecord);
-        templateSourceRecords.push(tmp);
-        thisCtl.getTemplateSource().setValue(tmp);
-        thisCtl.onTemplateTypeChange(null,templateSourceRecords,null);
-
-        var diseaseRecords = [];
-        diseaseRecords.push(diseaseRecord);
-
-        thisCtl.getExistingDisease().setRawValue(diseaseRecord.data.name);
-        thisCtl.DiseaseSelected(thisCtl.getExistingDisease(),diseaseRecords,null);
-
-        var diseaseStage = this.getDiseaseStage();
-        var diseaseStageRecord = diseaseStage.getStore().getById(diseaseStage.value.id);
-        var diseaseStageRecords = [];
+	afterFindDisease : function(diseaseRecord){
+		var thisCtl = this.getController("Authoring.AuthoringTab");
+		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
 
 
-        if(null != diseaseStageRecord){
-	        diseaseStageRecords.push(diseaseStageRecord);
+		var template=null;
+		var templateTypeModel, templateType = this.getSelTemplateType();
+
+		if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
+			/*
+			 * Assigning the template type to a Local Template. Not correct logic
+			 * but just something to get past the error when editing a template.
+			 */
+			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			templateType.setValue(templateTypeModel);
+			template = this.getMyTemplates();
+		}else if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].getValue()){
+			template = this.getTemplate();
+		}
+
+		if(null == template){
+			/*
+			 * Assigning the template type to a Local Template. Not correct logic
+			 * but just something to get past the error when editing a template.
+			 */
+			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			templateType.setValue(templateTypeModel);
+			template = this.getMyTemplates();
+		}
+		existingTemplate.setValue(true);
+
+		var rbtn = Ext.create(Ext.form.Radio,{
+			inputValue : 0
+		});
+
+		thisCtl.AuthorTypeSelected(rbtn,true,null,null);
+		thisCtl.getPatientNameField().setValue(this.application.Patient.name);
+		thisCtl.getPatientNameField().show();
+
+		var templateSourceRecord = this.getSelTemplateType().getStore().findBy(
+
+			function (record, id) {
+
+					if(record.data.id == templateType.getValue()){
+						return true;
+					}
+
+					return false;
+			});
+
+		var templateSourceRecords = [];
+
+		var tmp = templateType.getStore().getAt(templateSourceRecord);
+		templateSourceRecords.push(tmp);
+		thisCtl.getTemplateSource().setValue(tmp);
+		thisCtl.onTemplateTypeChange(null,templateSourceRecords,null);
+
+		var diseaseRecords = [];
+		diseaseRecords.push(diseaseRecord);
+
+		thisCtl.getExistingDisease().setRawValue(diseaseRecord.data.name);
+		thisCtl.DiseaseSelected(thisCtl.getExistingDisease(),diseaseRecords,null);
+
+		var diseaseStage = this.getDiseaseStage();
+		var diseaseStageRecord = diseaseStage.getStore().getById(diseaseStage.value.id);
+		var diseaseStageRecords = [];
+
+
+		if(null != diseaseStageRecord){
+			diseaseStageRecords.push(diseaseStageRecord);
 			thisCtl.getExistingDiseaseStage().setRawValue(diseaseStageRecord.data.name);
-		    thisCtl.onDiseaseStageChange(thisCtl.getExistingDiseaseStage(),diseaseStageRecords,null);
-        }else{
-            thisCtl.getExistingDiseaseStage().setRawValue('');
-        }
+			thisCtl.onDiseaseStageChange(thisCtl.getExistingDiseaseStage(),diseaseStageRecords,null);
+		}else{
+			thisCtl.getExistingDiseaseStage().setRawValue('');
+		}
 
-        var templateRecord;
-        if(null!=this.application.Patient.AppliedTemplateID){
-            templateRecord = template.getStore().getById(this.application.Patient.AppliedTemplateID);
-        }else{
-            templateRecord = template.getStore().getById(this.application.Patient.Template.id);
-        }
+		var templateRecord;
+		if(null!=this.application.Patient.AppliedTemplateID){
+			templateRecord = template.getStore().getById(this.application.Patient.AppliedTemplateID);
+		}else{
+			templateRecord = template.getStore().getById(this.application.Patient.Template.id);
+		}
 
-        template.clearValue();
+		template.clearValue();
 
-        if(null==templateRecord){
-            var newPlanCtl = this.getController("NewPlan.NewPlanTab");
-            template.getStore().load({
-                params: {
-                    URL: Ext.URLs.Templates + "/",
-                    ID: (null == this.application.Patient.Template) ? this.application.Patient.AppliedTemplateID : this.application.Patient.Template.id
-                },
-                callback : function(records,operation,success){
-                    if(success){
-                        templateRecord = this.getAt(0);
-                        newPlanCtl.afterFindTemplate(templateRecord,thisCtl,template);
-                    }
-                }
-            });
+		if(null==templateRecord){
+			var newPlanCtl = this.getController("NewPlan.NewPlanTab");
+			template.getStore().load({
+				params: {
+					URL: Ext.URLs.Templates + "/",
+					ID: (null == this.application.Patient.Template) ? this.application.Patient.AppliedTemplateID : this.application.Patient.Template.id
+				},
+				callback: function(records,operation,success){
+					if(success){
+						templateRecord = this.getAt(0);
+						newPlanCtl.afterFindTemplate(templateRecord,thisCtl,template);
+					}
+				}
+			});
 
-        }else{
-            this.afterFindTemplate(templateRecord,thisCtl,template);
-        }
-    },
+		}else{
+			this.afterFindTemplate(templateRecord,thisCtl,template);
+		}
+	},
 	afterFindTemplate : function(templateRecord,controller,template){
 		var templateRecords = [];
 		this.collapseCombo(template,null);
@@ -32092,7 +32032,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				width:300,
 				buttons: Ext.MessageBox.OKCANCEL,
 				scope: this,
-				fn : function(buttonId) {
+				fn: function(buttonId) {
 					if("ok" === buttonId) {
 						try {
 							var fncName = "Generate End of Treatment Summary";
@@ -32203,48 +32143,48 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-    applyTemplateToPatient : function(button){
-        var startDate = new Date(this.application.Patient.TreatmentStart);
-        var dateEnded = new Date(this.application.Patient.TreatmentEnd);
-        var today = new Date();
+	applyTemplateToPatient : function(button){
+		var startDate = new Date(this.application.Patient.TreatmentStart);
+		var dateEnded = new Date(this.application.Patient.TreatmentEnd);
+		var today = new Date();
 
-        this.getStore('PerfStatStore').load({ 
-            scope : this,
-            callback : this.ShowAskQues2ApplyTemplate
-        });
-    },
+		this.getStore('PerfStatStore').load({ 
+			scope : this,
+			callback : this.ShowAskQues2ApplyTemplate
+		});
+	},
 
-    clearCTOS : function(button){
-        if(this.getCTOSDataDsp().hidden==false){
-            this.getCTOSDataDsp().hide();
-            if ("1" === SessionTemplateAuthoring) {
+	clearCTOS : function(button){
+		if(this.getCTOSDataDsp().hidden==false){
+			this.getCTOSDataDsp().hide();
+			if ("1" === SessionTemplateAuthoring) {
 				if ("Provider" === Sessionrole || "All Roles" === Sessionrole) {
 					this.getApplyTemplateBtn().hide();
 				}
 				this.getEditTemplateBtn().hide();
-            }
-            this.application.selTemplate=null;
+			}
+			this.application.selTemplate=null;
 
-            if(!button){
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-            }else if("2" === button){
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
-                Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
-                if(this.getPatientInfo().hidden == false){
-                    this.getLaboratoryInfo().hide();
-                    this.getPatientHistory().hide();
-                    this.getPatientTemplates().hide();
-                    this.getPatientInfoTable().hide();
-                    this.getPatientInfo().hide();
-                    this.getSelectPatient().setValue('');
-                    this.getSelectPatient().getStore().removeAll();
-                    this.getSelectPatient().lastQuery = null;
-                    this.getCTOS().hide();
-                }
-            }
-        }
-    },
+			if(!button){
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
+			}else if("2" === button){
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].setValue(false);
+				Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].setValue(false);
+				if(this.getPatientInfo().hidden == false){
+					this.getLaboratoryInfo().hide();
+					this.getPatientHistory().hide();
+					this.getPatientTemplates().hide();
+					this.getPatientInfoTable().hide();
+					this.getPatientInfo().hide();
+					this.getSelectPatient().setValue('');
+					this.getSelectPatient().getStore().removeAll();
+					this.getSelectPatient().lastQuery = null;
+					this.getCTOS().hide();
+				}
+			}
+		}
+	},
 
 	TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
 		wccConsoleLog("What to do has been selected");
@@ -32314,16 +32254,16 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.DataLoadCount = 5;		// Count of # of modules to load
 				this.loadMDWSData();					// module 1
 				this.loadTemplates("Templates");					// module 5
-                this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
+				this.loadAllTemplatesApplied2Patient("PatientModelLoadSQLPostTemplateApplied");
 				this.loadOrderRecords("Calling Loc = pModel.load - Success");				// module 6
-// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
-                if (this.application.Patient.TemplateID) {
-                    this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
-                }
-                else {
+
+				if (this.application.Patient.TemplateID) {
+					this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "pModel");
+				}
+				else {
 					this.DataLoadCountDecrement("pModelLoad - PASS");
 					this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-                }
+				}
 
 				var theRealID = this.application.Patient.id;
 				this.LoadAllData4PatientByMDWSGUID( theRealID );
@@ -32376,8 +32316,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					var SelectPatientSection = thisCtl.getSelectPatientSection();
 					var SelectPatient = thisCtl.getSelectPatient();
 					var ConfirmPatient = thisCtl.getConfirmPatient();
-
-
 					SelectPatientSection.show();
 					SelectPatient.hide();
 					if (flag) {
@@ -32403,18 +32341,18 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	PatientModelLoadMDWS : function(query) {
-        // Load Patient Information via /Mymdws/Match/ Service Call
+		// Load Patient Information via /Mymdws/Match/ Service Call
 		// console.log("Loading Patient Info MDWS Model from PatientModelLoadMDWS function");
-        var pModel = this.getModel("PatientInfoMDWS");
-        var pModelParam = query;
+		var pModel = this.getModel("PatientInfoMDWS");
+		var pModelParam = query;
 		this.application.PatientSSN_ID = query;
 		this.application.loadMask("One moment please, retrieving Patient Information for " + query + "...");
 
-        pModel.load(pModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
+		pModel.load(pModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
 // wccConsoleLog("PatientModelLoadMDWS - Load Complete");
-                wccConsoleLog("Patient Info Loaded - Processing");
+				wccConsoleLog("Patient Info Loaded - Processing");
 				this.application.unMask();
 
 				/* We now have a Match of data including the VPR */
@@ -32472,14 +32410,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 					ConfirmPatient.el.select("button").on("click", this.ConfirmPatientClick, this);
 				}
-            },
-            failure : function (record, operation) {
+			},
+			failure : function (record, operation) {
 				this.application.unMask();
-	            Ext.MessageBox.alert('Error', 'Patient Info failed to load properly.<br />' + operation.error);
-                wccConsoleLog("Patient Info failed to load properly");
-            }
-        });
+				Ext.MessageBox.alert('Error', 'Patient Info failed to load properly.<br />' + operation.error);
+				wccConsoleLog("Patient Info failed to load properly");
+			}
+		});
 	},
+
 
 
 
@@ -32593,7 +32532,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	handlePatientSelectionClickEvent : function( evt, theBtn ) {
-        // console.log("handlePatientSelectionClickEvent");
+		// console.log("handlePatientSelectionClickEvent");
 		wccConsoleLog("handlePatientSelectionClickEvent - PatientInfoTable!");
 
 		//---------------------------------
@@ -32628,7 +32567,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-
 	loadMDWSData : function() {
 		// console.log("Loading MDWS Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		Ext.ComponentQuery.query("NewPlanTab PatientInfo container[name=\"MDWSStatus\"]")[0].hide();
@@ -32646,7 +32584,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 //
 //------------------------------------------------------------------------------------------------------------------------------
 
-    loadAllergyInfo : function() {
+	loadAllergyInfo : function() {
 		// console.log("Loading Allergy Info - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadAllergyInfo PASS");
 		this.PatientDataLoadComplete("Allergy Info");
@@ -32675,11 +32613,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-    loadLabInfo : function() {
+	loadLabInfo : function() {
 		// console.log("Loading Lab Data - Start/End, Ajax call removed, no longer needed - MWB - 2/23/2015");
 		this.DataLoadCountDecrement("loadLabInfo PASS");
 		this.PatientDataLoadComplete("Lab Info");
-    },
+	},
 
 
 
@@ -32805,7 +32743,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			}
 		},
 
-
 		extractVitals : function(rec) {
 			var nIdx, vIdx, DateTaken, data, units;
 			if (rec.hasOwnProperty("type")) {
@@ -32816,18 +32753,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				else {
 					this.Vitals[nIdx] = {DateTaken : DateTaken, BSA : "", BSA_Method: "", BSA_Weight : "", WeightFormula : "", PS : "No Change", PSID : "N/C"};
 				}
-/**********
-				if (this.vIdx !== nIdx) {
-					this.vIdx = nIdx;
-					DateTaken = this.extractDate(nIdx);
-					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
-				}
-				else if (!this.Vitals[this.vIdx]) {
-					this.vIdx = nIdx;
-					DateTaken = this.extractDate(nIdx);
-					this.Vitals[this.vIdx] = {DateTaken : DateTaken, BSA : "0", BSA_Method: "-", BSA_Weight : "-", WeightFormula : "-", PS : "No Change", PSID : "N/C"};
-				}
-*************/
+
 				switch( rec.type ) {
 					case "T":
 						data = "Temperature";
@@ -33093,7 +33019,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				Ext.Ajax.request({
 					scope : this,
 					url: Ext.URLs.LoadVPR + "/" + this.application.Patient.EoTS_ID,
-					success : function( response, opts ){
+					success: function( response, opts ){
 						this.application.unMask();
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
@@ -33117,57 +33043,57 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				});
 	},
 
-    /**
-     *
-     * Gets the current and historical templates applied to the patient from the "Patient_Assigned_Templates", "Master_Template", "EoTS" and "Lookup" tables
-     *
-     **/
-    loadAllTemplatesApplied2Patient : function() {
+	/**
+	 *
+	 * Gets the current and historical templates applied to the patient from the "Patient_Assigned_Templates", "Master_Template", "EoTS" and "Lookup" tables
+	 *
+	 **/
+	loadAllTemplatesApplied2Patient : function() {
 // console.log("Loading All Templates Applied 2 Patient - Start");
-        // console.log("loadAllTemplatesApplied2Patient Entry Point");
-        var phModel = this.getModel("AllTemplatesApplied2Patient");
-        var phModelParam = this.application.Patient.id;
-        phModel.load(phModelParam, {
-            scope : this,
-            success : function( AllTemplatesApplied2Patient, response ) {
+		// console.log("loadAllTemplatesApplied2Patient Entry Point");
+		var phModel = this.getModel("AllTemplatesApplied2Patient");
+		var phModelParam = this.application.Patient.id;
+		phModel.load(phModelParam, {
+			scope : this,
+			success : function( AllTemplatesApplied2Patient, response ) {
 // console.log("Loading All Templates Applied 2 Patient - Finished");
-                this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
-                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
-                this.PatientDataLoadComplete("All Templates Applied");
-                var current = AllTemplatesApplied2Patient.get("current");
-                if (current && current[0]) {
-                    current = current[0];
-                    if (current.TemplateID) {
-                        this.LoadSpecifiedTemplate(current.TemplateID, "loadAllTemplatesApplied2Patient");
-                    }
-                    else {
-                        this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 2 - PASS");
-                        this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-                    }
-                }
-            },
-            failure : function (err, response) {
-                this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - FAIL");
-                this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
-            }
-        });
-    },
+				this.application.Patient.AllTemplatesApplied2Patient = AllTemplatesApplied2Patient;
+				this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - PASS");
+				this.PatientDataLoadComplete("All Templates Applied");
+				var current = AllTemplatesApplied2Patient.get("current");
+				if (current && current[0]) {
+					current = current[0];
+					if (current.TemplateID) {
+						this.LoadSpecifiedTemplate(current.TemplateID, "loadAllTemplatesApplied2Patient");
+					}
+					else {
+						this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 2 - PASS");
+						this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+					}
+				}
+			},
+			failure : function (err, response) {
+				this.DataLoadCountDecrement("loadAllTemplatesApplied2Patient Part 1 - FAIL");
+				this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
+			}
+		});
+	},
 
 
 
 
 	loadTemplates : function() {
 // console.log("Loading Templates - Start");
-        var phModel = this.getModel("PatientTemplates");
-        var phModelParam = this.application.Patient.id;
-        phModel.load(phModelParam, {
-            scope : this,
-            success : function( patientInfo, response ) {
+		var phModel = this.getModel("PatientTemplates");
+		var phModelParam = this.application.Patient.id;
+		phModel.load(phModelParam, {
+			scope : this,
+			success : function( patientInfo, response ) {
 // console.log("Loading Templates - Finished");
 // wccConsoleLog("PatientTemplates Model - Load Complete");
 				var rawData = Ext.JSON.decode(response.response.responseText);
-                // First take all the data received and put it into a local JSON object for the TPL to process
-                wccConsoleLog("Patient Templates Loaded - Processing");
+				// First take all the data received and put it into a local JSON object for the TPL to process
+				wccConsoleLog("Patient Templates Loaded - Processing");
 
 				this.application.Patient.TemplateHistory = rawData.records;
 
@@ -33178,15 +33104,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.PatientDataLoadComplete("Templates");
 
 
-            },
-            failure : function (err, response) {
+			},
+			failure : function (err, response) {
 // wccConsoleLog("PatientTemplates Model - Load FAILED - " + response.error);
-                wccConsoleLog("PatientHistory store failed to load properly - " + response.error);
+				wccConsoleLog("PatientHistory store failed to load properly - " + response.error);
 				this.DataLoadCountDecrement("loadTemplates FAIL");
 
 				this.PatientDataLoadComplete("Templates - Failed to load - " + response.error);
-            }
-        });
+			}
+		});
 //
 //	List of Templates for patient
 //
@@ -33199,7 +33125,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.Ajax.request({
 			scope : this,
 			url: URL,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				/* For some reason the text is double encoded (e.g. &lt; == &amp;lt;) */
@@ -33255,7 +33181,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		Ext.Ajax.request({
 			scope : this,
 			url: URL,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				// console.log("getEmoLevelInfo from Site Config - Complete");
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
@@ -33411,12 +33337,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 /******************************/
 	},
 
-    //-------------------------------------------------------------------------
-    //
-    //	Patient Selected - Phase 1 for this panel
-    //	Causes Patient Info
-    //	(including Patient History, Laboratory Information and CTOS Tabset) to be displayed
-    //
+	//-------------------------------------------------------------------------
+	//
+	//	Patient Selected - Phase 1 for this panel
+	//	Causes Patient Info
+	//	(including Patient History, Laboratory Information and CTOS Tabset) to be displayed
+	//
 	//	MWB 10 Feb 2012 - Made several minor changes for code cleanup and
 	//		sorted the PatientMeasurements for disply of most recent measurements first
 	//
@@ -33445,11 +33371,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		var pVPR = this.convertVPR.parseVPR(this.application.TempPatient.VPR.data.items);
 		this.application.Patient.ParsedVPR = pVPR;
 		this.application.Patient.Allergies = pVPR.Allergies;
-		this.application.Patient.Vitals    = pVPR.Vitals;
-		this.application.Patient.name      = pVPR.rootObj.fullName;
-		this.application.Patient.Gender    = pVPR.rootObj.gender;
-		this.application.Patient.Age       = pVPR.rootObj.age;
-		this.application.Patient.DOB       = pVPR.rootObj.dob;
+		this.application.Patient.Vitals	= pVPR.Vitals;
+		this.application.Patient.name	  = pVPR.rootObj.fullName;
+		this.application.Patient.Gender	= pVPR.rootObj.gender;
+		this.application.Patient.Age	   = pVPR.rootObj.age;
+		this.application.Patient.DOB	   = pVPR.rootObj.dob;
 
 		// Get a handle to the frameset itself
 		var thisCtl = this.getController("NewPlan.NewPlanTab");
@@ -33480,9 +33406,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 			// MWB 02 Feb 2012 - Clear out the CTOS Tab when changing the patient
-		var piTable = thisCtl.updatePITable("");
-
-		piTable.collapse();
+		this.updatePITable("");
+		this.getPatientInfoTable().collapse();
 
 		var piTableInfo = thisCtl.getPatientInfoTableInformation();
 		piTableInfo.update("");
@@ -33522,34 +33447,33 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		 *	Current Applied Template Loaded --- Yes this module is called twice for some reason, need to find out why.
 		 */
 
-
 		this.Modules2Load.push({func : this.loadAllergyInfo, name : "loadAllergyInfo"});
 		this.Modules2Load.push({func : this.loadLabInfo, name : "loadLabInfo"});
 		this.Modules2Load.push({func : this.loadMDWSData, name : "LoadMDWSData"});
+
 		this.Modules2Load.push({func : this.loadCumulativeMedDosing, name : "loadCumulativeMedDosing"});
+
 		this.Modules2Load.push({func : this.loadAllTemplatesApplied2Patient, name : "loadAllTemplatesApplied2Patient - PatientSelected"});
 		this.Modules2Load.push({func : this.loadTemplates, name : "loadTemplates - Templates"});
 		this.Modules2Load.push({func : this.loadVitals, name : "loadVitals - Vitals"});
 
-
-
 		var puWinSelCancerCtl = this.getController("Common.puWinSelCancer");
 		puWinSelCancerCtl.getDiseaseHistory(this.application.Patient);
 
-        if (this.application.Patient.TemplateID) {
-            this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
-        }
-        else {
-            this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
-            this.DataLoadCountDecrement("PatientSelected No Current Template Applied Second decrement of DataLoadCount");
-            this.PatientDataLoadComplete("No Current Template Applied to patient to load");
-        }
-    },
-    //
-    //
-    //	END Patient Selected
-    //
-    //-------------------------------------------------------------------------
+		if (this.application.Patient.TemplateID) {
+			this.LoadSpecifiedTemplate(this.application.Patient.TemplateID, "PatientSelected");
+		}
+		else {
+			this.DataLoadCountDecrement("PatientSelected No Current Template Applied decrement of DataLoadCount");
+			this.DataLoadCountDecrement("PatientSelected No Current Template Applied Second decrement of DataLoadCount");
+			this.PatientDataLoadComplete("No Current Template Applied to patient to load");
+		}
+	},
+	//
+	//
+	//	END Patient Selected
+	//
+	//-------------------------------------------------------------------------
 
 
 
@@ -33611,35 +33535,35 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 /**********************/
 
 	buildTemplateInfo : function(thisCtl, Patient, comeFrom) {
-        var TemplateInfo, 
-            patientTemplates = thisCtl.getPatientTemplates(),
-            currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
-            historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
-            numRecords = 0;
-        
-        if (currentTemplates) {
-            numRecords += currentTemplates.length;
-        }
-        if (historicalTemplates) {
-            numRecords += historicalTemplates.length;
-        }
+		var TemplateInfo, 
+			patientTemplates = thisCtl.getPatientTemplates(),
+			currentTemplates = this.application.Patient.CurrentTemplatesApplied2Patient,
+			historicalTemplates = this.application.Patient.HistoricalTemplatesApplied2Patient,
+			numRecords = 0;
+		
+		if (currentTemplates) {
+			numRecords += currentTemplates.length;
+		}
+		if (historicalTemplates) {
+			numRecords += historicalTemplates.length;
+		}
 
-        TemplateInfo = {};
-        TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
-        TemplateInfo.Current = this.application.Patient.CurrentTemplatesApplied2Patient;
+		TemplateInfo = {};
+		TemplateInfo.Historical = this.application.Patient.HistoricalTemplatesApplied2Patient;
+		TemplateInfo.Current = this.application.Patient.CurrentTemplatesApplied2Patient;
 
-        // Render # of templates for initial display of the panel - MWB - 11/11/2013
-        patientTemplates.update( TemplateInfo );
+		// Render # of templates for initial display of the panel - MWB - 11/11/2013
+		patientTemplates.update( TemplateInfo );
 
-        var strRecs = "No Records Available";
-        if (1 === numRecords ) {
-            strRecs = numRecords + " Record";
-        }
-        else if (numRecords > 1) {
-            strRecs = numRecords + " Records";
-        }
-        this.resetTRSPanel(thisCtl, strRecs);
-        return patientTemplates;
+		var strRecs = "No Records Available";
+		if (1 === numRecords ) {
+			strRecs = numRecords + " Record";
+		}
+		else if (numRecords > 1) {
+			strRecs = numRecords + " Records";
+		}
+		this.resetTRSPanel(thisCtl, strRecs);
+		return patientTemplates;
 	},
 
 	DataLoadCountDecrement : function(module) {
@@ -33755,7 +33679,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		if ("Update BSA" === Loaded) {
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
-			piTableInfo.update(Patient);		//--//
+			piTableInfo.update(Patient);
 			CumDoseCtl = this.getController("Common.puWinAddCumDose");
 			CumDoseCtl.UpdateCumDoseInfo( );
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
@@ -33805,7 +33729,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		if (DataLoadCount <= 0) {		// All remote data for this patient has been loaded
 			var len, tmp;
-			var piTable;
 			var PatientHistoryVitalStats;
 
 			if (Ext.Date.isEqual(new Date(Patient.TreatmentStart), new Date(new Date().toDateString()))) {
@@ -33821,10 +33744,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 			thisCtl.getPatientInfo().expand();
 
-			// piTable = thisCtl.getPatientInfoTable();
-			piTable = thisCtl.updatePITable(Patient);
-
-			piTable.show();
+//			this.updatePITable(Patient);
+			this.getPatientInfoTable().show();
 
 			piTableInfo = thisCtl.getPatientInfoTableInformation();
 			piTableInfo.update(Patient);		//--//
@@ -33858,9 +33779,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			if (thePatientInfo.CurrentTemplatesApplied2Patient.length > 0) {
 				this.loadOrderRecords("CallingLoc = PatientDataLoadComplete");
 			}
-// console.log("Load Order Records from - PatientModelLoadSQLPostTemplateApplied");
+
 			Ext.Function.defer( this.AssignBtnHandlers, 2000, this );
-			// --- // console.log("PatientSelected event, launches LoadAdverse Events");
 			this.application.fireEvent("PatientSelected", this.application.PatientSelectedRecs, this.application.PatientSelectedOpts);	// MWB 10 Feb 2012 - Added additional parameters
 		}
 	},
@@ -33872,15 +33792,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	HandleVSHCalcDoseButtons : function( event, element ) {
-	/******* Button definition in view\Common\VitalSignsHistory.js
-				return ("<button class=\"anchor dspVSHDoseCalcs\" name=\"dspVSHDoseCalcs\" title=\"Show Dosage Calculation\" " +
-					"weight=\"" + data.Weight + "\" " +
-					"height=\"" + data.Height + "\" " +
-					"weightFormula=\"" + data.WeightFormula + "\" " +
-					"bsa_Weight=\"" + data.BSA_Weight + "\" " +
-					"bsa_Method=\"" + data.BSA_Method + "\" " +
-				">" + data.BSA + "</button> m<sup>2</sup>");
-	********/
 		var btnTitle = element.getAttribute("title");
 		if ("Show Dosage Calculation" === btnTitle) {
 			var Patient = this.application.Patient;
@@ -33949,61 +33860,60 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 
-    //-------------------------------------------------------------------------
-    //
-    //	Template Source (National/Local/Personal) Selected - Phase 1 of the CTOS Tab
-    //
-    //
-    onTemplateTypeChange : function(combo, recs, eOpts) {
-        wccConsoleLog("Select Template Type");
-        this.application.Patient.TemplateType = recs[0].data;
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var obj = thisCtl.getDiseaseAndStage();
-        obj.show();
-        this.getResetButton().show();
-    },
+	//-------------------------------------------------------------------------
+	//
+	//	Template Source (National/Local/Personal) Selected - Phase 1 of the CTOS Tab
+	//
+	//
+	onTemplateTypeChange : function(combo, recs, eOpts) {
+		wccConsoleLog("Select Template Type");
+		this.application.Patient.TemplateType = recs[0].data;
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var obj = thisCtl.getDiseaseAndStage();
+		obj.show();
+		this.getResetButton().show();
+	},
 
 	//
-    //
-    //	END Template Source Selected
-    //
-    //-------------------------------------------------------------------------
+	//
+	//	END Template Source Selected
+	//
+	//-------------------------------------------------------------------------
 
 
-    //-------------------------------------------------------------------------
-    //
-    //	Disease Type Selected - Phase 2 of the CTOS Tab
-    //
-    //
-    DiseaseSelected : function(combo, recs, eOpts) {
-        wccConsoleLog("Disease Type has been selected");
+	//-------------------------------------------------------------------------
+	//
+	//	Disease Type Selected - Phase 2 of the CTOS Tab
+	//
+	//
+	DiseaseSelected : function(combo, recs, eOpts) {
+		wccConsoleLog("Disease Type has been selected");
 
-        if(this.application.Patient.Disease != recs[0].data){
-            this.application.ResetClicked=false;
-        }
+		if(this.application.Patient.Disease != recs[0].data){
+			this.application.ResetClicked=false;
+		}
 
-        this.application.Patient.Disease = recs[0].data;
+		this.application.Patient.Disease = recs[0].data;
 
-        var obj = this.getTemplate();	// MWB 19 Jan 2012 - Added per customer request to not require selecting Disease Stage before displaying list of templates
-        obj.show();
+		var obj = this.getTemplate();
+		obj.show();
+	},
+	//-------------------------------------------------------------------------
+	//
+	//	Disease Stage Selected - Phase 2 of the CTOS Tab
+	//
+	//
+	onDiseaseStageChange : function(combo, recs, eOpts) {
+		wccConsoleLog("Disease Type and Stage has been selected");
 
-    },
-    //-------------------------------------------------------------------------
-    //
-    //	Disease Stage Selected - Phase 2 of the CTOS Tab
-    //
-    //
-    onDiseaseStageChange : function(combo, recs, eOpts) {
-        wccConsoleLog("Disease Type and Stage has been selected");
+		this.application.Patient.DiseaseStage = recs[0].data;
 
-        this.application.Patient.DiseaseStage = recs[0].data;
+		combo.hiddenValue = recs[0].data.name;
 
-        combo.hiddenValue = recs[0].data.name;
-
-        var thisCtl = this.getController("NewPlan.NewPlanTab");
-        var obj = thisCtl.getTemplate();
-        obj.show();
-    },
+		var thisCtl = this.getController("NewPlan.NewPlanTab");
+		var obj = thisCtl.getTemplate();
+		obj.show();
+	},
 
 
 
@@ -34016,7 +33926,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 // Load the selected template - Called when user clicks on the "Show Template" in the Patient Info Table via the "HandleAnchorClicks - PatientInfoTable!" function above.
 // This template is one which is currently applied to the patient.
 	CTOS_DataLoad2 : function(TemplateID) {
-	        this.application.loadMask("CTOS DataLoad2"); // MWB 19 Jan 2012 - Mask the screen
+			this.application.loadMask("CTOS DataLoad2"); // MWB 19 Jan 2012 - Mask the screen
 			var CTOSModel = this.getModel("CTOS");
 			var CTOSModelParam = TemplateID;
 
@@ -34024,16 +33934,15 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 			this.clearCTOS();
 
-	        CTOSModel.load(CTOSModelParam, {
+			CTOSModel.load(CTOSModelParam, {
 				scope: this,
-				success : function (CTOSTemplateData, response) {
+				success: function (CTOSTemplateData, response) {
 					wccConsoleLog("CTOS Loaded - Processing");
 					this.application.Patient.AppliedTemplateID = TemplateID;
 
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
 					var CTOSData = thisCtl.getCTOSDataDsp();
 
-// MWB - 6/7/2012 - Need to add Template Timing info to the data object
 					CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
 					CTOSData.update(CTOSTemplateData.data);
 					this.getDisease().setValue(CTOSTemplateData.data.Disease);
@@ -34059,7 +33968,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 					wccConsoleLog("CTOS Loaded - Rendering complete");
 				},
-				failure : function (err) {
+				failure: function (err) {
 					wccConsoleLog("CTOS Data failed to load properly");
 					var thisCtl = this.getController("NewPlan.NewPlanTab");
 					var CTOSData = thisCtl.getCTOSDataDsp();
@@ -34068,7 +33977,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 					this.application.unMask();	// MWB 19 Jan 2012 - Unmask the screen
 				}
-	        });
+			});
 	},
 
 
@@ -34176,7 +34085,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		this.clearCTOS();
 		CTOSModel.load(CTOSModelParam, {
 			scope: this,
-			success : function (CTOSTemplateData, response) {
+			success: function (CTOSTemplateData, response) {
 				// console.log("Loading Specified Template - Finished");
 				this.application.Patient.AppliedTemplateID = TemplateID;
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
@@ -34268,7 +34177,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			url: Ext.URLs.AddVitals,
 			method : "POST",
 			jsonData : params,
-			success : function( response, opts ){
+			success: function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 
@@ -34393,7 +34302,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 		{ ref : "GoalBtn",            selector : "OEM OEM_Level1 [name=\"AddGoal\"]" }
 	],
 
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized OEM Tab Controller!");
 
 		this.application.on( { TemplateSelected : this.TemplateSelected, scope : this } );
@@ -34556,16 +34465,12 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	},
 
 	DisplayOEMRecordData : function( PatientInfo ) {
-		// console.log("DisplayOEMRecordData");
-/*************** RESTORE CODE - MWB 5/12/2015 */
 		this.MaskOEMData(true);
-
 		var PatientID = this.application.Patient.id;
 		var OEMRecordsModel = this.getModel("OEMRecords");
 		OEMRecordsModel.load( PatientID, {
 			scope: this,
-			success : function (TemplateData, response) {
-				// this.application.unMask();
+			success: function (TemplateData, response) {
 				this.MaskOEMData(false);
 				var i, vvv = TemplateData.OEMRecordsStore.data.items, vvvLen = vvv.length;
 				var newArray = [];
@@ -34575,13 +34480,12 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 				this.application.Patient.OEMRecords.OEMRecords = newArray;
 				this.RenderData4EachAdminDay(this.application.Patient.OEMRecords);
 			},
-			failure : function (err) {
+			failure: function (err) {
 				this.MaskOEMData(false);
 				this.DataLoadCountDecrement("loadOrderRecords FAIL");
 				this.PatientDataLoadComplete("Templates - Failed to load");
 			}
 		});
-/******************/
 	},
 
 	displayOEM_Data : function( PatientInfo ) {
@@ -34809,7 +34713,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
  *
  *
  ***********************************************************************************/
-    procPerfStatStoreRecords : function (records, operation, success) {
+    procPerfStatStoreRecords: function (records, operation, success) {
         var i, len, record, patientIsDead = '5', itemsInGroup = [];	// new Array();
         len = records.length;
         for (i = 0; i < len; i++) {
@@ -34986,7 +34890,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	 *	A list of applied templates links will do this process
 	 *
 	 **********************/
-	PatientSelected : function (combo, recs, eOpts) {
+	PatientSelected: function (combo, recs, eOpts) {
 		wccConsoleLog("OEM Tab - Patient Selected has changed");
 		var tpl = new Ext.XTemplate("");
 		var dspOEMTemplateData = this.getDspOEMTemplateData();
@@ -35020,7 +34924,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
 	 *	A list of applied templates links will do this process
 	 *
 	 **********************/
-	selTemplateQuery : function (qe) {
+	selTemplateQuery: function (qe) {
 		if ("" === qe.combo.lastValue) {
 			delete qe.combo.lastQuery;
 		}
@@ -35041,7 +34945,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
  *
  *
  ***********************************************************************************/
-	getAndRenderTemplateData : function(TemplateObj) {
+	getAndRenderTemplateData: function(TemplateObj) {
 		if (!this.application.TempMedRecord) {
 			this.application.TempMedRecord = this.getModel(Ext.COMSModels.Edit_OEMRecord);
 		}
@@ -35085,7 +34989,7 @@ Ext.define("COMS.controller.NewPlan.OEM", {
             status: newStat,
             buttons: Ext.Msg.YESNOCANCEL,
             el : element,
-            fn : function(btnID, txt, opt) {
+            fn: function(btnID, txt, opt) {
                 var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
                 var Data = this.application.Patient.OEMRecords;
                 var records = Data.OEMRecords;
@@ -35159,7 +35063,7 @@ HoldSingleMedRecord : function(records, type, ridx, medIdx, nStatus, matchMedID,
 		scope : this,
 		url: URL,
         method: "PUT",
-		success : function( response, opts ){
+		success: function( response, opts ){
 			var text = response.responseText;
 			var resp = Ext.JSON.decode( text );
 			if (resp.success) {
@@ -35239,7 +35143,7 @@ handleOEM_RecordMedHold : function( event, element) {
         status: newStat,
         buttons: Ext.Msg.YESNOCANCEL,
         el : element,
-        fn : function(btnID, txt, opt) {
+        fn: function(btnID, txt, opt) {
             var matchRecord, matchMed, matchMedID, DrugSection, ridx, record, PREbtnID, TbtnID, POSTbtnID;
             var TherapyID;
             var Data = this.application.Patient.OEMRecords;
@@ -35399,7 +35303,7 @@ handleEditOEM_Record : function (event, element) {
 	 *	Then parses it to make a JSON Data Object and passes it off to the XTemplate for rendering in the OEM Tab
 	 *
 	 **********************/
-	selTemplateChange : function (combo, recs, eOpts) {
+	selTemplateChange: function (combo, recs, eOpts) {
 		wccConsoleLog("Template applied to patient has been selected");
 		this.getAndRenderTemplateData (recs[0].data);
 	}
@@ -35447,7 +35351,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 
 	// Ext.ComponentQuery.query("EditOEMRecord FluidVol[name=\"FluidVol2\"]")[0].el.dom
-	init : function () {
+	init: function () {
 		wccConsoleLog("Initialized Edit OEM Record Controller!");
 
 		this.application.on({ OEMEditRecord : this.OEMEditRecord, scope : this });
@@ -35655,7 +35559,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			status: newStat,
 			buttons: Ext.Msg.YESNOCANCEL,
 			// el : element,
-			fn : function(btnID, txt, opt) {
+			fn: function(btnID, txt, opt) {
 				if ("cancel" === btnID) {
 					Ext.MessageBox.alert("Medication Edit", "Medication edit - " + medName + " has been cancelled");
 			    }
@@ -35907,7 +35811,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 
 
 	// Ext.ComponentQuery.query("NewPlanTab PatientInfo PatientInfoTable container[name=\"BSAInfoTable\"] [name=\"BSA_CalcFormula\"]")[0].el.dom
-	init : function() {
+	init: function() {
 		wccConsoleLog("Initialized PatientInformationTable Controller!");
 		this.application.on({ PatientSelected : this.PatientSelected, scope : this });
 
@@ -36048,7 +35952,7 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 				buttons: Ext.Msg.YESNO,
 				icon: Ext.Msg.QUESTION,
 				CancerIdx : CancerIdx,
-				fn : function(buttonId, str, opt) {
+				fn: function(buttonId, str, opt) {
 					if ("yes" == buttonId) {
 						this.DiseaseData = DiseaseData;
 						Ext.COMS_LockSection(this.application.Patient.id, "AddEditCancer", this.DeleteSelectedCancerFromPatient, this);
@@ -36178,7 +36082,7 @@ Ext.define("COMS.controller.NewPlan.Reason4EOTSAnswer", {
 	],
 
 
-    init : function() {
+    init: function() {
         wccConsoleLog("Initialized Reason for End of Treatment Controller!");
         this.control({
 
@@ -36486,7 +36390,7 @@ Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
 		{ ref: "PatientInfoTableHeader", selector: "TreatmentDetails [name=\"PatientInfoTableHeader\"]"},
 		{ ref: "PatientInfoTableBody", selector: "TreatmentDetails [name=\"PatientInfoTableBody\"]"}
 	],
-	init : function() {
+	init: function() {
 		wccConsoleLog("Initialized Treatment Details Controller!");
 		this.control({
 			"TreatmentDetails button[action=\"cancel\"]": {
@@ -36568,7 +36472,7 @@ Ext.define("COMS.controller.NewPlan.ViewEndTreatmentSummary", {
 		{ ref: "PatientInfoTableBody", selector: "ViewEndTreatmentSummary [name=\"PatientInfoTableBody\"]"},
 		{ ref: "Reason4EOTSHead", selector: "ViewEndTreatmentSummary [name=\"Reason4EOTSHead\"]"}
 	],
-    init : function() {
+    init: function() {
         wccConsoleLog("Initialized End of Treatment Summary Controller!");
         this.control({
             "ViewEndTreatmentSummary button[action=\"cancel\"]": {
@@ -36769,7 +36673,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 				click: this.HandleRefresh
 			},
 			"OrdersTab button[text=\"Update Records\"]": {
-				click : function () {
+				click: function () {
 					var theGrid = this.getOrders();
 					theGrid.setLoading( "Updating Order Records", false );
 
@@ -36792,7 +36696,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							var aRec = theScope.PostedRecs.pop();
 							if (aRec) {
 								var tmpData = aRec.getData();
-								// --- // console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
+								// --- //console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
 								aRec.save({
 									scope: theScope,
 									success: ResponseAlertGood,
@@ -36865,7 +36769,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 		if (theStore) {
 			theStore.load({
 				scope: this,
-				callback : function() {
+				callback: function() {
 					if (false !== LoadAndRenderOEMTab) {
 						if (this.application.Patient) {
 							PatientInfo = this.application.Patient;
@@ -36890,12 +36794,9 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 		"Common.DEMOpuWin"
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
-			//"ProgrammerBtns button[text=\"Mask PI Table\"]" : {
-			//	"click" : this.ClickMaskTest
-			//},
 			"ProgrammerBtns button[text=\"Debugger\"]" : {
 				"click" : this.ClickDebugger
 			},
@@ -36940,12 +36841,6 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 	ClickDebugger : function() {
 		debugger;
 	},
-
-
-	// ClickMaskTest : function() {
-		// var thisCtl = this.getController("NewPlan.NewPlanTab");
-		// thisCtl.MaskPITable("Test");
-	// },
 
 	ClickLoadVitals : function() {
 		if (this.PatientCheck()) {
@@ -37069,7 +36964,7 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
         }
     ],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 
@@ -37108,7 +37003,7 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 		}
 	}, 
 
-	getColumnIndex : function (grid, dataIndex) {   
+	getColumnIndex: function (grid, dataIndex) {   
 		var gridColumns = grid.headerCt.getGridColumns();   
 		for (var i = 0; i < gridColumns.length; i++) {
 			if (gridColumns[i].dataIndex == dataIndex) {
@@ -37117,12 +37012,12 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 		}
 	},
 
-	renderPanel : function (panel) {
+	renderPanel: function (panel) {
 		var theGrid = this.getTheGrid();
 		theGrid.getStore().load();
 		return true;
 	},
-    TemplateTypeChange : function (combo, recs, eOpts) {
+    TemplateTypeChange: function (combo, recs, eOpts) {
         var guid = combo.getValue();
         var text = combo.getRawValue();
         var theGrid = this.getTheGrid();
@@ -37131,7 +37026,7 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
         theGrid.getStore().load({url : newURL});
     },
 
-    ShowAllTemplates : function() {
+    ShowAllTemplates: function() {
         var theGrid = this.getTheGrid();
         theGrid.reconfigure("TemplateListStore");
         theGrid.getStore().load();
@@ -37147,7 +37042,7 @@ Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 		{ ref: "theGrid", selector: "puWinListPatients grid"}
 	],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 			"puWinListPatients" : {
@@ -37166,7 +37061,7 @@ Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 	},
 
 
-	renderPanel : function (panel) {
+	renderPanel: function (panel) {
 		if (this.application.TemplateListPatients) {
 			var theGrid = this.getTheGrid();
 			theGrid.getStore().loadData(this.application.TemplateListPatients);
@@ -37185,7 +37080,7 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
     views: [ "TemplatePromotion.TemplatePromotionTab" ],
     refs: [ { ref: "theGrid", selector: "TemplatePromotionTab"} ],
 
-	init : function () {
+	init: function () {
 		this.control({
 			"scope" : this,
 
@@ -37290,7 +37185,7 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 		}
 	}, 
 
-	getColumnIndex : function (grid, dataIndex) {   
+	getColumnIndex: function (grid, dataIndex) {   
 		var gridColumns = grid.headerCt.getGridColumns();   
 		for (var i = 0; i < gridColumns.length; i++) {
 			if (gridColumns[i].dataIndex == dataIndex) {
@@ -37298,7 +37193,7 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 			}
 		}
 	},
-    TemplateTypeChange : function (combo, recs, eOpts) {
+    TemplateTypeChange: function (combo, recs, eOpts) {
         var guid = combo.getValue();
         var text = combo.getRawValue();
         var theGrid = this.getTheGrid();
@@ -37307,7 +37202,7 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
         theGrid.getStore().load({url : newURL});
     },
 
-    ShowAllTemplates : function() {
+    ShowAllTemplates: function() {
         var theGrid = this.getTheGrid();
         theGrid.reconfigure("TemplateListStore");
         theGrid.getStore().load();
@@ -37391,7 +37286,7 @@ Ext.application({
 		"NewPlan.TreatmentDetails"
 	],
 
-	launch : function () {
+	launch: function () {
 		wccConsoleLog("Launching Application Base");
 //		console.log("Disable Cache - app.launch()");
 		Ext.Loader.setConfig({ disableCaching:false });
@@ -37435,7 +37330,7 @@ Ext.application({
 
 
 		Ext.apply(Ext, {
-			roundNumber : function (number, decimals) { // Arguments: number to round, number of decimal places
+			roundNumber: function (number, decimals) { // Arguments: number to round, number of decimal places
 				var n1 = parseFloat(number);
 				var n2 = n1.toFixed(parseInt(decimals, 10));
 				return n2;
@@ -37454,18 +37349,18 @@ Ext.application({
 				 return ret;
 			},
 
-			in2cm : function (height) { // Inches to Centimeters; rounded to 2 decimal places
+			in2cm: function (height) { // Inches to Centimeters; rounded to 2 decimal places
 				return Ext.In2CM(height);
 			},
 
-			lbs2kg : function (weight) { // Pounds to Kilograms; rounded to 2 decimal places
+			lbs2kg: function (weight) { // Pounds to Kilograms; rounded to 2 decimal places
 				return Ext.Pounds2Kilos(weight);
 			},
-			f2C : function (f) { // Degrees Farenheight to Celcius; rounded to 1 decimal place
+			f2C: function (f) { // Degrees Farenheight to Celcius; rounded to 1 decimal place
 				return Ext.TempF2C(f);
 			},
 
-			CalcInfusionTime : function (vol, rate, label) { // Calculate Infusion time in Hrs/Min given Volume and Rate.
+			CalcInfusionTime: function (vol, rate, label) { // Calculate Infusion time in Hrs/Min given Volume and Rate.
 				var infTime = vol / rate;
 				var Hrs = infTime.toFixed(3);
 				var tmp = Hrs.split(".");
@@ -37495,7 +37390,7 @@ Ext.application({
 	},
 
 	loadText: "",
-	showLoadingMask : function (loadingMessage) {
+	showLoadingMask: function (loadingMessage) {
 		if (Ext.isEmpty(loadingMessage)) {
 			this.loadText = 'Loading... Please wait';
 		}
@@ -37510,14 +37405,14 @@ Ext.application({
 		Ext.Ajax.on('requestexception', Ext.getBody().unmask, Ext.getBody());
 	},
 
-	loadMask : function (msg) {
+	loadMask: function (msg) {
 		if (!msg) {
 			msg = "One moment please, loading data...";
 		}
 
 		Ext.getBody().mask(msg, "x-mask-loading").setHeight(1000 + Ext.getBody().getHeight());
 	},
-	unMask : function () {
+	unMask: function () {
 		Ext.getBody().unmask();
 	}
 

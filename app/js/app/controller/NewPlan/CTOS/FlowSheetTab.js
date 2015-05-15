@@ -473,18 +473,18 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 		});
 	},
 
+
 	getToxicityHistoryData : function(PAT_ID) {
 		var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
-		var theModule = this.getFS_ToxicityHistory();
-		this.maskFlowSheetPanels(theModule, "Toxicity History");
+		var FS_ToxicityHistoryPanel = this.getFS_ToxicityHistory();
+		this.maskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 
 		Ext.Ajax.request({
 			scope : this,
 			url: URL,
-			success: function( response, opts ){
+			success : function( response, opts ){
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
-
 				if (resp.success) {
 					if (resp.records) {
 						var i, len, rec;
@@ -493,20 +493,21 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 						this.application.Patient.TotalAdverseEvents = resp.totalEvents;
 						var theController = this.getController("NewPlan.AdverseEventsHistory");
 						var data = theController.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
-						theModule.update(data.list);
+						FS_ToxicityHistoryPanel.update(data.list);
 					}
 				}
 				else {
 					alert("load Flow Sheet Toxicity History - Error");
 				}
-				this.unMaskFlowSheetPanels(theModule, "Toxicity History");
+				this.unMaskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 			},
 			failure : function( response, opts ) {
-				this.unMaskFlowSheetPanels(theModule, "Toxicity History");
+				this.unMaskFlowSheetPanels(FS_ToxicityHistoryPanel, "Toxicity History");
 				alert("Flow Sheet Toxicity History Data Load Failed...");
 			}
 		});
 	},
+
 
 	getOptionalInfoData : function(PAT_ID) {
 		this.maskFlowSheetPanels(this.getDiseaseResponsePanel(), "Disease Response");
@@ -518,17 +519,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 			success : function( response) {
 				var obj = Ext.decode(response.responseText);
 
-				var Panel = this.getDiseaseResponsePanel();
-				Panel.update(obj);
-				this.unMaskFlowSheetPanels(Panel, "Disease Response");
+				var DiseaseResponsePanel = this.getDiseaseResponsePanel();
+				DiseaseResponsePanel.update(obj);
+				this.unMaskFlowSheetPanels(DiseaseResponsePanel, "Disease Response");
 
-				Panel = this.getOtherInfoPanel();
-				Panel.update(obj);
-				this.unMaskFlowSheetPanels(Panel, "Additional General Information");
+				var OtherInfoPanel = this.getOtherInfoPanel();
+				OtherInfoPanel.update(obj);
+				this.unMaskFlowSheetPanels(OtherInfoPanel, "Additional General Information");
 			},
 
 			failure : function( ) {
-				this.unMaskFlowSheetPanels(Panel, "Disease Response - Failed to load Disease Response Information");
+				this.unMaskFlowSheetPanels(FlowSheetPanels, "Disease Response - Failed to load Disease Response Information");
 				alert("Attempt to load Flow Sheet data failed.");
 				// console.log("Restoring Disease Response ERROR");
 			}
@@ -536,15 +537,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	},
 
 
-    getKeysFromJson : function (obj) {
-        var keys = [];
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                keys.push(key);
-            }
-        }
-        return keys;
-    },
+
+	getKeysFromJson : function (obj) {
+		var keys = [];
+		for (var key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				keys.push(key);
+			}
+		}
+		return keys;
+	},
 
 	createStore : function (json) {
 		var keys = this.getKeysFromJson(json[0]);

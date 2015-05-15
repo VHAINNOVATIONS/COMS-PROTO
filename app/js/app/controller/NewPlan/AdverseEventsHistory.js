@@ -8,18 +8,29 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 	],
 	"init" : function() {
 		wccConsoleLog("Initialized AdverseEventsHistory Controller!");
-		this.application.on({ PatientSelected : this.loadAdverseEventsHistory, scope : this });
-		this.application.on({ loadAdverseEventsHistory : this.loadAdverseEventsHistory, scope : this });
+		// --- // console.log("AdverseEventsHistory PatientSelected Event");
+		
+		this.application.on({ PatientSelected : this.loadAdverseEventsHistory1, scope : this });
+		// --- // console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
+		this.application.on({ loadAdverseEventsHistory : this.loadAdverseEventsHistory2, scope : this });
 		this.control({
 		});
 	},
 
+loadAdverseEventsHistory1 : function(recs, eOpts) {
+	Ext.loadAdverseEventsHistoryLaunchLoc = "onPatientSelected from AdverseEventsHistory Controller";
+	this.loadAdverseEventsHistory(recs, eOpts);
+},
+
+loadAdverseEventsHistory2 : function(recs, eOpts) {
+	Ext.loadAdverseEventsHistoryLaunchLoc = "onloadAdverseEventsHistory from AdverseEventsHistory Controller";
+	this.loadAdverseEventsHistory(recs, eOpts);
+},
 
 aSorter : function(a, b) {
 		a = new Date(a.date);
 		b = new Date(b.date);
 		return a>b ? -1 : a<b ? 1 : 0;
-
 },
 
 MergeAssessmentAndReactionLists : function(assessments, reactions) {
@@ -80,10 +91,12 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 },
 
 	loadAdverseEventsHistory : function(recs, eOpts) {
-		var theModule = this.getAdverseEventsHistory();
+		// console.log("Loading Adverse Events History from - " + Ext.loadAdverseEventsHistoryLaunchLoc);
+		Ext.loadAdverseEventsHistoryLaunchLoc = "";
+		var AdverseEventsHistoryPanel = this.getAdverseEventsHistory();
 
-		theModule.setTitle("Adverse Events History (No Adverse Events Recorded)");
-		theModule.update({});
+		AdverseEventsHistoryPanel.setTitle("Adverse Events History (No Adverse Events Recorded)");
+		AdverseEventsHistoryPanel.update({});
 		
 		if ("" !== this.application.Patient.PAT_ID) {
 			var URL = Ext.URLs.AdverseEventsHistory + "/" + this.application.Patient.PAT_ID;
@@ -92,7 +105,7 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 			Ext.Ajax.request({
 				scope : this,
 				url: URL,
-				success: function( response, opts ){
+				success : function( response, opts ){
 					this.application.unMask();
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
@@ -104,11 +117,11 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 							this.application.Patient.Reactions = resp.records.ReactAssessments;
 							this.application.Patient.TotalAdverseEvents = resp.totalEvents;
 							var data = this.MergeAssessmentAndReactionLists(resp.records.Assessments, resp.records.ReactAssessments);
-							theModule.update(data.list);
+							AdverseEventsHistoryPanel.update(data.list);
 							if (data.numAlerts > 0) {
 								alertText = " - <span style=\"color:red;\">" + data.numAlerts + " flagged to trigger an Alert</span>";
 							}
-							theModule.setTitle("Adverse Events History - (" + data.totEvents + " Adverse Events Recorded" + alertText + ")");
+							AdverseEventsHistoryPanel.setTitle("Adverse Events History - (" + data.totEvents + " Adverse Events Recorded" + alertText + ")");
 						}
 					}
 					else {

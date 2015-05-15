@@ -768,7 +768,12 @@ Ext.BSAWeight = function (PatientInfo) { // Returns weight in Kilos
 	case "Lean Weight":
 		CalcWeight = Ext.LeanWeight(w, h, g); // Weight in pounds, Height in Inches
 		break;
+
+	default:
+		PatientInfo.BSA_Weight = "";
+		return "";
 	}
+
 	CalcWeight = Ext.FormatNumber(+(Math.round(CalcWeight + "e+" + 2) + "e-" + 2));
 	PatientInfo.BSA_Weight = CalcWeight;
 	return CalcWeight;
@@ -786,7 +791,7 @@ Ext.BSA_Calc = function (PatientInfo) {
 	var BaseBSA = "";
 
 
-	if (0 === h || 0 === w) {
+	if (0 === h || 0 === w || "" === t) {
 		return "";
 	}
 

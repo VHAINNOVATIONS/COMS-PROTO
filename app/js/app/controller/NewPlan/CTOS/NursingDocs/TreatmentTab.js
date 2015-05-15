@@ -98,7 +98,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var drug = curTreatmentRecord.get("drug");
 		var res = drug.replace(/^\d+\. /, "");
 		curTreatmentRecord.set("drug", drug);
-		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("AccessCode"));
+		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("User"));
 		curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
 		curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
 		curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
@@ -115,7 +115,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 							var Info = { "MedID" : theData.Drug_ID, "MedName" : theData.drug, "UnitsID" : "", "UnitName" : theData.unit, "AdministeredDose" : theData.dose};
 							thisCtl.SaveNewCumDoseInfo( Info );
 				}
-
 				this.application.unMask();
 				if (!operation.success) {
 						Ext.MessageBox.alert("Error", "Administration Record Save failed... unknown reason");

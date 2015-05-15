@@ -43,7 +43,7 @@ Ext.define("COMS.controller.NewPlan.EndTreatmentSummary", {
 	],
 
 	refs: [
-		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"PatientInfoTable\"]"},
+		{ ref: "PatientInfoTable", selector: "EndTreatmentSummary [name=\"EoTS_PatientInfoTable\"]"},
 		{ ref: "PatientInfoTableHeader", selector: "EndTreatmentSummary [name=\"PatientInfoTableHeader\"]"},
 		{ ref: "PatientInfoTableBody", selector: "EndTreatmentSummary [name=\"PatientInfoTableBody\"]"},
 		{ ref: "Reason4EOTSHead", selector: "EndTreatmentSummary [name=\"Reason4EOTSHead\"]"},

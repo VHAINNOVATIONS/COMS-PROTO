@@ -104,8 +104,8 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 			// layout : "fit",
 			// defaults : { layout : "fit" },
 			margin: "0 10 10 10", 
-			items : [
-				{ xtype: "container", name: "PatientInfoTable", hidden : true, tpl: 
+			items : [		// EOTS Section
+				{ xtype: "container", name: "EoTS_PatientInfoTable", hidden : true, tpl: 
 					new Ext.XTemplate(
 						"<table border=\"1\" class=\"InformationTable\">",
 							"<tr><th>Type(s) of Cancer: </th><td colspan=3>",
@@ -199,7 +199,13 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 									"<td colspan=\"12\">{LastVitals.PSID} - {LastVitals.PS}</td></tr>",
 								"</table>",
 							"</td></tr>",
-						"</table>"
+						"</table>",
+						{
+							disableFormats: true,
+							DebuggerFcn : function ( values ) {
+								// debugger;
+							}
+						}
 					)
 				},
 
@@ -231,7 +237,7 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 		{ text: "Save", hidden : true, action: "save" },
 		{ text: "Cancel", hidden : true, action: "cancel" }
 	],
-	initComponent: function() {
+	initComponent : function() {
 		wccConsoleLog("End of Treatment Summary View - Initialization");
         Ext.apply(arguments, { widget : this.widget , itemsInGroup: this.itemsInGroup, ChangeTemplate: this.ChangeTemplate });
 		this.callParent(arguments);

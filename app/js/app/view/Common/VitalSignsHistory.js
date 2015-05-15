@@ -6,6 +6,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 
 	tpl : new Ext.XTemplate(
 		"{[this.tempCalc(values, parent)]}",
+		"{[this.getLastHWBSAInfo(values)]}",
 		"<table border=\"1\" class=\"PatHistResults InformationTable\">",
 			"<tr>",
 				"<th rowspan=\"2\">Date</th>",
@@ -27,7 +28,6 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				"<th ><abbr title=\"Body Surface Area Formula\">Method</abbr></th>",
 				"<th ><abbr title=\"Body Surface Area Formula\">BSA</abbr></th>",
 			"</tr>",
-			"{[this.getLastHWBSAInfo(values)]}",
 			"<tpl for=\"Vitals\">",
 				"<tr>",
 					"<td>{DateTaken}</td>",
@@ -52,72 +52,97 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 		{
 				// XTemplate Configuration
 			disableFormats: true,
-			tempCalc: function (data, pData) {
+			tempCalc : function (data, pData) {
 				// debugger;
 			},
-			getLastHWBSAInfo: function (data) {
+			getLastHWBSAInfo : function (data) {
+
 				var Vitals = data.Vitals, vLen = data.Vitals.length;
-				var i, v, h = "", w = "", bm = "", bw = "", wf = "";
-				for (i = vLen-1; i >= 0; i--) {
-					v = Vitals[i];
-
-					if ("" == v.Height || "-" == v.Height || !("Height" in v)) {
-//						v.Height = h;
+				var i, v1, v, h = "", w = "", bm = "", bw = "", wf = "";
+				v = { Height : "", Weight: "", BSA_Method : "", BSA_Weight : "", WeightFormula : "" };
+				for (i = 0; i < vLen; i++ ) {
+					v1 = Vitals[i];
+					if (!v1.hasOwnProperty("Height")) {
 					}
-					else {
-						h = v.Height;
+					else if ("" === v.Height) {
+						v.Height = v1.Height;
 					}
-
-					if ("" == v.Weight || "-" == v.Weight || !("Weight" in v)) {
-//						v.Weight = w;
+					if (!v1.hasOwnProperty("Weight")) {
 					}
-					else {
-						w = v.Weight;
+					else if ("" === v.Weight) {
+						v.Weight = v1.Weight;
 					}
-
-
-
-					if ("" == v.BSA_Method || "-" == v.BSA_Method || !("BSA_Method" in v)) {
-						v.BSA_Method = bm;
+					if (!v1.hasOwnProperty("BSA_Method")) {
 					}
-					else {
-						bm = v.BSA_Method;
+					else if ("" === v.BSA_Method) {
+						v.BSA_Method = v1.BSA_Method;
 					}
-
-					if ("" == v.BSA_Weight || "-" == v.BSA_Weight || !("BSA_Weight" in v)) {
-						v.BSA_Weight = bw;
+					if (!v1.hasOwnProperty("BSA_Weight")) {
 					}
-					else {
-						bw = v.BSA_Weight;
+					else if ("" === v.BSA_Weight) {
+						v.BSA_Weight = v1.BSA_Weight;
 					}
-					if ("" == v.WeightFormula || "-" == v.WeightFormula || !("WeightFormula" in v)) {
-						v.WeightFormula = wf;
+					if (!v1.hasOwnProperty("WeightFormula")) {
 					}
-					else {
-						wf = v.WeightFormula;
+					else if ("" === v.WeightFormula) {
+						v.WeightFormula = v1.WeightFormula;
+					}
+					if ("" !== v.Height && "" !== v.Weight && "" !== v.BSA_Method && "" !== v.BSA_Weight && "" !== v.WeightFormula) {
+						// console.log("Vitals Property Loop Index = " + i);
+						break;
 					}
 				}
-
-				v = Vitals[0];
-				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+				var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 				var thepiTag = Ext.get("#PatientInfoTableBSA_Display");
 
 				if (globalAppPatientScope) {
+					var PatientInfo = globalAppPatientScope.application.Patient;
+					// v = Vitals[0];
+					if (!PatientInfo.hasOwnProperty("Height")) {
+						PatientInfo.Height = "";
+					}
+					if (!PatientInfo.hasOwnProperty("Weight")) {
+						PatientInfo.Weight = "";
+					}
+					if (!PatientInfo.hasOwnProperty("BSA_Method")) {
+						PatientInfo.BSA_Method = "";
+					}
+					if (!PatientInfo.hasOwnProperty("BSA_Weight")) {
+						PatientInfo.BSA_Weight = "";
+					}
+					if (!PatientInfo.hasOwnProperty("WeightFormula")) {
+						PatientInfo.WeightFormula = "";
+					}
+					if (v.hasOwnProperty("Height") && PatientInfo.Height == "") {
+						PatientInfo.Height = v.Height;
+					}
+					if (v.hasOwnProperty("Weight") && PatientInfo.Weight == "") {
+						PatientInfo.Weight = v.Weight;
+					}
+					if (v.hasOwnProperty("BSA_Method") && PatientInfo.BSA_Method == "") {
+						PatientInfo.BSA_Method = v.BSA_Method;
+					}
+					if (v.hasOwnProperty("BSA_Weight") && PatientInfo.BSA_Weight == "") {
+						PatientInfo.BSA_Weight = v.BSA_Weight;
+					}
+					if (v.hasOwnProperty("WeightFormula") && PatientInfo.WeightFormula == "") {
+						PatientInfo.WeightFormula = v.WeightFormula;
+					}
+					PatientInfo.BSA = Ext.BSA_Calc(PatientInfo);
 					var thisCtl = globalAppPatientScope.getController("NewPlan.NewPlanTab");
-					thisCtl.updatePITable( globalAppPatientScope.application.Patient );
+					thisCtl.updatePITable( PatientInfo );
 				}
-				
 				return "";
 			},
 
-			BSA_WeightCalc: function (data, pData) {
+			BSA_WeightCalc : function (data, pData) {
 				if ("" == data.Gender) {
 					data.Gender = pData.Gender;
 				}
 				return Ext.BSAWeight(data);
 			},
 
-			BPCalc: function (data, pData) {
+			BPCalc : function (data, pData) {
 				if (data.BP) {
 					if ("0/0" == data.BP) {
 						return "";
@@ -127,7 +152,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			TempCalc: function (data, pData) {
+			TempCalc : function (data, pData) {
 				if (data.Temperature) {
 					if ("" == data.Temperature) {
 						return "";
@@ -139,7 +164,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			HeightCalc: function (data, pData) {
+			HeightCalc : function (data, pData) {
 				if (data.hasOwnProperty("Height")) {
 					if ("" == data.Height) {
 						return "";
@@ -151,7 +176,7 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			WeightCalc: function (data, pData) {
+			WeightCalc : function (data, pData) {
 				if (data.hasOwnProperty("Weight")) {
 					if ("" == data.Weight) {
 						return "";
@@ -163,8 +188,8 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 				return "";
 			},
 
-			BSACalc: function (data, pData, pDataIndex) {
-				var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+			BSACalc : function (data, pData, pDataIndex) {
+				var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 				var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
 								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 

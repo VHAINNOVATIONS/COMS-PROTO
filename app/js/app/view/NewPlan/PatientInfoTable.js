@@ -9,7 +9,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	collapsible : true,
 	collapsed : true,
 
-	items: [
+	items: [		// Patient Information Table
 		{ xtype: "container", name: "PatientInfoTable", cls: "PI_PatientInformationTable", tpl: 
 			new Ext.XTemplate(
 				"{[this.DebuggerFcn(values)]}",
@@ -36,7 +36,6 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							"<br />{TemplateDescription}",
 						"</tpl>",
 						"{[this.Links(values.TemplateName, values.TemplateID)]}",
-						//"<button class=\"anchor ShowAllPatientData\" tabType=\"ShowAllPatientData\" name=\"ShowAllPatientData\">..</button>",
 						"</td>",
 					"</tr>",
 
@@ -49,7 +48,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					"<tr>",
 						"<th>Regimen Goal:</th><td>{Goal}</td>",
 						"<th>Concurrent Radiation:</th><td>",
-							"<tpl if=\"'0' === ConcurRadTherapy\">No<tpl else>Yes</tpl>",
+							"{[this.ConcurRadTherapy(values.ConcurRadTherapy)]}",
 						"</td>",
 						"<td colspan=2>&nbsp;</td>",
 					"</tr>",
@@ -61,8 +60,9 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"<td colspan=5>",
 							"<table class=\"DataTable\"><tr><th>Disease</th><th>Stage</th><th>Recorded on</th><th>User</th><th>Delete</th></tr>",
 							"<tpl for=\"Disease\">",
+								"{[this.DebuggerFcn(values)]}",
 								"<tr><td>{DiseaseName}</td><td>{DiseaseStage}</td><td>{date}</td><td>{Author}</td><td>",
-		"{[this.DeleteCancer(out, values, parent, xindex, xcount)]}",
+									"{[this.DeleteCancer(out, values, parent, xindex, xcount)]}",
 								"</td></tr>",
 							"</tpl>",
 							"</table>",
@@ -93,17 +93,12 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						"</td>",
 					"</tr>",
 
-
 					"<tr>",
 						"<th>Clinical Trial: </th>",
 						"<td colspan=5>",
 							"{[this.clinicalTrial(values)]}",
 						"</td>",
 					"</tr>",
-
-
-
-
 
 					"<tr>",
 						"<th style=\"vertical-align: top;\">Medication Cumulative Dose Tracking: <br><button class=\"anchor AddCumulativeMedication\" tabType=\"AddCumulativeMedication\" name=\"AddCumulativeMedication\">Add Medication</button></th>",
@@ -129,6 +124,18 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 						// debugger;
 					},
 
+					ConcurRadTherapy : function (ConcurRadTherapy) {
+						if ('0' === ConcurRadTherapy) {
+							return "No";
+						}
+						else if ('' === ConcurRadTherapy) {
+							return "";
+						}
+						else {
+							return "Yes";
+						}
+					},
+
 					DeleteCancer : function (out, values, parent, xindex, xcount) {
 						var ci = xindex-1;
 						return "<button class=\"anchor DeleteCancerType\" tabType=\"DeleteCancerType\" CancerIdx=\"" + ci + "\" name=\"DeleteCancerType\">Delete</button>";
@@ -143,7 +150,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					},
 
 					BSA_Cell : function (data) {
-						var NAMsg = "<abbr title=\"Not Available\">N/A</abbr>";
+						var NAMsg = "<abbr title='Not Available'>N/A</abbr>";
 						var btnBuf = "<button style=\"margin-left: .25em;\" class=\"anchor DoBSACalcs\" tabType=\"DoBSACalcs\" name=\"DoBSACalcs\">Update BSA</button> " + 
 								"<span style=\"margin-left: .25em; font-weight: bold;\">Show</span><button class=\"anchor ShowBSACalcs\" tabType=\"ShowBSACalcs\" name=\"ShowBSACalcs\">Calculations</button>";
 						if (
@@ -161,7 +168,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 							}
 						}
 						data.BSA = "N/A";
-						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title=\"Not Available\">N/A</abbr></span>";
+						return "<span id=\"PatientInfoTableBSA_Display\"><abbr title='Not Available'>N/A</abbr></span>";
 					},
 
 					AddEditBtns : function (btnName, values, parent) {
@@ -312,7 +319,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 
 					CalcBSA : function( data, parent ) {
 						try {
-							if ("" === data.BSA) {
+							if ("" === data.BSA || "<abbr title='Not Available'>N/A</abbr>" === data.BSA) {
 								data.BSA = Ext.BSA_Calc(data);
 								data.Vitals[0].BSA = data.BSA;
 							}
