@@ -578,29 +578,23 @@ $queryStart_DATA = "'$Template_ID',
     }
 
     function saveExtraFields($regimenname, $cyclelength) {
+// '19' represents the "Total_Courses_Max" for a regimen
+// '20' represents the "Cycle_Length_Max" for a regimen
 
         if ($cyclelength) {
-            $query = "INSERT into LookUp(Lookup_Type, Name, Description) values " .
-                    "(20,'" . $regimenname . "'," . $cyclelength . ")";
+            $query = "INSERT into LookUp(Lookup_Type, Name, Description) values (20,'$regimenname','$cyclelength')";
         } else {
-
             $query = "select l.Description as description from LookUp l where l.Lookup_Type_ID = 20";
-
             $description = $this->query($query);
-
-            $query = "INSERT into LookUp(Lookup_Type, Name, Description) values " .
-                    "(20,'" . $regimenname . "','" . $description[0]["description"] . "')";
+            $description = $description[0]["description"];
+            $query = "INSERT into LookUp(Lookup_Type, Name, Description) values (20,'$regimenname','$description')";
         }
-
         $this->query($query);
 
         $query = "select l.Description as description from LookUp l where l.Lookup_Type_ID = 19";
-
         $description = $this->query($query);
-
-        $query = "INSERT into LookUp(Lookup_Type, Name, Description) values " .
-                "(19,'" . $regimenname . "','" . $description[0]["description"] . "')";
-
+        $description = $description[0]["description"];
+        $query = "INSERT into LookUp(Lookup_Type, Name, Description) values (19,'$regimenname','description')";
         $this->query($query);
     }
 
