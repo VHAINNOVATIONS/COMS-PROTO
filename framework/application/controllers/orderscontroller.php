@@ -89,16 +89,15 @@
             return $totalPctReduction;
         }
         
-        function FinalizeMedicationDosing( $form_data )
-        {
-            // error_log( "OrdersModel.grabOrders - Order Cleared" );
-            // error_log( json_encode( $form_data ) );
+        function FinalizeMedicationDosing( $form_data ) {
+error_log( "OrdersModel.grabOrders - Order Cleared" );
+error_log( json_encode( $form_data ) );
             
             $DoseF = $form_data->{'dose'};
             $UnitF = strtolower( $form_data->{'unit'} );
             $PIDF  = $form_data->{'patientID'};
-            
-            // error_log( "OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF" );
+
+error_log( "OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF" );
             if ( "auc" == $UnitF || "mg/kg" == $UnitF || "mg/m2" == $UnitF || "units / m2" == $UnitF || "units / kg" == $UnitF ) {
                 // Calculate Dose based on BSA
                 $controller        = 'PatientController';
@@ -107,13 +106,13 @@
                 $w                 = $BSA[ 0 ][ "WeightFormula" ];
                 $b                 = $BSA[ 0 ][ "BSAFormula" ];
                 
-                // error_log( "BSA Formula - $w; $b" );
+error_log( "BSA Formula - $w; $b" );
                 
                 $mrHW = $this->getMostRecentVitals( $PIDF );
-                // error_log( "Most Recent = " . $mrHW[ "Height" ] . " " . $mrHW[ "Weight" ] . " " . $mrHW[ "Age" ] . " " . $mrHW[ "Gender" ] );
+error_log( "Most Recent = " . $mrHW[ "Height" ] . " " . $mrHW[ "Weight" ] . " " . $mrHW[ "Age" ] . " " . $mrHW[ "Gender" ] );
                 
                 $ampu = $this->getAmputationPct( $PIDF );
-                // error_log( "TOTAL Pct BSA Reduction due to amputation = $ampu" );
+error_log( "TOTAL Pct BSA Reduction due to amputation = $ampu" );
                 
                 $controller = 'BSACalcController';
                 $BSACalcs   = new $controller( 'BSACalc', 'bsacalc', null );
@@ -128,7 +127,7 @@
                 } else if ( "Lean Weight" == $w ) {
                     $BSAWeight = $BSACalcs->LeanWeight( $mrHW[ "Weight" ], $mrHW[ "Height" ], $mrHW[ "Gender" ] ); // Height in Inches, weight in pounds
                 }
-                // error_log( "Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW[ "Weight" ] . "/$WeightInKG; Weight Method = $w; BSAWeight = $BSAWeight" );
+error_log( "Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW[ "Weight" ] . "/$WeightInKG; Weight Method = $w; BSAWeight = $BSAWeight" );
                 
                 $BSA = 0;
                 if ( "Mosteller" == $b ) {
@@ -149,12 +148,12 @@
                     $Patient[ "Weight" ]          = $mrHW[ "Weight" ];
                     $Patient[ "SerumCreatinine" ] = 1;
                     $CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
-                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
-                    $form_data->{'dose'} = $CalculatedDose;
-                    $form_data->{'unit'} = "mg";
+error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    $form_data->{'dose'}          = $CalculatedDose;
+                    $form_data->{'unit'}          = "mg";
                 } else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
-                    $CalculatedDose = $DoseF * $WeightInKG;
-                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    $CalculatedDose      = $DoseF * $WeightInKG;
+error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/kg" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
@@ -162,8 +161,8 @@
                         $form_data->{'unit'} = "units";
                     }
                 } else {
-                    $CalculatedDose = $DoseF * $BSA;
-                    // error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+                    $CalculatedDose      = $DoseF * $BSA;
+error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/m2" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
@@ -173,6 +172,9 @@
                 }
                 $form_data->{'orderstatus'} = "ClearedUpdate";
             }
+
+error_log( "Result of calculating Dosage - " . json_encode($form_data));
+
             return $form_data;
         }
         
