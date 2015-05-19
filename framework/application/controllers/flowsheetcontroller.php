@@ -344,7 +344,12 @@ os.Order_Status
 ,ndt.AdminDay
 ,ndt.Dose
 ,ndt.Unit
-,ndt.Route
+,CASE
+    WHEN CHARINDEX(':', ndt.Route) > 0 THEN
+        left(ndt.Route, CHARINDEX(':', ndt.Route)-1)
+    ELSE
+        ndt.Route
+ END as Route
 ,ndt.StartTime
 ,ndt.EndTime
 ,ndt.Comments

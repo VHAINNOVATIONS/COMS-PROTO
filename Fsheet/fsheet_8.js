@@ -108,8 +108,9 @@ var FSheet = function() {
 			var gHeight = this.nRows * 10;
 			var grid = Ext.create('Ext.grid.Panel', {
 				id: "FlowsheetGrid",
+				layout: 'fit',
 				width: gWidth,
-				height: gHeight,
+				// height: gHeight,
 				frame: true,
 				margin: "10 20",
 				title: 'Flowsheet for Patient ' + this.PName,

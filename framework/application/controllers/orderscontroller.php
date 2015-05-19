@@ -270,7 +270,12 @@ error_log( "Result of calculating Dosage - " . json_encode($form_data));
               CONVERT(nvarchar(max), CONVERT(decimal(10,1), replace(os.Amt,',','')))
       END as dose
       ,os.Unit as unit
-      ,os.Route as route
+      ,CASE
+          WHEN CHARINDEX(':', os.Route) > 0 THEN
+              left(os.Route, CHARINDEX(':', os.Route)-1)
+          ELSE
+              os.Route
+       END as route
       ,os.flvol
       ,os.FluidType
       ,os.infusion
@@ -311,7 +316,12 @@ End as orderstatus
               CONVERT(nvarchar(max), CONVERT(decimal(10,1), replace(os.Amt,',','')))
       END as dose
       ,os.Unit as unit
-      ,os.Route as route
+      ,CASE
+          WHEN CHARINDEX(':', os.Route) > 0 THEN
+              left(os.Route, CHARINDEX(':', os.Route)-1)
+          ELSE
+              os.Route
+       END as route
       ,os.flvol
       ,os.FluidType
       ,os.infusion
@@ -349,7 +359,12 @@ End as orderstatus
        Drug
       ,Dose
       ,Unit
-      ,Route
+      ,CASE
+          WHEN CHARINDEX(':', Route) > 0 THEN
+              left(Route, CHARINDEX(':', Route)-1)
+          ELSE
+              Route
+       END as Route
       ,StartTime
       ,EndTime
       ,Comments

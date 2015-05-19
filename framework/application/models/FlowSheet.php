@@ -375,7 +375,12 @@ function FS($PatientID, $TemplateID){
       ,RegReason
       ,PatientDose
       ,PatientDoseUnit
-      ,Route
+      ,CASE
+          WHEN CHARINDEX(':', Route) > 0 THEN
+              left(Route, CHARINDEX(':', Route)-1)
+          ELSE
+              Route
+       END as Route
       ,flvol
       ,flunit
       ,infusion
@@ -425,7 +430,12 @@ $query = "SELECT
       ,os.RegReason
       ,os.PatientDose
       ,os.PatientDoseUnit
-      ,os.Route
+      ,CASE
+          WHEN CHARINDEX(':', os.Route) > 0 THEN
+              left(os.Route, CHARINDEX(':', os.Route)-1)
+          ELSE
+              os.Route
+       END as Route
       ,os.flvol
       ,os.flunit
       ,os.infusion
@@ -452,7 +462,12 @@ $query = "SELECT
       ,ndt.Drug
       ,ndt.Dose
       ,ndt.Unit
-      ,ndt.Route
+      ,CASE
+          WHEN CHARINDEX(':', ndt.Route) > 0 THEN
+              left(ndt.Route, CHARINDEX(':', ndt.Route)-1)
+          ELSE
+              ndt.Route
+       END as Route
       ,substring(ndt.StartTime, 12, 30) as StartTime
       ,substring(ndt.EndTime, 12, 30) as EndTime
       ,ndt.Comments
@@ -500,7 +515,12 @@ $query = "SELECT
       ,os.RegReason
       ,os.PatientDose
       ,os.PatientDoseUnit
-      ,os.Route
+      ,CASE
+          WHEN CHARINDEX(':', os.Route) > 0 THEN
+              left(os.Route, CHARINDEX(':', os.Route)-1)
+          ELSE
+              os.Route
+       END as Route
       ,os.flvol
       ,os.flunit
       ,os.infusion
@@ -527,7 +547,12 @@ $query = "SELECT
       ,ndt.Drug
       ,ndt.Dose
       ,ndt.Unit
-      ,ndt.Route
+      ,CASE
+          WHEN CHARINDEX(':', ndt.Route) > 0 THEN
+              left(ndt.Route, CHARINDEX(':', ndt.Route)-1)
+          ELSE
+              ndt.Route
+       END as Route
       ,StartTime
       ,EndTime
       ,ndt.Comments
