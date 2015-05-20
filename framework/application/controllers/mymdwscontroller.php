@@ -84,6 +84,11 @@ class mymdwscontroller extends Controller {
     public function Match( $lastFour ) {
         $jsonRecord = array( );
         $client    = $this->MdwsSetup( true, $lastFour ); // MWB - 5/7/2012 Added the boolean "true" to the call since MdwsSetup has been modified to require a "isSSN" parameter
+        if(false === $client[ 'success' ]) {
+            $this->set( 'jsonRecord', $client );
+            return $client;
+        }
+
         $nodevista = new NodeVista();
         
         if ( !array_key_exists( 'UserDUZ', $_SESSION ) ) {
@@ -213,13 +218,6 @@ class mymdwscontroller extends Controller {
         $NameInfo["dfn"] = $this->_dfn;
         $NameInfo["ssn"] = $this->_ssn;
 
-        $this->_fullName = $nvpatientInfo["gender"];
-        $this->_dob = $nvpatientInfo["dob"];
-        $this->_ssn = $nvpatientInfo["ssn"];
-        $this->_age = $nvpatientInfo["age"];
-        $this->_dfn = $nvpatientInfo["localPid"];
-
-
         $fullname = array();
         $fullname[] = $NameInfo;
 
@@ -259,7 +257,6 @@ error_log("VPR1 = " . json_decode($VPR1));
         $jsonRecord[ 'total' ]   = '1';
         $jsonRecord[ 'records' ] = $patient;
         $this->set( 'jsonRecord', $jsonRecord );
-        
         return $jsonRecord;
     }
     
@@ -287,6 +284,16 @@ error_log("VPR1 = " . json_decode($VPR1));
 
         $nodevista = new NodeVista();
         $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
+error_log("MyMDWS_Controller - MdwsSetup - Patient Info for $value - " . json_encode($nvpatient));
+error_log("MyMDWS_Controller - MdwsSetup - Results Count = " . count($nvpatient));
+        if (count($nvpatient) == 0) {
+            $jsonRecord[ 'success' ] = false;
+            $jsonRecord[ 'message' ] = "No Patients found with patient identification matching $value";
+            return $jsonRecord;
+        }
+        else {
+error_log("MyMDWS_Controller - MdwsSetup - " . count($nvpatient) . " Patients found with patient identification matching $value");
+        }
 
         $nvpatient = $nvpatient[ 0 ];
         $pName     = explode( ",", $nvpatient[ "name" ] );
@@ -295,9 +302,8 @@ error_log("VPR1 = " . json_decode($VPR1));
         $this->_Name = $name;
         $this->_pName = $pName;
 
-
         $nvpatientInfo = json_decode( $nodevista->get( "patient/$DFNcoms" ), true );
-// error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
+error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
         $this->_fullName = $nvpatientInfo["name"];
         $this->_gender = $nvpatientInfo["gender"];
         $this->_dob = $nvpatientInfo["dob"];
@@ -305,7 +311,6 @@ error_log("VPR1 = " . json_decode($VPR1));
         $this->_age = $nvpatientInfo["age"];
         $this->_dfn = $nvpatientInfo["localPid"];
 
-        
         $mdwspatients            = array( );
         $mdwspatients[ 'count' ] = 0;
         if ( isset( $nvpatient ) ) {

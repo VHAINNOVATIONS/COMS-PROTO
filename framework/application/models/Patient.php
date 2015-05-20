@@ -127,6 +127,29 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
         }
     }
 
+        public function overrideBSAFormula( $patientID, $usr) {
+            $query   = "update Patient_BSA
+            Set 
+            Active = 0,
+            Date_Changed = GETDATE(),
+            UserName = '$usr'
+            where Patient_ID = '$patientID' and Active = 1";
+            $this->query($query);
+        }
+
+        public function addNewBSAFormula($patientID, $wt, $BSAFormula, $usr) {
+            $query   = "INSERT INTO Patient_BSA
+          (Patient_ID,WeightFormula,BSAFormula,Active,Date_Assigned,Date_Changed,UserName)
+          VALUES ('$patientID', '$wt', '$BSAFormula', 1, GETDATE(), GETDATE(), '$usr')";
+            $this->query($query);
+        }
+
+        public function _setBSA( $patientID, $wt, $BSAFormula, $usr) {
+            error_log("_setBSA - $patientID, $wt, $BSAFormula, $usr");
+            $this->overrideBSAFormula($patientID, $usr);
+            $this->addNewBSAFormula($patientID, $wt, $BSAFormula, $usr);
+        }
+
     public function savePatientTemplate($formData) {
 error_log("savePatientTemplate Form - " . json_encode($formData));
 
@@ -200,6 +223,7 @@ error_log("savePatientTemplate Form - " . json_encode($formData));
              */
             if ($ApprovedByUser != "") {
                 OrdersNotify($patientId, $templateId, $dateApplied, $dateStarted, $dateEnded, $goal, $clinicalTrial, $performanceStatus);
+                $this->_setBSA( $patientId, $weightFormula, $bsaFormula, $ApprovedByUser);
             }
         }
         else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
@@ -366,22 +390,12 @@ WHERE pat.Patient_ID = '$id'";
 
 
 
-    function getMeasurements ($id)
-    {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT Height as height, Weight as weight,Blood_Pressure as bp,Weight_Formula as weightFormula, " .
+    function getMeasurements ($id) {
+        $query = "SELECT Height as height, Weight as weight,Blood_Pressure as bp,Weight_Formula as weightFormula, " .
                      "BSA_Method as bsaMethod, BSA as bsa,BSA_Weight as bsaWeight,CONVERT(VARCHAR(10), Date_Taken, 101) as dateTaken, " .
                      "Temperature, Pulse, Respiration, Pain, OxygenationLevel as spo2level " .
                      "FROM Patient_History ph " . "WHERE ph.Patient_ID = '" . $id .
                      "' " . "ORDER BY Date_Taken DESC";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT Height as height,Weight as weight,Blood_Pressure as bp,Weight_Formula as weightFormula, " .
-                     "BSA_Method as bsaMethod, BSA as bsa,BSA_Weight as bsaWeight,date_format(Date_Taken, '%m/%d/%Y')  as dateTaken, " .
-                     "Temperature, Pulse, Respiration, Pain, OxygenationLevel as spo2level " .
-                     "FROM Patient_History ph " . "WHERE ph.Patient_ID = '" . $id .
-                     "' " . "ORDER BY Date_Taken DESC";
-        }
-        
         return $this->query($query);
     }
 

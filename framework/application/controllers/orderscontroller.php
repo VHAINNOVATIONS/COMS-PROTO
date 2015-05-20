@@ -77,6 +77,8 @@
         }
         
         function FinalizeMedicationDosing( $form_data ) {
+            $UntouchedFormData = $form_data;
+
 error_log( "OrdersModel.grabOrders - Order Cleared" );
 error_log( json_encode( $form_data ) );
             
@@ -93,6 +95,7 @@ error_log( "OrdersModel.grabOrders - DoseF = $DoseF; UnitF = $UnitF" );
                 $w                 = $BSA[ 0 ][ "WeightFormula" ];
                 $b                 = $BSA[ 0 ][ "BSAFormula" ];
                 
+error_log( "BSA Formula - " . json_encode($BSA));
 error_log( "BSA Formula - $w; $b" );
                 
                 $mrHW = $this->getMostRecentVitals( $PIDF );
