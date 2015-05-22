@@ -2,14 +2,6 @@ var vistaconfig = require("../../lib/rpcvista/vistaconfig");
 var vista = require("../../lib/rpcvista/VistaJS");
 var orderhelper = require("./helpers/orderhelper");
 
-
-
-
-
-
-
-
-
 function getMedicineIENFromORWULIndex(loginOptions, index, callback){
   var configuration = vistaconfig.configuration;
   for(var option in loginOptions){
@@ -97,6 +89,38 @@ exports.getOrderInfo = function(loginOptions, medicationIEN, patientIEN, callbac
       }
     }
   );
+  
+}
+
+exports.getAll = function(loginOptions, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWUL FV4DG', 'UD RX', function(error, result){
+    var firstParam = result.split('^')[0];
+    var lastIndex = result.split('^')[1];
+  
+    vista.callRpc(vistaconfig.logger, configuration, 'ORWUL FVSUB', [firstParam, '1', lastIndex], function(error, result){
+      var results = [];
+      var lines = result.split('\r\n');
+      lines.forEach(function(line){
+        if(line.indexOf('^') !== -1){
+          var result_split = line.split('^');
+          var resultObj = {
+            ien: result_split[0],
+            name: result_split[1].replace('\r\n', '').replace(/~+$/, '')
+          };
+          results.push(resultObj);
+        }else{
+          // skip drug
+          //callback(error,null);
+        }
+      });
+      console.log("Got here", results);
+      callback(error, results);
+    });
+  });
   
 }
 
