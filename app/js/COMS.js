@@ -9495,12 +9495,16 @@ Ext.define("COMS.view.Management.PharmacyManagement" ,{
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
 		{ "xtype" : "box", "html" : "<em style=\"font-weight: bold; color: red;\">Note:</em> Information is required to permit interopability with associated VistA instance pharmacy packages"},
+
+		{ "xtype" : "displayfield", "labelWidth" : 150, "width" : 300, "fieldLabel" : "<em>Last Synchronization</em>", "value" : "01/01/1900", "margin" : "20 0" },
+/*********
 		{ "xtype": "RequiredInstr"},
 		{ "xtype" : "textfield", "name" : "Host", "fieldLabel" : "VistA Host IP<em>*</em>", "allowBlank" : false },
 		{ "xtype" : "textfield", "name" : "Port", "fieldLabel" : "VistA Port <em>*</em>", "allowBlank" : false },
 		{ "xtype" : "textfield", "name" : "AccessCode", "fieldLabel" : "Access Code <em>*</em>", "allowBlank" : false },
 		{ "xtype" : "textfield", "name" : "VerifyCode", "fieldLabel" : "Verify Code <em>*</em>", "inputType" : "password", "allowBlank" : false },
-		{ "xtype" : "button", "name" : "Submit", "text" : "Submit", "formBind" : true }
+*************/
+		{ "xtype" : "button", "name" : "Submit", "text" : "Synchronize Medication Lists", "formBind" : true }
 	]
 });
 
