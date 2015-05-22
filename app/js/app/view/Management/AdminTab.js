@@ -60,6 +60,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ "xtype" : "MedicationHolds", "title" : "Medication Holds"},
 				{ "xtype" : "MedsNonRounded", "title" : "Medications Not Rounded"},
 				{ "xtype" : "RoundingRules", "title" : "Rounding Rules"},
+				{ "xtype" : "PharmacyManagement", "title" : "Pharmacy Management", "closable" : false},
 				{ "xtype" : "tabpanel", "title" : "Signature Verifications", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		}

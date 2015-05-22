@@ -8521,6 +8521,7 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 				{ "xtype" : "MedicationHolds", "title" : "Medication Holds"},
 				{ "xtype" : "MedsNonRounded", "title" : "Medications Not Rounded"},
 				{ "xtype" : "RoundingRules", "title" : "Rounding Rules"},
+				{ "xtype" : "PharmacyManagement", "title" : "Pharmacy Management", "closable" : false},
 				{ "xtype" : "tabpanel", "title" : "Signature Verifications", "closable" : false, "html" : "<h1>Not Yet Available</h1>" }
 			]
 		}
@@ -9485,6 +9486,23 @@ Ext.define("COMS.view.Management.PatternsOfCareTab" ,{
 	} ]
 });
 
+
+Ext.define("COMS.view.Management.PharmacyManagement" ,{
+	"extend" : "Ext.form.Panel",
+	"alias" : "widget.PharmacyManagement",
+	"name" : "PharmacyManagement",
+	"autoEl" : { tag : "section" },
+	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
+	"items" : [ 
+		{ "xtype" : "box", "html" : "<em style=\"font-weight: bold; color: red;\">Note:</em> Information is required to permit interopability with associated VistA instance pharmacy packages"},
+		{ "xtype": "RequiredInstr"},
+		{ "xtype" : "textfield", "name" : "Host", "fieldLabel" : "VistA Host IP<em>*</em>", "allowBlank" : false },
+		{ "xtype" : "textfield", "name" : "Port", "fieldLabel" : "VistA Port <em>*</em>", "allowBlank" : false },
+		{ "xtype" : "textfield", "name" : "AccessCode", "fieldLabel" : "Access Code <em>*</em>", "allowBlank" : false },
+		{ "xtype" : "textfield", "name" : "VerifyCode", "fieldLabel" : "Verify Code <em>*</em>", "inputType" : "password", "allowBlank" : false },
+		{ "xtype" : "button", "name" : "Submit", "text" : "Submit", "formBind" : true }
+	]
+});
 
 Ext.define("COMS.view.Management.Roles", {
 	"extend": "Ext.form.Panel",
@@ -10591,7 +10609,7 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 				{ xtype : "NursingDocs" },
 				{ xtype : "FlowSheet" },
 				{ xtype : "Chronology", hidden : true },
-				{ xtype : "KnowledgeBase", hidden : true }		// MWB - 7/16/2012 - Per e-mail from Sean this date, do not show KBase Tab, used "hidden" in case any functions expect the tab to be there
+				{ xtype : "KnowledgeBase", hidden : true }
 			];
 		}
 		else {
@@ -21493,7 +21511,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.LockoutTab',
 		'Management.Inventory',
 		'Management.PatternsOfCareTab',
-		'Management.Roles'
+		'Management.Roles',
+		'Management.PharmacyManagement'
 	],
 	models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
 	refs: [
@@ -21765,6 +21784,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"Roles [name=\"Role\"]" : {
 				select: this.selectRoleChange
 			},
+			"PharmacyManagement button[name=\"Submit\"]" : {
+				click: this.SubmitPharmacyManagement
+			},
 
 
 /* Medication Documentation */
@@ -21843,6 +21865,24 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		});
 	},
 
+	SubmitPharmacyManagement : function(theBtn) {
+		var form = theBtn.up("form").getForm();
+		if (form.isValid()) {
+			var values = form.getValues();
+			form.submit({
+				clientValidation: true,
+				url: "VCFDrugs.php",
+				method: 'POST',
+				success: function(form, action) {
+					form.reset();
+ 					Ext.Msg.alert('Pharmacy Management Form Processed successfully');
+				},
+				failure: function(form, action) {
+					Ext.Msg.alert('ooops');
+				}
+			});
+		}
+	},
 
 	selectVistAUser : function(combo) {
 		var msg = this.getSelVistAUserNoMatch();

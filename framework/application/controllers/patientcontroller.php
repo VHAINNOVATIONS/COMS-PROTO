@@ -713,23 +713,6 @@ $this->Patient->query( $query );
          ";
 // error_log("PatientController._insertOrderStatus - Query = $query");
             $this->Patient->query( $query );
-            /*removed for Order ID Bug
-            $mssqlLimit = null;
-            $mysqlLimit = null;
-            if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $mssqlLimit = 'TOP (1)';
-            } else if (DB_TYPE == 'mysql') {
-            $mysqlLimit = 'LIMIT 1';
-            }
-            
-            $queryOrderId = "SELECT $mssqlLimit Order_ID, Date_Modified FROM Order_Status ORDER BY Date_Modified DESC $mysqlLimit";
-            $result = $this->Patient->query($queryOrderId);
-            if (! empty($result[0]['Order_ID'])) {
-            return $result[0]['Order_ID'];
-            
-            } else {
-            return null;
-            }*/
             return $GUID;
         }
         
@@ -1884,7 +1867,8 @@ $this->Patient->query( $query );
             $query = "select * from Patient_BSA where Patient_ID = '$patientID' AND Active = 1";
             return $this->Patient->query( $query );
         }
-        
+
+
         function BSA( $patientID = null ) {
             $jsonRecord              = array( );
             $jsonRecord[ 'success' ] = true;
@@ -1920,37 +1904,10 @@ $this->Patient->query( $query );
                     $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-                
                 $wt   = $form_data->WeightFormula;
-                $meth = $form_data->BSAFormula;
+                $BSAFormula = $form_data->BSAFormula;
                 $usr  = $form_data->UserName;
-                
-                $this->Patient->beginTransaction();
-                $query   = "update Patient_BSA
-                Set 
-                Active = 0,
-                Date_Changed = GETDATE(),
-                UserName = '$usr'
-                where Patient_ID = '$patientID' and Active = 1";
-                $records = $this->Patient->query( $query );
-                if ( $this->checkForErrors( "Update Patient BSA Info", $records ) ) {
-                    $jsonRecord[ 'success' ] = false;
-                    $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
-                    $this->set( 'jsonRecord', $jsonRecord );
-                    return;
-                }
-                $query   = "INSERT INTO Patient_BSA
-              (Patient_ID,WeightFormula,BSAFormula,Active,Date_Assigned,Date_Changed,UserName)
-              VALUES ('$patientID', '$wt', '$meth', 1, GETDATE(), GETDATE(), '$usr')";
-                $records = $this->Patient->query( $query );
-                if ( $this->checkForErrors( "Update Patient BSA Info", $records ) ) {
-                    $jsonRecord[ 'success' ] = false;
-                    $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
-                    $this->set( 'jsonRecord', $jsonRecord );
-                    return;
-                }
-                $this->Patient->endTransaction();
-                $this->set( 'jsonRecord', $jsonRecord );
+                $this->Patient->_setBSA($patientID, $wt, $BSAFormula, $usr);
             } else {
                 $jsonRecord[ 'success' ] = false;
                 $jsonRecord[ 'msg' ]     = "Incorrect method for saving BSA Info (expected a POST got a " . $_SERVER[ 'REQUEST_METHOD' ];

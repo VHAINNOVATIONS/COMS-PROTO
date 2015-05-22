@@ -26,7 +26,8 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		'Management.LockoutTab',
 		'Management.Inventory',
 		'Management.PatternsOfCareTab',
-		'Management.Roles'
+		'Management.Roles',
+		'Management.PharmacyManagement'
 	],
 	models : ['LookupTable','LookupTable_Templates', 'IVFluidType'],
 	refs: [
@@ -298,6 +299,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"Roles [name=\"Role\"]" : {
 				select: this.selectRoleChange
 			},
+			"PharmacyManagement button[name=\"Submit\"]" : {
+				click: this.SubmitPharmacyManagement
+			},
 
 
 /* Medication Documentation */
@@ -376,6 +380,24 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		});
 	},
 
+	SubmitPharmacyManagement : function(theBtn) {
+		var form = theBtn.up("form").getForm();
+		if (form.isValid()) {
+			var values = form.getValues();
+			form.submit({
+				clientValidation: true,
+				url: "VCFDrugs.php",
+				method: 'POST',
+				success: function(form, action) {
+					form.reset();
+ 					Ext.Msg.alert('Pharmacy Management Form Processed successfully');
+				},
+				failure: function(form, action) {
+					Ext.Msg.alert('ooops');
+				}
+			});
+		}
+	},
 
 	selectVistAUser : function(combo) {
 		var msg = this.getSelVistAUserNoMatch();
