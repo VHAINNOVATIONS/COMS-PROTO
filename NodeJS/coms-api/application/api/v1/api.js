@@ -399,6 +399,29 @@ router.get('/medication/name/:name', function(req, res){
   medication.findByName(loginOptions, req.params.name, callback);
 });
 
+router.get('/medications', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  medication.getAll(loginOptions, callback);
+});
+
+
 router.get('/order/info/:patient/:medicationid', function(req, res){
   // get login options
   var loginOptions = {
