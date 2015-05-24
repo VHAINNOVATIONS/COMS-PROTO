@@ -399,7 +399,7 @@ router.get('/medication/name/:name', function(req, res){
   medication.findByName(loginOptions, req.params.name, callback);
 });
 
-router.get('/medications', function(req, res){
+router.get('/medications/inpatient', function(req, res){
   // get login options
   var loginOptions = {
     accessCode: req.get('X-ACCESS-CODE'),
@@ -418,7 +418,29 @@ router.get('/medications', function(req, res){
     }
   }
   // make an appointment
-  medication.getAll(loginOptions, callback);
+  medication.getInPatient(loginOptions, callback);
+});
+
+router.get('/medications/outpatient', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  medication.getOutPatient(loginOptions, callback);
 });
 
 
