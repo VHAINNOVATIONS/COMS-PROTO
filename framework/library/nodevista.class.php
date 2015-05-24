@@ -47,7 +47,7 @@ class NodeVista{
                 }
         }
 
-//      error_log("NodeVista Class - Basic Call Function SESSION Variables- " . json_encode($_SESSION));
+     // error_log("NodeVista Class - Basic Call Function SESSION Variables- " . json_encode($_SESSION));
 
       // Authentication to Node Vista
         // 'X-ACCESS-CODE: '.NV_ACCESS_CODE,

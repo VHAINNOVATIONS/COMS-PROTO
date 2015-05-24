@@ -2570,5 +2570,109 @@ error_log("VistAUsers");
     }
 
 
+    function SyncMedsListRemoveOldMeds($jsonRecord) {
+        $query = "delete from LookUp where Lookup_Type = 2 and Lookup_Type_ID is not null";
+        $retVal = $this->LookUp->query($query);
+        if($this->checkForErrors('Clear Medication List Failed. ', $retVal)){
+            error_log("FAILURE - " . json_encode($retVal));
+            $jsonRecord["success"] = "false";
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            return false;
+        }
+        return true;
+    }
+
+    function SyncMedsListInsertInPatient($InPatientMeds, $jsonRecord){
+        $MedsList    = json_decode( $InPatientMeds );
+        $MedsListLen = count($MedsList);
+        for ($i = 0; $i < $MedsListLen; $i++) {
+            $aMed = $MedsList[$i];
+            $name = $this->escapeString($aMed->{"name"});
+            $IEN = $aMed->{"ien"};
+            $query = "Insert into LookUp (Lookup_Type, Name, Lookup_Type_ID, Description) values ('2','$name','$IEN', 'InPatient')";
+            $retVal = $this->LookUp->query($query);
+
+            if($this->checkForErrors('Insert Medication Failed BP1. ', $retVal)){
+                error_log("FAILURE - $query");
+                error_log("FAILURE - " . json_encode($retVal));
+                $jsonRecord["success"] = "false";
+                $jsonRecord["msg"] = $this->get("frameworkErr");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function SyncMedsListInsertOutPatient($OutPatientMeds, $jsonRecord){
+        $MedsList    = json_decode( $OutPatientMeds );
+        $MedsListLen = count($MedsList);
+        for ($i = 0; $i < $MedsListLen; $i++) {
+            $aMed = $MedsList[$i];
+            $name = $this->escapeString($aMed->{"name"});
+            $IEN = $aMed->{"ien"};
+            $query = "Insert into LookUp (Lookup_Type, Name, Lookup_Type_ID, Description) values ('2','$name','$IEN', 'OutPatient')";
+            $retVal = $this->LookUp->query($query);
+
+            if($this->checkForErrors('Insert Medication Failed BP1. ', $retVal)){
+                error_log("FAILURE - $query");
+                error_log("FAILURE - " . json_encode($retVal));
+                $jsonRecord["success"] = "false";
+                $jsonRecord["msg"] = $this->get("frameworkErr");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function SyncMedsListGetLastSyncTime($jsonRecord) {
+        $query = "select Description as LastSyncTime from LookUp where Lookup_Type = 61 order by Description desc";
+        $retVal = $this->LookUp->query($query);
+        $jsonRecord["LastSyncTime"] = $retVal[0]["LastSyncTime"];
+    }
+
+    function SyncMedsListAddSyncDate($jsonRecord) {
+        $Today = date("Y-m-d H:i:s");
+        $query = "Insert into LookUp (Lookup_Type, Name, Description) values ('61','SyncMedsListDate', '$Today')";
+        $retVal = $this->LookUp->query($query);
+        if($this->checkForErrors('Insert Medication Failed BP2. ', $retVal)){
+            error_log("FAILURE - $query");
+            error_log("FAILURE - " . json_encode($retVal));
+            $jsonRecord["success"] = "false";
+            $jsonRecord["msg"] = $this->get("frameworkErr");
+            $this->SyncMedsListGetLastSyncTime($jsonRecord);
+        }
+    }
+
+
+    function SyncMedsList() {
+error_log("SyncMedsList - Entry Point");
+        $jsonRecord              = array( );
+        $jsonRecord[ "success" ] = true;
+        $meds = array();
+
+        if ( "POST" == $_SERVER[ "REQUEST_METHOD" ] ) {
+            $nodevista  = new NodeVista();
+            $InPatientMeds       = $nodevista->get( "medications/inpatient" );
+            $OutPatientMeds      = $nodevista->get( "medications/outpatient" );
+            if ($InPatientMeds && $OutPatientMeds) {
+                if ($this->SyncMedsListRemoveOldMeds()) {
+                    if ($this->SyncMedsListInsertInPatient($InPatientMeds, $jsonRecord)) {
+                        if ($this->SyncMedsListInsertOutPatient($OutPatientMeds, $jsonRecord)) {
+                            $jsonRecord["msg"] = $MedsListLen . " Medications have been imported";
+                            $this->SyncMedsListAddSyncDate($jsonRecord);
+                        }
+                    }
+                }
+            }
+            else {
+                error_log("SyncMedsList - NodeJS Service failed");
+                $msg                     = "SyncMedsList - ERROR no data returned from NodeJS Call";
+                $jsonRecord[ "success" ] = false;
+                $jsonRecord[ "msg" ]     = $msg;
+            }
+        }
+        $this->SyncMedsListGetLastSyncTime($jsonRecord);
+        $this->set( "jsonRecord", $jsonRecord );
+    }
 
 }

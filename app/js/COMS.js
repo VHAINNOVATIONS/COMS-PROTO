@@ -9479,10 +9479,6 @@ Ext.define("COMS.view.Management.PatternsOfCareTab" ,{
 			"<li><a href=\"#\" target=\"_blank\" class=\"ProviderTemplates\">Provider & Applied Templates</a></li>" +
 			"<li><a href=\"#\" target=\"_blank\" class=\"TemplatesAndToxicities\">Applied Templates & Toxicities</a></li> -->" +
 		"</ul>"
-
-
-
-
 	} ]
 });
 
@@ -9495,12 +9491,8 @@ Ext.define("COMS.view.Management.PharmacyManagement" ,{
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
 		{ "xtype" : "box", "html" : "<em style=\"font-weight: bold; color: red;\">Note:</em> Information is required to permit interopability with associated VistA instance pharmacy packages"},
-		{ "xtype": "RequiredInstr"},
-		{ "xtype" : "textfield", "name" : "Host", "fieldLabel" : "VistA Host IP<em>*</em>", "allowBlank" : false },
-		{ "xtype" : "textfield", "name" : "Port", "fieldLabel" : "VistA Port <em>*</em>", "allowBlank" : false },
-		{ "xtype" : "textfield", "name" : "AccessCode", "fieldLabel" : "Access Code <em>*</em>", "allowBlank" : false },
-		{ "xtype" : "textfield", "name" : "VerifyCode", "fieldLabel" : "Verify Code <em>*</em>", "inputType" : "password", "allowBlank" : false },
-		{ "xtype" : "button", "name" : "Submit", "text" : "Submit", "formBind" : true }
+		{ "xtype" : "displayfield", "labelWidth" : 150, "width" : 300, "name" : "LastSyncTime", "fieldLabel" : "<em>Last Synchronization</em>", "margin" : "20 0" },
+		{ "xtype" : "button", "name" : "Submit", "text" : "Synchronize Medication Lists", "formBind" : true }
 	]
 });
 
@@ -21784,6 +21776,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"Roles [name=\"Role\"]" : {
 				select: this.selectRoleChange
 			},
+			"PharmacyManagement" : {
+				afterrender: this.LoadLastSyncTime
+			},
 			"PharmacyManagement button[name=\"Submit\"]" : {
 				click: this.SubmitPharmacyManagement
 			},
@@ -21817,7 +21812,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				beforerender: this.DischargeInstructionLoadGrid
 			},
 			"DischargeInstructionManagement grid" : {
-					select: this.selectDischargeInstructionGridRow
+				select: this.selectDischargeInstructionGridRow
 			},
 			"DischargeInstructionManagement button[text=\"Cancel\"]" : {
 				click: this.clickDischargeInstructionCancel
@@ -21865,23 +21860,55 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		});
 	},
 
+	LoadLastSyncTime : function(theForm) {
+
+		theForm.getForm().setValues({"LastSyncTime" : "N/A"});
+		theForm.setLoading("Checking for medication list last synchronization time", false);
+
+		Ext.Ajax.request({
+			url: "/LookUp/SyncMedsList",
+			scope: this,
+			theForm : theForm,
+			
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				var LastSyncTime = resp.LastSyncTime;
+				opts.theForm.getForm().setValues({"LastSyncTime" : LastSyncTime});
+				theForm.setLoading(false, false);
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				Ext.MessageBox.alert("Loading Error", "Loading Error", "Can't load last medication synchronization time - <br />" + resp.msg );
+				theForm.setLoading(false, false);
+			}
+		});
+
+	},
+
 	SubmitPharmacyManagement : function(theBtn) {
-		var form = theBtn.up("form").getForm();
-		if (form.isValid()) {
-			var values = form.getValues();
-			form.submit({
-				clientValidation: true,
-				url: "VCFDrugs.php",
-				method: 'POST',
-				success: function(form, action) {
-					form.reset();
- 					Ext.Msg.alert('Pharmacy Management Form Processed successfully');
-				},
-				failure: function(form, action) {
-					Ext.Msg.alert('ooops');
-				}
-			});
-		}
+		var pForm = theBtn.up("form");
+		var form = pForm.getForm();
+		var values = form.getValues();
+		pForm.setLoading("Synchronizing Medication Lists", false);
+		form.submit({
+			clientValidation: true,
+			url: "/LookUp/SyncMedsList",
+			method: 'POST',
+			scope: this,
+			pForm : pForm,
+			success: function(form, action) {
+				var rt = Ext.JSON.decode(action.response.responseText);
+				form.setValues({"LastSyncTime" : rt.LastSyncTime});
+				action.pForm.setLoading(false, false);
+				Ext.Msg.alert("Success", "Pharmacy medication lists successfully synchronized");
+			},
+			failure: function(form, action) {
+				Ext.Msg.alert("Failure", "Pharmacy medication lists could not be synchronized");
+				form.setLoading(false, false);
+			}
+		});
 	},
 
 	selectVistAUser : function(combo) {

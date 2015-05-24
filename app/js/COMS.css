@@ -597,7 +597,9 @@ th.TherapySpacer {
 
 
 
-
+.x-form-display-field {
+	padding-top: 0!important;
+}
 
 th.drug {
 	text-align:right;
@@ -613,6 +615,7 @@ th.drug {
 
 .x-form-item-label em {
     color: red;
+	font-weight:bold!important;
 }
 
 #fluidVolUnit input{
