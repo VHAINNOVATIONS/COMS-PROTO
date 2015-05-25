@@ -2630,33 +2630,6 @@ error_log("Success - Old Style Meds Check");
 
     function SyncMedsListInsertOutPatient($OutPatientMeds, &$jsonRecord) {
         return $this->SyncMedsListInsertPatient($OutPatientMeds, "Out", $jsonRecord);
-/**
-        $MedsList    = json_decode( $OutPatientMeds );
-        $MedsListLen = count($MedsList);
-        $NewMedsInserted = 0;
-        for ($i = 0; $i < $MedsListLen; $i++) {
-            $aMed = $MedsList[$i];
-            $name = $this->escapeString($aMed->{"name"});
-            $IEN = $aMed->{"ien"};
-            $query = "select Lookup_Type_ID from Lookup where Lookup_Type_ID = '$IEN'";
-            $retVal = $this->LookUp->query($query);
-            if (count($retVal) == 0) {
-                $NewMedsInserted .= 1;
-                $query = "Insert into LookUp (Lookup_Type, Name, Lookup_Type_ID, Description) values ('2','$name','$IEN', 'OutPatient')";
-                $retVal = $this->LookUp->query($query);
-
-                if($this->checkForErrors('Insert Medication Failed BP1. ', $retVal)){
-                    error_log("FAILURE - $query");
-                    error_log("FAILURE - " . json_encode($retVal));
-                    $jsonRecord["success"] = "false";
-                    $jsonRecord["msg"] = $this->get("frameworkErr");
-                    return false;
-                }
-            }
-        }
-        $jsonRecord["NumNewOutpatientMedsInserted"] = $NewMedsInserted;
-        return true;
-**/
     }
 
     function SyncMedsListGetLastSyncTime(&$jsonRecord) {
