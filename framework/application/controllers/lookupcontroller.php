@@ -2441,77 +2441,49 @@ where l1.MedID = '$EMedID'";
         return $PatObj;
     }
 
-    function getDrugInfoFromVistA($drugName) {
-error_log("getDrugInfoFromVistA - $drugName");
-        $drugName   = rawurlencode(trim($drugName));
+    function getDrugInfoFromVistA($drugID) {
+        $drugID   = rawurlencode(trim($drugID));
         $MedInfoObj = null;
         if (array_key_exists("DrugList", $_SESSION)) {
             $DrugList = $_SESSION["DrugList"];
-            if (array_key_exists($drugName, $DrugList)) {
-                $MedInfoObj = $DrugList[$drugName];
+            if (array_key_exists($drugID, $DrugList)) {
+                $MedInfoObj = $DrugList[$drugID];
             }
         }
         else {
             $DrugList = array();
         }
         if (!$MedInfoObj) {
-error_log("getDrugInfoFromVistA - No Drug Info in Session Var");
             $nodevista  = new NodeVista();
-            // $drugName   = rawurlencode(trim($drugName));
-            $drugURL    = "medication/name/$drugName";
-            $MedID      = $nodevista->get( $drugURL );
-            $obj        = json_decode( $MedID );
-            $medIEN     = $obj->{"ien"};
-            $medName    = $obj->{"name"};
-            $MedInfo    = $nodevista->get( "order/info/100500/$medIEN" );
+            $MedInfo    = $nodevista->get( "order/info/100500/$drugID" );
             $MedInfoObj = json_decode( $MedInfo );
             $DrugList[$drugName] = $MedInfoObj;
             $_SESSION["DrugList"] = $DrugList;
-error_log("getDrugInfoFromVistA - Pushing Drug Info into Session Var");
-error_log(json_encode($DrugList[$drugName]));
-error_log(json_encode($_SESSION));
         }
-        else {
-error_log("getDrugInfoFromVistA - Drug Info exists in Session Var");
-error_log(json_encode($MedInfoObj));
-error_log(json_encode($_SESSION));
-        }
-
         return $MedInfoObj;
     }
 
-    function DrugInfo($drugName) {
+    function DrugInfo($drugID) {
         // $nodevista               = new NodeVista();
         $jsonRecord              = array( );
         $jsonRecord[ "success" ] = true;
         $records                 = array( );
         $msg                     = "";
 
-        if ("" === $drugName || null === $drugName) {
-            $msg                     = "ERROR: No Drug Name passed";
+        if ("" === $drugID || null === $drugID) {
+            $msg                     = "ERROR: No Drug passed";
             $jsonRecord[ "success" ] = false;
             $jsonRecord[ "msg" ]     = $msg;
             $this->set( "jsonRecord", $jsonRecord );
             return;
         }
         if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
-            // $drugName = rawurlencode(trim($drugName));
-            // $drugURL  = "medication/name/$drugName";
-            // $MedID    = $nodevista->get( $drugURL );
-
-            // $obj      = json_decode( $MedID );
-            // $medIEN   = $obj->{"ien"};
-            // $medName  = $obj->{"name"};
-
-            // $MedInfo = $nodevista->get( "order/info/100500/$medIEN" );
-            // $MedInfoObj      = json_decode( $MedInfo );
-
-            $MedInfoObj = $this->getDrugInfoFromVistA($drugName);
-            $Routes          = $MedInfoObj->{"Route"};
-            $Dosages         = $MedInfoObj->{"Dosage"};
-            $medIEN   = $MedInfoObj->{"Medication"}->{"ien"};
-            $medName  = $MedInfoObj->{"Medication"}->{"name"};
-            $DoseList = array();
+            $MedInfoObj = $this->getDrugInfoFromVistA($drugID);
+            $Routes     = $MedInfoObj->{"Route"};
+            $Dosages    = $MedInfoObj->{"Dosage"};
+            $medIEN     = $MedInfoObj->{"Medication"}->{"ien"};
+            $medName    = $MedInfoObj->{"Medication"}->{"name"};
+            $DoseList   = array();
             foreach($Dosages as $d) {
                 $d1 = explode("^^", $d);
                 $d2 = explode("^", $d1[1]);

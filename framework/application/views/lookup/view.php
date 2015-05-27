@@ -7,7 +7,7 @@
             //display the results 
             foreach ($lookups as $lookup) {
                 echo " {\"id\":\"" . $lookup["id"] . "\", \"type\":\"" . $lookup["type"] . "\", \"name\":\"" . 
-                        $lookup["Name"] . "\", \"description\":\"" . $lookup["Description"] . "\"}";
+                        $lookup["Name"] . "\", \"description\":\"" . $lookup["Description"] . "\", \"IEN\":\"" . $lookup["IEN"] . "\"}";
                 if($rowCount<$numRows){
                     echo ",";
                 }

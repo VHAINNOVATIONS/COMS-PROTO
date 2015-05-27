@@ -950,11 +950,7 @@ $queryStart_DATA = "'$Template_ID',
     }
 
     function selectAll() {
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM " . $this->_table . " WHERE Lookup_Type = 0 and Lookup_Type_ID < 50 OR Lookup_Type_ID > 60 order by 'Name'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "SELECT Lookup_Type_ID as ID, Name, Lookup_Type as type, Description as description FROM " . $this->_table . " WHERE Lookup_Type = 0";
-        }
+        $query = "SELECT ID=Lookup_Type_ID, Name, type=Lookup_Type, description=Description FROM LookUp WHERE Lookup_Type = 0 and (Lookup_Type_ID < 50 OR Lookup_Type_ID > 60) order by 'Name'";
         return $this->query($query);
     }
 
@@ -1058,6 +1054,8 @@ $queryStart_DATA = "'$Template_ID',
         ";
                 break;
         }
+// error_log("Lookup Model - getDataForJson() - $name; $query");
+
         return $this->query($query);
     }
 
@@ -1449,46 +1447,37 @@ error_log("-----------------------------------------------------------");
     }
     
     function selectByNameAndDesc($name, $description) {
+        // Lookup_Type == 2 for Drug
+        // Lookup_Type == 26 for Non Formulary Drug
 
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            if (strtoupper($description) == 'NONFORMADRUG') {
-                $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type IN " .
-                        "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND (upper(Name) = '" . strtoupper($name) . "' " .
-                        "OR upper(Name) = '" . strtoupper($description) . "'))";
-            } else if ('DRUG' == strtoupper($description)) {
-                $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type IN " .
-                        "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = 'UNIT' ) " .
-                        "AND Description NOT IN ('foot','pounds','killograms','centimeters','inches')";
-            } else if ('DRUG' == strtoupper($name)){
-                $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description ".
-                         "FROM LookUp ".
-                         "WHERE Lookup_Type = 2 AND Description = '".$description."' ".
-                         "UNION ".
-                         "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description ".
-                         "FROM LookUp ".
-                         "WHERE Lookup_Type = 26";
-            } else {
-//                $query = "SELECT ID=Lookup_Type, Name, type=Lookup_Type, description=Description FROM LookUp WHERE upper(Name) like '" . strtoupper($description) . "%' AND Lookup_Type = ( 
-//                           SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')";
-                return $this->getLookupInfoById($description);
-            }
-        } else if (DB_TYPE == 'mysql') {
-            if (strtoupper($description) == 'NONFORMADRUG') {
-                $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type IN " .
-                        "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND (upper(Name) = '" . strtoupper($name) . "' " .
-                        "OR upper(Name) = '" . strtoupper($description) . "'))";
-            } else if ('DRUG' == strtoupper($description)) {
-                $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type IN " .
-                        "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = 'UNIT' ) " .
-                        "AND Description NOT IN ('foot','pounds','killograms','centimeters','inches')";
-            } else {
-//                $query = "SELECT Lookup_Type as ID, Name, Lookup_Type as type, Description as description FROM LookUp WHERE upper(Name) like '" . strtoupper($description) . "%' AND Lookup_Type = ( 
-//                            SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = '" . strtoupper($name) . "')";
-                return $this->getLookupInfoById($description);
-            }
+        if (strtoupper($description) == 'NONFORMADRUG') {
+            $query = "SELECT Lookup_ID as id, Lookup_Type as type, Name, Description FROM LookUp WHERE Lookup_Type IN " .
+                    "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND (upper(Name) = '" . strtoupper($name) . "' " .
+                    "OR upper(Name) = '" . strtoupper($description) . "'))";
+        } else if ('DRUG' == strtoupper($description)) {
+            $query = "SELECT Lookup_ID as id, Lookup_Type as type, 
+            Name
+            , Description FROM LookUp WHERE Lookup_Type IN " .
+                    "(SELECT l.Lookup_Type_ID FROM LookUp l WHERE l.Lookup_Type = 0 AND upper(Name) = 'UNIT' ) " .
+                    "AND Description NOT IN ('foot','pounds','killograms','centimeters','inches')";
+        } else if ('DRUG' == strtoupper($name)){
+            $query = "SELECT Lookup_ID as id, Lookup_Type as type, 
+replace(replace(Name, '<', '('), '>', ')') as Name
+, Description, Lookup_Type_ID as IEN
+            FROM LookUp 
+            WHERE Lookup_Type = 2 AND Description = '$description'
+                     UNION 
+                     SELECT Lookup_ID as id, Lookup_Type as type, 
+replace(replace(Name, '<', '('), '>', ')') as Name
+, Description, Lookup_Type_ID as IEN
+                     FROM LookUp 
+                     WHERE Lookup_Type = 26";
+        } else {
+            return $this->getLookupInfoById($description);
         }
-
-
+// error_log("LookUp Model - selectByNameAndDesc() - $name; $description; $query");
+$DrugList = $this->query($query);
+// error_log("LookUp Model - selectByNameAndDesc() - Return Result = " . json_encode($DrugList));
         return $this->query($query);
     }
 
