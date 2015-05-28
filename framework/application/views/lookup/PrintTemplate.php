@@ -192,7 +192,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
     ?>
     </title>
 	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
-	<link rel="stylesheet" type="text/css" href="/app/js/COMS.css">
+	<link rel="stylesheet" type="text/css" href="../../js/COMS.css">
 	<style>
 	div.desc { font-weight: normal; font-style: italic;background:none; }
 	.OEMRecord_Element .header th {

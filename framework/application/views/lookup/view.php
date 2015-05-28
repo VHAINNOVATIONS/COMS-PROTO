@@ -6,8 +6,16 @@
             $rowCount=1;
             //display the results 
             foreach ($lookups as $lookup) {
-                echo " {\"id\":\"" . $lookup["id"] . "\", \"type\":\"" . $lookup["type"] . "\", \"name\":\"" . 
+                if (array_key_exists("IEN", $lookup)) {
+                    $retData = " {\"id\":\"" . $lookup["id"] . "\", \"type\":\"" . $lookup["type"] . "\", \"name\":\"" . 
                         $lookup["Name"] . "\", \"description\":\"" . $lookup["Description"] . "\", \"IEN\":\"" . $lookup["IEN"] . "\"}";
+                }
+                else {
+                    $retData = " {\"id\":\"" . $lookup["id"] . "\", \"type\":\"" . $lookup["type"] . "\", \"name\":\"" . 
+                        $lookup["Name"] . "\", \"description\":\"" . $lookup["Description"] . "\"}";
+                }
+error_log("Lookup View - " . $retData);
+                echo $retData;
                 if($rowCount<$numRows){
                     echo ",";
                 }

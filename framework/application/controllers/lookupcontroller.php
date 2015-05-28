@@ -138,6 +138,7 @@ class LookupController extends Controller {
 
 
     function saveTemplate() {
+error_log("Lookup Controller - saveTemplate() - Entry Point...");
         $form_data = json_decode(file_get_contents('php://input'));
         $temp = json_encode($form_data);
         // Note: $temp['RegimenName'] is the User Optional Name (sometimes referred to as the Description)
@@ -153,13 +154,16 @@ class LookupController extends Controller {
             $regimenName .= $drugname . $amt;
         }
 
+error_log("Lookup Controller - saveTemplate() - Got Regimens");
         $this->LookUp->beginTransaction();
         $lookupinfo = $this->LookUp->getLookupIdByNameAndType($regimenName, 4);
         $templateNum = count($lookupinfo) + 1;
 
         // Builds new Chemotherapy Regimen Name based on versioning scheme
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
+error_log("Lookup Controller - saveTemplate() - Got TemplateName - $templateName");
 
+// Save Template and Regimen name in the Lookup Table
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
         while(null == $templatelookupid[0]["lookupid"]){
             $templateNum++;
@@ -167,12 +171,16 @@ class LookupController extends Controller {
             $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
         }
 
+// Save User Supplied Name in the Lookup Table
         if ($usersuppliedname) {
             $this->LookUp->save(25, $templatelookupid[0]["lookupid"], $usersuppliedname);
         }
 
+error_log("Lookup Controller - saveTemplate() - Name and Alias saved");
+
         $cyclelength = $form_data->{'CycleLength'};
         $this->LookUp->saveExtraFields($regimenName, $cyclelength);
+error_log("Lookup Controller - saveTemplate() - Extra Fields saved");
 
         /**
          * This is just a bandaid because some calls to "/Lookup/saveTemplate" give actual
@@ -191,14 +199,18 @@ class LookupController extends Controller {
 
         $templateid = $this->LookUp->saveTemplate($form_data, $templatelookupid[0]["lookupid"]);
         if($this->checkForErrors("Insert Master Template (in Lookup Controller) Failed. (id=$templateid)", $templateid)){
+error_log("Lookup Controller - saveTemplate() - Insert Master Template Failed");
             $this->LookUp->rollbackTransaction();
             return;
         }
-        
+error_log("Lookup Controller - saveTemplate() - Insert Master Template Passed");
+
         if ($templateid) {
             $templateid = $templateid[0]['lookupid'];
             $references = $form_data->{'References'};
             $this->LookUp->saveTemplateReferences($references, $templateid);
+
+error_log("Lookup Controller - saveTemplate() - Save Pre Therapy");
             $Order_IDR = $form_data->{'Order_IDR'};
             $prehydrations = $form_data->{'PreMHMeds'};
             if ($prehydrations) {
@@ -209,7 +221,11 @@ class LookupController extends Controller {
                     return;
                 }
             }
+error_log("Lookup Controller - saveTemplate() - Pre Therapy Save Complete... ");
 
+
+
+error_log("Lookup Controller - saveTemplate() - Save Post Therapy");
             $posthydrations = $form_data->{'PostMHMeds'};
             if ($posthydrations) {
                 $retVal = $this->LookUp->saveHydrations($posthydrations, 'Post', $templateid, $Order_IDR);
@@ -219,6 +235,7 @@ class LookupController extends Controller {
                 }
             }
 
+error_log("Lookup Controller - saveTemplate() - Save Therapy");
             if ($regimens) {
                 if ($Order_IDR == ''){
                     $Order_IDR = '00000000-0000-0000-0000-000000000000';
@@ -226,6 +243,7 @@ class LookupController extends Controller {
                 $retVal = $this->LookUp->saveRegimen($regimens, $templateid, $Order_IDR);
                 if($this->checkForErrors('Insert Template Regimens Failed.', $retVal)){
                     $this->LookUp->rollbackTransaction();
+error_log("Lookup Controller - saveTemplate() - Save Therapy FAILED");
                     return;
                 }
             }
@@ -236,6 +254,7 @@ class LookupController extends Controller {
             $this->LookUp->rollbackTransaction();
             return;
         }
+error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
 
         $this->set('templateid', $templateid);
         $this->set('frameworkErr', null);
@@ -666,8 +685,8 @@ error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
             $prehydrations = null;
             $infusionMap = null;
             $retVal = $this->LookUp->getHydrations($id, 'pre');
-// error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
-// error_log(json_encode($retVal));
+error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
+error_log(json_encode($retVal));
             if ($retVal) {
                 $prehydrations = $retVal;
                 $infusionMap = array();
@@ -2442,6 +2461,7 @@ where l1.MedID = '$EMedID'";
     }
 
     function getDrugInfoFromVistA($drugID) {
+error_log("Lookup Controller - getDrugInfoFromVistA - ID= $drugID; Entry point");
         $drugID   = rawurlencode(trim($drugID));
         $MedInfoObj = null;
         if (array_key_exists("DrugList", $_SESSION)) {
@@ -2457,9 +2477,10 @@ where l1.MedID = '$EMedID'";
             $nodevista  = new NodeVista();
             $MedInfo    = $nodevista->get( "order/info/100500/$drugID" );
             $MedInfoObj = json_decode( $MedInfo );
-            $DrugList[$drugName] = $MedInfoObj;
+            $DrugList[$drugID] = $MedInfoObj;
             $_SESSION["DrugList"] = $DrugList;
         }
+error_log("Lookup Controller - getDrugInfoFromVistA - ID= $drugID; Info = " . json_encode($DrugList[$drugID]));
         return $MedInfoObj;
     }
 

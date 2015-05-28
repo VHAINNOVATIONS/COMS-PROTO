@@ -249,7 +249,7 @@ class LookUp extends Model {
      */
     public function saveTemplate($formData, $regimenId)
     {
-// error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
+error_log("saveTemplate(LookUp Model) - Entry Point - 3/9/2015");
 
         $cancerId = $formData->Disease;
         $diseaseStage = $formData->DiseaseStage;
@@ -371,15 +371,16 @@ $queryStart_DATA = "'$Template_ID',
             $error .= " No Cancer";
         }
 
+
         $query = $queryStart_CODE . ") VALUES (" . $queryStart_DATA . ")";
-// error_log("saveTemplate - BP3b - $error - $query");
+error_log("saveTemplate - BP3b - $error - $query");
 
         $retVal = $this->query($query);
         if (!empty($retVal['error'])) {
-// error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
+error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
             return $retVal;
         }
-// error_log("saveTemplate - BP4");
+error_log("saveTemplate - BP4");
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
         //$Ret[0] = $Template_ID;
@@ -456,11 +457,33 @@ $queryStart_DATA = "'$Template_ID',
      * @param string $orderId
      * @return array
      */
-    public function saveRegimen($regimens, $templateId, $orderId)
-    {
+    public function saveRegimen($regimens, $templateId, $orderId) {
+error_log("Lookup Model - saveRegimen - Entry Point");
         foreach ($regimens as $regimenObject) {
             $regimen = $regimenObject->data;
-            
+error_log("Lookup Model - saveRegimen - Regimen Obj =" . json_encode($regimen));
+// Regimen Obj = {
+//    "id": "",
+//    "Drug": "ALDOMET ESTER     (METHYLDOPATE INJ ) : 1761",
+//    "Amt": "45",
+//    "Units": "mg",
+//    "Route": "INTRAMUSCULAR : 15",
+//    "Day": "1",
+//    "FluidVol": "",
+//    "InfusionTime": "",
+//    "FlowRate": "",
+//    "Instructions": "",
+//    "FluidType": "",
+//    "Sequence": "1",
+//    "AdminTime": ""
+//}
+$theDrugInfo = explode(" : ", $regimen->Drug);
+$theDrugName = $theDrugInfo[0];
+$theDrugIEN = $theDrugInfo[1];
+$drug = $this->getDrugGUIDByIEN($theDrugIEN);
+$drugId = $drug[0]["id"];
+
+/**
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
             
             if (empty($drugId)) {
@@ -478,7 +501,9 @@ $queryStart_DATA = "'$Template_ID',
                     }
                 }
             }
-            
+**/
+error_log("Lookup Model - saveRegimen - Drug Obj = $theDrugName; $theDrugIEN; " . json_encode($drug));
+
             if (null == $drugId) {
                 $retVal = array(); 
                 $retVal['error'] = "The drug id could not be determined.";
@@ -503,7 +528,7 @@ $queryStart_DATA = "'$Template_ID',
 
 
             $route = $regimen->Route;
-// error_log("Lookup Model - saveRegimen - Route = $route");
+error_log("Lookup Model - saveRegimen - Route = $route");
 
 /*********
             $routeLookup = $this->getLookupIdByNameAndType($route, 12);
@@ -566,14 +591,14 @@ $queryStart_DATA = "'$Template_ID',
                     '$route'
                 )
             ";
-			$retVal = $this->query($query);
-// error_log("Lookup Model - saveRegimen - Query = $query");
+            $retVal = $this->query($query);
+error_log("Lookup Model - saveRegimen - Query = $query");
+error_log("Lookup Model - saveRegimen - Result - " . json_encode($retVal));
 
             if (!empty($retVal['error'])) {
                 return $retVal;
             }
         }
-
         return null;
     }
 
@@ -608,11 +633,18 @@ $queryStart_DATA = "'$Template_ID',
      */
     public function saveHydrations($hydrations, $type, $templateId, $orderId)
     {
+error_log("Lookup Model - saveHydrations() - ");
         foreach ($hydrations as $hydrationObject) {
             $hydration = $hydrationObject->data;
             $drugName = (empty($hydration->drugid)) ? null : $hydration->drugid;
             if ($drugName) {
-                $drug = $this->getLookupIdByNameAndType($drugName, 2);
+error_log("Lookup Model - saveHydrations() - Name - $drugName");
+                $DrugName_IEN = explode ( " : ", $drugName );
+                $drugName = $DrugName_IEN[0];
+                $drugIEN = $DrugName_IEN[1];
+
+                $drug = $this->getDrugGUIDByIEN($drugIEN);
+
                 if ($drug) {
                     $drugId = $drug[0]["id"];
                 } else {
@@ -625,7 +657,7 @@ $queryStart_DATA = "'$Template_ID',
                     }
                 }
             }
-
+error_log("Lookup Model - saveHydrations() - ID - $drugId");
             if (null == $drugId) {
                 $retVal = array(); 
                 $retVal['error'] = "Insert into Medication_Hydration for " . $type .
@@ -662,6 +694,7 @@ $queryStart_DATA = "'$Template_ID',
                     '$orderId'
                 )
             ";
+error_log("Lookup Model - saveHydrations() - $query");
             $retVal = $this->query($query);
             if (!empty($retVal['error'])) {
                 return $retVal;
@@ -1054,7 +1087,7 @@ $queryStart_DATA = "'$Template_ID',
         ";
                 break;
         }
-// error_log("Lookup Model - getDataForJson() - $name; $query");
+error_log("Lookup Model - getDataForJson() - $name; $query");
 
         return $this->query($query);
     }
@@ -1293,7 +1326,7 @@ error_log("LookUp.Model.getRegimens - $query");
                 $query = "
                     select 
                     mh.MH_ID as id, 
-                    lu.Name as drug, 
+replace(replace(lu.Name, '<', '('), '>', ')') as drug, 
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
@@ -1319,7 +1352,7 @@ error_log("LookUp.Model.getRegimens - $query");
                 $query = "
                     select 
                     mh.MH_ID as id, 
-                    lu.Name as drug, 
+replace(replace(lu.Name, '<', '('), '>', ')') as drug, 
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
@@ -1500,10 +1533,21 @@ $DrugList = $this->query($query);
         return $this->query($query);
     }
 
+    function getDrugGUIDByIEN($drugIEN) {
+        $query = "select Lookup_ID as id from LookUp where Lookup_Type_ID = '$drugIEN' and Lookup_Type = 2";
+        return $this->query($query);
+    }
+
+    function getDrugNameByIEN($drugIEN) {
+        $query = "select Name from LookUp where Lookup_Type_ID = '$drugIEN' and Lookup_Type = 2";
+        return $this->query($query);
+    }
+
+
+
     function getLookupIdByNameAndType($name, $type) {
 
-        $query = "select Lookup_ID as id  " .
-                "from LookUp where Name = '" . $name . "' and Lookup_Type = " . $type;
+        $query = "select Lookup_ID as id from LookUp where Name = '$name' and Lookup_Type = $type";
 
         return $this->query($query);
     }

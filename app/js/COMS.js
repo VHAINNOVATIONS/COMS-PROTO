@@ -5774,7 +5774,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"maskRe" : /[0-9\.]/,
 						"fieldLabel" : "Dosage Amount <em>*</em>",
 						"width" : 180,
-						"labelWidth" : 100,
+						"labelWidth" : 130,
 						"allowBlank" : false,
 						"name" : "Amt"
 					},
@@ -6076,7 +6076,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'maskRe' : /[0-9\.]/,
 							'fieldLabel' : 'Dosage Amount <em>*</em>',
 							'width' : 180,
-							'labelWidth' : 120,
+							'labelWidth' : 130,
 							'allowBlank' : false,
 							'name' : 'Amt1'
 						}, 
@@ -13415,7 +13415,7 @@ Ext.define("COMS.view.NewPlan.CTOS.DossageAmt" ,{
 	maskRe  :	/[0-9\.]/,
 	fieldLabel : "Dosage Amount <em class=\"required-field\">*</em>",
 	width : 200,
-	labelWidth : 115
+	labelWidth : 130
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.AdminTime" ,{
