@@ -2,19 +2,22 @@
     
     class OrdersController extends Controller {
         function checkForErrors( $errorMsg, $retVal ) {
-            if ( null != $retVal && array_key_exists( 'error', $retVal ) ) {
-                if ( DB_TYPE == 'sqlsrv' ) {
-                    foreach ( $retVal[ 'error' ] as $error ) {
+            $ErrorCode = "";
+            $this->set('frameworkErrCodes', $ErrorCode);
+            if (null != $retVal && array_key_exists('error', $retVal)) {
+                if (is_string($retVal['error'])) {
+                    $errorMsg .= " " . $retVal['error'];
+                }
+                else {
+                    foreach ($retVal['error'] as $error) {
                         $errorMsg .= "SQLSTATE: " . $error[ 'SQLSTATE' ] . " code: " . $error[ 'code' ] . " message: " . $error[ 'message' ];
                     }
-                } else if ( DB_TYPE == 'mysql' ) {
-                    $errorMsg .= $retVal[ 'error' ];
                 }
-                $this->set( 'frameworkErr', $errorMsg );
                 return true;
             }
             return false;
         }
+
         
         function getMostRecentVitals( $PatientID ) {
             $controller        = 'PatientController';
@@ -435,6 +438,7 @@ End as orderstatus
                 $this->set( 'jsonRecord', $jsonRecord );
                 return;
             }
+error_log("grabOrders4AllPatients - Patients with Active Templates - " . json_encode($patientTemplates));
             
             /*
              * The following is how to instantiate the PatientController class. Doing this allows access
@@ -458,6 +462,8 @@ End as orderstatus
             
             foreach ( $patientTemplates as $patient ) {
                 $PatientID =  $patient[ 'patientID' ];
+error_log("grabOrders4AllPatients - $PatientID");
+
                 $Last_Name = $this->Orders->LookupPatientName( $PatientID );
                 if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
                     $patient[ 'Last_Name' ] = $Last_Name;
@@ -465,8 +471,12 @@ End as orderstatus
                     $patient[ 'Last_Name' ] = '';
                 }
 
+error_log("grabOrders4AllPatients - " . json_encode($patient));
+
                 $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays( $PatientID, $patient[ 'templateID' ] );
                 
+error_log("grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - " . json_encode($oemrecords));
+
                 if ( $this->checkForErrors( 'Get Top Level OEM Data Failed. ', $oemrecords ) ) {
                     $jsonRecord[ 'success' ] = 'false';
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
@@ -475,7 +485,7 @@ End as orderstatus
                 }
 
 
-                error_log("----------------------------------------------------------------------------------");
+                error_log(" ----------------------------------------------------------------------------------");
                 error_log("Get Last Name for Patient - $PatientID = $Last_Name");
                 error_log("Get TopLevelOEMRecordsNextThreeDays for Patient - $PatientID");
                 error_log(json_encode($oemrecords));
@@ -492,7 +502,7 @@ End as orderstatus
                     
 
                 error_log("Get Pre Therapies... for Patient - " . $patient[ 'patientID' ]);
-                error_log(json_encode($retVal));
+                error_log("Pre Therapies - " . json_encode($retVal));
 
 
 
@@ -564,6 +574,8 @@ End as orderstatus
                         array_push( $finalOrders, $orderRecord );
                     }
                 }
+error_log(" ------------------------------------- NEXT PATIENT ---------------------------------------");
+
             }
             $jsonRecord[ 'success' ] = true;
             $jsonRecord[ 'total' ]   = count( $finalOrders );

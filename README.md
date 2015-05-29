@@ -12,3 +12,25 @@ Authentication/Verification Codes for demos.
 Programmer	Provider	Nurse	Pharmacist
 CPRS1234	1radiologist	1nurse	1pharmacist
 CPRS4321$	radiologist1	nurse1	pharmacist1
+
+Note:
+When deleting all templates run the following scripts:
+/*  4 = Template Selector Values with Template Name in Description */
+/* 21 = Cross Reference from Master Template to References Lookups */
+/* 25 = Alias for template name */
+
+select * from LookUp where Lookup_Type_ID = 25 or Lookup_Type_ID = 21 or Lookup_Type_ID = 4
+
+select * from dbo.Medication_Hydration
+select * from dbo.MH_Infusion
+select * from dbo.Template_Regimen
+
+select * from dbo.Master_Template
+select * from dbo.Template_Availability
+select * from dbo.TemplateSupportCare
+select * from dbo.Patient_Assigned_Templates
+select * from dbo.Order_Status
+
+
+Also...
+delete from Order_Status

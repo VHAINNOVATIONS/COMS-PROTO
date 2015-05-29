@@ -383,7 +383,7 @@ error_log("saveTemplate - BP3c - ERROR - " . json_encode($retVal));
 error_log("saveTemplate - BP4");
         $Ret = array();
         $Ret[0] = array("lookupid" =>$Template_ID);
-        //$Ret[0] = $Template_ID;
+
 
         return $Ret;
     }
@@ -403,18 +403,22 @@ error_log("saveTemplate - BP4");
 // error_log("getEmoData - (Entry Point) - $key");
         switch($key) {
             case "1":
+            case "Low":
                 $Label = "Emesis-1";
                 $Label = "Minimal Emetic Risk";
                 break;
             case "2":
+            case "Medium":
                 $Label = "Emesis-2";
                 $Label = "Low Emetic Risk";
                 break;
             case "3":
+            case "Moderate":
                 $Label = "Emesis-3";
                 $Label = "Moderate Emetic Risk";
                 break;
             case "4":
+            case "High":
                 $Label = "Emesis-4";
                 $Label = "High Emetic Risk";
                 break;
@@ -635,6 +639,7 @@ error_log("Lookup Model - saveRegimen - Result - " . json_encode($retVal));
     {
 error_log("Lookup Model - saveHydrations() - ");
         foreach ($hydrations as $hydrationObject) {
+error_log("Lookup Model - saveHydrations() - " . json_encode($hydrationObject));
             $hydration = $hydrationObject->data;
             $drugName = (empty($hydration->drugid)) ? null : $hydration->drugid;
             if ($drugName) {
@@ -1215,21 +1220,13 @@ error_log("Lookup Model - getDataForJson() - $name; $query");
     }
 
     function getTemplateReferences($id) {
-
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-
             $query = "select lu.Name as name, lu.Description as description, lu.Lookup_ID as id " .
                     "FROM LookUp lu where lu.Lookup_ID in (" .
                     "select l1.Description from LookUp l1 where l1.Name = '" . $id . "')";
-        } else if (DB_TYPE == 'mysql') {
-
-
-            $query = "select lu.`Name` as name, lu.`Description` as description, lu.`Lookup_ID` as id " .
-                    "FROM LookUp lu where lu.`Lookup_ID` in (" .
-                    "select l1.`Description` from LookUp l1 where l1.`Name` = '" . $id . "')";
-        }
-
-        return $this->query($query);
+error_log("getTemplateReferences for $id - $query");
+$retVal = $this->query($query);
+error_log("getTemplateReferences Result - " . json_encode($retVal));
+        return $retVal;
     }
 
     function getDiseaseStages($id) {
@@ -1261,7 +1258,7 @@ error_log("Lookup Model - getDataForJson() - $name; $query");
         $q1 = "SELECT 
         tr.Patient_Regimen_ID AS id, 
         tr.Regimen_Number AS regnumber, 
-        l.Name AS drug, 
+(select replace(replace(l.Name, '<', '('), '>', ')') + ' : ' + CAST(l.Lookup_Type_ID AS varchar(100)))AS drug,
         tr.Regimen_Dose AS regdose, 
         l1.Name AS regdoseunit, 
         tr.Regimen_Dose_Pct AS regdosepct, 
@@ -1319,14 +1316,16 @@ error_log("LookUp.Model.getRegimens - $query");
 
 
     function getHydrations($id, $type) {
-        $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
+        $query = "select Reason from Medication_Hydration where Template_ID = '$id'";
+error_log("getHydrations() - $query");
         $retVal = $this->query($query);
+error_log("getHydrations() - ". json_encode($retVal));
         if (count($retVal) > 0) {
             if (isset($retVal[0]["Reason"])) {
                 $query = "
                     select 
                     mh.MH_ID as id, 
-replace(replace(lu.Name, '<', '('), '>', ')') as drug, 
+(select replace(replace(lu.Name, '<', '('), '>', ')') + ' : ' + CAST(lu.Lookup_Type_ID AS varchar(100)))AS drug,
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
@@ -1352,7 +1351,7 @@ replace(replace(lu.Name, '<', '('), '>', ')') as drug,
                 $query = "
                     select 
                     mh.MH_ID as id, 
-replace(replace(lu.Name, '<', '('), '>', ')') as drug, 
+(select replace(replace(lu.Name, '<', '('), '>', ')') + ' : ' + CAST(lu.Lookup_Type_ID AS varchar(100)))AS drug,
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
@@ -1561,11 +1560,8 @@ $DrugList = $this->query($query);
     }
     
     function saveTemplateLevel($templateid, $Location, $NationalLevel, $TemplateOwner) {
-
-        //Insert into Template Availability
         $query = "INSERT INTO Template_Availability (TemplateID,Location,NationalLevel,TemplateOwner) VALUES (".
                  "'$templateid',$Location,'$NationalLevel',$TemplateOwner)";
-        
         return $this->query($query);
         
     }

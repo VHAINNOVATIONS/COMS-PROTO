@@ -11,24 +11,22 @@ function PoCD_Cmp($a, $b) {
     class PatientController extends Controller {
         
         function checkForErrors( $errorMsg, $retVal ) {
-            if ( null != $retVal && array_key_exists( 'error', $retVal ) ) {
-                
-                if ( DB_TYPE == 'sqlsrv' ) {
-                    foreach ( $retVal[ 'error' ] as $error ) {
+            $ErrorCode = "";
+            $this->set('frameworkErrCodes', $ErrorCode);
+            if (null != $retVal && array_key_exists('error', $retVal)) {
+                if (is_string($retVal['error'])) {
+                    $errorMsg .= " " . $retVal['error'];
+                }
+                else {
+                    foreach ($retVal['error'] as $error) {
                         $errorMsg .= "SQLSTATE: " . $error[ 'SQLSTATE' ] . " code: " . $error[ 'code' ] . " message: " . $error[ 'message' ];
                     }
-                } else if ( DB_TYPE == 'mysql' ) {
-                    $errorMsg .= $retVal[ 'error' ];
                 }
-                
-                $this->set( 'frameworkErr', $errorMsg );
-                
                 return true;
             }
-            
             return false;
         }
-        
+
         function MedicationSanityCheck( ) {
             // Get all templates from the Master Template
             $query = "select * from Master_Template";
@@ -711,7 +709,7 @@ $this->Patient->query( $query );
 				'$BSAFormula'
             )
          ";
-// error_log("PatientController._insertOrderStatus - Query = $query");
+error_log("PatientController._insertOrderStatus - Query = $query");
             $this->Patient->query( $query );
             return $GUID;
         }
@@ -1154,6 +1152,8 @@ $this->Patient->query( $query );
         }
         
         function PrePostTherapy( $hydrations, $infusions ) {
+error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydrations));
+error_log("---------------------------");
             $HydrationArray = array( );
             foreach ( $hydrations as $hydration ) {
 // error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydration));
@@ -1587,46 +1587,42 @@ $this->Patient->query( $query );
         }
         
         function Hydrations( $type = null, $id = null ) {
+error_log("Patient Controller - Hydrations() - $type; $id");
+
             $lookup = new LookUp();
-            
             $hydrations = $lookup->getHydrations( $id, $type );
-            
             if ( null != $hydrations && array_key_exists( 'error', $hydrations ) ) {
                 return $hydrations;
             }
-            
+
             $infusionMap     = array( );
             $origInfusionMap = array( );
-            
-            foreach ( $hydrations as $hydration ) {
-                
-                $infusions = $lookup->getMHInfusions( $hydration[ 'id' ] );
-                if ( null != $infusions && array_key_exists( 'error', $infusions ) ) {
-                    return $infusions;
+            if ( null !== $hydrations) {
+    error_log("Hydrations() - Getting Hydration Status - " . json_encode($hydrations));
+    error_log("---------------------------");
+                foreach ( $hydrations as $hydration ) {
+                    $infusions = $lookup->getMHInfusions( $hydration[ 'id' ] );
+                    if ( null != $infusions && array_key_exists( 'error', $infusions ) ) {
+                        return $infusions;
+                    }
+                    $myinfusions = array( );
+                    $origInfusionMap[ $hydration[ 'id' ] ] = $infusions;
+                    for ( $i = 0; $i < count( $infusions ); $i++ ) {
+                        $myinfusion                   = array( );
+                        $myinfusion[ 'amt' ]          = $infusions[ $i ][ 'amt' ];
+                        $myinfusion[ 'unit' ]         = $infusions[ $i ][ 'unit' ];
+                        $myinfusion[ 'type' ]         = $infusions[ $i ][ 'type' ];
+                        $myinfusion[ 'flowRate' ]     = $infusions[ $i ][ 'flowRate' ];
+                        $myinfusion[ 'fluidVol' ]     = $infusions[ $i ][ 'fluidVol' ];
+                        $myinfusion[ 'fluidType' ]    = $infusions[ $i ][ 'fluidType' ];
+                        $myinfusion[ 'infusionTime' ] = $infusions[ $i ][ 'infusionTime' ];
+                        $myinfusion[ 'Order_ID' ]     = $infusions[ $i ][ 'Order_ID' ];
+                        $myinfusion[ 'Order_Status' ] = $this->getOrderStatus( $myinfusion[ 'Order_ID' ] );
+                        $myinfusions[ $i ]->{'data'}  = $myinfusion;
+                    }
+                    $infusionMap[ $hydration[ 'id' ] ] = $myinfusions;
                 }
-                
-                $myinfusions = array( );
-                
-                $origInfusionMap[ $hydration[ 'id' ] ] = $infusions;
-                
-                for ( $i = 0; $i < count( $infusions ); $i++ ) {
-                    $myinfusion                   = array( );
-                    $myinfusion[ 'amt' ]          = $infusions[ $i ][ 'amt' ];
-                    $myinfusion[ 'unit' ]         = $infusions[ $i ][ 'unit' ];
-                    $myinfusion[ 'type' ]         = $infusions[ $i ][ 'type' ];
-                    $myinfusion[ 'flowRate' ]     = $infusions[ $i ][ 'flowRate' ];
-                    $myinfusion[ 'fluidVol' ]     = $infusions[ $i ][ 'fluidVol' ];
-                    $myinfusion[ 'fluidType' ]    = $infusions[ $i ][ 'fluidType' ];
-                    $myinfusion[ 'infusionTime' ] = $infusions[ $i ][ 'infusionTime' ];
-                    $myinfusion[ 'Order_ID' ]     = $infusions[ $i ][ 'Order_ID' ];
-                    $myinfusion[ 'Order_Status' ] = $this->getOrderStatus( $myinfusion[ 'Order_ID' ] );
-                    $myinfusions[ $i ]->{'data'}  = $myinfusion;
-                }
-                $infusionMap[ $hydration[ 'id' ] ] = $myinfusions;
             }
-// error_log("Patient.Controller.Hydrations - infusionMap Data");
-// error_log(json_encode($infusionMap));
-            
             $this->set( $type . 'hydrations', $hydrations );
             $this->set( $type . 'infusions', $infusionMap );
             $this->set( $type . 'origInfusions', $origInfusionMap );

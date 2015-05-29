@@ -150,8 +150,11 @@ error_log("Lookup Controller - saveTemplate() - Entry Point...");
         for ($index = 0; $index < count($regimens); $index++) {
             $regimendata = $regimens[$index]->{'data'};
             $amt = $regimendata->{'Amt'};
-            $drugname = $regimendata->{'Drug'};
-            $regimenName .= $drugname . $amt;
+            $drugInfo = explode(" : ", $regimendata->{'Drug'});
+            $drugname = $drugInfo[0];
+            $drugIEN = $drugInfo[1];
+error_log("Lookup Controller - saveTemplate() - Walking Therapys - " . json_encode($drugname));
+            $regimenName .= "$drugname $amt ";
         }
 
 error_log("Lookup Controller - saveTemplate() - Got Regimens");
@@ -266,7 +269,6 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
         }
 
         $this->LookUp->endTransaction();
-        //Update Template Availability using app/template.php
         $NationalLevel = 'No';
         
         $username = get_current_user();
@@ -276,6 +278,32 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
         $sitelist = $_SESSION['sitelist'];
         $this->LookUp->saveTemplateLevel($templateid,$sitelist,$NationalLevel,$rid);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     function delete() {
 
@@ -665,14 +693,29 @@ error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
             }
 
 error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
+            $EmoLevel = "";
+            if (array_key_exists ("emoLevelNum" , $retVal[0] )) {
             $EmoLevel = $retVal[0]["emoLevelNum"];
+            }
+            else if (array_key_exists ("emoLevel" , $retVal[0] )) {
+                $EmoLevel = $retVal[0]["emoLevel"];
+            }
+            if ("" !== $EmoLevel) {
+                error_log("Lookup Controller - TemplateData - get EMO Data for $EmoLevel");
             $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
+            }
+            else {
+                error_log("Lookup Controller - TemplateData - NO EMO Data for $EmoLevel");
+            }
 
+error_log("Lookup Controller - TemplateData - Getting FNRisk");
             $FNRisk = $retVal[0]["fnRisk"];
             $retVal[0]["fnrDetails"] = $this->LookUp->getNeutroData($FNRisk);
 
             $this->set('templatedata', $retVal);
+error_log("Lookup Controller - TemplateData - " . json_encode($retVal));
 
+error_log("Lookup Controller - getTemplateReferences  - $id");
             $retVal = $this->LookUp->getTemplateReferences($id);
 
             if($this->checkForErrors('Get Template References Failed. ', $retVal)){
@@ -680,7 +723,7 @@ error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
                 return;
             }
             $this->set('references', $retVal);
-
+error_log("Lookup Controller - References - " . json_encode($retVal));
 
             $prehydrations = null;
             $infusionMap = null;
@@ -702,8 +745,8 @@ error_log(json_encode($retVal));
 
 
             $retVal = $this->LookUp->getHydrations($id, 'post');
-// error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
-// error_log(json_encode($retVal));
+error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
+error_log(json_encode($retVal));
 
             $posthydrations = $retVal;
             $infusionMap = array();
@@ -717,8 +760,8 @@ error_log(json_encode($retVal));
 
 
             $retVal = $this->LookUp->getRegimens($id);
-// error_log("Lookup Controller - TemplateData - Got Therapy - ");
-// error_log(json_encode($retVal));
+error_log("Lookup Controller - TemplateData - Got Therapy - ");
+error_log(json_encode($retVal));
 
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);

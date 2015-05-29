@@ -15,7 +15,7 @@
             from Patient_Assigned_Templates pat 
             join Patient p on p.Patient_ID = pat.Patient_ID
             WHERE Date_Ended_Actual is NULL";
-            
+
             return $this->query( $query );
         }
         
