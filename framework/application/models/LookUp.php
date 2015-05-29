@@ -486,6 +486,7 @@ $theDrugName = $theDrugInfo[0];
 $theDrugIEN = $theDrugInfo[1];
 $drug = $this->getDrugGUIDByIEN($theDrugIEN);
 $drugId = $drug[0]["id"];
+error_log("saveRegimen drugID = $drugId");
 
 /**
             $drugId = (empty($regimen->drugid)) ? null : $regimen->drugid;
@@ -1534,7 +1535,10 @@ $DrugList = $this->query($query);
 
     function getDrugGUIDByIEN($drugIEN) {
         $query = "select Lookup_ID as id from LookUp where Lookup_Type_ID = '$drugIEN' and Lookup_Type = 2";
-        return $this->query($query);
+error_log("getDrugGUIDByIEN($drugIEN) = $query");
+        $retVal = $this->query($query);
+error_log("getDrugGUIDByIEN($drugIEN) = " . json_encode($retVal));
+        return $retVal;
     }
 
     function getDrugNameByIEN($drugIEN) {

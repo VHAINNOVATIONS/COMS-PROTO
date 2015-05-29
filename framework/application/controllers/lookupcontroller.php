@@ -725,21 +725,29 @@ error_log("Lookup Controller - getTemplateReferences  - $id");
             $this->set('references', $retVal);
 error_log("Lookup Controller - References - " . json_encode($retVal));
 
+
+
+
+
             $prehydrations = null;
             $infusionMap = null;
             $retVal = $this->LookUp->getHydrations($id, 'pre');
 error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
 error_log(json_encode($retVal));
+
+
             if ($retVal) {
                 $prehydrations = $retVal;
                 $infusionMap = array();
-                foreach ($prehydrations as $prehydration) {
-                    $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
-                    $infusionMap[$prehydration['id']] = $infusions;
+                if ( count($retVal) > 0 ) {
+                    foreach ($prehydrations as $prehydration) {
+                        $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
+                        $infusionMap[$prehydration['id']] = $infusions;
+                    }
                 }
+                $this->set('prehydrations', $prehydrations);
+                $this->set('preinfusions', $infusionMap);
             }
-            $this->set('prehydrations', $prehydrations);
-            $this->set('preinfusions', $infusionMap);
 
 
 
@@ -748,25 +756,27 @@ error_log(json_encode($retVal));
 error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
 error_log(json_encode($retVal));
 
-            $posthydrations = $retVal;
-            $infusionMap = array();
-            foreach ($posthydrations as $posthydration) {
-                $infusions = $this->LookUp->getMHInfusions($posthydration['id']);
-                $infusionMap[$posthydration['id']] = $infusions;
+            if ( count($retVal) > 0 ) {
+                $posthydrations = $retVal;
+                $infusionMap = array();
+                foreach ($posthydrations as $posthydration) {
+                    $infusions = $this->LookUp->getMHInfusions($posthydration['id']);
+                    $infusionMap[$posthydration['id']] = $infusions;
+                }
+                $this->set('posthydrations', $posthydrations);
+                $this->set('postinfusions', $infusionMap);
             }
-            $this->set('posthydrations', $posthydrations);
-            $this->set('postinfusions', $infusionMap);
 
 
 
             $retVal = $this->LookUp->getRegimens($id);
 error_log("Lookup Controller - TemplateData - Got Therapy - ");
 error_log(json_encode($retVal));
-
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
                 $this->set('templatedata', null);
                 return;
             }
+
             if (count($retVal) > 0) {
                 if (!isset($retVal[0]["id"])) {
                     $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');

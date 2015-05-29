@@ -14,23 +14,37 @@ CPRS1234	1radiologist	1nurse	1pharmacist
 CPRS4321$	radiologist1	nurse1	pharmacist1
 
 Note:
-When deleting all templates run the following scripts:
 /*  4 = Template Selector Values with Template Name in Description */
 /* 21 = Cross Reference from Master Template to References Lookups */
 /* 25 = Alias for template name */
 
-select * from LookUp where Lookup_Type_ID = 25 or Lookup_Type_ID = 21 or Lookup_Type_ID = 4
+Finding Template Information
 
-select * from dbo.Medication_Hydration
-select * from dbo.MH_Infusion
-select * from dbo.Template_Regimen
+This should list all basic template definitions
+select * from dbo.Master_Template where Patient_ID is null <-- Master Template Definition Records
 
-select * from dbo.Master_Template
-select * from dbo.Template_Availability
-select * from dbo.TemplateSupportCare
-select * from dbo.Patient_Assigned_Templates
-select * from dbo.Order_Status
+This should specify the Pre/Post/Therapy meds that are part of a template
+select * from dbo.Medication_Hydration where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
+select * from dbo.MH_Infusion where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
+select * from dbo.Template_Regimen where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
 
 
-Also...
-delete from Order_Status
+select * from dbo.Template_Availability <-- Defines the location that the Template (TemplateID which matches the Master_Template Template_ID from above) is assigned to (My/Local/National)
+
+select * from dbo.TemplateSupportCare <-- No idea...
+
+
+select * from dbo.Patient_Assigned_Templates <-- Specifies the unique Instance (via PAT_ID) that a particular template (from by Template_ID from Master Template above) is currently being used to treate a patient (via Date_Ended_Actual !== NULL; Is_Active tells if the template being used is currently active or has been supersceeded by a new version)
+
+select * from dbo.Order_Status <-- Specifies the individual orders (for a given drug on a given day) via the Template_ID (from by Template_ID from Master Template above), PAT_ID (from Patient_Assigned_Templates above), Patient_ID
+
+
+
+To clear out Templates assigned, but keeping the template definitions ...
+delete from Master_Template where Patient_ID is NOT null
+delete from Medication_Hydration where Order_ID != '00000000-0000-0000-0000-000000000000'
+delete from MH_Infusion where Order_ID != '00000000-0000-0000-0000-000000000000'
+delete from Template_Regimen where Order_ID != '00000000-0000-0000-0000-000000000000'
+delete from Patient_Assigned_Templates
+delete from Order_Status where Order_ID != '00000000-0000-0000-0000-000000000000'
+
