@@ -58,15 +58,14 @@ function getReferences($references) {
 
 function renderTherapy($tData, $tag, $hydrations, $infusions) {
 ?>
-<table border="1" class="InformationTable">
-<tbody>
-	<tr>
-		<th colspan="8" style="text-align: left; border: none !important;">
+	<tr class="TemplateHeader">
+		<th colspan="8" style="text-align: left; border-bottom-width:0;">
 			<h2 style="text-align: left;"><?php echo $tag;?> Therapy</h2>
 		</th>
 	</tr>
 
-	<tr><th colspan="8" style="text-align: left; border: none !important; font-weight: normal;">Instructions: 
+	<tr class="TemplateHeader">
+    <th colspan="8" style="text-align: left!important; font-weight: bold; border-top-width:0;">Instructions:
 
 	<?php 
 		if ("Pre" === $tag) {
@@ -94,10 +93,12 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 
 	<?php
 	foreach($hydrations as $hydration) {
+        $drug = explode(' : ', $hydration['drug']);
+        $drug = $drug[0];
 		if ("" !== $tag) {
 			$infusion = $infusions[$hydration['id']][0];
 			//Pre/Post Therapy Section Hydration - 
-			$drug = $hydration['drug'];
+			//$drug = $hydration['drug'];
 			$dose = $infusion['amt'];
 			$units = $infusion['unit'];
 			$route = $infusion['type'];
@@ -119,7 +120,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		}
 		else {
 			//Therapy Section Hydration - 
-			$drug = $hydration['drug'];
+			//$drug = $hydration['drug'];
 			$dose = $hydration['regdose'];
 			$units = $hydration['regdoseunit'];
 			$route = $hydration['route'];
@@ -173,7 +174,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		echo "</tr>\n";
 	}
 	?>
-</tbody></table>
+<!-- </tbody></table> -->
 <?php
 }
 ?>
@@ -240,9 +241,13 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 	}
 	else {
 		renderTemplateHeading($templatedata[0], $references);
+        echo "<table style=\"border:none;\" class=\"InformationTable\"><tbody>";
 		renderTherapy($templatedata[0], "Pre", $prehydrations, $preinfusions);
+        echo "<tr><td style=\"border-left-width: 0; border-right-width:0; colspan=\"8\">&nbsp;</td></tr>";
 		renderTherapy($templatedata[0], "", $regimens, "");
+        echo "<tr><td style=\"border-left-width: 0; colspan=\"8\">&nbsp;</td></tr>";
 		renderTherapy($templatedata[0], "Post", $posthydrations, $postinfusions);
+        echo "</table>";
 	}
 	?>
 	</section>

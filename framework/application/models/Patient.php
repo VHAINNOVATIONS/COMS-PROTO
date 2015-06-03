@@ -94,7 +94,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
             FROM Patient_Assigned_Templates 
             WHERE Date_Ended_Actual is null and Patient_ID = '$patientId'
         ";
-    error_log("savePatientTemplate $query");
+    error_log("terminateOutstandingRegimens $query");
         $results = $this->query($query);
 
         if ($results) {
@@ -107,7 +107,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
                         Date_Ended_Actual = $dateEndedValue
                     WHERE PAT_ID = '$id'
                 ";
-    error_log("savePatientTemplate $query");
+    error_log("terminateOutstandingRegimens $query");
     /////////////$this->query($query);
         
         /**
@@ -121,7 +121,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
                     WHERE Patient_ID = '$patientId' 
                         AND Template_ID = '$templateId'
                 ";
-    error_log("savePatientTemplate $query");
+    error_log("terminateOutstandingRegimens $query");
     /////////////$this->query($query);
             }
         }
@@ -150,6 +150,12 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
             $this->addNewBSAFormula($patientID, $wt, $BSAFormula, $usr);
         }
 
+
+    
+    
+    
+    
+    
     public function savePatientTemplate($formData) {
 error_log("savePatientTemplate Form - " . json_encode($formData));
 
@@ -216,7 +222,9 @@ error_log("savePatientTemplate Form - " . json_encode($formData));
                     '$bsaFormula',
                     '$clinicalTrial'
                 )";
+error_log("Patient Model - savePatientTemplate() - POST process - $query");
             $retValue = $this->query($query);
+error_log("Patient Model - savePatientTemplate() - POST process - return from Query - \n\n" . json_encode($retValue));
 
             /**
              * OrdersNotify in app/workflow.php

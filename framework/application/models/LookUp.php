@@ -512,6 +512,7 @@ error_log("Lookup Model - saveRegimen - Drug Obj = $theDrugName; $theDrugIEN; " 
             if (null == $drugId) {
                 $retVal = array(); 
                 $retVal['error'] = "The drug id could not be determined.";
+error_log("Lookup Model - saveRegimen - The drug id could not be determined.");
                 return $retVal;
             }
             
@@ -528,6 +529,7 @@ error_log("Lookup Model - saveRegimen - Drug Obj = $theDrugName; $theDrugIEN; " 
             if (null == $unitId) {
                 $retVal = array(); 
                 $retVal['error'] = "The unit id could not be determined.";
+error_log("Lookup Model - saveRegimen - The unit id could not be determined.");
                 return $retVal;
             }
 
@@ -601,9 +603,11 @@ error_log("Lookup Model - saveRegimen - Query = $query");
 error_log("Lookup Model - saveRegimen - Result - " . json_encode($retVal));
 
             if (!empty($retVal['error'])) {
+error_log("Lookup Model - saveRegimen - " . $retVal['error']);
                 return $retVal;
             }
         }
+error_log("Lookup Model - saveRegimen - Return NULL");
         return null;
     }
 
@@ -1254,6 +1258,7 @@ error_log("getTemplateReferences Result - " . json_encode($retVal));
     {
 
         $query = "select Reason from Template_Regimen Reason where Template_ID = '$id'";
+error_log("Lookup.Model - getRegimens() - First Query - $query");
         $retVal = $this->query($query);
 
         $q1 = "SELECT 
@@ -1308,11 +1313,13 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
             else {
                 $query = $q1 . $q1a . $q1Join . $q1AJoin . $q1Where;
             }
-error_log("LookUp.Model.getRegimens - $query");
+error_log("LookUp.Model.getRegimens Second Query- $query");
             $retVal = $this->query($query);
         }
+        else {
+error_log("LookUp.Model.getRegimens No Records; Last Query returns - " . json_encode($retVal));
+        }
         return $retVal;
-
     }
 
 
@@ -1521,8 +1528,7 @@ $DrugList = $this->query($query);
 
 
     function getLookupInfoById($id) {
-
-        $query = "select Lookup_ID as id, Lookup_Type as type, Name, Description " .
+        $query = "select Lookup_ID as id, Lookup_Type as type, Lookup_Type_ID, Name, Description " .
                 "from LookUp where Lookup_ID = '" . $id . "'";
 
         return $this->query($query);

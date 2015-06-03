@@ -16398,6 +16398,9 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	}, {
 		header: "<div>Drug</div>",
 		dataIndex: "drug",
+		renderer: function(v) {
+			return v.split(" : ")[0];
+		},
 		width: 200,
 		sortable: true,
 		align: "left"

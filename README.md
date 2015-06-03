@@ -18,8 +18,20 @@ Note:
 /* 21 = Cross Reference from Master Template to References Lookups */
 /* 25 = Alias for template name */
 
-Finding Template Information
 
+
+
+
+Apply Template to Patient...
+Patient Controller - savePatientTemplate
+calls
+Patient Controller - createOEMRecords
+To create all the Records in the Master_Template, Template_Regimen, Medication_Hydration and MH_Infusion tables...
+-------------------
+
+
+
+Finding Template Information
 This should list all basic template definitions
 select * from dbo.Master_Template where Patient_ID is null <-- Master Template Definition Records
 
@@ -27,7 +39,6 @@ This should specify the Pre/Post/Therapy meds that are part of a template
 select * from dbo.Medication_Hydration where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
 select * from dbo.MH_Infusion where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
 select * from dbo.Template_Regimen where Order_ID = '00000000-0000-0000-0000-000000000000' <-- Template Authored Records
-
 
 select * from dbo.Template_Availability <-- Defines the location that the Template (TemplateID which matches the Master_Template Template_ID from above) is assigned to (My/Local/National)
 
@@ -47,4 +58,44 @@ delete from MH_Infusion where Order_ID != '00000000-0000-0000-0000-000000000000'
 delete from Template_Regimen where Order_ID != '00000000-0000-0000-0000-000000000000'
 delete from Patient_Assigned_Templates
 delete from Order_Status where Order_ID != '00000000-0000-0000-0000-000000000000'
+
+to Delete the actual Template Definitions:
+
+First remove the Template Name, Alias and Cross Reference from the Lookup Table (Note the Cross Reference doesn't appear to be used)
+delete from Lookup where Lookup_Type = 4 or Lookup_Type = 21 or Lookup_Type = 25
+
+Remove all template definitions (both the definition, eg Patient_ID is NULL, and the individual records for a template (Patient_ID is NOT Null but the Template_ID matches the Template_ID of the Patient_ID is NULL record)
+delete from Master_Template
+
+Remove the reference to the template for the location it's assigned to
+delete from dbo.Template_Availability
+
+Remove the individual Medication Definitions for the Template
+Pre/Post
+delete from Medication_Hydration
+delete from MH_Infusion
+
+Therapy
+delete from Template_Regimen
+
+Then the information that links patients to a specific instance of a template
+delete from dbo.Patient_Assigned_Templates
+
+Clean out any Orders (note this is the ONLY place we need to keep that "null" record)
+delete from Order_Status where Order_ID != '00000000-0000-0000-0000-000000000000'
+
+
+
+
+So in a nutshell run the following script:
+delete from Lookup where Lookup_Type = 4 or Lookup_Type = 21 or Lookup_Type = 25
+delete from dbo.Master_Template
+delete from dbo.Template_Availability
+delete from dbo.Medication_Hydration
+delete from dbo.MH_Infusion
+delete from dbo.Template_Regimen
+delete from dbo.Patient_Assigned_Templates 
+delete from Order_Status where Order_ID != '00000000-0000-0000-0000-000000000000'
+
+
 

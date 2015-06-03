@@ -462,7 +462,8 @@ error_log("grabOrders4AllPatients - Patients with Active Templates - " . json_en
             
             foreach ( $patientTemplates as $patient ) {
                 $PatientID =  $patient[ 'patientID' ];
-error_log("grabOrders4AllPatients - $PatientID");
+                $ActiveTemplateID = $patient[ 'templateID' ];
+error_log("grabOrders4AllPatients - $PatientID; $ActiveTemplateID");
 
                 $Last_Name = $this->Orders->LookupPatientName( $PatientID );
                 if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
@@ -470,45 +471,112 @@ error_log("grabOrders4AllPatients - $PatientID");
                 } else {
                     $patient[ 'Last_Name' ] = '';
                 }
-
 error_log("grabOrders4AllPatients - " . json_encode($patient));
 
-                $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays( $PatientID, $patient[ 'templateID' ] );
-                
-error_log("grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - " . json_encode($oemrecords));
-
+                $oemrecords = $patientModel->getTopLevelOEMRecordsNextThreeDays( $PatientID, $ActiveTemplateID );
                 if ( $this->checkForErrors( 'Get Top Level OEM Data Failed. ', $oemrecords ) ) {
                     $jsonRecord[ 'success' ] = 'false';
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-
-
-                error_log(" ----------------------------------------------------------------------------------");
-                error_log("Get Last Name for Patient - $PatientID = $Last_Name");
-                error_log("Get TopLevelOEMRecordsNextThreeDays for Patient - $PatientID");
-                error_log(json_encode($oemrecords));
+error_log(" ----------------------- grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - -----------------------------------------------------------");
+error_log("Get Last Name for Patient - $PatientID = $Last_Name");
+error_log("Get TopLevelOEMRecordsNextThreeDays for Patient - $PatientID");
+error_log(json_encode($oemrecords));
+/******************** NEW CODE ********************************/
 
                 foreach ( $oemrecords as $oemrecord ) {
-                    $retVal = $patientController->Hydrations( 'pre', $oemrecord[ 'TemplateID' ] );
+                    $TempID = $oemrecord[ 'TemplateID' ];
+                    $query = "select Order_Status, Drug_Name, Order_Type, Template_ID, Order_ID, Amt, Unit, Route, flvol, FlowRate, Order_ID, CONVERT(varchar(10), Admin_Date, 101) as adminDate from Order_Status where Template_IDMT = '$TempID'";
+
+$query = "select 
+os.Order_Status, 
+os.Drug_Name, 
+os.Order_Type, 
+os.Template_ID, 
+os.Order_ID, 
+os.Amt, 
+os.Unit, 
+os.Route, 
+os.flvol, 
+os.FlowRate, 
+os.Order_ID, 
+CONVERT(varchar(10), os.Admin_Date, 101) as adminDate,
+mhi.Fluid_Type
+from Order_Status os 
+left outer join MH_Infusion mhi on mhi.Order_ID = os.Order_ID
+where os.Template_IDMT = '$TempID'";
                     
+                    $OrdersData = $this->Orders->query( $query );
+                    if ( $this->checkForErrors( 'Get Orders Failed. ', $OrdersData ) ) {
+                        $jsonRecord[ 'success' ] = 'false';
+                        $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
+                        $this->set( 'jsonRecord', $jsonRecord );
+                        return;
+                    }
+
+                    $finalOrders   = array( );
+                    foreach ( $OrdersData as $orderRecord ) {
+                        $Type = $orderRecord[ 'Order_Type' ];
+                        $AnOrder = array();
+                        $AnOrder['patientID'] = $PatientID;
+                        $AnOrder['Last_Name'] = $Last_Name;
+                        $AnOrder['dfn'] = '';
+                        $AnOrder['CourseNum'] = '';
+                        $AnOrder['templateID'] = $orderRecord[ 'Template_ID' ];
+                        $AnOrder['adminDay'] = '';
+                        $AnOrder['adminDate'] = $orderRecord[ 'adminDate' ];
+                        $AnOrder['drug'] = $orderRecord[ 'Drug_Name' ];
+                        $AnOrder['type'] = $Type . ($Type == "Therapy" ? "" : " Therapy");
+                        $AnOrder['typeOrder'] = '';
+                        $AnOrder['dose'] = $orderRecord[ 'Amt' ];
+                        $AnOrder['unit'] = $orderRecord[ 'Unit' ];
+                        $AnOrder['route'] = $orderRecord[ 'Route' ];
+                        $AnOrder['fluidVol'] = $orderRecord[ 'flvol' ];
+                        $AnOrder['fluidType'] = $orderRecord[ 'Fluid_Type' ];
+                        $AnOrder['flowRate'] = $orderRecord[ 'FlowRate' ];
+                        $AnOrder['instructions'] = '';
+                        $AnOrder['Order_ID'] = $orderRecord[ 'Order_ID' ];
+                        $AnOrder['orderid']  = $orderRecord[ 'Order_ID' ];
+                        $AnOrder['orderstatus'] = $orderRecord[ 'Order_Status' ];
+
+/**************
+                        $templateId  = $orderRecord[ 'Template_ID' ];
+                        $drug        = $orderRecord[ 'Drug_Name' ];
+                        $PID         = $orderRecord[ 'Patient_ID' ];
+                        $Order_ID    = $orderRecord[ 'Order_ID' ];
+                        $orderStatus = $orderRecord[ 'Order_Status' ];
+                        $orderid     = $orderRecord[ 'Order_ID' ];
+
+
+                        $orderRecord[ 'patientID' ]   = $PatientID;
+                        $orderRecord[ 'Last_Name' ]   = $Last_Name;
+
+                        $orderRecord[ 'orderstatus' ] = $orderStatus;
+                        $orderRecord[ 'orderid' ]     = $orderid;
+                        $orderRecord[ 'dose' ]        = $orderRecord[ 'Amt' ];
+                        $orderRecord[ 'unit' ]        = $orderRecord[ 'Unit' ];
+/******************/
+                        array_push( $finalOrders, $AnOrder );
+                    }
+                }
+
+/**************************************/
+
+
+
+/******************* START OLD CODE **************************************
+error_log("OEM Record Data for Template ID = $TempID");
+
+                    $retVal = $patientController->Hydrations( 'pre', $TempID );
                     if ( $this->checkForErrors( 'Get Pre Therapy Failed. ', $retVal ) ) {
                         $jsonRecord[ 'success' ] = 'false';
                         $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                         $this->set( 'jsonRecord', $jsonRecord );
                         return;
                     }
-                    
-
-                error_log("Get Pre Therapies... for Patient - " . $patient[ 'patientID' ]);
-                error_log("Pre Therapies - " . json_encode($retVal));
-
-
-
-
-
-
+// error_log("Pre Therapies - " . json_encode($retVal));
                     $preTherapys              = $patientController->get( 'prehydrations' );
                     $preTherapyDoseDetailsMap = $patientController->get( 'preorigInfusions' );
                     $preTherapyCount          = count( $preTherapys );
@@ -519,13 +587,15 @@ error_log("grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - " . jso
 
 
 
-                    $retVal          = $patientController->Hydrations( 'post', $oemrecord[ 'TemplateID' ] );
+
+                    $retVal                   = $patientController->Hydrations( 'post', $TempID );
                     if ( $this->checkForErrors( 'Get Post Therapy Failed. ', $retVal ) ) {
                         $jsonRecord[ 'success' ] = 'false';
                         $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                         $this->set( 'jsonRecord', $jsonRecord );
                         return;
                     }
+// error_log("Post Therapies - " . json_encode($retVal));
                     $postTherapys              = $patientController->get( 'posthydrations' );
                     $postTherapyDoseDetailsMap = $patientController->get( 'postorigInfusions' );
                     $postTherapyCount          = count( $postTherapys );
@@ -536,24 +606,26 @@ error_log("grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - " . jso
 
 
 
-
-                    $retVal = $patientController->Regimens( $oemrecord[ 'TemplateID' ] );
-                    
+error_log("Orders Controller - grabOrders4AllPatients() - ------------------------ Get Therapies ------------------------");
+                    $retVal = $patientController->Regimens( $ActiveTemplateID );
                     if ( $this->checkForErrors( 'Get Therapy Failed. ', $retVal ) ) {
                         $jsonRecord[ 'success' ] = 'false';
                         $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                         $this->set( 'jsonRecord', $jsonRecord );
                         return;
                     }
-                    
+error_log("Orders Controller - grabOrders4AllPatients() - Therapies - " . json_encode($retVal));
+
+
                     $regimens     = $patientController->get( 'regimens' );
                     $regimenCount = count( $regimens );
                     $type         = 'Therapy';
                     $typeOrder    = 2;
                     
                     $tmpOemRecord = $this->analyzeTherapys( $regimenCount, $regimens, $type, $typeOrder, $patient, $oemrecord );
-                    
                     $modOemRecords = array_merge( $modOemRecords, $tmpOemRecord );
+
+                    
                     $finalOrders   = array( );
                     foreach ( $modOemRecords as $orderRecord ) {
                         $templateId  = $orderRecord[ 'templateID' ];
@@ -573,7 +645,8 @@ error_log("grabOrders4AllPatients - getTopLevelOEMRecordsNextThreeDays - " . jso
                         }
                         array_push( $finalOrders, $orderRecord );
                     }
-                }
+ ******************* END OLD CODE **************************************/
+
 error_log(" ------------------------------------- NEXT PATIENT ---------------------------------------");
 
             }
@@ -720,9 +793,11 @@ error_log(" ------------------------------------- NEXT PATIENT -----------------
         
         
         private function analyzeTherapys( $therapyCount, $therapys, $type, $typeOrder, $patient, $oemrecord, $therapyDoseDetailsMap = null ) {
-            
             $modtmpOemRecord = array( );
-            
+
+error_log("Orders Controller; analyzeTherapys() - Type = $type; TypeOrder - $typeOrder; Count = $therapyCount; \n\n" . json_encode($therapys) . " \n\n" . json_encode($oemrecord));
+
+
             if ( $therapyCount ) {
                 foreach ( $therapys as $therapy ) {
                     if ( 'Therapy' === $type ) {

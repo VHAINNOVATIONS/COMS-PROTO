@@ -153,7 +153,7 @@ error_log("Lookup Controller - saveTemplate() - Entry Point...");
             $drugInfo = explode(" : ", $regimendata->{'Drug'});
             $drugname = $drugInfo[0];
             $drugIEN = $drugInfo[1];
-error_log("Lookup Controller - saveTemplate() - Walking Therapys - " . json_encode($drugname));
+error_log("Lookup Controller - saveTemplate() - Walking Therapys - " . $regimendata->{'Drug'} . " - " . json_encode($drugname));
             $regimenName .= "$drugname $amt ";
         }
 
