@@ -8149,8 +8149,8 @@ Ext.define("COMS.view.Common.selCTOSTemplate", {
 			"xtype" : "box", "autoEl" : "div", "cls" : "centeredMsg", "name" : "AllTemplatesShownMsg", 
 			"html" : "All templates now available for selection", "hidden" : true 
 		},
-		{ "xtype" : "selDiseaseAndStage", "margin" : "5 0 5 0" },
-		{ "xtype" : "selTemplate", "name" :"AllTemplates"}
+		{ "xtype" : "selTemplate", "name" :"AllTemplates"},
+		{ "xtype" : "selDiseaseAndStage", "margin" : "5 0 5 0" }
 	]
 });
 
@@ -17052,6 +17052,9 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	getNewTemplateForm : function( thisTab ) {
 		return thisTab.down("CreateNewTemplate");
 	},
+	getNewTemplateDiseaseAndStage : function( thisTab ) {
+		return thisTab.down("selDiseaseAndStage");
+	},
 
 
 	HideSelectedTemplateForm : function() {
@@ -17065,6 +17068,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var thisTab = this.getAuthoringTab();
 		this.getCourseInfo(thisTab).show();
 		this.getNewTemplateForm(thisTab).show();
+		this.getNewTemplateDiseaseAndStage(thisTab).show();
 		if (theTemplate) {
 			this.selTemplateChange(theTemplate);
 		}
@@ -17228,34 +17232,46 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 	afterCTOSLoaded: function (template) {
+		var disease, diseaseRecord;
 		wccConsoleLog("CTOS Loaded - Processing");
 		this.SelectedTemplate = template;
 		this.getAnyMedReminders4Template( template.internalId );
 		this.getExistingCourseInfo().show();
 		this.getNewTemplate().show();
-		var disease = this.getExistingDisease();
-		var diseaseRecord = disease.getStore().getById(template.data.Disease);
-		if(null === diseaseRecord){
-			var authorCtl = this.getController("Authoring.AuthoringTab");
-			var SelectedDiseaseID = disease.getValue();
-			if (!SelectedDiseaseID) {
-				SelectedDiseaseID = template.data.Disease;
-			}
-			disease.getStore().load({
-				params: {
-						URL: Ext.URLs.DiseaseType + "/",
-						ID: SelectedDiseaseID
-				},
-				callback: function (records, operation, success) {
-						if (success) {
-							diseaseRecord = disease.getStore().getById(disease.getValue());
-							authorCtl.LoadFormWithExistingData(template);
-						}else{
-							this.application.unMask();
-							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
-						}
+		if ("" !== template.data.Disease) {
+			disease = this.getExistingDisease();
+			diseaseRecord = disease.getStore().getById(template.data.Disease);
+			if(null === diseaseRecord){
+				var authorCtl = this.getController("Authoring.AuthoringTab");
+				var SelectedDiseaseID = disease.getValue();
+				if (!SelectedDiseaseID) {
+					SelectedDiseaseID = template.data.Disease;
 				}
-			});
+				disease.getStore().load({
+					scope : this,
+					params: {
+							URL: Ext.URLs.DiseaseType + "/",
+							ID: SelectedDiseaseID
+					},
+					callback: function (records, operation, success) {
+							if (success) {
+								diseaseRecord = disease.getStore().getById(operation.params.ID);
+								template.data.Disease = diseaseRecord.data.id;
+								template.data.DiseaseName = diseaseRecord.data.name;
+
+								authorCtl.LoadFormWithExistingData(template);
+							}else{
+								this.application.unMask();
+								Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
+							}
+					}
+				});
+			}
+			else {
+				template.data.Disease = diseaseRecord.data.id;
+				template.data.DiseaseName = diseaseRecord.data.name;
+				this.LoadFormWithExistingData(template);
+			}
 		}
 		else {
 			this.LoadFormWithExistingData(template);
@@ -17270,6 +17286,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.getTemplateAlias().setValue(template.data.Description);
 		this.getExistingDisease().setValue(template.data.Disease);
 		this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
+		this.application.Cancer = [];
+		this.application.Cancer.Stage = [];
+		this.application.Cancer.id = template.data.Disease;
+		this.application.Cancer.name = template.data.DiseaseName;
+		this.application.Cancer.Stage.id = template.data.DiseaseStage[0].id
+		this.application.Cancer.Stage.name = template.data.DiseaseStage[0].name;
 		this.getCourseNum().setValue(template.data.CourseNum);
 		this.getCourseNumMax().setValue(template.data.CourseNumMax);
 		this.getCycleLength().setValue(template.data.CycleLength);
@@ -17930,12 +17952,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		if (ckRec.hasRecord) {
 			wccConsoleLog('Remove Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
 			var reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',
+				id: ckRec.record.get('id'),
 				value: ckRec.record.get('Reference'),
-				description: ckRec.record.get('ReferenceLink'),
-				lookupid: ckRec.record.get('id')
+				description: ckRec.record.get('ReferenceLink')
 			});
-
+/************** this attempts to remove the reference from the Lookup Table NOT the Template *****************
 			reference.destroy({
 				scope: this,
 				success: function (data) {
@@ -17944,6 +17965,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					this.getEditReference().disable();
 				}
 			});
+**********************************************************************************************************/
 		} else {
 			Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
 		}

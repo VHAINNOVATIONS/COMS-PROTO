@@ -389,18 +389,17 @@ error_log("saveTemplate - BP4");
     }
 
     function saveTemplateReferences($references, $templateid) {
-
+error_log("LookUp Model - saveTemplateReferences(Template ID = $templateid)");
+error_log("LookUp Model - saveTemplateReferences() References - " . json_encode($references));
         for ($index = 0; $index < count($references); $index++) {
-
             $referencedata = $references[$index]->{'data'};
-
             $this->save(21, $templateid, $referencedata->{'RefID'});
         }
     }
 
     function getEmoData( $key = "1" ) {
         $Label = "";
-// error_log("getEmoData - (Entry Point) - $key");
+error_log("Lookup Model - getEmoData - (Entry Point) - $key");
         switch($key) {
             case "1":
             case "Low":
@@ -427,11 +426,12 @@ error_log("saveTemplate - BP4");
                 $Label = "High Emetic Risk";
                 break;
         }
-//         error_log("getEmoData - $key - no Label?");
+error_log("Lookup Model - getEmoData - $key - no Label?");
         if ("" == $Label) {
             return htmlspecialchars($key);
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+error_log("Lookup Model - getEmoData - $query");
         $EmesisVal = $this->query($query);
         if (count($EmesisVal) >= 1) {
             return htmlspecialchars($EmesisVal[0]["Details"]);
@@ -440,6 +440,7 @@ error_log("saveTemplate - BP4");
     }
 
     function getNeutroData( $FNRisk = 1 ) {
+error_log("Lookup Model - getNeutroData");
         if ($FNRisk < 10) {
             $Label = "Neutropenia-1";
         }
@@ -450,8 +451,12 @@ error_log("saveTemplate - BP4");
             $Label = "Neutropenia-3";
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+error_log("Lookup Model - getNeutroData - $query");
         $FNRVal = $this->query($query);
-        return htmlspecialchars($FNRVal[0]["Details"]);
+        if (count($FNRVal) >= 1) {
+            return htmlspecialchars($FNRVal[0]["Details"]);
+        }
+        return "";
     }
 
     /**
@@ -942,7 +947,7 @@ error_log("Lookup Model - saveHydrations() - $query");
                     JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                     JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                     JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
-                    JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
+                    LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
                     LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
                 WHERE mt.Template_ID = '$id'
             ";
@@ -975,12 +980,15 @@ error_log("Lookup Model - saveHydrations() - $query");
                     JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                     JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                     JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
-                    JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
+                    LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID
                     JOIN LookUp l5 ON l5.Name = '$Regimen_ID'
                     LEFT JOIN LookUp l3 ON l3.Lookup_ID = mt.Disease_Stage_ID 
                 WHERE mt.Template_ID = '$id'
             ";
         }
+
+error_log("LookUp Model - getTopLevelTemplateDataById (Template_ID and Regimen_ID) - $id, $Regimen_ID; Query = $query");
+
         $retVal = $this->query($query);
         if ($NoDescription) {
             if (isset($retVal[0])) {
@@ -1168,7 +1176,7 @@ error_log("Lookup Model - getDataForJson() - $name; $query");
                     INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID
                     INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
                     INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID
-                    INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+                    LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
                     INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
                     LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                     LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
@@ -1178,7 +1186,7 @@ error_log("Lookup Model - getDataForJson() - $name; $query");
                 $query .= " WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By 'description'";
-            
+error_log("Lookup Model - getTemplates($id) Query = $query");
         return $this->query($query);
     }
 
@@ -1206,7 +1214,7 @@ error_log("Lookup Model - getDataForJson() - $name; $query");
                 INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                 INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
                 INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID 
-                INNER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+                LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
                 LEFT  JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                 LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) ";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
@@ -1325,9 +1333,9 @@ error_log("LookUp.Model.getRegimens No Records; Last Query returns - " . json_en
 
     function getHydrations($id, $type) {
         $query = "select Reason from Medication_Hydration where Template_ID = '$id'";
-error_log("getHydrations() - $query");
+error_log("Lookup Model - getHydrations() - $query");
         $retVal = $this->query($query);
-error_log("getHydrations() - ". json_encode($retVal));
+error_log("Lookup Model - getHydrations() - ". json_encode($retVal));
         if (count($retVal) > 0) {
             if (isset($retVal[0]["Reason"])) {
                 $query = "

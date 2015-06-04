@@ -13,43 +13,38 @@ function calcNumAdminDays($ListOfAdminDays) {
     }
     return $NumAdminDays;
 };
+
+
+error_log("LookUp View TemplateData() Entry Point");
 if (!is_null($templatedata)) {
+    error_log("LookUp View TemplateData() Have Template Data - " . json_encode($templatedata));
     $numtemplates = count($templatedata);
+error_log("LookUp View TemplateData() - has $numtemplates Templates");
+
     if ($numtemplates) {
         echo "{\"success\" : true, \"total\" : $numtemplates , \"records\" :[";
         $rowCount = 1;
         //display the results 
         foreach ($templatedata as $oemrecord) {
+error_log("LookUp View TemplateData() - an OEMRecord = " . json_encode($oemrecord));
+            $PatientList = $this->get('PatientList');
 
             echo "{\n\t\"id\" : \"" . $oemrecord['id'] . "\", \n";
             echo "\t\"RegimenName\" : \"" . $oemrecord['name'] . "\", \n";
             echo "\t\"RegimenID\" : \"" . $oemrecord['Regimen_ID'] . "\", \n";
             echo "\t\"Description\" : \"" . $oemrecord['description'] . "\", \n";
-
             echo "\t\"Disease\" : \"" . $oemrecord['Disease'] . "\", \n";
             echo "\t\"DiseaseName\" : \"" . $oemrecord['DiseaseName'] . "\", \n";
-
             echo "\t\"DiseaseStage\" : [{\"id\":\"" . $oemrecord['DiseaseStage'] . "\", \"name\":\"" . $oemrecord['DiseaseStageName'] . "\"}], \n";
-
             echo "\t\"CourseNum\" : \"" . $oemrecord['CourseNum'] . "\", \n";
             echo "\t\"CourseNumMax\" : \"" . $oemrecord['CourseNumMax'] . "\", \n";
             echo "\t\"CycleLength\" : \"" . $oemrecord['length'] . "\", \n";
-
             echo "\t\"CycleLengthUnit\" : [{\"id\":\"" . $oemrecord['CycleLengthUnitID'] . "\", \"name\":\"" . $oemrecord['CycleLengthUnit'] . "\"}], \n";
-
             echo "\t\"ELevel\" : [{\"id\":\"" . $oemrecord['emoID'] . "\", \"name\":\"" . $oemrecord['emoLevel'] . "\", \"details\":" . json_encode( $oemrecord['emodetails']) . "}], \n";
             echo "\t\"FNRisk\" : \"" . $oemrecord['fnRisk'] . "\", \n";
             echo "\t\"FNRiskDetails\" : " . json_encode($oemrecord['fnrDetails']) . ", \n";
-
-
-
-            $PatientList = $this->get('PatientList');
             echo "\t\"PatientList\" : \n" . json_encode($PatientList) . "\t,\n";
             echo "\t\"PatientListCount\" : \n" . count($PatientList) . "\t,\n";
-
-
-
-
 
             // References
             $numreferences = count($references);

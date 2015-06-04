@@ -128,6 +128,35 @@ class LookupController extends Controller {
 
     }
 
+
+
+
+
+
+
+
+
+
+
+
+    /*
+     * Build the Template/Regimen name based on the names and dosages of the Therapy Drugs applied
+     */
+    function BuildRegimenName($regimens) {
+        $regimenName = '';
+        for ($index = 0; $index < count($regimens); $index++) {
+            $regimendata = $regimens[$index]->{'data'};
+            $amt = $regimendata->{'Amt'};
+            $drugInfo = explode(" : ", $regimendata->{'Drug'});
+            $drugname = $drugInfo[0];
+            $drugIEN = $drugInfo[1];
+error_log("Lookup Controller - saveTemplate() - Walking Therapys - " . $regimendata->{'Drug'} . " - " . json_encode($drugname));
+            $regimenName .= "$drugname $amt ";
+        }
+        return $regimenName;
+    }
+
+
     /*
      *
      * Note: Magic Numbers used...
@@ -145,26 +174,28 @@ error_log("Lookup Controller - saveTemplate() - Entry Point...");
 
         $regimens = $form_data->{'Meds'};
         $usersuppliedname = $form_data->{'RegimenName'};
-        $regimenName = '';
 
-        for ($index = 0; $index < count($regimens); $index++) {
-            $regimendata = $regimens[$index]->{'data'};
-            $amt = $regimendata->{'Amt'};
-            $drugInfo = explode(" : ", $regimendata->{'Drug'});
-            $drugname = $drugInfo[0];
-            $drugIEN = $drugInfo[1];
-error_log("Lookup Controller - saveTemplate() - Walking Therapys - " . $regimendata->{'Drug'} . " - " . json_encode($drugname));
-            $regimenName .= "$drugname $amt ";
-        }
-
+        $regimenName = $this->BuildRegimenName($regimens);
 error_log("Lookup Controller - saveTemplate() - Got Regimens");
+
+
         $this->LookUp->beginTransaction();
+
+
+
+        /*****************************************
+         *
+         *
+         **/
+        // Get list of Templates with this Regimen Name (if any). 
+        // This will give us the count of regimens using the same therapies so we can create a new version #
         $lookupinfo = $this->LookUp->getLookupIdByNameAndType($regimenName, 4);
         $templateNum = count($lookupinfo) + 1;
 
         // Builds new Chemotherapy Regimen Name based on versioning scheme
         $templateName = date("Y") . '-' . $templateNum . '-0001-ABCD-' . $regimenName . '-' . date("Ymd");
 error_log("Lookup Controller - saveTemplate() - Got TemplateName - $templateName");
+
 
 // Save Template and Regimen name in the Lookup Table
         $templatelookupid = $this->LookUp->save(4, $regimenName, $templateName);
@@ -180,6 +211,11 @@ error_log("Lookup Controller - saveTemplate() - Got TemplateName - $templateName
         }
 
 error_log("Lookup Controller - saveTemplate() - Name and Alias saved");
+        /*****************************************
+         *
+         *
+         **/
+
 
         $cyclelength = $form_data->{'CycleLength'};
         $this->LookUp->saveExtraFields($regimenName, $cyclelength);
@@ -188,10 +224,7 @@ error_log("Lookup Controller - saveTemplate() - Extra Fields saved");
         /**
          * This is just a bandaid because some calls to "/Lookup/saveTemplate" give actual
          * cycle length units and emotegenic levels instead of their GUIDs
-         * 
-         * @todo Fix these 4 lines later
          */
-
         $cycleLengthUnit = $this->LookUp->getIdByNameAndType($form_data->CycleLengthUnit, LookUp::TYPE_TIMEFRAMEUNIT);
         $eLevel = $this->LookUp->getIdByNameAndType($form_data->ELevel, LookUp::TYPE_ELEVEL);
         $form_data->CycleLengthUnit = (!empty($cycleLengthUnit)) ? $cycleLengthUnit : $form_data->CycleLengthUnit;
@@ -207,6 +240,7 @@ error_log("Lookup Controller - saveTemplate() - Insert Master Template Failed");
             return;
         }
 error_log("Lookup Controller - saveTemplate() - Insert Master Template Passed");
+
 
         if ($templateid) {
             $templateid = $templateid[0]['lookupid'];
@@ -250,6 +284,9 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy FAILED");
                     return;
                 }
             }
+error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
+
+
         }
         else {
             $this->set('templateid', $templateid);
@@ -257,7 +294,7 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy FAILED");
             $this->LookUp->rollbackTransaction();
             return;
         }
-error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
+
 
         $this->set('templateid', $templateid);
         $this->set('frameworkErr', null);
@@ -637,6 +674,8 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
                 break;
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+error_log("Lookup Controller - EFNR() EMO - $query");
+
         $EmesisVal = $this->LookUp->query($query);
         $retVal[0]["emoLevel"] = $EmoLevel[0];
         $retVal[0]["emoDetails"] = htmlspecialchars($EmesisVal[0]["Details"]);
@@ -656,6 +695,7 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
             $Label = "Neutropenia-3";
         }
         $query = "Select Details from SiteCommonInformation WHERE Label = '$Label' and DataType = 'Risks' order by Label ";
+error_log("Lookup Controller - EFNR() FNR - $query");
         $FNRVal = $this->LookUp->query($query);
         $retVal[0]["fnrLevel"] = $FNRisk . "% (" . $FNRLevel . " Risk)";
         $retVal[0]["fnrDetails"] = htmlspecialchars($FNRVal[0]["Details"]);
@@ -675,66 +715,71 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
 
 
     function TemplateData($id = NULL) {
+        $TemplateDataReturn = array();
         if ($id != NULL) {
 error_log("Lookup Controller - TemplateData - ID = $id");
 
             $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed.");
                 $this->set('templatedata', null);
                 return;
             }
+error_log("Lookup Controller - TemplateData - Initial Data - " . json_encode($retVal));
 
-error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
+
             $Regimen_ID = $retVal[0]["Regimen_ID"];
             $retVal = $this->LookUp->getTopLevelTemplateDataById($id, $Regimen_ID);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
+error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed. 2");
                 $this->set('templatedata', null);
                 return;
             }
+error_log("Lookup Controller - TemplateData - TopLevelTemplateDataById - $id, $Regimen_ID" . json_encode($retVal));
 
-error_log("Lookup Controller - TemplateData - " . json_encode($retVal[0]));
+
             $EmoLevel = "";
             if (array_key_exists ("emoLevelNum" , $retVal[0] )) {
-            $EmoLevel = $retVal[0]["emoLevelNum"];
+                $EmoLevel = $retVal[0]["emoLevelNum"];
             }
             else if (array_key_exists ("emoLevel" , $retVal[0] )) {
                 $EmoLevel = $retVal[0]["emoLevel"];
             }
             if ("" !== $EmoLevel) {
-                error_log("Lookup Controller - TemplateData - get EMO Data for $EmoLevel");
-            $retVal[0]["emodetails"] = $this->LookUp->getEmoData( $EmoLevel );
+                $retVal1 = $this->LookUp->getEmoData( $EmoLevel );
+                $retVal[0]["emodetails"] = $retVal1;
             }
             else {
                 error_log("Lookup Controller - TemplateData - NO EMO Data for $EmoLevel");
             }
+error_log("Lookup Controller - TemplateData - get EMO Data for $EmoLevel - " . json_encode($retVal1));
+
 
 error_log("Lookup Controller - TemplateData - Getting FNRisk");
             $FNRisk = $retVal[0]["fnRisk"];
-            $retVal[0]["fnrDetails"] = $this->LookUp->getNeutroData($FNRisk);
-
+            $retVal1 = $this->LookUp->getNeutroData($FNRisk);
+            $retVal[0]["fnrDetails"] = $retVal1;
             $this->set('templatedata', $retVal);
-error_log("Lookup Controller - TemplateData - " . json_encode($retVal));
+error_log("Lookup Controller - TemplateData - Get FNRisk Data for $FNRisk - " . json_encode($retVal));
+
 
 error_log("Lookup Controller - getTemplateReferences  - $id");
-            $retVal = $this->LookUp->getTemplateReferences($id);
-
-            if($this->checkForErrors('Get Template References Failed. ', $retVal)){
+            $retVal1 = $this->LookUp->getTemplateReferences($id);
+            if($this->checkForErrors('Get Template References Failed. ', $retVal1)){
                 $this->set('templatedata', null);
+error_log("Lookup Controller - TemplateData - Error; Get Template References Failed.");
                 return;
             }
-            $this->set('references', $retVal);
-error_log("Lookup Controller - References - " . json_encode($retVal));
+            $this->set('references', $retVal1);
+error_log("Lookup Controller - References - " . json_encode($retVal1));
 
 
-
-
-
+error_log("Lookup Controller - getHydrations  - PRE THERAPY - $id");
             $prehydrations = null;
             $infusionMap = null;
             $retVal = $this->LookUp->getHydrations($id, 'pre');
 error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
 error_log(json_encode($retVal));
-
 
             if ($retVal) {
                 $prehydrations = $retVal;
@@ -748,9 +793,6 @@ error_log(json_encode($retVal));
                 $this->set('prehydrations', $prehydrations);
                 $this->set('preinfusions', $infusionMap);
             }
-
-
-
 
             $retVal = $this->LookUp->getHydrations($id, 'post');
 error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
@@ -767,18 +809,18 @@ error_log(json_encode($retVal));
                 $this->set('postinfusions', $infusionMap);
             }
 
-
-
             $retVal = $this->LookUp->getRegimens($id);
 error_log("Lookup Controller - TemplateData - Got Therapy - ");
 error_log(json_encode($retVal));
             if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
+error_log("Lookup Controller - TemplateData - Error; Exit 1");
                 $this->set('templatedata', null);
                 return;
             }
 
             if (count($retVal) > 0) {
                 if (!isset($retVal[0]["id"])) {
+error_log("Lookup Controller - TemplateData - Error; Exit 2");
                     $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');
                     $this->set('templatedata', null);
                     return;
@@ -811,13 +853,15 @@ error_log(json_encode($retVal));
 
             $Patients = $this->getPatients4Template( $id );
             $this->set("PatientList", $Patients);
-
+error_log("Lookup Controller - TemplateData - Error; Exit 3");
 
 
         } else {
+error_log("Lookup Controller - TemplateData - Error; Exit 4");
             $this->set('templatedata', null);
             $this->set('frameworkErr', 'Template id must be provided.');
         }
+error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
     }
 
     function DiseaseStage($id = null) {
