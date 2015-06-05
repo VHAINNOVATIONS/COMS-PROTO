@@ -1236,9 +1236,9 @@ error_log("Lookup Model - getTemplates($id) Query = $query");
             $query = "select lu.Name as name, lu.Description as description, lu.Lookup_ID as id " .
                     "FROM LookUp lu where lu.Lookup_ID in (" .
                     "select l1.Description from LookUp l1 where l1.Name = '" . $id . "')";
-error_log("getTemplateReferences for $id - $query");
+error_log("Lookup Model - getTemplateReferences for $id - $query");
 $retVal = $this->query($query);
-error_log("getTemplateReferences Result - " . json_encode($retVal));
+error_log("Lookup Model - getTemplateReferences Result - " . json_encode($retVal));
         return $retVal;
     }
 

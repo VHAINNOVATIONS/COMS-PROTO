@@ -13,10 +13,13 @@ require_once "/ChromePhp.php";
  */
 class LookupController extends Controller {
 
-    function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg) {
+    function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg, $id = null) {
         if ("" !== $query) {
             //error_log("Got Query - $query");
             $retVal = $this->LookUp->query($query);
+error_log("LookupController - _ProcQuery() Query = $query");
+error_log("LookupController - _ProcQuery() Result = " . json_decode($retVal));
+
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 // error_log("Error");
                 if("Unique" == $this->get('frameworkErrCodes')) {
@@ -38,6 +41,9 @@ class LookupController extends Controller {
                     unset($jsonRecord['msg']);
                     $jsonRecord['total'] = count($retVal);
                     $jsonRecord['records'] = $retVal;
+                }
+                else if ($id) {
+                    $jsonRecord['id'] = $id;
                 }
             }
         }
@@ -79,14 +85,16 @@ class LookupController extends Controller {
     
 
     function save() {
-        // error_log("Lookup Save - ");
+error_log("Lookup Save - ");
         $Msg = "Generic Save";
         $jsonRecord = array();
         $jsonRecord['success'] = true;
+        $GUD = null;
 
         $name = $description = $id = $lookupid = "";
 
         $tmp = json_decode(file_get_contents("php://input"));
+error_log("Lookup Save - " . json_encode($tmp));
         if(isset($tmp->value)) {
             $name = $tmp->value;
             $name = $this->escapeString($name);
@@ -108,9 +116,11 @@ class LookupController extends Controller {
             $ErrMsg = "Updating $Msg  Record";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $query = "INSERT into LookUp (Lookup_Type, Name, Description) values ('$lookupid','$name','$description')";
+            $GUD = $this->LookUp->newGUID();
+            $query = "INSERT into LookUp (Lookup_ID, Lookup_Type, Name, Description) values ('$GUD', '$lookupid','$name','$description')";
 
             $jsonRecord['msg'] = "$Msg Record Created";
+            $jsonRecord['id'] = $GUID;
             $ErrMsg = "Creating $Msg Record";
         }
         else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
@@ -123,8 +133,8 @@ class LookupController extends Controller {
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a POST, PUT or DELETE got a " . $_SERVER['REQUEST_METHOD'];
         }
 
-        // error_log("save() = $query");
-        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)");
+error_log("save() = $query");
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)", $GUD);
 
     }
 
@@ -448,9 +458,14 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
     }
 
     function TemplateReferences($id = null) {
-
         if ($id != null) {
-            $this->set('references', $this->LookUp->getTemplateReferences($id));
+            $retVal = $this->LookUp->getTemplateReferences($id);
+            if ($this->checkForErrors("Failed to get Template Reference", $retVal)) {
+                $this->set('references', null);
+            }
+            else {
+                $this->set('references', $retVal);
+            }
         } else {
             $this->set('references', null);
             $this->set('frameworkErr', 'No Template ID provided.');
@@ -768,7 +783,8 @@ error_log("Lookup Controller - getTemplateReferences  - $id");
             if($this->checkForErrors('Get Template References Failed. ', $retVal1)){
                 $this->set('templatedata', null);
 error_log("Lookup Controller - TemplateData - Error; Get Template References Failed.");
-                return;
+error_log("Lookup Controller - TemplateData - Error; " . json_encode($retVal1));
+                // return;
             }
             $this->set('references', $retVal1);
 error_log("Lookup Controller - References - " . json_encode($retVal1));
