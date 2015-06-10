@@ -14352,7 +14352,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
-							"{Med} ({Dose1} {DoseUnits1})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose1} {DoseUnits1})",
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
@@ -14374,7 +14374,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
@@ -14420,7 +14420,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
-							"{Med} ({Dose} {DoseUnits})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose} {DoseUnits})",
 
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",
@@ -14443,7 +14443,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose} {DoseUnits}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
 									"</td>",
@@ -14489,7 +14489,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
-							"{Med} ({Dose1} {DoseUnits1})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose1} {DoseUnits1})",
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
@@ -14511,7 +14511,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
@@ -14555,9 +14555,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
-                SiteConfig : {},
+				SiteConfig : {},
 				debuggerFcn : function ( current, prev ) {
-					// debugger;
+					debugger;
 				},
 
                 showReason : function(values, parent) {
@@ -14575,6 +14575,13 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					return route;
 				},
 
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
+				},
+
 
 				HasBSADose : function(units) {
 					var du = units.toUpperCase();
@@ -14589,6 +14596,11 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 
 				CalculateBSA_Dosing : function (values, therapy) {
 					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
+					debugger;
+					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
+
+
+
 					if (therapy) {
 						du = values.DoseUnits;
 						Dose = values.Dose;
@@ -14605,7 +14617,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					duuc = du.toUpperCase();
 					calcDose = du.substr(0, du.search("/"));
 					if (duuc.search("M2") > 0) {
-						BSA_Dose = Dose * this.Patient.BSA;
+						BSA_Dose = Dose * CalcBSA_Dose;
 						BSA_Dose = Ext.FormatNumber("" + BSA_Dose);
 						dspCalcDose = BSA_Dose + " " + calcDose;
 					}
@@ -15032,7 +15044,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					// XTemplate Configuration
 					disableFormats: true,
 					DebuggerFcn : function ( values ) {
-						// debugger;
+						debugger;
 					},
 
 					ConcurRadTherapy : function (ConcurRadTherapy) {
@@ -16032,7 +16044,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"PreMHMeds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -16068,7 +16080,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"Meds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt} {Units}</td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -16113,7 +16125,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"PostMHMeds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -16151,6 +16163,12 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					return ("<br /><em>" + data + " " + data2 + "</em>");
 				}
 				return "";
+			},
+			stripIENfromDrug : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
 			},
 			calcRoute : function(data) {
 				var route = data.Infusion1 ? data.Infusion1 : data.Route;
@@ -24561,7 +24579,7 @@ Ext.define('COMS.controller.Navigation', {
 
 		if ("Orders" === newCard.title) {
 			var Orders = this.getController("Orders.OrdersTab");
-			Orders.LoadOrdersStore(false);
+			Orders.LoadOrdersStore(false, false);
 		}
 
 		if (!editTemplate && "Template Authoring" == newCard.title && "Start New Plan" == oldCard.title) {
@@ -25224,7 +25242,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -25258,7 +25276,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose} {DoseUnits}",
@@ -25290,7 +25308,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -25326,6 +25344,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 						return (null !== therapy[0].Med);
 					}
 					return (false);
+				},
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
 				},
 
 				SaveIdx : function (xindex, Cycle, Day, values) {
@@ -25433,7 +25457,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -25499,7 +25523,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose} {DoseUnits}",
@@ -25535,7 +25559,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -25606,6 +25630,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 					}
 					return (false);
 				},
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
+				},
 
 				SaveIdx : function (xindex, Cycle, Day, values) {
 					this.pIndex = xindex;
@@ -25625,7 +25655,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 						}
 						a2 = FluidType + FluidVol + FlowRate;
 						try {
-							flg = ("" !== a2.trim());							
+							flg = ("" !== a2.trim());
 						}
 						catch (e) {
 						}
@@ -36918,7 +36948,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							theGrid.setLoading( false, false );
 							if (theScope.PostedRecsFailed.length <= 0) {
 								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true);
+								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true, true);
 							}
 							else {
 								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
@@ -36992,25 +37022,27 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 	},
 
 	"HandleRefresh" : function (button, evt, eOpts) {
-		this.LoadOrdersStore(false);
+		this.LoadOrdersStore(false, true);
 	},
 
-	"LoadOrdersStore" : function (LoadAndRenderOEMTab) {
+	"LoadOrdersStore" : function (LoadAndRenderOEMTab, forceRefresh) {
 		var PatientInfo, theStore;
 		theStore = Ext.getStore("OrdersStore");
 		if (theStore) {
-			theStore.load({
-				scope: this,
-				callback: function() {
-					if (false !== LoadAndRenderOEMTab) {
-						if (this.application.Patient) {
-							PatientInfo = this.application.Patient;
-							PatientInfo.OEMDataRendered = false;
-							this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
+			if (0 == theStore.getCount() || forceRefresh) {
+				theStore.load({
+					scope: this,
+					callback: function() {
+						if (false !== LoadAndRenderOEMTab) {
+							if (this.application.Patient) {
+								PatientInfo = this.application.Patient;
+								PatientInfo.OEMDataRendered = false;
+								this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
+							}
 						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 });

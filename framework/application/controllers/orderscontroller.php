@@ -463,7 +463,7 @@ error_log("grabOrders4AllPatients - Patients with Active Templates - " . json_en
             foreach ( $patientTemplates as $patient ) {
                 $PatientID =  $patient[ 'patientID' ];
                 $ActiveTemplateID = $patient[ 'templateID' ];
-error_log("grabOrders4AllPatients - $PatientID; $ActiveTemplateID");
+error_log("grabOrders4AllPatients - PatientID = $PatientID; ActiveTemplateID = $ActiveTemplateID");
 
                 $Last_Name = $this->Orders->LookupPatientName( $PatientID );
                 if ( !empty( $Last_Name ) && count( $Last_Name ) > 0 ) {
@@ -485,8 +485,11 @@ error_log("Get Last Name for Patient - $PatientID = $Last_Name");
 error_log("Get TopLevelOEMRecordsNextThreeDays for Patient - $PatientID");
 error_log(json_encode($oemrecords));
 /******************** NEW CODE ********************************/
+$finalOrdersSorted      = array();
+
 
                 foreach ( $oemrecords as $oemrecord ) {
+                    // Get One Day's Records
                     $TempID = $oemrecord[ 'TemplateID' ];
                     $query = "select Order_Status, Drug_Name, Order_Type, Template_ID, Order_ID, Amt, Unit, Route, flvol, FlowRate, Order_ID, CONVERT(varchar(10), Admin_Date, 101) as adminDate from Order_Status where Template_IDMT = '$TempID'";
 
@@ -503,11 +506,16 @@ os.flvol,
 os.FlowRate, 
 os.Order_ID, 
 CONVERT(varchar(10), os.Admin_Date, 101) as adminDate,
+case when tr.Instructions is not null then tr.Instructions else mh.Description end as Instructions,
 mhi.Fluid_Type
 from Order_Status os 
 left outer join MH_Infusion mhi on mhi.Order_ID = os.Order_ID
+left outer join Template_Regimen tr on tr.Order_ID = os.Order_ID
+left outer join Medication_Hydration mh on mh.Order_ID = os.Order_ID
 where os.Template_IDMT = '$TempID'";
                     
+error_log("Orders Controller - grabOrders4AllPatients() - Each OEM Record Query = $query");
+
                     $OrdersData = $this->Orders->query( $query );
                     if ( $this->checkForErrors( 'Get Orders Failed. ', $OrdersData ) ) {
                         $jsonRecord[ 'success' ] = 'false';
@@ -515,10 +523,15 @@ where os.Template_IDMT = '$TempID'";
                         $this->set( 'jsonRecord', $jsonRecord );
                         return;
                     }
+error_log("Orders Controller - grabOrders4AllPatients() - Each OEM Record Orders Data = " . json_encode($OrdersData));
+$finalOrders            = array();
+$finalOrders["Pre"]     = array();
+$finalOrders["Post"]    = array();
+$finalOrders["Therapy"] = array();
 
-                    $finalOrders   = array( );
                     foreach ( $OrdersData as $orderRecord ) {
                         $Type = $orderRecord[ 'Order_Type' ];
+                        $fluidVol = $orderRecord[ 'flvol' ];
                         $AnOrder = array();
                         $AnOrder['patientID'] = $PatientID;
                         $AnOrder['Last_Name'] = $Last_Name;
@@ -533,10 +546,10 @@ where os.Template_IDMT = '$TempID'";
                         $AnOrder['dose'] = $orderRecord[ 'Amt' ];
                         $AnOrder['unit'] = $orderRecord[ 'Unit' ];
                         $AnOrder['route'] = $orderRecord[ 'Route' ];
-                        $AnOrder['fluidVol'] = $orderRecord[ 'flvol' ];
+                        $AnOrder['fluidVol'] = $fluidVol == "0" ? "" : $fluidVol;
                         $AnOrder['fluidType'] = $orderRecord[ 'Fluid_Type' ];
                         $AnOrder['flowRate'] = $orderRecord[ 'FlowRate' ];
-                        $AnOrder['instructions'] = '';
+                        $AnOrder['instructions'] = $orderRecord[ 'Instructions' ];
                         $AnOrder['Order_ID'] = $orderRecord[ 'Order_ID' ];
                         $AnOrder['orderid']  = $orderRecord[ 'Order_ID' ];
                         $AnOrder['orderstatus'] = $orderRecord[ 'Order_Status' ];
@@ -557,10 +570,21 @@ where os.Template_IDMT = '$TempID'";
                         $orderRecord[ 'orderid' ]     = $orderid;
                         $orderRecord[ 'dose' ]        = $orderRecord[ 'Amt' ];
                         $orderRecord[ 'unit' ]        = $orderRecord[ 'Unit' ];
-/******************/
-                        array_push( $finalOrders, $AnOrder );
+******************/
+                        // array_push( $finalOrders, $AnOrder );
+                        $finalOrders[$Type][] = $AnOrder;
+error_log("Orders Controller - grabOrders4AllPatients() - Pushing Each Order Record = " . json_encode($AnOrder));
                     }
+
                 }
+
+// $finalOrdersSorted[] = $finalOrders["Pre"];
+// $finalOrdersSorted[] = $finalOrders["Therapy"];
+// $finalOrdersSorted[] = $finalOrders["Post"];
+
+$finalOrdersSorted = array_merge($finalOrders["Pre"], $finalOrders["Therapy"], $finalOrders["Post"]);
+
+error_log("Orders Controller - grabOrders4AllPatients() - finalOrders = " . json_encode($finalOrdersSorted));
 
 /**************************************/
 
@@ -651,8 +675,8 @@ error_log(" ------------------------------------- NEXT PATIENT -----------------
 
             }
             $jsonRecord[ 'success' ] = true;
-            $jsonRecord[ 'total' ]   = count( $finalOrders );
-            $jsonRecord[ 'records' ] = $finalOrders;
+            $jsonRecord[ 'total' ]   = count( $finalOrdersSorted );
+            $jsonRecord[ 'records' ] = $finalOrdersSorted;
             $this->set( 'jsonRecord', $jsonRecord );
         }
         

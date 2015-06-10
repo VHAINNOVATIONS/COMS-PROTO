@@ -245,7 +245,7 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 		renderTherapy($templatedata[0], "Pre", $prehydrations, $preinfusions);
         echo "<tr><td style=\"border-left-width: 0; border-right-width:0; colspan=\"8\">&nbsp;</td></tr>";
 		renderTherapy($templatedata[0], "", $regimens, "");
-        echo "<tr><td style=\"border-left-width: 0; colspan=\"8\">&nbsp;</td></tr>";
+        echo "<tr><td style=\"border-left-width: 0; border-right-width:0; colspan=\"8\">&nbsp;</td></tr>";
 		renderTherapy($templatedata[0], "Post", $posthydrations, $postinfusions);
         echo "</table>";
 	}

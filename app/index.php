@@ -78,7 +78,7 @@ error_log("Browser Info = " . json_encode($navigator_user_agent));
         //$TimeOutMax = 5000;
 		$LastLogin = $_SESSION['LoginTime'];
 		//echo $LastLogin;
-        //$LastLogin1 = $TimeOutMax;
+        $LastLogin1 = $TimeOutMax;
         
         
         if ( $LastLogin1 > $TimeOutMax ) {
