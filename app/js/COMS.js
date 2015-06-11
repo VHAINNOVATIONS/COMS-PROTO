@@ -12012,11 +12012,21 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
 		"<h2>Medication Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"<p><h3>{Medication}</h3>",
+			"<p><h3>{[this.stripIENfromDrug( values.Medication )]}</h3>",
 			"{Documentation}",
 			"</p>",
 		"</tpl>",
-		"</div></section>"
+		"</div></section>",
+		{
+				// XTemplate Configuration
+			disableFormats: true,
+			stripIENfromDrug : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
+			}
+		}
 	)
 });
 
@@ -12900,7 +12910,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
     plugins: [ Ext.ND_cellEditing ],
 	columns : [
 		{ header : "", dataIndex : "typeOrder", hidden : true, renderer: Ext.ND_TreatmentTypeOrderRenderer },
-		{ header : "Medication", dataIndex : "drug", width : 120 },
+		{ header : "Medication", dataIndex : "drug", width : 120,
+				renderer: function(v) {
+					return v.split(" : ")[0];
+				}
+		},
 		{ header : "Dose", dataIndex : "dose", width : 50, editor: { allowBlank: false } },
 		{ header : "Units", dataIndex : "unit", width : 70},
 		{ header : "Route", dataIndex : "route", width : 50},
@@ -13468,7 +13482,7 @@ Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 	alias : "widget.InfusionMethod",
 
 	"fieldLabel": "Route <em class=\"required-field\">*</em>",
-	"width": 140,
+	"width": 240,
 	"labelWidth": 70,
 	"store": "InfusionStore",
 	"displayField": "name",
@@ -13480,7 +13494,7 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectReason" ,{
 	alias : "widget.SelectReason",
 	fieldLabel: "Select Reason <em class=\"required-field\">*</em>",
 	labelWidth: 115,
-	width: 300,
+	width: 400,
 	store: "ReasonStore",
 	allowBlank: false,
 	displayField: "value",
@@ -14557,7 +14571,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				curDay : 0,
 				SiteConfig : {},
 				debuggerFcn : function ( current, prev ) {
-					debugger;
+					// debugger;
 				},
 
                 showReason : function(values, parent) {
@@ -14596,7 +14610,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 
 				CalculateBSA_Dosing : function (values, therapy) {
 					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
-					debugger;
+					// debugger;
 					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
 
 
@@ -15044,7 +15058,7 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 					// XTemplate Configuration
 					disableFormats: true,
 					DebuggerFcn : function ( values ) {
-						debugger;
+						// debugger;
 					},
 
 					ConcurRadTherapy : function (ConcurRadTherapy) {
@@ -35548,6 +35562,33 @@ handleEditOEM_Record : function (event, element) {
 			MedRecord.FlowRate2 = mr.FlowRate2;
 			MedRecord.InfusionTime1 = mr.InfusionTime1;
 			MedRecord.InfusionTime2 = mr.InfusionTime2;
+		}
+
+		var tmp = MedRecord.Med;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.Med = tmp[0];
+				MedRecord.MedIEN = tmp[1];
+			}
+		}
+
+		tmp = MedRecord.InfusionMethod;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.InfusionMethod = tmp[0];
+				MedRecord.InfusionMethodIEN = tmp[1];
+			}
+		}
+
+		tmp = MedRecord.InfusionMethod2;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.InfusionMethod2 = tmp[0];
+				MedRecord.InfusionMethod2IEN = tmp[1];
+			}
 		}
 
 		var EditRecordWin = Ext.widget("EditOEMRecord");

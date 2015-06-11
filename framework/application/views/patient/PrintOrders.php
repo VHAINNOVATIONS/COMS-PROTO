@@ -106,6 +106,21 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 			if ($numMeds) {
 				$hydrationCount = 1;
 				foreach ($hydrations as $hydration) {
+                    $hDrug = $hydration["drug"];
+                    $hRoute = $hydration['route'];
+
+
+        $pos = strrpos($hDrug, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $hDrug);
+            $hDrug = $R1[0];
+        }
+        $pos = strrpos($hRoute, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $hRoute);
+            $hRoute = $R1[0];
+        }
+
 					$numInfusions = 0;
 					$adminTime = "";
 					// Array Index is case sensitive, but data coming back is in different case depending on table :(
@@ -124,14 +139,14 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 					if (0 === $numInfusions) {
 						if ("" === $tag) {
 							drug_dose_admin_table(
-								$hydration["drug"],
+								"hDrug1 - $hDrug",
 								$sequence,
 								"", 
 								$hydration["instructions"], 
 								$hydration['regdose'], 
 								$hydration['regdoseunit'], 
 								$hydration['bsaDose'], 
-								$hydration['route'],
+								$hRoute,
 								$hydration['adminTime'],
 								$hydration['fluidType'], 
 								$hydration['flvol'], 
@@ -145,15 +160,29 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 					}
 					else if (1 === $numInfusions) {
 						$infusion = $myinfusions[0];
+
+                            $iDrug = $hydration["drug"];
+                            $iRoute = $infusion['type'];
+        $pos = strrpos($iDrug, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $iDrug);
+            $iDrug = $R1[0];
+        }
+        $pos = strrpos($iRoute, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $iRoute);
+            $iRoute = $R1[0];
+        }
+
 						drug_dose_admin_table(
-							$hydration["drug"],
+							$iDrug,
 							$sequence,
 							"", 
 							$hydration["description"], 
 							$infusion['amt'], 
 							$infusion['unit'], 
 							$infusion['bsaDose'], 
-							$infusion['type'],
+							$iRoute,
 							$adminTime,
 							$infusion['fluidType'], 
 							$infusion['fluidVol'], 
@@ -164,15 +193,29 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 					else if ($numInfusions > 1) {
 						$infusionCount = 1;
 						foreach ($myinfusions as $infusion) {
+                            $iDrug = $infusion["drug"];
+                            $iRoute = $infusion['type'];
+
+        $pos = strrpos($iDrug, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $iDrug);
+            $iDrug = $R1[0];
+        }
+        $pos = strrpos($iRoute, " : ");
+        if ($pos !== false) {
+            $R1 = explode(" : ", $iRoute);
+            $iRoute = $R1[0];
+        }
+
 							drug_dose_admin_table(
-								$infusion["drug"], 
+								"iDrug2 - $iDrug",
 								$sequence,
 								$infusionCount, 
 								$hydration["description"], 
 								$infusion['amt'], 
 								$infusion['unit'], 
 								$infusion['bsaDose'], 
-								$infusion['type'],
+								$iRoute,
 								$adminTime,
 								$infusion['fluidType'], 
 								$infusion['fluidVol'], 
