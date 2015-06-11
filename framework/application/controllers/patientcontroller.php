@@ -625,9 +625,9 @@ $this->Patient->query( $query );
                 $PAT_ID = $result[0]['PAT_ID'];
 // error_log("Got PAT_ID = $PAT_ID");
             }
-//            else {
+//          else {
 // error_log("No PAT_ID - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR - ERROR");
-// }
+//          }
 
 
 
@@ -1185,8 +1185,8 @@ error_log( "---------------------------------------------------- Patient Control
         }
         
         function PrePostTherapy( $hydrations, $infusions ) {
-error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydrations));
-error_log("---------------------------");
+// error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydrations));
+// error_log("---------------------------");
             $HydrationArray = array( );
             foreach ( $hydrations as $hydration ) {
 // error_log("PrePostTherapy() - Getting Hydration Status - " . json_encode($hydration));
