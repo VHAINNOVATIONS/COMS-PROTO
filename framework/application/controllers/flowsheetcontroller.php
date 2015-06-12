@@ -272,6 +272,22 @@ class FlowsheetController extends Controller
                 $aDate   = $aRec[ "Admin_Date" ];
                 $MedName = $aRec[ "Drug_Name" ];
 
+
+
+                $MedName = $aRec[ "Drug_Name" ];
+                $MedName1 = $aRec[ "Drug_Name" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
+
+
+
+
+
+
                 $Key     = "$aDate-$MedName";
                 $tmpRec  = array(
                      "Status" => $aRec[ "Order_Status" ],
@@ -307,6 +323,26 @@ class FlowsheetController extends Controller
                 $Type    = $aRec[ "Order_Type" ];
                 $aDate   = $aRec[ "Admin_Date" ];
                 $MedName = $aRec[ "Drug_Name" ];
+
+                $MedName = $aRec[ "Drug_Name" ];
+                $MedName1 = $aRec[ "Drug_Name" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
+                $MedName = $aRec[ "Drug_Name" ];
+                $MedName1 = $aRec[ "Drug_Name" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
+
+
+
 
                 $Key     = "$aDate-$MedName";
                 $tmpRec  = array("Status" => $aRec[ "Order_Status" ]);
@@ -519,6 +555,13 @@ error_log("getHoldCancelRecords - $query");
             $PreMeds = $aRecord[ "PreTherapy" ];
             foreach ( $PreMeds as $Med ) {
                 $MedName = $Med[ "Med" ];
+                $MedName1 = $Med[ "Med" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
                 $Key     = "$AdminDate-$MedName";
                 if ( !isset( $PreTherapy[ $MedName ] ) ) {
                     $PreMedsList[ ]         = $MedName;
@@ -533,6 +576,13 @@ error_log("getHoldCancelRecords - $query");
             $Meds = $aRecord[ "Therapy" ];
             foreach ( $Meds as $Med ) {
                 $MedName = $Med[ "Med" ];
+                $MedName1 = $Med[ "Med" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
                 $Key     = "$AdminDate-$MedName";
                 if ( !isset( $Therapy[ $MedName ] ) ) {
                     $ThrMedsList[ ]      = $MedName;
@@ -551,6 +601,13 @@ error_log("getHoldCancelRecords - $query");
             $PostMeds = $aRecord[ "PostTherapy" ];
             foreach ( $PostMeds as $Med ) {
                 $MedName = $Med[ "Med" ];
+                $MedName1 = $Med[ "Med" ];
+                $MedName1 = explode(" : ", $MedName1);
+                if (count($MedName1) > 1) {
+                    $MedName = $MedName1[0];
+                }
+// error_log("Flowsheet Controller - FSDataConvert2 - $MedName");
+
                 $Key     = "$AdminDate-$MedName";
                 if ( !isset( $PostTherapy[ $MedName ] ) ) {
                     $PostMedsList[ ]         = $MedName;
