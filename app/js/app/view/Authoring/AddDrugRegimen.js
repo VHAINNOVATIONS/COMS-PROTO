@@ -36,17 +36,17 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"columns" : 2,
 						"items" : [
 							{
-								boxLabel: "Inpatient",
-								name: "PatientType",
-								inputValue: "InPatient",
-								width: 100,
-								checked: true
+								"boxLabel" : "Inpatient",
+								"name" : "PatientType",
+								"inputValue" : "InPatient",
+								"width" : 100,
+								"checked" : true
 							},
 							{
-								boxLabel: "Outpatient",
-								name: "PatientType",
-								inputValue: "OutPatient",
-								width: 125
+								"boxLabel" : "Outpatient",
+								"name" : "PatientType",
+								"inputValue" : "OutPatient",
+								"width" : 125
 							}
 						]
 					}
@@ -68,11 +68,9 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"name" : "Drug",
 						"store" : "DrugStore",
 						"displayField" : "name",
-						"valueField" : "name",
+						"valueField" : "IEN",
 						"queryMode" : "local",
-						"editable" : true,
 						"typeahead" : true,
-
 						"allowBlank" : false
 					}
 				]
@@ -107,7 +105,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"maskRe" : /[0-9\.]/,
 						"fieldLabel" : "Dosage Amount <em>*</em>",
 						"width" : 180,
-						"labelWidth" : 100,
+						"labelWidth" : 130,
 						"allowBlank" : false,
 						"name" : "Amt"
 					},
@@ -144,40 +142,39 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 				]
 			},
 			{
-				xtype: "container",
-				layout: "hbox",
-				name: "fluidInfo",
-				hidden: true,
-				defaults: {
-					labelAlign: "right",
-					margin: "5 0 5 0"
+				"xtype" : "container",
+				"layout" : "hbox",
+				"name" : "fluidInfo",
+				"hidden" : true,
+				"defaults" : {
+					"labelAlign" : "right",
+					"margin" : "5 0 5 0"
 				},
-				items: [
+				"items" : [
 					{
-						xtype: "combo",
-						name: "FluidType",
-						fieldLabel: "Fluid Type <em>*</em>",
-						width: 220,
-						lableWidth: 85,
-						allowBlank: false,
-						displayField: "value",
-						valueField: "value",
+						"xtype" : "combo",
+						"name" : "FluidType",
+						"fieldLabel" : "Fluid Type <em>*</em>",
+						"width" : 220,
+						"lableWidth" : 85,
+						"allowBlank" : false,
+						"displayField" : "value",
+						"valueField" : "value",
 						"queryMode" : "local",
 						"editable" : true,
 						"typeahead" : true,
-
-						store: "LookupStore"
+						"store" : "LookupStore"
 					},
 					{
-						xtype: "textfield",
-						fieldLabel: "Fluid Volume <em>*</em>",
-						maskRe: /[0-9\.]/,
-						labelWidth: 85,
-						width: 170,
-						name: "FluidVol",
-						margin: "5 0 5 5",
-						colspan: 1,
-						allowBlank: false
+						"xtype" : "textfield",
+						"fieldLabel" : "Fluid Volume <em>*</em>",
+						"maskRe" : /[0-9\.]/,
+						"labelWidth" : 85,
+						"width" : 170,
+						"name" : "FluidVol",
+						"margin" : "5 0 5 5",
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -187,30 +184,30 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"width" : 20
 					},
 					{
-						xtype: "textfield",
-						fieldLabel: "Flow Rate <em>*</em>",
-						maskRe: /[0-9\.]/,
-						labelWidth: 70,
-						width: 120,
-						name: "FlowRate",
-						colspan: 1,
-						allowBlank: false
+						"xtype" : "textfield",
+						"fieldLabel" : "Flow Rate <em>*</em>",
+						"maskRe" : /[0-9\.]/,
+						"labelWidth" : 70,
+						"width" : 120,
+						"name" : "FlowRate",
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
-						xtype: "container",
-						html: "ml/hr",
-						readOnly: true,
-						name: "flowRateUnit",
-						margin: "8 0 0 3",
-						width: 50
+						"xtype" : "container",
+						"html" : "ml/hr",
+						"readOnly" : true,
+						"name" : "flowRateUnit",
+						"margin" : "8 0 0 3",
+						"width" : 50
 					},
 					{
-						xtype: "textfield",
-						name: "InfusionTime",
-						fieldLabel: "Infusion Time",
-						width: 195,
-						lableWidth: 120,
-						readOnly: true
+						"xtype" : "textfield",
+						"name" : "InfusionTime",
+						"fieldLabel" : "Infusion Time",
+						"width" : 195,
+						"lableWidth" : 120,
+						"readOnly" : true
 					}
 				]
 			},
@@ -241,19 +238,15 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					}
 				]
 			},
-
-
-
-
 			{
-				xtype: "textfield",
-				labelAlign: "right",
-				margin: "0 5 5 0",
-				labelWidth: 75,
-				width: 780,
-				fieldLabel: "Instructions",
-				name: "Instructions",
-				colspan: 4
+				"xtype" : "textfield",
+				"labelAlign" : "right",
+				"margin" : "0 5 5 0",
+				"labelWidth" : 75,
+				"width" : 780,
+				"fieldLabel" : "Instructions",
+				"name" : "Instructions",
+				"colspan" : 4
 			}
 		]
 	}],

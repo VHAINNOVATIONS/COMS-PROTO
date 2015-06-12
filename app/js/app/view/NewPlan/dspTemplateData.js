@@ -52,7 +52,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"PreMHMeds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -88,7 +88,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"Meds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt} {Units}</td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -133,7 +133,7 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 			"<tpl for=\"PostMHMeds\">",
 				"<tr>",
 					"<th rowspan=\"2\">{Sequence}</th>",
-					"<td>{Drug}</td>",
+					"<td>{[this.stripIENfromDrug(values.Drug)]}</td>",
 					"<td>{Amt1} {Units1} {[this.optionalData(values.Amt2, values.Units2)]} </td>",
 					"<td>{[this.calcRoute(values)]}</td>",
 					"<td>{Day}</td>",
@@ -171,6 +171,12 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 					return ("<br /><em>" + data + " " + data2 + "</em>");
 				}
 				return "";
+			},
+			stripIENfromDrug : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
 			},
 			calcRoute : function(data) {
 				var route = data.Infusion1 ? data.Infusion1 : data.Route;

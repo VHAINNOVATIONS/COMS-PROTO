@@ -218,8 +218,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 
-	getDrugInfoFromVistA : function (drugName, fnc) {
-		var URL = Ext.URLs.DrugInfo + "/" + encodeURIComponent(drugName.toLowerCase());
+	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + drugID;
 		var theWin = this.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( "Loading Drug Information");
@@ -242,8 +242,9 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		});
 	},
 
+	// Grab the list of routes from the Drug Info and build the Route Combo Store from that list
 	AddDrugInfoFromVistA2Store : function(respObj, theScope) {
-var theValue = theScope.getHydrationInfusion1().getValue();
+		var theValue = theScope.getHydrationInfusion1().getValue();
 		var theWin = theScope.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( false );
@@ -262,29 +263,20 @@ var theValue = theScope.getHydrationInfusion1().getValue();
 			RoutesData4Store.push(aRoute);
 		}
 		RouteStore.loadData(RoutesData4Store);
-
-
-theScope.getHydrationInfusion1().setValue(theValue);
-
+		theScope.getHydrationInfusion1().setValue(theValue);
 		theScope.getDrugPUWindow_DoseRouteFields().show();
 	},
 
 	drugSelected : function(combo, recs, eOpts){
+		// debugger;
 		this.getDrugPUWindow_DoseRouteFields().hide();
-		var drugName;
+		var drugName, drugID;
 		if(null !== recs){
 			drugName = recs[0].data.name;
-		}else{
-			drugName = combo.getValue();
+			drugID = recs[0].data.IEN;
 		}
-		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+		this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 	},
-
-//	collapseCombo : function(picker,eOpts){
-//		if(picker.getValue() === null && picker.hiddenValue !== null){
-//			picker.setRawValue(picker.hiddenValue);
-//		}
-//	},
 
 	loadCombo: function (picker, eOpts) {
 		if (picker.getStore()) {		// MWB - 6/19/2012 - Added to remove the filter added to the store
@@ -668,7 +660,6 @@ theScope.getHydrationInfusion1().setValue(theValue);
 	},
 
 	SaveHydrationDrug: function (button) { // Called when clicking on the "Save" button in the Hydration Drug Pop-Up Window
-
 		wccConsoleLog("SaveHydrationDrug()");
 		var win = button.up('window');
 		var HydrationType = win.type;
@@ -681,8 +672,11 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		var values = theForm.getValues();
 
 		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
-		theRouteField = this.getDrugRoute();
+		var theRouteField = this.getDrugRoute();
 		values.Infusion1 = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
+
+		var theDrugField = this.getHydrationDrugCombo();
+		values.Drug = theDrugField.getDisplayValue() + " : " + theDrugField.getValue();
 
 		var numRecords = theStore.count();
 		this.insertNewHydrationRecord(win, theStore, HydrationType, numRecords, values);
@@ -731,25 +725,29 @@ theScope.getHydrationInfusion1().setValue(theValue);
 
 	},
 
-    RemoveSelectedHydrationDrug: function (btn, text) {
-        var theQuery = this.theQuery;
-        if ("yes" === btn) {
-            wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
-            this.getSelectedRecord(true);
-        }
-        else {
-            var record = this.getSelectedRecord(false);   // get the record and deselect it
-            if (record.hasRecord) {
-                record.selModel.deselectAll();
-            }
-        }
-        delete this.panelType;
-        delete this.ckRec;
-        delete this.theQuery;
-    },
+	RemoveSelectedHydrationDrug: function (btn, text) {
+		var theQuery = this.theQuery;
+		if ("yes" === btn) {
+			wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
+			this.getSelectedRecord(true);
+		}
+		else {
+			var record = this.getSelectedRecord(false);   // get the record and deselect it
+			if (record.hasRecord) {
+				record.selModel.deselectAll();
+			}
+		}
+		delete this.panelType;
+		delete this.ckRec;
+		delete this.theQuery;
+	},
 
 	EditDrugGetDetails : function(record) {
-		var drugName = record.getData().Drug;
+		// debugger;
+		var recordData = record.getData();
+		var drugSplit = recordData.Drug.split(" : ");
+		var drugName = drugSplit[0];
+		var drugID = drugSplit[1];
 		var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
 		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 		RouteInfoFields.hide();
@@ -760,37 +758,37 @@ theScope.getHydrationInfusion1().setValue(theValue);
 		this.addToSequenceStore(theCombo,false);
 		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
 
-		this.getHydrationSequenceCombo().setValue(record.data.Sequence);
-		this.getHydrationDrugCombo().setValue(record.data.Drug);
-		this.getHydrationAmt1().setValue(record.data.Amt1);
-		this.getHydrationUnits1().setValue(record.data.Units1);
+		this.getHydrationSequenceCombo().setValue(recordData.Sequence);
+		this.getHydrationDrugCombo().setValue(drugID);
+		this.getHydrationDrugCombo().setRawValue(drugName);
 
-var theRouteName, theRouteID, theRoute = record.data.Infusion1;
+		this.getHydrationAmt1().setValue(recordData.Amt1);
+		this.getHydrationUnits1().setValue(recordData.Units1);
 
-if (theRoute.indexOf(" : ") > 0) {
-	theRoute = theRoute.split(" : ");
-	theRouteID = theRoute[1];
-	theRouteName = theRoute[0];
-	this.getHydrationInfusion1().setValue(theRouteID);
-	this.getHydrationInfusion1().setRawValue(theRouteID);
-}
-else {
-	this.getHydrationInfusion1().setValue(theRoute);
-}
+		var theRouteName, theRouteID, theRoute = recordData.Infusion1;
 
+		if (theRoute.indexOf(" : ") > 0) {
+			theRoute = theRoute.split(" : ");
+			theRouteID = theRoute[1];
+			theRouteName = theRoute[0];
+			this.getHydrationInfusion1().setValue(theRouteID);
+			this.getHydrationInfusion1().setRawValue(theRouteID);
+		}
+		else {
+			this.getHydrationInfusion1().setValue(theRoute);
+		}
 
 		this.routeSelected(this.getHydrationInfusion1(),null,null);
+		this.getHydrationInstructions().setValue(recordData.Instructions);
+		this.getHydrationFluidVol1().setValue(recordData.FluidVol1);
+		this.getHydrationFlowRate1().setValue(recordData.FlowRate1);
+		this.getHydrationInfusionTime1().setValue(recordData.InfusionTime1);
+		this.getHydrationFluidType1().setValue(recordData.FluidType1);
 
-		this.getHydrationInstructions().setValue(record.data.Instructions);
-		this.getHydrationFluidVol1().setValue(record.data.FluidVol1);
-		this.getHydrationFlowRate1().setValue(record.data.FlowRate1);
-		this.getHydrationInfusionTime1().setValue(record.data.InfusionTime1);
-		this.getHydrationFluidType1().setValue(record.data.FluidType1);
+		this.getHydrationDay().setValue(recordData.Day);
+		this.getHydrationAdminTime().setValue(recordData.AdminTime);
 
-		this.getHydrationDay().setValue(record.data.Day);
-		this.getHydrationAdminTime().setValue(record.data.AdminTime);
-
-		this.getDrugInfoFromVistA(drugName, this.AddDrugInfoFromVistA2Store);
+		this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 		RouteInfoFields.show();
 	},
 

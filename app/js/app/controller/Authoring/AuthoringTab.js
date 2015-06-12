@@ -329,19 +329,22 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	getNewTemplateForm : function( thisTab ) {
 		return thisTab.down("CreateNewTemplate");
 	},
+	getNewTemplateDiseaseAndStage : function( thisTab ) {
+		return thisTab.down("selDiseaseAndStage");
+	},
 
 
 	HideSelectedTemplateForm : function() {
 		var thisTab = this.getAuthoringTab();
 		this.getCourseInfo(thisTab).hide();
 		this.getNewTemplateForm(thisTab).hide();
-		// this.selTemplateChange(theTemplate);
 	},
 
 	ShowSelectedTemplateForm : function(theTemplate) {
 		var thisTab = this.getAuthoringTab();
 		this.getCourseInfo(thisTab).show();
 		this.getNewTemplateForm(thisTab).show();
+		this.getNewTemplateDiseaseAndStage(thisTab).show();
 		if (theTemplate) {
 			this.selTemplateChange(theTemplate);
 		}
@@ -505,34 +508,46 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 
 	afterCTOSLoaded: function (template) {
+		var disease, diseaseRecord;
 		wccConsoleLog("CTOS Loaded - Processing");
 		this.SelectedTemplate = template;
 		this.getAnyMedReminders4Template( template.internalId );
 		this.getExistingCourseInfo().show();
 		this.getNewTemplate().show();
-		var disease = this.getExistingDisease();
-		var diseaseRecord = disease.getStore().getById(template.data.Disease);
-		if(null === diseaseRecord){
-			var authorCtl = this.getController("Authoring.AuthoringTab");
-			var SelectedDiseaseID = disease.getValue();
-			if (!SelectedDiseaseID) {
-				SelectedDiseaseID = template.data.Disease;
-			}
-			disease.getStore().load({
-				params: {
-						URL: Ext.URLs.DiseaseType + "/",
-						ID: SelectedDiseaseID
-				},
-				callback: function (records, operation, success) {
-						if (success) {
-							diseaseRecord = disease.getStore().getById(disease.getValue());
-							authorCtl.LoadFormWithExistingData(template);
-						}else{
-							this.application.unMask();
-							Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
-						}
+		if ("" !== template.data.Disease) {
+			disease = this.getExistingDisease();
+			diseaseRecord = disease.getStore().getById(template.data.Disease);
+			if(null === diseaseRecord){
+				var authorCtl = this.getController("Authoring.AuthoringTab");
+				var SelectedDiseaseID = disease.getValue();
+				if (!SelectedDiseaseID) {
+					SelectedDiseaseID = template.data.Disease;
 				}
-			});
+				disease.getStore().load({
+					scope : this,
+					params: {
+							URL: Ext.URLs.DiseaseType + "/",
+							ID: SelectedDiseaseID
+					},
+					callback: function (records, operation, success) {
+							if (success) {
+								diseaseRecord = disease.getStore().getById(operation.params.ID);
+								template.data.Disease = diseaseRecord.data.id;
+								template.data.DiseaseName = diseaseRecord.data.name;
+
+								authorCtl.LoadFormWithExistingData(template);
+							}else{
+								this.application.unMask();
+								Ext.MessageBox.alert('Failure', 'Cancer type could not be found for this template. ');
+							}
+					}
+				});
+			}
+			else {
+				template.data.Disease = diseaseRecord.data.id;
+				template.data.DiseaseName = diseaseRecord.data.name;
+				this.LoadFormWithExistingData(template);
+			}
 		}
 		else {
 			this.LoadFormWithExistingData(template);
@@ -547,6 +562,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.getTemplateAlias().setValue(template.data.Description);
 		this.getExistingDisease().setValue(template.data.Disease);
 		this.getExistingDiseaseStage().setValue(template.data.DiseaseStage[0].name);
+		this.application.Cancer = [];
+		this.application.Cancer.Stage = [];
+		this.application.Cancer.id = template.data.Disease;
+		this.application.Cancer.name = template.data.DiseaseName;
+		this.application.Cancer.Stage.id = template.data.DiseaseStage[0].id;
+		this.application.Cancer.Stage.name = template.data.DiseaseStage[0].name;
 		this.getCourseNum().setValue(template.data.CourseNum);
 		this.getCourseNumMax().setValue(template.data.CourseNumMax);
 		this.getCycleLength().setValue(template.data.CycleLength);
@@ -1207,12 +1228,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		if (ckRec.hasRecord) {
 			wccConsoleLog('Remove Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
 			var reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',
+				id: ckRec.record.get('id'),
 				value: ckRec.record.get('Reference'),
-				description: ckRec.record.get('ReferenceLink'),
-				lookupid: ckRec.record.get('id')
+				description: ckRec.record.get('ReferenceLink')
 			});
-
+/************** this attempts to remove the reference from the Lookup Table NOT the Template *****************
 			reference.destroy({
 				scope: this,
 				success: function (data) {
@@ -1221,6 +1241,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					this.getEditReference().disable();
 				}
 			});
+**********************************************************************************************************/
 		} else {
 			Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
 		}
@@ -1257,6 +1278,40 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	},
 
+	createNewReferenceRecord : function() {
+		return Ext.create('COMS.model.LookupTable', {
+			value: this.getReferenceName().getValue(),
+			description: this.getReferenceLink().getValue(),
+			lookupid : '9'
+		});
+	},
+
+	ckAndGenReferenceRecord : function(ComboRecord, existingRecord) {
+		var reference, ComboRecordGUID, RefName, RefLink;
+		if (ComboRecord) {
+			ComboRecordGUID = ComboRecord.getData().id;
+			RefName = ComboRecord.getData().name;
+			RefLink = ComboRecord.getData().description;
+			if (existingRecord) {
+				if (existingRecord.getData().Reference !== RefName || existingRecord.getData().ReferenceLink !== RefLink) {
+					reference = this.createNewReferenceRecord();
+				}
+				else if (this.getReferenceName().getValue() !== existingRecord.getData().Reference || this.getReferenceLink().getValue() !== existingRecord.getData().ReferenceLink) {
+					reference = this.createNewReferenceRecord();
+				}
+			}
+			else {
+				if (this.getReferenceName().getValue() !== RefName || this.getReferenceLink().getValue() !== RefLink) {
+					reference = this.createNewReferenceRecord();
+				}
+			}
+		}
+		else {
+			reference = this.createNewReferenceRecord();
+		}
+		return reference;
+	},
+
 	clickSaveReference: function (button) {
 		// Click on the "Save" button in the Reference PopUp window.
 		// var grid = Ext.widget('TemplateReferences');		// Note: this gets a new instance of a particular widget by it's xtype, NOT an existing instance
@@ -1266,116 +1321,131 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var form = win.down('form');
 		var values = form.getValues();
 
-		var record = form.getRecord();
-		var rowNum = store.indexOf(record);
-		var reference;
-		var existingRecord = null;
-
+		var reference = null, existingRecord = null;
 		if (this.getSelectedRecord(false, 'AuthoringTab TemplateReferences').hasRecord) {
 			existingRecord = this.getSelectedRecord(false, 'AuthoringTab TemplateReferences').record;
 		}
-		//KD - 12/28/11 - Check to ensure a record is not being edited or selected from drop down
-		if (!record && !existingRecord) {
-			reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',
-				value: values.Reference,
-				description: values.ReferenceLink,
-				lookupid: ''
-			});
-
-			//KD - 12/28/11 - Check to ensure a record is not being edited but is selected from drop down
-		} else if (!record && existingRecord) {
-			reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',	// "9" is a "Magic Number" for the type of record being stored in the Lookup Table
-				value: this.getReferenceName().getValue(),
-				description: this.getReferenceLink().getValue()
-			});
-
-			//KD - 12/28/11 - Record is being edited
-		} else {
-			reference = Ext.create('COMS.model.LookupTable', {
-				id: '9',	// "9" is a "Magic Number" for the type of record being stored in the Lookup Table
-				value: values.Reference,
-				description: values.ReferenceLink,
-				lookupid: record.get('id')
-			});
+		
+		var theCombo, ComboRecord;
+		theCombo = this.getReferenceCombo();
+		if (theCombo.value) {
+			ComboRecord = theCombo.findRecordByValue(theCombo.value);
+			if (!ComboRecord) {
+				if (theCombo.rawValue) {
+					ComboRecord = theCombo.findRecordByDisplay(theCombo.rawValue);
+				}
+			}
+			reference = this.ckAndGenReferenceRecord(ComboRecord, existingRecord);
 		}
+		else if (theCombo.rawValue) {
+			ComboRecord = theCombo.findRecordByDisplay(theCombo.rawValue);
+			reference = this.ckAndGenReferenceRecord(ComboRecord, existingRecord);
+		}
+		else {
+			reference = this.createNewReferenceRecord();
+		}
+		if (reference) {
+			this.application.loadMask("Please wait; Saving Reference");
+			reference.save({
+				scope: this,
+				waitMsg: 'Saving Data...',
+				success: function (data, op1, op2, op3) {
 
-		this.application.loadMask("Please wait; Saving Reference");
-		reference.save({
-			scope: this,
-			waitMsg: 'Saving Data...',
-			success: function (data) {
-				wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
-				var ref = Ext.create(Ext.COMSModels.References, {
-					id: data.data.lookupid,
-					Reference: data.data.value,
-					ReferenceLink: data.data.description
-				});
 
-				var comboReference = Ext.create(Ext.COMSModels.LUReferences, {
-					id: data.data.lookupid,
-					name: data.data.value,
-					description: data.data.description
-				});
-
-				if (-1 === rowNum) {
-					store.insert(0, ref);
-				} else {
-					store.removeAt(rowNum);
-					store.insert(rowNum, ref);
-				}
-
-				this.getReferenceCombo().getStore().insert(0, comboReference);
-				this.getRemoveReference().disable();
-				this.getEditReference().disable();
-				win.close();
-				this.application.unMask();
-			},
-			failure: function (record, op) {
-				var thisCtl = this.getController('Authoring.AuthoringTab');
-				var comboStore = this.getReferenceCombo().getStore();
-
-				var recordIndex = comboStore.findBy(
-
-				function (record, id) {
-					if (record.get('name') === thisCtl.getReferenceName().getValue() && record.get('description') === thisCtl.getReferenceLink().getValue()) {
-						return true;
-					}
-					return false;
-				});
-
-				var ref;
-				var existingRowNum = -1;
-				if (recordIndex !== -1) {
-					var comboRecord = comboStore.getAt(recordIndex);
-					ref = Ext.create(Ext.COMSModels.References, {
-						id: comboRecord.get('id'),
-						Reference: comboRecord.get('name'),
-						ReferenceLink: comboRecord.get('description')
+					var guid = Ext.JSON.decode( op1.response.responseText ).id;
+					wccConsoleLog("Saved Lookup Type ID " + data.getId() + " lookupid " + data.data.lookupid);
+					var ref = Ext.create(Ext.COMSModels.References, {
+						// id: data.data.lookupid,
+						id : guid,
+						Reference: data.data.value,
+						ReferenceLink: data.data.description
 					});
-					existingRowNum = store.find('id', comboRecord.get('id'));
-				} else {
-					try {
-						ref = Ext.create(Ext.COMSModels.References, {
-							id: op.request.scope.reader.jsonData.lookupid,
-							Reference: record.data.value,
-							ReferenceLink: record.data.description
-						});
-					}
-					catch (e) {
-					}
-				}
-				if (-1 === existingRowNum) {
+
+					var comboReference = Ext.create(Ext.COMSModels.LUReferences, {
+						// id: data.data.lookupid,
+						id : guid,
+						name: data.data.value,
+						description: data.data.description
+					});
 					store.insert(0, ref);
 					this.getRemoveReference().disable();
 					this.getEditReference().disable();
 					win.close();
 					this.application.unMask();
-				} else {
-					Ext.MessageBox.alert('Invalid', 'This reference already exists.');
+				},
+				failure: function (record, op) {
+					var thisCtl = this.getController('Authoring.AuthoringTab');
+					var comboStore = this.getReferenceCombo().getStore();
+
+					var recordIndex = comboStore.findBy(
+						function (record, id) {
+							if (record.get('name') === thisCtl.getReferenceName().getValue() && record.get('description') === thisCtl.getReferenceLink().getValue()) {
+								return true;
+							}
+							return false;
+						}
+					);
+
+					var ref;
+					var existingRowNum = -1;
+					if (recordIndex !== -1) {
+						var comboRecord = comboStore.getAt(recordIndex);
+						ref = Ext.create(Ext.COMSModels.References, {
+							id: comboRecord.get('id'),
+							Reference: comboRecord.get('name'),
+							ReferenceLink: comboRecord.get('description')
+						});
+						existingRowNum = store.find('id', comboRecord.get('id'));
+					} else {
+						try {
+							ref = Ext.create(Ext.COMSModels.References, {
+								id: op.request.scope.reader.jsonData.lookupid,
+								Reference: record.data.value,
+								ReferenceLink: record.data.description
+							});
+						}
+						catch (e) {
+						}
+					}
+					if (-1 === existingRowNum) {
+						store.insert(0, ref);
+						this.getRemoveReference().disable();
+						this.getEditReference().disable();
+						win.close();
+						this.application.unMask();
+					} else {
+						Ext.MessageBox.alert('Invalid', 'This reference already exists.');
+					}
+					this.application.unMask();
 				}
+			});
+		}
+		else if (ComboRecord) {
+			var crData = ComboRecord.getData();
+			// Reference to add to the Grid Store
+			var ref = Ext.create(Ext.COMSModels.References, {
+				id : crData.id,
+				Reference: crData.name,
+				ReferenceLink: crData.description
+			});
+			var existingRowNum = store.find('id', crData.id);
+			if (-1 === existingRowNum) {
+				store.insert(0, ref);
 			}
-		});
+
+			// Reference to add to the Select Reference Combo Store in the Pop Up Window.
+			// This shouldn't be necessary as the combo refreshes on selection.
+			/**
+			var comboReference = Ext.create(Ext.COMSModels.LUReferences, {
+				id : crData.id,
+				name: crData.name,
+				description: crData.description
+			});
+			this.getReferenceCombo().getStore().insert(0, comboReference);
+			**/
+			this.getRemoveReference().disable();
+			this.getEditReference().disable();
+			win.close();
+		}
 	}
 });

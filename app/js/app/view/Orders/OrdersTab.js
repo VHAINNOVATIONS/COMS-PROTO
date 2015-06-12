@@ -59,7 +59,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	columns: [{
 		header: "Name",
 		dataIndex: "Last_Name",
-		// width: 180,
 		flex: 3,
 		sortable: true,
 		align: "left",
@@ -103,14 +102,15 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	}, {
 		header: "<div>Type</div>",
 		dataIndex: "type",
-		// width: 75,
-		// flex: 2,
 		width: 80,
 		sortable: false,
 		align: "left"
 	}, {
 		header: "<div>Drug</div>",
 		dataIndex: "drug",
+		renderer: function(v) {
+			return v.split(" : ")[0];
+		},
 		width: 200,
 		sortable: true,
 		align: "left"

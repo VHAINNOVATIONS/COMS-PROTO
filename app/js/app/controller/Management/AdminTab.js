@@ -299,6 +299,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"Roles [name=\"Role\"]" : {
 				select: this.selectRoleChange
 			},
+			"PharmacyManagement" : {
+				afterrender: this.LoadLastSyncTime
+			},
 			"PharmacyManagement button[name=\"Submit\"]" : {
 				click: this.SubmitPharmacyManagement
 			},
@@ -380,24 +383,56 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		});
 	},
 
-	SubmitPharmacyManagement : function(theBtn) {
-		var form = theBtn.up("form").getForm();
-		if (form.isValid()) {
-			var values = form.getValues();
-			form.submit({
-				clientValidation: true,
-				url: "VCFDrugs.php",
-				method: 'POST',
-				success: function(form, action) {
-					form.reset();
- 					Ext.Msg.alert('Pharmacy Management Form Processed successfully');
-				},
-				failure: function(form, action) {
-					Ext.Msg.alert('ooops');
-				}
-			});
-		}
+	LoadLastSyncTime : function(theForm) {
+		theForm.getForm().setValues({"LastSyncTime" : "N/A"});
+		theForm.setLoading("Checking for medication list last synchronization time", false);
+
+		Ext.Ajax.request({
+			url: "/LookUp/SyncMedsList",
+			scope: this,
+			theForm : theForm,
+			
+			success: function( response, opts ){
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				var LastSyncTime = resp.LastSyncTime;
+				opts.theForm.getForm().setValues({"LastSyncTime" : LastSyncTime});
+				theForm.setLoading(false, false);
+			},
+			failure : function( response, opts ) {
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				Ext.MessageBox.alert("Loading Error", "Loading Error", "Can't load last medication synchronization time - <br />" + resp.msg );
+				theForm.setLoading(false, false);
+			}
+		});
+
 	},
+
+	SubmitPharmacyManagement : function(theBtn) {
+		var pForm = theBtn.up("form");
+		var form = pForm.getForm();
+		var values = form.getValues();
+		pForm.setLoading("Synchronizing Medication Lists", false);
+		form.submit({
+			clientValidation: true,
+			url: "/LookUp/SyncMedsList",
+			method: 'POST',
+			scope: this,
+			pForm : pForm,
+			success: function(form, action) {
+				var rt = Ext.JSON.decode(action.response.responseText);
+				form.setValues({"LastSyncTime" : rt.LastSyncTime});
+				action.pForm.setLoading(false, false);
+				Ext.Msg.alert("Success", "Pharmacy medication lists successfully synchronized");
+			},
+			failure: function(form, action) {
+				Ext.Msg.alert("Failure", "Pharmacy medication lists could not be synchronized");
+				form.setLoading(false, false);
+			}
+		});
+	},
+
 
 	selectVistAUser : function(combo) {
 		var msg = this.getSelVistAUserNoMatch();

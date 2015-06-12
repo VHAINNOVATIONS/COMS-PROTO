@@ -3011,15 +3011,15 @@ Ext.define('COMS.model.DrugUnits', {
 
 });
 
-Ext.define('COMS.model.Drugs', {
-	extend: 'Ext.data.Model',
-	fields: [ "id", "name", "description", "IEN" ],
-	proxy: {
-		type: 'rest',
-		url : Ext.URLs.Drugs,
-		reader: {
-			type: 'json',
-			root : 'records'
+Ext.define("COMS.model.Drugs", {
+	"extend" : "Ext.data.Model",
+	"fields" : [ "id", "name", "description", "IEN" ],
+	"proxy" : {
+		"type" : "rest",
+		"url" : Ext.URLs.Drugs,
+		"reader" : {
+			"type" : "json",
+			"root" : "records"
 		}
 	}
 });
@@ -3449,22 +3449,22 @@ Ext.define('COMS.model.LabInfo', {
 
 });
 
-Ext.define('COMS.model.LookupTable', {
-	extend: 'Ext.data.Model',
-	fields: [ "id", "value", "description", "lookupid" ],
-	proxy: {
-		type: 'rest',
-		api: {
-			read: Ext.URLs.Lookups,
-			update: Ext.URLs.AddLookup,
-			destroy: Ext.URLs.DeleteLookup,
-			create: Ext.URLs.AddLookup
+Ext.define("COMS.model.LookupTable", {
+	"extend" : "Ext.data.Model",
+	"fields" : [ "id", "value", "description", "lookupid" ],
+	"proxy" : {
+		"type" : "rest",
+		"api" : {
+			"read" : Ext.URLs.Lookups,
+			"update" : Ext.URLs.AddLookup,
+			"destroy" : Ext.URLs.DeleteLookup,
+			"create" : Ext.URLs.AddLookup
 		},
-		reader: {
-			type: 'json',
-			root : 'records',
-			successProperty : 'success',
-			messageProperty : 'message'
+		"reader" : {
+			"type" : "json",
+			"root" : "records",
+			"successProperty" : "success",
+			"messageProperty" : "message"
 		}
 	}
 });
@@ -5703,17 +5703,17 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"columns" : 2,
 						"items" : [
 							{
-								boxLabel: "Inpatient",
-								name: "PatientType",
-								inputValue: "InPatient",
-								width: 100,
-								checked: true
+								"boxLabel" : "Inpatient",
+								"name" : "PatientType",
+								"inputValue" : "InPatient",
+								"width" : 100,
+								"checked" : true
 							},
 							{
-								boxLabel: "Outpatient",
-								name: "PatientType",
-								inputValue: "OutPatient",
-								width: 125
+								"boxLabel" : "Outpatient",
+								"name" : "PatientType",
+								"inputValue" : "OutPatient",
+								"width" : 125
 							}
 						]
 					}
@@ -5727,7 +5727,6 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					"margin" : "5 5 5 0"
 				},
 				"items" : [
-
 					{
 						"xtype" : "combo",
 						"fieldLabel" : "Select Drug <em>*</em>",
@@ -5739,9 +5738,8 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"valueField" : "IEN",
 						"queryMode" : "local",
 						"typeahead" : true,
-						"allowBlank" : false,
+						"allowBlank" : false
 					}
-
 				]
 			},
 			{
@@ -5811,40 +5809,39 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 				]
 			},
 			{
-				xtype: "container",
-				layout: "hbox",
-				name: "fluidInfo",
-				hidden: true,
-				defaults: {
-					labelAlign: "right",
-					margin: "5 0 5 0"
+				"xtype" : "container",
+				"layout" : "hbox",
+				"name" : "fluidInfo",
+				"hidden" : true,
+				"defaults" : {
+					"labelAlign" : "right",
+					"margin" : "5 0 5 0"
 				},
-				items: [
+				"items" : [
 					{
-						xtype: "combo",
-						name: "FluidType",
-						fieldLabel: "Fluid Type <em>*</em>",
-						width: 220,
-						lableWidth: 85,
-						allowBlank: false,
-						displayField: "value",
-						valueField: "value",
+						"xtype" : "combo",
+						"name" : "FluidType",
+						"fieldLabel" : "Fluid Type <em>*</em>",
+						"width" : 220,
+						"lableWidth" : 85,
+						"allowBlank" : false,
+						"displayField" : "value",
+						"valueField" : "value",
 						"queryMode" : "local",
 						"editable" : true,
 						"typeahead" : true,
-
-						store: "LookupStore"
+						"store" : "LookupStore"
 					},
 					{
-						xtype: "textfield",
-						fieldLabel: "Fluid Volume <em>*</em>",
-						maskRe: /[0-9\.]/,
-						labelWidth: 85,
-						width: 170,
-						name: "FluidVol",
-						margin: "5 0 5 5",
-						colspan: 1,
-						allowBlank: false
+						"xtype" : "textfield",
+						"fieldLabel" : "Fluid Volume <em>*</em>",
+						"maskRe" : /[0-9\.]/,
+						"labelWidth" : 85,
+						"width" : 170,
+						"name" : "FluidVol",
+						"margin" : "5 0 5 5",
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -5854,30 +5851,30 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"width" : 20
 					},
 					{
-						xtype: "textfield",
-						fieldLabel: "Flow Rate <em>*</em>",
-						maskRe: /[0-9\.]/,
-						labelWidth: 70,
-						width: 120,
-						name: "FlowRate",
-						colspan: 1,
-						allowBlank: false
+						"xtype" : "textfield",
+						"fieldLabel" : "Flow Rate <em>*</em>",
+						"maskRe" : /[0-9\.]/,
+						"labelWidth" : 70,
+						"width" : 120,
+						"name" : "FlowRate",
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
-						xtype: "container",
-						html: "ml/hr",
-						readOnly: true,
-						name: "flowRateUnit",
-						margin: "8 0 0 3",
-						width: 50
+						"xtype" : "container",
+						"html" : "ml/hr",
+						"readOnly" : true,
+						"name" : "flowRateUnit",
+						"margin" : "8 0 0 3",
+						"width" : 50
 					},
 					{
-						xtype: "textfield",
-						name: "InfusionTime",
-						fieldLabel: "Infusion Time",
-						width: 195,
-						lableWidth: 120,
-						readOnly: true
+						"xtype" : "textfield",
+						"name" : "InfusionTime",
+						"fieldLabel" : "Infusion Time",
+						"width" : 195,
+						"lableWidth" : 120,
+						"readOnly" : true
 					}
 				]
 			},
@@ -5908,19 +5905,15 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					}
 				]
 			},
-
-
-
-
 			{
-				xtype: "textfield",
-				labelAlign: "right",
-				margin: "0 5 5 0",
-				labelWidth: 75,
-				width: 780,
-				fieldLabel: "Instructions",
-				name: "Instructions",
-				colspan: 4
+				"xtype" : "textfield",
+				"labelAlign" : "right",
+				"margin" : "0 5 5 0",
+				"labelWidth" : 75,
+				"width" : 780,
+				"fieldLabel" : "Instructions",
+				"name" : "Instructions",
+				"colspan" : 4
 			}
 		]
 	}],
@@ -6011,38 +6004,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								"typeahead" : true,
 								"allowBlank" : false,
 							}
-/***********					
-	
-						{
-							"xtype" : "combo",
-							"fieldLabel" : "Select Drug <em>*</em>",
-							"labelWidth" : 80,
-							"width" : 425,
-							"name" : "Drug",
-							"store" : "DrugStore",
-							"displayField" : "name",
-							"valueField" : "IEN",
-							"queryMode" : "local",
-							// "editable" : true,
-							"typeahead" : true,
-							"allowBlank" : false,
-						}
-							
-						{
-							xtype: 'combo',
-							fieldLabel: 'Select Drug <em>*</em>',
-							labelWidth: 80,
-							width: 405,
-							name: 'Drug',
-							store: 'DrugStore',
-							allowBlank: false,
-							'queryMode' : 'local',
-							// 'editable' : true,
-							'typeahead' : true,
-							displayField: 'name',
-							valueField: 'IEN'
-						}
-	****************/
 						]
 					},
 
@@ -6466,223 +6427,279 @@ Ext.define('COMS.view.Authoring.CycleLength' ,{
 });
 
 
-Ext.define('COMS.view.Authoring.DrugRegimen' ,{
-	extend: 'Ext.panel.Panel',
-	alias : 'widget.TemplateDrugRegimen',
-        border : 3,
-	margin: '0 20 20 20',
-        
-        items:[
-		{ xtype : 'textfield', name : "RegimenInstructions", fieldLabel: 'Instructions', labelAlign: 'right', margin : '10 10 0 10', width : 840, labelWidth: 100 },
-                { xtype: 'grid',
-                    autoScroll: 'y',
-                    columnLines: true,
-                    width: 925,
-                    title : 'Drug Regimen',
-                    viewConfig: {stripeRows: true, height: 125, forceFit: true},
-                    margin: '10 10 10 10',
-                    // store : { fields: ['Day', 'Drug', 'Dosage', 'Unit', 'PctDose', 'Reason', 'PDose', 'Route', 'AdminDay'] },
-                    store : { model : Ext.COMSModels.DrugRegimen },	// create here since each instance of the Hydration panel needs it's own store
-                    columns : [
-                                {header : 'Sequence', dataIndex : 'Sequence', width: 60, sortable : true, align: 'center' },                        
-                                {header : 'Admin<br/>Day(s)', dataIndex : 'Day', width: 80, align: 'center' },
-                                {header : 'Admin<br/>Time', dataIndex : 'AdminTime', width: 60, align: 'center' },
-                                {header : 'Drug', dataIndex : 'Drug', width: 100, align: 'center',
-											renderer: function (value, p, record) {
-												var theDrug = Ext.String.format('{0}', value);
-												var theDrugName = theDrug.split(" : ")[0];
-												return theDrugName;
-											}
-								},
-                                {header : 'Dosage<br/>Amount', dataIndex : 'Amt', width: 50, align: 'center' },
-                                {header : 'Units', dataIndex : 'Units', width: 50, align: 'center' },
-                                {header : 'Route', dataIndex : 'Route', width: 50, align: 'center',
-									renderer: function (value, p, record) {
-										if (value.indexOf(" : ") > 0) {
-											return value.split(" : ")[0];
-										}
-										return value;
-									}
-								},
-                                // These are only needed during the administration
-                                // {header : '% of Regimen Dose', dataIndex : 'PctDose', width: 110 },
-                                // {header : 'Reason', dataIndex : 'Reason', flex : 1 },
-                                // {header : 'Patient Dose', dataIndex : 'PDose', width: 90 },
-                                {header : 'Fluid/<br/>Volume', dataIndex : 'FluidVol', width: 50, align: 'center' },
-                                {header : 'Flow<br/>Rate', dataIndex : 'FlowRate', width: 40, align: 'center'},
-                                {header : 'Infusion<br/>Time', dataIndex : 'InfusionTime', width: 100, align: 'center' },
-                                {header : 'Fluid/<br/>Type', dataIndex : 'FluidType', width: 50, align: 'center'},
-                                {header : 'Instructions', dataIndex: 'Instructions', flex: 1, align: 'center'}
-                             ],
-                            buttons: [
-                                    { text: 'Add Drug' }, 
-                                    { text: 'Add Non-Formulary Drug', title: 'AddNonForma' },
-                                    { text: 'Remove Drug', disabled: true },
-                                    { text: 'Edit Drug', disabled: true }
-                            ],
-                            buttonAlign: 'left'
-                }
-        ]
- 
+Ext.define("COMS.view.Authoring.DrugRegimen", {
+	"extend": "Ext.panel.Panel",
+	"alias": "widget.TemplateDrugRegimen",
+	"border": 3,
+	"margin": "0 20 20 20",
+
+	"items": [{
+		"xtype": "textfield",
+		"name": "RegimenInstructions",
+		"fieldLabel": "Instructions",
+		"labelAlign": "right",
+		"margin": "10 10 0 10",
+		"width": 840,
+		"labelWidth": 100
+	}, {
+		"xtype": "grid",
+		"autoScroll": "y",
+		"columnLines" : true,
+		"width" : 925,
+		"title" : 'Drug Regimen',
+		"viewConfig" : {"stripeRows" : true, "height" : 125, "forceFit" : true},
+		"margin" : '10 10 10 10',
+		"store" : { "model" : Ext.COMSModels.DrugRegimen },
+		"columns" : [{
+				"header" : "Sequence",
+				"dataIndex" : "Sequence",
+				"width" : 60,
+				"sortable" : true,
+				"align" : "center"
+			}, {
+				"header" : "Admin<br/>Day(s)",
+				"dataIndex" : "Day",
+				"width" : 80,
+				"align" : "center"
+			}, {
+				"header" : "Admin<br/>Time",
+				"dataIndex" : "AdminTime",
+				"width" : 60,
+				"align" : "center"
+			}, {
+				"header" : "Drug",
+				"dataIndex" : "Drug",
+				"width" : 100,
+				"align" : "center",
+				"renderer" : function(value, p, record) {
+					var theDrug = Ext.String.format("{0}", value);
+					var theDrugName = theDrug.split(" : ")[0];
+					return theDrugName;
+				}
+			}, {
+				"header" : "Dosage<br/>Amount",
+				"dataIndex" : "Amt",
+				"width" : 50,
+				"align" : "center"
+			}, {
+				"header" : "Units",
+				"dataIndex" : "Units",
+				"width" : 50,
+				"align" : "center"
+			}, {
+				"header" : "Route",
+				"dataIndex" : "Route",
+				"width" : 50,
+				"align" : "center",
+				"renderer" : function(value, p, record) {
+					if (value.indexOf(" : ") > 0) {
+						return value.split(" : ")[0];
+					}
+					return value;
+				}
+			},
+			// These are only needed during the administration
+			// {header : "% of Regimen Dose", dataIndex : "PctDose", width: 110 },
+			// {header : "Reason", dataIndex : "Reason", flex : 1 },
+			// {header : "Patient Dose", dataIndex : "PDose", width: 90 },
+			{
+				"header" : "Fluid/<br/>Volume",
+				"dataIndex" : "FluidVol",
+				"width" : 50,
+				"align" : "center"
+			}, {
+				"header" : "Flow<br/>Rate",
+				"dataIndex" : "FlowRate",
+				"width" : 40,
+				"align" : "center"
+			}, {
+				"header" : "Infusion<br/>Time",
+				"dataIndex" : "InfusionTime",
+				"width" : 100,
+				"align" : "center"
+			}, {
+				"header" : "Fluid/<br/>Type",
+				"dataIndex" : "FluidType",
+				"width" : 50,
+				"align" : "center"
+			}, {
+				"header" : "Instructions",
+				"dataIndex" : "Instructions",
+				"flex" : 1,
+				"align" : "center"
+			}
+		],
+		"buttons" : [{
+			"text" : "Add Drug"
+		}, {
+			"text" : "Add Non-Formulary Drug",
+			"title" : "AddNonForma"
+		}, {
+			"text" : "Remove Drug",
+			"disabled" : true
+		}, {
+			"text" : "Edit Drug",
+			"disabled" : true
+		}],
+		"buttonAlign" : "left"
+	}]
 });
 
-
-/*global Ext, renderAmt, renderRoute, renderUnit, renderFluidVol, renderFlowRate, renderInfusionTime, renderFluidType */
-Ext.define('COMS.view.Authoring.Hydration', {
-	extend: 'Ext.panel.Panel',
-	alias: 'widget.TemplateHydration',
-	margin: '0 20 20 20',
-	items: [
+Ext.define("COMS.view.Authoring.Hydration", {
+	"extend" : "Ext.panel.Panel",
+	"alias" : "widget.TemplateHydration",
+	"margin" : "0 20 20 20",
+	"items" : [
 		{
-			xtype: 'textfield',
-			name: "HydrationInstructions",
-			fieldLabel: 'Instructions',
-			labelAlign: 'right',
-			margin: '10 10 0 10',
-			width: 840,
-			labelWidth: 100
+			"xtype" : "textfield",
+			"name" : "HydrationInstructions",
+			"fieldLabel" : "Instructions",
+			"labelAlign" : "right",
+			"margin" : "10 10 0 10",
+			"width" : 840,
+			"labelWidth" : 100
 		},
 		{
-			xtype: 'grid',
-			autoScroll: 'y',
-			cls: 'custom-grid',
-			columnLines: true,
-			width: 925,
-			viewConfig: {
-				stripeRows: true,
-				height: 125,
-				forceFit: true
+			"xtype" : "grid",
+			"autoScroll" : "y",
+			"cls" : "custom-grid",
+			"columnLines" : true,
+			"width" : 925,
+			"viewConfig" : {
+				"stripeRows" : true,
+				"height" : 125,
+				"forceFit" : true
 			},
-			title: 'Drug Regimen',
-			margin: '10 10 10 10',
-			store: {
-				model: Ext.COMSModels.Hydration
+			"title" : "Drug Regimen",
+			"margin" : "10 10 10 10",
+			"store" : {
+				"model" : Ext.COMSModels.Hydration
 			},
 			// create here since each instance of the Hydration panel needs it's own store
-			columns: [
+			"columns" : [
 				{
-					header: 'Sequence',
-					dataIndex: 'Sequence',
-					width: 60,
-					sortable: true,
-					align: 'center',
-					renderer: function (value, p, record) {
-						return Ext.String.format('{0}', value);
+					"header" : "Sequence",
+					"dataIndex" : "Sequence",
+					"width" : 60,
+					"sortable" : true,
+					"align" : "center",
+					"renderer" : function (value, p, record) {
+						return Ext.String.format("{0}", value);
 					}
 				},
 				{
-					header: 'Admin<br/>Day(s)',
-					dataIndex: 'Day',
-					width: 80,
-					sortable: false,
-					align: 'center',
-					renderer: function (value, p, record) {
-						return Ext.String.format('{0}', value);
+					"header" : "Admin<br/>Day(s)",
+					"dataIndex" : "Day",
+					"width" : 80,
+					"sortable" : false,
+					"align" : "center",
+					"renderer" : function (value, p, record) {
+						return Ext.String.format("{0}", value);
 					}
 				},
 				{
-					header: 'Admin<br/>Time',
-					dataIndex: 'AdminTime',
-					width: 60,
-					sortable: false,
-					align: 'center',
-					renderer: function (value, p, record) {
-						return Ext.String.format('{0}', value);
+					"header" : "Admin<br/>Time",
+					"dataIndex" : "AdminTime",
+					"width" : 60,
+					"sortable" : false,
+					"align" : "center",
+					"renderer" : function (value, p, record) {
+						return Ext.String.format("{0}", value);
 					}
 				},
 				{
-					header: 'Drug',
-					dataIndex: 'Drug',
-					width: 100,
-					sortable: false,
-					align: 'center',
-					renderer: function (value, p, record) {
-						var theValue = Ext.String.format('{0}', value);
+					"header" : "Drug",
+					"dataIndex" : "Drug",
+					"width" : 100,
+					"sortable" : false,
+					"align" : "center",
+					"renderer" : function (value, p, record) {
+						var theValue = Ext.String.format("{0}", value);
 						var theDrugName = theValue.split(" : ")[0];
 						return theDrugName;
 					}
 				},
 				{
-					header: 'Dosage<br/>Amount',
-					dataIndex: 'Amt1',
-					width: 50,
-					sortable: false,
-					align: 'center',
-					renderer: renderAmt
+					"header" : "Dosage<br/>Amount",
+					"dataIndex" : "Amt1",
+					"width" : 50,
+					"sortable" : false,
+					"align" : "center",
+					"renderer" : renderAmt
 				},
 				{
-					header: 'Units',
-					dataIndex: 'Units1',
-					width: 50,
-					sortable: false,
-					renderer: renderUnit,
-					align: 'center'
+					"header" : "Units",
+					"dataIndex" : "Units1",
+					"width" : 50,
+					"sortable" : false,
+					"renderer" : renderUnit,
+					"align" : "center"
 				},
 				{
-					header: 'Route',
-					dataIndex: 'Infusion1',
-					width: 50,
-					sortable: false,
-					renderer: renderRoute,
-					align: 'center'
+					"header" : "Route",
+					"dataIndex" : "Infusion1",
+					"width" : 50,
+					"sortable" : false,
+					"renderer" : renderRoute,
+					"align" : "center"
 				},
 				{
-					header: 'Fluid/<br/>Volume',
-					dataIndex: 'FluidVol1',
-					width: 50,
-					sortable: false,
-					renderer: renderFluidVol,
-					align: 'center'
+					"header" : "Fluid/<br/>Volume",
+					"dataIndex" : "FluidVol1",
+					"width" : 50,
+					"sortable" : false,
+					"renderer" : renderFluidVol,
+					"align" : "center"
 				},
 				{
-					header: 'Flow<br/>Rate',
-					dataIndex: 'FlowRate1',
-					width: 40,
-					sortable: false,
-					renderer: renderFlowRate,
-					align: 'center'
+					"header" : "Flow<br/>Rate",
+					"dataIndex" : "FlowRate1",
+					"width" : 40,
+					"sortable" : false,
+					"renderer" : renderFlowRate,
+					"align" : "center"
 				},
 				{
-					header: 'Infusion<br/>Time',
-					dataIndex: 'InfusionTime1',
-					width: 100,
-					sortable: false,
-					renderer: renderInfusionTime,
-					align: 'center'
+					"header" : "Infusion<br/>Time",
+					"dataIndex" : "InfusionTime1",
+					"width" : 100,
+					"sortable" : false,
+					"renderer" : renderInfusionTime,
+					"align" : "center"
 				},
 				{
-					header: 'Fluid/<br/>Type',
-					dataIndex: 'FluidType1',
-					width: 50,
-					sortable: false,
-					renderer: renderFluidType,
-					align: 'center'
+					"header" : "Fluid/<br/>Type",
+					"dataIndex" : "FluidType1",
+					"width" : 50,
+					"sortable" : false,
+					"renderer" : renderFluidType,
+					"align" : "center"
 				},
 				{
-					header: 'Instructions',
-					dataIndex: 'Instructions',
-					width: 217,
-					sortable: false,
-					align: 'center',
-					renderer: function (value, p, record) {
-						return Ext.String.format('{0}', value);
+					"header" : "Instructions",
+					"dataIndex" : "Instructions",
+					"width" : 217,
+					"sortable" : false,
+					"align" : "center",
+					"renderer" : function (value, p, record) {
+						return Ext.String.format("{0}", value);
 					}
 				}
 			],
-			buttons: [
+			"buttons" : [
 				{
-					text: 'Add Drug'
+					"text" : "Add Drug"
 				},
 				{
-					text: 'Remove Drug',
-					disabled: true
+					"text" : "Remove Drug",
+					"disabled" : true
 				},
 				{
-					text: 'Edit Drug',
-					disabled: true
+					"text" : "Edit Drug",
+					"disabled" : true
 				}
 			],
-			buttonAlign: 'left'
+			"buttonAlign" : "left"
 		}		// END of Grid definition
 	]
 });
@@ -6691,67 +6708,59 @@ function renderAmt(value, p, record) {
 
 	var amt2 = record.data.Amt2;
 
-	if (null !== value && null !== amt2 && '' !== amt2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== amt2 && "" !== amt2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderUnit(value, p, record) {
 
 	var unit2 = record.data.Units2;
 
-	if (null !== value && null !== unit2 && '' !== unit2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== unit2 && "" !== unit2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderRoute(value, p, record) {
 	if (value.indexOf(" : ") > 0) {
 		return value.split(" : ")[0];
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderFluidVol(value, p, record) {
-
 	var val2 = record.data.FluidVol2;
-
-	if (null !== value && null !== val2 && '' !== val2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== val2 && "" !== val2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderFlowRate(value, p, record) {
-
 	var val2 = record.data.FlowRate2;
-
-	if (null !== value && null !== val2 && '' !== val2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== val2 && "" !== val2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderInfusionTime(value, p, record) {
-
 	var val2 = record.data.InfusionTime2;
-
-	if (null !== value && null !== val2 && '' !== val2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== val2 && "" !== val2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 function renderFluidType(value, p, record) {
-
 	var val2 = record.data.FluidType2;
-
-	if (null !== value && null !== val2 && '' !== val2) {
-		return Ext.String.format('{0}', value);
+	if (null !== value && null !== val2 && "" !== val2) {
+		return Ext.String.format("{0}", value);
 	}
-	return Ext.String.format('{0}', value);
+	return Ext.String.format("{0}", value);
 }
 
 Ext.define('COMS.view.Authoring.HydrationSequence', {
@@ -6959,36 +6968,6 @@ function renderURI(value, p, record) {
 		return tmp;
 	}
 }
-
-/**************************
-Ext.define('COMS.view.Template.selDrug' ,{
-    extend: 'Ext.form.field.ComboBox',
-    alias : 'widget.selDrug',
-	name : 'Select Drug',
-
-	width: 500,
-	size : 50,
-	labelWidth: 150,
-	displayField: 'Drug',
-	valueField: 'Drug',
-    initComponent: function() {
-        this.store = {
-            fields: ['Drug', 'Unit', 'Comments'],
-            data  : [
-                {Drug: 'Cisplatin', Unit : 'mg', Comments : '' },
-                {Drug: 'Vinorelbine', Unit : 'mg', Comments : '' },
-                {Drug: 'Pemetrexed', Unit : 'micrograms', Comments : '' },
-                {Drug: 'Gemcitabine', Unit : 'mg', Comments : '' },
-                {Drug: 'Dexamethasone', Unit : 'mg', Comments : '' },
-                {Drug: 'Ondansetron', Unit : 'mg', Comments : '' },
-                {Drug: 'Aprepitant', Unit : 'mg', Comments : '' },
-                {Drug: 'NS', Unit : 'mg', Comments : '' },
-                {Drug: 'Prochlorperazine', Unit : 'mg', Comments : '' }
-            ]
-        };
-	}
-});
-*********************************/
 
 
 Ext.define("COMS.view.CkBoxTArea" ,{
@@ -8149,8 +8128,8 @@ Ext.define("COMS.view.Common.selCTOSTemplate", {
 			"xtype" : "box", "autoEl" : "div", "cls" : "centeredMsg", "name" : "AllTemplatesShownMsg", 
 			"html" : "All templates now available for selection", "hidden" : true 
 		},
-		{ "xtype" : "selTemplate", "name" :"AllTemplates"},
-		{ "xtype" : "selDiseaseAndStage", "margin" : "5 0 5 0" }
+		{ "xtype" : "selDiseaseAndStage", "margin" : "5 0 5 0" },
+		{ "xtype" : "selTemplate", "name" :"AllTemplates"}
 	]
 });
 
@@ -8873,9 +8852,9 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 	"alias": "widget.EmeticMeds",
 	"name": "EmeticMeds",
 	"autoEl": {
-		tag: "section"
+		"tag" : "section"
 	},
-	border: false,
+	"border" : false,
 	"defaults": {
 		"labelAlign": "right",
 		"labelClsExtra": "NursingDocs-label",
@@ -8922,48 +8901,19 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				}]
 			}]
 		},
-					{
-						"xtype" : "combo",
-						"fieldLabel" : "Select Drug <em>*</em>",
-						"labelWidth" : 80,
-						"width" : 425,
-						"name" : "Drug",
-						"store" : "DrugStore",
-						"displayField" : "name",
-						"valueField" : "IEN",
-						"queryMode" : "local",
-						"typeahead" : true,
-						"allowBlank" : false,
-					},
-/**************
-						{
-							"xtype" : "combo",
-							"fieldLabel" : "Select Drug <em>*</em>",
-							"labelWidth" : 80,
-							"width" : 425,
-							"name" : "Drug",
-							"store" : "DrugStore",
-							"displayField" : "name",
-							"valueField" : "IEN",
-							"queryMode" : "local",
-							// "editable" : true,
-							"typeahead" : true,
-							"allowBlank" : false,
-						},
-
-
 		{
 			"xtype" : "combo",
-			"typeAhead" : true,
-			"minChars" : 2,
 			"fieldLabel" : "Select Drug <em>*</em>",
+			"labelWidth" : 80,
+			"width" : 425,
 			"name" : "Drug",
 			"store" : "DrugStore",
 			"displayField" : "name",
 			"valueField" : "IEN",
-			"width" : 500
+			"queryMode" : "local",
+			"typeahead" : true,
+			"allowBlank" : false,
 		},
-***************/
 		{
 			"xtype": "ManagementBtns"
 		},
@@ -9543,9 +9493,8 @@ Ext.define("COMS.view.Management.PatternsOfCareTab" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.PatternsOfCareTab",
 	"name" : "PatternsOfCareTab",
-	"autoEl" : { tag : "nav" },
-	// "defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
-	"items" : [ { "xtype" : "box", "html" :  
+	"autoEl" : { "tag" : "nav" },
+	"items" : [ { "xtype" : "box", "html" : 
 		"<ul class=\"PatternsOfCare\">" +
 			"<li><a href=\"/POCD/CBG\" target=\"_POCD\" class=\"GenderCancerTypes\">Gender & Cancer Types</a></li>" +
 			"<!-- <li><a href=\"#\" target=\"_blank\" class=\"TemplatesCancerTypes\">Cancer Types & Applied Templates</a></li>" +
@@ -9560,7 +9509,7 @@ Ext.define("COMS.view.Management.PharmacyManagement" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.PharmacyManagement",
 	"name" : "PharmacyManagement",
-	"autoEl" : { tag : "section" },
+	"autoEl" : { "tag" : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
 		{ "xtype" : "box", "html" : "<em style=\"font-weight: bold; color: red;\">Note:</em> Information is required to permit interopability with associated VistA instance pharmacy packages"},
@@ -11926,35 +11875,29 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedInstructions", {
 	]
 });
 
-
-
-
-
-
-
-
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.MedsInfoDisplay",
-	name : "NursingDocs.MedsInfoDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.MedsInfoDisplay",
+	"name" : "NursingDocs.MedsInfoDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"{[this.tempCalc(values)]}",
-			"<p><h3>{Medication}</h3>",
+			"<p><h3>{[this.stripIENfromDrug( values.Medication )]}</h3>",
 			"{Documentation}",
 			"</p>",
 		"</tpl>",
 		"</div></section>",
 		{
 				// XTemplate Configuration
-			disableFormats: true,
-			tempCalc: function (data) {
-				// debugger;
+			"disableFormats" : true,
+			"stripIENfromDrug" : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
 			}
 		}
 	)
@@ -11967,12 +11910,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.ClinicInfoDisplay",
-	name : "NursingDocs.ClinicInfoDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.ClinicInfoDisplay",
+	"name" : "NursingDocs.ClinicInfoDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Clinic --- Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
@@ -11984,12 +11927,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	)
 });
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.SpclInstrDisplay",
-	name : "NursingDocs.SpclInstrDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.SpclInstrDisplay",
+	"name" : "NursingDocs.SpclInstrDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Discharge Instructions:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
@@ -12002,13 +11945,13 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.MedSpecificInfoDisplay",
-	name : "NursingDocs.MedSpecificInfoDisplay",
-	autoScroll : true,
-	html : "<hr>None Available<hr>",
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.MedSpecificInfoDisplay",
+	"name" : "NursingDocs.MedSpecificInfoDisplay",
+	"autoScroll" : true,
+	"html" : "<hr>None Available<hr>",
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Medication Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
@@ -12019,8 +11962,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
 		"</div></section>",
 		{
 				// XTemplate Configuration
-			disableFormats: true,
-			stripIENfromDrug : function(drug) {
+			"disableFormats" : true,
+			"stripIENfromDrug" : function(drug) {
 				if (drug.indexOf(" : ") > 0) {
 					drug = drug.split(" : ")[0];
 				}
@@ -12266,27 +12209,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"name": "Teaching_Other",
 							"fieldLabel": "Other"
 						},
-/*************
 						{
 							"xtype": "CheckCombo",
-							// "noDataText" : "",
-							"value" : "",		// If a CheckCombo is not initialized with a value of "" the form shows up as Dirty
-							"fieldLabel": "Select Clinic Information",
-							"name": "ND_E_SelectClinicInfo",
-							"width": 450,
-							"margin" : "5 0 10 0",
-							"store" : "ClinicInfo",
-							"displayField": "Label",
-							"valueField": "ID"
-						}, 
-
-						{
-							"xtype": "ClinicInfoDisplay"
-						},
-************/
-						{
-							"xtype": "CheckCombo",
-							// "noDataText" : "",
 							"value" : "",
 							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",
@@ -12896,54 +12820,54 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
-    extend: "Ext.grid.Panel",
-    alias : "widget.NursingDocs_Treatment_Meds",
-    store : "ND_Treatment",
-    autoScroll : true,
-    columnLines : true,
-    sortableColumns : false,
-    enableColumnHide : false,
-    enableColumnMove : false,
-    features: [{ftype:'grouping'}],
-    viewConfig:{ markDirty: false },
-    selType: "cellmodel",
-    plugins: [ Ext.ND_cellEditing ],
-	columns : [
-		{ header : "", dataIndex : "typeOrder", hidden : true, renderer: Ext.ND_TreatmentTypeOrderRenderer },
-		{ header : "Medication", dataIndex : "drug", width : 120,
-				renderer: function(v) {
+	"extend" : "Ext.grid.Panel",
+	"alias" : "widget.NursingDocs_Treatment_Meds",
+	"store" : "ND_Treatment",
+	"autoScroll" : true,
+	"columnLines" : true,
+	"sortableColumns" : false,
+	"enableColumnHide" : false,
+	"enableColumnMove" : false,
+	"features" : [{"ftype" :"grouping"}],
+	"viewConfig" :{ "markDirty" : false },
+	"selType" : "cellmodel",
+	"plugins" : [ Ext.ND_cellEditing ],
+	"columns" : [
+		{ "header" : "", "dataIndex" : "typeOrder", "hidden" : true, "renderer" : Ext.ND_TreatmentTypeOrderRenderer },
+		{ "header" : "Medication", "dataIndex" : "drug", "width" : 120,
+				"renderer" : function(v) {
 					return v.split(" : ")[0];
 				}
 		},
-		{ header : "Dose", dataIndex : "dose", width : 50, editor: { allowBlank: false } },
-		{ header : "Units", dataIndex : "unit", width : 70},
-		{ header : "Route", dataIndex : "route", width : 50},
-		{ header : "Start Time", dataIndex : "StartTime", renderer : Ext.ND_TreatmentTimeRenderer, 
-			editor : new Ext.form.field.Time({
-				increment : 1, 
-				snapToIncrement : true, 
-				format : "h:i A",
-				id : "startTimeEditor"
+		{ "header" : "Dose", "dataIndex" : "dose", "width" : 50, "editor" : { "allowBlank" : false } },
+		{ "header" : "Units", "dataIndex" : "unit", "width" : 70},
+		{ "header" : "Route", "dataIndex" : "route", "width" : 50},
+		{ "header" : "Start Time", "dataIndex" : "StartTime", "renderer" : Ext.ND_TreatmentTimeRenderer, 
+			"editor" : new Ext.form.field.Time({
+				"increment" : 1, 
+				"snapToIncrement" : true, 
+				"format" : "h:i A",
+				"id" : "startTimeEditor"
 			})
 		},
-		{ header : "End Time", dataIndex : "EndTime", renderer : Ext.ND_TreatmentTimeRenderer, 
-			editor : new Ext.form.field.Time({
-				increment : 1, 
-				snapToIncrement : true, 
-				format : "h:i A",
-				id : "endTimeEditor"
+		{ "header" : "End Time", "dataIndex" : "EndTime", "renderer" : Ext.ND_TreatmentTimeRenderer, 
+			"editor" : new Ext.form.field.Time({
+				"increment" : 1, 
+				"snapToIncrement" : true, 
+				"format" : "h:i A",
+				"id" : "endTimeEditor"
 			})
 		},
-		{ header : "Comments", dataIndex : "Comments", width : 250, 
-			renderer : Ext.ND_CommentRenderer, 
-			editor : { xtype : "textfield" } 
+		{ "header" : "Comments", "dataIndex" : "Comments", "width" : 250, 
+			"renderer" : Ext.ND_CommentRenderer, 
+			"editor" : { xtype: "textfield" } 
 		},
-		{ header : "Signature", dataIndex : "Treatment_User", width : 200, renderer : Ext.ND_TreatmentSignature },
-		{ header : "", width : 40, xtype: 'actioncolumn', hideable: false, 
-			handler: function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record : record, scope : this });
+		{ "header" : "Signature", "dataIndex" : "Treatment_User", "width" : 200, "renderer" : Ext.ND_TreatmentSignature },
+		{ "header" : "", "width" : 40, "xtype" : "actioncolumn", "hideable" : false, 
+			"handler" : function (grid, rowIndex, colIndex, node, e, record, rowNode) {
+				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record: record, scope: this });
 			},
-			getClass: function(v, meta, rec, row, col, store) {
+			"getClass" : function(v, meta, rec, row, col, store) {
 				if ("Administered" === rec.get("orderstatus")) {
 					this.items[0].tooltip = "Make addendum";
 					return "EditCell";
@@ -12956,28 +12880,28 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
-    extend: "Ext.panel.Panel",
-    alias : "widget.NursingDocs_Treatment",
-    name : "Nursing Documentation Treatment Tab",
-    title: "Administration",
-    items : [
-        { xtype : "fieldset",
-            padding : "10",
-            defaultType : "fieldset",
-            items : [
-                {
-                    title : "Medication Given",
-                    name : "ND_T_Meds",
-                    defaults : { margin : "5 0 30 0" },
-                    items : [
-						{ xtype : "box", html : "Items marked with a <em class=\"required-field\">*</em> have an addendum", margin : "0", style : { "textAlign" : "center", "fontWeight" : "bold" }},
-						{ xtype : "NursingDocs_Treatment_Meds", title : "Treatment Administered", name : "AdministeredMedsGrid" }
-                    ]
-                },
-                { xtype : "button", text : "Administration Complete", hidden : true }
-            ]
-        }
-    ]
+	"extend" : "Ext.panel.Panel",
+	"alias" : "widget.NursingDocs_Treatment",
+	"name" : "Nursing Documentation Treatment Tab",
+	"title" : "Administration",
+	"items" : [
+		{ "xtype" : "fieldset",
+			"padding" : "10",
+			"defaultType" : "fieldset",
+			"items" : [
+				{
+					"title" : "Medication Given",
+					"name" : "ND_T_Meds",
+					"defaults" : { "margin" : "5 0 30 0" },
+					"items" : [
+						{ "xtype" : "box", "html" : "Items marked with a <em class=\"required-field\">*</em> have an addendum", "margin" : "0", "style" : { "textAlign": "center", "fontWeight": "bold" }},
+						{ "xtype" : "NursingDocs_Treatment_Meds", "title" : "Treatment Administered", "name" : "AdministeredMedsGrid" }
+					]
+				},
+				{ "xtype" : "button", "text" : "Administration Complete", "hidden" : true }
+			]
+		}
+	]
 });
 
 
@@ -13396,8 +13320,8 @@ Ext.define("COMS.view.NewPlan.CTOS.OEMPerformanceStatus", {
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.FluidVol" ,{
-	extend: "Ext.form.field.Text",
-	alias : "widget.FluidVol",
+	"extend" : "Ext.form.field.Text",
+	"alias" : "widget.FluidVol",
 	"fieldLabel": "Fluid Volume <em class=\"required-field\">*</em>",
 	"maskRe" : /[0-9\.]/,
 	"labelWidth": 95,
@@ -13406,16 +13330,16 @@ Ext.define("COMS.view.NewPlan.CTOS.FluidVol" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.FlowRate" ,{
-	extend: "Ext.form.field.Text",
-	alias : "widget.FlowRate",
-	fieldLabel : "Flow Rate",
-	width : 140,
-	labelWidth : 70
+	"extend" : "Ext.form.field.Text",
+	"alias" : "widget.FlowRate",
+	"fieldLabel" : "Flow Rate",
+	"width" : 140,
+	"labelWidth" : 70
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.AdminDay" ,{
-	extend: "Ext.form.field.Text",
-	alias : "widget.AdminDay",
+	"extend" : "Ext.form.field.Text",
+	"alias" : "widget.AdminDay",
 	"fieldLabel": "Administration Day(s) <em class=\"required-field\">*</em>",
 	"maskRe" : /^[-,0-9 ]+$/,
 	"width": 250,
@@ -13424,26 +13348,26 @@ Ext.define("COMS.view.NewPlan.CTOS.AdminDay" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DossageAmt" ,{
-	extend: "Ext.form.field.Text",
-	alias : "widget.DossageAmt",
-	maskRe  :	/[0-9\.]/,
-	fieldLabel : "Dosage Amount <em class=\"required-field\">*</em>",
-	width : 200,
-	labelWidth : 130
+	"extend" : "Ext.form.field.Text",
+	"alias" : "widget.DossageAmt",
+	"maskRe" : /[0-9\.]/,
+	"fieldLabel" : "Dosage Amount <em class=\"required-field\">*</em>",
+	"width" : 200,
+	"labelWidth" : 130
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.AdminTime" ,{
-	extend: "Ext.form.field.Time",
-	alias : "widget.AdminTime",
-    "fieldLabel": "Administration Time",
+	"extend" : "Ext.form.field.Time",
+	"alias" : "widget.AdminTime",
+	"fieldLabel": "Administration Time",
 	"width": 290,
 	"labelWidth": 130
 });
 
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectFluidType" ,{
-	extend : "Ext.form.field.ComboBox",
-	alias : "widget.SelectFluidType",
+	"extend" : "Ext.form.field.ComboBox",
+	"alias" : "widget.SelectFluidType",
 	"fieldLabel": "Select Fluid Type <em class=\"required-field\">*</em>",
 	"labelWidth": 115,
 	"width": 200,
@@ -13454,8 +13378,8 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectFluidType" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
-	extend : "Ext.form.field.ComboBox",
-	alias : "widget.SelectDrug",
+	"extend" : "Ext.form.field.ComboBox",
+	"alias" : "widget.SelectDrug",
 	"fieldLabel": "Select Drug <em>*</em>",
 	"labelWidth": 115,
 	"width": 425,
@@ -13465,10 +13389,9 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"valueField": "id"
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
-	extend : "Ext.form.field.ComboBox",
-	alias : "widget.DrugUnits",
+	"extend" : "Ext.form.field.ComboBox",
+	"alias" : "widget.DrugUnits",
 	"fieldLabel": "Units <em class=\"required-field\">*</em>",
 	"labelWidth": 95,
 	"width": 210,
@@ -13478,9 +13401,8 @@ Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
-	extend : "Ext.form.field.ComboBox",
-	alias : "widget.InfusionMethod",
-
+	"extend" : "Ext.form.field.ComboBox",
+	"alias" : "widget.InfusionMethod",
 	"fieldLabel": "Route <em class=\"required-field\">*</em>",
 	"width": 240,
 	"labelWidth": 70,
@@ -13490,30 +13412,28 @@ Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectReason" ,{
-	extend : "Ext.form.field.ComboBox",
-	alias : "widget.SelectReason",
-	fieldLabel: "Select Reason <em class=\"required-field\">*</em>",
-	labelWidth: 115,
-	width: 400,
-	store: "ReasonStore",
-	allowBlank: false,
-	displayField: "value",
-	valueField: "id"
+	"extend" : "Ext.form.field.ComboBox",
+	"alias" : "widget.SelectReason",
+	"fieldLabel" : "Select Reason <em class=\"required-field\">*</em>",
+	"labelWidth" : 115,
+	"width" : 400,
+	"store" : "ReasonStore",
+	"allowBlank" : false,
+	"displayField" : "value",
+	"valueField" : "id"
 });
 
 
 
 Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
-	extend: "Ext.window.Window",
-	alias : "widget.EditOEMRecord",
-
-	title: "Edit Drug Record",
-	layout: "fit",
-	autoShow: true,
-	width: 900,
-	modal: true,
-
-	items : [
+	"extend" : "Ext.window.Window",
+	"alias" : "widget.EditOEMRecord",
+	"title" : "Edit Drug Record",
+	"layout" : "fit",
+	"autoShow" : true,
+	"width" : 900,
+	"modal" : true,
+	"items" : [
 		{
 			"xtype": "form",
 			"items": [
@@ -13521,81 +13441,81 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 
 				{
 					"xtype": "container",
-					defaults: {
-						labelAlign: "right",
-						margin: "0"
+					"defaults" : {
+						"labelAlign" : "right",
+						"margin" : "0"
 					},
 					"items": [
 						// Row 1 - Drug
 						{
-							xtype: 'container',
-							layout: 'hbox',
-							defaults: {
-								labelAlign: 'right',
-								margin: '0 0 5 0'
+							"xtype" : "container",
+							"layout" : "hbox",
+							"defaults" : {
+								"labelAlign" : "right",
+								"margin" : "0 0 5 0"
 							},
-							items: [
-								{ xtype: "container",  width: 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
-								{ xtype: "SelectDrug", "name": "Med", colspan : 2, margin: "2 2 2 2" },
-								{ xtype: "SelectReason", name:"Reason", colspan: 2, margin: "2"}
+							"items" : [
+								{ "xtype" : "container",  "width" : 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
+								{ "xtype" : "SelectDrug", "name": "Med", "colspan" : 2, "margin" : "2 2 2 2" },
+								{ "xtype" : "SelectReason", "name" : "Reason", "colspan" : 2, "margin" : "2"}
 							]
 						},
 
 						// Row 2 - Dosing
 						{
-							xtype: 'container',
-							layout: 'hbox',
-							defaults: {
-								labelAlign: 'right',
-								margin: '0 0 5 0'
+							"xtype" : "container",
+							"layout" : "hbox",
+							"defaults" : {
+								"labelAlign" : "right",
+								"margin" : "0 0 5 0"
 							},
-							items: [
-								{ xtype: "container",  width: 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
-								{ xtype: "DossageAmt", name : "Dose", margin: "2 2 2 2" },
-								{ xtype: "DrugUnits", name : "Units", margin: "2 2 2 2" },
-								{ xtype: "InfusionMethod", name : "InfusionMethod",  colspan : 2, margin: "2 2 2 2" }
+							"items" : [
+								{ "xtype" : "container", "width" : 20, "html": "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>" },
+								{ "xtype" : "DossageAmt", "name" : "Dose", "margin" : "2 2 2 2" },
+								{ "xtype" : "DrugUnits", "name" : "Units", "margin" : "2 2 2 2" },
+								{ "xtype" : "InfusionMethod", "name" : "InfusionMethod", "colspan" : 2, "margin" : "2 2 2 2" }
 							]
 						},
 
 						// Row 3 - Fliud Info - "FluidInfoSpacer", "FluidType", "FluidInfoVol", "FluidInfoRate", "InfusionTime"
 						{
-							xtype: 'container',
-							layout: 'hbox',
-							name: 'fluidInfo',
-							hidden: true,
-							defaults: {
-								labelAlign: 'right',
-								margin: '0 0 5 0'
+							"xtype" : "container",
+							"layout" : "hbox",
+							"name" : "fluidInfo",
+							"hidden" : true,
+							"defaults" : {
+								"labelAlign" : "right",
+								"margin" : "0 0 5 0"
 							},
-							items: [
-								{ xtype: "container",  width: 30, html: "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>", name : "FluidInfoSpacer" },
-								{ xtype: "SelectFluidType", name : "FluidType", margin: "2 2 2 2" },
-								{ xtype: "container", layout : "hbox", width :270, margin: "2 0 0 0", "defaults": { labelAlign: "right" }, items : [
-									{ xtype: "FluidVol", name : "FluidVol", margin: "0 0 2 1" },
-									{ xtype: "container", width: 20, html : "ml", margin: "3 0 2 2"}
-								], name : "FluidInfoVol" },
-								{ xtype: "container", layout : "hbox", width :180, margin: "2 0 0 0", "defaults": { labelAlign: "right" }, items : [
-									{ xtype: "FlowRate", name : "FlowRate", margin: "0 0 2 1" },
-									{ xtype: "container", html : "ml/hr", margin: "3 0 2 2"}
-								], name : "FluidInfoRate" },
-								{ xtype: "displayfield", fieldLabel: "Infusion Time", name : "InfusionTime", margin: "2 0 0 0", width: 200 }
+							"items" : [
+								{ "xtype" : "container",  "width" : 30, "html" : "<span style=\"font-weight: bold;\">&nbsp;&nbsp;&nbsp;</span>", "name" : "FluidInfoSpacer" },
+								{ "xtype" : "SelectFluidType", "name" : "FluidType", "margin" : "2 2 2 2" },
+								{ "xtype" : "container", "layout" : "hbox", "width" : 270, "margin" : "2 0 0 0", "defaults": { "labelAlign" : "right" }, "items" : [
+									{ "xtype" : "FluidVol", "name" : "FluidVol", "margin" : "0 0 2 1" },
+									{ "xtype" : "container", "width" : 20, "html" : "ml", "margin" : "3 0 2 2"}
+								], "name" : "FluidInfoVol" },
+								{ "xtype" : "container", "layout" : "hbox", "width" : 180, "margin" : "2 0 0 0", "defaults": { "labelAlign" : "right" }, "items" : [
+									{ "xtype" : "FlowRate", "name" : "FlowRate", "margin" : "0 0 2 1" },
+									{ "xtype" : "container", "html" : "ml/hr", "margin" : "3 0 2 2"}
+								], "name" : "FluidInfoRate" },
+								{ "xtype" : "displayfield", "fieldLabel" : "Infusion Time", "name" : "InfusionTime", "margin" : "2 0 0 0", "width" : 200 }
 							]
 						},
 						{
-							xtype : "textfield",
-							labelAlign : "right",
-							colspan : 5,
-							margin : "2 0 0 2",
-							labelWidth : 75,
-							width : 805,
-							fieldLabel : "Instructions",
-							name : "Instructions"
+							"xtype" : "textfield",
+							"labelAlign" : "right",
+							"colspan" : 5,
+							"margin" : "2 0 0 2",
+							"labelWidth" : 75,
+							"width" : 805,
+							"fieldLabel" : "Instructions",
+							"name" : "Instructions"
 						},
-						{ xtype: "hiddenfield", colspan: 5, name : "Order_ID" }
+						{ "xtype" : "hiddenfield", "colspan" : 5, "name" : "Order_ID" }
 					]
 				},
-				{ xtype : "button", text : "Save", action : "save", margin : "10 30"  },
-				{ xtype : "button", text: "Cancel", margin : "10 0"  }
+				{ "xtype" : "button", "text" : "Save", "action" : "save", "margin" : "10 30"  },
+				{ "xtype" : "button", "text" : "Cancel", "margin" : "10 0"  }
 			]
 		}
 	]
@@ -14441,7 +14361,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
 
-                        "</th>",
+						"</th>",
 						"<td class=\"BorderBottom\">",
 							"<table class=\"OEMRecord_Element InformationTable\">",
 								"<colgroup width=40%></colgroup>",
@@ -14574,12 +14494,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					// debugger;
 				},
 
-                showReason : function(values, parent) {
-                    if ("" !== values.Reason) {
-                        return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
-                    }
-                    return "";
-                },
+				showReason : function(values, parent) {
+					if ("" !== values.Reason) {
+						return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
+					}
+					return "";
+				},
 
 				calcRoute : function(data) {
 					var route = data.AdminMethod1 ? data.AdminMethod1 : data.AdminMethod;
@@ -14596,7 +14516,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					return drug;
 				},
 
-
 				HasBSADose : function(units) {
 					var du = units.toUpperCase();
 					var r1 = du.search("M2");
@@ -14612,8 +14531,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
 					// debugger;
 					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
-
-
 
 					if (therapy) {
 						du = values.DoseUnits;
@@ -16378,7 +16295,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	columns: [{
 		header: "Name",
 		dataIndex: "Last_Name",
-		// width: 180,
 		flex: 3,
 		sortable: true,
 		align: "left",
@@ -16422,8 +16338,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	}, {
 		header: "<div>Type</div>",
 		dataIndex: "type",
-		// width: 75,
-		// flex: 2,
 		width: 80,
 		sortable: false,
 		align: "left"
@@ -17093,7 +17007,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var thisTab = this.getAuthoringTab();
 		this.getCourseInfo(thisTab).hide();
 		this.getNewTemplateForm(thisTab).hide();
-		// this.selTemplateChange(theTemplate);
 	},
 
 	ShowSelectedTemplateForm : function(theTemplate) {
@@ -17322,7 +17235,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.application.Cancer.Stage = [];
 		this.application.Cancer.id = template.data.Disease;
 		this.application.Cancer.name = template.data.DiseaseName;
-		this.application.Cancer.Stage.id = template.data.DiseaseStage[0].id
+		this.application.Cancer.Stage.id = template.data.DiseaseStage[0].id;
 		this.application.Cancer.Stage.name = template.data.DiseaseStage[0].name;
 		this.getCourseNum().setValue(template.data.CourseNum);
 		this.getCourseNumMax().setValue(template.data.CourseNumMax);
@@ -18033,7 +17946,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		win.close();
 
 	},
-
 
 	createNewReferenceRecord : function() {
 		return Ext.create('COMS.model.LookupTable', {
@@ -18946,7 +18858,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 	},
 	DrugRegimenBtns: function (button) { // Handles the onclick event of all the buttons for the Drug Regimen grid
-		// debugger;
 		var ckRec = this.getSelectedRecord(false);
 		var theQuery = "AuthoringTab TemplateDrugRegimen grid";
 		var exist, view, puWin;
@@ -18988,9 +18899,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				this.getDrugRegimenAdminDay().setValue(recordData.Day);
 				this.getDrugRegimenDrug().setValue(drugID);
 				this.getDrugRegimenDrug().setRawValue(drugName);
-
-
-
 				this.getDrugRegimenAmt().setValue(recordData.Amt);
 				this.getDrugRegimenUnits().setValue(recordData.Units);
 				this.getDrugRegimenRoute().setValue(recordData.Route);
@@ -19005,7 +18913,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 				RouteInfoFields.show();
 			}
-
 		} else if ("Remove Drug" === button.text) {
 			wccConsoleLog("Remove Drug Regimen for - " + ckRec.record.get("Drug"));
 			Ext.Msg.confirm("Remove Drug", "Are you sure you want to remove this drug from this template?", this.RemoveSelectedDrug, this);
@@ -19701,7 +19608,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	SaveHydrationDrug: function (button) { // Called when clicking on the "Save" button in the Hydration Drug Pop-Up Window
-
 		wccConsoleLog("SaveHydrationDrug()");
 		var win = button.up('window');
 		var HydrationType = win.type;
@@ -19767,22 +19673,22 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 	},
 
-    RemoveSelectedHydrationDrug: function (btn, text) {
-        var theQuery = this.theQuery;
-        if ("yes" === btn) {
-            wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
-            this.getSelectedRecord(true);
-        }
-        else {
-            var record = this.getSelectedRecord(false);   // get the record and deselect it
-            if (record.hasRecord) {
-                record.selModel.deselectAll();
-            }
-        }
-        delete this.panelType;
-        delete this.ckRec;
-        delete this.theQuery;
-    },
+	RemoveSelectedHydrationDrug: function (btn, text) {
+		var theQuery = this.theQuery;
+		if ("yes" === btn) {
+			wccConsoleLog("Remove " + this.panelType + " Therapy Drug - " + this.ckRec.record.get('Drug'));
+			this.getSelectedRecord(true);
+		}
+		else {
+			var record = this.getSelectedRecord(false);   // get the record and deselect it
+			if (record.hasRecord) {
+				record.selModel.deselectAll();
+			}
+		}
+		delete this.panelType;
+		delete this.ckRec;
+		delete this.theQuery;
+	},
 
 	EditDrugGetDetails : function(record) {
 		// debugger;
@@ -19801,8 +19707,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
 
 		this.getHydrationSequenceCombo().setValue(recordData.Sequence);
-this.getHydrationDrugCombo().setValue(drugID);
-this.getHydrationDrugCombo().setRawValue(drugName);
+		this.getHydrationDrugCombo().setValue(drugID);
+		this.getHydrationDrugCombo().setRawValue(drugName);
 
 		this.getHydrationAmt1().setValue(recordData.Amt1);
 		this.getHydrationUnits1().setValue(recordData.Units1);
@@ -19820,9 +19726,7 @@ this.getHydrationDrugCombo().setRawValue(drugName);
 			this.getHydrationInfusion1().setValue(theRoute);
 		}
 
-
 		this.routeSelected(this.getHydrationInfusion1(),null,null);
-
 		this.getHydrationInstructions().setValue(recordData.Instructions);
 		this.getHydrationFluidVol1().setValue(recordData.FluidVol1);
 		this.getHydrationFlowRate1().setValue(recordData.FlowRate1);
@@ -21999,7 +21903,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				beforerender: this.DischargeInstructionLoadGrid
 			},
 			"DischargeInstructionManagement grid" : {
-				select: this.selectDischargeInstructionGridRow
+					select: this.selectDischargeInstructionGridRow
 			},
 			"DischargeInstructionManagement button[text=\"Cancel\"]" : {
 				click: this.clickDischargeInstructionCancel
@@ -22048,7 +21952,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	LoadLastSyncTime : function(theForm) {
-
 		theForm.getForm().setValues({"LastSyncTime" : "N/A"});
 		theForm.setLoading("Checking for medication list last synchronization time", false);
 
@@ -22097,6 +22000,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			}
 		});
 	},
+
 
 	selectVistAUser : function(combo) {
 		var msg = this.getSelVistAUserNoMatch();
@@ -23762,7 +23666,6 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 	},
 
 	selDrug : function(theCombo, theRecord) {
-		// debugger;
 		var DrugID = theCombo.getValue();
 		var DrugName = theCombo.getRawValue();
 		var theData = theRecord[0].getData();
@@ -25669,7 +25572,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 						}
 						a2 = FluidType + FluidVol + FlowRate;
 						try {
-							flg = ("" !== a2.trim());
+							flg = ("" !== a2.trim());							
 						}
 						catch (e) {
 						}
@@ -37062,11 +36965,11 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 	PanelReady : function (thePanel, eOpts) {
 	},
 
-	"HandleRefresh" : function (button, evt, eOpts) {
+	HandleRefresh : function (button, evt, eOpts) {
 		this.LoadOrdersStore(false, true);
 	},
 
-	"LoadOrdersStore" : function (LoadAndRenderOEMTab, forceRefresh) {
+	LoadOrdersStore : function (LoadAndRenderOEMTab, forceRefresh) {
 		var PatientInfo, theStore;
 		theStore = Ext.getStore("OrdersStore");
 		if (theStore) {

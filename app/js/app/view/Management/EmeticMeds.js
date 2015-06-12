@@ -3,9 +3,9 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 	"alias": "widget.EmeticMeds",
 	"name": "EmeticMeds",
 	"autoEl": {
-		tag: "section"
+		"tag" : "section"
 	},
-	border: false,
+	"border" : false,
 	"defaults": {
 		"labelAlign": "right",
 		"labelClsExtra": "NursingDocs-label",
@@ -54,14 +54,16 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 		},
 		{
 			"xtype" : "combo",
-			"typeAhead" : true,
-			"minChars" : 2,
 			"fieldLabel" : "Select Drug <em>*</em>",
+			"labelWidth" : 80,
+			"width" : 425,
 			"name" : "Drug",
 			"store" : "DrugStore",
 			"displayField" : "name",
-			"valueField" : "id",
-			"width" : 500
+			"valueField" : "IEN",
+			"queryMode" : "local",
+			"typeahead" : true,
+			"allowBlank" : false,
 		},
 		{
 			"xtype": "ManagementBtns"

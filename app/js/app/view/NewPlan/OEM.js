@@ -122,7 +122,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
-							"{Med} ({Dose1} {DoseUnits1})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose1} {DoseUnits1})",
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Pre\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
@@ -144,7 +144,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
@@ -190,14 +190,14 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
-							"{Med} ({Dose} {DoseUnits})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose} {DoseUnits})",
 
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Therapy\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
 							"<div style=\"text-align: left;\">Order Status : <span>{Order_Status}</span></div>",
 
-                        "</th>",
+						"</th>",
 						"<td class=\"BorderBottom\">",
 							"<table class=\"OEMRecord_Element InformationTable\">",
 								"<colgroup width=40%></colgroup>",
@@ -213,7 +213,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose} {DoseUnits}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
 									"</td>",
@@ -259,7 +259,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th style=\"vertical-align: top;\">",
-							"{Med} ({Dose1} {DoseUnits1})",
+							"{[this.stripIENfromDrug( values.Med )]} ({Dose1} {DoseUnits1})",
 							"<div style=\"font-weight: normal; font-style: italic;\">{Instructions}</div>",
 							"{[this.CalcAnchor( \"Post\", xindex, values, parent )]}",
 							"{[this.showReason(values, parent)]}",
@@ -281,7 +281,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"</tr>",
 
 								"<tr>",
-									"<td>{Med}</td>",
+									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
 									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
@@ -325,17 +325,17 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				pIndex : 0,
 				curCycle : 0,
 				curDay : 0,
-                SiteConfig : {},
+				SiteConfig : {},
 				debuggerFcn : function ( current, prev ) {
 					// debugger;
 				},
 
-                showReason : function(values, parent) {
-                    if ("" !== values.Reason) {
-                        return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
-                    }
-                    return "";
-                },
+				showReason : function(values, parent) {
+					if ("" !== values.Reason) {
+						return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
+					}
+					return "";
+				},
 
 				calcRoute : function(data) {
 					var route = data.AdminMethod1 ? data.AdminMethod1 : data.AdminMethod;
@@ -345,6 +345,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					return route;
 				},
 
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
+				},
 
 				HasBSADose : function(units) {
 					var du = units.toUpperCase();
@@ -359,6 +365,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 
 				CalculateBSA_Dosing : function (values, therapy) {
 					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
+					// debugger;
+					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
+
 					if (therapy) {
 						du = values.DoseUnits;
 						Dose = values.Dose;
@@ -375,7 +384,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					duuc = du.toUpperCase();
 					calcDose = du.substr(0, du.search("/"));
 					if (duuc.search("M2") > 0) {
-						BSA_Dose = Dose * this.Patient.BSA;
+						BSA_Dose = Dose * CalcBSA_Dose;
 						BSA_Dose = Ext.FormatNumber("" + BSA_Dose);
 						dspCalcDose = BSA_Dose + " " + calcDose;
 					}
