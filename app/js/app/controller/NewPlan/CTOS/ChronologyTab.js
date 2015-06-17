@@ -62,7 +62,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -96,7 +96,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose} {DoseUnits}",
@@ -128,7 +128,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -164,6 +164,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 						return (null !== therapy[0].Med);
 					}
 					return (false);
+				},
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
 				},
 
 				SaveIdx : function (xindex, Cycle, Day, values) {
@@ -271,7 +277,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PreTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -337,7 +343,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"Therapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose} {DoseUnits}",
@@ -373,7 +379,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 				"<tpl for=\"PostTherapy\">",
 					"<tr>",
 						"<th>",
-							"{Med}",
+							"{[this.stripIENfromDrug( values.Med )]}",
 						"</th>",
 						"<td>",
 							"{Dose1} {DoseUnits1}",
@@ -443,6 +449,12 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 						return (null !== therapy[0].Med);
 					}
 					return (false);
+				},
+				stripIENfromDrug : function(drug) {
+					if (drug.indexOf(" : ") > 0) {
+						drug = drug.split(" : ")[0];
+					}
+					return drug;
 				},
 
 				SaveIdx : function (xindex, Cycle, Day, values) {

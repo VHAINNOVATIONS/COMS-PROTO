@@ -1,32 +1,26 @@
-
-
-
-
-
-
-
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.MedsInfoDisplay",
-	name : "NursingDocs.MedsInfoDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.MedsInfoDisplay",
+	"name" : "NursingDocs.MedsInfoDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"{[this.tempCalc(values)]}",
-			"<p><h3>{Medication}</h3>",
+			"<p><h3>{[this.stripIENfromDrug( values.Medication )]}</h3>",
 			"{Documentation}",
 			"</p>",
 		"</tpl>",
 		"</div></section>",
 		{
 				// XTemplate Configuration
-			disableFormats: true,
-			tempCalc: function (data) {
-				// debugger;
+			"disableFormats" : true,
+			"stripIENfromDrug" : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
 			}
 		}
 	)
@@ -39,12 +33,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.ClinicInfoDisplay",
-	name : "NursingDocs.ClinicInfoDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.ClinicInfoDisplay",
+	"name" : "NursingDocs.ClinicInfoDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Clinic --- Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
@@ -56,12 +50,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.ClinicInfoDisplay" ,{
 	)
 });
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.SpclInstrDisplay",
-	name : "NursingDocs.SpclInstrDisplay",
-	autoScroll : true,
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.SpclInstrDisplay",
+	"name" : "NursingDocs.SpclInstrDisplay",
+	"autoScroll" : true,
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Discharge Instructions:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
@@ -74,21 +68,31 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.SpclInstrDisplay" ,{
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedSpecificInfoDisplay" ,{
-	extend : "Ext.container.Container",
-    alias : "widget.MedSpecificInfoDisplay",
-	name : "NursingDocs.MedSpecificInfoDisplay",
-	autoScroll : true,
-	html : "<hr>None Available<hr>",
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.MedSpecificInfoDisplay",
+	"name" : "NursingDocs.MedSpecificInfoDisplay",
+	"autoScroll" : true,
+	"html" : "<hr>None Available<hr>",
 
-	tpl : new Ext.XTemplate(
+	"tpl" : new Ext.XTemplate(
 		"<h2>Medication Information:</h2><section>",
 		"<div class=\"SelectedSiteCommonInstructions\">",
 		"<tpl for=\".\">",
-			"<p><h3>{Medication}</h3>",
+			"<p><h3>{[this.stripIENfromDrug( values.Medication )]}</h3>",
 			"{Documentation}",
 			"</p>",
 		"</tpl>",
-		"</div></section>"
+		"</div></section>",
+		{
+				// XTemplate Configuration
+			"disableFormats" : true,
+			"stripIENfromDrug" : function(drug) {
+				if (drug.indexOf(" : ") > 0) {
+					drug = drug.split(" : ")[0];
+				}
+				return drug;
+			}
+		}
 	)
 });
 
@@ -328,27 +332,8 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 							"name": "Teaching_Other",
 							"fieldLabel": "Other"
 						},
-/*************
 						{
 							"xtype": "CheckCombo",
-							// "noDataText" : "",
-							"value" : "",		// If a CheckCombo is not initialized with a value of "" the form shows up as Dirty
-							"fieldLabel": "Select Clinic Information",
-							"name": "ND_E_SelectClinicInfo",
-							"width": 450,
-							"margin" : "5 0 10 0",
-							"store" : "ClinicInfo",
-							"displayField": "Label",
-							"valueField": "ID"
-						}, 
-
-						{
-							"xtype": "ClinicInfoDisplay"
-						},
-************/
-						{
-							"xtype": "CheckCombo",
-							// "noDataText" : "",
 							"value" : "",
 							"fieldLabel": "Select Discharge Instructions",
 							"name": "ND_E_SelectDischargeInstr",

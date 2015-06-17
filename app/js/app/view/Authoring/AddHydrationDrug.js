@@ -57,20 +57,21 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							labelAlign: 'right',
 							margin: '5 5 5 0'
 						},
-						items: [{
-							xtype: 'combo',
-							fieldLabel: 'Select Drug <em>*</em>',
-							labelWidth: 80,
-							width: 405,
-							name: 'Drug',
-							store: 'DrugStore',
-							allowBlank: false,
-							'queryMode' : 'local',
-							'editable' : true,
-							'typeahead' : true,
-							displayField: 'name',
-							valueField: 'name'
-						}]
+						items: [
+							{
+								"xtype" : "combo",
+								"fieldLabel" : "Select Drug <em>*</em>",
+								"labelWidth" : 80,
+								"width" : 425,
+								"name" : "Drug",
+								"store" : "DrugStore",
+								"displayField" : "name",
+								"valueField" : "IEN",
+								"queryMode" : "local",
+								"typeahead" : true,
+								"allowBlank" : false,
+							}
+						]
 					},
 
 					{
@@ -103,7 +104,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'maskRe' : /[0-9\.]/,
 							'fieldLabel' : 'Dosage Amount <em>*</em>',
 							'width' : 180,
-							'labelWidth' : 120,
+							'labelWidth' : 130,
 							'allowBlank' : false,
 							'name' : 'Amt1'
 						}, 

@@ -1012,6 +1012,33 @@ handleEditOEM_Record : function (event, element) {
 			MedRecord.InfusionTime2 = mr.InfusionTime2;
 		}
 
+		var tmp = MedRecord.Med;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.Med = tmp[0];
+				MedRecord.MedIEN = tmp[1];
+			}
+		}
+
+		tmp = MedRecord.InfusionMethod;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.InfusionMethod = tmp[0];
+				MedRecord.InfusionMethodIEN = tmp[1];
+			}
+		}
+
+		tmp = MedRecord.InfusionMethod2;
+		if (tmp) {
+			tmp = tmp.split(" : ");
+			if (tmp.length > 1) {
+				MedRecord.InfusionMethod2 = tmp[0];
+				MedRecord.InfusionMethod2IEN = tmp[1];
+			}
+		}
+
 		var EditRecordWin = Ext.widget("EditOEMRecord");
 		EditRecordWin.setTitle(title);
 		this.application.fireEvent("OEMEditRecord", MedRecord, anchorType);

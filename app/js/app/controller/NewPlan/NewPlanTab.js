@@ -2977,7 +2977,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var thisCtl = this.getController("NewPlan.NewPlanTab");
 				var CTOSData = thisCtl.getCTOSDataDsp();
 				var ApplyBtn = this.getApplyTemplateBtn();
-				var TemplateApplied;
+				var TemplateApplied = false;
 
 
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
@@ -2986,8 +2986,17 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					CTOSData.show();
 				}
 
-				var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
-				TemplateApplied = patientAppliedTemplates.getValue();
+				// var patientAppliedTemplates = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0];
+				// TemplateApplied = patientAppliedTemplates.getValue();
+				var ta1, ta1_ended;
+				ta1 = this.application.Patient.CurrentTemplatesApplied2Patient;
+				ta1_ended = true;
+
+				if (ta1 && ta1.length > 0) {
+					// TemplateApplied = true;
+					ta1_ended = (ta1[0].DateEndedActual !== "");
+					TemplateApplied = !ta1_ended;
+				}
 
 				if ("1" === SessionTemplateAuthoring) {
 					this.getEditTemplateBtn().show();

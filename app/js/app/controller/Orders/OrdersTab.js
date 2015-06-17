@@ -38,7 +38,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							theGrid.setLoading( false, false );
 							if (theScope.PostedRecsFailed.length <= 0) {
 								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true);
+								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true, true);
 							}
 							else {
 								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
@@ -111,26 +111,28 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 	PanelReady : function (thePanel, eOpts) {
 	},
 
-	"HandleRefresh" : function (button, evt, eOpts) {
-		this.LoadOrdersStore(false);
+	HandleRefresh : function (button, evt, eOpts) {
+		this.LoadOrdersStore(false, true);
 	},
 
-	"LoadOrdersStore" : function (LoadAndRenderOEMTab) {
+	LoadOrdersStore : function (LoadAndRenderOEMTab, forceRefresh) {
 		var PatientInfo, theStore;
 		theStore = Ext.getStore("OrdersStore");
 		if (theStore) {
-			theStore.load({
-				scope: this,
-				callback: function() {
-					if (false !== LoadAndRenderOEMTab) {
-						if (this.application.Patient) {
-							PatientInfo = this.application.Patient;
-							PatientInfo.OEMDataRendered = false;
-							this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
+			if (0 == theStore.getCount() || forceRefresh) {
+				theStore.load({
+					scope: this,
+					callback: function() {
+						if (false !== LoadAndRenderOEMTab) {
+							if (this.application.Patient) {
+								PatientInfo = this.application.Patient;
+								PatientInfo.OEMDataRendered = false;
+								this.application.fireEvent("DisplayOEMRecordData", PatientInfo);
+							}
 						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 });
