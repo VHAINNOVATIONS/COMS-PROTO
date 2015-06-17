@@ -4629,9 +4629,9 @@ Ext.define("COMS.model.PatientInfoAmputee", {
 	belongsTo : "COMS.model.PatientInfo"
 });
 
-Ext.define("COMS.model.PatientInfoMDWS", {
+/*************
+Ext.define("COMS.model.MDWSPatientRecord", {
 	extend: "Ext.data.Model",
-	idProperty : "id",
 	fields: [
 		"id",
 		"name",
@@ -4659,6 +4659,45 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 		{ model : "COMS.model.PatientInfoMDWSDiseases", name : "Disease" },
 		{ model : "COMS.model.PatientInfoAmputee", name : "Amputations" }
 	],
+	belongsTo : "COMS.model.PatientInfoMDWS"
+});
+***********/
+
+Ext.define("COMS.model.PatientInfoMDWS", {
+	extend: "Ext.data.Model",
+	idProperty : "id",
+	// fields: [ "Patients" ],
+	// hasMany : [
+		// { model : "COMS.model.MDWSPatientRecord", name : "Patients" }
+	// ],
+	fields: [
+		"id",
+		"name",
+		"DOB",
+		"Gender",
+		"Age",
+		"DFN",				// Data File Name which links to MDWS
+		"Disease",			// Array of diseases
+		"TemplateName",		// Info on the currently active template
+		"TemplateDescription",
+		"TemplateID",
+		"TreatmentStart",
+		"TreatmentEnd",
+		"TreatmentStatus",
+		"Amputations",
+		"message",			// Used in case an error message is returned from the framework
+		"VPR",		// Consider this as a string even though it's really a JSON Object from VistA - MWB - 2/24/2015
+		"BSAFormula",
+		"ClinicalTrial",
+		"Goal",
+		"PerformanceStatus"
+	],
+
+	hasMany : [
+		{ model : "COMS.model.PatientInfoMDWSDiseases", name : "Disease" },
+		{ model : "COMS.model.PatientInfoAmputee", name : "Amputations" }
+	],
+
 	proxy: {
 		type: 'rest',
 		api: {
@@ -15550,7 +15589,7 @@ Ext.define("COMS.view.NewPlan.SelectPatient" ,{
 	name : "Select Patient Control",
 	hidden : true,
 	items : [
-		{ xtype : "container", name : "Confirm", tpl : "Please click here to confirm this is the patient you want : <tpl for=\".\"><button class=\"anchor\" name=\"PatientConfirm\" pid=\"{Patient_ID}\" pn=\"{Patient_Name}\">{Patient_Name}</button>{NoPatientFound}</tpl>", hidden : true},
+		{ xtype : "container", name : "Confirm", tpl : "<table><tr style=\"vertical-align: top;\"><td>Please click here to confirm this is the patient you want : </td><td><table><tpl for=\".\"><tr><td><button class=\"anchor\" name=\"PatientConfirm\" pid=\"{Patient_ID}\" pn=\"{Patient_Name}\">{Patient_Name}</button></td></tr>{NoPatientFound}</tpl></table></td></tr></table>", hidden : true},
 		{ xtype : "box", name : "NoPatient", html : "<div style=\"text-align: center; font-weight:bold; font-size:larger\">No Patient by that ID can be found in <abbr title=\"Computerized Patient Record System\">CPRS</abbr></div>", hidden : true},
 		{ xtype : "combobox", 
 			name : "Select", 
@@ -32623,11 +32662,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.unMask();
 
 				/* We now have a Match of data including the VPR */
-				var theRecords = response.resultSet.records;
+				var i, aRecord, theData, theRecords = response.resultSet.records;
 				this.application.PossiblePatients = [];
 				for (i = 0; i < theRecords.length; i++) {
-					var aRecord = theRecords[i];
-					var theData = aRecord.getData();
+					aRecord = theRecords[i];
+					theData = aRecord.getData();
 					this.application.PossiblePatients[theData.id] = theData;
 				}
 
@@ -32640,7 +32679,36 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					query = CPRS_QueryString.getValue();
 				}
 
+				var PatientInfo = [];
+				this.application.TempPatients = theRecords;
 				if ("" !== query) {
+					for (i = 0; i < theRecords.length; i++) {
+						aRecord = theRecords[i];
+						theData = aRecord.getData();
+						Patient_ID = theData.id;
+						NoPatientFound = "";
+						Patient_Name = "";
+						if (theData.VPR.data.items) {
+							Patient_Name = theData.VPR.data.items[0].fullName;
+						}
+						else {
+							NoPatientFound = "No patient by that ID can be found in VistA";
+						}
+
+						// Additional code here to perform proper query in MDWS for data
+						var thisCtl = this.getController("NewPlan.NewPlanTab");
+						var SelectPatientSection = thisCtl.getSelectPatientSection();
+						var SelectPatient = thisCtl.getSelectPatient();
+						var ConfirmPatient = thisCtl.getConfirmPatient();
+						SelectPatientSection.show();
+
+						PatientInfo[i] = [];
+						PatientInfo[i].Patient_Name = Patient_Name;
+						PatientInfo[i].Patient_ID = Patient_ID;
+					}
+					ConfirmPatient.update( PatientInfo );
+
+/*****
 					var record = patientInfo.data;
 					Patient_ID = record.id;
 					NoPatientFound = "";
@@ -32665,8 +32733,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					PatientInfo.Patient_Name = Patient_Name;
 					PatientInfo.Patient_ID = Patient_ID;
 					ConfirmPatient.update( PatientInfo );
+*****/
 
-					if ("" === Patient_Name) {
+					if (theRecords.length == 0) {
 						thisCtl.getNoPatient().show();
 						ConfirmPatient.hide();
 					}
@@ -32768,6 +32837,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	ConfirmPatientClick : function(evt, btn) {
 		var patientMDWSGUID = btn.getAttribute("pid");
+		this.application.TempPatient = this.application.PossiblePatients[patientMDWSGUID];		// this.application.TempPatients[patientMDWSGUID].data;
 		this.LoadAllData4PatientByMDWSGUID( patientMDWSGUID );
 	},
 

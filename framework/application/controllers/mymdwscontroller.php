@@ -81,35 +81,17 @@ class mymdwscontroller extends Controller {
         return $details;
     }
     
-    public function Match( $lastFour ) {
-        $jsonRecord = array( );
-        $client    = $this->MdwsSetup( true, $lastFour ); // MWB - 5/7/2012 Added the boolean "true" to the call since MdwsSetup has been modified to require a "isSSN" parameter
-        if(false === $client[ 'success' ]) {
-            $this->set( 'jsonRecord', $client );
-            return $client;
-        }
 
-        $nodevista = new NodeVista();
-        
-        if ( !array_key_exists( 'UserDUZ', $_SESSION ) ) {
-            error_log( "Getting User DUZ" );
-            $UserInfo = $nodevista->get( "user/info" );
-            $obj      = json_decode( $UserInfo );
-            error_log( "User Information = $UserInfo" );
-            $_SESSION[ 'UserDUZ' ] = $obj->{'duz'};
-        }
-        else {
-            error_log("Got User DUZ - " . $_SESSION[ 'UserDUZ' ]);
-        }
-        
-        
-        $comspatientModel = new Patient();
+
+
+    private function MatchGetInfo4OnePatient($lastFour, $comspatientModel) {
+error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - Entry Point, DFN = " . $this->_dfn);
         $patient          = $comspatientModel->getPatientIdByDFN( $this->_dfn );
         if ( $this->checkForErrors( 'Get Patient Record by DFN Failed. ', $patient ) ) {
             $jsonRecord[ 'success' ] = false;
             $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
             $this->set( 'jsonRecord', $jsonRecord );
-            // return;	<-- MWB - 5/4/2012 Can't return null, need to return the jsonRecord
+error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - call to Patient Model -> getPatientIdByDFN() FAILED - " . $this->get( 'frameworkErr' ));
             return $jsonRecord;
         }
 
@@ -121,8 +103,8 @@ class mymdwscontroller extends Controller {
         }
 
 
+error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - Got Patient By DFN (" . $this->_dfn . "), No Errors - " . json_encode($patient));
 
-        error_log("Got Patient By DFN (" . $this->_dfn . "), No Errors - " . json_encode($patient));
         $patient = $comspatientModel->selectByPatientId( $patient[ 0 ][ 'id' ] );
         if ( $this->checkForErrors( 'Get Patient Info Failed. ', $patient ) ) {
             $jsonRecord[ 'success' ] = false;
@@ -196,7 +178,7 @@ class mymdwscontroller extends Controller {
         $patient[ 0 ][ 'Amputations' ] = $tmpAmputations;
 
         $nodevista = new NodeVista();
-//        $VPR = $nodevista->get("patient/details/" . $this->_dfn);
+        // $VPR = $nodevista->get("patient/details/" . $this->_dfn);
         $VPR = $nodevista->get("patient/vitals/" . $this->_dfn);
         $patient[0]['VPR'] = json_decode($VPR);
 
@@ -223,84 +205,126 @@ class mymdwscontroller extends Controller {
 
         // $VPR_Data_Items = array_merge( $VPR_Data_Items, json_decode($VPR), $NameInfo, json_encode($VPR1) );
         $VPR_Data_Items = array_merge( $VPR_Data_Items, $fullname, json_decode($VPR) );
-
-/*
-error_log("VPR = $VPR");
-error_log("VPR = " . json_encode($VPR));
-error_log("VPR = " . json_decode($VPR));
-error_log("----------------------------------------------");
-
-error_log("NameInfo = " . json_encode($NameInfo));
-
-error_log("VPR1 = $VPR1");
-error_log("VPR1 = " . json_encode($VPR1));
-error_log("VPR1 = " . json_decode($VPR1));
-**/
-
         $VPR_Data["items"] = $VPR_Data_Items;
         $VPR_New["data"] = $VPR_Data;
-
-// error_log("VPR_Data_Items = " . json_encode($VPR_Data_Items));
-// error_log("Items = " . json_encode($VPR_Data));
-// error_log("data = " . json_encode($VPR_New));
-
-
-
-//        $patient[0]["VistA_Name"] = $this->_Name;
-//        $patient[0]["VistA_pName"] = $this->_pName;
-        // $patient[0]["VPR_New"] = json_encode($VPR_New);
-        // $patient[0]["VPR_New1"] = json_decode($VPR_New);
-        // $patient[0]["VPR_New2"] = $VPR_New;
         $patient[0]["VPR"] = $VPR_New;
 
+        $this->patient = $patient[0];
+error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - EXIT Point, patient = " . json_decode($this->patient) );
+
+        return null;
+    }
+
+    public function Match( $lastFour ) {
+        $jsonRecord = array( );
+        $client    = $this->MdwsSetup( true, $lastFour ); // MWB - 5/7/2012 Added the boolean "true" to the call since MdwsSetup has been modified to require a "isSSN" parameter
+        error_log("MyMDWS Controller - Match($lastFour) - " . json_encode($client));
+        if(false === $client[ 'success' ]) {
+            $this->set( 'jsonRecord', $client );
+            return $client;
+        }
+
+
+        $nodevista = new NodeVista();
+        
+        if ( !array_key_exists( 'UserDUZ', $_SESSION ) ) {
+            error_log( "Getting User DUZ" );
+            $UserInfo = $nodevista->get( "user/info" );
+            $obj      = json_decode( $UserInfo );
+            error_log( "User Information = $UserInfo" );
+            $_SESSION[ 'UserDUZ' ] = $obj->{'duz'};
+        }
+        else {
+            error_log("Got User DUZ - " . $_SESSION[ 'UserDUZ' ]);
+        }
+
+
+/*vvvvvvvvvvvvvvvvvv CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 vvvvvvvvvvvvvvvvvv
+        if ($this->_dfn == "7245792") {
+            $this->_dfn = "100499";
+        }
+        else if ($this->_dfn == "7254979") {
+            $this->_dfn = "100500";
+        }
+        else if ($this->_dfn == "7305057") {
+            $this->_dfn = "100501";
+        }
+^^^^^^^^^^^^^^^^^ CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 ^^^^^^^^^^^^^^^^^*/
+
+        $comspatientModel = new Patient();
+
+        $nvpatient = $this->nvPatientsList;
+        $PatientList = array();
+        // $PatientList["Patients"] = array();
+        foreach ( $nvpatient as $aPatient ) {
+error_log("My MDWS Controller - Match() - Getting info for a Patient " . json_encode($aPatient));
+            $retVal = $this->getCPRSPatientData4Patient($lastFour, $aPatient, $nodevista);
+            if ($retVal) {
+                return $retVal;
+            }
+
+/*vvvvvvvvvvvvvvvvvv CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 vvvvvvvvvvvvvvvvvv
+        if ($this->_dfn == "7245792") {
+            $this->_dfn = "100499";
+        }
+        else if ($this->_dfn == "7254979") {
+            $this->_dfn = "100500";
+        }
+        else if ($this->_dfn == "7305057") {
+            $this->_dfn = "100501";
+        }
+^^^^^^^^^^^^^^^^^ CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 ^^^^^^^^^^^^^^^^^*/
+
+error_log("My MDWS Controller - Match() - Got Info for a Patient so continuing with - " . json_encode($this));
+            $retVal = $this->MatchGetInfo4OnePatient($lastFour, $comspatientModel);
+            if ($retVal) {
+                return $retVal;
+            }
+            // $aSinglePatient = array();
+            // $aSinglePatient["Patient"] = $this->patient;
+            // $PatientList["Patients"][] = $this->patient;
+            $PatientList[] = $this->patient;
+error_log("My MDWS Controller - Match() - Returning Patient Array - " . json_encode($PatientList));
+        }
+
+
+
+
         $jsonRecord[ 'success' ] = true;
-        $jsonRecord[ 'total' ]   = '1';
-        $jsonRecord[ 'records' ] = $patient;
+        $jsonRecord[ 'total' ]   = count($PatientList);
+        $jsonRecord[ 'records' ] = $PatientList;
         $this->set( 'jsonRecord', $jsonRecord );
         return $jsonRecord;
     }
     
-    public function Mega( $type = null, $value = null ) {
-        $jsonRecord = array( );
-        
-        /* MWB - 3/3/2015 - Mega call no longer needed as we get the VPR by default */
-        $jsonRecord[ 'success' ] = false;
-        $jsonRecord[ 'message' ] = 'function no longer needed; remove';
-        $this->set( 'jsonRecord', $jsonRecord );
-        return;
-    }
-    
-    public function MdwsSetup( $isSSN, $value ) {
-// error_log("MdwsSetup() Now using NodeVistA - Entry point");
-        $username   = get_current_user();
-        $jsonRecord = array( );
-        $roles      = $this->Mymdws->getRoleInfo( $username );      // from SQL
 
-        if ( $this->checkForErrors( 'Get Role Info Failed. ', $roles ) ) {
-            $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
-            return $jsonRecord;
-        }
 
-        $nodevista = new NodeVista();
-        $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
-error_log("MyMDWS_Controller - MdwsSetup - Patient Info for $value - " . json_encode($nvpatient));
-error_log("MyMDWS_Controller - MdwsSetup - Results Count = " . count($nvpatient));
-        if (count($nvpatient) == 0) {
-            $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = "No Patients found with patient identification matching $value";
-            return $jsonRecord;
-        }
-        else {
-error_log("MyMDWS_Controller - MdwsSetup - " . count($nvpatient) . " Patients found with patient identification matching $value");
-        }
 
-        $nvpatient = $nvpatient[ 0 ];
+
+
+    private function getCPRSPatientData4Patient($patientSSID, $nvPatient, $nodevista) {
+error_log("My MDWS Controller - getCPRSPatientData4Patient() - " . json_encode($nvPatient));
+        $nvpatient = $nvPatient;
         $pName     = explode( ",", $nvpatient[ "name" ] );
         $name      = $pName[ 1 ] . " " . $pName[ 0 ];
         $DFNcoms   = $nvpatient[ 'dfn' ];
         $this->_Name = $name;
         $this->_pName = $pName;
+
+
+/*vvvvvvvvvvvvvvvvvv CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 vvvvvvvvvvvvvvvvvv
+        if ($DFNcoms == "7245792") {
+            $DFNcoms = "100499";
+        }
+        else if ($DFNcoms == "7254979") {
+            $DFNcoms = "100500";
+        }
+        else if ($DFNcoms == "7305057") {
+            $DFNcoms = "100501";
+        }
+^^^^^^^^^^^^^^^^^ CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 ^^^^^^^^^^^^^^^^^*/
+
+
 
         $nvpatientInfo = json_decode( $nodevista->get( "patient/$DFNcoms" ), true );
 error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
@@ -323,51 +347,121 @@ error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
 
         if ( null != $mdwspatients && 1 < $mdwspatients->count ) {
             $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = "More than 1 Patient with SSN matching $value";
+            $jsonRecord[ 'message' ] = "More than 1 Patient with SSN matching $patientSSID";
+error_log("My MDWS Controller - getCPRSPatientData4Patient() - More than 1 Patient with SSN matching $patientSSID");
             return $jsonRecord;
         } elseif ( null == $mdwspatients || 0 == $mdwspatients->count ) {
             $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $value";
+            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $patientSSID";
+error_log("My MDWS Controller - getCPRSPatientData4Patient() - No Patients found with SSN matching $patientSSID");
             return $jsonRecord;
         }
 
         $mdwspatient = $mdwspatients->patients->PatientTO;
         $this->_dfn  = $mdwspatient->localPid;
-// error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
+error_log("MdwsSetup - got DFN from VistA via Node = " . $this->_dfn);
 
         // $mdwspatient = json_decode( $nodevista->get( 'patient/' . $this->_dfn ) );
         $mdwspatient = $nvpatientInfo;
 
         if ( null === $mdwspatient ) {
             $jsonRecord[ 'success' ] = false;
-            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $value";
-// error_log("MdwsSetup - VistA says no patients with matching SSN, yet we got the DFN from VistA");
+            $jsonRecord[ 'message' ] = "No Patients found with SSN matching $patientSSID";
+error_log("MdwsSetup - VistA says no patients with matching SSN, yet we got the DFN from VistA");
             return $jsonRecord;
         }
 
-// error_log("MdwsSetup - getting Patient By DFN from SQL");
+error_log("MdwsSetup - getting Patient By DFN (" . $this->_dfn . ") from SQL");
         $comspatientModel = new Patient();
         $patient          = $comspatientModel->getPatientIdByDFN( $this->_dfn );
-        
+
         if ( null == $patient || empty( $patient ) ) {
-// error_log("MdwsSetup - Patient with DFN does not exist in SQL; Creating one");
+error_log("MdwsSetup - Patient with DFN does not exist in SQL; Creating one");
             $this->Mymdws->beginTransaction();
             $query = "SELECT NEWID()";
             $GUID  = $this->Mymdws->query( $query );
             $GUID  = $GUID[ 0 ][ "" ];
-// error_log("MdwsSetup - Creating new patient for - " . json_encode($mdwspatient));
-            $retVal = $comspatientModel->addNewPatient( $mdwspatient, $value, $GUID );
+error_log("MdwsSetup - Creating new patient for - " . json_encode($mdwspatient));
+            $retVal = $comspatientModel->addNewPatient( $mdwspatient, $patientSSID, $GUID );
             
             if ( $this->checkForErrors( 'Add New Patient from MDWS Failed. ', $retVal ) ) {
                 $jsonRecord[ 'success' ] = false;
                 $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
                 $this->Mymdws->rollbackTransaction();
-// error_log("MdwsSetup - addNewPatient() failed - " . $this->get( 'frameworkErr' ));
+error_log("MdwsSetup - addNewPatient() failed - " . $this->get( 'frameworkErr' ));
                 return $jsonRecord;
             }
-
             $this->Mymdws->endTransaction();
         }
+        else {
+error_log("MdwsSetup - Patient with DFN (" . $this->_dfn . ") DOES exist in SQL;");
+        }
+        return null;
+    }
+    
+    public function MdwsSetup( $isSSN, $value ) {
+// error_log("MdwsSetup() Now using NodeVistA - Entry point");
+        $username   = get_current_user();
+        $jsonRecord = array( );
+        $roles      = $this->Mymdws->getRoleInfo( $username );      // from SQL
+
+        if ( $this->checkForErrors( 'Get Role Info Failed. ', $roles ) ) {
+            $jsonRecord[ 'success' ] = false;
+            $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
+            return $jsonRecord;
+        }
+
+        $nodevista = new NodeVista();
+        $nvpatient = json_decode( $nodevista->get( "patient/lastfive/$value" ), true );
+error_log("MyMDWS_Controller - MdwsSetup - Patient Info for isSSN = $isSSN, $value - " . json_encode($nvpatient));
+
+/*vvvvvvvvvvvvvvvvvv CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 vvvvvvvvvvvvvvvvvv
+$nvpatient = json_decode(
+'[
+    {
+        "dfn": "7245792",
+        "name": "KRWGHU,JEUDTSXWEHU ZDJELHA",
+        "localPid": "7245792"
+    },
+    {
+        "dfn": "7254979",
+        "name": "KYDFEST,WEDADW IHUXJEH",
+        "localPid": "7254979"
+    },
+    {
+        "dfn": "7305057",
+        "name": "KDYMDH,KXYYDH ZLUDH",
+        "localPid": "7305057"
+    }
+]'
+, true );
+^^^^^^^^^^^^^^^^^ CODE FOR FORCED MULTIPLE MATCHES - MWB - 6/17/2015 ^^^^^^^^^^^^^^^^^*/
+
+
+error_log("MyMDWS_Controller - MdwsSetup - Patient Info for forced example of Lookup for k1918 - " . json_encode($nvpatient));
+
+
+error_log("MyMDWS_Controller - MdwsSetup - Patient Info for $value - " . json_encode($nvpatient));
+error_log("MyMDWS_Controller - MdwsSetup - Results Count = " . count($nvpatient));
+        if (count($nvpatient) == 0) {
+            $jsonRecord[ 'success' ] = false;
+            $jsonRecord[ 'message' ] = "No Patients found with patient identification matching $value";
+            return $jsonRecord;
+        }
+        else {
+error_log("MyMDWS_Controller - MdwsSetup - " . count($nvpatient) . " Patients found with patient identification matching $value");
+        }
+
+
+        $this->nvPatientsList = $nvpatient;
+        /**
+        foreach ( $nvpatient as $aPatient ) {
+            $retVal = $this->getCPRSPatientData4Patient($value, $aPatient, $nodevista);
+            if ($retVal) {
+                return $retVal;
+            }
+        }
+        **/
         return null;
     }
     
@@ -400,6 +494,17 @@ error_log("Patient Detail Info replacing VPR - " . json_encode($nvpatientInfo));
      }
      */
     
+
+    public function Mega( $type = null, $value = null ) {
+        $jsonRecord = array( );
+        
+        /* MWB - 3/3/2015 - Mega call no longer needed as we get the VPR by default */
+        $jsonRecord[ 'success' ] = false;
+        $jsonRecord[ 'message' ] = 'function no longer needed; remove';
+        $this->set( 'jsonRecord', $jsonRecord );
+        return;
+    }
+
     public function MDWSMatchPatient( $client, $lastFour ) {
         if ( null === $client ) {
             return "";
