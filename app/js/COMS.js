@@ -17088,29 +17088,43 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
+
 	// User has selected what they want to do...
 	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
-		wccConsoleLog("User has selected what to do");
-		var theController = this.getController("Common.selCTOSTemplate");
-		var radioType = rbtn.inputValue;
+		this.application.loadMask();
+		Ext.suspendLayouts();
 
-		var selCTOSTemplate = this.getCTOSTemplateSelection();
-		var lblReqFields = this.getReqInstr();
-		lblReqFields.show();
+/* MWB - 6/17/2015 
+ * this is a hack, but will display a wait wheel while the tab is rendering 
+ * otherwise there's a long delay before the radio button is displayed as set 
+ * and the page shows so the user thinks nothing is happening
+ */
+		var task = new Ext.util.DelayedTask(function(){
+			wccConsoleLog("User has selected what to do");
+			var theController = this.getController("Common.selCTOSTemplate");
+			var radioType = rbtn.inputValue;
 
-		if (0 == radioType && newValue) {		// Select Existing Template
-			selCTOSTemplate.show();
-			theController.showInitialSelector(selCTOSTemplate);
-			theController.resetTemplateSrc(selCTOSTemplate);
-			this.clearTemplate(null);
-			this.HideSelectedTemplateForm();
-		}
-		else if (1 == radioType && newValue) {	// Create New Template
-			selCTOSTemplate.hide();
-			this.clearTemplate(null);
-			this.ShowSelectedTemplateForm(null);
-			theController.hideInitialAndFilterSelector(selCTOSTemplate);
-		}
+			var selCTOSTemplate = this.getCTOSTemplateSelection();
+			var lblReqFields = this.getReqInstr();
+			lblReqFields.show();
+
+			if (0 == radioType && newValue) {		// Select Existing Template
+				selCTOSTemplate.show();
+				theController.showInitialSelector(selCTOSTemplate);
+				theController.resetTemplateSrc(selCTOSTemplate);
+				this.clearTemplate(null);
+				this.HideSelectedTemplateForm();
+			}
+			else if (1 == radioType && newValue) {	// Create New Template
+				selCTOSTemplate.hide();
+				this.clearTemplate(null);
+				this.ShowSelectedTemplateForm(null);
+				theController.hideInitialAndFilterSelector(selCTOSTemplate);
+			}
+			Ext.resumeLayouts(true);
+			this.application.unMask();
+		}, this);
+		task.delay(150);
 	},
 
 
@@ -18529,8 +18543,21 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var query = "AuthoringTab TemplateDrugRegimen grid";
 		var theGrid = Ext.ComponentQuery.query(query)[0];
 		var theStore = theGrid.getStore();
-		var hydrationForm = drugRegimen.down("form");
-		var regimenValues = hydrationForm.getValues();
+		var regimenForm = drugRegimen.down("form");
+		var regimenValues = regimenForm.getValues();
+
+		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
+		var baseRegimenForm = regimenForm.getForm();
+		var drugCombo = baseRegimenForm.findField("Drug");
+		var drugName = drugCombo.rawValue;
+		var drugIEN = drugCombo.value;
+		regimenValues.Drug = drugName + " : " + drugIEN;
+
+		var routeCombo = baseRegimenForm.findField("Route");
+		var routeName = routeCombo.rawValue;
+		var routeIEN = routeCombo.value;
+		regimenValues.Route = routeName + " : " + routeIEN;
+
 		var numRecords = theStore.count();
 
 		var newRecord = this.validateRecord(regimenValues);
@@ -18639,6 +18666,22 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var form = win.down("form");
 		var values = form.getValues();
 
+
+		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
+		var baseForm = form.getForm();
+		var drugCombo = baseForm.findField("Drug");
+		var drugName = drugCombo.rawValue;
+		var drugIEN = drugCombo.value;
+		values.Drug = drugName + " : " + drugIEN;
+
+		var routeCombo = baseForm.findField("Route");
+		var routeName = routeCombo.rawValue;
+		var routeIEN = routeCombo.value;
+		values.Route = routeName + " : " + routeIEN;
+
+
+
+
 		var lookupRecord = Ext.create(Ext.COMSModels.LookupTable, {
 			id: "26",
 			value: values.name,
@@ -18653,7 +18696,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				win.close();
 			},
 			failure: function (err) {
-
 				Ext.MessageBox.alert("Invalid", "This Drug already exists.");
 
 			}
@@ -19369,6 +19411,19 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var theStore = theGrid.getStore();
 		var hydrationForm = addHydrationDrug.down('form');
 		var hydrationValues = hydrationForm.getValues();
+
+		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
+		var baseHydrationForm = hydrationForm.getForm();
+		var drugCombo = baseHydrationForm.findField("Drug");
+		var drugName = drugCombo.rawValue;
+		var drugIEN = drugCombo.value;
+		hydrationValues.Drug = drugName + " : " + drugIEN;
+
+		var routeCombo = baseHydrationForm.findField("Infusion1");
+		var routeName = routeCombo.rawValue;
+		var routeIEN = routeCombo.value;
+		hydrationValues.Infusion1 = routeName + " : " + routeIEN;
+
 		var numRecords = theStore.count();
 
 		var newRecord = this.validateRecord(hydrationValues,HydrationType);
@@ -19657,6 +19712,20 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var theStore = theGrid.getStore();
 		var theForm = win.down('form');
 		var values = theForm.getValues();
+
+		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
+		/* Note: The code further below (3/9/2015) doesn't seem to work on all occasions but this code does, so keeping both */
+		var baseForm = theForm.getForm();
+		var drugCombo = baseForm.findField("Drug");
+		var drugName = drugCombo.rawValue;
+		var drugIEN = drugCombo.value;
+		values.Drug = drugName + " : " + drugIEN;
+
+		var routeCombo = baseForm.findField("Infusion1");
+		var routeName = routeCombo.rawValue;
+		var routeIEN = routeCombo.value;
+		values.Infusion1 = routeName + " : " + routeIEN;
+
 
 		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
 		var theRouteField = this.getDrugRoute();
@@ -32396,6 +32465,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
+		this.application.loadMask();
+		Ext.suspendLayouts();
 		wccConsoleLog("What to do has been selected");
 		var selCTOSTemplateObj = this.getSelCTOSTemplate();
 		this.application.Patient.AppliedTemplateID = null;
@@ -32422,6 +32493,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				selCTOSTemplateObj.show();
 			}
 		}
+		Ext.resumeLayouts(true);
+		this.application.unMask();
 	},
 
 
