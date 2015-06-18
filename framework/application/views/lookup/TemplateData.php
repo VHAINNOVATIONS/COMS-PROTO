@@ -85,6 +85,8 @@ error_log("LookUp View TemplateData() - an OEMRecord = " . json_encode($oemrecor
                         \"id\":\"" . $prehydration["id"] . "\", 
                         \"Instructions\":\"" . $prehydration["description"]  . "\", 
                         \"Drug\":\"" . $prehydration["drug"] . "\", 
+                        \"MedicationType\":\"" . $prehydration["MedicationType"] . "\", 
+
                         \"Day\":\"" . $prehydration["adminDay"] . "\", 
                         \"Sequence\":\"" . $prehydration["Sequence"] . "\", 
                         \"AdminTime\":\"" .$prehydration["adminTime"] . "\", ";
@@ -183,7 +185,11 @@ error_log("LookUp View TemplateData() - an OEMRecord = " . json_encode($oemrecor
                     $CumDosePerCycleUnits = $regimen["regdoseunit"];
 
                     // MWB, 3 Jan 2012 - added the $regimen["id"] to be returned as well
-                    echo "\t\t{\"id\" : \"" . $regimen["id"] . "\", \"Drug\" : \"" . $regimen["drug"] . "\", \"Amt\" : \"" . $regimen["regdose"] .
+                    echo "\t\t{\"id\" : \"" . $regimen["id"] . 
+                    "\", \"Drug\" : \"" . $regimen["drug"] .
+                    "\", \"MedicationType\" : \"" . $regimen["MedicationType"] .
+
+                    "\", \"Amt\" : \"" . $regimen["regdose"] .
                     "\", \"Units\":\"" . $regimen["regdoseunit"] .
                     "\", \"pctDose\" : \"" . $regimen["regdosepct"] . "\", \"reason\" : \"" . $regimen["regreason"] .
                     "\", \"PatDose\" : \"" . $regimen["patientdose"] . " " . $regimen["patientdoseunit"] .
@@ -253,6 +259,7 @@ error_log("LookUp View TemplateData() - an OEMRecord = " . json_encode($oemrecor
 
                     echo " {\"id\":\"" . $posthydration["id"] . "\", \"Instructions\":\"" . $posthydration["description"] .
                     "\", \"Drug\":\"" . $posthydration["drug"] . 
+                    "\", \"MedicationType\":\"" . $posthydration["MedicationType"] . 
                     "\", \"Day\":\"" . $posthydration["adminDay"] . "\", \"Sequence\":\"" . $posthydration["Sequence"] . 
                     "\", \"AdminTime\":\"" .$posthydration["adminTime"] ."\", ";
 

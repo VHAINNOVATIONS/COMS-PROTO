@@ -2953,10 +2953,11 @@ Ext.define('COMS.model.DrugRegimen', {
 	fields: [
 		{ name: 'id', type: 'string'},
 		{ name: 'Drug', type: 'string'},
+		{ name: 'MedicationType', type: 'string'},
 		{ name: 'Amt', type: 'string'},
 		{ name: 'Units', type: 'string'},		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string
 		{ name: 'Route', type: 'string'},	// Internally, use a GUID to the Infusion Method Lookup Table, but this should be the actual string
-                { name: 'Sequence', type: 'string'},
+		{ name: 'Sequence', type: 'string'},
 		// { name: 'PctDose', type: 'string'},
 		// { name: 'PctDose', type: 'string'},
 		{ name: 'Day', type: 'string'},
@@ -3323,6 +3324,7 @@ Ext.define("COMS.model.HydrationDrug", {
 		"hydrationType",	// specifies pre or post hydration
 		"Sequence",
 		"Drug",
+		"MedicationType",
 
 		"Amt1",
 		"Units1",		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string
@@ -3732,6 +3734,7 @@ Ext.define('COMS.model.Med', {
 	fields: [
 		{ name: 'id', type: 'string'},
 		{ name: 'Drug', type: 'string'},
+		{ name: 'MedicationType', type: 'string'},
 		{ name: 'Amt', type: 'string'},
 		{ name: 'Units', type: 'string'},		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string
 		{ name: 'Route', type: 'string'},	// Internally, use a GUID to the Infusion Method Lookup Table, but this should be the actual string
@@ -18976,6 +18979,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				puWin.setTitle("Edit Drug Regimen");
 				this.addToSequenceStore(this.getDrugRegimenSequence(), theQuery, false);
 				puWin.recIndex = ckRec.rowNum; // Used in dup drug check on saving
+
+
+this.getPatientType().setValue({PatientType: recordData.MedicationType});
+
 				this.getDrugRegimenSequence().setValue(recordData.Sequence);
 				this.getDrugRegimenAdminDay().setValue(recordData.Day);
 				this.getDrugRegimenDrug().setValue(drugID);

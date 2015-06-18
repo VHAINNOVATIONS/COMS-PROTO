@@ -12,7 +12,7 @@
  *    function MDWSSelectPatientByDFN($client,$dfn)
  *    function Match($lastFour)
  *    function MdwsSetup($isSSN,$value)
- *    function Mega($type = null,$value = null)
+ *    function Mega($type = null,$value = null)     <-- Pulled, no longer needed as we get the VPR by default - MWB - 3/3/2015
  *    function checkForErrors($errorMsg,$retVal)
  *
  */
@@ -463,46 +463,6 @@ error_log("MyMDWS_Controller - MdwsSetup - " . count($nvpatient) . " Patients fo
         }
         **/
         return null;
-    }
-    
-    /**
-     *
-     * @param  SoapClient $client
-     * @return array
-     
-     private function _mdwsMeds($client)
-     {
-     if (empty($client)) {
-     return;
-     }
-     
-     $result = $client->getAllMeds();
-     $result = $this->mdwsBase->MDWsCrashReport($result->getAllMedsResult, "getAllMeds", false);
-     if (empty($result)) {
-     return;
-     }
-     
-     $count = $result->arrays->TaggedMedicationArray->count;
-     if ($count > 0) {
-     $meds = (!empty($result->arrays->TaggedMedicationArray->meds)) ? $result->arrays->TaggedMedicationArray->meds : array();
-     
-     return $meds;
-     }
-     $_SESSION['MDWS_Msg'] = $this->_noMedsMsg;
-     
-     return;
-     }
-     */
-    
-
-    public function Mega( $type = null, $value = null ) {
-        $jsonRecord = array( );
-        
-        /* MWB - 3/3/2015 - Mega call no longer needed as we get the VPR by default */
-        $jsonRecord[ 'success' ] = false;
-        $jsonRecord[ 'message' ] = 'function no longer needed; remove';
-        $this->set( 'jsonRecord', $jsonRecord );
-        return;
     }
 
     public function MDWSMatchPatient( $client, $lastFour ) {

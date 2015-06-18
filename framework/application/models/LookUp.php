@@ -1273,6 +1273,7 @@ error_log("Lookup.Model - getRegimens() - First Query - $query");
         tr.Patient_Regimen_ID AS id, 
         tr.Regimen_Number AS regnumber, 
 (select replace(replace(l.Name, '<', '('), '>', ')') + ' : ' + CAST(l.Lookup_Type_ID AS varchar(100)))AS drug,
+        l.Description as MedicationType,
         tr.Regimen_Dose AS regdose, 
         l1.Name AS regdoseunit, 
         tr.Regimen_Dose_Pct AS regdosepct, 
@@ -1342,6 +1343,7 @@ error_log("Lookup Model - getHydrations() - ". json_encode($retVal));
                     select 
                     mh.MH_ID as id, 
 (select replace(replace(lu.Name, '<', '('), '>', ')') + ' : ' + CAST(lu.Lookup_Type_ID AS varchar(100)))AS drug,
+                    lu.Description as MedicationType,
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
@@ -1368,6 +1370,7 @@ error_log("Lookup Model - getHydrations() - ". json_encode($retVal));
                     select 
                     mh.MH_ID as id, 
 (select replace(replace(lu.Name, '<', '('), '>', ')') + ' : ' + CAST(lu.Lookup_Type_ID AS varchar(100)))AS drug,
+                    lu.Description as MedicationType,
                     mh.Description as description, 
                     mh.Fluid_Vol as fluidVol, 
                     mh.Flow_Rate as flowRate, 
