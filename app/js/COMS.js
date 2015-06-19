@@ -5778,7 +5778,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"store" : "DrugStore",
 						"displayField" : "name",
 						"valueField" : "IEN",
-						"queryMode" : "local",
+						//"queryMode" : "local",
 						"typeahead" : true,
 						"allowBlank" : false
 					}
@@ -18946,59 +18946,74 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var theQuery = "AuthoringTab TemplateDrugRegimen grid";
 		var exist, view, puWin;
 		if ("Add Drug" === button.text) {
-
-			//KD - 03/09/2012 - This is done to prevent multiple instances (windows) to be created everytime the "Add Drug" button is clicked
 			exist = Ext.ComponentQuery.query("AddDrugRegimen")[0];
 			if (!exist) {
 				puWin = Ext.widget("AddDrugRegimen"); // Creates an instance of the "Add Drug Regimen" pop-up window
 			} else {
 				puWin = exist;
 			}
-			//KD
 			this.addToSequenceStore(this.getDrugRegimenSequence(), theQuery, true);
 		} else if ("AddNonForma" === button.title) {
-
-			//KD - 03/09/2012 - This is done to prevent multiple instances (windows) to be created everytime the "Add Drug" button is clicked
 			exist = Ext.ComponentQuery.query("EditLookup")[0];
 			if (!exist) {
 				view = Ext.widget("EditLookup");
 			} else {
 				view = exist;
 			}
-			//KD
 			view.setTitle("Add Non-Formulary Drug");
 		} else if ("Edit Drug" === button.text) {
 			if (ckRec.hasRecord) {
 				var record = Ext.create(Ext.COMSModels.DrugRegimen, ckRec.record.data);
 				var recordData = record.getData();
-				var DrugSplit = recordData.Drug.split(" : ");
-				var drugName = DrugSplit[0];
-				var drugID = DrugSplit[1];
-				wccConsoleLog("Edit Drug Regimen for - " + ckRec.record.get("Drug"));
+
 				puWin = Ext.widget("AddDrugRegimen"); // Creates an instance of the "Add Drug Regimen" pop-up window
 				puWin.setTitle("Edit Drug Regimen");
 				this.addToSequenceStore(this.getDrugRegimenSequence(), theQuery, false);
 				puWin.recIndex = ckRec.rowNum; // Used in dup drug check on saving
 
+				var theRouteCombo, 
+					theDrugCombo,
+					theRoute = recordData.Route, 
+					theDrug = recordData.Drug;
 
-this.getPatientType().setValue({PatientType: recordData.MedicationType});
+				theRouteCombo = this.getDrugRegimenRoute();
+				if (theRoute.indexOf(" : ") > 0) {
+					theRoute = theRoute.split(" : ");
+					this.theRouteIEN = theRoute[1];
+					this.theRouteName = theRoute[0];
+					theRouteCombo.setValue(this.theRouteIEN);
+					theRouteCombo.setRawValue(this.theRouteName);
+				}
+				else {
+					theRouteCombo.setValue(theRoute);
+				}
+				this.routeSelected(theRouteCombo, null, null);
 
+				theDrugCombo = this.getDrugRegimenDrug();
+				if (theDrug.indexOf(" : ") > 0) {
+					theDrug = theDrug.split(" : ");
+					this.theDrugIEN = theDrug[1];
+					this.theDrugName = theDrug[0];
+					theDrugCombo.setValue(this.theDrugIEN);
+					theDrugCombo.setRawValue(this.theDrugName);
+					this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+				}
+				else {
+					theDrugCombo.setValue(theDrug);
+				}
+
+				this.getPatientType().setValue({PatientType: recordData.MedicationType});
 				this.getDrugRegimenSequence().setValue(recordData.Sequence);
 				this.getDrugRegimenAdminDay().setValue(recordData.Day);
-				this.getDrugRegimenDrug().setValue(drugID);
-				this.getDrugRegimenDrug().setRawValue(drugName);
 				this.getDrugRegimenAmt().setValue(recordData.Amt);
 				this.getDrugRegimenUnits().setValue(recordData.Units);
-				this.getDrugRegimenRoute().setValue(recordData.Route);
 				this.getDrugRegimenFluidVol().setValue(recordData.FluidVol);
 				this.getDrugRegimenInfusionTime().setValue(recordData.InfusionTime);
 				this.getDrugRegimenFlowRate().setValue(recordData.FlowRate);
 				this.getDrugRegimenInstructions().setValue(recordData.Instructions);
 				this.getDrugRegimenAdminTime().setValue(recordData.AdminTime);
 				this.getDrugRegimenFluidType().setValue(recordData.FluidType);
-				this.routeSelected(this.getDrugRegimenRoute(), null, null);
 				var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
-				this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 				RouteInfoFields.show();
 			}
 		} else if ("Remove Drug" === button.text) {
@@ -19016,35 +19031,39 @@ this.getPatientType().setValue({PatientType: recordData.MedicationType});
 
 	SaveDrugRegimen: function (button) { // Called when clicking on the "Save" button in the Pop-Up Window
 		var win = button.up("window");
-		wccConsoleLog("Adding new Drug Regimen");
 		var theGrid = this.getDrugRegimenGrid(); // Ext.ComponentQuery.query(query)[0];
 		var theStore = theGrid.getStore();
 		var theForm = win.down("form");
 		var values = theForm.getValues();
 
+		var theDrugCombo = this.getDrugRegimenDrug();
+		var drugName = theDrugCombo.getRawValue();
+		var drugIEN;
+		if (drugName == this.theDrugName) {
+			theDrugIEN = this.theDrugIEN;
+		}
+		else {
+			var theDrugIEN = theDrugCombo.getValue();
+		}
+		delete this.theDrugName;
+		delete this.theDrugIEN;
+		values.Drug = drugName + " : " + theDrugIEN;
 
-		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
-		var baseRegimenForm = theForm.getForm();
-		var drugCombo = baseRegimenForm.findField("Drug");
-		var drugName = drugCombo.rawValue;
-		var drugIEN = drugCombo.value;
-		values.Drug = drugName + " : " + drugIEN;
-
-		var routeCombo = baseRegimenForm.findField("Route");
-		var routeName = routeCombo.rawValue;
-		var routeIEN = routeCombo.value;
+		var theRouteCombo = this.getDrugRoute();
+		var routeName = theRouteCombo.getRawValue();
+		var routeIEN = theRouteCombo.getValue();
+		if (routeName == this.theRouteName) {
+			routeIEN = this.theRouteIEN;
+		}
+		else {
+			var routeIEN = theRouteCombo.getRawValue();
+		}
+		delete this.theRouteName;
+		delete this.theRouteName;
 		values.Route = routeName + " : " + routeIEN;
 
-
-
-		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
-		var theRouteField = this.getDrugRoute();
-		values.Route = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
-
-		var theDrugField = this.getDrugRegimenDrug();
-		values.Drug = theDrugField.getDisplayValue() + " : " + theDrugField.getValue();
-
 		var numRecords = theStore.count();
+
 		this.insertNewDrugRegimenRecord(win, theStore, numRecords, values);
 	}
 });
@@ -19735,16 +19754,36 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var theForm = win.down('form');
 		var values = theForm.getValues();
 
-		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
-		/* Note: The code further below (3/9/2015) doesn't seem to work on all occasions but this code does, so keeping both */
+
 		var theDrugCombo = this.getHydrationDrugCombo();
-		drugName = theDrugCombo.getRawValue();
-		drugIEN = theDrugCombo.getValue();
+		var drugName = theDrugCombo.getRawValue();
+		var drugIEN;
+		if (drugName == this.theDrugName) {
+			drugIEN = this.theDrugIEN;
+		}
+		else {
+			drugIEN = theDrugCombo.getValue();
+		}
+		delete this.theDrugName;
+		delete this.theDrugIEN;
 		values.Drug = drugName + " : " + drugIEN;
 
-		routeName = this.getHydrationInfusion1().getRawValue();
-		routeIEN = this.getHydrationInfusion1().getValue();
+
+		var theRouteCombo = this.getHydrationInfusion1();
+		var routeName = theRouteCombo.getRawValue();
+		var routeIEN;
+		if (routeName == this.theRouteName) {
+			routeIEN = this.theRouteIEN;
+		}
+		else {
+			routeIEN = theRouteCombo.getRawValue();
+		}
+		delete this.theRouteName;
+		delete this.theRouteIEN;
 		values.Infusion1 = routeName + " : " + routeIEN;
+
+
+
 
 		var numRecords = theStore.count();
 		this.insertNewHydrationRecord(win, theStore, HydrationType, numRecords, values);
@@ -19817,13 +19856,6 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 		RouteInfoFields.hide();
 
-
-/**
-		var drugSplit = recordData.Drug.split(" : ");
-		var drugName = drugSplit[0];
-		var drugID = drugSplit[1];
-**/
-
 		hdPanel.type = this.panelType;
 		hdPanel.setTitle("Edit " + this.panelType + " Therapy Drug");
 		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
@@ -19834,33 +19866,35 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		this.addToSequenceStore(theCombo,false);
 		theCombo.setValue(recordData.Sequence);
 
-
 		this.getHydrationAmt1().setValue(recordData.Amt1);
 		this.getHydrationUnits1().setValue(recordData.Units1);
 
-		var theRouteCombo, theRouteName, theRouteID, theRoute = recordData.Infusion1, theDrugName, theDrugID, theDrug = recordData.Drug;
+		var theRouteCombo, 
+			theDrugCombo,
+			theRoute = recordData.Infusion1, 
+			theDrug = recordData.Drug;
 
 		theRouteCombo = this.getHydrationInfusion1();
 		if (theRoute.indexOf(" : ") > 0) {
 			theRoute = theRoute.split(" : ");
-			theRouteID = theRoute[1];
-			theRouteName = theRoute[0];
-			theRouteCombo.setValue(theRouteID);
-			theRouteCombo.setRawValue(theRouteName);
+			this.theRouteIEN = theRoute[1];
+			this.theRouteName = theRoute[0];
+			theRouteCombo.setValue(this.theRouteIEN);
+			theRouteCombo.setRawValue(this.theRouteName);
 		}
 		else {
 			theRouteCombo.setValue(theRoute);
 		}
 		this.routeSelected(theRouteCombo, null, null);
 
-		var theDrugCombo = this.getHydrationDrugCombo();
+		theDrugCombo = this.getHydrationDrugCombo();
 		if (theDrug.indexOf(" : ") > 0) {
 			theDrug = theDrug.split(" : ");
-			theDrugID = theDrug[1];
-			theDrugName = theDrug[0];
-			theDrugCombo.setValue(theDrugID);
-			theDrugCombo.setRawValue(theDrugName);
-			this.getDrugInfoFromVistA(theDrugName, theDrugID, this.AddDrugInfoFromVistA2Store);
+			this.theDrugIEN = theDrug[1];
+			this.theDrugName = theDrug[0];
+			theDrugCombo.setValue(this.theDrugIEN);
+			theDrugCombo.setRawValue(this.theDrugName);
+			this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
 		}
 		else {
 			theDrugCombo.setValue(theDrug);
