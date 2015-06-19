@@ -6,8 +6,10 @@
     $ProjType = "Release 1.3 April 10, 2015";
     $ProjType = "Release 1.4 May 8, 2015";
     $ProjType = "Release 1.9 May 28, 2015";
-    */
     $ProjType = "Release 1.11";     // June 12, 2015";
+    */
+    $ProjType = "Release 1.15";     // June 19, 2015";
+
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
 ?>

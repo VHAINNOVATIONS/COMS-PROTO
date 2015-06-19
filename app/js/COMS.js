@@ -17821,9 +17821,19 @@ this.application.loadMask("Please wait; Saving Template");
 	},
 
 	RemoveSelectedReminder : function(arg1, arg2, arg3) {
+		var theGrid = this.getMedRemindersGrid();
+		var theRecord = theGrid.getSelectionModel().getSelection();
+		var theStore = theGrid.getStore();
+		theStore.remove(theRecord);
+		var theForm = this.getMedRemindersForm().getForm();
+		theForm.reset();
+		this.getMedRemindersForm().hide();
+		var theBtn = this.getAddReminderBtn();
+		theBtn.setText("Add Reminder");
 	},
 	
 	EditSelectedReminder : function(arg1, arg2, arg3) {
+		debugger;
 	},
 
 	getAnyMedReminders4Template : function(TemplateID) {
