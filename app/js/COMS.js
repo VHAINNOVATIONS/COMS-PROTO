@@ -17394,6 +17394,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
     },
     
     saveTemplate: function (button) {
+this.application.loadMask("Please wait; Saving Template");
         var UserAlias = this.getTemplateAlias().getValue();
         var haveDuplicate = false;
         var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
@@ -17407,6 +17408,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
             scope: this,
             alias: UserAlias,
             success: function(response, opts) {
+				this.application.unMask();
                 var obj = Ext.decode(response.responseText);
                 var Records = obj.records;
                 var i, matchingRecord, record2Flag, Template,
@@ -17461,6 +17463,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
             },
             failure: function(response, opts) {
+				this.application.unMask();
                 wccConsoleLog('server-side failure with status code ' + response.status);
             }
         });
@@ -18883,7 +18886,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			Instructions: data.Instructions,
 			Sequence: data.Sequence,
 			AdminTime: data.AdminTime,
-			FluidType: data.FluidType
+			FluidType: data.FluidType,
+			MedicationType: data.MedicationType
 		});
 
 		var errors = newRecord.validate();
@@ -19002,7 +19006,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 					theDrugCombo.setValue(theDrug);
 				}
 
-				this.getPatientType().setValue({PatientType: recordData.MedicationType});
+				this.getPatientType().setValue({PatientType : recordData.MedicationType});
 				this.getDrugRegimenSequence().setValue(recordData.Sequence);
 				this.getDrugRegimenAdminDay().setValue(recordData.Day);
 				this.getDrugRegimenAmt().setValue(recordData.Amt);
@@ -19035,6 +19039,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var theStore = theGrid.getStore();
 		var theForm = win.down("form");
 		var values = theForm.getValues();
+		values.MedicationType = values.PatientType;		// inconsistency in column name, faster/easier to simply duplicate.
 
 		var theDrugCombo = this.getDrugRegimenDrug();
 		var drugName = theDrugCombo.getRawValue();
@@ -19056,7 +19061,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			routeIEN = this.theRouteIEN;
 		}
 		else {
-			var routeIEN = theRouteCombo.getRawValue();
+			var routeIEN = theRouteCombo.getValue();
 		}
 		delete this.theRouteName;
 		delete this.theRouteName;
@@ -19708,7 +19713,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			InfusionTime1: data.InfusionTime1,
 			FluidType1: data.FluidType1,
 			Day: data.Day,
-			AdminTime: data.AdminTime
+			AdminTime: data.AdminTime,
+			MedicationType: data.MedicationType
 		});
 
 		var errors = newRecord.validate();
@@ -19753,6 +19759,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var theStore = theGrid.getStore();
 		var theForm = win.down('form');
 		var values = theForm.getValues();
+		values.MedicationType = values.PatientType;		// inconsistency in column name, faster/easier to simply duplicate.
 
 
 		var theDrugCombo = this.getHydrationDrugCombo();
@@ -19776,7 +19783,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			routeIEN = this.theRouteIEN;
 		}
 		else {
-			routeIEN = theRouteCombo.getRawValue();
+			routeIEN = theRouteCombo.getValue();
 		}
 		delete this.theRouteName;
 		delete this.theRouteIEN;
