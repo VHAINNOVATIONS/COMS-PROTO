@@ -16827,7 +16827,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		selector: "AuthoringTab container[name=\"courseInfo\"]"
 		},
 
-		// Reference Buttons
+		// Template References
+	{
+		ref: "TemplateReferencesGrid",
+		selector: "AuthoringTab TemplateReferences"
+	},
 	{
 		ref: "RemoveReference",
 		selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
@@ -16838,7 +16842,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
 	},
 
-		// Reference Fields
 	{
 		ref: 'ReferenceName',
 		selector: 'AddReference textfield[name="Reference"]'
@@ -16934,7 +16937,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			},
 
 			"AuthoringTab MedReminder button[title=\"RemoveReminder\"]" : {
-				click: this.RemoveSelectedReminder
+				click: this.RemoveReminder
 			},
 			"AuthoringTab MedReminder button[title=\"EditReminder\"]" : {
 				click: this.EditSelectedReminder
@@ -17820,16 +17823,22 @@ this.application.loadMask("Please wait; Saving Template");
 		}
 	},
 
-	RemoveSelectedReminder : function(arg1, arg2, arg3) {
-		var theGrid = this.getMedRemindersGrid();
-		var theRecord = theGrid.getSelectionModel().getSelection();
-		var theStore = theGrid.getStore();
-		theStore.remove(theRecord);
-		var theForm = this.getMedRemindersForm().getForm();
-		theForm.reset();
-		this.getMedRemindersForm().hide();
-		var theBtn = this.getAddReminderBtn();
-		theBtn.setText("Add Reminder");
+	RemoveReminderConfirmed : function(YesNo) {
+		if ("yes" == YesNo) {
+			var theGrid = this.getMedRemindersGrid();
+			var theRecord = theGrid.getSelectionModel().getSelection();
+			var theStore = theGrid.getStore();
+			theStore.remove(theRecord);
+			var theForm = this.getMedRemindersForm().getForm();
+			theForm.reset();
+			this.getMedRemindersForm().hide();
+			var theBtn = this.getAddReminderBtn();
+			theBtn.setText("Add Reminder");
+		}
+	},
+
+	RemoveReminder: function () {
+		Ext.Msg.confirm("Remove Reminder", "Are you sure you want to remove this Reminder from this template?", this.RemoveReminderConfirmed, this);
 	},
 	
 	EditSelectedReminder : function(arg1, arg2, arg3) {
@@ -17961,28 +17970,16 @@ this.application.loadMask("Please wait; Saving Template");
 		this.getReferenceLink().setValue(piData.description);
 	},
 
-	removeReference: function (button) {
-		var ckRec = this.getSelectedRecord(false, 'AuthoringTab TemplateReferences');
-		if (ckRec.hasRecord) {
-			wccConsoleLog('Remove Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
-			var reference = Ext.create('COMS.model.LookupTable', {
-				id: ckRec.record.get('id'),
-				value: ckRec.record.get('Reference'),
-				description: ckRec.record.get('ReferenceLink')
-			});
-/************** this attempts to remove the reference from the Lookup Table NOT the Template *****************
-			reference.destroy({
-				scope: this,
-				success: function (data) {
-					this.getSelectedRecord(true, 'AuthoringTab TemplateReferences'); // remove the selected record from the current store
-					this.getRemoveReference().disable();
-					this.getEditReference().disable();
-				}
-			});
-**********************************************************************************************************/
-		} else {
-			Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
+	removeReferenceConfirmed: function (YesNo) {
+		if ("yes" == YesNo) {
+			var theGrid = this.getTemplateReferencesGrid();
+			var theRecord = theGrid.getSelectionModel().getSelection();
+			var theStore = theGrid.getStore();
+			theStore.remove(theRecord);
 		}
+	},
+	removeReference: function () {
+		Ext.Msg.confirm("Remove Reference", "Are you sure you want to remove this Reference from this template?", this.removeReferenceConfirmed, this);
 	},
 
 	editReference: function (grid, record) {
@@ -18204,6 +18201,9 @@ Ext.StdRouteValidation = function (config, value) {
 };
 Ext.routeRequiresFluid = function (route) {
 	route = route.toUpperCase();
+	if ("IV PIGGYBACK" == route) {
+		return true;
+	}
 	if ("IVPB" == route) {
 		return true;
 	}
@@ -18213,7 +18213,6 @@ Ext.routeRequiresFluid = function (route) {
 	if ("INTRAVENOUS" == route) {
 		return true;
 	}
-
 	if ("INTRATHECAL" == route) {
 		return true;
 	}
