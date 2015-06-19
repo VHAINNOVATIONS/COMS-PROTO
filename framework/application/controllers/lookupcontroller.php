@@ -1660,7 +1660,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             else {
                 $query = "Select * from SiteCommonInformation where DataType = '$DataType' order by Label ";
             }
-// error_log("Lookup.Controller._CommonServiceCallMethod - $Label; DataType - $DataType; Query - $query");
+error_log("Lookup.Controller._CommonServiceCallMethod - $Label; DataType - $DataType; Query - $query");
             $jsonRecord['msg'] = "No records to find";
             $ErrMsg = "Retrieving $Msg Records";
         }
@@ -1700,8 +1700,11 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method called for $Msg Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
         }
+
+
         if ("" !== $query) {
             $retVal = $this->LookUp->query($query);
+error_log("Lookup.Controller._CommonServiceCallMethod - Returns - " . json_encode($retVal));
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 $jsonRecord['success'] = false;
                 $jsonRecord['msg'] = $this->get('frameworkErr');
@@ -1720,6 +1723,7 @@ Sample Template ID: 5651A66E-A183-E311-9F0C-000C2935B86F
                 }
             }
         }
+
         $this->set('jsonRecord', $jsonRecord);
         return;
     }

@@ -19022,6 +19022,21 @@ this.getPatientType().setValue({PatientType: recordData.MedicationType});
 		var theForm = win.down("form");
 		var values = theForm.getValues();
 
+
+		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
+		var baseRegimenForm = theForm.getForm();
+		var drugCombo = baseRegimenForm.findField("Drug");
+		var drugName = drugCombo.rawValue;
+		var drugIEN = drugCombo.value;
+		values.Drug = drugName + " : " + drugIEN;
+
+		var routeCombo = baseRegimenForm.findField("Route");
+		var routeName = routeCombo.rawValue;
+		var routeIEN = routeCombo.value;
+		values.Route = routeName + " : " + routeIEN;
+
+
+
 		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
 		var theRouteField = this.getDrugRoute();
 		values.Route = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
@@ -19722,24 +19737,14 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 		/* Exception, Drug Combo need to get Value (drug name) and Raw Value (drug IEN) */
 		/* Note: The code further below (3/9/2015) doesn't seem to work on all occasions but this code does, so keeping both */
-		var baseForm = theForm.getForm();
-		var drugCombo = baseForm.findField("Drug");
-		var drugName = drugCombo.rawValue;
-		var drugIEN = drugCombo.value;
+		var theDrugCombo = this.getHydrationDrugCombo();
+		drugName = theDrugCombo.getRawValue();
+		drugIEN = theDrugCombo.getValue();
 		values.Drug = drugName + " : " + drugIEN;
 
-		var routeCombo = baseForm.findField("Infusion1");
-		var routeName = routeCombo.rawValue;
-		var routeIEN = routeCombo.value;
+		routeName = this.getHydrationInfusion1().getRawValue();
+		routeIEN = this.getHydrationInfusion1().getValue();
 		values.Infusion1 = routeName + " : " + routeIEN;
-
-
-		/* MWB - 3/9/2015 Change in Drug Route methods due to VistA requirements means we need the name AND id (aka IEN) */
-		var theRouteField = this.getDrugRoute();
-		values.Infusion1 = theRouteField.getDisplayValue() + " : " + theRouteField.getValue();
-
-		var theDrugField = this.getHydrationDrugCombo();
-		values.Drug = theDrugField.getDisplayValue() + " : " + theDrugField.getValue();
 
 		var numRecords = theStore.count();
 		this.insertNewHydrationRecord(win, theStore, HydrationType, numRecords, values);
@@ -19808,50 +19813,67 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	EditDrugGetDetails : function(record) {
 		// debugger;
 		var recordData = record.getData();
-		var drugSplit = recordData.Drug.split(" : ");
-		var drugName = drugSplit[0];
-		var drugID = drugSplit[1];
 		var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
 		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 		RouteInfoFields.hide();
 
+
+/**
+		var drugSplit = recordData.Drug.split(" : ");
+		var drugName = drugSplit[0];
+		var drugID = drugSplit[1];
+**/
+
 		hdPanel.type = this.panelType;
 		hdPanel.setTitle("Edit " + this.panelType + " Therapy Drug");
-		var theCombo = this.getHydrationSequenceCombo();
-		this.addToSequenceStore(theCombo,false);
 		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
 
-		this.getHydrationSequenceCombo().setValue(recordData.Sequence);
-		this.getHydrationDrugCombo().setValue(drugID);
-		this.getHydrationDrugCombo().setRawValue(drugName);
+		this.getPatientType().setValue({PatientType: recordData.MedicationType});
+
+		var theCombo = this.getHydrationSequenceCombo();
+		this.addToSequenceStore(theCombo,false);
+		theCombo.setValue(recordData.Sequence);
+
 
 		this.getHydrationAmt1().setValue(recordData.Amt1);
 		this.getHydrationUnits1().setValue(recordData.Units1);
 
-		var theRouteName, theRouteID, theRoute = recordData.Infusion1;
+		var theRouteCombo, theRouteName, theRouteID, theRoute = recordData.Infusion1, theDrugName, theDrugID, theDrug = recordData.Drug;
 
+		theRouteCombo = this.getHydrationInfusion1();
 		if (theRoute.indexOf(" : ") > 0) {
 			theRoute = theRoute.split(" : ");
 			theRouteID = theRoute[1];
 			theRouteName = theRoute[0];
-			this.getHydrationInfusion1().setValue(theRouteID);
-			this.getHydrationInfusion1().setRawValue(theRouteID);
+			theRouteCombo.setValue(theRouteID);
+			theRouteCombo.setRawValue(theRouteName);
 		}
 		else {
-			this.getHydrationInfusion1().setValue(theRoute);
+			theRouteCombo.setValue(theRoute);
+		}
+		this.routeSelected(theRouteCombo, null, null);
+
+		var theDrugCombo = this.getHydrationDrugCombo();
+		if (theDrug.indexOf(" : ") > 0) {
+			theDrug = theDrug.split(" : ");
+			theDrugID = theDrug[1];
+			theDrugName = theDrug[0];
+			theDrugCombo.setValue(theDrugID);
+			theDrugCombo.setRawValue(theDrugName);
+			this.getDrugInfoFromVistA(theDrugName, theDrugID, this.AddDrugInfoFromVistA2Store);
+		}
+		else {
+			theDrugCombo.setValue(theDrug);
 		}
 
-		this.routeSelected(this.getHydrationInfusion1(),null,null);
 		this.getHydrationInstructions().setValue(recordData.Instructions);
 		this.getHydrationFluidVol1().setValue(recordData.FluidVol1);
 		this.getHydrationFlowRate1().setValue(recordData.FlowRate1);
 		this.getHydrationInfusionTime1().setValue(recordData.InfusionTime1);
 		this.getHydrationFluidType1().setValue(recordData.FluidType1);
-
 		this.getHydrationDay().setValue(recordData.Day);
 		this.getHydrationAdminTime().setValue(recordData.AdminTime);
 
-		this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 		RouteInfoFields.show();
 	},
 
