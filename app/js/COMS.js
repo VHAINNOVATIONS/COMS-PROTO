@@ -2965,24 +2965,24 @@ Ext.define('COMS.model.DrugRegimen', {
 		{ name: 'InfusionTime', type: 'string'},		
 		{ name: 'AdminTime', type: 'string'},
 		{ name: 'FlowRate', type: 'string'},
-                { name: 'FluidType', type: 'string'},
-        { name: 'Instructions', type: 'string'}
+		{ name: 'FluidType', type: 'string'},
+		{ name: 'Instructions', type: 'string'}
 	],
-        validations : [
-            { type: 'presence', name: 'Drug', message: 'Please select a drug'},
-            { type: 'presence', name: 'Sequence', message: 'Please select a sequence'},
-            { type: 'presence', name: 'Amt', message: 'Amount must be entered.'},
-            { type: 'presence', name: 'Units', message: 'Units must be entered.'},
-				// the name used to be "Infusion" rather than "Route", Infusion doesn't exist in the model, 
-				// but a bug in the RC version of the library prevented this from being found. 
-				// The release version fixed that bug which is why I saw a validation error and the UAT-Test site (which uses the RC library) did not.
-			{ type: 'presence', name: 'Route', message: 'Route must be entered.'},		
-            { type: 'fluidVolregimen', name: 'FluidVol', message: 'Fluid Volume must be entered.'},
-            // { type: 'adminTimeregimen', name: 'AdminTime', message: 'Administration Time must be entered.'},
-            { type: 'flowRateregimen', name: 'FlowRate', message: 'Flow Rate must be entered'},
-            { type: 'fluidTyperegimen', name: 'FluidType', message: 'Fluid Type must be selected'},
-            { type: 'presence', name: 'Day', message: 'Administration Day(s) must be entered.'}
-        ],
+	validations : [
+		{ type: 'presence', name: 'Drug', message: 'Please select a drug'},
+		{ type: 'presence', name: 'Sequence', message: 'Please select a sequence'},
+		{ type: 'presence', name: 'Amt', message: 'Amount must be entered.'},
+		{ type: 'presence', name: 'Units', message: 'Units must be entered.'},
+			// the name used to be "Infusion" rather than "Route", Infusion doesn't exist in the model, 
+			// but a bug in the RC version of the library prevented this from being found. 
+			// The release version fixed that bug which is why I saw a validation error and the UAT-Test site (which uses the RC library) did not.
+		{ type: 'presence', name: 'Route', message: 'Route must be entered.'},		
+		{ type: 'fluidVolregimen', name: 'FluidVol', message: 'Fluid Volume must be entered.'},
+		// { type: 'adminTimeregimen', name: 'AdminTime', message: 'Administration Time must be entered.'},
+		{ type: 'flowRateregimen', name: 'FlowRate', message: 'Flow Rate must be entered'},
+		{ type: 'fluidTyperegimen', name: 'FluidType', message: 'Fluid Type must be selected'},
+		{ type: 'presence', name: 'Day', message: 'Administration Day(s) must be entered.'}
+	],
 	proxy: {
 		type: 'rest',
 		url : Ext.URLs.DrugRegimen,
@@ -14650,26 +14650,6 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					a2 = FluidType;		// + FluidVol + FlowRate;
 					flg = ("" !== a2.trim());
 					return flg;
-/*******************
-					try {
-						if ("" === AdminMethod) {
-							return false;
-						}
-						if ("IV" !== AdminMethod.substr(0,2)) {
-							return false;
-						}
-						a2 = FluidType + FluidVol + FlowRate;
-						try {
-							flg = ("" !== a2.trim());							
-						}
-						catch (e) {
-						}
-						return( flg );
-					}
-					catch (err) {
-						return( false );
-					}
- *******************/
 				},
 
 				CalcInfusionTime : function (vol, rate) {
@@ -18528,6 +18508,9 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			route = recs[0].data.name;
 		} else {
 			route = combo.getValue();
+			if (!isNaN(route)) {
+				route = combo.getRawValue();
+			}
 		}
 
 		if (null != route && "" != route) {

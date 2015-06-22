@@ -81,7 +81,7 @@
         function FinalizeMedicationDosing( $form_data ) {
             $UntouchedFormData = $form_data;
 
-error_log( "OrdersModel.grabOrders - Order Cleared" );
+error_log( "OrdersModel.grabOrders - Order Cleared - checking for problem with AUC Calculation" );
 error_log( json_encode( $form_data ) );
             
             $DoseF = $form_data->{'dose'};
