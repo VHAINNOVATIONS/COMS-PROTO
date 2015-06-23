@@ -5778,9 +5778,10 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"store" : "DrugStore",
 						"displayField" : "name",
 						"valueField" : "IEN",
-						//"queryMode" : "local",
-						"typeahead" : true,
-						"allowBlank" : false
+						"queryMode" : "local",
+						"typeAhead" : true,
+						"allowBlank" : false,
+						"editable" : true
 					}
 				]
 			},
@@ -5829,7 +5830,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"allowBlank" : false,
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"name" : "Units"
 					},
 					{
@@ -5845,7 +5846,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"allowBlank" : false,
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"name" : "Route"
 					}
 				]
@@ -5871,7 +5872,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"valueField" : "value",
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"store" : "LookupStore"
 					},
 					{
@@ -6043,8 +6044,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								"displayField" : "name",
 								"valueField" : "IEN",
 								"queryMode" : "local",
-								"typeahead" : true,
+								"typeAhead" : true,
 								"allowBlank" : false,
+								"editable" : true
 							}
 						]
 					},
@@ -6094,7 +6096,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
-							'typeahead' : true,
+							'typeAhead' : true,
 							'name' : 'Units1'
 						}, 
 						{
@@ -6111,7 +6113,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
-							'typeahead' : true,
+							'typeAhead' : true,
 							'name' : 'Infusion1'
 						}
 						]
@@ -6135,10 +6137,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								allowBlank: false,
 								displayField: 'value',
 								valueField: 'value',
-							'queryMode' : 'local',
-							'editable' : true,
-							'typeahead' : true,
-
+								'queryMode' : 'local',
+								'editable' : true,
+								'typeAhead' : true,
 								store: 'LookupStore'
 							},
 							{
@@ -8184,7 +8185,6 @@ Ext.define("COMS.view.Common.selDisease" ,{
 	"alias" : "widget.selDisease",
 	"name" : "selDisease",
 	"store" : "DiseaseType",
-	"minChars" : 1,
 	"forceSelection" : true,
 	"triggerAction" : "all",
 	"emptyText" : "Select a Cancer Type",
@@ -8953,8 +8953,8 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"displayField" : "name",
 			"valueField" : "IEN",
 			"queryMode" : "local",
-			"typeahead" : true,
-			"allowBlank" : false,
+			"typeAhead" : true,
+			"allowBlank" : false
 		},
 		{
 			"xtype": "ManagementBtns"
@@ -13428,7 +13428,10 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"store": "DrugStore",
 	"allowBlank": false,
 	"displayField": "name",
-	"valueField": "id"
+	"valueField": "id",		// "valueField" : "IEN",
+	"queryMode" : "local",
+	"typeAhead" : true,
+	"allowBlank" : false
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
@@ -18249,72 +18252,70 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			selector: "AddDrugRegimen [name=\"Dose_RouteFields\"]"
 		},
 
-        // Drug Regimen Buttons
+		// Drug Regimen Buttons
 		{
 			ref: "RemoveDrugRegimen",
 			selector: "AuthoringTab TemplateDrugRegimen button[text=\"Remove Drug\"]"
-        }, {
+		}, {
 			ref: "EditDrugRegimen",
 			selector: "AuthoringTab TemplateDrugRegimen button[text=\"Edit Drug\"]"
-        },
+		},
 
-        // Drug Regimen Fields
+		// Drug Regimen Fields
 		{
 			ref: "DrugRegimenAdminDay",
 			selector: "AddDrugRegimen textfield[name=\"Day\"]"
-        }, {
-			ref: "DrugRegimenDrug",
+		}, {
+			ref: "DrugRegimenCombo",
 			selector: "AddDrugRegimen combo[name=\"Drug\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenSequence",
 			selector: "AddDrugRegimen combo[name=\"Sequence\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenAmt",
 			selector: "AddDrugRegimen textfield[name=\"Amt\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenUnits",
 			selector: "AddDrugRegimen combo[name=\"Units\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenRoute",
 			selector: "AddDrugRegimen combo[name=\"Route\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenFluidVol",
 			selector: "AddDrugRegimen textfield[name=\"FluidVol\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenInfusionTime",
 			selector: "AddDrugRegimen textfield[name=\"InfusionTime\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenFlowRate",
 			selector: "AddDrugRegimen textfield[name=\"FlowRate\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenFluidType",
 			selector: "AddDrugRegimen textfield[name=\"FluidType\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenInstructions",
 			selector: "AddDrugRegimen textfield[name=\"Instructions\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenGrid",
 			selector: "AuthoringTab TemplateDrugRegimen grid"
-        }, {
+		}, {
 			ref: "FluidInfo",
 			selector: "AddDrugRegimen container[name=\"fluidInfo\"]"
-        }, {
+		}, {
 			ref: "DrugRegimenAdminTime",
 			selector: "AddDrugRegimen textfield[name=\"AdminTime\"]"
-        }, {
+		}, {
 			ref: "DoseSpacer",
 			selector: "AddDrugRegimen container[name=\"dosespacer\"]"
-        }, {
+		}, {
 			ref: "PatientType",
 			selector: "AddDrugRegimen radiogroup[name=\"patientRadio\"]"
-        },
+		},
 		{
 			ref: "DrugRoute",
 			selector: "AddDrugRegimen [name=\"Route\"]"
 		}
-
-
-    ],
+	],
 
 	// Ext.ComponentQuery.query("AuthoringTab TemplateDrugRegimen grid")[0].el.dom
 	init: function () {
@@ -18358,7 +18359,14 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			},
 			"AddDrugRegimen combo[name=\"Drug\"]": {
 				select: this.drugSelected,
-				expand: this.loadCombo
+				change : this.ComboSearch,
+				beforequery: function(record){
+					record.query = new RegExp(record.query, 'i');
+					record.forceAll = true;
+				}
+			},
+			"AddDrugRegimen radiogroup[name=\"patientRadio\"]" : {
+				change : this.selectMedType
 			},
 			"AddDrugRegimen combo[name=\"FluidType1\"]": {
 				beforequery: function (queryEvent) {
@@ -18369,8 +18377,30 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
+	selectMedType : function(rBtn) {
+		var medType = rBtn.boxLabel;
+		var theCombo = this.getDrugRegimenCombo();
+		this.loadCombo(theCombo);
+	},
+
+
+	ComboSearch : function(combo) {
+		var store = combo.store;
+		store.filters.clear();
+		store.filter({
+			id      : 'name',
+			property: 'name',
+			anyMatch: true,
+			value   : combo.getValue()
+		});
+	},
+
 	ShowFields : function( theWin, eOpts ) {
 		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+
+		var theCombo = this.getDrugRegimenCombo();
+		this.loadCombo(theCombo);
+
 		var theRouteField = this.getDrugRoute();
 		var v = theRouteField.getValue();
 		var d = theRouteField.getDisplayValue();
@@ -18437,18 +18467,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 	},
 
-//	collapseCombo: function (picker, eOpts) {
-//		if (picker.getValue() == null && picker.hiddenValue != null) {
-//			picker.setRawValue(picker.hiddenValue); // MWB 15 Feb 2012 - Added missing ";" as per JSLint
-//		}
-//	},
-
 	loadCombo: function (picker, eOpts) {
-
-		if (picker.getStore()) { // MWB - 6/19/2012 - Added to remove the filter added to the store
-			picker.getStore().clearFilter();
-		}
-
+		picker.up("window").setLoading( "Loading Drug List", false );
 
 		var originalHiddenVal = null;
 		picker.hiddenValue = picker.getRawValue();
@@ -18468,6 +18488,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				ID: id
 			},
 			callback: function (records, operation, success) {
+				picker.up("window").setLoading( false, false );
+				picker.focus();
 				if (success) {
 					if (null != originalHiddenVal) {
 						picker.setRawValue(originalHiddenVal);
@@ -18475,8 +18497,8 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				}
 			}
 		});
-
 	},
+
 	calcInfusionTime: function (field, eOpts) {
 		var fluidVol = this.getDrugRegimenFluidVol().getValue();
 		var flowRate = this.getDrugRegimenFlowRate().getValue();
@@ -18985,7 +19007,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				}
 				this.routeSelected(theRouteCombo, null, null);
 
-				theDrugCombo = this.getDrugRegimenDrug();
+				theDrugCombo = this.getDrugRegimenCombo();
 				if (theDrug.indexOf(" : ") > 0) {
 					theDrug = theDrug.split(" : ");
 					this.theDrugIEN = theDrug[1];
@@ -19033,7 +19055,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var values = theForm.getValues();
 		values.MedicationType = values.PatientType;		// inconsistency in column name, faster/easier to simply duplicate.
 
-		var theDrugCombo = this.getDrugRegimenDrug();
+		var theDrugCombo = this.getDrugRegimenCombo();
 		var drugName = theDrugCombo.getRawValue();
 		var drugIEN;
 		if (drugName == this.theDrugName) {
@@ -19262,19 +19284,46 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			},
 			'AddHydrationDrug combo[name="Drug"]' : {
 				select: this.drugSelected,
-				// collapse: this.collapseCombo,
-				expand : this.loadCombo
+				change : this.ComboSearch,
+				beforequery: function(record){
+					record.query = new RegExp(record.query, 'i');
+					record.forceAll = true;
+				}
 			},
 			"AddHydrationDrug combo[name=\"FluidType1\"]" : {
 				beforequery: function(queryEvent) {
 					delete queryEvent.combo.lastQuery;
 				},
 				expand: this.FluidTypeRouteSelected
+			},
+			"AddHydrationDrug radiogroup[name=\"patientRadio\"]" : {
+				change : this.selectMedType
 			}
 		});
 	},
 
+	selectMedType : function(rBtn) {
+		var medType = rBtn.boxLabel;
+		var theCombo = this.getHydrationDrugCombo();
+		this.loadCombo(theCombo);
+	},
+
+	ComboSearch : function(combo) {
+		var store = combo.store;
+		// store.clearFilter();
+		store.filters.clear();
+		store.filter({
+			id      : 'name',
+			property: 'name',
+			anyMatch: true,
+			value   : combo.getValue()
+		});
+	},
+
+
 	ShowFields : function( theWin, eOpts ) {
+		var theCombo = this.getHydrationDrugCombo();
+		this.loadCombo(theCombo);
 		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 		var theRouteField = this.getDrugRoute();
 		var v = theRouteField.getValue();
@@ -19346,15 +19395,14 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 	loadCombo: function (picker, eOpts) {
-		if (picker.getStore()) {		// MWB - 6/19/2012 - Added to remove the filter added to the store
-			picker.getStore().clearFilter();
-		}
+		picker.up("window").setLoading( "Loading Drug List", false );
 		var originalHiddenVal = null;
 		picker.hiddenValue = picker.getRawValue();
 		picker.clearValue();
 
 		var URI, id;
 		var patientType = this.getPatientType().getValue().PatientType;
+
 
 		if (picker.name === "Drug") {
 			URI = Ext.URLs.Drugs + "/";
@@ -19367,6 +19415,8 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 					ID: id
 				},
 				callback: function (records, operation, success) {
+					picker.up("window").setLoading( false, false );
+					picker.focus();
 					if (success) {
 						if (null !== originalHiddenVal) {
 							picker.setRawValue(originalHiddenVal);
