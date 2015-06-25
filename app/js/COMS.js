@@ -1856,20 +1856,20 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 					x1 = Ext.AdjustedWeight(x.Weight, x.Height, x.Gender);
 					tmp1 = ("((" + WeightInKilos + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
 					tmp1 += " = " + x1 + " kg";
-					//console.log("Calculating " + x.WeightFormula + " - " + x1);
+					// console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
 				case "Lean Weight":
 					x1 = Ext.LeanWeight(x.Weight, x.Height, x.Gender);
 					tmp1 = ("(" + ("M" === x.Gender ? "1.1" : "1.07") + " * " + WeightInKilos + ") - " + ("M" === x.Gender ? "128" : "148") + " * (" + WeightInKilos + "<sup>2</sup> / 100 * " + (2.54 * HeightInMeters) + "<sup>2</sup>))");
 					tmp1 += " = " + x1 + " kg";
-					//console.log("Calculating " + x.WeightFormula + " - " + x1);
+					// console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
 				}
 
 				tmp += x.WeightFormula + "</td></tr>"; // The name of the Weight Method used (e.g. Actual, Ideal, Adjusted, etc).
 				tmp += "<tr><th>&nbsp;</th><td>= " + x.WF + " = " + x1 + " kg</td></tr>"; // The string for calculating the weight as well as the result of the calculation
 				tmp += "<tr><th>&nbsp;</th><td>= " + tmp1 + xtramsg; // The details of the calculation as well as the result.
-				//console.log("BSA_Weight - " + x1);
+				// console.log("BSA_Weight - " + x1);
 				x.BSA_Weight = x1;
 				//					this.locPatient.BSA_Weight = x.BSA_Weight;	//??????????????????????
 				return ("= " + tmp);
@@ -18325,15 +18325,15 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				// "activate" : this.ShowFields
 				"activate" : this.ActivateTherapyWindow,
 				"afterlayout" : function(theWin) { 
-					//console.log("afterlayout");
+					// console.log("afterlayout");
 			},
 				"show" : function(theWin) { 
 					this.suspendComboLoad = false;
-					//console.log("aftershow");
+					// console.log("aftershow");
 				},
 				"afterrender" : function(theWin) { 
 					this.suspendComboLoad = true;
-					//console.log("afterrender");
+					// console.log("afterrender");
 				}
 			},
 			"AuthoringTab TemplateDrugRegimen button": {
@@ -18393,10 +18393,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		var medType = rBtn.boxLabel;
 		var theCombo = this.getDrugRegimenCombo();
 		if (this.suspendComboLoad) {
-			//console.log("Loading Combo from SelectedMedType is suspended");
+			// console.log("Loading Combo from SelectedMedType is suspended");
 		}
 		else {
-			//console.log("Loading Combo from SelectedMedType");
+			// console.log("Loading Combo from SelectedMedType");
 		this.loadCombo(theCombo);
 		}
 	},
@@ -18477,7 +18477,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 
 	loadCombo: function (combo, theDrug) {
-		console.log("Loading Select Drug Combo Store");
+		// console.log("Loading Select Drug Combo Store");
 		combo.up("window").setLoading( "Loading Drug List", false );
 		var originalHiddenVal = null;
 		// combo.hiddenValue = combo.getRawValue();
@@ -18501,7 +18501,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			},
 			scope : this,
 			callback: function (records, operation, success) {
-				console.log("Select Drug Combo Store Loaded");
+				// console.log("Select Drug Combo Store Loaded");
 				var theWindow = combo.up("window");
 				if (theWindow) {
 					theWindow.setLoading( false, false );
@@ -19307,15 +19307,15 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			"AddHydrationDrug" : {
 				"activate" : this.ActivatePrePostTherapyWindow,
 				"afterlayout" : function(theWin) { 
-					//console.log("afterlayout");
+					// console.log("afterlayout");
 				},
 				"show" : function(theWin) { 
 					this.suspendComboLoad = false;
-					//console.log("aftershow");
+					// console.log("aftershow");
 				},
 				"afterrender" : function(theWin) { 
 					this.suspendComboLoad = true;
-					//console.log("afterrender");
+					// console.log("afterrender");
 				}
 			},
 			'AuthoringTab TemplateHydration button': {
@@ -19365,10 +19365,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		var medType = rBtn.boxLabel;
 		var theCombo = this.getHydrationDrugCombo();
 		if (this.suspendComboLoad) {
-			//console.log("Loading Combo from SelectedMedType is suspended");
+			// console.log("Loading Combo from SelectedMedType is suspended");
 		}
 		else {
-			//console.log("Loading Combo from SelectedMedType");
+			// console.log("Loading Combo from SelectedMedType");
 			this.loadCombo(theCombo);
 		}
 	},
@@ -19449,7 +19449,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	
 
 	loadCombo: function (combo, theDrug) {
-		console.log("Loading Select Drug Combo Store");
+		// console.log("Loading Select Drug Combo Store");
 		combo.up("window").setLoading( "Loading Drug List", false );
 		var originalHiddenVal = null;
 		// combo.hiddenValue = combo.getRawValue();
@@ -19473,7 +19473,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			},
 			scope : this,
 			callback: function (records, operation, success) {
-				console.log("Select Drug Combo Store Loaded");
+				// console.log("Select Drug Combo Store Loaded");
 				var theWindow = combo.up("window");
 				if (theWindow) {
 					theWindow.setLoading( false, false );
@@ -24869,10 +24869,10 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 	],
 	"init" : function() {
 		wccConsoleLog("Initialized AdverseEventsHistory Controller!");
-		// --- // console.log("AdverseEventsHistory PatientSelected Event");
+		// console.log("AdverseEventsHistory PatientSelected Event");
 		
 		this.application.on({ PatientSelected : this.loadAdverseEventsHistory1, scope : this });
-		// --- // console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
+		// console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
 		this.application.on({ loadAdverseEventsHistory : this.loadAdverseEventsHistory2, scope : this });
 		this.control({
 		});
@@ -37234,7 +37234,7 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 							var aRec = theScope.PostedRecs.pop();
 							if (aRec) {
 								var tmpData = aRec.getData();
-								// --- //console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
+								// console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
 								aRec.save({
 									scope: theScope,
 									success: ResponseAlertGood,

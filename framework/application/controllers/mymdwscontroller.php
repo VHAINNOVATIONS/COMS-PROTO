@@ -88,6 +88,12 @@ class mymdwscontroller extends Controller {
         return json_decode($VPR);
     }
 
+    public function getPatientInfoFromVistA($DFN) {
+        $nodevista = new NodeVista();
+        $VPR = $nodevista->get("patient/$DFN");
+        return json_decode($VPR);
+    }
+
 
 
     private function MatchGetInfo4OnePatient($lastFour, $comspatientModel) {
@@ -182,7 +188,7 @@ error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - Got Patient By DFN ("
         }
         
         $patient[ 0 ][ 'Amputations' ] = $tmpAmputations;
-        $patient[0]['VPR'] = $this->getVitalsFromVistA($this->_dfn);
+        $VPR = $this->getVitalsFromVistA($this->_dfn);
 
         $VPR_New = array();
         $VPR_Data = array();
@@ -204,13 +210,13 @@ error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - Got Patient By DFN ("
         $fullname[] = $NameInfo;
 
         // $VPR_Data_Items = array_merge( $VPR_Data_Items, json_decode($VPR), $NameInfo, json_encode($VPR1) );
-        $VPR_Data_Items = array_merge( $VPR_Data_Items, $fullname, json_decode($VPR) );
+        $VPR_Data_Items = array_merge( $VPR_Data_Items, $fullname, $VPR );
         $VPR_Data["items"] = $VPR_Data_Items;
         $VPR_New["data"] = $VPR_Data;
         $patient[0]["VPR"] = $VPR_New;
 
         $this->patient = $patient[0];
-error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - EXIT Point, patient = " . json_decode($this->patient) );
+error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - EXIT Point, patient = " . json_encode($patient[0]) );
 
         return null;
     }
