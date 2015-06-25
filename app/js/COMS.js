@@ -18322,9 +18322,20 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		wccConsoleLog("Initialized Drug Regimen Controller!");
 		this.control({
 			"AddDrugRegimen" : {
-				"activate" : this.ShowFields
+				// "activate" : this.ShowFields
+				"activate" : this.ActivateTherapyWindow,
+				"afterlayout" : function(theWin) { 
+					//console.log("afterlayout");
 			},
-			// MWB 30 Dec 2011 - Added the Drug Regimen functionality...
+				"show" : function(theWin) { 
+					this.suspendComboLoad = false;
+					//console.log("aftershow");
+				},
+				"afterrender" : function(theWin) { 
+					this.suspendComboLoad = true;
+					//console.log("afterrender");
+				}
+			},
 			"AuthoringTab TemplateDrugRegimen button": {
 				click: this.DrugRegimenBtns
 			},
@@ -18332,7 +18343,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				itemclick: this.clickDrugRegimenGrid,
 				itemcontextmenu: this.onCtxHandler
 			},
-			"AddDrugRegimen button[text=\"Save\"]": { // Pop-up window
+			"AddDrugRegimen button[text=\"Save\"]": {
 				click: this.SaveDrugRegimen
 			},
 			"EditLookup button[action=\"save\"]": {
@@ -18377,10 +18388,17 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
+	// Drug Regimen Controller
 	selectMedType : function(rBtn) {
 		var medType = rBtn.boxLabel;
 		var theCombo = this.getDrugRegimenCombo();
+		if (this.suspendComboLoad) {
+			//console.log("Loading Combo from SelectedMedType is suspended");
+		}
+		else {
+			//console.log("Loading Combo from SelectedMedType");
 		this.loadCombo(theCombo);
+		}
 	},
 
 
@@ -18395,19 +18413,120 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
-	ShowFields : function( theWin, eOpts ) {
-		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
 
-		var theCombo = this.getDrugRegimenCombo();
-		this.loadCombo(theCombo);
+	EditDrugGetDetails : function(record) {
+		var hdPanel = Ext.widget('AddDrugRegimen', { record: record }); // Creates an instance of the "Add Hydration Drug" pop-up window
+	},
 
-		var theRouteField = this.getDrugRoute();
-		var v = theRouteField.getValue();
-		var d = theRouteField.getDisplayValue();
-		if (v) {
+	ActivateTherapyWindow : function( theWin ) {
+		Ext.suspendLayouts();
+		var record = theWin.record;
+		if (record) {
+			var recordData = record.data,
+				RouteInfoFields = this.getDrugPUWindow_DoseRouteFields(),
+				theRoute = recordData.Route, 
+				theDrug = recordData.Drug,
+				theRouteCombo, 
+				theDrugCombo;
+
+			RouteInfoFields.hide();
+
+			theWin.setTitle("Edit Drug Regimen");
+			theWin.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
+
+			this.getPatientType().setValue({PatientType: recordData.MedicationType});
+
+			var theCombo = this.getDrugRegimenSequence();
+			this.addToSequenceStore(theCombo, this.theQuery, false);
+			theCombo.setValue(recordData.Sequence);
+
+//			this.getHydrationAmt1().setValue(recordData.Amt1);
+//			this.getHydrationUnits1().setValue(recordData.Units1);
+
+			theDrugCombo = this.getDrugRegimenCombo();
+			this.loadCombo(theDrugCombo, theDrug);
+
+			theRouteCombo = this.getDrugRegimenRoute();
+			if (theRoute.indexOf(" : ") > 0) {
+				theRoute = theRoute.split(" : ");
+				this.theRouteIEN = theRoute[1];
+				this.theRouteName = theRoute[0];
+				theRouteCombo.setValue(this.theRouteIEN);
+				theRouteCombo.setRawValue(this.theRouteName);
+			}
+			else {
+				theRouteCombo.setValue(theRoute);
+			}
+			this.routeSelected(theRouteCombo, null, null);
+
+			this.getDrugRegimenSequence().setValue(recordData.Sequence);
+			this.getDrugRegimenAdminDay().setValue(recordData.Day);
+			this.getDrugRegimenAmt().setValue(recordData.Amt);
+			this.getDrugRegimenUnits().setValue(recordData.Units);
+			this.getDrugRegimenFluidVol().setValue(recordData.FluidVol);
+			this.getDrugRegimenInfusionTime().setValue(recordData.InfusionTime);
+			this.getDrugRegimenFlowRate().setValue(recordData.FlowRate);
+			this.getDrugRegimenInstructions().setValue(recordData.Instructions);
+			this.getDrugRegimenAdminTime().setValue(recordData.AdminTime);
+			this.getDrugRegimenFluidType().setValue(recordData.FluidType);
+
 			RouteInfoFields.show();
 		}
+		Ext.resumeLayouts(true);
 	},
+
+
+	loadCombo: function (combo, theDrug) {
+		console.log("Loading Select Drug Combo Store");
+		combo.up("window").setLoading( "Loading Drug List", false );
+		var originalHiddenVal = null;
+		// combo.hiddenValue = combo.getRawValue();
+		combo.clearValue();
+		combo.theDrug = theDrug;
+
+		var URI, id;
+		var patientType = this.getPatientType().getValue().PatientType;
+
+		if (combo.name === "Drug") {
+			URI = Ext.URLs.Drugs + "/";
+			id = patientType;
+		}
+		var store = combo.getStore();
+		store.filters.clear();
+
+		store.load({
+			params: {
+				URL: URI,
+				ID: id
+			},
+			scope : this,
+			callback: function (records, operation, success) {
+				console.log("Select Drug Combo Store Loaded");
+				var theWindow = combo.up("window");
+				if (theWindow) {
+					theWindow.setLoading( false, false );
+				}
+				combo.focus();
+				if (success) {
+					if (combo.theDrug) {
+						var theDrug = combo.theDrug;
+						if (theDrug.indexOf(" : ") > 0) {
+							theDrug = theDrug.split(" : ");
+							this.theDrugIEN = theDrug[1];
+							this.theDrugName = theDrug[0];
+							combo.setValue(this.theDrugIEN);
+							combo.setRawValue(this.theDrugName);
+							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+						}
+						else {
+							combo.setValue(theDrug);
+						}
+					}
+				}
+			}
+		});
+	},
+
 
 	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
 		var URL = Ext.URLs.DrugInfo + "/" + drugID;
@@ -18453,6 +18572,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			RoutesData4Store.push(aRoute);
 		}
 		RouteStore.loadData(RoutesData4Store);
+		// theScope.getHydrationInfusion1().setValue(theValue);
 		theScope.getDrugPUWindow_DoseRouteFields().show();
 	},
 
@@ -18465,38 +18585,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			drugID = recs[0].data.IEN;
 			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 		}
-	},
-
-	loadCombo: function (picker, eOpts) {
-		picker.up("window").setLoading( "Loading Drug List", false );
-
-		var originalHiddenVal = null;
-		picker.hiddenValue = picker.getRawValue();
-		picker.clearValue();
-
-		var URI, id;
-		var patientType = this.getPatientType().getValue().PatientType;
-
-		if (picker.name == "Drug") {
-			URI = Ext.URLs.Drugs + "/";
-			id = patientType;
-		}
-
-		picker.getStore().load({
-			params: {
-				URL: URI,
-				ID: id
-			},
-			callback: function (records, operation, success) {
-				picker.up("window").setLoading( false, false );
-				picker.focus();
-				if (success) {
-					if (null != originalHiddenVal) {
-						picker.setRawValue(originalHiddenVal);
-					}
-				}
-			}
-		});
 	},
 
 	calcInfusionTime: function (field, eOpts) {
@@ -18554,7 +18642,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	},
 
 	SaveSequence: function (button) {
-
 		var drugRegimen = Ext.ComponentQuery.query("AddDrugRegimen")[0];
 
 		var win = button.up("window");
@@ -18950,6 +19037,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	//	Drug Regimen Grid Handlers
 	//
 	RemoveSelectedDrug: function (btn, text) {
+		var theQuery = this.theQuery;
 		if ("yes" === btn) {
 			this.getSelectedRecord(true); // bool param will either destroy (true) or return (false) the selected record
 		} else {
@@ -18958,10 +19046,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				record.selModel.deselectAll();
 			}
 		}
+		delete this.ckRec;
+		delete this.theQuery;
 	},
 	DrugRegimenBtns: function (button) { // Handles the onclick event of all the buttons for the Drug Regimen grid
 		var ckRec = this.getSelectedRecord(false);
-		var theQuery = "AuthoringTab TemplateDrugRegimen grid";
+		this.theQuery = "AuthoringTab TemplateDrugRegimen grid";
 		var exist, view, puWin;
 		if ("Add Drug" === button.text) {
 			exist = Ext.ComponentQuery.query("AddDrugRegimen")[0];
@@ -18970,7 +19060,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			} else {
 				puWin = exist;
 			}
-			this.addToSequenceStore(this.getDrugRegimenSequence(), theQuery, true);
+			this.addToSequenceStore(this.getDrugRegimenSequence(), this.theQuery, true);
 		} else if ("AddNonForma" === button.title) {
 			exist = Ext.ComponentQuery.query("EditLookup")[0];
 			if (!exist) {
@@ -18981,58 +19071,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			view.setTitle("Add Non-Formulary Drug");
 		} else if ("Edit Drug" === button.text) {
 			if (ckRec.hasRecord) {
+				this.ckRec = ckRec;
 				var record = Ext.create(Ext.COMSModels.DrugRegimen, ckRec.record.data);
-				var recordData = record.getData();
-
-				puWin = Ext.widget("AddDrugRegimen"); // Creates an instance of the "Add Drug Regimen" pop-up window
-				puWin.setTitle("Edit Drug Regimen");
-				this.addToSequenceStore(this.getDrugRegimenSequence(), theQuery, false);
-				puWin.recIndex = ckRec.rowNum; // Used in dup drug check on saving
-
-				var theRouteCombo, 
-					theDrugCombo,
-					theRoute = recordData.Route, 
-					theDrug = recordData.Drug;
-
-				theRouteCombo = this.getDrugRegimenRoute();
-				if (theRoute.indexOf(" : ") > 0) {
-					theRoute = theRoute.split(" : ");
-					this.theRouteIEN = theRoute[1];
-					this.theRouteName = theRoute[0];
-					theRouteCombo.setValue(this.theRouteIEN);
-					theRouteCombo.setRawValue(this.theRouteName);
-				}
-				else {
-					theRouteCombo.setValue(theRoute);
-				}
-				this.routeSelected(theRouteCombo, null, null);
-
-				theDrugCombo = this.getDrugRegimenCombo();
-				if (theDrug.indexOf(" : ") > 0) {
-					theDrug = theDrug.split(" : ");
-					this.theDrugIEN = theDrug[1];
-					this.theDrugName = theDrug[0];
-					theDrugCombo.setValue(this.theDrugIEN);
-					theDrugCombo.setRawValue(this.theDrugName);
-					this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
-				}
-				else {
-					theDrugCombo.setValue(theDrug);
-				}
-
-				this.getPatientType().setValue({PatientType : recordData.MedicationType});
-				this.getDrugRegimenSequence().setValue(recordData.Sequence);
-				this.getDrugRegimenAdminDay().setValue(recordData.Day);
-				this.getDrugRegimenAmt().setValue(recordData.Amt);
-				this.getDrugRegimenUnits().setValue(recordData.Units);
-				this.getDrugRegimenFluidVol().setValue(recordData.FluidVol);
-				this.getDrugRegimenInfusionTime().setValue(recordData.InfusionTime);
-				this.getDrugRegimenFlowRate().setValue(recordData.FlowRate);
-				this.getDrugRegimenInstructions().setValue(recordData.Instructions);
-				this.getDrugRegimenAdminTime().setValue(recordData.AdminTime);
-				this.getDrugRegimenFluidType().setValue(recordData.FluidType);
-				var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
-				RouteInfoFields.show();
+				this.ckRec = ckRec;
+				this.EditDrugGetDetails(record);
 			}
 		} else if ("Remove Drug" === button.text) {
 			wccConsoleLog("Remove Drug Regimen for - " + ckRec.record.get("Drug"));
@@ -19253,21 +19295,37 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 
 	// Ext.ComponentQuery.query('TemplatePreHydration button[text="Add Drug"]')[0].el.dom
+	/*
+	 * Note: The "suspendComboLoad" is used to surpress the potential double loading of the drug select combo store
+	 * if the selected medication was an outpatient medication.
+	 * The drug select combo store defaults to an inpatient medication which would be loaded as part of the window rendering process
+	 * after which the current record would cause the outpatient medication data to be loaded in the store.
+	 */
 	init: function () {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 		this.control({
 			"AddHydrationDrug" : {
-				"activate" : this.ShowFields
+				"activate" : this.ActivatePrePostTherapyWindow,
+				"afterlayout" : function(theWin) { 
+					//console.log("afterlayout");
+				},
+				"show" : function(theWin) { 
+					this.suspendComboLoad = false;
+					//console.log("aftershow");
+				},
+				"afterrender" : function(theWin) { 
+					this.suspendComboLoad = true;
+					//console.log("afterrender");
+				}
 			},
-			// MWB 28 Dec 2011 - Added the Pre/Post Hydration Add Drug functionality...
 			'AuthoringTab TemplateHydration button': {
 				click: this.HydrationBtns
 			},
-			'AuthoringTab TemplateHydration grid': { // The Hydration Grid Control
+			'AuthoringTab TemplateHydration grid': {
 				itemclick: this.clickUpdateHydration,
 				itemcontextmenu: this.onCtxHandler
 			},
-			'AddHydrationDrug button[text="Save"]': { // Pop-up window
+			'AddHydrationDrug button[text="Save"]': {
 				click: this.SaveHydrationDrug
 			},
 			'HydrationSequence[name=\"Hydration Sequence\"] button[text="Save"]' : {
@@ -19302,15 +19360,21 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		});
 	},
 
+	// Drug Pre/Post Controller
 	selectMedType : function(rBtn) {
 		var medType = rBtn.boxLabel;
 		var theCombo = this.getHydrationDrugCombo();
-		this.loadCombo(theCombo);
+		if (this.suspendComboLoad) {
+			//console.log("Loading Combo from SelectedMedType is suspended");
+		}
+		else {
+			//console.log("Loading Combo from SelectedMedType");
+			this.loadCombo(theCombo);
+		}
 	},
 
 	ComboSearch : function(combo) {
 		var store = combo.store;
-		// store.clearFilter();
 		store.filters.clear();
 		store.filter({
 			id      : 'name',
@@ -19321,18 +19385,119 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	},
 
 
-	ShowFields : function( theWin, eOpts ) {
-		var theCombo = this.getHydrationDrugCombo();
-		this.loadCombo(theCombo);
-		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
-		var theRouteField = this.getDrugRoute();
-		var v = theRouteField.getValue();
-		var d = theRouteField.getDisplayValue();
-		if (v) {
+
+	ActivatePrePostTherapyWindow : function( theWin ) {
+		Ext.suspendLayouts();
+		var record = theWin.record;
+		if (record) {
+			var recordData = record.data,
+				RouteInfoFields = this.getDrugPUWindow_DoseRouteFields(),
+				theRoute = recordData.Infusion1, 
+				theDrug = recordData.Drug,
+				theRouteCombo, 
+				theDrugCombo;
+
+			RouteInfoFields.hide();
+
+			theWin.type = this.panelType;
+			theWin.setTitle("Edit " + this.panelType + " Therapy Drug");
+			theWin.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
+
+			this.getPatientType().setValue({PatientType: recordData.MedicationType});
+
+			var theCombo = this.getHydrationSequenceCombo();
+			this.addToSequenceStore(theCombo,false);
+			theCombo.setValue(recordData.Sequence);
+
+			this.getHydrationAmt1().setValue(recordData.Amt1);
+			this.getHydrationUnits1().setValue(recordData.Units1);
+
+
+			theDrugCombo = this.getHydrationDrugCombo();
+			this.loadCombo(theDrugCombo, theDrug);
+
+			theRouteCombo = this.getHydrationInfusion1();
+			if (theRoute.indexOf(" : ") > 0) {
+				theRoute = theRoute.split(" : ");
+				this.theRouteIEN = theRoute[1];
+				this.theRouteName = theRoute[0];
+				theRouteCombo.setValue(this.theRouteIEN);
+				theRouteCombo.setRawValue(this.theRouteName);
+			}
+			else {
+				theRouteCombo.setValue(theRoute);
+			}
+			this.routeSelected(theRouteCombo, null, null);
+
+			this.getHydrationInstructions().setValue(recordData.Instructions);
+			this.getHydrationFluidVol1().setValue(recordData.FluidVol1);
+			this.getHydrationFlowRate1().setValue(recordData.FlowRate1);
+			this.getHydrationInfusionTime1().setValue(recordData.InfusionTime1);
+			this.getHydrationFluidType1().setValue(recordData.FluidType1);
+			this.getHydrationDay().setValue(recordData.Day);
+			this.getHydrationAdminTime().setValue(recordData.AdminTime);
+
 			RouteInfoFields.show();
 		}
+		Ext.resumeLayouts(true);
 	},
 
+	EditDrugGetDetails : function(record) {
+		var hdPanel = Ext.widget('AddHydrationDrug', { record: record }); // Creates an instance of the "Add Hydration Drug" pop-up window
+	},
+
+	
+
+	loadCombo: function (combo, theDrug) {
+		console.log("Loading Select Drug Combo Store");
+		combo.up("window").setLoading( "Loading Drug List", false );
+		var originalHiddenVal = null;
+		// combo.hiddenValue = combo.getRawValue();
+		combo.clearValue();
+		combo.theDrug = theDrug;
+
+		var URI, id;
+		var patientType = this.getPatientType().getValue().PatientType;
+
+		if (combo.name === "Drug") {
+			URI = Ext.URLs.Drugs + "/";
+			id = patientType;
+		}
+		var store = combo.getStore();
+		store.filters.clear();
+
+		store.load({
+			params: {
+				URL: URI,
+				ID: id
+			},
+			scope : this,
+			callback: function (records, operation, success) {
+				console.log("Select Drug Combo Store Loaded");
+				var theWindow = combo.up("window");
+				if (theWindow) {
+					theWindow.setLoading( false, false );
+				}
+				combo.focus();
+				if (success) {
+					if (combo.theDrug) {
+						var theDrug = combo.theDrug;
+						if (theDrug.indexOf(" : ") > 0) {
+							theDrug = theDrug.split(" : ");
+							this.theDrugIEN = theDrug[1];
+							this.theDrugName = theDrug[0];
+							combo.setValue(this.theDrugIEN);
+							combo.setRawValue(this.theDrugName);
+							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+						}
+						else {
+							combo.setValue(theDrug);
+						}
+					}
+				}
+			}
+		});
+	},
 
 	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
 		var URL = Ext.URLs.DrugInfo + "/" + drugID;
@@ -19360,7 +19525,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 
 	// Grab the list of routes from the Drug Info and build the Route Combo Store from that list
 	AddDrugInfoFromVistA2Store : function(respObj, theScope) {
-		var theValue = theScope.getHydrationInfusion1().getValue();
+		var theValue, hInfusion = theScope.getHydrationInfusion1();
+		if (hInfusion) {
+			theValue = hInfusion.getValue();
+		}
 		var theWin = theScope.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( false );
@@ -19390,41 +19558,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		if(null !== recs){
 			drugName = recs[0].data.name;
 			drugID = recs[0].data.IEN;
+			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 		}
-		this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
 	},
 
-	loadCombo: function (picker, eOpts) {
-		picker.up("window").setLoading( "Loading Drug List", false );
-		var originalHiddenVal = null;
-		picker.hiddenValue = picker.getRawValue();
-		picker.clearValue();
-
-		var URI, id;
-		var patientType = this.getPatientType().getValue().PatientType;
-
-
-		if (picker.name === "Drug") {
-			URI = Ext.URLs.Drugs + "/";
-			id = patientType;
-		}
-
-		picker.getStore().load({
-				params: {
-					URL: URI,
-					ID: id
-				},
-				callback: function (records, operation, success) {
-					picker.up("window").setLoading( false, false );
-					picker.focus();
-					if (success) {
-						if (null !== originalHiddenVal) {
-							picker.setRawValue(originalHiddenVal);
-						}
-					}
-				}
-		});
-	},
 
 	calcInfusionTime: function(field, eOpts){
 
@@ -19898,67 +20035,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		delete this.theQuery;
 	},
 
-	EditDrugGetDetails : function(record) {
-		// debugger;
-		var recordData = record.getData();
-		var hdPanel = Ext.widget('AddHydrationDrug'); // Creates an instance of the "Add Hydration Drug" pop-up window
-		var RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
-		RouteInfoFields.hide();
 
-		hdPanel.type = this.panelType;
-		hdPanel.setTitle("Edit " + this.panelType + " Therapy Drug");
-		hdPanel.recIndex = this.ckRec.rowNum;	// Used in dup drug check on saving
-
-		this.getPatientType().setValue({PatientType: recordData.MedicationType});
-
-		var theCombo = this.getHydrationSequenceCombo();
-		this.addToSequenceStore(theCombo,false);
-		theCombo.setValue(recordData.Sequence);
-
-		this.getHydrationAmt1().setValue(recordData.Amt1);
-		this.getHydrationUnits1().setValue(recordData.Units1);
-
-		var theRouteCombo, 
-			theDrugCombo,
-			theRoute = recordData.Infusion1, 
-			theDrug = recordData.Drug;
-
-		theRouteCombo = this.getHydrationInfusion1();
-		if (theRoute.indexOf(" : ") > 0) {
-			theRoute = theRoute.split(" : ");
-			this.theRouteIEN = theRoute[1];
-			this.theRouteName = theRoute[0];
-			theRouteCombo.setValue(this.theRouteIEN);
-			theRouteCombo.setRawValue(this.theRouteName);
-		}
-		else {
-			theRouteCombo.setValue(theRoute);
-		}
-		this.routeSelected(theRouteCombo, null, null);
-
-		theDrugCombo = this.getHydrationDrugCombo();
-		if (theDrug.indexOf(" : ") > 0) {
-			theDrug = theDrug.split(" : ");
-			this.theDrugIEN = theDrug[1];
-			this.theDrugName = theDrug[0];
-			theDrugCombo.setValue(this.theDrugIEN);
-			theDrugCombo.setRawValue(this.theDrugName);
-			this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
-		}
-		else {
-			theDrugCombo.setValue(theDrug);
-		}
-
-		this.getHydrationInstructions().setValue(recordData.Instructions);
-		this.getHydrationFluidVol1().setValue(recordData.FluidVol1);
-		this.getHydrationFlowRate1().setValue(recordData.FlowRate1);
-		this.getHydrationInfusionTime1().setValue(recordData.InfusionTime1);
-		this.getHydrationFluidType1().setValue(recordData.FluidType1);
-		this.getHydrationDay().setValue(recordData.Day);
-		this.getHydrationAdminTime().setValue(recordData.AdminTime);
-
-		RouteInfoFields.show();
-	},
 
 	HydrationBtns: function (button) { // Handles the onclick event of all the buttons for both the pre and post hydration grids
 		var panel = button.up("panel").up("container");

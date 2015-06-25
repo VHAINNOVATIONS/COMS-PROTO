@@ -80,7 +80,13 @@ class mymdwscontroller extends Controller {
         $details[ 0 ][ 'PerformanceStatus' ]   = '';
         return $details;
     }
-    
+
+
+    public function getVitalsFromVistA($DFN) {
+        $nodevista = new NodeVista();
+        $VPR = $nodevista->get("patient/vitals/$DFN");
+        return json_decode($VPR);
+    }
 
 
 
@@ -176,14 +182,8 @@ error_log("MyMDWS Controller - MatchGetInfo4OnePatient() - Got Patient By DFN ("
         }
         
         $patient[ 0 ][ 'Amputations' ] = $tmpAmputations;
+        $patient[0]['VPR'] = $this->getVitalsFromVistA($this->_dfn);
 
-        $nodevista = new NodeVista();
-        // $VPR = $nodevista->get("patient/details/" . $this->_dfn);
-        $VPR = $nodevista->get("patient/vitals/" . $this->_dfn);
-        $patient[0]['VPR'] = json_decode($VPR);
-
-        // $VPR1 = $nodevista->get("patient/details/" . $this->_dfn);
-        // $patient[0]['VPR1'] = json_decode($VPR1);
         $VPR_New = array();
         $VPR_Data = array();
         $VPR_Data_Items = array();
