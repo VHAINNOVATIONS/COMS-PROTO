@@ -19,6 +19,10 @@
 
         
         function getMostRecentVitals( $PatientID ) {
+error_log("Orders Controller - getMostRecentVitals($PatientID)");
+            $jsonRecord = array();
+            $jsonRecord[ 'success' ] = true;
+
             $controller        = 'PatientController';
             $patientController = new $controller( 'Patient', 'patient', null );
             $patientModel      = new Patient();
@@ -28,10 +32,17 @@
             $ret               = array( );
             $ret[ "Age" ]      = $records[ 0 ][ "Age" ];
             $ret[ "Gender" ]   = $records[ 0 ][ "Gender" ];
-            // error_log("Patient Vitals - " . json_encode($records));
+
             foreach ( $records as $aVital ) {
-                $h = $aVital[ "Height" ];
-                $w = $aVital[ "Weight" ];
+                $h = "";
+                $w = "";
+                if (array_key_exists("Height", $aVital)) {
+                    $h = $aVital[ "Height" ];
+                }
+                if (array_key_exists("Weight", $aVital)) {
+                    $w = $aVital[ "Weight" ];
+                }
+
                 if ( "" !== $h && 0 == $mrHeight ) {
                     $mrHeight = $h;
                 }
@@ -41,15 +52,28 @@
                 if ( $mrWeight !== 0 && $mrHeight !== 0 ) {
                     $ret[ "Height" ] = $mrHeight;
                     $ret[ "Weight" ] = $mrWeight;
+error_log("Patient Vitals - " . json_encode($ret));
+            $jsonRecord[ 'total' ]   = 1;
+            $jsonRecord[ 'records' ] = array();
+            $jsonRecord[ 'records' ][] = $ret;
+            $this->set( 'jsonRecord', $jsonRecord );
+
                     return $ret;
                 }
             }
+
             $ret[ "Height" ] = $mrHeight;
             $ret[ "Weight" ] = $mrWeight;
+error_log("Patient Vitals - " . json_encode($ret));
+
+
+            $jsonRecord[ 'total' ]   = 1;
+            $jsonRecord[ 'records' ] = array();
+            $jsonRecord[ 'records' ][] = $ret;
+            $this->set( 'jsonRecord', $jsonRecord );
             return $ret;
         }
-        
-        
+
         function getAmputationPct( $PatientID ) {
             // error_log("Amputations for - $PatientID");
             $lookup      = new LookUp();
@@ -101,6 +125,7 @@ error_log( "BSA Formula - " . json_encode($BSA));
 error_log( "BSA Formula - $w; $b" );
                 
                 $mrHW = $this->getMostRecentVitals( $PIDF );
+error_log( "Most Recent = " . json_encode(mrHW));
 error_log( "Most Recent = " . $mrHW[ "Height" ] . " " . $mrHW[ "Weight" ] . " " . $mrHW[ "Age" ] . " " . $mrHW[ "Gender" ] );
                 
                 $ampu = $this->getAmputationPct( $PIDF );

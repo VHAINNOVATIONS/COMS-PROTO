@@ -1,5 +1,11 @@
 <?php
 
+    function _sortVitalsArray($a, $b) {
+        // error_log("Sort - A = " . json_encode( $a));
+        // error_log("Sort - B = " . json_encode( $b));
+        return (strtotime($a["DateTaken"]) > strtotime($b["DateTaken"]));
+    }
+
 class Patient extends Model
 {
 
@@ -33,16 +39,16 @@ class Patient extends Model
                      "FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '" .
                      $patientId . "'";
             $query = "SELECT id = Patient_ID, name = '', Age = '', DOB = '', p.DFN as DFN FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '$patientId'";
-        }    
+        }
 error_log("Patient Model - selectByPatientId - $query");
-$retVal = $this->query($query);
-$DFN = $retVal[0]["DFN"];
+                $retVal = $this->query($query);
+                $DFN = $retVal[0]["DFN"];
                 $nodevista = new NodeVista();
                 $PatientInfo = $nodevista->get("patient/$DFN");
                 $pi = json_decode($PatientInfo);
 
-$dob = new DateTime($pi->{'dob'});
-$dobString = date_format($dob, 'd/m/Y');
+                $dob = new DateTime($pi->{'dob'});
+                $dobString = date_format($dob, 'd/m/Y');
 
                 $retVal[0]["name"] = $pi->{'name'};
                 $retVal[0]["Age"] = $pi->{'age'};
@@ -50,10 +56,6 @@ $dobString = date_format($dob, 'd/m/Y');
                 $retVal[0]["Gender"] = $pi->{'gender'};
 
 error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal[0]));
-
-
-// {"name":"FIVEHUNDREDONE,PATIENT","gender":"M","dob":"1935-04-07T04:00:00.000Z","ssn":"666000501","age":"80","localPid":"100500"}
-
         return $retVal;
     }
 
@@ -396,6 +398,58 @@ WHERE pat.Patient_ID = '$id'";
 
 
 
+    function getVitalsFromVistA_AsArray($DFN) {
+        // get Vitals from VistA
+        $controller = 'mymdwscontroller';
+        $MyMDWSController = new $controller('mymdws', 'mymdws', null);
+        $VistAVitals = $MyMDWSController->getVitalsFromVistA($DFN);
+        $VistAPatientInfo = $MyMDWSController->getPatientInfoFromVistA($DFN);
+        // error_log("VistA Vitals - " . json_encode($VistAVitals));
+        $vitals = array();
+        foreach($VistAVitals as $aVital) {
+            // error_log("A Vital = " . json_encode($aVital));
+            $aDate = $aVital->date;
+
+
+$date = new DateTime($aDate, new DateTimeZone('UTC'));
+$aDate = $date->format('m/d/Y H:i:s');
+
+
+            // $aDate = date("Y-m-d H:i:s", $aDate);
+            // error_log($aDate);
+            // error_log($aVital->description->desc);
+            if (!isset($vitals[$aDate])) {
+                $vitals[$aDate] = array();
+                $vitals[$aDate]["Age"] = $VistAPatientInfo->age;
+                $vitals[$aDate]["Gender"] = $VistAPatientInfo->gender;
+            }
+            switch ($aVital->type) {
+                case "BP":
+                    $vitals[$aDate]["BP"] = $aVital->value;
+                    break;
+                case "PN":
+                    $vitals[$aDate]["Pain"] = $aVital->value;
+                    break;
+                default:
+                    if (array_key_exists("description", $aVital)) {
+                        $vitals[$aDate][$aVital->description->desc] = $aVital->value;
+                    }
+                    else {
+                        $vitals[$aDate][$aVital->type] = $aVital->value;
+                    }
+            }
+        }
+        error_log("Vitals as array = " . json_encode($vitals));
+        return $vitals;
+    }
+
+
+
+
+
+
+
+
 
 
     function getMeasurements ($id) {
@@ -407,16 +461,29 @@ WHERE pat.Patient_ID = '$id'";
         return $this->query($query);
     }
 
+
+
     function getMeasurements_v1 ($id, $dateTaken)
     {
-        $query = "SELECT Patient_ID as id from Patient where DFN = '" . $id . "'";
-        // error_log("getMeasurements_v1 - $query");
-        $patientId = $this->query($query);
-        
-        if (null != $patientId && ! array_key_exists('error', $patientId)) {
-            $id = $patientId[0]['id'];
+        $DFN = $id;
+        if (is_int($id)) {
+            $query = "SELECT Patient_ID, DFN from Patient where DFN = '$id'";
         }
-        
+        else {
+            $query = "SELECT Patient_ID, DFN from Patient where Patient_ID = '$id'";
+        }
+        $patientId = $this->query($query);
+        if (array_key_exists("error", $patientId)) {
+            $errMsgList[] = "Error retrieving patient measurements" . $patientId["error"];
+            return $patientId;
+        }
+
+        $id = $patientId[0]['Patient_ID'];
+        $DFN = $patientId[0]['DFN'];
+        $VistAVitals = $this->getVitalsFromVistA_AsArray($DFN);
+
+
+
         $baseQuery = "SELECT 
             ph.Height as Height,
             ph.Weight as Weight,
@@ -469,20 +536,45 @@ WHERE pat.Patient_ID = '$id'";
             FROM Patient_History ph 
             INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID 
             LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
-            WHERE ph.Patient_ID = '$id'";
+            WHERE ph.Patient_ID = '$id' and Date_Taken is not null";
 
         if (null == $dateTaken) {
             $query = $baseQuery . " ORDER BY Date_Taken DESC";
         } else {
             $query = $baseQuery . " AND CONVERT(VARCHAR(10), Date_Taken, 105) = '$dateTaken' ORDER BY Date_Taken DESC";
         }
-
         error_log("getMeasurements_v1 - $query");
-        return $this->query($query);
+        $retVal = $this->query($query);
+error_log("getMeasurements_v1 - Query Result " . json_encode($retVal));
+
+        if (null != $retVal && !array_key_exists('error', $retVal)) {
+            reset($VistAVitals);
+            $firstKey = key($VistAVitals);
+            $age = $VistAVitals[$firstKey]["Age"];
+            $gender = $VistAVitals[$firstKey]["Gender"];
+
+            foreach($retVal as &$aVital) {
+                $aVital["Age"] = $age;
+                $aVital["Gender"] = $gender;
+            }
+
+            foreach($VistAVitals as $aDate => &$aVital) {
+                $aVital["DateTaken"] = $aDate;
+                $retVal[] = $aVital;
+            }
+            usort($retVal, "_sortVitalsArray");
+        }
+
+        error_log("getMeasurements_v1 - " . json_encode($retVal));
+
+
+
+
+
+        return $retVal;
     }
 
-    function saveVitals ($form_data, $patientId)
-    {
+    function saveVitals ($form_data, $patientId) {
 
         error_log("Patient.Model.saveVitals - " . json_encode($form_data));
         if (empty($patientId)) {
@@ -1292,7 +1384,6 @@ error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
                 $comment = '';
             }
         } else {
-            // echo "Allergy - " . $form_data->{'allergenName'} . "<br>";
             $retVal = array();
             $a = array();
             if (DB_TYPE == 'sqlsrv') {
@@ -1305,8 +1396,6 @@ error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
             } else if (DB_TYPE == 'mysql') {
                 $retVal['error'] = "Allergies Not Assessed for this patient";
             }
-            
-            // echo "saveAllergy() - Returning error condition<br>";
             return $retVal;
         }
         
@@ -1563,17 +1652,13 @@ error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
         foreach ($queryq as $row) {
             $Template_IDchk = $row['Template_ID_CHK'];
             $Drug_Namechk = $row['Drug_Name_CHK'];
-            // echo "Template_IDchk: ".$Template_IDchk."<br>";
-            // echo "Drug_Namechk: ".$Drug_Namechk."<br>";
         }
         if ($Template_IDchk === NULL) {
-            // echo "empty sring";
             $query = "INSERT INTO Order_Status(Template_ID, Order_Status, Drug_Name, Order_Type, Patient_ID, Notes) VALUES ('$TID','Finalized','$Drug_Name','$Order_Type','$PID','Line 1325')";
         } else {
             $query = "Update Order_Status set Order_Status = 'Finalized' " .
                      "where Template_ID = '" . $TID . "' " . "AND Drug_Name = '" .
                      $Drug_Name . "' " . "AND Patient_ID = '" . $PID . "'";
-            // "AND Order_Type = '".$Order_Type."'";
         }
         
         $this->query($query);
