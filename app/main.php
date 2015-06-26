@@ -7,9 +7,11 @@
     $ProjType = "Release 1.4 May 8, 2015";
     $ProjType = "Release 1.9 May 28, 2015";
     $ProjType = "Release 1.11";     // June 12, 2015";
-    $ProjType = "Release 1.15";     // June 19, 2015";
+    $ProjType = "Release 1.13a";     // June 19, 2015";
+    $ProjType = "Release 1.13b";     // June 23, 2015";
+    $ProjType = "Release 1.14";     // June 25, 2015";
     */
-    $ProjType = "Release 1.16";     // June 23, 2015";
+    $ProjType = "Release 1.14a";     // June 26, 2015"; Fix defect where Dosage Amounts in Orders Tab show up as NaN when the dose is blank in Order_Status table
 
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
