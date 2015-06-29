@@ -3,7 +3,7 @@
     function _sortVitalsArray($a, $b) {
         // error_log("Sort - A = " . json_encode( $a));
         // error_log("Sort - B = " . json_encode( $b));
-        return (strtotime($a["DateTaken"]) > strtotime($b["DateTaken"]));
+        return (strtotime($a["DateTaken"]) <= strtotime($b["DateTaken"]));
     }
 
 class Patient extends Model
@@ -480,36 +480,12 @@ $aDate = $date->format('m/d/Y H:i:s');
 
         $id = $patientId[0]['Patient_ID'];
         $DFN = $patientId[0]['DFN'];
+
+error_log("getMeasurements_v1 - (get Vitals) From VistA - DFN - $DFN; ID - $id");
+
+
         $VistAVitals = $this->getVitalsFromVistA_AsArray($DFN);
-
-
-
-        $baseQuery = "SELECT 
-            ph.Height as Height,
-            ph.Weight as Weight,
-            BP = CAST(Systolic as varchar(5)) + '/' + CAST(Diastolic as varchar(5)), 
-            Weight_Formula as WeightFormula, 
-            BSA_Method as BSA_Method, 
-            BSA,
-            BSA_Weight,
-            CONVERT(VARCHAR(10), Date_Taken, 101) + ' ' + CONVERT(VARCHAR(8), Date_Taken, 108) as DateTaken,
-            CONVERT(VARCHAR(10), Date_Taken, 101) as DateTaken2, 
-            Temperature, 
-            TemperatureLocation, 
-            Pulse, 
-            Respiration, 
-            Pain, 
-            OxygenationLevel as SPO2, 
-            Cycle, 
-            Admin_Day as Day, 
-            CASE WHEN ph.Performance_ID is null then 'No Change' else l4.Description END as PS, 
-            CASE WHEN ph.Performance_ID is null then 'N/C' else l4.Name END as PSID, 
-            Age = DATEDIFF(YY, p.DOB, GETDATE()) - CASE WHEN( (MONTH(p.DOB)*100 + DAY(DOB)) > (MONTH(GETDATE())*100 + DAY(GETDATE())) ) THEN 1 ELSE 0 END, 
-            p.Gender as Gender 
-            FROM Patient_History ph 
-            INNER JOIN Patient p ON p.Patient_ID = ph.Patient_ID 
-            LEFT JOIN LookUp l4 ON l4.Lookup_ID = ph.Performance_ID 
-            WHERE ph.Patient_ID = '$id'";
+error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVitals));
 
         $baseQuery = "SELECT 
             ph.Height as Height,
@@ -544,27 +520,48 @@ $aDate = $date->format('m/d/Y H:i:s');
             $query = $baseQuery . " AND CONVERT(VARCHAR(10), Date_Taken, 105) = '$dateTaken' ORDER BY Date_Taken DESC";
         }
         error_log("getMeasurements_v1 - $query");
-        $retVal = $this->query($query);
-error_log("getMeasurements_v1 - Query Result " . json_encode($retVal));
 
+
+        $retVal = $this->query($query);
+        error_log("getMeasurements_v1 - Vitals from SQL - " . json_encode($retVal));
+
+        // Sort the return set based on Date Taken in Descending Order so most recent date first
         if (null != $retVal && !array_key_exists('error', $retVal)) {
+
+
+
+
+
+            error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL");
             reset($VistAVitals);
             $firstKey = key($VistAVitals);
             $age = $VistAVitals[$firstKey]["Age"];
             $gender = $VistAVitals[$firstKey]["Gender"];
 
             foreach($retVal as &$aVital) {
+                error_log("Vitals from SQL, Adding Age/Gender to " . json_encode($aVital));
                 $aVital["Age"] = $age;
                 $aVital["Gender"] = $gender;
+                $aVital["Src"] = "SQL";
             }
 
             foreach($VistAVitals as $aDate => &$aVital) {
+                error_log("Vitals from VistA, Adding to SQL Array - " . json_encode($aVital));
                 $aVital["DateTaken"] = $aDate;
+                $aVital["Src"] = "VistA";
                 $retVal[] = $aVital;
             }
             usort($retVal, "_sortVitalsArray");
         }
-
+        else if (null == $retVal) {
+            foreach($VistAVitals as $aDate => &$aVital) {
+                error_log("Vitals from VistA, Adding to NULL Array - " . json_encode($aVital));
+                $aVital["DateTaken"] = $aDate;
+                $aVital["Src"] = "VistA";
+                $retVal[] = $aVital;
+            }
+            usort($retVal, "_sortVitalsArray");
+        }
         error_log("getMeasurements_v1 - " . json_encode($retVal));
 
 

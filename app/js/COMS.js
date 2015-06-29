@@ -1,3 +1,16 @@
+/*****************************************************
+ *    /LookUp/TemplateData/<Template_ID>
+ *    /LookUp/TemplateMedDocs/<Template_ID>
+ *    /Patient/Vitals/<Patient_ID>
+ *    /Patient/Template/<Patient_ID>
+ *    /Patient/Templates/<Patient_ID>
+ *    /Patient/CumulativeDoseTracking/<Patient_ID>
+ *    /Patient/OEM/<Patient_ID>
+ *
+ *    /NursingDoc/AdverseEventsHistory/<PAT_ID>
+ *    /Patient/DischargeInstructions/<PAT_ID>
+ *****************************************************/
+
 /***
  *
  *	Console Logging Code
@@ -29879,7 +29892,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 	InfuseReactPost : function(records, Patient, theApp) {
 		var params = Ext.encode(records);
 		var CMD = "POST";
-		var URL = Ext.URLs.AddND_React_Assess + "/" + Patient.PAT_ID;
+		var URL = Ext.URLs.AddND_React_Assess + Patient.PAT_ID;
 		if (Patient.InfuseReactionRecordID) {
 			CMD = "PUT";
 			URL += "/" + Patient.InfuseReactionRecordID;
@@ -30315,14 +30328,14 @@ this.AdminDate = today;
 	},
 
 
-	ClearTabData : function( ) {
-		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+
+	ClearTreatmentTab : function() {
+			// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
 		try {
 			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.TreatmentTab");
 			if (!thisCtl.getND_T_Tab().rendered) {
 				return;		// Traps possible call from the PopulateNDTabs event
 			}
-
 			var theTreatmentGrid = Ext.ComponentQuery.query("NursingDocs_Treatment [name=\"AdministeredMedsGrid\"]")[0];
 			var Patient = this.application.Patient;
 			if (theTreatmentGrid && theTreatmentGrid.rendered && "" !== Patient.PAT_ID) {
@@ -30330,8 +30343,28 @@ this.AdminDate = today;
 			}
 		}
 		catch (e) {
-			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTabData() " + e.message );
+			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTreatmentTab() " + e.message );
 		}
+	},
+
+	ClearAssessmentTab : function() {
+			// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+		try {
+			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.AssessmentTab");
+			if (!thisCtl.getND_T_Tab().rendered) {
+				return;		// Traps possible call from the PopulateNDTabs event
+			}
+
+		}
+		catch (e) {
+			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearAssessmentTab() " + e.message );
+		}
+
+	},
+
+
+	ClearTabData : function( ) {
+		this.ClearTreatmentTab();
 	},
 
 
@@ -33500,8 +33533,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
-					var mergedVitals = this.MergeWithVPR_Array(rawData.records);
-					this.application.Patient.Vitals = mergedVitals;
+					// var mergedVitals = this.MergeWithVPR_Array(rawData.records);
+					// this.application.Patient.Vitals = mergedVitals;
+					this.application.Patient.Vitals = rawData.records;
 				}
 				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);

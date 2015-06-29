@@ -97,5 +97,47 @@ delete from dbo.Template_Regimen
 delete from dbo.Patient_Assigned_Templates 
 delete from Order_Status where Order_ID != '00000000-0000-0000-0000-000000000000'
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+Notes on Treatment Documentation Tab
+
+Patient F0500 = DFN = 100499 = Patient ID = 310E712D-E304-48E9-9835-94F31DA5595C
+PAT_ID = 820753A1-4706-E511-9B8C-000C2935B86F	Patient_ID = 310E712D-E304-48E9-9835-94F31DA5595C = Template_ID = 48CD4FD7-9F87-4F31-B284-D872C0E9384C
+
+select * from Patient_Assigned_Templates
+
+/LookUp/TemplateData/<Template_ID>
+/LookUp/TemplateMedDocs/<Template_ID>
+/Patient/Vitals/<Patient_ID>
+/Patient/Template/<Patient_ID>
+/Patient/Templates/<Patient_ID>
+/Patient/CumulativeDoseTracking/<Patient_ID>
+/Patient/OEM/<Patient_ID>
+
+/NursingDoc/AdverseEventsHistory/<PAT_ID>
+/Patient/DischargeInstructions/<PAT_ID>
+
+
+
+General Information Tab, saved via the "Save" button below the Vital Signs Edit group.
+Note, this save performs 2 service calls:
+Save General Information - 
+Save Vital Signs - 
+
+Assessment
+
+IV Site - No Save, but gives a "Save Complete" dialog.
+
+
+Infusion Reaction - Save via 
+/NursingDoc/ReactAssess/820753A1-4706-E511-9B8C-000C2935B86F/2C3DC7E8-C4C4-4213-A0FB-1F9E52150359
+                        ^^^^^^^^^^^^ PAT_ID ^^^^^^^^^^^^^^^   ^^^^ InfuseReactionRecordID ^^^^
+The InfuseReactionRecordID is passed only if this is an update of an existing record (via PUT)
+
+Discharge Instructions
+
+Load specific
+/Patient/DischargeInstructions/820753A1-4706-E511-9B8C-000C2935B86F/4B65F07A-8A75-4881-BAAF-908AB7AC8F09
+                               ^^^^^^^^^^^^ PAT_ID ^^^^^^^^^^^^^^^
+
 
 

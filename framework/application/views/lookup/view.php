@@ -14,7 +14,6 @@
                     $retData = " {\"id\":\"" . $lookup["id"] . "\", \"type\":\"" . $lookup["type"] . "\", \"name\":\"" . 
                         $lookup["Name"] . "\", \"description\":\"" . $lookup["Description"] . "\"}";
                 }
-error_log("Lookup View - " . $retData);
                 echo $retData;
                 if($rowCount<$numRows){
                     echo ",";

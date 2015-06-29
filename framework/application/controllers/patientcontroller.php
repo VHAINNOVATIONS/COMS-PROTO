@@ -1951,7 +1951,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
          * DischargeInstructions - This service call manages the Patient Discharge Instruction records
          * Each time a set of Discharge Instructions are generated for a particular patient a record is maintained consisting of the following:
          *  A Lookup Table (DischargeInfoLookup) containing
-         *      Patient ID
+         *      PAT ID
          *      Template ID
          *      Date Discharge Instructions were generated.
          *      A Unique ID for this record which is used as a link into the DischargeInformation table which contains a separate record for each instruction saved in a single Discharge Instruction Form
@@ -1989,7 +1989,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
          *
          **/
         
-        function DischargeInstructions( $PatientID = null, $dischargeRecordID = null ) {
+        function DischargeInstructions( $PAT_ID = null, $dischargeRecordID = null ) {
             $jsonRecord              = array( );
             $jsonRecord[ 'success' ] = true;
             $query                   = "";
@@ -2001,7 +2001,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
             
             $ErrMsg = "";
             if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
-                if ( $PatientID ) {
+                if ( $PAT_ID ) {
                     if ( $dischargeRecordID ) {
                         $query = "select 
                         di.fieldName as fieldName,
@@ -2014,10 +2014,10 @@ error_log("Patient Controller - Hydrations() - $type; $id");
                         $query = "
                         SELECT DischargeID, PatientID, 
                         CONVERT(varchar,date,101) as date
-                        FROM $DischargeLinkTable where PatientID = '$PatientID' order by date desc";
+                        FROM $DischargeLinkTable where PatientID = '$PAT_ID' order by date desc";
                     }
                 }
-// error_log("DischargeInstructions Query - $query");
+error_log("DischargeInstructions Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
@@ -2032,7 +2032,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
                 Date
             ) VALUES (
                 '$GUID',
-                '$PatientID',
+                '$PAT_ID',
                 '$Date2'
             )";
                 $retVal = $this->Patient->query( $query );
@@ -2079,7 +2079,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
                 Date
             ) VALUES (
                 '$dischargeRecordID',
-                '$PatientID',
+                '$PAT_ID',
                 '$Date2'
             )";
                 $retVal = $this->Patient->query( $query );
@@ -2139,36 +2139,43 @@ error_log("Patient Controller - Hydrations() - $type; $id");
             }
             
             if ( "" !== $query ) {
+error_log("DischargeInstructions Query - Performing Lookup");
                 $retVal = $this->Patient->query( $query );
+error_log("DischargeInstructions Query - Lookup Complete");
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
+error_log("DischargeInstructions Query - Lookup generated an Error");
                     $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->Patient->rollbackTransaction();
                 } else {
+error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
                     $jsonRecord[ 'success' ] = 'true';
                     
                     if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] && $dischargeRecordID ) {
+error_log("DischargeInstructions Query - Getting More Data");
                         /* Get Patient Name for display on PrintOut */
                         $patInfoQuery = "SELECT 
                         PAT.PAT_ID, 
-                        PAT.Patient_ID, 
-                        lu1.Last_Name, 
-                        lu1.First_Name
+                        PAT.Patient_ID
+                        /* lu1.Last_Name, 
+                        lu1.First_Name */
                         FROM Patient_Assigned_Templates PAT
                         JOIN Patient lu1 ON lu1.Patient_ID = PAT.Patient_ID
-                        WHERE PAT.PAT_ID = '$PatientID'";
-                        
+                        WHERE PAT.PAT_ID = '$PAT_ID'";
+error_log("DischargeInstructions Query - Getting More Data - $patInfoQuery");
                         $patInfo = $this->Patient->query( $patInfoQuery );
                         if ( $this->checkForErrors( $ErrMsg, $patInfo ) ) {
+error_log("DischargeInstructions Query - Lookup generated an Error");
                             $jsonRecord[ 'success' ] = false;
                             $jsonRecord[ 'msg' ]     = "Patient Information Unavailable - " . $this->get( 'frameworkErr' );
                         } else {
-// error_log("$patInfoQuery");
+error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
+error_log("$patInfoQuery");
 // error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
                             /* Parse data into Proper Form Input structure */
                             if ( count( $retVal ) > 0 ) {
                                 $data                  = array( );
-                                $data[ "PatientName" ] = $patInfo[ 0 ][ "First_Name" ] . " " . $patInfo[ 0 ][ "Last_Name" ];
+                                // $data[ "PatientName" ] = $patInfo[ 0 ][ "First_Name" ] . " " . $patInfo[ 0 ][ "Last_Name" ];
                                 $data[ "date" ]        = "";
                                 foreach ( $retVal as $record ) {
                                     if ( "" === $data[ "date" ] ) {
