@@ -117,11 +117,48 @@ select * from Patient_Assigned_Templates
 /Patient/DischargeInstructions/<PAT_ID>
 
 
-
-General Information Tab, saved via the "Save" button below the Vital Signs Edit group.
+General Information Tab
+saved via the "Save" button below the Vital Signs Edit group.
 Note, this save performs 2 service calls:
-Save General Information - 
-Save Vital Signs - 
+Save General Information - /NursingDoc/GenInfo/
+POST Data
+comment: "Test Comment..."
+consentGood: false
+educationGood: false
+patientIDGood: true
+patientId: "310E712D-E304-48E9-9835-94F31DA5595C"
+planReviewed: false
+---------------
+/NursingDoc/GenInfo/<PAT_ID>
+
+
+
+
+
+
+Save Vital Signs - /Patient/Vitals
+POST Data
+BP: " / "
+BSA: ""
+BSA_Method: "Mosteller"
+BSA_Weight: "101.6"
+Cycle: ""
+DFN: "100499"
+DateTaken: "06/29/2015"
+Day: ""
+Diastolic: ""
+Height: ""
+Pain: null
+Pulse: ""
+Respiration: ""
+SPO2: null
+Systolic: ""
+Temperature: ""
+TemperatureLocation: ""
+Weight: ""
+WeightFormula: "Actual Weight"
+patientId: "310E712D-E304-48E9-9835-94F31DA5595C"
+
 
 Assessment
 
@@ -137,7 +174,7 @@ Discharge Instructions
 
 Load specific
 /Patient/DischargeInstructions/820753A1-4706-E511-9B8C-000C2935B86F/4B65F07A-8A75-4881-BAAF-908AB7AC8F09
-                               ^^^^^^^^^^^^ PAT_ID ^^^^^^^^^^^^^^^
+                               ^^^^^^^^^^^^ PAT_ID ^^^^^^^^^^^^^^^   ^^^^^^^ dischargeRecordID ^^^^^^^
 
 
 

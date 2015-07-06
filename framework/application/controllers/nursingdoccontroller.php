@@ -536,70 +536,75 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
             }
         }
         
-        function GenInfo( $id = null ) {
-            
-            $form_data = json_decode( file_get_contents( 'php://input' ) );
-            
-            if ( $id != NULL ) {
-                
-                //$lookup = new LookUp();
-                
-                $genInfoRecords = $this->NursingDoc->getGenInfoForPatient( $id );
-                
-                if ( $this->checkForErrors( 'Get GenInfo Records Failed. ', $genInfoRecords ) ) {
-                    $this->set( 'jsonRecord', null );
-                    return;
-                }
-                
-                $patient = new Patient();
-                
-                $jsonRecord        = array( );
-                $modGenInfoRecords = array( );
-                
-                $jsonRecord[ 'success' ] = 'true';
-                $jsonRecord[ 'total' ]   = count( $genInfoRecords );
-                $jsonRecord[ 'records' ] = $genInfoRecords;
-                
-                $this->set( 'jsonRecord', $jsonRecord );
-                $this->set( 'frameworkErr', null );
-            } else if ( $form_data ) {
-                
-                $jsonRecord = array( );
-                
-                $this->NursingDoc->beginTransaction();
-                
-                $retVal = $this->NursingDoc->saveGenInfo( $form_data );
-                $this->set( 'frameworkErr', null );
-                
-                if ( null != $retVal && array_key_exists( 'apperror', $retVal ) ) {
-                    
-                    $errorMsg                = $retVal[ 'apperror' ];
-                    $jsonRecord[ 'success' ] = 'false';
-                    $jsonRecord[ 'msg' ]     = $errorMsg;
-                    $this->set( 'jsonRecord', $jsonRecord );
-                    $this->NursingDoc->rollbackTransaction();
-                    return;
-                    
-                }
-                
-                if ( $this->checkForErrors( 'Save GenInfo Failed. ', $retVal ) ) {
-                    $jsonRecord[ 'success' ] = 'false';
-                    $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
+
+        function GenInfo( $PAT_ID = null ) {
+            $jsonRecord        = array( );
+            $jsonRecord[ 'success' ] = 'true';
+
+            if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+                if ( $PAT_ID != NULL ) {
+                    $genInfoRecords = $this->NursingDoc->getGenInfoForPatient( $PAT_ID );
+                    if ( $this->checkForErrors( 'Get GenInfo Records Failed. ', $genInfoRecords ) ) {
+                        $this->set( 'jsonRecord', null );
+                        return;
+                    }
+                    $jsonRecord[ 'success' ] = 'true';
+                    $jsonRecord[ 'total' ]   = count( $genInfoRecords );
+                    $jsonRecord[ 'records' ] = $genInfoRecords;
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
-                    $this->NursingDoc->rollbackTransaction();
+                } else {
+                    $jsonRecord[ 'success' ] = false;
+                    $jsonRecord[ 'msg' ]     = "Missing Patient Assigned Templates ID for retrieving Patient General Information";
+                    $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-                
-                $jsonRecord[ 'success' ] = 'true';
-                $jsonRecord[ 'msg' ]     = 'Gen Info Save Successful';
-                $this->set( 'jsonRecord', $jsonRecord );
-                $this->NursingDoc->endTransaction();
-                
-            } else {
-                $this->set( 'frameworkErr', 'No Patient ID provided.' );
             }
-            
+            else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+                $form_data = json_decode( file_get_contents( 'php://input' ) );
+                if ( $form_data ) {
+                    $jsonRecord = array( );
+                    $this->NursingDoc->beginTransaction();
+                    $retVal = $this->NursingDoc->saveGenInfo( $form_data, $PAT_ID );
+                    $this->set( 'frameworkErr', null );
+                    if ( null != $retVal && array_key_exists( 'apperror', $retVal ) ) {
+                        $errorMsg                = $retVal[ 'apperror' ];
+                        $jsonRecord[ 'success' ] = 'false';
+                        $jsonRecord[ 'msg' ]     = $errorMsg;
+                        $this->set( 'jsonRecord', $jsonRecord );
+                        $this->NursingDoc->rollbackTransaction();
+                        return;
+                    }
+                    if ( $this->checkForErrors( 'Save GenInfo Failed. ', $retVal ) ) {
+                        $jsonRecord[ 'success' ] = 'false';
+                        $jsonRecord[ 'message' ] = $this->get( 'frameworkErr' );
+                        $this->set( 'jsonRecord', $jsonRecord );
+                        $this->set( 'frameworkErr', null );
+                        $this->NursingDoc->rollbackTransaction();
+                        return;
+                    }
+                    $jsonRecord[ 'success' ] = 'true';
+                    $jsonRecord[ 'msg' ]     = 'Gen Info Save Successful';
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    $this->NursingDoc->endTransaction();
+                } else {
+                    $jsonRecord[ 'success' ] = false;
+                    $jsonRecord[ 'msg' ]     = "Missing Form Data to post for General Information";
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    return;
+                }
+            }
+            else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
+                $jsonRecord[ 'success' ] = 'false';
+                $jsonRecord[ 'msg' ]     = "Update General Information process not yet operational";
+                $this->set( 'jsonRecord', $jsonRecord );
+                return;
+            } else {
+                $jsonRecord[ 'success' ] = false;
+                $jsonRecord[ 'msg' ]     = "Incorrect method called for General Info Service (expected a GET/POST/PUT got a " . $_SERVER[ 'REQUEST_METHOD' ] . ")";
+                $this->set( 'jsonRecord', $jsonRecord );
+                return;
+            }
         }
         
         
@@ -1075,9 +1080,10 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
             if ( $InfuseReactRecordID ) {
                 $query .= " AND IReact_ID = '$InfuseReactRecordID'";
             }
-            // error_log("_getInfuseReactLink Query - $query");
+error_log("_getInfuseReactLink Query - $query");
             return $this->NursingDoc->query( $query );
         }
+
         function _getInfuseReactDetails( $InfuseReactRecordID ) {
             $query = "select
             Sequence as sequence, 
@@ -1088,8 +1094,7 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
             sectionTitle
             from ND_InfuseReactions_Details where IReact_ID = '$InfuseReactRecordID'
             order by Sequence";
-            
-            // error_log("_getInfuseReactDetails Query - $query");
+error_log("_getInfuseReactDetails Query - $query");
             $retVal = $this->NursingDoc->query( $query );
             return $retVal;
         }
@@ -1110,7 +1115,7 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                 '$currDate',
                 'author'
             )";
-            // error_log("_InsertInfuseReactLink Query - $query");
+error_log("_InsertInfuseReactLink Query - $query");
             $retVal   = $this->NursingDoc->query( $query );
             return $retVal;
         }
@@ -1140,7 +1145,7 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                 '$comments',
                 '$sectionTitle'
             )";
-            // error_log("_InsertInfuseReactDetail Query - $query");
+error_log("_InsertInfuseReactDetail Query - $query");
             $retVal       = $this->NursingDoc->query( $query );
             return $retVal;
         }
@@ -1197,8 +1202,8 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
         
         
         function ReactAssess( $PAT_ID = null, $InfuseReactRecordID = null ) {
-            // error_log("PAT_ID = $PAT_ID; Infusion Reaction Record ID = ''");
-            // error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
+error_log("NursingDoc Controller - ReactAssess - PAT_ID = $PAT_ID; Infusion Reaction Record ID = $InfuseReactRecordID");
+error_log("Server Request = " . $_SERVER['REQUEST_METHOD']);
             
             $jsonRecord              = array( );
             $jsonRecord[ 'success' ] = true;
@@ -1217,10 +1222,10 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                 
                 
                 if ( "ireact_id" == strtolower( $PAT_ID ) ) {
-                    // error_log("Get Records by Infusion Reaction Link ID - $InfuseReactRecordID");
+error_log("NursingDoc Controller - ReactAssess - Get Records by Infusion Reaction Link ID - $InfuseReactRecordID");
                     $InfuseReactDetails = $this->_getInfuseReactDetails( $InfuseReactRecordID );
                     if ( $this->checkForErrors( 'Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink ) ) {
-                        // error_log("ReactAssess Details - ERROR");
+error_log("ReactAssess Details - ERROR");
                         $this->set( 'jsonRecord', null );
                         return;
                     }
@@ -1231,6 +1236,7 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                     $jsonRecord[ 'records' ] = $ReactAssessRecords;
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
+error_log("ReactAssess Error Return");
                     return;
                 }
                 
@@ -1241,12 +1247,14 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                 // error_log("Get New GUID - $GUID");
                 
                 if ( $PAT_ID ) {
+error_log("NursingDoc Controller - ReactAssess - Get Records by PAT_ID");
                     $InfuseReactLinkID = $this->_getInfuseReactLink( $PAT_ID, $InfuseReactRecordID );
                     if ( $this->checkForErrors( 'Get ND_ReactAssess Link Records Failed. ', $InfuseReactLinkID ) ) {
                         // error_log("ReactAssess - ERROR");
                         $this->set( 'jsonRecord', null );
                         return;
                     }
+error_log("ReactAssess - Link IDs - " . json_encode($InfuseReactLinkID));
                     foreach ( $InfuseReactLinkID as $InfuseReactLink ) {
                         $InfuseReactDetails = $this->_getInfuseReactDetails( $InfuseReactLink[ 'id' ] );
                         if ( $this->checkForErrors( 'Get ND_ReactAssess Details Records Failed. ', $InfuseReactLink ) ) {
@@ -1258,6 +1266,7 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                         $InfuseReact[ 'InfuseReactLink' ][ 'Details' ] = $InfuseReactDetails;
                         array_push( $ReactAssessRecords, $InfuseReact );
                     }
+error_log("ReactAssess - Records - " . json_encode($ReactAssessRecords));
                     $jsonRecord[ 'total' ]   = count( $ReactAssessRecords );
                     $jsonRecord[ 'records' ] = $ReactAssessRecords;
                     $this->set( 'jsonRecord', $jsonRecord );
@@ -1274,24 +1283,26 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
             
             else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
                 $Details = $form_data->{'Details'};
-                // error_log("POST - Inserting Details - " . $this->varDumpToString($Details));
-                // error_log("------------------------- Creating Link to Records -------------------------------------------");
+error_log("NursingDoc Controller - ReactAssess - POST - Inserting Details - " . $this->varDumpToString($Details));
+error_log("------------------------- Creating Link to Records -------------------------------------------");
                 $this->NursingDoc->beginTransaction();
                 $retVal = $this->_InsertInfuseReactLink( $GUID, $PAT_ID );
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
+error_log("ERROR in _InsertInfuseReactLink");
                     $this->NursingDoc->rollbackTransaction();
                     $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-                // error_log("-------------------------- Creating individual Records ------------------------------------------");
+error_log("Got InfuseReactLink - ");
+error_log("-------------------------- Creating individual Records ------------------------------------------");
                 
                 foreach ( $Details as $detail ) {
                     $retVal = $this->_InsertInfuseReactDetail( $GUID, $detail );
-                    // error_log("------------------------ Saved --------------------------------------------");
-                    
+error_log("------------------------ Saved --------------------------------------------");
                     if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
+error_log("ERROR in _InsertInfuseReactDetail");
                         $this->NursingDoc->rollbackTransaction();
                         $jsonRecord[ 'success' ] = false;
                         $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
@@ -1299,10 +1310,36 @@ error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]))
                         return;
                     }
                 }
-                
+error_log("Finished inserting Infuse Reaction Info");
+
                 $this->NursingDoc->endTransaction();
+
+
+
             } else if ( "PUT" == $_SERVER[ 'REQUEST_METHOD' ] ) {
                 // Delete all Detail records for the current ID then save the new data.
+                $query  = "delete from ND_InfuseReactions_Details where IReact_ID = '$InfuseReactRecordID'";
+                $retVal = $this->NursingDoc->query( $query );
+                $Details = $form_data->{'Details'};
+error_log("POST - Inserting Details - " . $this->varDumpToString($Details));
+                $this->NursingDoc->beginTransaction();
+
+error_log("-------------------------- Creating individual Records ------------------------------------------");
+                foreach ( $Details as $detail ) {
+                    $retVal = $this->_InsertInfuseReactDetail( $InfuseReactRecordID, $detail );
+error_log("------------------------ Saved --------------------------------------------");
+                    if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
+error_log("ERROR in _InsertInfuseReactDetail");
+                        $this->NursingDoc->rollbackTransaction();
+                        $jsonRecord[ 'success' ] = false;
+                        $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
+                        $this->set( 'jsonRecord', $jsonRecord );
+                        return;
+                    }
+                }
+                $this->NursingDoc->endTransaction();
+error_log("Finished inserting Infuse Reaction Info");
+
             } else {
                 $jsonRecord[ 'success' ] = false;
                 $jsonRecord[ 'msg' ]     = "Incorrect method called for Assessment Service (expected a GET got a " . $_SERVER[ 'REQUEST_METHOD' ] . ")";

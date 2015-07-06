@@ -1,3 +1,45 @@
+/**************
+http://coms-mwb.dbitpro.com:355/NursingDoc/ReactAssess/820753A1-4706-E511-9B8C-000C2935B86F/C3E2C076-E327-4927-8FA5-86D780D0F734
+
+{
+"patientId" : "310E712D-E304-48E9-9835-94F31DA5595C",
+"Details" : [{
+"alertEvent" : false,
+"choice" : true,
+"comments" : "",
+"fieldLabel" : " Topical heating applied",
+"levelChosen" : 0,
+"sectionTitle" : "Extravasation",
+"sequence" : 0
+},
+{
+"alertEvent" : false,
+"choice" : true,
+"comments" : "",
+"fieldLabel" : " Topical cooling applied",
+"levelChosen" : 0,
+"sectionTitle" : "Extravasation",
+"sequence" : 1
+},
+{
+"alertEvent" : false,
+"choice" : true,
+"comments" : "",
+"fieldLabel" : " Interventions",
+"levelChosen" : 0,
+"sectionTitle" : "Extravasation",
+"sequence" : 2
+},
+{
+"alertEvent" : false,
+"choice" : true,
+"comments" : "",
+"fieldLabel" : " Other",
+"levelChosen" : 0,
+"sectionTitle" : "Other",
+"sequence" : 33
+}]}
+ **************/
 /*****************************************************
  *    /LookUp/TemplateData/<Template_ID>
  *    /LookUp/TemplateMedDocs/<Template_ID>
@@ -4091,7 +4133,7 @@ Ext.define("COMS.model.ND_ReactAssessXtrav", {
 		"ND_RA_Xtrav_Cooling",			// true/false
 		"ND_RA_Xtrav_CoolFreq",
 		"ND_RA_Xtrav_Interventions",	// true/false
-		"ND_RA_Xtrav_Interventions",
+		"ND_RA_Xtrav_InterventionsGiven",
 		"ND_RA_Xtrav_Antidotes",		// true/false
 		"ND_RA_Xtrav_AntidotesGiven",
 		"ND_RA_Xtrav_Measurements",		// true/false
@@ -11844,7 +11886,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GenInfo" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_GenInfo",
 	name : "Nursing Documentation General Info Tab",
 	title: "General Information",
@@ -12355,7 +12397,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_PreTreatment",
 	name : "Nursing Documentation Pre Treatment Tab",
 	title: "IV Site",
@@ -12535,7 +12577,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.RATextarea" ,{
 
 
 
-Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
+Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess", {
 	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_React_Assess",
 	name : "Nursing Documentation Reaction/Assess Tab",
@@ -12552,8 +12594,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
-					name: "ND_RA_Xtrav_Heat",
-					boxLabel : " Topical heating applied"
+					name: "ND_RA_Xtrav_Heating",
+					boxLabel : " Topical heating applied",
+					section: "Extravasation",
+					sequence : 0,
+					subField : "ND_RA_Xtrav_HeatFreq"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
@@ -12563,9 +12608,11 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
-					name: "ND_RA_Xtrav_Cool",
-					boxLabel : " Topical cooling applied"
-
+					name: "ND_RA_Xtrav_Cooling",
+					boxLabel : " Topical cooling applied",
+					section: "Extravasation",
+					sequence : 1,
+					subField : "ND_RA_Xtrav_CoolFreq"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
@@ -12576,7 +12623,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Interventions",
-					boxLabel : " Interventions"
+					boxLabel : " Interventions",
+					section: "Extravasation",
+					sequence : 2,
+					subField : "ND_RA_Xtrav_InterventionsGiven"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
@@ -12587,7 +12637,10 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Antidotes",
-					boxLabel : " Antidotes"
+					boxLabel : " Antidotes",
+					section: "Extravasation",
+					sequence : 3,
+					subField : "ND_RA_Xtrav_AntidotesGiven"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
@@ -12598,47 +12651,62 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Measurements",
-					boxLabel : " Measurements", labelAlign: "top"
+					boxLabel : " Measurements",		// labelAlign: "top",
+					section: "Extravasation",
+					sequence : 4,
+					subField : "ND_RA_Xtrav_MeasurementsTaken"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
-					name : "ND_RA_Xtrav_MeasurementsDetails",
+					name : "ND_RA_Xtrav_MeasurementsTaken",
 					fieldLabel : "Enter Bi-Dimensional Measurements"
 				},
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Edema",
-					boxLabel : " Edema"
+					boxLabel : " Edema",
+					section: "Extravasation",
+					sequence : 5,
+					subField : ""
 				},
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Erythema",
-					boxLabel : " Erythema"
+					boxLabel : " Erythema",
+					section: "Extravasation",
+					sequence : 6,
+					subField : ""
 				},
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Discomfort",
-					boxLabel : " Discomfort with movement"
+					boxLabel : " Discomfort with movement",
+					section: "Extravasation",
+					sequence : 7,
+					subField : "ND_RA_Xtrav_DiscomfortDesc"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
-					name : "ND_RA_Xtrav_DiscomfortDetails",
-					fieldLabel : "Enter Range of motion and describe discomfort felt"					
+					name : "ND_RA_Xtrav_DiscomfortDesc",
+					fieldLabel : "Enter Range of motion and describe discomfort felt"
 				},
 
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_Xtrav_Other",
-					boxLabel : " Other"
+					boxLabel : " Other",
+					section: "Extravasation",
+					sequence : 8,
+					subField : "ND_RA_Xtrav_OtherDetails"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_Xtrav_OtherDetails",
-					fieldLabel : "Enter description"					
+					fieldLabel : "Enter description"
 				}
 			]
 		},
@@ -12660,35 +12728,56 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Fever",
-					boxLabel : " Fever", xxwidth: 100
+					boxLabel : " Fever", 
+					section: "Cytokine-Release Syndrome",
+					sequence : 0,
+					subField : "ND_RA_CRS_Temperature"
 				},
 				{ 
 					xtype : "textfield", labelAlign: "right", labelClsExtra : "NursingDocs-label", hidden : true,
 					name : "ND_RA_CRS_Temperature",
 					fieldLabel : " - Temperature", xxlabelWidth: 110
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Chills", 
-					boxLabel : " Chills"
+					boxLabel : " Chills",
+					section: "Cytokine-Release Syndrome",
+					sequence : 1,
+					subField : ""
+
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Rigors", 
-					boxLabel : " Rigors"
+					boxLabel : " Rigors",
+					section: "Cytokine-Release Syndrome",
+					sequence : 2,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Nausea", 
-					boxLabel : " Nausea"
+					boxLabel : " Nausea",
+					section: "Cytokine-Release Syndrome",
+					sequence : 3,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Hypotension", 
-					boxLabel : " Hypotension", XXwidth: 100
+					boxLabel : " Hypotension",
+					section: "Cytokine-Release Syndrome",
+					sequence : 4,
+					subField : "ND_RA_CRS_Systolic",
+					subField2 : "ND_RA_CRS_Diastolic"
 				},
 
-				{ xtype : "fieldcontainer", name: "ND_RA_CRS_HypotensionBP", hidden : true,
+				{ xtype : "fieldcontainer", name: "ND_RA_CRS_BP", hidden : true,
 					fieldLabel : " - Blood Pressure", labelWidth: 130, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
 					{ xtype : "textfield", name : "ND_RA_CRS_Systolic", width: 60 },
@@ -12696,55 +12785,89 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 					{ xtype : "textfield", name : "ND_RA_CRS_Diastolic", width: 60 },
 					{ xtype : "displayfield", value : " (Lowest value)" }
 				]},
+				// -----------------------------------------------------
 
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Tachycardia", 
-					boxLabel : " Tachycardia", xxwidth: 100
+					boxLabel : " Tachycardia", 
+					section: "Cytokine-Release Syndrome",
+					sequence : 5,
+					subField : "ND_RA_CRS_PulseFld"
 				},
 
-				{ xtype : "fieldcontainer", name: "ND_RA_CRS_TachycardiaPulse", hidden : true,
+				{ xtype : "fieldcontainer", name: "ND_RA_CRS_Pulse", hidden : true,
 					fieldLabel : " - Pulse", labelWidth: 110, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
-					{ xtype : "textfield", name : "ND_RA_CRS_Pulse", width: 150 },
+					{ xtype : "textfield", name : "ND_RA_CRS_PulseFld", width: 150 },
 					{ xtype : "displayfield", value : " (Highest value)" }
 				]},
+				// -----------------------------------------------------
 
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Asthenia", 
-					boxLabel : " Asthenia"
+					boxLabel : " Asthenia",
+					section: "Cytokine-Release Syndrome",
+					sequence : 6,
+					subField : ""
+
 				},
+				// -----------------------------------------------------
+
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Headache", 
-					boxLabel : " Headache"
+					boxLabel : " Headache",
+					section: "Cytokine-Release Syndrome",
+					sequence : 7,
+					subField : ""
+
 				},
+				// -----------------------------------------------------
+
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Rash", 
-					boxLabel : " Rash", xxwidth: 100
+					boxLabel : " Rash",
+					section: "Cytokine-Release Syndrome",
+					sequence : 8,
+					subField : "ND_RA_CRS_RashDesc"
 				},
 				{ 
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_CRS_RashDesc", 
 					fieldLabel : "Enter description"
 				},
+				// -----------------------------------------------------
+
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_TongueEdema", 
-					boxLabel : " Tongue and Laryngeal Edema"
+					boxLabel : " Tongue and Laryngeal Edema",
+					section: "Cytokine-Release Syndrome",
+					sequence : 9,
+					subField : ""
+
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CRS_Dyspnea", 
-					boxLabel : " Dyspnea"
+					boxLabel : " Dyspnea",
+					section: "Cytokine-Release Syndrome",
+					sequence : 10,
+					subField : ""
+
 				},
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_CRS_Other",
-					boxLabel : " Other"
+					boxLabel : " Other",
+					section: "Cytokine-Release Syndrome",
+					sequence : 11,
+					subField : "ND_RA_CRS_OtherDetails"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
@@ -12767,20 +12890,32 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Uneasiness", 
-					boxLabel : " Uneasiness or Agitation"
+					boxLabel : " Uneasiness or Agitation",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 0,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_ChestTightness", 
-					boxLabel : " Chest Tightness"
+					boxLabel : " Chest Tightness",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 1,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Hypotension", 
-					boxLabel : " Hypotension"
+					boxLabel : " Hypotension",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 2,
+					subField : "ND_RA_HorA_Systolic",
+					subField2 : "ND_RA_HorA_Diastolic"
 				},
 
-				{ xtype : "fieldcontainer", name: "ND_RA_HorA_HypotensionBP", hidden : true,
+				{ xtype : "fieldcontainer", name: "ND_RA_HorA_BP", hidden : true,
 					fieldLabel : " - Blood Pressure", labelWidth: 130, 
 					labelClsExtra : "NursingDocs-label",  defaults: { hideLabel : true }, layout : "hbox", items : [
 					{ xtype : "textfield", name : "ND_RA_HorA_Systolic", width: 60 },
@@ -12788,57 +12923,91 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 					{ xtype : "textfield", name : "ND_RA_HorA_Diastolic", width: 60 },
 					{ xtype : "displayfield", value : " (Lowest value)" }
 				]},
-
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Dyspnea", 
-					boxLabel : " Dyspnea"
+					boxLabel : " Dyspnea",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 3,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Wheezing", 
-					boxLabel : " Wheezing"
+					boxLabel : " Wheezing",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 4,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Urticaria", 
-					boxLabel : " Urticaria"
+					boxLabel : " Urticaria",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 5,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_PeriorbitalEdema", 
-					boxLabel : " Periorbital or facial edema"
+					boxLabel : " Periorbital or facial edema",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 6,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Abdominal", 
-					boxLabel : " Abdominal"
+					boxLabel : " Abdominal",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 7,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Cramping", 
-					boxLabel : " Cramping"
+					boxLabel : " Cramping",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 8,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Diarrhea", 
-					boxLabel : " Diarrhea"
+					boxLabel : " Diarrhea",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 9,
+					subField : ""
 				},
+				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_HorA_Nausea", 
-					boxLabel : " Nausea"
+					boxLabel : " Nausea",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 10,
+					subField : ""
 				},
 				// -----------------------------------------------------
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name: "ND_RA_HorA_Other",
-					boxLabel : " Other"
+					boxLabel : " Other",
+					section: "Hypersensitivity or Anaphylaxis",
+					sequence : 11,
+					subField : "ND_RA_HorA_OtherDetails"
 				},
 				{
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_HorA_OtherDetails",
-					fieldLabel : "Enter description"					
+					fieldLabel : "Enter description"
 				}
 			]
 		},
@@ -12855,24 +13024,22 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess" ,{
 				{
 					xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-label", inputValue : true,
 					name : "ND_RA_CR_Reaction", 
-					boxLabel : " Other"
+					boxLabel : " Other",
+					section: "Other",
+					sequence : 0,
+					subField : "ND_RA_CR_Comments"
 				},
 				{ 
 					xtype : "NursingDocs_RATextarea",
 					name : "ND_RA_CR_Comments",
-					fieldLabel : "Comments", xxlabelWidth: 110
+					fieldLabel : "Comments"
 				}
 			]
 		},
-
-
-
 		{ xtype : "checkbox", boxLabelCls : "x-form-cb-label NursingDocs-boxLabel", inputValue : true, name : "ND_InfusReact_None", boxLabel : "No Adverse Reaction" },
 		{ xtype : "container", layout : "hbox", defaults : {margin: "5 0 0 20"}, items : [ { xtype : "button", text : "Save", action : "save" }, { xtype : "button", text : "Cancel"  } ]}
 	]
 });
-
-
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 	"extend" : "Ext.grid.Panel",
@@ -18392,11 +18559,13 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			"AddDrugRegimen radiogroup[name=\"patientRadio\"]" : {
 				change : this.selectMedType
 			},
-			"AddDrugRegimen combo[name=\"FluidType1\"]": {
+			"AddDrugRegimen combo[name=\"FluidType\"]": {
 				beforequery: function (queryEvent) {
 					delete queryEvent.combo.lastQuery;
 				},
-				expand: this.FluidTypeRouteSelected
+				expand: function (combo, recs, eOpts) {
+					this.FluidTypeRouteSelected(combo, recs, eOpts);
+				}
 			}
 		});
 	},
@@ -18410,7 +18579,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 		else {
 			// console.log("Loading Combo from SelectedMedType");
-		this.loadCombo(theCombo);
+			this.loadCombo(theCombo, null);
 		}
 	},
 
@@ -18484,6 +18653,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			this.getDrugRegimenFluidType().setValue(recordData.FluidType);
 
 			RouteInfoFields.show();
+		}
+		else {
+			theDrugCombo = this.getDrugRegimenCombo();
+			this.loadCombo(theDrugCombo, null);
 		}
 		Ext.resumeLayouts(true);
 	},
@@ -19382,7 +19555,7 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 		}
 		else {
 			// console.log("Loading Combo from SelectedMedType");
-			this.loadCombo(theCombo);
+			this.loadCombo(theCombo, null);
 		}
 	},
 
@@ -19451,6 +19624,10 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 			this.getHydrationAdminTime().setValue(recordData.AdminTime);
 
 			RouteInfoFields.show();
+		}
+		else {
+			theDrugCombo = this.getHydrationDrugCombo();
+			this.loadCombo(theDrugCombo, null);
 		}
 		Ext.resumeLayouts(true);
 	},
@@ -28682,6 +28859,28 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			selector: "NursingDocs_GenInfo NursingDocs_DualDosingVerification"
 		},
 
+
+		{
+			ref: "rgPatientID", 
+			selector: "NursingDocs_PatientID [name=\"rgPatientID\"]"
+		},
+		{
+			ref: "rgConsent", 
+			selector: "NursingDocs_PatientID [name=\"rgConsent\"]"
+		},
+		{
+			ref: "PatientIDComment", 
+			selector: "NursingDocs_PatientID [name=\"PatientIDComment\"]"
+		},
+		{
+			ref: "rgEduAssess", 
+			selector: "NursingDocs_PatientTeaching [name=\"rgEduAssess\"]"
+		},
+		{
+			ref: "rgPlanReviewed", 
+			selector: "NursingDocs_PatientTeaching [name=\"rgPlanReviewed\"]"
+		},
+
 		{
 			ref: "ndVitalSignsForm",
 			selector: "VitalSignsEntryForm"
@@ -28753,7 +28952,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "VitalSignsHistory",
-	        selector: "NursingDocs_GenInfo VitalSignsHistory"
+			selector: "NursingDocs_GenInfo VitalSignsHistory"
 		},
 		{
 			ref : "ND_PT_TabLabInfo",
@@ -28784,25 +28983,25 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"button[text=\"Calculations\"]" : {
 					click : this.HandleVSFormShowCalcButtons
 			},
-            "button[name=\"ShowBSA\"]" : {
-                click: this.NDGIVS_BSA_Calculations
-            },
+			"button[name=\"ShowBSA\"]" : {
+				click: this.NDGIVS_BSA_Calculations
+			},
 
-            "NursingDocs_GenInfo button[action=\"save\"]": {
-                click: this.btnSaveGenInfo
-            },
+			"NursingDocs_GenInfo button[action=\"save\"]": {
+				click: this.btnSaveGenInfo
+			},
 			"NursingDocs_DualDosingVerification button[name=\"DDV_FirstSig\"]" : {
-                click: this.btnFirstSignature
+				click: this.btnFirstSignature
 			},
 			"NursingDocs_DualDosingVerification button[name=\"DDV_SecSig\"]" : {
-                click: this.btnSecondSignature
+				click: this.btnSecondSignature
 			},
-            "Authenticate[title=\"Signature of first verifier\"] button[action=\"save\"]": {
-                click: this.AuthenticateUser
-            },
-            "Authenticate[title=\"Signature of second verifier\"] button[action=\"save\"]": {
-                click: this.AuthenticateUser
-            },
+			"Authenticate[title=\"Signature of first verifier\"] button[action=\"save\"]": {
+				click: this.AuthenticateUser
+			},
+			"Authenticate[title=\"Signature of second verifier\"] button[action=\"save\"]": {
+				click: this.AuthenticateUser
+			},
 			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
@@ -29100,12 +29299,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
-ClearTabData : function(obj) {
-		// obj.ClearNDTabs()
-		// obj.PopulateNDTabs()
-		// obj.scope
-
-        var thisCtl;
+	ClearTabData : function(obj) {
+/********
+		var thisCtl;
 		try {
 			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
 			if (!thisCtl.getNdct_GenInfoTab().rendered) {
@@ -29114,36 +29310,54 @@ ClearTabData : function(obj) {
 		}
 		catch (e) {
 			Ext.MessageBox.alert("Loading Error", "ND - ClearTabData() - Error - " + e.message );
+			return;
 		}
 		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+ **********/
 
-		var f1 = thisCtl.getNdct_PatientID();
-		Ext.each(f1.query('field'), function(field) { 
-			field.reset(); 
-		}); 
-		var f2 = thisCtl.getNdct_PatientTeaching();
-		Ext.each(f2.query('field'), function(field) { 
-			field.reset(); 
-		});
-		var f3 = thisCtl.getNdct_DualDosing();
-		Ext.each(f3.query('field'), function(field) { 
-			field.reset(); 
-		});
-
-		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
-		var afLen = allForms.length;
-		var f, i;
-		if (this.application.Patient) {
-			this.initVitalSignsEntryForm(this.application.Patient);
+		if (this.application.Patient.PAT_ID == "") {
+			// Reset form data
+			var giTab = this.getNdct_GenInfoTab().getForm();
+			giTab.reset();
 		}
 		else {
-			var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
-			for (i = 0; i < afLen; i++) {
-				f = allForms[i].getForm();
-				f.setValues(clearedFields);
-			}
-		}
+			Ext.Ajax.request({
+				scope : this,
+				url: Ext.URLs.AddND_GenInfo + "/" + this.application.Patient.PAT_ID,
+				method : "GET",
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (!resp.success) {
+						Ext.MessageBox.alert("Data Retrieval Error", "ND - GenInfo - General Information Section, Error - " + resp.msg );
+					}
+					else {
+						var giTab = this.getNdct_GenInfoTab().getForm();
+						if (resp.total > 0) {
+							var RgPatientID = this.getRgPatientID();
+							var RgConsent = this.getRgConsent();
+							var RgEduAssess = this.getRgEduAssess();
+							var RgPlanReviewed = this.getRgPlanReviewed();
 
+							var theData = resp.records[0];
+							giTab.setValues({PatientIDComment:theData.comment});
+							RgPatientID.setValue({patientIDGood : theData.patientIDGood == "true"});
+							RgConsent.setValue({consentGood : theData.consentGood == "true"});
+							RgEduAssess.setValue({educationGood : theData.educationGood == "true"});
+							RgPlanReviewed.setValue({planReviewed : theData.planReviewed == "true"});
+						}
+						else {
+							giTab.reset();
+						}
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Data Retrieval Error", "ND - GenInfo - General Information Section, Save Error - " + resp.msg );
+				}
+			});
+		}
 		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
 		thisCtl.ClearTabData();
 	},
@@ -29401,7 +29615,7 @@ ClearTabData : function(obj) {
 		var params = Ext.encode(record);
 		Ext.Ajax.request({
 			scope : this,
-			url: Ext.URLs.AddND_GenInfo,
+			url: Ext.URLs.AddND_GenInfo + "/" + this.application.Patient.PAT_ID,
 			method : "POST",
 			jsonData : params,
 			success: function( response, opts ){
@@ -29434,7 +29648,7 @@ ClearTabData : function(obj) {
 		this.SavingGenInfo = false;
 		this.application.loadMask("One moment please, saving General Information...");
 		var SaveGood1 = this.SaveGenInfo();
-		var SaveGood2 = this.SaveVitals("NursingDocs_VitalSigns");
+		// var SaveGood2 = this.SaveVitals("NursingDocs_VitalSigns");
 		this.application.unMask();
 		if (!SaveGood1 && !SaveGood2) {
 			Ext.MessageBox.alert("No Data Saved", "There was no data specified to be saved" );
@@ -29636,10 +29850,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	],
 
 	refs: [
-	    {
-		    ref: "CTOS",
+		{
+			ref: "CTOS",
 			selector: "NewPlanTab CTOS"
-	    },
+		},
 		{
 			ref : "NursingDocsTabSet",
 			selector : "NursingDocs"
@@ -29654,13 +29868,22 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Pre Treatment Tab Controller!");
+
+		this.application.on({ PatientSelected : this.ClearTabData, scope : this });
 		this.control({
-            "NursingDocs_PreTreatment checkbox" : {
+			"NursingDocs_PreTreatment checkbox" : {
 				change : this.SiteAssessmentCheckBoxCheck
 			},
-            "NursingDocs_PreTreatment" : { afterrender : this.TabRendered },
-            "NursingDocs_PreTreatment button[action=\"save\"]": { click: this.btnSaveIVSiteInfo }
+			"NursingDocs_PreTreatment" : { afterrender : this.TabRendered },
+			"NursingDocs_PreTreatment button[action=\"save\"]": { click: this.btnSaveIVSiteInfo }
 		});
+	},
+
+	ClearTabData : function (recs, opts) {
+		/* Currently there is no saved data for this process so only need to clear the panel on patient load */
+		var panel = this.getND_PT_Tab();
+		var URL = Ext.URLs.ND_IVSite;
+		panel.getForm().reset();
 	},
 
 
@@ -29729,9 +29952,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			"NursingDocs_React_Assess checkbox" : {
 				change : this.ClickCheckbox
 			},
-            "NursingDocs_React_Assess button[action=\"save\"]": {
-                click: this.SaveReact_Assess
-            }
+			"NursingDocs_React_Assess button[action=\"save\"]": {
+				click: this.SaveReact_Assess
+			}
 /*				
 				,
 
@@ -29742,8 +29965,105 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		});
 	},
 
-	PatientSelected : function() {
-		// debugger;
+	PatientSelected : function(patientRecords, opts) {
+		var theForm = this.getND_RA_Tab().getForm();
+
+		if (this.application.Patient.PAT_ID == "") {
+			// Reset form data
+			theForm.reset();
+		}
+		else {
+			Ext.Ajax.request({
+				scope : this,
+				url: Ext.URLs.AddND_React_Assess + "/" + this.application.Patient.PAT_ID,
+				method : "GET",
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (!resp.success) {
+						Ext.MessageBox.alert("Data Retrieval Error", "ND - Reaction Assessment Section, Error - " + resp.msg );
+					}
+					else {
+						if (resp.total > 0) {
+						}
+						else {
+							theForm.reset();
+						}
+						/******************
+xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_OtherDetails",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_RashDesc", 
+xtype : "NursingDocs_RATextarea",name : "ND_RA_CR_Comments",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_HorA_OtherDetails",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_AntidotesGiven",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_CoolFreq",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_DiscomfortDetails",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_HeatFreq",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_InterventionsGiven",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_MeasurementsDetails",
+xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_OtherDetails",
+xtype : "textfield",name : "ND_RA_CRS_Temperature",
+
+xtype : "checkbox", name : "ND_RA_CRS_Asthenia", 
+xtype : "checkbox", name : "ND_RA_CRS_Chills", 
+xtype : "checkbox", name : "ND_RA_CRS_Dyspnea", 
+xtype : "checkbox", name : "ND_RA_CRS_Fever",
+xtype : "checkbox", name : "ND_RA_CRS_Headache", 
+xtype : "checkbox", name : "ND_RA_CRS_Hypotension", 
+xtype : "checkbox", name : "ND_RA_CRS_Nausea", 
+xtype : "checkbox", name : "ND_RA_CRS_Rash", 
+xtype : "checkbox", name : "ND_RA_CRS_Rigors", 
+xtype : "checkbox", name : "ND_RA_CRS_Tachycardia", 
+xtype : "checkbox", name : "ND_RA_CRS_TongueEdema", 
+xtype : "checkbox", name : "ND_RA_CR_Reaction", 
+xtype : "checkbox", name : "ND_RA_HorA_Abdominal", 
+xtype : "checkbox", name : "ND_RA_HorA_ChestTightness", 
+xtype : "checkbox", name : "ND_RA_HorA_Cramping", 
+xtype : "checkbox", name : "ND_RA_HorA_Diarrhea", 
+xtype : "checkbox", name : "ND_RA_HorA_Dyspnea", 
+xtype : "checkbox", name : "ND_RA_HorA_Hypotension", 
+xtype : "checkbox", name : "ND_RA_HorA_Nausea", 
+xtype : "checkbox", name : "ND_RA_HorA_PeriorbitalEdema", 
+xtype : "checkbox", name : "ND_RA_HorA_Uneasiness", 
+xtype : "checkbox", name : "ND_RA_HorA_Urticaria", 
+xtype : "checkbox", name : "ND_RA_HorA_Wheezing", 
+xtype : "checkbox", name: "ND_RA_CRS_Other",
+xtype : "checkbox", name: "ND_RA_HorA_Other",
+xtype : "checkbox", name: "ND_RA_Xtrav_Antidotes",
+xtype : "checkbox", name: "ND_RA_Xtrav_Cool",
+xtype : "checkbox", name: "ND_RA_Xtrav_Discomfort",
+xtype : "checkbox", name: "ND_RA_Xtrav_Edema",
+xtype : "checkbox", name: "ND_RA_Xtrav_Erythema",
+xtype : "checkbox", name: "ND_RA_Xtrav_Heat",
+xtype : "checkbox", name: "ND_RA_Xtrav_Interventions",
+xtype : "checkbox", name: "ND_RA_Xtrav_Measurements",
+xtype : "checkbox", name: "ND_RA_Xtrav_Other",
+xtype : "checkbox",name : "ND_InfusReact_None"
+
+						 ******************/
+						/*********
+						var giTab = this.getNdct_GenInfoTab().getForm();
+						var RgPatientID = this.getRgPatientID();
+						var RgConsent = this.getRgConsent();
+						var RgEduAssess = this.getRgEduAssess();
+						var RgPlanReviewed = this.getRgPlanReviewed();
+
+						var theData = resp.records[0];
+						giTab.setValues({PatientIDComment:theData.comment});
+						RgPatientID.setValue({patientIDGood : theData.patientIDGood == "true"});
+						RgConsent.setValue({consentGood : theData.consentGood == "true"});
+						RgEduAssess.setValue({educationGood : theData.educationGood == "true"});
+						RgPlanReviewed.setValue({planReviewed : theData.planReviewed == "true"});
+						**********/
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Data Retrieval Error", "ND - Reaction Assessment Section, Save Error - " + resp.msg );
+				}
+			});
+		}
+
 	},
 
 
@@ -29764,21 +30084,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		}
 	},
 
-	ClickCheckbox : function(btn, newValue, oldValue, eOpts) {
-		var fldName = "", commentName, txtField, comments;
-		var NoneCkBox = this.getNoAdverseReactions();
-		var NoAdverseState = NoneCkBox.getValue();
-
-		switch (btn.name) {
-			case "ND_InfusReact_None": 
-				fldName = "";
-			break;
-
-			case "ND_RA_Xtrav_Heat":
+	getFldName4CkBox(ckBox) {
+		var fldName = "";
+		switch (ckBox.name) {
+			case "ND_RA_Xtrav_Heating":
 				fldName = "ND_RA_Xtrav_HeatFreq";
 			break;
 			
-			case "ND_RA_Xtrav_Cool":
+			case "ND_RA_Xtrav_Cooling":
 				fldName = "ND_RA_Xtrav_CoolFreq";
 			break;
 			
@@ -29791,11 +30104,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			break;
 			
 			case "ND_RA_Xtrav_Measurements":
-				fldName = "ND_RA_Xtrav_MeasurementsDetails";
+				fldName = "ND_RA_Xtrav_MeasurementsTaken";
 			break;
 			
 			case "ND_RA_Xtrav_Discomfort":
-				fldName = "ND_RA_Xtrav_DiscomfortDetails";
+				fldName = "ND_RA_Xtrav_DiscomfortDesc";
 			break;
 
 			case "ND_RA_Xtrav_Other":
@@ -29807,11 +30120,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			break;
 			
 			case "ND_RA_CRS_Hypotension":
-				fldName = "ND_RA_CRS_HypotensionBP";
+				fldName = "ND_RA_CRS_BP";
 			break;
 			
 			case "ND_RA_CRS_Tachycardia":
-				fldName = "ND_RA_CRS_TachycardiaPulse";
+				fldName = "ND_RA_CRS_Pulse";
 			break;
 			
 			case "ND_RA_CRS_Rash":
@@ -29823,7 +30136,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			break;
 			
 			case "ND_RA_HorA_Hypotension":
-				fldName = "ND_RA_HorA_HypotensionBP";
+				fldName = "ND_RA_HorA_BP";
 			break;
 			
 			case "ND_RA_HorA_Other":
@@ -29834,7 +30147,15 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				fldName = "ND_RA_CR_Comments";
 			break;
 		}
+		return fldName;
+	},
 
+	ClickCheckbox : function(btn, newValue, oldValue, eOpts) {
+		var fldName = "", commentName, txtField, comments;
+		var NoneCkBox = this.getNoAdverseReactions();
+		var NoAdverseState = NoneCkBox.getValue();
+
+		fldName = this.getFldName4CkBox(btn);
 		if (btn.value && "ND_InfusReact_None" !== btn.name) {
 			NoneCkBox.setValue(false);
 		}
@@ -29845,14 +30166,14 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				if (txtField) {
 					txtField.show();
 				}
-				if ("ND_RA_HorA_HypotensionBP" === fldName) {
+				if ("ND_RA_HorA_BP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Systolic\"]")[0];
 				}
-				else if ("ND_RA_CRS_HypotensionBP" === fldName) {
+				else if ("ND_RA_CRS_BP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Systolic\"]")[0];
 				}
-				else if ("ND_RA_CRS_TachycardiaPulse" === fldName) {
-					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Pulse\"]")[0];
+				else if ("ND_RA_CRS_Pulse" === fldName) {
+					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_PulseFld\"]")[0];
 				}
 				if (txtField) {
 					txtField.focus(true, true);
@@ -29862,21 +30183,24 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 				if (txtField) {
 					txtField.hide();
 				}
-				if ("ND_RA_HorA_HypotensionBP" === fldName) {
+				if ("ND_RA_HorA_BP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Diastolic\"]")[0];
 					txtField.setValue("");
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_HorA_Systolic\"]")[0];
 
 				}
-				else if ("ND_RA_CRS_HypotensionBP" === fldName) {
+				else if ("ND_RA_CRS_BP" === fldName) {
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Diastolic\"]")[0];
 					txtField.setValue("");
 					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Systolic\"]")[0];
 				}
-				else if ("ND_RA_CRS_TachycardiaPulse" === fldName) {
-					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_Pulse\"]")[0];
+				else if ("ND_RA_CRS_Pulse" === fldName) {
+					txtField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"ND_RA_CRS_PulseFld\"]")[0];
 				}
-				txtField.setValue("");
+				if (txtField) {
+					txtField.setValue("");
+					txtField.focus(true, true);
+				}
 			}
 		}
 	},
@@ -29928,45 +30252,41 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 
 
 	SaveReact_Assess : function(btn) {
-		// var theForm = btn.up("form").getForm();
+		var theForm = btn.up("form").getForm();
+		var theFields = theForm.getFields();
+		var theFieldValues = theForm.getValues();
 		var Patient = this.application.Patient;
-
 		var ReactAssesFormChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
 		var i, v, haveChecks = false, numChecks = ReactAssesFormChecks.length, ReactAssesFormCheck, ReactAssesFormValue, ReactAssesFormOption, ReactAssesFormComments, ReactAssesFormCommentsValue;
-		var records = {}, ReactAssesessmentsCount = 0;
+		var aField, subField, subField2, records = {}, ReactAssesessmentsCount = 0;
 		records.patientId = Patient.id;
 		records.Details = [];
 
-		for (i = 0; i < numChecks; i++) {
-			ReactAssesFormCheck = ReactAssesFormChecks[i];
-			v = ReactAssesFormCheck.getValue();
-			if (v) {
-				haveChecks = true;
-				ReactAssesFormOption = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + ReactAssesFormCheck.name + "Options\"]");
-				ReactAssesFormComments = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + ReactAssesFormCheck.name + "Comments\"]");
-
-				ReactAssesFormValue = 0;
-				ReactAssesFormCommentsValue = "";
-
-				if (ReactAssesFormOption && ReactAssesFormOption.length > 0) {		// ReactAssesFormOption[0]) {
-					ReactAssesFormValue = ReactAssesFormOption[0].getValue();
-					if (null === ReactAssesFormValue) {
-						ReactAssesFormValue = "";		// 0;
+		for (i = 0; i < theFields.items.length; i++) {
+			aField = theFields.items[i];
+			if (aField.section) {
+				if (aField.getValue()) {
+					haveChecks = true;
+					subField = null;
+					subField2 = null;
+					v = "";
+					if ("" !== aField.subField) {
+						subField = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + aField.subField + "\"]")[0];
+						v = subField.getValue();
 					}
+					if (aField.subField2) {
+						subField2 = Ext.ComponentQuery.query("NursingDocs_React_Assess [name=\"" + aField.subField2 + "\"]")[0];
+						v += " / " + subField2.getValue();
+					}
+					records.Details[ReactAssesessmentsCount++] = { 
+						"sequence" : aField.sequence, 
+						"fieldLabel" : aField.boxLabel, 
+						"choice" : true, 
+						"comments" : v, 
+						"levelChosen" : 0, 
+						"sectionTitle" : aField.section
+					};
 				}
-				if (ReactAssesFormComments && ReactAssesFormComments.length > 0) {		//  && ReactAssesFormComments[0]) {
-					ReactAssesFormCommentsValue = ReactAssesFormComments[0].getValue();
-				}
-				var sectionTitle = ReactAssesFormCheck.up("fieldset").title;
-
-				records.Details[ReactAssesessmentsCount++] = { 
-					"sequence" : i, 
-					"fieldLabel" : ReactAssesFormCheck.boxLabel, 
-					"choice" : true, 
-					"comments" : ReactAssesFormCommentsValue, 
-					"levelChosen" : ReactAssesFormValue, 
-					"sectionTitle" : sectionTitle
-				};
 			}
 		}
 		if (haveChecks) {
@@ -29981,9 +30301,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 		else {
 				Ext.MessageBox.alert("Saving Error", "If there are no Adverse Events then you must check the \"No Adverse Reaction since Last Treatment\" checkbox" );
 			}
-
 	}
-
 });
 
 

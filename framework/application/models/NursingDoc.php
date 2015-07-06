@@ -242,26 +242,13 @@ WHERE nt.PAT_ID = '$id'";
     }
     
     function getGenInfoForPatient($patientId) {
-
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            $query = "select GenInfo_ID as id, CONVERT(VARCHAR(30), Date_Assessment, 100) as date, Author as author, Goal as goal, ".
-                    "case when (PatientIDGood = 1) then 'true' else 'false' end as patientIDGood, " .
-                    "case when (ConsentGood = 1) then 'true' else 'false' end as consentGood, Comment as comment, ".
-                    "case when (EducationGood = 1) then 'true' else 'false' end as educationGood, " .
-                    "case when (PlanReviewed =1) then 'true' else 'false' end as planReviewed ".
-                    /*, '' as allergies, " .
-                    "ClinicalTrial as clinicalTrial, ClinicalTrialType as clinicalTrialType " .*/
-                    "from ND_GenInfo " .
-                    "where Patient_ID = '" . $patientId . "'";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "select GenInfo_ID as id, Date_Assessment as date, Author as author, Goal as goal, (SELECT IF(PatientIDGood, 'true', 'false')) as patientIDGood, " .
-                    "(SELECT IF(ConsentGood, 'true', 'false')) as consentGood, Comment as comment, (SELECT IF(EducationGood, 'true', 'false')) as educationGood, " .
-                    "(SELECT IF(PlanReviewed, 'true', 'false')) as planReviewed, '' as allergies, " .
-                    "(SELECT IF(ClinicalTrial, 'true', 'false')) as clinicalTrial, ClinicalTrialType as clinicalTrialType " .
-                    "from ND_GenInfo " .
-                    "where Patient_ID = '" . $patientId . "'";
-        }
-
+        $query = "select GenInfo_ID as id, CONVERT(VARCHAR(30), Date_Assessment, 100) as date, Author as author, Goal as goal, ".
+            "case when (PatientIDGood = 1) then 'true' else 'false' end as patientIDGood, " .
+            "case when (ConsentGood = 1) then 'true' else 'false' end as consentGood, Comment as comment, ".
+            "case when (EducationGood = 1) then 'true' else 'false' end as educationGood, " .
+            "case when (PlanReviewed =1) then 'true' else 'false' end as planReviewed ".
+            "from ND_GenInfo " .
+            "where Patient_ID = '$patientId' order by date desc";
         return $this->query($query);
     }
 
@@ -291,36 +278,24 @@ WHERE nt.PAT_ID = '$id'";
         return $this->query($query);
     }
     
-    function saveGenInfo($form_data){
-
-        if(isset($form_data->{'patientId'})){
-            $patientId = $form_data->{'patientId'};
-        }else{
-            $retVal = array();            
-            $retVal['apperror'] = "Field name ---patientId--- not provided.";    
+    function saveGenInfo($form_data, $PAT_ID = null){
+        if ($PAT_ID === null) {
+            $retVal = array();
+            $retVal['apperror'] = "Field name ---patientId--- not provided.";
             return $retVal;
         }
-        
+        $patientId = $PAT_ID;
+
         $author = get_current_user();
         $patiendIdGood = $form_data->{'patientIDGood'};
         $consentGood = $form_data->{'consentGood'};
         $comment = $form_data->{'comment'};
         $educationGood = $form_data->{'educationGood'};
         $planReviewed = $form_data->{'planReviewed'};
-        
         $currDate = $this->getCurrentDate();
-        
-        if (DB_TYPE == 'sqlsrv' || DB_TYPE == 'mssql') {
-            
-            $query = "INSERT INTO ND_GenInfo (Patient_ID,Date_Assessment,Author,PatientIDGood,ConsentGood,Comment,EducationGood,PlanReviewed) values(".
-                     "'".$patientId."','".$currDate."','".$author."','".$patiendIdGood."','".$consentGood."','".$comment."','".$educationGood."','".$planReviewed."')";
-        } else if (DB_TYPE == 'mysql') {
-            $query = "INSERT INTO ND_GenInfo (Patient_ID,Date_Assessment,Author,PatientIDGood,ConsentGood,Comment,EducationGood,PlanReviewed) values(".
-                     "'".$patientId."','".$currDate."','".$author."',".$patiendIdGood.",".$consentGood.",'".$comment."',".$educationGood.",".$planReviewed.")";
-        }
-        
+
+        $query = "INSERT INTO ND_GenInfo (Patient_ID,Date_Assessment,Author,PatientIDGood,ConsentGood,Comment,EducationGood,PlanReviewed) values('$patientId','$currDate','$author','$patiendIdGood','$consentGood','$comment','$educationGood','$planReviewed')";
         return $this->query($query);
-        
     }
     
     function saveIVSite($form_data){
