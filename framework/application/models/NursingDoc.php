@@ -147,13 +147,20 @@ WHERE nt.PAT_ID = '$id'";
      */
     public function updateTreatment($data)
     {
-        $query = "SELECT NEWID()";
-        $GUID = $this->query($query);
-        $GUID = $GUID[0][""];
-		
-		// error_log ("updateTreatment - " . json_encode($data));
+        $update = false;
+        if (array_key_exists('Treatment_ID', $data) && "" !== $data->Treatment_ID) {
+            $theGUID = $data->Treatment_ID;
+            $update = true;
+        }
+        else {
+            $query = "SELECT NEWID()";
+            $GUID = $this->query($query);
+            $GUID = $GUID[0][""];
+            $theGUID = trim($GUID, '{}');
+        }
+        $this->_treatmentId = $theGUID;
+        error_log ("NursingDoc - updateTreatment - GUID = $theGUID - " . json_encode($data));
 
-        $this->_treatmentId = trim($GUID, '{}');
         $Patient_ID = $data->patientID;
         $Template_ID = $data->templateID;
         $PAT_ID = $data->PAT_ID;
@@ -177,64 +184,94 @@ WHERE nt.PAT_ID = '$id'";
         $Dose_OriginalValue = $data->dose_originalValue;
         $Unit_OriginalValue = $data->unit_originalValue;
         $Route_OriginalValue = $data->route_originalValue;
-        
-        $query = 
-            "INSERT INTO ND_Treatment (
-                Treatment_ID,
-                Patient_ID,
-                Template_ID,
-                Order_ID,
-                PAT_ID,
-                Cycle,
-                AdminDay,
-                AdminDate,
-                Type,
-                Drug,
-                Dose,
-                Unit,
-                Route,
-                StartTime,
-                EndTime,
-                Comments,
-                Treatment_User,
-                Treatment_Date,
-                Drug_OriginalValue,
-                Dose_OriginalValue,
-                Unit_OriginalValue,
-                Route_OriginalValue
-            ) VALUES (
-                '{$this->_treatmentId}',
-                '$Patient_ID',
-                '$Template_ID',
-                '$Order_ID',
-                '$PAT_ID',
-                '$Cycle',
-                '$AdminDay',
-                '$AdminDate',
-                '$Type',
-                '$Drug',
-                '$Dose',
-                '$Unit',
-                '$Route',
-                '$StartTime',
-                '$EndTime',
-                '$Comments',
-                '$Treatment_User',
-                '$Treatment_Date',
-                '$Drug_OriginalValue',
-                '$Dose_OriginalValue',
-                '$Unit_OriginalValue',
-                '$Route_OriginalValue'
-            ) ";
-            
+        if ($update) {
+            $query = "UPDATE ND_Treatment
+   SET Patient_ID = '$Patient_ID',
+      Template_ID = '$Template_ID',
+      Order_ID = '$Order_ID',
+      PAT_ID = '$PAT_ID',
+      Cycle = '$Cycle',
+      AdminDay = '$AdminDay',
+      AdminDate = '$AdminDate',
+      Type = '$Type',
+      Drug = '$Drug',
+      Dose = '$Dose',
+      Unit = '$Unit',
+      Route = '$Route',
+      StartTime = '$StartTime',
+      EndTime = '$EndTime',
+      Comments = '$Comments',
+      Treatment_User = '$Treatment_User',
+      Treatment_Date = '$Treatment_Date',
+      Drug_OriginalValue = '$Drug_OriginalValue',
+      Dose_OriginalValue = '$Dose_OriginalValue',
+      Unit_OriginalValue = '$Unit_OriginalValue',
+      Route_OriginalValue = '$Route_OriginalValue'
+   WHERE Treatment_ID = '$theGUID'";
 
-// error_log ("updateTreatment - $query");
+
+        }
+        else {
+            $query = 
+                "INSERT INTO ND_Treatment (
+                    Treatment_ID,
+                    Patient_ID,
+                    Template_ID,
+                    Order_ID,
+                    PAT_ID,
+                    Cycle,
+                    AdminDay,
+                    AdminDate,
+                    Type,
+                    Drug,
+                    Dose,
+                    Unit,
+                    Route,
+                    StartTime,
+                    EndTime,
+                    Comments,
+                    Treatment_User,
+                    Treatment_Date,
+                    Drug_OriginalValue,
+                    Dose_OriginalValue,
+                    Unit_OriginalValue,
+                    Route_OriginalValue
+                ) VALUES (
+                    '$theGUID',
+                    '$Patient_ID',
+                    '$Template_ID',
+                    '$Order_ID',
+                    '$PAT_ID',
+                    '$Cycle',
+                    '$AdminDay',
+                    '$AdminDate',
+                    '$Type',
+                    '$Drug',
+                    '$Dose',
+                    '$Unit',
+                    '$Route',
+                    '$StartTime',
+                    '$EndTime',
+                    '$Comments',
+                    '$Treatment_User',
+                    '$Treatment_Date',
+                    '$Drug_OriginalValue',
+                    '$Dose_OriginalValue',
+                    '$Unit_OriginalValue',
+                    '$Route_OriginalValue'
+                ) ";
+        }
+
+error_log ("updateTreatment - $query");
         $result = $this->query($query);
-// error_log ("updateTreatment - " . json_encode($result));
+error_log ("updateTreatment - " . json_encode($result));
         if (!empty($result['error'])) {
             return $result;
         }
-    }        
+        else {
+            return $theGUID;
+        }
+    }
     
     public function getTreatmentId()
     {

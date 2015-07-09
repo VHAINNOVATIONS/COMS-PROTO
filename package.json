@@ -12,12 +12,12 @@
   },
   "homepage": "https://github.com/DBITPRO/COMS",
   "devDependencies": {
-    "grunt": "*",
-    "grunt-contrib-jshint": "*",
-    "grunt-junit-report": "*",
-    "grunt-xsltproc": "*",
+    "grunt": "^0.4.5",
     "grunt-contrib-concat": "*",
     "grunt-contrib-copy": "~0.8.0",
-    "grunt-phplint": "0.0.5"
+    "grunt-contrib-jshint": "*",
+    "grunt-junit-report": "*",
+    "grunt-phplint": "0.0.5",
+    "grunt-xsltproc": "*"
   }
 }

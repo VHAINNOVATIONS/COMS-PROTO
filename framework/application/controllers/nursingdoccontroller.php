@@ -482,60 +482,95 @@
             $this->set( 'jsonRecord', $jsonRecord );
         }
         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public function Treatment( $id = null ) {
-error_log("NursingDoc Controller - Treatment Entry");
+            error_log("NursingDoc Controller - Treatment Entry - Request Type = " . $_SERVER[ 'REQUEST_METHOD' ] );
             $form_data  = json_decode( file_get_contents( 'php://input' ) );
             $jsonRecord = array( );
-            
+
+            if ("PUT" === $_SERVER[ 'REQUEST_METHOD' ]) {
+                if ( $form_data != null ) {
+                    error_log("NursingDoc Controller - Update Treatment via PUT");
+                    $this->NursingDoc->beginTransaction();
+                    if ( $this->checkForErrors( 'Update Nursing Doc Treatment Values Failed. ', $returnVal ) ) {
+                        $this->NursingDoc->rollbackTransaction();
+                        $jsonRecord[ 'success' ] = 'false';
+                        $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
+                        $this->set( 'jsonRecord', $jsonRecord );
+                        error_log("NursingDoc Controller - Update Treatment via PUT - ERROR");
+                        return;
+                    }
+                    $this->NursingDoc->endTransaction();
+                    $jsonRecord[ 'success' ] = true;
+                    $jsonRecord[ 'total' ]   = count( $records );
+                    $jsonRecord[ 'records' ] = $records;
+                    $this->set( 'jsonRecord', $jsonRecord );
+                }
+                else {
+                    $jsonRecord[ 'success' ] = 'false';
+                    $jsonRecord[ 'msg' ]     = "No Form Data Submitted";
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    error_log("NursingDoc Controller - Update Treatment via PUT - ERROR");
+                    return;
+                }
+            }
+
             if ( $form_data != null ) {
-error_log("NursingDoc Controller - Update Treatment");
                 $this->NursingDoc->beginTransaction();
-                
                 $returnVal = $this->NursingDoc->updateTreatment( $form_data );
                 $patientID = $form_data->patientID;
                 $drug      = $form_data->drug;
                 $adminDate = $form_data->adminDate;
                 $orderID   = $form_data->Order_ID;
                 $this->NursingDoc->UpdateOrder( $patientID, $drug, $adminDate, $orderID );
-                
                 if ( $this->checkForErrors( 'Update Nursing Doc Treatment Values Failed. ', $returnVal ) ) {
                     $this->NursingDoc->rollbackTransaction();
                     $jsonRecord[ 'success' ] = 'false';
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
-error_log("NursingDoc Controller - Update Treatment - ERROR");
                     return;
                 }
-                
                 $this->NursingDoc->endTransaction();
-                
                 $jsonRecord[ 'success' ] = 'true';
                 $jsonRecord[ 'total' ]   = 1;
-                $jsonRecord[ 'records' ] = array_merge( array( 'Treatment_ID' => $this->NursingDoc->getTreatmentId() ), get_object_vars( $form_data ) );
-                $jsonRecord[ 'records' ]['Treatment_User'] = $jsonRecord[ 'records' ]['User'];
-
-error_log("Nursing - Treatment - Data " . json_encode($jsonRecord[ 'records' ]));
-
+                $fDat = get_object_vars( $form_data );
+                $fDat["Treatment_ID"] = $returnVal;
+                $jsonRecord[ 'records' ] = $fDat;
                 $this->set( 'jsonRecord', $jsonRecord );
-                
             } else {
-                
                 $records = $this->NursingDoc->getTreatments( $id );
-                
                 if ( $this->checkForErrors( 'Get Nursing Doc Treatments Failed. ', $records ) ) {
                     $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->set( 'jsonRecord', $jsonRecord );
                     return;
                 }
-                
                 $jsonRecord[ 'success' ] = true;
                 $jsonRecord[ 'total' ]   = count( $records );
                 $jsonRecord[ 'records' ] = $records;
                 $this->set( 'jsonRecord', $jsonRecord );
             }
         }
-        
+
 
         function GenInfo( $PAT_ID = null ) {
             $jsonRecord        = array( );
@@ -1664,7 +1699,7 @@ error_log("Finished inserting Infuse Reaction Info");
         
         function checkForErrors( $errorMsg, $retVal ) {
             
-            if ( null != $retVal && array_key_exists( 'error', $retVal ) ) {
+            if ( null != $retVal && is_array ($retVal) && array_key_exists( 'error', $retVal ) ) {
                 
                 if ( DB_TYPE == 'sqlsrv' ) {
                     foreach ( $retVal[ 'error' ] as $error ) {

@@ -362,6 +362,7 @@ End as orderstatus
       ,ISNULL(CONVERT(varchar(50),ndt.Treatment_Date),'') as Treatment_Date
       ,ISNULL(CONVERT(varchar(50),ndt.Dose),'') as ndDose
       ,CONVERT(varchar(10), os.Admin_Date, 101) as adminDate
+      ,ISNULL(CONVERT(varchar(50),ndt.Treatment_ID),'') as Treatment_ID
       FROM Order_Status os
       left join ND_Treatment ndt on ndt.Order_ID = os.Order_ID
       join Patient p on p.Patient_ID = os.Patient_ID
