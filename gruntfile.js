@@ -1,6 +1,15 @@
 /*
- *
+ * Make sure Grunt and it's necessary dependancies are installed...
  * npm install
+ * npm install -g grunt-cli
+ * npm install grunt --save-dev
+ * npm install jshint-junit-reporter
+ * npm install grunt-contrib-concat --save-dev
+ * npm install grunt-contrib-jshint --save-dev
+ * npm install grunt-junit-report --save-dev
+ * npm install grunt-xsltproc --save-dev
+ * npm install grunt-phplint
+ * Ensure PHP is in the path
  */
 module.exports = function(grunt) {
 
@@ -31,7 +40,7 @@ module.exports = function(grunt) {
     jshint: {
 		options: {
 			"reporter" : require("jshint-junit-reporter"),
-			"reporterOutput" : "./reports/output/junit-output.xml",
+			"reporterOutput" : "./reports/output/junit-output1.xml",
 
 //			"reporterOutput" : "jshint.output.txt",
 //			"indent" : true,

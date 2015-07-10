@@ -13109,7 +13109,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 			"editor" : { xtype: "textfield" } 
 		},
 		{ "header" : "Signature", "dataIndex" : "Treatment_User", "width" : 200, "renderer" : Ext.ND_TreatmentSignature },
-		{ "header" : "", "width" : 40, "xtype" : "actioncolumn", "hideable" : false, 
+		{ "header" : "&nbsp;", "width" : 40, "xtype" : "actioncolumn", "hideable" : false, 
 			"handler" : function (grid, rowIndex, colIndex, node, e, record, rowNode) {
 				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { theGrid : grid, rIdx : rowIndex, record: record, scope: this });
 			},
@@ -21596,6 +21596,7 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 			}
 		});
 	},
+	ammendedComment : "<em class=\"required-field\">*</em>",
 
 
 	Cancel : function(btn) {
@@ -21610,23 +21611,35 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 		var ahStore = AddendumsHistory.getStore();
 
 		var theRecord = theWin.record;
-		var theData = theWin.record.getData();
-
+		var theData = theRecord.getData();
+		var theComment = theRecord.get("Comments");
+		var thePos = theComment.indexOf(this.ammendedComment);
+		if (-1 !== thePos || 0 === thePos) {
+			theComment = theComment.replace(this.ammendedComment , " ").trim();
+			theRecord.set("Comments", theComment);
+		}
 		gStore.add(theRecord);		// <--- This clears out the data in the Treatment Panel Grid... WHY?
 		ahStore.add(theRecord);
+		theGrid.getActiveView().refresh(true);
 	},
 
 	AssignVerify2SignHandler : function(tableView, cellElement, cellIdx, record, rowElement, rowIndex, evt, opts) {
 		if (cellElement.innerHTML.search("Sign to Verify") > 0) {
+			var theComment = record.get("Comments");
 			var StartTime = record.get("StartTime");
 			if ("" === StartTime) {
 				Ext.MessageBox.alert("Error", "You MUST specify at least a \"Start Time\" for this administration");
 			}
-			else if ("" === record.get("Comments")) {
+			else if ("" === theComment) {
 				Ext.MessageBox.alert("Error", "You MUST make a comment on the reason for the addendum");
 			}
 			else {
 				record.set("Treatment_User", "In Process...");
+				var thePos = theComment.indexOf(this.ammendedComment);
+				if (-1 === thePos || thePos > 0) {
+					record.set("Comments", this.ammendedComment + " " + theComment);
+				}
+				
 				var EditRecordWin = Ext.widget("Authenticate", { theView : tableView, theRow : rowIndex, curTreatmentRecord: record, retFcn : function(curTreatmentRecord, theScope, c) { 
 					var pWin = Ext.ComponentQuery.query('puWinTreatmentAmmend')[0];
 					var theParGrid = pWin.theGrid;		// The grid in the Treatment Tab
@@ -30510,6 +30523,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 					curTreatmentRecord.set("AccessCode", "");
 					curTreatmentRecord.set("User", resp.records);
 					curTreatmentRecord.set("VerifyCode", "");
+
+
+
+
 					this.SaveTreatmentRecord (curTreatmentRecord);
 					if (win.retFcn) {
 						win.retFcn(curTreatmentRecord, this);
