@@ -15,8 +15,10 @@
     $ProjType = "Release 1.14a";     // June 26, 2015"; Fix defect where Dosage Amounts in Orders Tab show up as NaN when the dose is blank in Order_Status table
     $ProjType = "Release 1.14b";     // June 30, 2015"; Properly save (via PAT_ID not Patient_ID) and retrieve GenInfo tab on loading/switching a patient
     $ProjType = "Release 1.14c";     // July 06, 2015"; Save data from TD panels and clear panels when switching patients.
-    */
     $ProjType = "Release 1.14d";     // July 09, 2015"; Making Addendums to Treatment Panel
+    $ProjType = "Release 1.14e";     // July 10, 2015"; Adding "*" to Ammended records
+    */
+    $ProjType = "Release 1.14f";     // July 10, 2015"; Fixed "Infusion Reactions panel, selection of “No Adverse Reactions” results in an erroneous error message" defect
 
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */

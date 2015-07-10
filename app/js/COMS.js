@@ -30341,8 +30341,10 @@ xtype : "checkbox",name : "ND_InfusReact_None"
 			}
 		}
 		else {
+			if (!this.getNoAdverseReactions().getValue()) {
 				Ext.MessageBox.alert("Saving Error", "If there are no Adverse Events then you must check the \"No Adverse Reaction since Last Treatment\" checkbox" );
 			}
+		}
 	}
 });
 
