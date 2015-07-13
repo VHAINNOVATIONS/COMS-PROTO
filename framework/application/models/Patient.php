@@ -1,9 +1,10 @@
 <?php
 
     function _sortVitalsArray($a, $b) {
-        // error_log("Sort - A = " . json_encode( $a));
-        // error_log("Sort - B = " . json_encode( $b));
-        return (strtotime($a["DateTaken"]) <= strtotime($b["DateTaken"]));
+        error_log("Sort - A = " . json_encode( $a));
+        error_log("Sort - B = " . json_encode( $b));
+        /// return (strtotime($a["DateTaken"]) <= strtotime($b["DateTaken"]));
+        return true;
     }
 
 class Patient extends Model
@@ -462,6 +463,40 @@ $aDate = $date->format('m/d/Y H:i:s');
     }
 
 
+    function _CkMeasurementMatch ($vitals2Return, $Key) {
+        foreach($vitals2Return as &$aTVital) {
+            if ($aTVital["Date"] == $Key) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getMostRecentHeightWeight($Vitals) {
+        $len = count($Vitals);
+        $h = "";
+        $w = "";
+        for ($i = 0; $i < $len; $i++) {
+            if ("" == $h && "" !== $Vitals[$i]["Height"]) {
+                $h = $Vitals[$i]["Height"];
+            }
+            if ("" == $w && "" !== $Vitals[$i]["Weight"]) {
+                $w = $Vitals[$i]["Weight"];
+            }
+            if ("" !== $h && "" !== $w) {
+                for ($j = 0; $j < $i; $j++) {
+                    if ("" == $Vitals[$j]["Weight"]) {
+                        $Vitals[$j]["Weight"] = $w;
+                    }
+                    if ("" == $Vitals[$j]["Height"]) {
+                        $Vitals[$j]["Height"] = $h;
+                    }
+                }
+                return;
+            }
+        }
+    }
+
 
     function getMeasurements_v1 ($id, $dateTaken)
     {
@@ -486,6 +521,12 @@ error_log("getMeasurements_v1 - (get Vitals) From VistA - DFN - $DFN; ID - $id")
 
         $VistAVitals = $this->getVitalsFromVistA_AsArray($DFN);
 error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVitals));
+error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL");
+        reset($VistAVitals);
+        $firstKey = key($VistAVitals);
+        $age = $VistAVitals[$firstKey]["Age"];
+        $gender = $VistAVitals[$firstKey]["Gender"];
+
 
         $baseQuery = "SELECT 
             ph.Height as Height,
@@ -525,50 +566,82 @@ error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVit
         $retVal = $this->query($query);
         error_log("getMeasurements_v1 - Vitals from SQL - " . json_encode($retVal));
 
+        $vitals2Return = array();
+
         // Sort the return set based on Date Taken in Descending Order so most recent date first
         if (null != $retVal && !array_key_exists('error', $retVal)) {
-
-
-
-
-
-            error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL");
-            reset($VistAVitals);
-            $firstKey = key($VistAVitals);
-            $age = $VistAVitals[$firstKey]["Age"];
-            $gender = $VistAVitals[$firstKey]["Gender"];
-
+            /// Add SQL Data to log...
+            error_log("Vitals from SQL");
+            $c = 0;
             foreach($retVal as &$aVital) {
-                error_log("Vitals from SQL, Adding Age/Gender to " . json_encode($aVital));
-                $aVital["Age"] = $age;
-                $aVital["Gender"] = $gender;
-                $aVital["Src"] = "SQL";
+                $c++;
+                $zDate = $aVital["DateTaken"];
+                $date = new DateTime( $zDate );
+                $aDateLocal = $date->format('m/d/Y');
+                $aDate = strtotime($zDate);
+                if (!array_key_exists($aDate, $vitals2Return)) {    // Key contains time and date.
+                    $vitals2Return[$aDate] = array();
+                    $vitals2Return[$aDate] = $aVital;
+                    $vitals2Return[$aDate]["DateTaken"] = $zDate;
+                    $vitals2Return[$aDate]["Date"] = $aDateLocal;
+                    $vitals2Return[$aDate]["Age"] = $age;
+                    $vitals2Return[$aDate]["Gender"] = $gender;
+                    $vitals2Return[$aDate]["Src"] = "SQL";
+                }
+                else {
+                    error_log("Date Matching Existing Data - ");
+                    error_log("Old - " . json_encode($vitals2Return[$aDate]));
+                    error_log("New - " . json_encode($aVital));
+                }
+                error_log( "SQL Entry = " . json_encode($vitals2Return[$aDate]));
             }
+            $c = 0;
+
+            $UTC = new DateTimeZone("UTC");
+            $newTZ = new DateTimeZone(date_default_timezone_get ( ));
 
             foreach($VistAVitals as $aDate => &$aVital) {
-                error_log("Vitals from VistA, Adding to SQL Array - " . json_encode($aVital));
-                $aVital["DateTaken"] = $aDate;
-                $aVital["Src"] = "VistA";
-                $retVal[] = $aVital;
+                $date = new DateTime( $aDate, $UTC );
+                $date->setTimezone( $newTZ );
+                $aDateLocal = $date->format('m/d/Y h:m:s');
+                $DateOnly = $date->format('m/d/Y');
+                $c++;
+                $zDate = strtotime($aDateLocal);
+                if (!$this->_CkMeasurementMatch($vitals2Return, $DateOnly)) {
+                    $vitals2Return[$zDate] = array();
+                    $vitals2Return[$zDate] = $aVital;
+                    $vitals2Return[$zDate]["DateTaken"] = $aDateLocal;
+                    $vitals2Return[$zDate]["Date"] = $DateOnly;
+                    $vitals2Return[$zDate]["TimeStampUTZ"] = $aDate;
+                    $vitals2Return[$zDate]["Age"] = $age;
+                    $vitals2Return[$zDate]["Gender"] = $gender;
+                    $vitals2Return[$zDate]["Src"] = "VistA";
+                    error_log( "VistA Entry = " . json_encode($vitals2Return[$zDate]));
+                }
+                else {
+                    error_log( "VistA Entry = No need to add Vista data to SQL Record - " . json_encode($aVital));
+                }
             }
-            usort($retVal, "_sortVitalsArray");
         }
         else if (null == $retVal) {
             foreach($VistAVitals as $aDate => &$aVital) {
+                $zDate = strtotime($aDate);
                 error_log("Vitals from VistA, Adding to NULL Array - " . json_encode($aVital));
                 $aVital["DateTaken"] = $aDate;
                 $aVital["Src"] = "VistA";
-                $retVal[] = $aVital;
+                $vitals2Return[$zDate] = $aVital;
             }
-            usort($retVal, "_sortVitalsArray");
         }
-        error_log("getMeasurements_v1 - " . json_encode($retVal));
+
+        $retVal1 = array();
+        foreach($vitals2Return as $aDate => &$aVital) {
+            error_log("Vitals Being Returned, Key = $aDate; " . $aVital["DateTaken"] . "; " . $aVital["Src"] . " Data = " . json_encode($aVital));
+            $retVal1[] = $aVital;
+        }
+        $this->getMostRecentHeightWeight(&$retVal1);
 
 
-
-
-
-        return $retVal;
+        return $retVal1;
     }
 
     function saveVitals ($form_data, $patientId) {
@@ -602,17 +675,6 @@ error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVit
         }
         $objDateTime = new DateTime('NOW');
         $observed = $objDateTime->format(DateTime::ISO8601);
-        // $dateTaken = $observed;
-        /**************** - MWB - 3/4/2015 - Checking if vital has already been saved for this date ************************
-        $query = "SELECT count(*) as count FROM Patient_History where Patient_ID = '$patientId' AND Date_Taken = '$dateTaken'";
-        $existingHistory = $this->query($query);
-        
-        if ($existingHistory[0]['count'] > 0) {
-            $existingHistory['apperror'] = "Vitals data already exists for this Patient on this date.";
-            return $existingHistory;
-        }
-        *****************/
-
 
                 $nodevista = new NodeVista();
                 $VistATime = $nodevista->get("current/date");
@@ -650,10 +712,6 @@ $dateTaken = date_format($theDateTime, 'Y-m-d H:i:s');
 
 
 error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed"); //  DateTaken from SQL - $dateTaken");
-//                $retVal = array();
-//                $retVal['apperror'] = "VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed";
-//                return $retVal;        
-
 
 
         if (isset($form_data->{'OEMRecordID'})) {
@@ -679,6 +737,7 @@ error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - 
             $VitalObj = array('type' => "BP", 'value' => $bp1, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
+error_log("Posting Vital to VistA - patient/vital/add - $PatientData");
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
             $eRet1 = json_decode( $postRet, true );
             if (array_key_exists("error", $eRet1)) {

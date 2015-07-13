@@ -17,8 +17,9 @@
     $ProjType = "Release 1.14c";     // July 06, 2015"; Save data from TD panels and clear panels when switching patients.
     $ProjType = "Release 1.14d";     // July 09, 2015"; Making Addendums to Treatment Panel
     $ProjType = "Release 1.14e";     // July 10, 2015"; Adding "*" to Ammended records
-    */
     $ProjType = "Release 1.14f";     // July 10, 2015"; Fixed "Infusion Reactions panel, selection of “No Adverse Reactions” results in an erroneous error message" defect
+    */
+    $ProjType = "Release 1.14g";     // July 13, 2015"; Fix defect where duplicate Vitals are pulled from VistA. Merge vitals from VistA and SQL based on Date only not Date and Time since VistA Date/Time stamp doesn't match actual date/time the vital was saved.
 
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */
@@ -191,6 +192,7 @@ var UseNewQueryMethod = true;
 var MDWSTypeMsg = "MDWS Match Query in use";
 var SQLTypeMsg = "SQL Query in use";
 
+
 function switchQueryMethod() {
     var MDWS = "MDWS/Match Query Method";
     var SQL = "Internal SQL Query Method";
@@ -223,14 +225,16 @@ function switchQueryMethod() {
 }
 
 
-
+// var LogoutCancelled;
 window.onbeforeunload = function(e) { // see: http://jsfiddle.net/zalun/yFuPr/
+    /**
     if (LogoutCancelled) {
         e = e || window.event;
         e.preventDefault = false;
         e.cancelBubble = false;
         e.returnValue = '';
     }
+    **/
 }
 </script>
 </body>
