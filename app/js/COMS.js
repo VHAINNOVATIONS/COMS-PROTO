@@ -29690,7 +29690,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		this.SavingGenInfo = false;
 		this.application.loadMask("One moment please, saving General Information...");
 		var SaveGood1 = this.SaveGenInfo();
-		// var SaveGood2 = this.SaveVitals("NursingDocs_VitalSigns");
+		var SaveGood2 = this.SaveVitals("NursingDocs_VitalSigns");
 		this.application.unMask();
 		if (!SaveGood1 && !SaveGood2) {
 			Ext.MessageBox.alert("No Data Saved", "There was no data specified to be saved" );
