@@ -444,6 +444,8 @@ router.get('/medications/outpatient', function(req, res){
 });
 
 
+
+
 router.get('/order/info/:patient/:medicationid', function(req, res){
   // get login options
   var loginOptions = {
@@ -560,6 +562,97 @@ router.post('/order/new', function(req, res){
   order.saveOrder(loginOptions, req.body, callback);
 });
 
+
+router.post('/order/lockforpatient', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  order.lockOrdersForPatient(loginOptions, req.body.dfn, callback);
+});
+
+router.post('/order/lock', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+
+  order.lockOrder(loginOptions, req.body.ien, callback);
+});
+
+
+router.post('/order/unlockforpatient', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  order.unLockOrdersForPatient(loginOptions, req.body.dfn, callback);
+});
+
+
+router.post('/order/unlock', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  order.unLockOrder(loginOptions, req.body.ien, callback);
+});
+
+
 router.get('/current/date', function(req, res){
   // get login options
   var loginOptions = {
@@ -581,6 +674,81 @@ router.get('/current/date', function(req, res){
   
   utilities.currentDate(loginOptions, callback);
   
+});
+
+
+router.get('/order/complexOrderMessage', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  order.checkComplexOrderMessage(loginOptions, req.params.ien, callback);
+});
+
+router.get('/order/checkRelease', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+  // make an appointment
+  order.checkReleaseOrder(loginOptions, req.params.ien, callback);
+});
+
+
+router.post('/order/send', function(req, res){
+  // get login options
+  var loginOptions = {
+    accessCode: req.get('X-ACCESS-CODE'),
+    verifyCode: req.get('X-VERIFY-CODE') 
+  }
+  
+  var callback = function(error, result){
+    if(error){
+      res.status(500).json(
+        {
+          error: error.message
+        }
+      );
+    }else{
+      res.status(200).json(result);
+    }
+  }
+
+  var patientDfn = req.body.patientId;
+  var providerDuz = req.body.providerId;
+  var locationIen = req.body.locationIen;
+  var esig = req.body.accesscode;
+  var orderIens = req.body.orderIds;
+
+  // make an appointment
+  order.sendOrders(loginOptions, patientDfn, providerDuz, locationIen, esig, orderIens, callback);
 });
 
 

@@ -135,3 +135,174 @@ exports.saveOrder = function(loginOptions, orderOptions, callback){
 }
 
 
+exports.lockOrdersForPatient =  function(loginOptions, patientdfn, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDX LOCK', patientdfn, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      var retval = false;
+      if(result == '1'){
+        retval = true;
+      }
+      callback(error, {'status': retval});
+    }
+  });
+  
+}
+
+exports.lockOrder =  function(loginOptions, orderien, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDX LOCK ORDER', orderien, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      var retval = false;
+      if(result == '1'){
+        retval = true;
+      }
+      callback(error, {'status': retval});
+    }
+  });
+  
+}
+
+exports.unLockOrdersForPatient = function(loginOptions, patientdfn, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDX UNLOCK', patientdfn, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      var retval = false;
+      if(result == '1'){
+        retval = true;
+      }
+      callback(error, {'status': retval});
+    }
+  });
+  
+}
+
+exports.unLockOrder = function(loginOptions, orderien, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDX UNLOCK ORDER', orderien, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      var retval = false;
+      if(result == '1'){
+        retval = true;
+      }
+      callback(error, {'status': retval});
+    }
+  });
+  
+}
+
+
+
+exports.checkComplexOrderMessage = function(loginOptions, orderien, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDXA OFCPLX', orderien, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      callback(error, {'message': result});
+    }
+  });
+  
+}
+
+
+
+exports.checkComplexOrderMessage = function(loginOptions, orderien, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDXA OFCPLX', orderien, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      callback(error, {'message': result});
+    }
+  });
+  
+}
+
+
+exports.checkReleaseOrder = function(loginOptions, orderien, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDXA OFCPLX', {'1': orderien+'^^1'}, function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      callback(error, {'message': result});
+    }
+  });
+  
+}
+
+
+exports.sendOrders = function(loginOptions, patientDfn, providerDuz, locationIen, esig, orderIens, callback){
+  var configuration = vistaconfig.configuration;
+  for(var option in loginOptions){
+    configuration[option] = loginOptions[option];
+  }
+
+  // constants to use for signing orders
+  var SS_ESIGNED  = "1";
+  var RS_RELEASE  = "1";
+  var NO_POLICY   = "I";  
+
+  var orders = {}
+
+  for(var i = 0; i < orderIens.arrayLength; i++){
+    orders[i] = orderIens[i]+'^'+SS_ESIGNED+'^'+RS_RELEASE+'^'+NO_POLICY;
+  }
+
+
+  vista.callRpc(vistaconfig.logger, configuration, 'ORWDX SEND', 
+    [
+      patientDfn,
+      providerDuz,
+      locationIen,
+      vista.RpcParameter.encrypted(esig),
+      orders
+    ], 
+    function(error, result){
+    if(result instanceof Error){
+      callback(result, null);
+    }else{
+      callback(error, {'message': result});
+    }
+  });
+  
+}
+
+
