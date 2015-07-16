@@ -1906,4 +1906,22 @@ error_log("getDrugGUIDByIEN($drugIEN) = " . json_encode($retVal));
     function updateEmeticMedData($EmeticID, $_POST) {
         return $this->doEmeticMedData("update", $EmeticID, $_POST);
     }
+
+    function getMedicationType($MedIEN) {
+        $query = "Select Description as MedType from LookUp where Lookup_Type = 2 and Lookup_Type_ID = '$MedIEN'";
+        $retVal = $this->query($query);
+error_log("LookUp Model - getMedicationType - $query");
+error_log("LookUp Model - getMedicationType - " . json_encode($retVal));
+
+        if (null === $retVal) {
+error_log("LookUp Model - getMedicationType - ERROR - No Return Results");
+            return "";
+        }
+        if (array_key_exists('error', $retVal)) {
+error_log("LookUp Model - getMedicationType - ERROR - " . json_encode($retVal));
+            return "";
+        }
+        return $MedType[0]["MedType"];
+
+    }
 }

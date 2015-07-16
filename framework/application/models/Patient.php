@@ -498,6 +498,9 @@ $aDate = $date->format('m/d/Y H:i:s');
     }
 
 
+
+
+
     function getMeasurements_v1 ($id, $dateTaken)
     {
         $DFN = $id;
@@ -512,6 +515,9 @@ $aDate = $date->format('m/d/Y H:i:s');
             $errMsgList[] = "Error retrieving patient measurements" . $patientId["error"];
             return $patientId;
         }
+
+
+
 
         $id = $patientId[0]['Patient_ID'];
         $DFN = $patientId[0]['DFN'];
@@ -1417,6 +1423,12 @@ error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
         return $this->query($query);
     }
 
+    function getPatientDFNByGUID($PatientID) {
+        $query = "SELECT DFN from Patient where Patient_ID = '" . $PatientID . "'";
+        return $this->query($query);
+    }
+
+
     function saveAllergy ($form_data, $patientId)
     {
         if (empty($patientId)) {
@@ -1944,6 +1956,29 @@ error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
         $query = "SELECT * FROM Med_Reminders" . $buf;
         // error_log($query);
         return $this->query($query);
+    }
+
+    function getApproverOfRegimen($Patient_ID) {
+        $Today = date('m/d/Y');
+
+        $query = "SELECT AssignedByUser, ApprovedByUser FROM Patient_Assigned_Templates where Patient_ID = '$Patient_ID' and Date_Started <= '$Today' and Date_Ended_Actual is NULL";
+        $retVal = $this->query($query);
+error_log("Patient Model - getApproverOfRegimen - $query");
+error_log("Patient Model - getApproverOfRegimen - " . json_encode($retVal));
+
+        if (null === $retVal) {
+error_log("Patient Model - getApproverOfRegimen - ERROR - No Return Results");
+            return "";
+        }
+        if (array_key_exists('error', $retVal)) {
+error_log("Patient Model - getApproverOfRegimen - ERROR - " . json_encode($retVal));
+            return "";
+        }
+        $ApprovedByUser = '';
+        $AssignedByUser = '';
+
+        $ApprovedByUser = $retVal[0]['ApprovedByUser'];
+        return $ApprovedByUser;
     }
 
 }

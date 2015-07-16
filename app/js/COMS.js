@@ -1199,7 +1199,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
 
                 var evnts = {
                     'actionbuttonclick':true
-                }
+                };
                 Ext.Array.each(items, function(btn) {
                     if (btn.handler) { }
                     else if (btn.eventName) {
@@ -1245,7 +1245,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                                 view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
                             }
                             view.fireEvent(eventName, view, rowIndex, colIndex);
-                        }
+                        };
                     })(item);
                 }
                 var hide;
@@ -1604,7 +1604,8 @@ Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, or
 	);
 	var newFormula = html.applyTemplate(temp);
 	return newFormula;
-},
+};
+
 Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	var temp = Ext.apply(PatientInfo, {
 		dose: Dose,
@@ -13634,8 +13635,7 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"displayField": "name",
 	"valueField": "id",		// "valueField" : "IEN",
 	"queryMode" : "local",
-	"typeAhead" : true,
-	"allowBlank" : false
+	"typeAhead" : true
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
@@ -18626,14 +18626,18 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 	ActivateTherapyWindow : function( theWin ) {
 		Ext.suspendLayouts();
-		var record = theWin.record;
+		var record = theWin.record,
+			recordData,
+			RouteInfoFields,
+			theRoute,
+			theDrug,
+			theRouteCombo, 
+			theDrugCombo;
 		if (record) {
-			var recordData = record.data,
-				RouteInfoFields = this.getDrugPUWindow_DoseRouteFields(),
-				theRoute = recordData.Route, 
-				theDrug = recordData.Drug,
-				theRouteCombo, 
-				theDrugCombo;
+			recordData = record.data;
+			RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+			theRoute = recordData.Route;
+			theDrug = recordData.Drug;
 
 			RouteInfoFields.hide();
 
@@ -19309,12 +19313,12 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 
 		var theDrugCombo = this.getDrugRegimenCombo();
 		var drugName = theDrugCombo.getRawValue();
-		var drugIEN;
+		var theDrugIEN;
 		if (drugName == this.theDrugName) {
 			theDrugIEN = this.theDrugIEN;
 		}
 		else {
-			var theDrugIEN = theDrugCombo.getValue();
+			theDrugIEN = theDrugCombo.getValue();
 		}
 		delete this.theDrugName;
 		delete this.theDrugIEN;
@@ -19327,7 +19331,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			routeIEN = this.theRouteIEN;
 		}
 		else {
-			var routeIEN = theRouteCombo.getValue();
+			routeIEN = theRouteCombo.getValue();
 		}
 		delete this.theRouteName;
 		delete this.theRouteName;
@@ -19599,13 +19603,17 @@ Ext.define('COMS.controller.Authoring.Hydration', {
 	ActivatePrePostTherapyWindow : function( theWin ) {
 		Ext.suspendLayouts();
 		var record = theWin.record;
-		if (record) {
-			var recordData = record.data,
-				RouteInfoFields = this.getDrugPUWindow_DoseRouteFields(),
-				theRoute = recordData.Infusion1, 
-				theDrug = recordData.Drug,
+			var recordData,
+				RouteInfoFields,
+				theRoute, 
+				theDrug,
 				theRouteCombo, 
 				theDrugCombo;
+		if (record) {
+			recordData = record.data;
+			RouteInfoFields = this.getDrugPUWindow_DoseRouteFields();
+			theRoute = recordData.Infusion1;
+			theDrug = recordData.Drug;
 
 			RouteInfoFields.hide();
 
@@ -30126,7 +30134,7 @@ xtype : "checkbox",name : "ND_InfusReact_None"
 		}
 	},
 
-	getFldName4CkBox(ckBox) {
+	getFldName4CkBox : function(ckBox) {
 		var fldName = "";
 		switch (ckBox.name) {
 			case "ND_RA_Xtrav_Heating":
@@ -30492,7 +30500,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		});
 		delete this.curTreatmentRecord;
-		delete rec;
+		// delete rec;
 	},
 
 	TreatmentAuthenticateUser : function (button) {		// Handler for Authenticate widget after user clicks "Sign"
@@ -33255,8 +33263,12 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					query = CPRS_QueryString.getValue();
 				}
 
-				var PatientInfo = [];
+				PatientInfo = [];
 				this.application.TempPatients = theRecords;
+				var thisCtl;
+				var SelectPatientSection;
+				var SelectPatient;
+				var ConfirmPatient;
 				if ("" !== query) {
 					for (i = 0; i < theRecords.length; i++) {
 						aRecord = theRecords[i];
@@ -33272,10 +33284,10 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 						}
 
 						// Additional code here to perform proper query in MDWS for data
-						var thisCtl = this.getController("NewPlan.NewPlanTab");
-						var SelectPatientSection = thisCtl.getSelectPatientSection();
-						var SelectPatient = thisCtl.getSelectPatient();
-						var ConfirmPatient = thisCtl.getConfirmPatient();
+						thisCtl = this.getController("NewPlan.NewPlanTab");
+						SelectPatientSection = thisCtl.getSelectPatientSection();
+						SelectPatient = thisCtl.getSelectPatient();
+						ConfirmPatient = thisCtl.getConfirmPatient();
 						SelectPatientSection.show();
 
 						PatientInfo[i] = [];
@@ -37622,88 +37634,210 @@ Ext.define("COMS.controller.Orders.OrdersTab", {
 			"OrdersTab button[text=\"Refresh\"]": {
 				click: this.HandleRefresh
 			},
+
+			"Authenticate[title=\"Authenticate to Sign Orders\"] button[action=\"save\"]": {
+				click: {
+					scope : this,
+					fn : this.OrdersAuthenticateUser
+				}
+			},
+
 			"OrdersTab button[text=\"Update Records\"]": {
 				click: function () {
-					var theGrid = this.getOrders();
-					theGrid.setLoading( "Updating Order Records", false );
+					var curTreatmentRecord;
+					this.OrdersUpdateRecords();
 
-					this.PostedRecsFailed = [];
-					this.PostedRecs = [];
 
-					var HandleResponse = function(record, status, theScope) {
-						if (theScope.PostedRecs.length <= 0) {
-							var theGrid = theScope.getOrders();
-							theGrid.setLoading( false, false );
-							if (theScope.PostedRecsFailed.length <= 0) {
-								Ext.MessageBox.alert("Success", "The Order Status has been updated.");
-								theScope.getController("Orders.OrdersTab").LoadOrdersStore(true, true);
-							}
-							else {
-								Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+
+/**************
+					var EditRecordWin = Ext.widget("Authenticate", 
+						{ 
+							title: "Authenticate to Sign Orders",
+							// Note: Any model instance would do the "TreatmentAuthenticateUser()" function just requires a model for setting the variables for authenticating the user info.
+							curTreatmentRecord : Ext.create(Ext.COMSModels.ND_Treatment, {}), 
+							retFcn : function(curTreatmentRecord, theScope, c) { 
+								var theGrid = theScope.getOrders();
+								theGrid.setLoading( "Updating Order Records", false );
+
+								theScope.PostedRecsFailed = [];
+								theScope.PostedRecs = [];
+
+								var theStore = Ext.getStore("OrdersStore");
+								var DirtyRecords = theStore.getUpdatedRecords();
+								var drLen = DirtyRecords.length;
+								theScope.NumRecords = drLen;
+								if (drLen > 0) {
+									// Run Update Process for each record.
+									var i, rec;
+									for (i = 0; i < drLen; i++) {
+										theScope.CurRecIdx = i;
+										rec = DirtyRecords[i];
+										var recData = rec.getData();
+										var orderStatus = recData.orderstatus;
+										if (null == orderStatus || "" == orderStatus) {
+											Ext.MessageBox.alert("Information", "Please select an Order Status");
+											return;
+										}
+
+										var order = Ext.create("COMS.model.OrdersTable", {
+											orderstatus: orderStatus,
+											templateID: recData.templateID,
+											drug: recData.drug,
+											dose: recData.dose,
+											unit: recData.unit,
+											patientID: recData.patientID,
+											dfn: recData.dfn,
+											type: recData.type,
+											route: recData.route,
+											orderid: recData.orderid,
+											Last_Name: recData.Last_Name,
+											adminDay : recData.adminDate
+										});
+										theScope.PostedRecs.push(order);
+									}
+									theScope.HandleResponse(null, null, theScope);	// Save the first record.
+								}
+								else {
+									theGrid.setLoading( false, false );
+								}
+								this.close();
 							}
 						}
-						else {
-							var aRec = theScope.PostedRecs.pop();
-							if (aRec) {
-								var tmpData = aRec.getData();
-								// console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
-								aRec.save({
-									scope: theScope,
-									success: ResponseAlertGood,
-									failure: ResponseAlertFail
-								});
-							}
-						}
-					};
-					var ResponseAlertFail = function(record) {
-						this.PostedRecsFailed.push(record);
-						HandleResponse(record, false, this);
-					};
-					var ResponseAlertGood = function(record) {
-						HandleResponse(record, true, this);
-					};
-
-					var theStore = Ext.getStore("OrdersStore");
-					var DirtyRecords = theStore.getUpdatedRecords();
-					var drLen = DirtyRecords.length;
-					this.NumRecords = drLen;
-					if (drLen > 0) {
-						// Run Update Process for each record.
-						var i, rec;
-						for (i = 0; i < drLen; i++) {
-							this.CurRecIdx = i;
-							rec = DirtyRecords[i];
-							var recData = rec.getData();
-							var orderStatus = recData.orderstatus;
-							if (null == orderStatus || "" == orderStatus) {
-								Ext.MessageBox.alert("Information", "Please select an Order Status");
-								return;
-							}
-
-							var order = Ext.create("COMS.model.OrdersTable", {
-								orderstatus: orderStatus,
-								templateID: recData.templateID,
-								drug: recData.drug,
-								dose: recData.dose,
-								unit: recData.unit,
-								patientID: recData.patientID,
-								dfn: recData.dfn,
-								type: recData.type,
-								route: recData.route,
-								orderid: recData.orderid,
-								Last_Name: recData.Last_Name,
-								adminDay : recData.adminDate
-							});
-							this.PostedRecs.push(order);
-						}
-						HandleResponse(null, null, this);	// Save the first record.
-					}
-					else {
-						theGrid.setLoading( false, false );
-					}
+					);
+****************/
 				}
 			}
 		});
+	},
+
+
+	OrdersUpdateRecords : function() {
+		var theGrid = this.getOrders();
+		theGrid.setLoading( "Updating Order Records", false );
+
+		this.PostedRecsFailed = [];
+		this.PostedRecs = [];
+
+		var theStore = Ext.getStore("OrdersStore");
+		var DirtyRecords = theStore.getUpdatedRecords();
+		var drLen = DirtyRecords.length;
+		this.NumRecords = drLen;
+		if (drLen > 0) {
+			// Run Update Process for each record.
+			var i, rec;
+			for (i = 0; i < drLen; i++) {
+				this.CurRecIdx = i;
+				rec = DirtyRecords[i];
+				var recData = rec.getData();
+				var orderStatus = recData.orderstatus;
+				if (null == orderStatus || "" == orderStatus) {
+					Ext.MessageBox.alert("Information", "Please select an Order Status");
+					return;
+				}
+
+				var order = Ext.create("COMS.model.OrdersTable", {
+					orderstatus: orderStatus,
+					templateID: recData.templateID,
+					drug: recData.drug,
+					dose: recData.dose,
+					unit: recData.unit,
+					patientID: recData.patientID,
+					dfn: recData.dfn,
+					type: recData.type,
+					route: recData.route,
+					orderid: recData.orderid,
+					Last_Name: recData.Last_Name,
+					adminDay : recData.adminDate
+				});
+				this.PostedRecs.push(order);
+			}
+			this.HandleResponse(null, null, this);	// Save the first record.
+		}
+		else {
+			theGrid.setLoading( false, false );
+		}
+	},
+
+	OrdersAuthenticateUser : function (button) {		// Handler for Authenticate widget after user clicks "Sign"
+		var theWin = button.up("Authenticate");
+		var curTreatmentRecord = theWin.curTreatmentRecord;
+
+		this.SignRecordBtn = button;
+		button.hide();
+		var win = button.up('window');
+
+		win.setLoading("Authenticating digital signature", false);
+		var form = win.down('form');
+		var values = form.getValues();
+		var SignData = window.SessionUser + " - " + Ext.Date.format(new Date(), "m/d/Y - g:i a");
+
+		curTreatmentRecord.set("AccessCode", values.AccessCode);
+		curTreatmentRecord.set("User", values.AccessCode);
+		curTreatmentRecord.set("VerifyCode", values.VerifyCode);
+
+		Ext.Ajax.request({
+			scope : this,
+			url: "/Session/Authenticate?Access=" + values.AccessCode + "&Verify=" + values.VerifyCode,
+			success: function( response, opts ){
+				win.setLoading(false, false);
+				var text = response.responseText;
+				var resp = Ext.JSON.decode( text );
+				if (resp.success && "Failed" !== resp.records) {
+					curTreatmentRecord.set("AccessCode", "");
+					curTreatmentRecord.set("User", resp.records);
+					curTreatmentRecord.set("VerifyCode", "");
+					if (win.retFcn) {
+						win.retFcn(curTreatmentRecord, this);
+					}
+					else {
+						win.close();
+					}
+				}
+				else {
+					Ext.MessageBox.alert("Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+					this.SignRecordBtn.show();
+				}
+			},
+			failure : function( response, opts ) {
+				win.setLoading(false, false);
+				Ext.MessageBox.alert("Error", "Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
+				this.SignRecordBtn.show();
+			}
+		});
+	},
+
+	HandleResponse : function(record, status, theScope) {
+			if (theScope.PostedRecs.length <= 0) {
+				var theGrid = theScope.getOrders();
+				theGrid.setLoading( false, false );
+				if (theScope.PostedRecsFailed.length <= 0) {
+					Ext.MessageBox.alert("Success", "The Order Status has been updated.");
+					theScope.getController("Orders.OrdersTab").LoadOrdersStore(true, true);
+				}
+				else {
+					Ext.MessageBox.alert("Invalid", "The Order Status was not updated");
+				}
+			}
+			else {
+				var aRec = theScope.PostedRecs.pop();
+				if (aRec) {
+					var tmpData = aRec.getData();
+					// console.log("Saving a single Record - " + tmpData.drug + " - " + tmpData.type + " - " + tmpData.route);
+					aRec.save({
+						scope: theScope,
+						success: this.ResponseAlertGood,
+						failure: this.ResponseAlertFail
+					});
+				}
+			}
+		},
+
+	ResponseAlertFail : function(record) {
+		this.PostedRecsFailed.push(record);
+		this.HandleResponse(record, false, this);
+	},
+	ResponseAlertGood : function(record) {
+		this.HandleResponse(record, true, this);
 	},
 
 	PanelReady : function (thePanel, eOpts) {

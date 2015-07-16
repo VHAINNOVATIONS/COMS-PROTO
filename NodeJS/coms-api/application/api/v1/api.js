@@ -677,7 +677,7 @@ router.get('/current/date', function(req, res){
 });
 
 
-router.get('/order/complexOrderMessage', function(req, res){
+router.get('/order/complexOrderMessage/:ien', function(req, res){
   // get login options
   var loginOptions = {
     accessCode: req.get('X-ACCESS-CODE'),
@@ -699,7 +699,7 @@ router.get('/order/complexOrderMessage', function(req, res){
   order.checkComplexOrderMessage(loginOptions, req.params.ien, callback);
 });
 
-router.get('/order/checkRelease', function(req, res){
+router.get('/order/checkRelease/:ien', function(req, res){
   // get login options
   var loginOptions = {
     accessCode: req.get('X-ACCESS-CODE'),

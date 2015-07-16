@@ -194,12 +194,218 @@ error_log( "Result of calculating Dosage - " . json_encode($form_data));
 
             return $form_data;
         }
-        
+
+
+    private function _SendOrderData2VistA($nodevista, $DFN, $theMedID, $dosage, $VistA_Route, $AdminDays) {
+error_log("-------------------------- _SendOrderData2VistA - START --------------------------");
+        $m = explode(":", $theMedID);
+        $m = trim($m[1]);
+        $VistA_Order                          = array( );
+        $VistA_Order[ "dfn" ]                 = "$DFN";
+        $VistA_Order[ "provider" ]            = $_SESSION[ "UserDUZ" ];
+        $VistA_Order[ "clinic" ]              = $_SESSION[ "sitelist" ];
+        $VistA_Order[ "type" ]                = "inpatient";
+        $VistA_Order[ "drug" ]                = $m;
+        $VistA_Order[ "dosage" ]              = $dosage;
+        $VistA_Order[ "route" ]               = $VistA_Route;
+        $VistA_Order[ "administration_days" ] = $AdminDays;
+        $VistA_Order[ "administration_time" ] = "1520";
+
+        $orderURL    = "order/new";
+        $OrderReturn = $nodevista->post( $orderURL, json_encode( $VistA_Order ) );
+        $OrderIEN = json_decode($OrderReturn, true);
+        $OrderIEN = $OrderIEN['ien'];
+
+        error_log("Order Sent - ");
+        error_log("Order URL - $orderURL");
+        error_log("Order Data - " . json_encode($VistA_Order));
+        error_log("Order Return - $OrderReturn");
+        error_log("Order IEN - $OrderIEN");
+error_log("-------------------------- _SendOrderData2VistA - FINISHED --------------------------");
+
+        return $OrderIEN;
+    }
+
+    private function _SignOrder($nodevista, $DFN, $OrderIEN) {
+error_log("-------------------------- _SignOrder - START --------------------------");
+        $VistA_Order                          = array( );
+        $VistA_Order[ "patientId" ]           = "$DFN";
+        $VistA_Order[ "providerId" ]          = $_SESSION[ "UserDUZ" ];
+        $VistA_Order[ "locationIen" ]         = $_SESSION[ "sitelist" ];
+        $VistA_Order[ "accesscode" ]          = "cprs1234";
+        $VistA_Order[ "orderIds" ]            = array($OrderIEN);
+
+        $orderURL    = "order/send";
+        $VistAReturn = $nodevista->post( $orderURL, json_encode( $VistA_Order ) );
+
+        error_log("Order Sent - ");
+        error_log("Order URL - $orderURL");
+        error_log("Order Data - " . json_encode($VistA_Order));
+        error_log("Order Return - $VistAReturn");
+error_log("-------------------------- _SignOrder - FINISHED --------------------------");
+        return ($VistAReturn == "");
+    }
+
+
+    private function _LockPatient($nodevista, $DFN) {
+error_log("-------------------------- _LockPatient - START --------------------------");
+        $orderURL = "order/lockforpatient";
+        $Params = array();
+        $Params["dfn"] = $DFN;
+        $VistAReturn = $nodevista->post( $orderURL, json_encode( $Params ) );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['status'];
+error_log("VistA URL - $orderURL");
+error_log("VistA Data - " . json_encode($Params));
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- _LockPatient - FINISHED --------------------------");
+        return $Status;
+    }
+
+    private function _UnLockPatient($nodevista, $DFN) {
+error_log("-------------------------- _UnLockPatient - START --------------------------");
+        $orderURL = "order/unlockforpatient";
+        $Params = array();
+        $Params["dfn"] = $DFN;
+        $VistAReturn = $nodevista->post( $orderURL, json_encode( $Params ) );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['status'];
+
+error_log("VistA URL - $orderURL");
+error_log("VistA Data - " . json_encode($Params));
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- _UnLockPatient - FINISHED --------------------------");
+        return $Status;
+    }
+
+
+    private function _LockOrder ($nodevista, $OrderIEN) {
+error_log("-------------------------- _LockOrder - START --------------------------");
+        $orderURL = "order/lock";
+        $Params = array();
+        $Params["ien"] = $OrderIEN;
+        $VistAReturn = $nodevista->post( $orderURL, json_encode( $Params ) );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['status'];
+error_log("VistA URL - $orderURL");
+error_log("VistA Data - " . json_encode($Params));
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- _LockOrder - FINISHED --------------------------");
+        return $Status;
+    }
+
+
+
+    private function _UnLockOrder ($nodevista, $OrderIEN) {
+error_log("-------------------------- _UnLockOrder - START --------------------------");
+        $orderURL = "order/unlock";
+        $Params = array();
+        $Params["ien"] = $OrderIEN;
+        $VistAReturn = $nodevista->post( $orderURL, json_encode( $Params ) );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['status'];
+error_log("VistA URL - $orderURL");
+error_log("VistA Data - " . json_encode($Params));
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- _UnLockOrder - FINISHED --------------------------");
+        return $Status;
+    }
+
+
+
+    private function _GetOrderMsg ($nodevista, $OrderIEN) {
+error_log("-------------------------- complexOrderMessage - START --------------------------");
+        $orderURL = "order/complexOrderMessage/$OrderIEN";
+
+        $VistAReturn      = $nodevista->get( $orderURL );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['message'];
+
+error_log("VistA URL - $orderURL");
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- complexOrderMessage - FINISHED --------------------------");
+        return ($Status == "");
+    }
+
+    private function _OrderReleased ($nodevista, $OrderIEN) {
+error_log("-------------------------- checkRelease - START --------------------------");
+        $orderURL = "order/checkRelease/$OrderIEN";
+
+        $VistAReturn      = $nodevista->get( $orderURL );
+        $Status = json_decode($VistAReturn, true);
+        $Status = $Status['message'];
+
+error_log("VistA URL - $orderURL");
+error_log("VistAReturn - $VistAReturn");
+error_log("VistAReturn Status - $Status");
+error_log("-------------------------- checkRelease - FINISHED --------------------------");
+        return ($Status == "");
+    }
+
+
+    private function _IsMedTypeOutPatient($theMedID) {
+        $LookupModel      = new LookUp();
+        $MedType    = $LookupModel->getMedicationType($theMedID);
+        return ("OutPatient" == $MedType);
+    }
+
+    private function _ProcessAndSignOrderThroughVistA($PatientID, $theMedID, $dosage, $VistA_Route, $AdminDays) {
+        $patientModel      = new Patient();
+        $Patient_Record    = $patientModel->getPatientDFNByGUID($PatientID);
+error_log("_ProcessAndSignOrderThroughVistA - " . json_encode($Patient_Record));
+        if (array_key_exists("error", $Patient_Record)) {
+            $errMsgList = "Error retrieving patient DFN" . $Patient_Record["error"];
+            return $PatientID;
+        }
+
+        $Approver = $patientModel->getApproverOfRegimen($PatientID);
+        if ("" === $Approver) {
+            $errMsgList = "No Approver of specified Regimen found";
+error_log("_ProcessAndSignOrderThroughVistA - $errMsgList" );
+            return "";
+        }
+error_log("_ProcessAndSignOrderThroughVistA - Approver = $Approver" );
+
+        $OutpatientMed = $this->_IsMedTypeOutPatient($theMedID);
+        if ($OutPatientMed) {
+            error_log("Orders Controller - _ProcessAndSignOrderThroughVistA - Medication is for Outpatient so no signing required");
+            return "";
+        }
+error_log("_ProcessAndSignOrderThroughVistA - InPatient Medication" );
+
+
+        $DFN = $Patient_Record[0]["DFN"];
+
+
+        $nodevista   = new NodeVista();
+
+error_log("_ProcessAndSignOrderThroughVistA - _SendOrderData2VistA" );
+
+        $OrderIEN = $this->_SendOrderData2VistA($nodevista, $DFN, $theMedID, $dosage, $VistA_Route, $AdminDays);
+        if ($this->_LockPatient($nodevista, $DFN)) {
+            if ($this->_LockOrder ($nodevista, $OrderIEN)) {
+                if ($this->_GetOrderMsg($nodevista, $OrderIEN)) {
+                    if ($this->_OrderReleased($nodevista, $OrderIEN)) {
+                        $this->_SignOrder($nodevista, $DFN, $OrderIEN);
+                    }
+                }
+                $this->_UnLockOrder ($nodevista, $OrderIEN);
+            }
+        }
+        $this->_UnLockPatient($nodevista, $DFN);
+    }
+
+
         
         function ProcessOrdersPosting( $form_data ) {
             $this->Orders->beginTransaction();
-            // error_log( "OrdersController.grabOrders.HasFormData - " );
-            // error_log( json_encode( $form_data ) );
+error_log( "OrdersController.grabOrders.HasFormData - " );
+error_log( json_encode( $form_data ) );
             
             $OrderStatusF = $form_data->{'orderstatus'};
             $PIDF         = $form_data->{'patientID'};
@@ -227,33 +433,21 @@ error_log( "Result of calculating Dosage - " . json_encode($form_data));
                 
                 $VistA_Route          = array( );
                 $VistA_Route[ "ien" ] = $RouteInfoID;
+
+                error_log("Routes Length - " . count($theRoutes));
                 foreach ( $theRoutes as $route ) {
                     error_log( "Walking Routes - $RouteInfoID - " . json_encode( $route ) );
                     $theRouteID = $route->{"ien"};
                     if ( $theRouteID === $RouteInfoID ) {
                         $VistA_Route[ "code" ] = $route->{"code"};
+                        break;
                     } else {
                         error_log( "Walking Routes - $RouteInfoID - Not Found" );
                     }
                 }
                 error_log( "Walking Routes - FINISHED" );
-                
-                $VistA_Order                          = array( );
-                $VistA_Order[ "dfn" ]                 = "$DFN";
-                $VistA_Order[ "provider" ]            = $_SESSION[ "UserDUZ" ];
-                $VistA_Order[ "clinic" ]              = $_SESSION[ "sitelist" ];
-                $VistA_Order[ "type" ]                = "inpatient";
-                $VistA_Order[ "drug" ]                = $theMedID;
-                $VistA_Order[ "dosage" ]              = $form_data->{'dose'} . " " . $form_data->{'unit'};
-                $VistA_Order[ "route" ]               = $VistA_Route;
-                $VistA_Order[ "administration_days" ] = $AdminDays;
-                
-                $nodevista   = new NodeVista();
-                $orderURL    = "order/new";
-                $OrderReturn = $nodevista->post( $orderURL, json_encode( $VistA_Order ) );
-                
-                // error_log("Order Sent - ");
-                // error_log(json_encode($OrderReturn));
+
+                $this->_ProcessAndSignOrderThroughVistA($PIDF, $theMedID, $form_data->{'dose'} . " " . $form_data->{'unit'}, $VistA_Route, $AdminDays);
             }
             
             // error_log( "OrdersController.grabOrders.HasFormData - POST FINALIZEATION!" );
