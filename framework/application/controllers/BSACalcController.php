@@ -25,16 +25,21 @@
          *
          **/
         function FormatNumber( $num ) {
-            $num = round( $num, 2, PHP_ROUND_HALF_UP );
+			//error_log("FormatNumber 1; = $num");
+            // $num = round( $num, 2, PHP_ROUND_HALF_UP );
+			$num = round( $num, 1 );
+			//error_log("FormatNumber 2; = $num");
             $num = number_format( $num, 2 );
+			//error_log("FormatNumber 3; = $num");
             $num = rtrim( $num, "0" );
+			//error_log("FormatNumber 4; = $num");
             
             return $num;
         }
         
         function CalcAUCDose( $Patient, $AUC ) {
-error_log("CalcAUCDose - $AUC");
-error_log(json_encode($Patient));
+//error_log("CalcAUCDose - $AUC");
+//error_log(json_encode($Patient));
             $age    = $Patient["Age"];
             $gender = $Patient["Gender"];
             $wt     = $Patient["Weight"]; // in pounds
@@ -43,24 +48,24 @@ error_log(json_encode($Patient));
             $AUC    = $AUC ? $AUC : 1; // fail safe if no AUC is passed;
 
             $GFR = ( 140 - $age );
-error_log("CalcAUCDose - GFR = 140 - $age = $GFR");
+//error_log("CalcAUCDose - GFR = 140 - $age = $GFR");
 
             $GFR = $GFR * $kg;
-error_log("CalcAUCDose - GFR = (140 - $age) * $kg = $GFR");
+//error_log("CalcAUCDose - GFR = (140 - $age) * $kg = $GFR");
 
             if ( "F" === $gender ) {
                 $GFR = $GFR * 0.85;
-error_log("CalcAUCDose - GFR = (140 - $age) * $kg * 0.85 for Female = $GFR");
+//error_log("CalcAUCDose - GFR = (140 - $age) * $kg * 0.85 for Female = $GFR");
             }
             
             // echo "Age = $age\nKG = $kg\nAUC = $AUC\nSC = $sc\nGFR=$GFR\n";
             
             $GFR1  = $GFR / ( 72 * $sc );
-error_log("CalcAUCDose - GFR =  $GFR / ( 72 * $sc ) = $GFR1");
+//error_log("CalcAUCDose - GFR =  $GFR / ( 72 * $sc ) = $GFR1");
             $GFR = $GFR1;
 
             $Dose = ( $GFR + 25 ) * $AUC;
-error_log("CalcAUCDose - GFR =  ($GFR +25) * $AUC = $Dose");
+//error_log("CalcAUCDose - GFR =  ($GFR +25) * $AUC = $Dose");
 
             $Dose = $this->FormatNumber( $Dose );
             return $Dose;

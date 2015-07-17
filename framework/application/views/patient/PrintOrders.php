@@ -398,6 +398,8 @@ function OEM_PatientInfo($pInfo, $mRecord, $pDetailMap) {
 // error_log("All GLOBALLY Defined Variables - " . json_encode(get_defined_vars()));
 $mRecord = $masterRecord[0];
 $pInfo = $PatientInfo;
+//error_log("Patient Info - " . json_encode($pInfo));
+
 $PatientID = $pInfo["id"];
 
 $pTemplateHistory = $patientTemplate;	// List of PAST templates applied to this patient. The CURRENTLY applied template is NOT in this list!
@@ -405,6 +407,13 @@ $patientAllergies = $patientAllergies;
 
 // Information about the current treatment
 $pDetailMap = $PatientDetailMap[$pInfo['id']];
+
+//error_log("Patient Detail Map = " . json_encode($PatientDetailMap));
+//error_log("mRecord Map = " . json_encode($mRecord));
+
+if (null === $mRecord['DiseaseStage'] || "" === $mRecord['DiseaseStageName']) {
+	$mRecord['DiseaseStage'] = "<abbr title=\"None Specified\" >N/S</abbr>";
+}
 
 
 $controller = 'OrdersController';
