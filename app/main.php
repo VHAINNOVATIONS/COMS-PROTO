@@ -19,8 +19,10 @@
     $ProjType = "Release 1.14e";     // July 10, 2015"; Adding "*" to Ammended records
     $ProjType = "Release 1.14f";     // July 10, 2015"; Fixed "Infusion Reactions panel, selection of “No Adverse Reactions” results in an erroneous error message" defect
     $ProjType = "Release 1.14g";     // July 13, 2015"; Fix defect where duplicate Vitals are pulled from VistA. Merge vitals from VistA and SQL based on Date only not Date and Time since VistA Date/Time stamp doesn't match actual date/time the vital was saved.
-    */
     $ProjType = "Release 1.14h";     // July 16, 2015"; Added Order Signing Code to Orders controller. Fixed defect that prevented COMS from running in MS-IE (ran JSHint through JS files and identified several syntax defects which only manifested in MS-IE
+    */
+
+	$ProjType = "Release 1.14i";     // July 17, 2015"; Fixed defect for Print Orders... 1. Calculated dosages are not displayed 2. Recommendations for Neutropenia Risk was hard coded text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen 3. Recommendations for Emesis Risk was a hard coded blank text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen
 
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */

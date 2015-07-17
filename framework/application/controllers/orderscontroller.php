@@ -106,7 +106,7 @@ error_log("Patient Vitals - " . json_encode($ret));
 
 
     function Prep4BSA_DosingCalc($PIDF) {
-        error_log("Orders Controller - Prep4BSA_DosingCalc - $PIDF");
+        // error_log("Orders Controller - Prep4BSA_DosingCalc - $PIDF");
         $controller          = 'PatientController';
         $patientController   = new $controller( 'Patient', 'patient', null );
         $BSA                 = $patientController->_getBSA( $PIDF );
@@ -155,37 +155,46 @@ error_log("Patient Vitals - " . json_encode($ret));
 
 
 function BSA_DosingCalc($BSA_Prep, $DoseF, $UnitF) {
+	// error_log("Orders Controller - BSA_DosingCalc - $DoseF, $UnitF");
         $FinalCalculatedDose         = array();
         $FinalCalculatedDose['dose'] = "";
         $FinalCalculatedDose['unit'] = "";
+		$UnitF = strtolower($UnitF);
 
-        if ( "auc" == $UnitF ) {
-            $Patient                      = array();
-            $Patient[ "Age" ]             = $BSA_Prep["Vitals"][ "Age" ];
-            $Patient[ "Gender" ]          = $BSA_Prep["Vitals"][ "Gender" ];
-            $Patient[ "Weight" ]          = $BSA_Prep["Vitals"][ "Weight" ];
-            $Patient[ "SerumCreatinine" ] = 1;
-            $CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
+		if ( "auc" == $UnitF || "mg/kg" == $UnitF || "mg/m2" == $UnitF || "units / m2" == $UnitF || "units / kg" == $UnitF ) {
+			if ( "auc" == $UnitF ) {
+				$Patient                      = array();
+				$Patient[ "Age" ]             = $BSA_Prep["Vitals"][ "Age" ];
+				$Patient[ "Gender" ]          = $BSA_Prep["Vitals"][ "Gender" ];
+				$Patient[ "Weight" ]          = $BSA_Prep["Vitals"][ "Weight" ];
+				$Patient[ "SerumCreatinine" ] = 1;
+				$controller                   = 'BSACalcController';
+				$BSACalcs                     = new $controller( 'BSACalc', 'bsacalc', null );
+				$CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
 
-            $FinalCalculatedDose['dose']          = $CalculatedDose;
-            $FinalCalculatedDose['unit']          = "mg";
-        } else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
-            $CalculatedDose      = $DoseF * $BSA_Prep["WeightInKG"];
-            $FinalCalculatedDose['dose'] = $CalculatedDose;
-            if ( "mg/kg" == $UnitF ) {
-                $FinalCalculatedDose['unit'] = "mg";
-            } else {
-                $FinalCalculatedDose['unit'] = "units";
-            }
-        } else {
-            $CalculatedDose      = $DoseF * $BSA_Prep["BSA"];
-            $FinalCalculatedDose['dose'] = $CalculatedDose;
-            if ( "mg/m2" == $UnitF ) {
-                $FinalCalculatedDose['unit'] = "mg";
-            } else {
-                $FinalCalculatedDose['unit'] = "units";
-            }
-        }
+				$FinalCalculatedDose['dose']  = $CalculatedDose;
+				$FinalCalculatedDose['unit']  = "mg";
+			} else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
+				$CalculatedDose      = $DoseF * $BSA_Prep["WeightInKG"];
+				$FinalCalculatedDose['dose'] = $CalculatedDose;
+				if ( "mg/kg" == $UnitF ) {
+					$FinalCalculatedDose['unit'] = "mg";
+				} else {
+					$FinalCalculatedDose['unit'] = "units";
+				}
+			} else {
+				$CalculatedDose      = $DoseF * $BSA_Prep["BSA"];
+				$FinalCalculatedDose['dose'] = $CalculatedDose;
+				if ( "mg/m2" == $UnitF ) {
+					$FinalCalculatedDose['unit'] = "mg";
+				} else {
+					$FinalCalculatedDose['unit'] = "units";
+				}
+			}
+		}
+		else {
+			$FinalCalculatedDose['dose'] = "N/A";
+		}
         return $FinalCalculatedDose;
     }
 
