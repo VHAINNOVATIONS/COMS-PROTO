@@ -236,17 +236,6 @@ function PoCD_Cmp($a, $b) {
                     $patientDetailMap[ $patientID ] = $PatientDetails;
                 }
                 $this->set( 'PatientDetailMap', $patientDetailMap );
-                
-                /**
-                $lookup = new LookUp();
-                $Disease = $lookup->selectByNameAndDesc('DiseaseType', $this->masterRecord[0]['Disease']);
-                if ($this->checkForErrors('Get Disease Info Failed. ',  $Disease)) {
-                $this->set('templatedata', null);
-                return;
-                }
-                $this->masterRecord[0]['DiseaseRecord'] = $Disease;
-                **/
-                
             } else {
                 $this->set( 'frameworkErr', 'No Patient ID provided.' );
             }
@@ -382,7 +371,7 @@ function PoCD_Cmp($a, $b) {
                                 $patientDetailMap[ $patient[ 'ID' ] ] = $detail;
                             }
 
-error_log("viewAll - The Details - " . json_encode($detail));
+// error_log("viewAll - The Details - " . json_encode($detail));
                         }
                     } else {
 // error_log("No Details, so build one");
@@ -720,7 +709,7 @@ $this->Patient->query( $query );
 				'$BSAFormula'
             )
          ";
-error_log("PatientController._insertOrderStatus - Query = $query");
+// error_log("PatientController._insertOrderStatus - Query = $query");
             $this->Patient->query( $query );
             return $GUID;
         }
@@ -738,8 +727,8 @@ error_log("PatientController._insertOrderStatus - Query = $query");
          * @todo Move this into a model
          */
         private function _insertTherapyOrders( $therapies, $infusionMap, $dateStarted, $template, $cycle, $patientId, $formData ) {
-error_log( "_insertTherapyOrders - Entry Point - " . count( $therapies ) );
-error_log( "_insertTherapyOrders - " . json_encode($infusionMap));
+// error_log( "_insertTherapyOrders - Entry Point - " . count( $therapies ) );
+// error_log( "_insertTherapyOrders - " . json_encode($infusionMap));
 
             foreach ( $therapies as $therapy ) {
                 $adminDays = $therapy[ "adminDay" ];
@@ -805,7 +794,7 @@ error_log( "_insertTherapyOrders - " . json_encode($infusionMap));
                     $daysArray = array_unique( $daysArray );
                     sort( $daysArray );
                     $startDate = new DateTime( $dateStarted );
-error_log( "_insertTherapyOrders - Looping DaysArray - " . count( $daysArray ) );
+// error_log( "_insertTherapyOrders - Looping DaysArray - " . count( $daysArray ) );
                     for ( $index = 0; $index < count( $daysArray ); $index++ ) {
                         $daysDiff = 0;
                         if ( $index > 0 ) {
@@ -814,7 +803,7 @@ error_log( "_insertTherapyOrders - Looping DaysArray - " . count( $daysArray ) )
                             $daysDiff = ( $daysArray[ $index ] ) - 1;
                         }
                         date_add( $startDate, new DateInterval( 'P' . $daysDiff . 'D' ) );
-error_log( "_insertTherapyOrders - _insertTemplate" );
+// error_log( "_insertTherapyOrders - _insertTemplate" );
                         $templateId = $this->_insertTemplate( $template, $daysArray[ $index ], $startDate->format( 'Y-m-d' ), $cycle, $patientId );
                         if ( empty( $templateId ) ) {
                             return;
@@ -829,10 +818,10 @@ error_log( "_insertTherapyOrders - _insertTemplate" );
                             $this->_insertRegimens( $therapy, $templateId[ 0 ][ 'lookupid' ], $orderId );
                         }
                     }
-error_log( "_insertTherapyOrders - Looping DaysArray END LOOP" );
+// error_log( "_insertTherapyOrders - Looping DaysArray END LOOP" );
                 }
             }
-error_log( "_insertTherapyOrders - EXIT Point - " );
+// error_log( "_insertTherapyOrders - EXIT Point - " );
         }
         
         /**
@@ -844,8 +833,8 @@ error_log( "_insertTherapyOrders - EXIT Point - " );
          * @todo Move into a model
          */
         private function _insertRegimens( $regimen, $templateId, $orderId ) {
-error_log( "------------------------------------------------ Patient Controller - _insertRegimens() ------------------------------------------");
-error_log( "$regimen, $templateId, $orderId");
+// error_log( "------------------------------------------------ Patient Controller - _insertRegimens() ------------------------------------------");
+// error_log( "$regimen, $templateId, $orderId");
 
 
 
@@ -878,8 +867,8 @@ error_log( "$regimen, $templateId, $orderId");
             $DrugInfo = str_replace(">",")",str_replace("<","(",$DrugName));
             $DrugInfo1 = "$DrugInfo : $DrugIEN";
             $data->Drug = $DrugInfo1;
-error_log("Patient Controller - _insertRegimens(); Drug Information : $DrugName; $DrugIEN; $DrugInfo; $DrugInfo1");
-error_log("Patient Controller - _insertRegimens(); Regimen - \n\n" . json_encode($regimens[ 0 ]));
+// error_log("Patient Controller - _insertRegimens(); Drug Information : $DrugName; $DrugIEN; $DrugInfo; $DrugInfo1");
+// error_log("Patient Controller - _insertRegimens(); Regimen - \n\n" . json_encode($regimens[ 0 ]));
 
 
 
@@ -977,8 +966,8 @@ error_log("Patient Controller - _insertRegimens(); Regimen - \n\n" . json_encode
          * @todo Get Hydrations, Infusions, Regimens, etc, from a model not a view
          */
         private function createOEMRecords( $formData ) {
-error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Entry ----------------------------------------------------" );
-error_log( json_encode($formData));
+// error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Entry ----------------------------------------------------" );
+// error_log( json_encode($formData));
 
 
             $templateId = $formData->TemplateID;
@@ -986,7 +975,7 @@ error_log( json_encode($formData));
             $templates  = $lookup->getTopLevelTemplateDataById( $templateId, '' );
             $template   = $templates[ 0 ];
 
-error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Pre/Post Hydrations via TemplateID = $templateId ----------------------------------------------------" );
+// error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Pre/Post Hydrations via TemplateID = $templateId ----------------------------------------------------" );
             $this->Hydrations( 'pre', $templateId );
             $preHydrations  = $this->get( 'prehydrations' );
             $preInfusionMap = $this->get( 'preinfusions' );
@@ -995,28 +984,28 @@ error_log( "---------------------------------------------------- Patient Control
             $postHydrations  = $this->get( 'posthydrations' );
             $postInfusionMap = $this->get( 'postinfusions' );
 
-error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Regimens via TemplateID = $templateId ----------------------------------------------------" );
+// error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Regimens via TemplateID = $templateId ----------------------------------------------------" );
             $this->Regimens( $templateId );
             $regimens = $this->get( 'regimens' );
-error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Regimens ----------------------------------------------------" );
-error_log( json_encode($regimens));
+// error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - Regimens ----------------------------------------------------" );
+// error_log( json_encode($regimens));
 
 
             $dateStarted = $formData->DateStarted;
             $patientId   = $formData->PatientID;
             
-error_log( "createOEMRecords - Cycles = " . $template[ 'CourseNumMax' ] );
+// error_log( "createOEMRecords - Cycles = " . $template[ 'CourseNumMax' ] );
             for ( $cycle = 1; $cycle <= $template[ 'CourseNumMax' ]; $cycle++ ) {
                 if ( !$this->checkForErrors( 'Failed to get prehydrations', $preHydrations ) && !empty( $preHydrations ) ) {
-error_log( "createOEMRecords - InsertTherapyOrders - Pre" );
+// error_log( "createOEMRecords - InsertTherapyOrders - Pre" );
                     $this->_insertTherapyOrders( $preHydrations, $preInfusionMap, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 if ( !$this->checkForErrors( 'Failed to get posthydrations', $postHydrations ) && !empty( $postHydrations ) ) {
-error_log( "createOEMRecords - InsertTherapyOrders - Post" );
+// error_log( "createOEMRecords - InsertTherapyOrders - Post" );
                     $this->_insertTherapyOrders( $postHydrations, $postInfusionMap, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 if ( !$this->checkForErrors( 'Failed to get regimens', $regimens ) && !empty( $regimens ) ) {
-error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - _insertTherapyOrders() ----------------------------------------------------" );
+// error_log( "---------------------------------------------------- Patient Controller - createOEMRecords - _insertTherapyOrders() ----------------------------------------------------" );
                     $this->_insertTherapyOrders( $regimens, null, $dateStarted, $template, $cycle, $patientId, $formData );
                 }
                 $dateStarted = $this->_formatDate( $dateStarted, $template[ "CycleLengthUnit" ], $template[ "length" ] );
@@ -1105,6 +1094,10 @@ error_log( "---------------------------------------------------- Patient Control
             
             $oemMap = array( );
             foreach ( $oemrecords as $oemrecord ) {
+// error_log( "Patient Controller - genOEMData() - OEM Record - ");
+// error_log( json_encode($oemrecord) );
+
+// echo "ARRAY:<br>" . json_encode($oemDetails) . "<br><br><br>";
                 $oemDetails          = array( );
                 $oemRecordTemplateID = $oemrecord[ 'TemplateID' ];
                 
@@ -1136,7 +1129,9 @@ error_log( "---------------------------------------------------- Patient Control
                 
                 $oemDetails[ 'Therapy' ]              = $this->get( 'regimens' );
                 $oemMap[ $oemrecord[ 'TemplateID' ] ] = $oemDetails;
-                // echo "ARRAY:<br>" . json_encode($oemDetails) . "<br><br><br>";
+// error_log( "Patient Controller - genOEMData() - OEM Details - ");
+// error_log( json_encode($oemDetails) );
+
             }
             
             $this->set( 'oemMap', $oemMap );
@@ -1506,11 +1501,11 @@ error_log( "---------------------------------------------------- Patient Control
             $lookup   = new LookUp();
             $regimens = $lookup->getRegimens( $id );
             if ( null != $regimens && array_key_exists( 'error', $regimens ) ) {
-error_log("Patient Controller - Regimens() - We have an error");
+// error_log("Patient Controller - Regimens() - We have an error");
                 return $regimens;
             }
-error_log("Patient.Controller.Regimens - SET Regimens - ");
-error_log(json_encode($regimens));
+// error_log("Patient.Controller.Regimens - SET Regimens - ");
+// error_log(json_encode($regimens));
             $this->set( 'regimens', $regimens );
         }
         
@@ -1621,7 +1616,7 @@ error_log(json_encode($regimens));
         }
         
         function Hydrations( $type = null, $id = null ) {
-error_log("Patient Controller - Hydrations() - $type; $id");
+// error_log("Patient Controller - Hydrations() - $type; $id");
 
             $lookup = new LookUp();
             $hydrations = $lookup->getHydrations( $id, $type );
@@ -1632,8 +1627,8 @@ error_log("Patient Controller - Hydrations() - $type; $id");
             $infusionMap     = array( );
             $origInfusionMap = array( );
             if ( null !== $hydrations) {
-    error_log("Hydrations() - Getting Hydration Status - " . json_encode($hydrations));
-    error_log("---------------------------");
+    // error_log("Hydrations() - Getting Hydration Status - " . json_encode($hydrations));
+    // error_log("---------------------------");
                 foreach ( $hydrations as $hydration ) {
                     $infusions = $lookup->getMHInfusions( $hydration[ 'id' ] );
                     if ( null != $infusions && array_key_exists( 'error', $infusions ) ) {
@@ -2017,7 +2012,7 @@ error_log("Patient Controller - Hydrations() - $type; $id");
                         FROM $DischargeLinkTable where PatientID = '$PAT_ID' order by date desc";
                     }
                 }
-error_log("DischargeInstructions Query - $query");
+// error_log("DischargeInstructions Query - $query");
                 $jsonRecord[ 'msg' ] = "No records to find";
                 $ErrMsg              = "Retrieving Records";
             } else if ( "POST" == $_SERVER[ 'REQUEST_METHOD' ] ) {
@@ -2139,20 +2134,20 @@ error_log("DischargeInstructions Query - $query");
             }
             
             if ( "" !== $query ) {
-error_log("DischargeInstructions Query - Performing Lookup");
+// error_log("DischargeInstructions Query - Performing Lookup");
                 $retVal = $this->Patient->query( $query );
-error_log("DischargeInstructions Query - Lookup Complete");
+// error_log("DischargeInstructions Query - Lookup Complete");
                 if ( $this->checkForErrors( $ErrMsg, $retVal ) ) {
-error_log("DischargeInstructions Query - Lookup generated an Error");
+// error_log("DischargeInstructions Query - Lookup generated an Error");
                     $jsonRecord[ 'success' ] = false;
                     $jsonRecord[ 'msg' ]     = $this->get( 'frameworkErr' );
                     $this->Patient->rollbackTransaction();
                 } else {
-error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
+// error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
                     $jsonRecord[ 'success' ] = 'true';
                     
                     if ( "GET" == $_SERVER[ 'REQUEST_METHOD' ] && $dischargeRecordID ) {
-error_log("DischargeInstructions Query - Getting More Data");
+// error_log("DischargeInstructions Query - Getting More Data");
                         /* Get Patient Name for display on PrintOut */
                         $patInfoQuery = "SELECT 
                         PAT.PAT_ID, 
@@ -2162,15 +2157,15 @@ error_log("DischargeInstructions Query - Getting More Data");
                         FROM Patient_Assigned_Templates PAT
                         JOIN Patient lu1 ON lu1.Patient_ID = PAT.Patient_ID
                         WHERE PAT.PAT_ID = '$PAT_ID'";
-error_log("DischargeInstructions Query - Getting More Data - $patInfoQuery");
+// error_log("DischargeInstructions Query - Getting More Data - $patInfoQuery");
                         $patInfo = $this->Patient->query( $patInfoQuery );
                         if ( $this->checkForErrors( $ErrMsg, $patInfo ) ) {
-error_log("DischargeInstructions Query - Lookup generated an Error");
+// error_log("DischargeInstructions Query - Lookup generated an Error");
                             $jsonRecord[ 'success' ] = false;
                             $jsonRecord[ 'msg' ]     = "Patient Information Unavailable - " . $this->get( 'frameworkErr' );
                         } else {
-error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
-error_log("$patInfoQuery");
+// error_log("DischargeInstructions Query - Lookup did NOT generate an Error");
+// error_log("$patInfoQuery");
 // error_log("Patient Info - " . json_encode( $patInfo[0]["First_Name"] . " " . $patInfo[0]["Last_Name"] ));
                             /* Parse data into Proper Form Input structure */
                             if ( count( $retVal ) > 0 ) {

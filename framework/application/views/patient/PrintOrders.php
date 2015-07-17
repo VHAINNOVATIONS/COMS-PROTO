@@ -1,6 +1,4 @@
 <?php 
-// PatientID = 6855D2FD-27A1-E111-903E-000C2935B86F
-//require_once "/ChromePhp.php";
 ob_start();		// See article - http://digitalpbk.com/php/warning-cannot-modify-header-information-headers-already-sent
 
 /**
@@ -13,41 +11,17 @@ ob_start();		// See article - http://digitalpbk.com/php/warning-cannot-modify-he
  * Use get_defined_vars() to get ALL the defined variables in this scope
  **/
 
-
-
-$mRecord = $masterRecord[0];
-$temp = json_encode($mRecord);
-
-$pInfo = $PatientInfo;
-$temp = json_encode($pInfo);
-
-$pTemplateHistory = $patientTemplate;	// List of PAST templates applied to this patient. The CURRENTLY applied template is NOT in this list!
-$temp = json_encode($pTemplateHistory);
-
-$patientAllergies = $patientAllergies;
-$temp = json_encode($patientAllergies);
-
-// Information about the current treatment
-$pDetailMap = $PatientDetailMap[$pInfo['id']];
-$temp = json_encode($pDetailMap);
-
-if (!is_null($oemrecords) && is_null($oemsaved)) {
-    $numeoemrecords = count($oemrecords);
-    $numtemplates = count($masterRecord);
-}
-
-function Log_drug_dose_admin_table($doseNum, $instru, $drug, $dose, $units, $calcDose, $admin, $adminTime, $fluid, $vol, $flowRate, $infusionTime) {
-}
-
-function drug_dose_admin_table($drug, $sequence, $doseNum, $instru, $dose, $units, $calcDose, $admin, $adminTime, $fluid, $vol, $flowRate, $infusionTime) {
+function drug_dose_admin_table($params) {
+	// error_log("All Defined Variables within drug_dose_admin_table()- " . json_encode(get_defined_vars()));
+	// error_log("drug_dose_admin_table - Params = " . json_encode($params));
 ?>
-		<tr style="vertical-align: top;">
-			<td class="drug" style="text-align: center;"><?php echo $sequence; ?></td>
-			<td class="drug"><?php echo $drug . "<div class=\"desc\">$instru</div>"; ?>
 
+		<tr style="vertical-align: top;">
+			<td class="drug" style="text-align: center;"><?php echo $params["sequence"]; ?></td>
+			<td class="drug"><?php echo $params["drug"] . "<div class=\"desc\">" . $params["instr"] . "</div>"; ?>
 		<?php
-	if ("IV" === $admin || "IVPB" === $admin) {
-		?>
+	if ("IV" === $params["admin"] || "IVPB" === $params["admin"]) {
+?>
 		<table width=100%>
 		<tr class="header">
 			<th>Fluid Type</th>
@@ -56,34 +30,36 @@ function drug_dose_admin_table($drug, $sequence, $doseNum, $instru, $dose, $unit
 			<th>Infusion Time</th>
 		</tr>
 		<tr>
-			<td><?php echo $fluid; ?></td>
-			<td><?php echo $vol; ?> ml</td>
-			<td><?php echo $flowRate; ?> ml/hr</td>
-			<td><?php echo $infusionTime; ?></td>
+			<td><?php echo $params["fluid"]; ?></td>
+			<td><?php echo $params["vol"]; ?> ml</td>
+			<td><?php echo $params["flowRate"]; ?> ml/hr</td>
+			<td><?php echo $params["infusionTime"]; ?></td>
 		</tr>
 		</table>
-		<?php
+<?php
 	}
-?>			
-			
-			
-			
+?>
 			</td>
-			<td><?php echo $dose . " " . $units; ?></td>
-			<td><?php echo $calcDose; ?></td>
-			<td><?php echo $admin; ?></td>
-			<td><?php echo $adminTime; ?></td>
+			<td><?php echo $params['dose'] . " " . $params['units']; ?></td>
+			<td><?php echo $params["calcDose"]; ?></td>
+			<td><?php echo $params["admin"]; ?></td>
+			<td><?php echo $params["adminTime"]; ?></td>
 		</tr>
 <?php
 }
 
-function renderTherapyData($oemrecord, $oemDetails, $tag) {
+
+
+
+
+
+
+
+
+function renderTherapyData($pInfo, $oemrecord, $oemDetails, $tag) {
+	// error_log("All Defined Variables within renderTherapyData()-     " . json_encode(get_defined_vars()));
 	$hydrations = $oemDetails[$tag . 'Therapy'];
 	$numMeds = count($hydrations);
-
-
-
-
 	$temp = json_encode($hydrations);
 
 	if ("" !== $tag) {
@@ -92,7 +68,6 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 	}
 
 ?>
-
 			<tr class="TherapyType"><th colspan="6"><?php echo "$tag Therapy - "; if ($numMeds > 0) { echo "<span>" . $oemrecord[$tag . 'TherapyInstr'] . "</span>"; } ?></th></tr>
 			<tr class="header">
 				<th>Sequence #</th>
@@ -103,137 +78,194 @@ function renderTherapyData($oemrecord, $oemDetails, $tag) {
 				<th>Administration&nbsp;Time</th>
 			</tr>
 <?php
-			if ($numMeds) {
-				$hydrationCount = 1;
-				foreach ($hydrations as $hydration) {
-                    $hDrug = $hydration["drug"];
-                    $hRoute = $hydration['route'];
-
-
-        $pos = strrpos($hDrug, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $hDrug);
-            $hDrug = $R1[0];
-        }
-        $pos = strrpos($hRoute, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $hRoute);
-            $hRoute = $R1[0];
-        }
-
-					$numInfusions = 0;
-					$adminTime = "";
-					// Array Index is case sensitive, but data coming back is in different case depending on table :(
-					if (array_key_exists("Sequence", $hydration)) {
-						$sequence = $hydration["Sequence"];
-					}
-					else {
-						$sequence = $hydration["sequence"];
-					}
-
-					if ("" !== $tag) {
-						$myinfusions = $infusions[$hydration['id']];
-						$numInfusions = count($myinfusions);
-					}
-
-					if (0 === $numInfusions) {
-						if ("" === $tag) {
-							drug_dose_admin_table(
-								"hDrug1 - $hDrug",
-								$sequence,
-								"", 
-								$hydration["instructions"], 
-								$hydration['regdose'], 
-								$hydration['regdoseunit'], 
-								$hydration['bsaDose'], 
-								$hRoute,
-								$hydration['adminTime'],
-								$hydration['fluidType'], 
-								$hydration['flvol'], 
-								$hydration['flowRate'], 
-								$hydration['infusion']
-							);
-						}
-						else {
-							drug_dose_admin_table("", "", "", "", "", "", "", "", "", "", "", "", "");
-						}
-					}
-					else if (1 === $numInfusions) {
-						$infusion = $myinfusions[0];
-
-                            $iDrug = $hydration["drug"];
-                            $iRoute = $infusion['type'];
-        $pos = strrpos($iDrug, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $iDrug);
-            $iDrug = $R1[0];
-        }
-        $pos = strrpos($iRoute, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $iRoute);
-            $iRoute = $R1[0];
-        }
-
-						drug_dose_admin_table(
-							$iDrug,
-							$sequence,
-							"", 
-							$hydration["description"], 
-							$infusion['amt'], 
-							$infusion['unit'], 
-							$infusion['bsaDose'], 
-							$iRoute,
-							$adminTime,
-							$infusion['fluidType'], 
-							$infusion['fluidVol'], 
-							$infusion['flowRate'], 
-							$infusion['infusionTime']
-						);
-					}
-					else if ($numInfusions > 1) {
-						$infusionCount = 1;
-						foreach ($myinfusions as $infusion) {
-                            $iDrug = $infusion["drug"];
-                            $iRoute = $infusion['type'];
-
-        $pos = strrpos($iDrug, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $iDrug);
-            $iDrug = $R1[0];
-        }
-        $pos = strrpos($iRoute, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $iRoute);
-            $iRoute = $R1[0];
-        }
-
-							drug_dose_admin_table(
-								"iDrug2 - $iDrug",
-								$sequence,
-								$infusionCount, 
-								$hydration["description"], 
-								$infusion['amt'], 
-								$infusion['unit'], 
-								$infusion['bsaDose'], 
-								$iRoute,
-								$adminTime,
-								$infusion['fluidType'], 
-								$infusion['fluidVol'], 
-								$infusion['flowRate'], 
-								$infusion['infusionTime']
-							);
-							$infusionCount++;
-						}
-					}
-					$hydrationCount++;
-				}
+	if ($numMeds) {
+		$hydrationCount = 1;
+		foreach ($hydrations as $hydration) {
+			$hDrug = $hydration['drug'];
+			if (array_key_exists ( 'route' , $hydration ) && isset($hydration['route'])) {
+				$hRoute = $hydration['route'];
 			}
 			else {
-				drug_dose_admin_table("", "", "", "None for this day", "", "", "", "", "", "", "", "", "");
+				$hRoute = "";
 			}
+			$pos = strrpos($hDrug, " : ");
+			if ($pos !== false) {
+				$R1 = explode(" : ", $hDrug);
+				$hDrug = $R1[0];
+			}
+			$pos = strrpos($hRoute, " : ");
+			if ($pos !== false) {
+				$R1 = explode(" : ", $hRoute);
+				$hRoute = $R1[0];
+			}
+			$numInfusions = 0;
+			$adminTime = "";
+			// Array Index is case sensitive, but data coming back is in different case depending on table :(
+			if (array_key_exists("Sequence", $hydration)) {
+				$sequence = $hydration["Sequence"];
+			}
+			else {
+				$sequence = $hydration["sequence"];
+			}
+
+			if ("" !== $tag) {
+				$myinfusions = $infusions[$hydration['id']];
+				$numInfusions = count($myinfusions);
+			}
+
+			if (0 === $numInfusions) {
+				$params = array();
+				if ("" === $tag) {
+					$doseF = $hydration['regdose'];
+					$unitsF = $hydration['regdoseunit'];
+					$calcDose = $hydration['bsaDose'];
+					if (null === $calcDose || "" === $calcDose) {
+						$calcDoseA = $pInfo["Orders"]->BSA_DosingCalc($pInfo["BSA_Prep"], $doseF, $unitsF);
+						$calcDose = $calcDoseA["dose"] . " " . $calcDoseA["unit"];
+					}
+					$params["pInfo"] = $pInfo;
+					$params["drug"] = $hDrug;
+					$params["sequence"] = $sequence;
+					$params["doseNum"] = "";
+					$params["instr"] = $hydration["instructions"];
+					$params["dose"] = $doseF;
+					$params["units"] = $unitsF;
+					$params["calcDose"] = $calcDose;
+					$params["admin"] = $hRoute;
+					$params["adminTime"] = $hydration['adminTime'];
+					$params["fluid"] = $hydration['fluidType'];
+					$params["vol"] = $hydration['flvol'];
+					$params["flowRate"] = $hydration['flowRate'];
+					$params["infusionTime"] = $hydration['infusion'];
+				}
+				else {
+					$params["pInfo"] = "";
+					$params["drug"] = "";
+					$params["sequence"] = "";
+					$params["doseNum"] = "";
+					$params["instr"] = "";
+					$params["dose"] = "";
+					$params["units"] = "";
+					$params["calcDose"] = "";
+					$params["admin"] = "";
+					$params["adminTime"] = "";
+					$params["fluid"] = "";
+					$params["vol"] = "";
+					$params["flowRate"] = "";
+					$params["infusionTime"] = "";
+				}
+				drug_dose_admin_table($params);
+			}
+			else if (1 === $numInfusions) {
+				$infusion = $myinfusions[0];
+				$iDrug = $hydration["drug"];
+				$iRoute = $infusion['type'];
+				$pos = strrpos($iDrug, " : ");
+				if ($pos !== false) {
+					$R1 = explode(" : ", $iDrug);
+					$iDrug = $R1[0];
+				}
+				$pos = strrpos($iRoute, " : ");
+				if ($pos !== false) {
+					$R1 = explode(" : ", $iRoute);
+					$iRoute = $R1[0];
+				}
+
+					$doseF = $infusion['amt'];
+					$unitsF = $infusion['unit'];
+					$calcDose = $infusion['bsaDose'];
+					if (null === $calcDose || "" === $calcDose) {
+						$calcDoseA = $pInfo["Orders"]->BSA_DosingCalc($pInfo["BSA_Prep"], $doseF, $unitsF);
+						$calcDose = $calcDoseA["dose"] . " " . $calcDoseA["unit"];
+					}
+
+				$params = array();
+				$params["pInfo"] = $pInfo;
+				$params["drug"] = $iDrug;
+				$params["sequence"] = $sequence;
+				$params["doseNum"] = "";
+				$params["instr"] = $hydration["description"];
+				$params["dose"] = $doseF;
+				$params["units"] = $unitsF;
+				$params["calcDose"] = $calcDose;
+				$params["admin"] = $iRoute;
+				$params["adminTime"] = $adminTime;
+				$params["fluid"] = $infusion['fluidType'];
+				$params["vol"] = $infusion['fluidVol'];
+				$params["flowRate"] = $infusion['flowRate'];
+				$params["infusionTime"] = $infusion['infusionTime'];
+				drug_dose_admin_table($params);
+			}
+
+			else if ($numInfusions > 1) {
+				$infusionCount = 1;
+				foreach ($myinfusions as $infusion) {
+					$iDrug = $infusion["drug"];
+					$iRoute = $infusion['type'];
+
+					$pos = strrpos($iDrug, " : ");
+					if ($pos !== false) {
+						$R1 = explode(" : ", $iDrug);
+						$iDrug = $R1[0];
+					}
+					$pos = strrpos($iRoute, " : ");
+					if ($pos !== false) {
+						$R1 = explode(" : ", $iRoute);
+						$iRoute = $R1[0];
+					}
+
+					$doseF = $infusion['amt'];
+					$unitsF = $infusion['unit'];
+					$calcDose = $infusion['bsaDose'];
+					if (null === $calcDose || "" === $calcDose) {
+						$calcDoseA = $pInfo["Orders"]->BSA_DosingCalc($pInfo["BSA_Prep"], $doseF, $unitsF);
+						$calcDose = $calcDoseA["dose"] . " " . $calcDoseA["unit"];
+					}
+
+					$params = array();
+					$params["pInfo"] = $pInfo;
+					$params["drug"] = "iDrug2 - $iDrug";
+					$params["sequence"] = $sequence;
+					$params["doseNum"] = $infusionCount;
+					$params["instr"] = $hydration["description"];
+					$params["dose"] = $doseF;
+					$params["units"] = $unitsF;
+					$params["calcDose"] = $calcDose;
+					$params["admin"] = $iRoute;
+					$params["adminTime"] = $adminTime;
+					$params["fluid"] = $infusion['fluidType'];
+					$params["vol"] = $infusion['fluidVol'];
+					$params["flowRate"] = $infusion['flowRate'];
+					$params["infusionTime"] = $infusion['infusionTime'];
+					drug_dose_admin_table($params);
+					$infusionCount++;
+				}
+			}
+			$hydrationCount++;
+		}
+	}
+	else {
+		$params = array();
+		$params["pInfo"] = $pInfo;
+		$params["drug"] = "";
+		$params["sequence"] = "";
+		$params["doseNum"] = "";
+		$params["instr"] = "None for this day";
+		$params["dose"] = "";
+		$params["units"] = "";
+		$params["calcDose"] = "";
+		$params["admin"] = "";
+		$params["adminTime"] = "";
+		$params["fluid"] = "";
+		$params["vol"] = "";
+		$params["flowRate"] = "";
+		$params["infusionTime"] = "";
+		drug_dose_admin_table($params);
+	}
 }
 
 function OEM_DrugData($pInfo, $masterRecord, $mRecord, $pDetailMap, $oemrecords, $oemsaved, $oemMap) {
+	// error_log("All Defined Variables within OEM_DrugData()- " . json_encode(get_defined_vars()));
 ?>
 <table border="1" width="100%" class="Therapy OEMRecord_Element InformationTable">
 	<colgroup width="5%"></colgroup>
@@ -245,6 +277,7 @@ function OEM_DrugData($pInfo, $masterRecord, $mRecord, $pDetailMap, $oemrecords,
 	<tbody>
 <?php
 		$loopVar = 1;
+
 		foreach ($oemrecords as $oemrecord) {
 			$oemDetails = $oemMap[$oemrecord['TemplateID']];
 			$temp = json_encode($oemrecord);
@@ -262,12 +295,13 @@ function OEM_DrugData($pInfo, $masterRecord, $mRecord, $pDetailMap, $oemrecords,
 			</tr></table>
 			</th></tr>
 <?php 
-			renderTherapyData($oemrecord, $oemDetails, "Pre"); 
-			renderTherapyData($oemrecord, $oemDetails, ""); 
-			renderTherapyData($oemrecord, $oemDetails, "Post"); 
+			renderTherapyData($pInfo, $oemrecord, $oemDetails, "Pre"); 
+			renderTherapyData($pInfo, $oemrecord, $oemDetails, ""); 
+			renderTherapyData($pInfo, $oemrecord, $oemDetails, "Post"); 
 			$loopVar++;
 		}
 ob_end_flush();
+
 ?>
 	</tbody>
 </table>
@@ -275,7 +309,28 @@ ob_end_flush();
 <?php
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function OEM_PatientInfo($pInfo, $mRecord, $pDetailMap) {
+	// error_log("All Defined Variables within OEM_PatientInfo()- " . json_encode(get_defined_vars()));
 ?>
 <table border="1" width="100%" class="InformationTable">
 
@@ -322,48 +377,64 @@ function OEM_PatientInfo($pInfo, $mRecord, $pDetailMap) {
 
 <tr><th>Neutropenia&nbsp;Risk:</th><td><?php echo $mRecord['fnRisk']; ?>%</td>
 <th>Recommendation:</th>
-<td colspan="5">
-The 2005 Update Committee agreed unanimously that reduction in febrile neutropenia(FN) is an important clinical outcome that justifies the use of CSFs, 
-regardless of impact on other factors, when the risk of FN is approximately 20% and no other equally effective regimen that does not require CSFs is available. 
-Primary prophylaxis is recommended for the prevention of FN in patients who are at high risk based on age, medical history, disease characteristics, and 
-myelotoxicity of the chemotherapy regimen. 
-CSF use allows a modest to moderate increase in dose-density and/or dose-intensity of chemotherapy regimens. 
-Dose-dense regimens should only be used within an appropriately designed clinical trial or if supported by convincing efficacy data. 
-Prophylactic CSF for patients with diffuse aggressive lymphoma aged 65 years and older treated with curative chemotherapy (CHOP or more aggressive regimens) 
-should be given to reduce the incidence of FN and infections. 
-Current recommendations for the management of patients exposed to lethal doses of total body radiotherapy, but not doses high enough to lead to certain death 
-due to injury to other organs, includes the prompt administration of CSF or pegylated G-CSF
+<td colspan="5"><?php echo html_entity_decode(htmlspecialchars_decode($mRecord["fnrDetails"])); ?>%</td>
+
 </td></tr>
 <tr>
 <th rowspan="2">Emesis&nbsp;Risk:</th>
 <td rowspan="2"><?php echo $mRecord['emoLevel']; ?></td>
-<th>ASCO Recommendation:</th><td colspan="5"><?php echo ""; ?></td></tr>
-<tr><th>NCCN Recommendation:</th><td colspan="5"><?php echo ""; ?></td></tr>
+
+<th>Recommendation:</th><td colspan="5"><?php echo html_entity_decode(htmlspecialchars_decode($mRecord["emodetails"])); ?></td></tr>
 
 </table>
 
 <?php
 }
+
+/*************************** END OF FUNCTION DEFINITIONS ***************************/
+
+
+
+// error_log("All GLOBALLY Defined Variables - " . json_encode(get_defined_vars()));
+$mRecord = $masterRecord[0];
+$pInfo = $PatientInfo;
+$PatientID = $pInfo["id"];
+
+$pTemplateHistory = $patientTemplate;	// List of PAST templates applied to this patient. The CURRENTLY applied template is NOT in this list!
+$patientAllergies = $patientAllergies;
+
+// Information about the current treatment
+$pDetailMap = $PatientDetailMap[$pInfo['id']];
+
+
+$controller = 'OrdersController';
+$OrdersController = new $controller('Orders', 'orders', null);
+$BSA_Prep = $OrdersController->Prep4BSA_DosingCalc($PatientID);      // Do once at start
+$pInfo["BSA_Prep"] = $BSA_Prep;
+$pInfo["Orders"] = $OrdersController;
+
+
+$doseF = 32;
+$unitsF = "mg/m2";
+$rslts = $pInfo["Orders"]->BSA_DosingCalc($pInfo["BSA_Prep"], $doseF, $unitsF);
+
+
+if (!is_null($oemrecords) && is_null($oemsaved)) {
+    $numeoemrecords = count($oemrecords);
+    $numtemplates = count($masterRecord);
+}
+
+
 ?>
 
 
-
-
-
-
-
-
-
-
-<?php error_log("Patient/PrintOrders - " . json_encode($pInfo)); ?>
 <!doctype html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-    
 	<title>COMS Chemotherapy Orders for <?php echo $pInfo['name']; ?></title>
 	<link rel="stylesheet" type="text/css" href="/libs/ExtJS_4.1.0/resources/css/ext-all.css">
-    <link rel="stylesheet" type="text/css" href="../../js/COMS.css">
+	<link rel="stylesheet" type="text/css" href="../../js/COMS.css">
 	<style>
 	div.desc { font-weight: normal; font-style: italic;background:none; }
 	.OEMRecord_Element .header th {
@@ -372,9 +443,9 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 	td.drug {
 		font-weight: bold!important;
 	}
-    h1 {
+	h1 {
 		font-size:200%;
-    }
+	}
 	th h2 {
 		font-size:150%;
 		margin-top: 1em;
@@ -382,7 +453,6 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 	th { 
 		text-align: right; 
 	}
-
 	.center-Header th {
 		text-align: center!important;
 	}
@@ -392,13 +462,9 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 <div id="application" style="width:98%;margin: 1em auto;border:none;">
 	<header role="banner">
 	<h1>COMS Chemotherapy Orders for <br><?php echo $pInfo['name']; ?></h1>
-
-	
-	
 	<?php
 		if($mRecord) {
 	?>
-	<!-- <h2>Patient: <?php echo $pInfo['name']; ?></h2> -->
 	</header>
 
 	<section>
@@ -416,8 +482,6 @@ due to injury to other organs, includes the prompt administration of CSF or pegy
 	<?php
 		}
 	?>
-
-
 	<footer>
 	</footer>
 </div>

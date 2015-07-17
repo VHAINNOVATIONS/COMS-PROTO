@@ -1,8 +1,8 @@
 <?php
 
     function _sortVitalsArray($a, $b) {
-        error_log("Sort - A = " . json_encode( $a));
-        error_log("Sort - B = " . json_encode( $b));
+        // error_log("Sort - A = " . json_encode( $a));
+        // error_log("Sort - B = " . json_encode( $b));
         /// return (strtotime($a["DateTaken"]) <= strtotime($b["DateTaken"]));
         return true;
     }
@@ -26,7 +26,7 @@ class Patient extends Model
                 $query .= " where p.Patient_ID = '$patientId'";
             }
         }
-        error_log("Patient Model - selectAll - $query");
+        // error_log("Patient Model - selectAll - $query");
         return $this->query($query);
     }
 
@@ -41,7 +41,7 @@ class Patient extends Model
                      $patientId . "'";
             $query = "SELECT id = Patient_ID, name = '', Age = '', DOB = '', p.DFN as DFN FROM " . $this->_table . " p " . "WHERE p.Patient_ID = '$patientId'";
         }
-error_log("Patient Model - selectByPatientId - $query");
+// error_log("Patient Model - selectByPatientId - $query");
                 $retVal = $this->query($query);
                 $DFN = $retVal[0]["DFN"];
                 $nodevista = new NodeVista();
@@ -56,7 +56,7 @@ error_log("Patient Model - selectByPatientId - $query");
                 $retVal[0]["DOB"] = $dobString;
                 $retVal[0]["Gender"] = $pi->{'gender'};
 
-error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal[0]));
+// error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal[0]));
         return $retVal;
     }
 
@@ -97,7 +97,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
             FROM Patient_Assigned_Templates 
             WHERE Date_Ended_Actual is null and Patient_ID = '$patientId'
         ";
-    error_log("terminateOutstandingRegimens $query");
+    // error_log("terminateOutstandingRegimens $query");
         $results = $this->query($query);
 
         if ($results) {
@@ -110,7 +110,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
                         Date_Ended_Actual = $dateEndedValue
                     WHERE PAT_ID = '$id'
                 ";
-    error_log("terminateOutstandingRegimens $query");
+    // error_log("terminateOutstandingRegimens $query");
     /////////////$this->query($query);
         
         /**
@@ -124,7 +124,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
                     WHERE Patient_ID = '$patientId' 
                         AND Template_ID = '$templateId'
                 ";
-    error_log("terminateOutstandingRegimens $query");
+    // error_log("terminateOutstandingRegimens $query");
     /////////////$this->query($query);
             }
         }
@@ -148,7 +148,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
         }
 
         public function _setBSA( $patientID, $wt, $BSAFormula, $usr) {
-            error_log("_setBSA - $patientID, $wt, $BSAFormula, $usr");
+            // error_log("_setBSA - $patientID, $wt, $BSAFormula, $usr");
             $this->overrideBSAFormula($patientID, $usr);
             $this->addNewBSAFormula($patientID, $wt, $BSAFormula, $usr);
         }
@@ -160,7 +160,7 @@ error_log("Patient Model - selectByPatientId - Results - " . json_encode($retVal
     
     
     public function savePatientTemplate($formData) {
-error_log("savePatientTemplate Form - " . json_encode($formData));
+// error_log("savePatientTemplate Form - " . json_encode($formData));
 
 
         $patientId = $formData->PatientID;
@@ -225,9 +225,9 @@ error_log("savePatientTemplate Form - " . json_encode($formData));
                     '$bsaFormula',
                     '$clinicalTrial'
                 )";
-error_log("Patient Model - savePatientTemplate() - POST process - $query");
+// error_log("Patient Model - savePatientTemplate() - POST process - $query");
             $retValue = $this->query($query);
-error_log("Patient Model - savePatientTemplate() - POST process - return from Query - \n\n" . json_encode($retValue));
+// error_log("Patient Model - savePatientTemplate() - POST process - return from Query - \n\n" . json_encode($retValue));
 
             /**
              * OrdersNotify in app/workflow.php
@@ -440,7 +440,7 @@ $aDate = $date->format('m/d/Y H:i:s');
                     }
             }
         }
-        error_log("Vitals as array = " . json_encode($vitals));
+        // error_log("Vitals as array = " . json_encode($vitals));
         return $vitals;
     }
 
@@ -522,12 +522,12 @@ $aDate = $date->format('m/d/Y H:i:s');
         $id = $patientId[0]['Patient_ID'];
         $DFN = $patientId[0]['DFN'];
 
-error_log("getMeasurements_v1 - (get Vitals) From VistA - DFN - $DFN; ID - $id");
+// error_log("getMeasurements_v1 - (get Vitals) From VistA - DFN - $DFN; ID - $id");
 
 
         $VistAVitals = $this->getVitalsFromVistA_AsArray($DFN);
-error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVitals));
-error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL");
+// error_log("getMeasurements_v1 - (get Vitals) From VistA" . json_encode($VistAVitals));
+// error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL");
         reset($VistAVitals);
         $firstKey = key($VistAVitals);
         $age = $VistAVitals[$firstKey]["Age"];
@@ -566,18 +566,18 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
         } else {
             $query = $baseQuery . " AND CONVERT(VARCHAR(10), Date_Taken, 105) = '$dateTaken' ORDER BY Date_Taken DESC";
         }
-        error_log("getMeasurements_v1 - $query");
+        // error_log("getMeasurements_v1 - $query");
 
 
         $retVal = $this->query($query);
-        error_log("getMeasurements_v1 - Vitals from SQL - " . json_encode($retVal));
+        // error_log("getMeasurements_v1 - Vitals from SQL - " . json_encode($retVal));
 
         $vitals2Return = array();
 
         // Sort the return set based on Date Taken in Descending Order so most recent date first
         if (null != $retVal && !array_key_exists('error', $retVal)) {
             /// Add SQL Data to log...
-            error_log("Vitals from SQL");
+            // error_log("Vitals from SQL");
             $c = 0;
             foreach($retVal as &$aVital) {
                 $c++;
@@ -595,11 +595,11 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
                     $vitals2Return[$aDate]["Src"] = "SQL";
                 }
                 else {
-                    error_log("Date Matching Existing Data - ");
-                    error_log("Old - " . json_encode($vitals2Return[$aDate]));
-                    error_log("New - " . json_encode($aVital));
+                    // error_log("Date Matching Existing Data - ");
+                    // error_log("Old - " . json_encode($vitals2Return[$aDate]));
+                    // error_log("New - " . json_encode($aVital));
                 }
-                error_log( "SQL Entry = " . json_encode($vitals2Return[$aDate]));
+                // error_log( "SQL Entry = " . json_encode($vitals2Return[$aDate]));
             }
             $c = 0;
 
@@ -622,17 +622,17 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
                     $vitals2Return[$zDate]["Age"] = $age;
                     $vitals2Return[$zDate]["Gender"] = $gender;
                     $vitals2Return[$zDate]["Src"] = "VistA";
-                    error_log( "VistA Entry = " . json_encode($vitals2Return[$zDate]));
+                    // error_log( "VistA Entry = " . json_encode($vitals2Return[$zDate]));
                 }
                 else {
-                    error_log( "VistA Entry = No need to add Vista data to SQL Record - " . json_encode($aVital));
+                    // error_log( "VistA Entry = No need to add Vista data to SQL Record - " . json_encode($aVital));
                 }
             }
         }
         else if (null == $retVal) {
             foreach($VistAVitals as $aDate => &$aVital) {
                 $zDate = strtotime($aDate);
-                error_log("Vitals from VistA, Adding to NULL Array - " . json_encode($aVital));
+                // error_log("Vitals from VistA, Adding to NULL Array - " . json_encode($aVital));
                 $aVital["DateTaken"] = $aDate;
                 $aVital["Src"] = "VistA";
                 $vitals2Return[$zDate] = $aVital;
@@ -641,7 +641,7 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
 
         $retVal1 = array();
         foreach($vitals2Return as $aDate => &$aVital) {
-            error_log("Vitals Being Returned, Key = $aDate; " . $aVital["DateTaken"] . "; " . $aVital["Src"] . " Data = " . json_encode($aVital));
+            // error_log("Vitals Being Returned, Key = $aDate; " . $aVital["DateTaken"] . "; " . $aVital["Src"] . " Data = " . json_encode($aVital));
             $retVal1[] = $aVital;
         }
         $this->getMostRecentHeightWeight(&$retVal1);
@@ -652,7 +652,7 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
 
     function saveVitals ($form_data, $patientId) {
 
-        error_log("Patient.Model.saveVitals - " . json_encode($form_data));
+        // error_log("Patient.Model.saveVitals - " . json_encode($form_data));
         if (empty($patientId)) {
             
             if (isset($form_data->{'patientId'})) {
@@ -687,7 +687,7 @@ error_log("getMeasurements_v1 - Add Age and Gender from VistA to Vitals from SQL
 
                 $vts = json_decode($VistATime);
                 $vtsDateStr = $vts->{'date'};
-error_log("VistA Time = $VistATime" . $vts->{'date'} . " DateTaken from SQL - " . $dateTaken);
+// error_log("VistA Time = $VistATime" . $vts->{'date'} . " DateTaken from SQL - " . $dateTaken);
 
 
 	  $theCenturyMultiplier = substr($vtsDateStr, 0, 1);
@@ -708,7 +708,7 @@ error_log("VistA Time = $VistATime" . $vts->{'date'} . " DateTaken from SQL - " 
 	  $theMin = substr($vtsDateStr, 10, 2);
 	  $theDateTimeStr = "$theMonth/$theDay/$y $theHr:$theMin $AmPm";
 
-error_log("VistA Time = $VistATime, " . $vts->{'date'} . " - $theDateTimeStr");
+// error_log("VistA Time = $VistATime, " . $vts->{'date'} . " - $theDateTimeStr");
 
 $theDateTime = new DateTime($theDateTimeStr);
 
@@ -717,7 +717,7 @@ $observed = $theDateTime->format(DateTime::ISO8601);
 $dateTaken = date_format($theDateTime, 'Y-m-d H:i:s');
 
 
-error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed"); //  DateTaken from SQL - $dateTaken");
+// error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - Observed = $observed"); //  DateTaken from SQL - $dateTaken");
 
 
         if (isset($form_data->{'OEMRecordID'})) {
@@ -743,7 +743,7 @@ error_log("VistA Time =  $VistATime, " . $vts->{'date'} . " - $theDateTimeStr - 
             $VitalObj = array('type' => "BP", 'value' => $bp1, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-error_log("Posting Vital to VistA - patient/vital/add - $PatientData");
+// error_log("Posting Vital to VistA - patient/vital/add - $PatientData");
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
             $eRet1 = json_decode( $postRet, true );
             if (array_key_exists("error", $eRet1)) {
@@ -848,7 +848,7 @@ error_log("Posting Vital to VistA - patient/vital/add - $PatientData");
             $VitalObj = array('type' => "PO2", 'value' => $spo2, 'provider' => $_SESSION['UserDUZ']);
             $PatientData = array('patient' => $form_data->{'DFN'}, 'location' => $_SESSION[ 'sitelist' ], 'observed_date_time' => $observed, 'vital' => $VitalObj);
             $PatientData = json_encode($PatientData);
-error_log("Saving Pulse Oximetry - Data = $PatientData");
+// error_log("Saving Pulse Oximetry - Data = $PatientData");
             $postRet = $nodevista->post("patient/vital/add" , $PatientData);
             $eRet1 = json_decode( $postRet, true );
             if (array_key_exists("error", $eRet1)) {
@@ -867,7 +867,7 @@ error_log("Saving Pulse Oximetry - Data = $PatientData");
         }
 
 
-error_log("No VistA Errors...");
+// error_log("No VistA Errors...");
 
         $bsa = $form_data->{'BSA'};
         $bsaMethod = $form_data->{'BSA_Method'};
@@ -901,7 +901,7 @@ error_log("No VistA Errors...");
         
         $record = $this->query($query);
         if (null != $record && array_key_exists('error', $record)) {
-error_log("getting Performance Status Error - $query");
+// error_log("getting Performance Status Error - $query");
             return $record;
         } else if (count($record) > 0) {
             if (null === $PS_ID) {
@@ -918,13 +918,13 @@ error_log("getting Performance Status Error - $query");
             }
         }
 
-error_log("Performance Status Saved");
+// error_log("Performance Status Saved");
         
         if (null == $oemRecordId) {
             $ob1 = explode("T", $observed);
             $time = explode("-", $ob1[1]);
             $ob2 = $ob1[0] . " ". $time[0];
-error_log("SQL Time ($ob2) from VistA time ($observed)");
+// error_log("SQL Time ($ob2) from VistA time ($observed)");
 $observed = $ob2;
             if (! empty($templateId)) {
                 $query = "INSERT INTO Patient_History(Patient_ID,Height,Weight,Blood_Pressure,Systolic,Diastolic,BSA,Temperature,TemperatureLocation,Date_Taken, " .
@@ -970,7 +970,7 @@ $observed = $ob2;
 
         (empty($performanceId)) ? $query .= "null)" : $query .= "'$performanceId')";
 
-error_log("Patient.Model.saveVitals - $query");
+// error_log("Patient.Model.saveVitals - $query");
 
         $result = $this->query($query);
         
@@ -993,7 +993,7 @@ error_log("Patient.Model.saveVitals - $query");
     function updateOEMRecord ($form_data)
     {
 
-error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
+// error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
 
 
         $templateid = $form_data->{'TemplateID'};
@@ -1125,7 +1125,7 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
             Reason = '$Reason'
             where Patient_Regimen_ID = '$therapyid'";
 
-error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
+// error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
 
 
             $retVal = $this->query($query);
@@ -1135,7 +1135,7 @@ error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
         } 
         else if ('Pre' === $therapytype || 'Post' === $therapytype) {
             $query = "select * from MH_Infusion where MH_ID = '$therapyid'";
-error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
+// error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
 
             $infusionRecord = $this->query($query);
             if (null != $infusionRecord && array_key_exists('error', $infusionRecord)) {
@@ -1149,7 +1149,7 @@ error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
                 Status = '$Status',
                 Reason = '$Reason'
                 where MH_ID = '$therapyid'";
-error_log("Patient.Model.updateOEMRecord - Update - $query" );
+// error_log("Patient.Model.updateOEMRecord - Update - $query" );
 
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -1216,7 +1216,7 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
 
     function addNewPatient ($patient, $SSN_ID, $GUID)
     {
-        error_log("addNewPatient() - Patient - $SSN_ID; $GUID; " . json_encode($patient));
+        // error_log("addNewPatient() - Patient - $SSN_ID; $GUID; " . json_encode($patient));
 //        error_log("addNewPatient() - localPID = " . $patient->localPid);
 //        error_log("addNewPatient() - localPID = " . $patient['localPid']);
 
@@ -1227,7 +1227,7 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
         $this->query($query2);
 
         $query  = "INSERT INTO Patient (Patient_ID,Date_Created,DFN) values('$GUID','$sqlcurDate','$dfn')";
-error_log("addNewPatient - $query");
+// error_log("addNewPatient - $query");
         return $this->query($query);
     }
 
@@ -1340,8 +1340,8 @@ error_log("addNewPatient - $query");
         $EndDateSearch = date("m/d/Y", $EndDate);
         
         $query = "Select Regimen_ID as RegimenID from Master_Template where Template_ID = '$id'";
-error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - PatientID = $patientId; TemplateID = $id");
-error_log($query);
+// error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - PatientID = $patientId; TemplateID = $id");
+// error_log($query);
 
 
         $regimenId = $this->query($query);
@@ -1369,7 +1369,7 @@ error_log($query);
         ";
         
 
-error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
+// error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
         return $this->query($query);
     }
 
@@ -1650,7 +1650,7 @@ error_log("Patient.Model.getTopLevelOEMRecordsNextThreeDays - $query");
     	        Order_Status = '$orderStatus' 
     	    WHERE Order_ID = '$orderId'
     	";
-error_log("Patient.Model.updateOrderStatus - $query");
+// error_log("Patient.Model.updateOrderStatus - $query");
         return $this->query($query);
     }
 
@@ -1668,7 +1668,7 @@ error_log("Patient.Model.updateOrderStatus - $query");
 	            AND Drug_Name = '$drugName'
                 AND Order_ID = '$Order_ID'
 	    ";
-error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
+// error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
         return $this->query($query);
     }
 
@@ -1963,15 +1963,15 @@ error_log("Patient.Model.updateOrderStatusByPatientIdAndDrugName - $query");
 
         $query = "SELECT AssignedByUser, ApprovedByUser FROM Patient_Assigned_Templates where Patient_ID = '$Patient_ID' and Date_Started <= '$Today' and Date_Ended_Actual is NULL";
         $retVal = $this->query($query);
-error_log("Patient Model - getApproverOfRegimen - $query");
-error_log("Patient Model - getApproverOfRegimen - " . json_encode($retVal));
+// error_log("Patient Model - getApproverOfRegimen - $query");
+// error_log("Patient Model - getApproverOfRegimen - " . json_encode($retVal));
 
         if (null === $retVal) {
-error_log("Patient Model - getApproverOfRegimen - ERROR - No Return Results");
+// error_log("Patient Model - getApproverOfRegimen - ERROR - No Return Results");
             return "";
         }
         if (array_key_exists('error', $retVal)) {
-error_log("Patient Model - getApproverOfRegimen - ERROR - " . json_encode($retVal));
+// error_log("Patient Model - getApproverOfRegimen - ERROR - " . json_encode($retVal));
             return "";
         }
         $ApprovedByUser = '';

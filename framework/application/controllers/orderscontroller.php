@@ -102,6 +102,108 @@ error_log("Patient Vitals - " . json_encode($ret));
             return $totalPctReduction;
         }
         
+
+
+
+    function Prep4BSA_DosingCalc($PIDF) {
+        error_log("Orders Controller - Prep4BSA_DosingCalc - $PIDF");
+        $controller          = 'PatientController';
+        $patientController   = new $controller( 'Patient', 'patient', null );
+        $BSA                 = $patientController->_getBSA( $PIDF );
+        $w                   = $BSA[ 0 ][ "WeightFormula" ];
+        $b                   = $BSA[ 0 ][ "BSAFormula" ];
+        $mrHW                = $this->getMostRecentVitals( $PIDF );
+        $ampu                = $this->getAmputationPct( $PIDF );
+
+        $controller          = 'BSACalcController';
+        $BSACalcs            = new $controller( 'BSACalc', 'bsacalc', null );
+        $WeightInKG          = $BSACalcs->Pounds2Kilos( $mrHW[ "Weight" ] );
+        $HeightInM           = $BSACalcs->In2Meters( $mrHW[ "Height" ] );
+
+            $BSAWeight = $WeightInKG;
+            if ( "Adjusted Weight" == $w ) {
+                $BSAWeight = $BSACalcs->AdjustedWeight( $mrHW[ "Weight" ], $mrHW[ "Height" ], $mrHW[ "Gender" ] ); // Height in Inches, weight in pounds
+            } else if ( "Ideal Weight" == $w ) {
+                $BSAWeight = $BSACalcs->IdealWeight( $mrHW[ "Weight" ], $mrHW[ "Height" ], $mrHW[ "Gender" ] ); // Height in Inches, weight in pounds
+            } else if ( "Lean Weight" == $w ) {
+                $BSAWeight = $BSACalcs->LeanWeight( $mrHW[ "Weight" ], $mrHW[ "Height" ], $mrHW[ "Gender" ] ); // Height in Inches, weight in pounds
+            }
+
+            $BSA = 0;
+            if ( "Mosteller" == $b ) {
+                $BSA = $BSACalcs->BSA_Mosteller( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            } else if ( "DuBois" == $b ) {
+                $BSA = $BSACalcs->BSA_DuBois( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            } else if ( "Haycock" == $b ) {
+                $BSA = $BSACalcs->BSA_Haycock( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            } else if ( "Gehan and George" == $b ) {
+                $BSA = $BSACalcs->BSA_Gehan_George( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            } else if ( "Boyd" == $b ) {
+                $BSA = $BSACalcs->BSA_Boyd( $HeightInM, $BSAWeight ); // Height in Meters, Weight in Kg
+            }
+            $BSA_Prep = array();
+            $BSA_Prep["WeightFormula"] = $w;
+            $BSA_Prep["BSAFormula"] = $b;
+            $BSA_Prep["Vitals"] = $mrHW;
+            $BSA_Prep["Amputations"] = $ampu;
+            $BSA_Prep["WeightInKG"] = $WeightInKG;
+            $BSA_Prep["HeightInM"] = $HeightInM;
+            $BSA_Prep["BSAWeight"] = $BSAWeight;
+            $BSA_Prep["BSA"] = $BSA;
+        return $BSA_Prep;
+    }
+
+
+function BSA_DosingCalc($BSA_Prep, $DoseF, $UnitF) {
+        $FinalCalculatedDose         = array();
+        $FinalCalculatedDose['dose'] = "";
+        $FinalCalculatedDose['unit'] = "";
+
+        if ( "auc" == $UnitF ) {
+            $Patient                      = array();
+            $Patient[ "Age" ]             = $BSA_Prep["Vitals"][ "Age" ];
+            $Patient[ "Gender" ]          = $BSA_Prep["Vitals"][ "Gender" ];
+            $Patient[ "Weight" ]          = $BSA_Prep["Vitals"][ "Weight" ];
+            $Patient[ "SerumCreatinine" ] = 1;
+            $CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
+
+            $FinalCalculatedDose['dose']          = $CalculatedDose;
+            $FinalCalculatedDose['unit']          = "mg";
+        } else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
+            $CalculatedDose      = $DoseF * $BSA_Prep["WeightInKG"];
+            $FinalCalculatedDose['dose'] = $CalculatedDose;
+            if ( "mg/kg" == $UnitF ) {
+                $FinalCalculatedDose['unit'] = "mg";
+            } else {
+                $FinalCalculatedDose['unit'] = "units";
+            }
+        } else {
+            $CalculatedDose      = $DoseF * $BSA_Prep["BSA"];
+            $FinalCalculatedDose['dose'] = $CalculatedDose;
+            if ( "mg/m2" == $UnitF ) {
+                $FinalCalculatedDose['unit'] = "mg";
+            } else {
+                $FinalCalculatedDose['unit'] = "units";
+            }
+        }
+        return $FinalCalculatedDose;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         function FinalizeMedicationDosing( $form_data ) {
             $UntouchedFormData = $form_data;
 
@@ -160,17 +262,17 @@ error_log( "Calculated BSA Weight; Actual (lbs/kg) = " . $mrHW[ "Weight" ] . "/$
                 }
                 
                 if ( "auc" == $UnitF ) {
+                    $Patient                      = array();
                     $Patient[ "Age" ]             = $mrHW[ "Age" ];
                     $Patient[ "Gender" ]          = $mrHW[ "Gender" ];
                     $Patient[ "Weight" ]          = $mrHW[ "Weight" ];
                     $Patient[ "SerumCreatinine" ] = 1;
                     $CalculatedDose               = $BSACalcs->CalcAUCDose( $Patient, $DoseF );
-error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
+
                     $form_data->{'dose'}          = $CalculatedDose;
                     $form_data->{'unit'}          = "mg";
                 } else if ( "mg/kg" == $UnitF || "units / kg" == $UnitF ) {
                     $CalculatedDose      = $DoseF * $WeightInKG;
-error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/kg" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
@@ -179,7 +281,6 @@ error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     }
                 } else {
                     $CalculatedDose      = $DoseF * $BSA;
-error_log( "CalculatedDose for $UnitF = $CalculatedDose" );
                     $form_data->{'dose'} = $CalculatedDose;
                     if ( "mg/m2" == $UnitF ) {
                         $form_data->{'unit'} = "mg";
