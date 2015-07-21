@@ -1446,7 +1446,7 @@ error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
             $ErrMsg = "Updating Medication Documentation Record";
         }
         else if ("DELETE" == $_SERVER['REQUEST_METHOD']) {
-            $query = "DELETE from Med_Docs where Med_ID = '$ID'";
+            $query = "DELETE from Med_Docs where ID = '$ID'";
             $jsonRecord['msg'] = "Medication Documentation Records Deleted";
             $ErrMsg = "Deleting Medication Documentation Records";
         }
@@ -1454,11 +1454,16 @@ error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
             $jsonRecord['success'] = false;
             $jsonRecord['msg'] = "Incorrect method called for Medication Documentation Service (expected a GET got a " . $_SERVER['REQUEST_METHOD'];
         }
+
+
         if ("" !== $query) {
+error_log("Med_Docs - Query - $query");
             $retVal = $this->LookUp->query($query);
+error_log("Med_Docs - RetVal - " . json_encode($retVal));
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 $jsonRecord['success'] = false;
                 $jsonRecord['msg'] = $this->get('frameworkErr');
+error_log("Med_Docs - Query Failed - " . $jsonRecord['msg']);
             }
             else {
                 $jsonRecord['success'] = 'true';
@@ -1467,6 +1472,7 @@ error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
                     $jsonRecord['total'] = count($retVal);
                     $jsonRecord['records'] = $retVal;
                 }
+error_log("Med_Docs - Query PASSED - " . json_encode($jsonRecord));
             }
         }
         $this->set('jsonRecord', $jsonRecord);
@@ -1703,7 +1709,8 @@ error_log("Lookup.Controller._CommonServiceCallMethod - $Label; DataType - $Data
 
 
         if ("" !== $query) {
-            $retVal = $this->LookUp->query($query);
+error_log("Lookup.Controller._CommonServiceCallMethod - Query - " . json_encode($query));
+			$retVal = $this->LookUp->query($query);
 error_log("Lookup.Controller._CommonServiceCallMethod - Returns - " . json_encode($retVal));
             if ($this->checkForErrors($ErrMsg, $retVal)) {
                 $jsonRecord['success'] = false;
