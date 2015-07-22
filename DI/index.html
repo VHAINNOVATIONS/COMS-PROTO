@@ -724,6 +724,10 @@ function LoadMedInfo(TemplateID) {
 					dec = Ext.util.Format.htmlDecode(raw);
 				}
 				MedRecords[i].Documentation = dec;
+
+				raw = MedRecords[i].Medication;
+				dec = raw.split(":")[0].trim();
+				MedRecords[i].Medication = dec;
 			}
 			if (MedRecordsDsp) {
 				MedRecordsDsp.update(MedRecords);

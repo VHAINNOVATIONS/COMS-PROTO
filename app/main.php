@@ -22,9 +22,13 @@
     $ProjType = "Release 1.14h";     // July 16, 2015"; Added Order Signing Code to Orders controller. Fixed defect that prevented COMS from running in MS-IE (ran JSHint through JS files and identified several syntax defects which only manifested in MS-IE
 	$ProjType = "Release 1.14i";     // July 17, 2015"; Fixed defect for Print Orders... 1. Calculated dosages are not displayed 2. Recommendations for Neutropenia Risk was hard coded text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen 3. Recommendations for Emesis Risk was a hard coded blank text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen
 	$ProjType = "Release 1.15";     // July 17, 2015"; Minor enhancement to Print Orders, Release to Sandbox
+	$ProjType = "Release 1.15a";     // July 21, 2015"; Started adding Delete functionality to the tabs in the Site Configuration Panel which did not have them.
+
 	*/
 
-	$ProjType = "Release 1.15a";     // July 21, 2015"; Started adding Delete functionality to the tabs in the Site Configuration Panel which did not have them.
+	$ProjType = "Release 1.15b";     // July 22, 2015"; Removed IEN display from Discharge Instructions Printout. Fixed Editing Medication in OEM Panel not displaying Fluid Types when panel is opened (this was a different code block than that which was fixed in 1.13)
+
+
 
 /* <!doctype html> */
 /* MWB - 3/12/2015: Need the old DocType because of the X-UA-COMPATIBLE meta tag to force use of IE-9 mode rather than IE-7 for VA browsers */

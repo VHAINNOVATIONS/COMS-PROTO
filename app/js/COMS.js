@@ -36609,6 +36609,8 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			ref: "SelectedMed",
 			selector : "EditOEMRecord SelectDrug"
 		},
+
+
 		{
 			ref: "FluidVol",
 			selector : "EditOEMRecord FluidVol[name=\"FluidVol\"]"
@@ -36938,15 +36940,16 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 	OEMEditRecord : function(MedRecord, RecordType, arg2) {
 		this.application.Patient.MedRecord = MedRecord;
-
 		var thisCtl = this.getController("NewPlan.OEM_Edit");
 		var theForm = thisCtl.getTheForm();
 		var ShowOptional = false;
 		var ShowFluid = false, ShowFluid2 = false;
 
-		if ("IV" == MedRecord.InfusionMethod.substr(0, 2)) {
-			ShowFluid = true;
-			this.toggleFluidInfo(true);
+		if (Ext.routeRequiresFluid(MedRecord.InfusionMethod)) {
+			this.getFluidInfo().show();
+		}
+		else {
+			this.getFluidInfo().hide();
 		}
 
 		MedRecord.State = "";
