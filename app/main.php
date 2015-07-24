@@ -23,10 +23,12 @@
 	$ProjType = "Release 1.14i";     // July 17, 2015"; Fixed defect for Print Orders... 1. Calculated dosages are not displayed 2. Recommendations for Neutropenia Risk was hard coded text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen 3. Recommendations for Emesis Risk was a hard coded blank text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen
 	$ProjType = "Release 1.15";     // July 17, 2015"; Minor enhancement to Print Orders, Release to Sandbox
 	$ProjType = "Release 1.15a";     // July 21, 2015"; Started adding Delete functionality to the tabs in the Site Configuration Panel which did not have them.
-
+	$ProjType = "Release 1.15b";     // July 22, 2015"; Removed IEN display from Discharge Instructions Printout. Fixed Editing Medication in OEM Panel not displaying Fluid Types when panel is opened (this was a different code block than that which was fixed in 1.13)
 	*/
 
-	$ProjType = "Release 1.15b";     // July 22, 2015"; Removed IEN display from Discharge Instructions Printout. Fixed Editing Medication in OEM Panel not displaying Fluid Types when panel is opened (this was a different code block than that which was fixed in 1.13)
+	$ProjType = "Release 1.15c";     // July 24, 2015"; Started work on the defect in the Emetogenic Level Panel.
+	// Added new functionality, the ability to specify a Hydration Administration in Pre/Post and Therapy at request of Dr Kelley.
+	// This allows for a template sequence to be generated with OUT a Drug Amount or Units specified but MUST be specified as a Hydration Drug.
 
 
 

@@ -1522,13 +1522,14 @@ replace(replace(Name, '<', '('), '>', ')') as Name
 replace(replace(Name, '<', '('), '>', ')') as Name
 , Description, Lookup_Type_ID as IEN
                      FROM LookUp 
-                     WHERE Lookup_Type = 26";
+                     WHERE Lookup_Type = 26
+                     order by IEN";
         } else {
             return $this->getLookupInfoById($description);
         }
-// error_log("LookUp Model - selectByNameAndDesc() - $name; $description; $query");
+error_log("LookUp Model - selectByNameAndDesc( - $name; $description; $query");
 $DrugList = $this->query($query);
-// error_log("LookUp Model - selectByNameAndDesc() - Return Result = " . json_encode($DrugList));
+error_log("LookUp Model - selectByNameAndDesc() - Return Result = " . json_encode($DrugList));
         return $this->query($query);
     }
 

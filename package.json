@@ -19,5 +19,15 @@
     "grunt-junit-report": "0.0.4",
     "grunt-phplint": "0.0.5",
     "grunt-xsltproc": "^0.5.1"
+  },
+
+    "scripts": {
+    "preenv"  : "config set npm_config_editor=editplus.exe && config set npm_config_loglevel=silly && set > FooBar.txt",
+    "prelint" : "set npm_config_editor=editplus.exe && set npm_config_loglevel=silly && set > FooBar.txt",
+    "lint"    : "jshint --verbose --config jshintConfig.json ./app/js/COMS.js",
+    "test"    : "mocha test/",
+    "env"     : "set",
+    "t1"      : "dir ./app/js/*.js",
+    "t2"      : "dir ./app/js/*/*.js"
   }
 }

@@ -2623,31 +2623,41 @@ error_log("Lookup Controller - getDrugInfoFromVistA - ID= $drugID; Info = " . js
             return;
         }
         if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
-            $MedInfoObj = $this->getDrugInfoFromVistA($drugID);
-            $Routes     = $MedInfoObj->{"Route"};
-            $Dosages    = $MedInfoObj->{"Dosage"};
-            $medIEN     = $MedInfoObj->{"Medication"}->{"ien"};
-            $medName    = $MedInfoObj->{"Medication"}->{"name"};
-            $DoseList   = array();
-            foreach($Dosages as $d) {
-                $d1 = explode("^^", $d);
-                $d2 = explode("^", $d1[1]);
-                $d3 = explode("&& ", $d2[0]);
-                $Display = $d2[1];
-                $Send = $d2[0];
-                $dList = array();
-                $dList["key"] = $d;
-                $dList["name"] = $Display;
-                $dList["value"] = $Send;
-                $DoseList[] = $dList;
-            }
-            $MedInfo = array();
-            $MedInfo["Name"]       = $medName;
-            $MedInfo["IEN"]        = $medIEN;
-            $MedInfo["Routes"]     = $Routes;
-            $MedInfo["Dosages"]    = $DoseList;
-            $jsonRecord["MedInfo"] = $MedInfo;
-
+			if ("0" === $drugID) {
+				$MedInfo = array();
+				$Route4PCH = array("ien" => "14", "name" => "INTRAVENOUS", "code" => "IV");
+				$MedInfo["Name"]       = " HYDRATION";
+				$MedInfo["IEN"]        = "0000";
+				$MedInfo["Routes"]     = array($Route4PCH);
+				$MedInfo["Dosages"]    = array();
+				$jsonRecord["MedInfo"] = $MedInfo;
+			}
+			else {
+				$MedInfoObj = $this->getDrugInfoFromVistA($drugID);
+				$Routes     = $MedInfoObj->{"Route"};
+				$Dosages    = $MedInfoObj->{"Dosage"};
+				$medIEN     = $MedInfoObj->{"Medication"}->{"ien"};
+				$medName    = $MedInfoObj->{"Medication"}->{"name"};
+				$DoseList   = array();
+				foreach($Dosages as $d) {
+					$d1 = explode("^^", $d);
+					$d2 = explode("^", $d1[1]);
+					$d3 = explode("&& ", $d2[0]);
+					$Display = $d2[1];
+					$Send = $d2[0];
+					$dList = array();
+					$dList["key"] = $d;
+					$dList["name"] = $Display;
+					$dList["value"] = $Send;
+					$DoseList[] = $dList;
+				}
+				$MedInfo = array();
+				$MedInfo["Name"]       = $medName;
+				$MedInfo["IEN"]        = $medIEN;
+				$MedInfo["Routes"]     = $Routes;
+				$MedInfo["Dosages"]    = $DoseList;
+				$jsonRecord["MedInfo"] = $MedInfo;
+			}
             $this->set( "jsonRecord", $jsonRecord );
         }
         else {
@@ -2708,9 +2718,29 @@ error_log("Success - Old Style Meds Check");
         return true;
     }
 
+	function AddPreChemoHydrationToInPatientMedList($NewMedsInserted) {
+        $IEN = "0000";
+        $name = " HYDRATION";
+        $PatientTypePatient = "InPatient";
+
+        $query = "select Lookup_Type_ID from Lookup where Lookup_Type_ID = '$IEN'";
+error_log("AddPreChemoHydrationToInPatientMedList - $query");
+
+        $retVal = $this->LookUp->query($query);
+error_log("AddPreChemoHydrationToInPatientMedList - " . json_encode($retVal));
+        if (count($retVal) == 0) {
+            $query = "Insert into LookUp (Lookup_Type, Name, Lookup_Type_ID, Description) values ('2','$name','$IEN', '$PatientTypePatient')";
+error_log("AddPreChemoHydrationToInPatientMedList - (New) $query");
+            $retVal = $this->LookUp->query($query);
+            if(!$this->checkForErrors('Insert Medication Failed BP1. ', $retVal)){
+				$NewMedsInserted++;
+			}
+        }
+        return $NewMedsInserted;
+	}
+
     function SyncMedsListInsertPatient($PatientMeds, $PatientType, &$jsonRecord) {
         $PatientTypePatient = $PatientType . "Patient";
-        error_log("$PatientTypePatient Entry Point");
         $MedsList    = json_decode( $PatientMeds );
         $MedsListLen = count($MedsList);
         $NewMedsInserted = 0;
@@ -2736,7 +2766,12 @@ error_log("Success - Old Style Meds Check");
             }
             $CheckCount++;
         }
-        error_log("$PatientTypePatient Check Count = $CheckCount; $NewMedsInserted");
+		if("In" === $PatientType) {
+			error_log("Adding PreChemoHydration to Drug Lineup");
+			$NewMedsInserted = $this->AddPreChemoHydrationToInPatientMedList($NewMedsInserted);
+		}
+		error_log("$PatientTypePatient Check Count = $CheckCount; $NewMedsInserted");
+
         $jsonRecord["NumNew" . $PatientTypePatient . "MedsInserted"] = $NewMedsInserted;
         return true;
     }
