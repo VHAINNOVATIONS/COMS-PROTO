@@ -6,30 +6,31 @@
     $ProjType = "Release 1.3 April 10, 2015";
     $ProjType = "Release 1.4 May 8, 2015";
     $ProjType = "Release 1.9 May 28, 2015";
-    $ProjType = "Release 1.11";     // June 12, 2015";
-    $ProjType = "Release 1.13a";     // June 19, 2015";
-    $ProjType = "Release 1.15";     // June 19, 2015";
-    $ProjType = "Release 1.13b";     // June 23, 2015";
-    $ProjType = "Release 1.16";     // June 23, 2015"
-    $ProjType = "Release 1.14";     // June 25, 2015";
-    $ProjType = "Release 1.14a";     // June 26, 2015"; Fix defect where Dosage Amounts in Orders Tab show up as NaN when the dose is blank in Order_Status table
-    $ProjType = "Release 1.14b";     // June 30, 2015"; Properly save (via PAT_ID not Patient_ID) and retrieve GenInfo tab on loading/switching a patient
-    $ProjType = "Release 1.14c";     // July 06, 2015"; Save data from TD panels and clear panels when switching patients.
-    $ProjType = "Release 1.14d";     // July 09, 2015"; Making Addendums to Treatment Panel
-    $ProjType = "Release 1.14e";     // July 10, 2015"; Adding "*" to Ammended records
-    $ProjType = "Release 1.14f";     // July 10, 2015"; Fixed "Infusion Reactions panel, selection of “No Adverse Reactions” results in an erroneous error message" defect
-    $ProjType = "Release 1.14g";     // July 13, 2015"; Fix defect where duplicate Vitals are pulled from VistA. Merge vitals from VistA and SQL based on Date only not Date and Time since VistA Date/Time stamp doesn't match actual date/time the vital was saved.
-    $ProjType = "Release 1.14h";     // July 16, 2015"; Added Order Signing Code to Orders controller. Fixed defect that prevented COMS from running in MS-IE (ran JSHint through JS files and identified several syntax defects which only manifested in MS-IE
-	$ProjType = "Release 1.14i";     // July 17, 2015"; Fixed defect for Print Orders... 1. Calculated dosages are not displayed 2. Recommendations for Neutropenia Risk was hard coded text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen 3. Recommendations for Emesis Risk was a hard coded blank text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen
-	$ProjType = "Release 1.15";     // July 17, 2015"; Minor enhancement to Print Orders, Release to Sandbox
-	$ProjType = "Release 1.15a";     // July 21, 2015"; Started adding Delete functionality to the tabs in the Site Configuration Panel which did not have them.
-	$ProjType = "Release 1.15b";     // July 22, 2015"; Removed IEN display from Discharge Instructions Printout. Fixed Editing Medication in OEM Panel not displaying Fluid Types when panel is opened (this was a different code block than that which was fixed in 1.13)
-	*/
-
-	$ProjType = "Release 1.15c";     // July 24, 2015"; Started work on the defect in the Emetogenic Level Panel.
+    $ProjType = "Release 1.11";     // June 12, 2015;
+    $ProjType = "Release 1.13a";    // June 19, 2015;
+    $ProjType = "Release 1.15";     // June 19, 2015;
+    $ProjType = "Release 1.13b";    // June 23, 2015;
+    $ProjType = "Release 1.16";     // June 23, 2015
+    $ProjType = "Release 1.14";     // June 25, 2015;
+    $ProjType = "Release 1.14a";    // June 26, 2015; Fix defect where Dosage Amounts in Orders Tab show up as NaN when the dose is blank in Order_Status table
+    $ProjType = "Release 1.14b";    // June 30, 2015; Properly save (via PAT_ID not Patient_ID) and retrieve GenInfo tab on loading/switching a patient
+    $ProjType = "Release 1.14c";    // July 06, 2015; Save data from TD panels and clear panels when switching patients.
+    $ProjType = "Release 1.14d";    // July 09, 2015; Making Addendums to Treatment Panel
+    $ProjType = "Release 1.14e";    // July 10, 2015; Adding "*" to Ammended records
+    $ProjType = "Release 1.14f";    // July 10, 2015; Fixed "Infusion Reactions panel, selection of “No Adverse Reactions” results in an erroneous error message" defect
+    $ProjType = "Release 1.14g";    // July 13, 2015; Fix defect where duplicate Vitals are pulled from VistA. Merge vitals from VistA and SQL based on Date only not Date and Time since VistA Date/Time stamp doesn't match actual date/time the vital was saved.
+    $ProjType = "Release 1.14h";    // July 16, 2015; Added Order Signing Code to Orders controller. Fixed defect that prevented COMS from running in MS-IE (ran JSHint through JS files and identified several syntax defects which only manifested in MS-IE
+	$ProjType = "Release 1.14i";    // July 17, 2015; Fixed defect for Print Orders... 1. Calculated dosages are not displayed 2. Recommendations for Neutropenia Risk was hard coded text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen 3. Recommendations for Emesis Risk was a hard coded blank text block, now pulls from Site Config info the same as the OEM Tab and is based on the value entered for the Regimen
+	$ProjType = "Release 1.15";     // July 17, 2015; Minor enhancement to Print Orders, Release to Sandbox
+	$ProjType = "Release 1.15a";    // July 21, 2015; Started adding Delete functionality to the tabs in the Site Configuration Panel which did not have them.
+	$ProjType = "Release 1.15b";    // July 22, 2015; Removed IEN display from Discharge Instructions Printout. Fixed Editing Medication in OEM Panel not displaying Fluid Types when panel is opened (this was a different code block than that which was fixed in 1.13)
+	$ProjType = "Release 1.15c";    // July 24, 2015; Started work on the defect in the Emetogenic Level Panel.
 	// Added new functionality, the ability to specify a Hydration Administration in Pre/Post and Therapy at request of Dr Kelley.
 	// This allows for a template sequence to be generated with OUT a Drug Amount or Units specified but MUST be specified as a Hydration Drug.
+	*/
 
+
+	$ProjType = "Release 1.15d";	// July 28, 2015; Fixed Defects in Site Configuration Emetic Medications panel and added Delete functionality
 
 
 /* <!doctype html> */

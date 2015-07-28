@@ -3111,7 +3111,7 @@ Ext.define("COMS.model.Drugs", {
 
 Ext.define('COMS.model.EmeticMeds', {
 	extend: 'Ext.data.Model',
-	fields: [ "id", "EmoLevel", "EmoLevelName", "MedID", "MedName", "MedType" ],
+	fields: [ "id", "EmoLevel", "EmoLevelName", "IEN", "MedID", "MedName", "MedType" ],
 	proxy: {
 		type: 'rest',
 		url : Ext.URLs.EmeticMeds,
@@ -9156,24 +9156,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				}]
 			}]
 		},
-/*******
-		{
-			"xtype" : "combo",
-			"fieldLabel" : "Select Drug <em>*</em>",
-			"labelWidth" : 150,
-			"width" : 425,
-			"name" : "Drug",
-			"store" : "DrugStore",
-			"displayField" : "name",
-			"valueField" : "IEN",
-			"queryMode" : "local",
-			"typeAhead" : true,
-			"allowBlank" : false,
-			"editable" : true
-		},
-**********/
-
-
 		{
 			"xtype" : "combo",
 			"fieldLabel" : "Select Drug <em>*</em>",
@@ -9206,8 +9188,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				}
 			})
 		},
-
-/*	{ xtype : "selOutPatientMed", "fieldLabel" : "Select Drug <em>*</em>",  "labelWidth" : 150, "width" : 425 },{ xtype : "selInPatientMed", "fieldLabel" : "Select Drug <em>*</em>",  "labelWidth" : 150, "width" : 425 }, */
 		{
 			"xtype": "ManagementBtns"
 		},
@@ -9229,7 +9209,8 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				{
 					"text": "Emetic Level",
 					"dataIndex": "EmoLevelName",
-					"flex": 1
+					"flex": 1,
+					"hidden": true
 				},
 				{
 					"text": "Medication",
@@ -17311,16 +17292,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				deselect: this.deSelectMedReminderGridRow
 			},
 
-
-
-
-
-
-
-
-
-
-
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
 				change: this.TemplateTypeSelected
@@ -24656,27 +24627,31 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 	},
 
 	initDrugStore : function() {
+		var pType = this.getPatientType().getValue().PatientType;
 		var theDrugCombo = this.getSelDrug();
 		theDrugCombo.lastQuery = null; 
 		var theDrugStore = theDrugCombo.getStore();
-		var pType = this.getPatientType().getValue().PatientType;
-		theDrugStore.proxy.url = Ext.URLs.Drugs + "/" + pType;
+		theDrugStore.filters.clear();
+		theDrugStore.proxy.api.read = Ext.URLs.Drugs + "/" + pType;
+
+
+		theDrugStore.load();
 	},
 
-	RefreshPanel : function() {
-		this.application.loadMask("Please wait; Loading Emetic Medications");
+	RefreshPanel : function(P) {
+		// this.application.loadMask("Please wait; Loading Emetic Medications");
 		this.initDrugStore();
 
-/*
+
 		var theGrid = this.getEmeticMedsGrid();
 		var theStore = theGrid.getStore();
 		theStore.load();
-*/
+
 		var delBtn = this.getDeleteBtn();
 		delBtn.setDisabled(true);
 		delBtn.show();
 
-		this.application.unMask();
+		// this.application.unMask();
 		return true;
 	},
 
@@ -24694,28 +24669,23 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 
 	selectGridRow : function(theRowModel, record, index, eOpts) {
 		var recID = record.get("id");
-		var EmoLevel = record.get("EmoLevel");
+		var EmoLevelID = record.get("EmoLevel");
+		var EmoLevel = record.get("EmoLevelName");
 		var PatientType = record.get("MedType");
 
 		var thePTypeField = this.getPatientType();
 
 		var MedID = record.get("MedID");
 		var MedName = record.get("MedName");
-		var Med = Ext.create(Ext.COMSModels.Drugs, {
-			id : record.get("MedID"),
-			name : record.get("MedName")
-		});
-		var theDrugField = this.getSelDrug();
-		theDrugField.setValue(Med);
+		var MedIEN = record.get("IEN");
 
-/* MWB - 3/13/2015 - The creation of a model and then assigning that to a field makes no sense ********************************
-		EmoLevel = Ext.create(Ext.COMSModels.EmetogenicLevel, {
-			name : record.get("EmoLevelName"),
-			description : record.get("EmoLevel")
-		});
-*******************/
+		var theDrugField = this.getSelDrug();
+		theDrugField.setValue(MedIEN);
+		theDrugField.setRawValue(MedName);
+
 		var theLevelField = this.getSelLevel();
-		theLevelField.setValue(EmoLevel);
+		theLevelField.setValue(EmoLevelID);
+		theLevelField.setRawValue(EmoLevel);
 
 		this.CurrentEmeticMedRecordID = recID;
 
@@ -24731,20 +24701,21 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 
 	CancelForm : function(theBtn, theEvent, eOpts) {
 		theBtn.up('form').getForm().reset();
+		this.getSelDrug().setRawValue("");
 		delete this.CurrentEmeticMedRecordID;
 	},
 
 	SaveForm : function(theBtn, theEvent, eOpts) {
-		var form = theBtn.up('form').getForm();
-		var theData = form.getValues(false, false, false, true);
 		var fData = {};
-		fData.MedName = this.getSelDrug().getRawValue();
-		fData.MedID = theData.Drug;
-		fData.MedType = theData.PatientType;
-		fData.EmoLevel = theData.EmetogenicLevel;
 
-		var ValidForm = form.isValid();
-		if (ValidForm) {
+		var theDrugField = this.getSelDrug();
+		fData.MedID = theDrugField.getValue();
+
+		var theEmoLevelField = this.getSelLevel();
+		fData.EmoLevel = theEmoLevelField.getValue();
+
+		var form = theBtn.up('form').getForm();
+		if (form.isValid()) {
 			var recID = this.CurrentEmeticMedRecordID;
 			var URL = Ext.URLs.EmeticMeds;
 			delete this.CurrentEmeticMedRecordID;
@@ -24822,9 +24793,10 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 			});
 		}
 		else {
+			var theBtn = this.getDeleteBtn();
 			this.application.unMask();
 			this.RefreshPanel();
-			this.CancelForm();
+			this.CancelForm(theBtn);
 		}
 	},
 

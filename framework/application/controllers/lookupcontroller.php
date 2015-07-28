@@ -4,12 +4,69 @@ require_once "/ChromePhp.php";
 /**
  * @property LookUp $LookUp
  * 
- * function checkForErrors($errorMsg,$retVal){
- * function save() {
- * function saveTemplate() {
- * function delete() {
- * function deleteTemplate(){
- * function view($name = null, $description = null, $id = null) {
+ *    function _CommonServiceCallMethod($ID, $DataType, $Msg)
+ *    function _CommonServiceCallMethodByLabel($Label, $DataType, $Msg)
+ *    function _FindMedRecord($Med_ID)
+ *    function _getAllCumulativeDoseMeds($ID)
+ *    function _getAllFluidTypeRecords(&$jsonRecord)
+ *    function _getAllFluidTypes()
+ *    function _getAllFluidTypes4MedID(&$jsonRecord, $Med_ID)
+ *    function _getDocs4MedID(&$jsonRecord, $Med_ID)
+ *    function _getFluidTypeRecords4Med(&$jsonRecord, $Med_ID)
+ *    function _getFluidTypes($Med_ID)
+ *    function _InsertFluidTypeRecord(&$jsonRecord, $Med_ID, $FluidType_ID)
+ *    function _LookupCumulativeDoseMeds($ID)
+ *    function _ProcQuery($query, $jsonRecord, $ErrMsg, $UniqueMsg, $id = null)
+ *    function AddPreChemoHydrationToInPatientMedList($NewMedsInserted)
+ *    function BuildRegimenName($regimens)
+ *    function checkForErrors($errorMsg,$retVal)
+ *    function ClinicInfo($ID = null)
+ *    function CumulativeDoseMeds($ID = null)
+ *    function delete()
+ *    function deleteTemplate()
+ *    function DischargeInstruction($ID = null)
+ *    function DiseaseStage($id = null)
+ *    function DiseaseStaging($ID = null)
+ *    function DrugInfo($drugID)
+ *    function EFNR($PAT_ID = NULL)
+ *    function EmeticMeds($EMedID = null)
+ *    function flagTemplateInactive()
+ *    function getDrugInfoFromVistA($drugID)
+ *    function getPatientInfoFromVistA($DFN)
+ *    function getPatients4Template( $templateID = null )
+ *    function Hydrations($type = null, $id = null)
+ *    function IDEntry($Vital = null)
+ *    function IVFluidType($Med_ID = null)
+ *    function IVFluidType4Med($Med_ID = null)
+ *    function LabResults($patientID = null)
+ *    function Locations()
+ *    function MedDocs($ID = null)
+ *    function MedHold()
+ *    function MedRisks($ID = null, $Type = null)
+ *    function PrintTemplate($templateId = NULL)
+ *    function Regimens($id = null)
+ *    function RoundingRule()
+ *    function save()
+ *    function saveTemplate()
+ *    function SiteConfig()
+ *    function SyncMedsList()
+ *    function SyncMedsListAddSyncDate(&$jsonRecord)
+ *    function SyncMedsListGetLastSyncTime(&$jsonRecord)
+ *    function SyncMedsListInsertInPatient($InPatientMeds, &$jsonRecord)
+ *    function SyncMedsListInsertOutPatient($OutPatientMeds, &$jsonRecord)
+ *    function SyncMedsListInsertPatient($PatientMeds, $PatientType, &$jsonRecord)
+ *    function SyncMedsListRemoveOldMeds(&$jsonRecord)
+ *    function Template($EMedID = null)
+ *    function TemplateData($id = NULL)
+ *    function TemplateDetails($field = NULL, $name = NULL)
+ *    function TemplateLocation($TemplateID)
+ *    function TemplateMedDocs($TemplateID = null)
+ *    function TemplateReferences($id = null)
+ *    function Templates($field = NULL, $id = NULL)
+ *    function ToxicityInstruction($ToxID = null, $SubCat = null)
+ *    function view($name = null, $description = null, $id = null)
+ *    function viewall($name = NULL, $description = NULL)
+ *    function VistAUsers($name=null)
  */
 class LookupController extends Controller {
 
@@ -2366,6 +2423,7 @@ select * from EmeticMeds
  *
  **/
     function EmeticMeds($EMedID = null) {
+// error_log("EmeticMeds - " . $_SERVER["REQUEST_METHOD"]);
         $DataType = 'EmeticMeds';
         $msg = 'Emetic Meds';
 
@@ -2375,23 +2433,45 @@ select * from EmeticMeds
         $jsonRecord["success"] = true;
         $tmpRecords = array();
 
-/* Note: The "Magic Number" 13 is the Type in the Lookup Table for the Emetic Levels (1-4) */
+/* Note: The "Magic Number" (13) - "l3.Lookup_Type = 13";  is the Type in the Lookup Table for the Emetic Levels (1-4) */
         if ("GET" == $_SERVER["REQUEST_METHOD"]) {
             if ($EMedID == null) {
-                $query = "
-select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
-from EmeticMeds l1
-join LookUp l2 on l1.MedID = l2.Lookup_ID
-join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13";
+                $query = 
+"select 
+sci.ID as id,
+sci.Label as Med_ID, 
+sci.Grade_Level as EmoLevel,
+
+(select replace(replace(l1.Name, '<', '('), '>', ')')) AS MedName,
+l1.Description as MedType,
+l1.Lookup_Type_ID as IEN,
+l1.Lookup_ID as MedID,
+l2.Name as EmoLevelName
+
+from SiteCommonInformation sci 
+join LookUp l1 on sci.Label = l1.Lookup_Type_ID
+join LookUp l2 on sci.Grade_Level = l2.Description and l2.Lookup_Type = 13
+where DataType = 'EmeticMeds'";
+
+
             }
             else {
-                $query = "
-select l1.id, l1.EmoLevel, l3.Name as EmoLevelName, l2.Name as MedName, l1.MedID, l1.MedType
-from EmeticMeds l1
-join LookUp l2 on l1.MedID = l2.Lookup_ID
-join LookUp l3 on l1.EmoLevel = l3.Description and l3.Lookup_Type = 13
-where l1.MedID = '$EMedID'";
+                $query = 
+"
+select 
+sci.ID as EmeticMed_ID,
+sci.Label as Med_ID, 
+l1.Name as Med_Name, 
+l1.Description as Med_Type,
+l1.Lookup_Type_ID as IEN,
+sci.Grade_Level as EmoLevel 
+from SiteCommonInformation sci 
+join LookUp l1 on sci.Label = l1.Lookup_ID
+where sci.ID = '$EMedID'";
+
+
             }
+// error_log("EmeticMeds - GET - $query");
             $records = $this->LookUp->query($query);
             $msg = "Get ". $msg;
             $tmpRecords = $records;
@@ -2420,7 +2500,8 @@ where l1.MedID = '$EMedID'";
         }
         else if ("DELETE" == $_SERVER["REQUEST_METHOD"]) {
             if ($EMedID) {
-                $query = "delete from EmeticMeds where id='$EMedID'";
+                $query = "delete from SiteCommonInformation where id='$EMedID' and DataType = 'EmeticMeds'";
+// error_log("EmeticMeds - Delete - $query");
                 $records = $this->LookUp->query($query);
                 $msg = "Delete ". $msg;
                 $tmpRecords = $records;

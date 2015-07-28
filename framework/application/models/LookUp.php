@@ -1093,7 +1093,7 @@ $drugId = $drug[0]["id"];
         $query = "
             SELECT id=Lookup_ID, 
                 type=Lookup_Type, 
-                Name, 
+                select replace(replace(Name, '<', '('), '>', ')') AS Name, 
                 Description 
                 FROM LookUp 
                 WHERE Lookup_Type = ( 
@@ -1864,31 +1864,24 @@ error_log("LookUp Model - selectByNameAndDesc() - Return Result = " . json_encod
         $InsertBuf1 = array();
         $InsertBuf2 = array();
         $UpdateBuf = array();
-        $DataType = "EmeticMeds";
+        $DataType = "SiteCommonInformation";
+
+        $InsertBuf1[] = "DataType";
+        $InsertBuf2[] = "'EmeticMeds'";
+
         if (isset($InputData->EmoLevel)) {
             $EmoLevel = $this->escapeString($InputData->EmoLevel);
-            $InsertBuf1[] = "EmoLevel";
+            $InsertBuf1[] = "Grade_Level";
             $InsertBuf2[] = "'$EmoLevel'";
-            $UpdateBuf[] = "EmoLevel = '$EmoLevel'";
-        }
-        if (isset($InputData->MedName)) {
-            $MedName = $this->escapeString($InputData->MedName);
-            $InsertBuf1[] = "MedName";
-            $InsertBuf2[] = "'$MedName'";
-            $UpdateBuf[] = "MedName = '$MedName'";
+            $UpdateBuf[] = "Grade_Level = '$EmoLevel'";
         }
         if (isset($InputData->MedID)) {
             $MedID = $InputData->MedID;
-            $InsertBuf1[] = "MedID";
+            $InsertBuf1[] = "Label";
             $InsertBuf2[] = "'$MedID'";
-            $UpdateBuf[] = "MedID = '$MedID'";
+            $UpdateBuf[] = "Label = '$MedID'";
         }
-        if (isset($InputData->MedType)) {
-            $MedType = $InputData->MedType;
-            $InsertBuf1[] = "MedType";
-            $InsertBuf2[] = "'$MedType'";
-            $UpdateBuf[] = "MedType = '$MedType'";
-        }
+
 
         if ("update" == $fcn) {
             $query = "UPDATE $DataType SET " . implode(", ", $UpdateBuf) . " where id = '$EmeticID'";
@@ -1898,7 +1891,9 @@ error_log("LookUp Model - selectByNameAndDesc() - Return Result = " . json_encod
             $InsertBuf2[] = "'$EmeticID'";
             $query = "INSERT into $DataType (" . implode(", ", $InsertBuf1) . ") VALUES (" . implode(", ", $InsertBuf2) . ")";
         }
-        // error_log("EmeticMeds - $query");
+//error_log("Emetic Med Data - $fcn, $EmeticID, $query");
+
+
         return $this->query($query);
     }
     function setEmeticMedData($EmeticID, $_POST) {
