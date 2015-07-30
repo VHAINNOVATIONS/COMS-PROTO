@@ -27,10 +27,11 @@
 	$ProjType = "Release 1.15c";    // July 24, 2015; Started work on the defect in the Emetogenic Level Panel.
 	// Added new functionality, the ability to specify a Hydration Administration in Pre/Post and Therapy at request of Dr Kelley.
 	// This allows for a template sequence to be generated with OUT a Drug Amount or Units specified but MUST be specified as a Hydration Drug.
+	$ProjType = "Release 1.15d";	// July 28, 2015; Fixed Defects in Site Configuration Emetic Medications panel and added Delete functionality
 	*/
 
+	$ProjType = "Release 1.15e";	// July 30, 2015; Fix Defect on how data for Regimen containing new Hydration Drug is retrieved.
 
-	$ProjType = "Release 1.15d";	// July 28, 2015; Fixed Defects in Site Configuration Emetic Medications panel and added Delete functionality
 
 
 /* <!doctype html> */
