@@ -139,7 +139,8 @@ error_log("LookupController - _ProcQuery() Result = " . json_decode($retVal));
         }
         return false;
     }
-    
+
+
 
     function save() {
 error_log("Lookup Save - ");
@@ -173,7 +174,7 @@ error_log("Lookup Save - " . json_encode($tmp));
             $ErrMsg = "Updating $Msg  Record";
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
-            $GUD = $this->LookUp->newGUID();
+            $GUID = $this->LookUp->newGUID();
             $query = "INSERT into LookUp (Lookup_ID, Lookup_Type, Name, Description) values ('$GUD', '$lookupid','$name','$description')";
 
             $jsonRecord['msg'] = "$Msg Record Created";
@@ -565,20 +566,6 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
     function getPatients4Template( $templateID = null ) {
         $Patients = array();
 
-        $query = "select 
-    pat.Patient_ID,
-    CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
-    CONVERT(VARCHAR(10), pat.Date_Ended, 101) as Est_End_Date,
-    mt.Template_ID,
-    p.First_Name,
-    p.Last_Name,
-    p.Match as SSID
-    from Patient_Assigned_Templates pat
-    join Master_Template mt on mt.Template_ID = pat.Template_ID
-    join Patient p on p.Patient_ID = pat.Patient_ID
-    where pat.Template_ID = '$templateID'
-    and DATEDIFF(day, GETDATE(), pat.Date_Started)< 0 and pat.Date_Ended_Actual is null";
-
     $query = "select 
     pat.Patient_ID,
     CONVERT(VARCHAR(10), pat.Date_Started, 101) as Date_Started,
@@ -847,53 +834,86 @@ error_log("Lookup Controller - TemplateData - Error; " . json_encode($retVal1));
 error_log("Lookup Controller - References - " . json_encode($retVal1));
 
 
-error_log("Lookup Controller - getHydrations  - PRE THERAPY - $id");
-            $prehydrations = null;
-            $infusionMap = null;
-            $retVal = $this->LookUp->getHydrations($id, 'pre');
-error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
-error_log(json_encode($retVal));
 
-            if ($retVal) {
-                $prehydrations = $retVal;
-                $infusionMap = array();
-                if ( count($retVal) > 0 ) {
-                    foreach ($prehydrations as $prehydration) {
-                        $infusions = $this->LookUp->getMHInfusions($prehydration['id']);
-                        $infusionMap[$prehydration['id']] = $infusions;
-                    }
-                }
-                $this->set('prehydrations', $prehydrations);
-                $this->set('preinfusions', $infusionMap);
-            }
 
-            $retVal = $this->LookUp->getHydrations($id, 'post');
-error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
-error_log(json_encode($retVal));
+			$prehydrations = null;
+			$posthydrations = null;
+			$infusionMap = null;
 
-            if ( count($retVal) > 0 ) {
-                $posthydrations = $retVal;
-                $infusionMap = array();
-                foreach ($posthydrations as $posthydration) {
-                    $infusions = $this->LookUp->getMHInfusions($posthydration['id']);
-                    $infusionMap[$posthydration['id']] = $infusions;
-                }
-                $this->set('posthydrations', $posthydrations);
-                $this->set('postinfusions', $infusionMap);
-            }
 
-            $retVal = $this->LookUp->getRegimens($id);
-error_log("Lookup Controller - TemplateData - Got Therapy - ");
-error_log(json_encode($retVal));
-            if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
-error_log("Lookup Controller - TemplateData - Error; Exit 1");
-                $this->set('templatedata', null);
-                return;
-            }
+/******************* PRE THERAPY *********************/
+// 			error_log("Lookup Controller - getHydrations  - PRE THERAPY - $id");
+			$retVal = $this->LookUp->getHydrations($id, 'pre');
+// 			error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
+// 			error_log(json_encode($retVal));
+			if($this->checkForErrors('Get Pre Therapy Failed. 1', $retVal)){
+// 				error_log("Lookup Controller - TemplateData - Error; Exit 1");
+				$this->set('templatedata', null);
+				return;
+			}
+
+			if ( count($retVal) > 0 ) {
+				$prehydrations = $retVal;
+				$infusionMap = array();
+				foreach ($prehydrations as $prehydration) {
+					$key = $prehydration['id'];
+// 					error_log("Lookup Controller - TemplateData - $key - prehydration - ");
+// 					error_log(json_encode($prehydration));
+					$infusions = $this->LookUp->getMHInfusions($key);
+					$infusionMap[$key] = $infusions;
+				}
+				$this->set('prehydrations', $prehydrations);
+// 				error_log("Lookup Controller - TemplateData - prehydrations - ");
+// 				error_log(json_encode($prehydrations));
+
+				$this->set('preinfusions', $infusionMap);
+				error_log("Lookup Controller - TemplateData - preinfusions - ");
+				error_log(json_encode($infusionMap));
+			}
+
+/******************* POST THERAPY *********************/
+// 			error_log("Lookup Controller - getHydrations  - POST THERAPY - $id");
+			$retVal = $this->LookUp->getHydrations($id, 'post');
+// 			error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
+// 			error_log(json_encode($retVal));
+			if($this->checkForErrors('Get Post Therapy Failed. 1', $retVal)){
+// 				error_log("Lookup Controller - TemplateData - Error; Exit 1");
+				$this->set('templatedata', null);
+				return;
+			}
+
+			if ( count($retVal) > 0 ) {
+				$posthydrations = $retVal;
+				$infusionMap = array();
+				foreach ($posthydrations as $posthydration) {
+					$key = $posthydration['id'];
+// 					error_log("Lookup Controller - TemplateData - $key - posthydration - ");
+// 					error_log(json_encode($posthydration));
+					$infusions = $this->LookUp->getMHInfusions($key);
+					$infusionMap[$key] = $infusions;
+				}
+				$this->set('posthydrations', $posthydrations);
+// 				error_log("Lookup Controller - TemplateData - posthydrations - ");
+// 				error_log(json_encode($posthydrations));
+
+				$this->set('postinfusions', $infusionMap);
+// 				error_log("Lookup Controller - TemplateData - preinfusions - ");
+// 				error_log(json_encode($infusionMap));
+			}
+
+/******************* THERAPY *********************/
+			$retVal = $this->LookUp->getRegimens($id);
+			error_log("Lookup Controller - TemplateData - Got Therapy - ");
+			error_log(json_encode($retVal));
+			if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
+				error_log("Lookup Controller - TemplateData - Error; Exit 1");
+				$this->set('templatedata', null);
+				return;
+			}
 
             if (count($retVal) > 0) {
                 if (!isset($retVal[0]["id"])) {
-error_log("Lookup Controller - TemplateData - Error; Exit 2");
+					error_log("Lookup Controller - TemplateData - Error; Exit 2");
                     $this->set('frameworkErr', 'Get Template_Regimen Failed. 3');
                     $this->set('templatedata', null);
                     return;
@@ -916,6 +936,8 @@ error_log("Lookup Controller - TemplateData - Error; Exit 2");
                     $this->set('CumulativeDoseMedsInRegimen', $CumulativeDoseMedsInRegimen);
                 }
             }
+
+
 /************
             else {
                 $this->set('frameworkErr', 'Get Template_Regimen Failed. 2');
@@ -1003,7 +1025,7 @@ error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
                 $this->LookUp->rollbackTransaction();
                 $jsonRecord['success'] = false;
                 $jsonRecord['msg'] = "Error";
-                $jsonRecord['frameworkErr'] = $frameworkErr;
+                $jsonRecord['frameworkErr'] = $this->get('frameworkErr');
             }
             else {
                 $this->LookUp->endTransaction();
@@ -1041,7 +1063,7 @@ error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
                 $this->LookUp->rollbackTransaction();
                 $jsonRecord['success'] = false;
                 $jsonRecord['msg'] = "Error";
-                $jsonRecord['frameworkErr'] = $frameworkErr;
+                $jsonRecord['frameworkErr'] = $this->get('frameworkErr');
             }
             else {
                 $this->LookUp->endTransaction();

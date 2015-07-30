@@ -17792,6 +17792,7 @@ this.application.loadMask("Please wait; Saving Template");
                 }
 				else {
                             this.application.loadMask("Please wait; Saving Template");
+
                             Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
@@ -17826,6 +17827,14 @@ this.application.loadMask("Please wait; Saving Template");
             }
         });
     },
+
+	isHydration : function(Drug) {
+		var isHydration = Drug;
+		isHydration = isHydration.split(":");
+		isHydration = isHydration[0].trim();
+		return ("HYDRATION" === isHydration);
+	},
+
 
 	PrepareTemplate2Save: function (KeepAlive) {
 		var diseaseId = null;
@@ -17885,7 +17894,7 @@ this.application.loadMask("Please wait; Saving Template");
 		var postMhStore = postMHgrid.getStore();
 
 
-		var drugArray = [], drug, drugModel;
+		var limitCount, drugArray = [], drug, drugModel;
 		limitCount = drugstore.count();
 
 		for (i = 0; i < limitCount; i++) {
@@ -17903,9 +17912,7 @@ this.application.loadMask("Please wait; Saving Template");
 				Sequence: drugModel.data.Sequence,
 				AdminTime: drugModel.data.AdminTime,
 				FluidType: drugModel.data.FluidType
-
 			});
-
 			drugArray.push(drug);
 		}
 
@@ -17916,17 +17923,21 @@ this.application.loadMask("Please wait; Saving Template");
 			preMhModel = preMhStore.getAt(i);
 			infusionArray = [];
 
-			infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-				amt: preMhModel.data.Amt1,
-				unit: preMhModel.data.Units1,
-				type: preMhModel.data.Infusion1,
-				flowRate: preMhModel.data.FlowRate1,
-				fluidVol: preMhModel.data.FluidVol1,
-				fluidType: preMhModel.data.FluidType1,
-				infusionTime: preMhModel.data.InfusionTime1,
-				instruction: preMhModel.data.Instructions
-			});
+			if (('' != preMhModel.data.Amt1 && '' != preMhModel.data.Units1 && '' != preMhModel.data.Infusion1) || this.isHydration(preMhModel.data.Drug)) {
+				infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+					amt: preMhModel.data.Amt1,
+					unit: preMhModel.data.Units1,
+					type: preMhModel.data.Infusion1,
+					flowRate: preMhModel.data.FlowRate1,
+					fluidVol: preMhModel.data.FluidVol1,
+					fluidType: preMhModel.data.FluidType1,
+					infusionTime: preMhModel.data.InfusionTime1,
+					instruction: preMhModel.data.Instructions
+				});
+				infusionArray.push(infusion1);
+			}
 
+			/*********
 			infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
 				amt: preMhModel.data.Amt2,
 				unit: preMhModel.data.Units2,
@@ -17938,12 +17949,10 @@ this.application.loadMask("Please wait; Saving Template");
 				instruction: preMhModel.data.Instructions
 			});
 
-			if ('' != preMhModel.data.Amt1 && '' != preMhModel.data.Units1 && '' != preMhModel.data.Infusion1) {
-				infusionArray.push(infusion1);
-			}
 			if ('' != preMhModel.data.Amt2 && '' != preMhModel.data.Units2 && '' != preMhModel.data.Infusion2) {
 				infusionArray.push(infusion2);
 			}
+			**********/
 
 			preMH = Ext.create(Ext.COMSModels.MHMed, {
 				drugid: preMhModel.data.Drug,
@@ -17965,34 +17974,35 @@ this.application.loadMask("Please wait; Saving Template");
 			postMhModel = postMhStore.getAt(i);
 			infusionArray = [];
 
-			infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-				amt: postMhModel.data.Amt1,
-				unit: postMhModel.data.Units1,
-				type: postMhModel.data.Infusion1,
-				flowRate: postMhModel.data.FlowRate1,
-				fluidVol: postMhModel.data.FluidVol1,
-				fluidType: postMhModel.data.FluidType1,
-				infusionTime: postMhModel.data.InfusionTime1,
-				instruction: postMhModel.data.Instructions
-			});
-
-			infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-				amt: postMhModel.data.Amt2,
-				unit: postMhModel.data.Units2,
-				type: postMhModel.data.Infusion2,
-				flowRate: postMhModel.data.FlowRate1,
-				fluidVol: postMhModel.data.FluidVol1,
-				fluidType: postMhModel.data.FluidType1,
-				infusionTime: postMhModel.data.InfusionTime1,
-				instruction: postMhModel.data.Instructions
-			});
-
-			if ('' != postMhModel.data.Amt1 && '' != postMhModel.data.Units1 && '' != postMhModel.data.Infusion1) {
+			if (('' != postMhModel.data.Amt1 && '' != postMhModel.data.Units1 && '' != postMhModel.data.Infusion1) || this.isHydration(postMhModel.data.Drug)) {
+				infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+					amt: postMhModel.data.Amt1,
+					unit: postMhModel.data.Units1,
+					type: postMhModel.data.Infusion1,
+					flowRate: postMhModel.data.FlowRate1,
+					fluidVol: postMhModel.data.FluidVol1,
+					fluidType: postMhModel.data.FluidType1,
+					infusionTime: postMhModel.data.InfusionTime1,
+					instruction: postMhModel.data.Instructions
+				});
 				infusionArray.push(infusion1);
 			}
+
+			/**
 			if ('' != postMhModel.data.Amt2 && '' != postMhModel.data.Units2 && '' != postMhModel.data.Infusion2) {
+				infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+					amt: postMhModel.data.Amt2,
+					unit: postMhModel.data.Units2,
+					type: postMhModel.data.Infusion2,
+					flowRate: postMhModel.data.FlowRate1,
+					fluidVol: postMhModel.data.FluidVol1,
+					fluidType: postMhModel.data.FluidType1,
+					infusionTime: postMhModel.data.InfusionTime1,
+					instruction: postMhModel.data.Instructions
+				});
 				infusionArray.push(infusion2);
 			}
+			**/
 
 			postMH = Ext.create(Ext.COMSModels.MHMed, {
 				drugid: postMhModel.data.Drug,
@@ -18004,6 +18014,7 @@ this.application.loadMask("Please wait; Saving Template");
 				adminTime: postMhModel.data.AdminTime
 			});
 			postMHArray.push(postMH);
+
 		}
 
 		var template = Ext.create(Ext.COMSModels.CTOS, {
@@ -24021,11 +24032,16 @@ vcode: null		// ignore
 	},
 	
 	deleteTemplateCall: function(mytemplate,ckRec){
+		var theGrid = this.getTemplateGrid();
+		theGrid.setLoading("Removing Template", false);
+
 		mytemplate.destroy({
 			scope: this,
 			success: function (record, op) {
 				this.getSelectedRecord(true, 'AdminTab DeleteTemplate grid'); // remove the selected record from the current store
 				this.getRemoveTemplate().disable();
+				var theGrid = this.getTemplateGrid();
+				theGrid.setLoading(false, false);
 				var adminCtl = this.getController("Management.AdminTab");
 				//Ext.MessageBox.alert('Success', 'Template ' + ckRec.record.get('description') + ' was deleted from the system.');
 				Ext.MessageBox.show({
@@ -24046,6 +24062,9 @@ vcode: null		// ignore
 				wccConsoleLog("Delete Template Failed");
 				this.getRemoveTemplate().disable();
 				this.application.unMask();
+				var theGrid = this.getTemplateGrid();
+				theGrid.setLoading(false, false);
+
 				var adminCtl = this.getController("Management.AdminTab");
 				Ext.MessageBox.show({
 					title: 'Information',
@@ -24059,82 +24078,10 @@ vcode: null		// ignore
 						}
 					}
 				});
-
-				//Ext.MessageBox.alert('Failure', 'Template was not deleted: ' + op.request.scope.reader.jsonData["frameworkErr"]);
 			}
 		});
 		
 	}
-
-/*************
-	editLookup : function(button){
-		var ckRec = this.getSelectedRecord(false, 'AdminTab grid');
-		if (ckRec.hasRecord) {
-			wccConsoleLog('Editing Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
-			var view = Ext.widget('EditLookup'); // Creates an instance of the "Add Reference" pop-up window
-			view.down('form').loadRecord(ckRec.record);
-		} else {
-			Ext.MessageBox.alert('Invalid', 'Please select a Row in the Lookup Grid.');
-		}
-	},
-
-
-	// Load the grid's store to see all the values for the selected type
-	LookupSelected : function ( combo, recs, eOpts ) {
-		wccConsoleLog('Admin Tab, Lookup Selected');
-		var theData = recs[0].data.value;
-		var thisCtl = this.getController('Management.AdminTab');
-		var theStore = thisCtl.getLookupGrid().getStore();
-		var theURL = Ext.URLs.BaseView + "/" + theData;
-		theStore.load({
-			url:theURL
-		});
-	},
-
-	updateLookup: function(button){
-		wccConsoleLog('clicked Save button');
-		var grid = Ext.ComponentQuery.query('AdminTab grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
-		var store = grid.getStore();
-
-		var form = button.up('form');
-			
-		var values = form.form.getValues();
-			
-			
-		var lookupRecord = Ext.create('COMS.model.LookupTable', {
-			id: values.id,
-			value: values.value,
-			description: values.description
-		});
-
-		lookupRecord.save({
-			scope : this,
-			waitMsg : 'Saving Data...',
-			success: function(data) {
-				wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
-					
-				var ref = Ext.create(Ext.COMSModels.GenericLookup, {
-					id: data.data.lookupid,
-					name: data.data.value,
-					description: data.data.description
-				});
-
-				store.insert(0, ref);
-					
-				var thisCtl = this.getController('Management.AdminTab');
-				var addLookups = thisCtl.getLookup();
-				addLookups.form.findField('value').setValue('');
-				addLookups.form.findField('id').setValue('');
-
-				addLookups.form.findField('description').setValue('');
-			},
-			failure: function(err){
-				Ext.MessageBox.alert('Invalid', 'This reference already exists.');
-			}
-		});
-			
-	}
-***************/
 });
 
 Ext.define('COMS.controller.Management.CumulativeDosing', {

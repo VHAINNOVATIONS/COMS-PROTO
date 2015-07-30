@@ -684,9 +684,8 @@ $drugId = $drug[0]["id"];
             $sequenceNumber = $hydration->sequence;
             $adminTime = $hydration->adminTime;
             $description = str_replace("'", "''", $hydration->description);
-            $fluidVol = $hydration->fluidVol;
-            $flowRate = $hydration->flowRate;
-            $infusionTime = $hydration->infusionTime;
+
+
 
             $query = "
                 INSERT INTO Medication_Hydration (
@@ -725,13 +724,22 @@ $drugId = $drug[0]["id"];
                     AND Sequence_Number = '$sequenceNumber'
             ";
 
+// error_log("Lookup Model - saveHydrations() - $query");
             $result = $this->query($query);
+// error_log("Lookup Model - saveHydrations() - retVal = " . json_encode($result[0]));
+
             if (!empty($result[0])) {
                 $mhId = $result[0]["mhid"];
+				$unitId = "";
+				$amt = "";
                 $infusions = $hydration->infusions;
+
+// error_log("Lookup Model - saveHydrations() - Walking Infusions");
                 foreach ($infusions as $infusion) { 
                     $infusionData = $infusion->data;
-                    if(count($infusionData)>1){
+// error_log("Lookup Model - saveHydrations() - Infusion Data = " . json_encode($infusionData));
+				if ("0" !== $drugIEN) {
+					if(count($infusionData)>1){
                         $unit = $infusionData['unit'];
                     }else{
                         $unit = $infusionData->unit;
@@ -746,8 +754,10 @@ $drugId = $drug[0]["id"];
                         $retVal = array(); 
                         $retVal['error'] = "Insert int MH_ID for " . $type .
                              " Therapy failed. The unit id could not be determined.";
+// error_log("Lookup Model - saveHydrations() - UnitLLookup Failed - ");
                         return $retVal;
                     }
+				}
 
 
                     /* Get Route Information for Pre/Post Therapy Meds */
@@ -758,23 +768,8 @@ $drugId = $drug[0]["id"];
                     }
                     $route = $unitType;
 // error_log("Lookup Model - saveHydrations - getRoute - $unitType; Storing in VistA_RouteInfo");
-/*******
-                    $unitTypeLookup = $this->getLookupIdByNameAndType($unitType, 12);
-// error_log("getRoute - " . json_encode($unitTypeLookup));
 
-                    if ($unitTypeLookup) {
-                        $unitTypeId = $unitTypeLookup[0]["id"];
-                    } else {
-                        $unitTypeId = null;
-                    }
 
-                    if (null == $unitTypeId) {
-                        $retVal = array(); 
-                        $retVal['error'] = "Insert int MH_ID for " . $type .
-                             " Therapy failed. The Route could not be determined.";
-                        return $retVal;
-                    }
- *******/
 
 
 
@@ -791,35 +786,13 @@ $drugId = $drug[0]["id"];
                         $fluidType = $infusionData->fluidType;
                         $infusionTime = $infusionData->infusionTime;
                     }
-
                     $fluidType = $this->escapeString($fluidType);
-/**
-                    $query = "
-                        INSERT INTO MH_Infusion (
-                            MH_ID, 
-                            Infusion_Unit_ID, 
-                            Infusion_Type_ID, 
-                            Infusion_Amt, 
-                            Fluid_Vol, 
-                            Flow_Rate, 
-                            Infusion_Time, 
-                            Fluid_Type,
-                            Order_ID,
-                            VistA_RouteInfo
-                        ) VALUES (
-                            '$mhId',
-                            '$unitId',
-                            '$unitTypeId',
-                            '$amt',
-                            '$fluidVol',
-                            '$flowRate',
-                            '$infusionTime',
-                            '$fluidType',
-                            '$orderId',
-                            '$route'
-                        )
-                    ";
- **/
+
+if ("0" === $drugIEN) {
+	$unitId = '00000000-0000-0000-0000-000000000000';
+	$amt = 0;
+}
+
 
                     $query = "
                         INSERT INTO MH_Infusion (
@@ -1093,7 +1066,7 @@ $drugId = $drug[0]["id"];
         $query = "
             SELECT id=Lookup_ID, 
                 type=Lookup_Type, 
-                select replace(replace(Name, '<', '('), '>', ')') AS Name, 
+                replace(replace(Name, '<', '('), '>', ')') AS Name, 
                 Description 
                 FROM LookUp 
                 WHERE Lookup_Type = ( 
@@ -1334,7 +1307,7 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
 
     function getHydrations($id, $type) {
         $query = "select Reason from Medication_Hydration where Template_ID = '$id'";
-// error_log("Lookup Model - getHydrations() - $query");
+// error_log("Lookup Model get Reason - getHydrations() - $query");
         $retVal = $this->query($query);
 // error_log("Lookup Model - getHydrations() - ". json_encode($retVal));
         if (count($retVal) > 0) {
@@ -1407,8 +1380,14 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
      */
     public function getMHInfusions($id)
     {
-        $query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
+// error_log("----------------------------------- Lookup Model - getMHInfusions -----------------------------------");
+		$query = "select Reason from Medication_Hydration Reason where Template_ID = '$id'";
+// error_log("Lookup Model - getMHInfusions for ID = $id");
+// error_log("Lookup Model - getMHInfusions Query");
+// error_log("$query");
+
         $retVal = $this->query($query);
+// error_log("Lookup Model - getMHInfusions Result - " . json_encode($retVal));
 
         $q1 = "SELECT 
     mhi.Infusion_ID AS id, 
@@ -1418,7 +1397,7 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
         ELSE 
             CONVERT(nvarchar(max), CONVERT(decimal(10,1), mhi.Infusion_Amt))
     END as amt,
-    l1.Name AS unit, 
+    case when l1.Name is null then '' else l1.Name end AS unit,
     coalesce(l2.Name, mhi.VistA_RouteInfo) as type,
     mhi.BSA_Dose AS bsaDose, 
     mhi.Fluid_Type AS fluidType,
@@ -1430,7 +1409,7 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
         $q1a = ", os.Order_Status AS Order_Status";
 
         $q1Join1 = " FROM MH_Infusion mhi 
-    JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
+    left outer JOIN LookUp l1 ON l1.Lookup_ID = mhi.Infusion_Unit_ID
     left outer JOIN LookUp l2 ON l2.Lookup_ID = mhi.Infusion_Type_ID";
 
         $q1Join2 = " JOIN Order_Status os on os.Order_ID = mhi.Order_ID";
@@ -1446,10 +1425,10 @@ coalesce(l3.Name, tr.VistA_RouteInfo) as route,
 // error_log("Lookup Model - getMHInfusions for ID = $id");
 // error_log("Lookup Model - getMHInfusions Query");
 // error_log("$query");
-// error_log("-----------------------------------------------------------");
-
         $retVal = $this->query($query);
-        return $retVal;
+// error_log("Lookup Model - getMHInfusions Result - " . json_encode($retVal));
+// error_log("----------------------------------- Lookup Model - getMHInfusions -----------------------------------");
+		return $retVal;
     }
 
     function getTemplateDetailByNameAndField($name, $field) {

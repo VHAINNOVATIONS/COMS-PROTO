@@ -92,86 +92,127 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 	</tr>
 
 	<?php
-	foreach($hydrations as $hydration) {
-        $drug = explode(' : ', $hydration['drug']);
-        $drug = $drug[0];
-		if ("" !== $tag) {
-			$infusion = $infusions[$hydration['id']][0];
-			//Pre/Post Therapy Section Hydration - 
-			//$drug = $hydration['drug'];
-			$dose = $infusion['amt'];
-			$units = $infusion['unit'];
-			$route = $infusion['type'];
-			$fluidVol = $infusion['fluidVol'];
-            if (array_key_exists("flunit", $infusion)) {
-                $fluidUnits = $infusion['flunit'];
-            }
-            else {
-                $fluidUnits = "";
-            }
+	$dose = '';
+	$units = '';
+	$route = '';
+	$fluidVol = '';
+	$fluidUnits = '';
+	$infusionTime = '';
+	$flowRate = '';
+	$instructions = '';
+	$sequence = '';
+	$adminDay = '';
+	$adminTime = '';
+	$fluidType = '';
+	if ($hydrations && count($hydrations) > 0) {
+error_log("Render Therapy - Have Hydrations for $tag - " . count($hydrations));
+		foreach($hydrations as $hydration) {
+error_log("Render Therapy - Have Hydration - " . json_encode($hydration));
+			$dose = '';
+			$units = '';
+			$route = '';
+			$fluidVol = '';
+			$fluidUnits = '';
+			$infusionTime = '';
+			$flowRate = '';
+			$instructions = '';
+			$sequence = '';
+			$adminDay = '';
+			$adminTime = '';
+			$fluidType = '';
+			$drug = explode(' : ', $hydration['drug']);
+			$drug = $drug[0];
+			if ("" !== $tag) {
+				if (count($infusions[$hydration['id']]) > 0) {
+					$infusion = $infusions[$hydration['id']][0];
+					//Pre/Post Therapy Section Hydration - 
+					//$drug = $hydration['drug'];
+					$dose = $infusion['amt'];
+					$units = $infusion['unit'];
+					if (0 == $dose) {
+						$dose = '';
+						$units = '';
+					}
+					$route = $infusion['type'];
+					$fluidVol = $infusion['fluidVol'];
+					if (array_key_exists("flunit", $infusion)) {
+						$fluidUnits = $infusion['flunit'];
+					}
+					else {
+						$fluidUnits = "";
+					}
 
-			$infusionTime = $infusion['infusionTime'];
-			$flowRate = $hydration['flowRate'];
-			$instructions = $hydration['description'];
-			$sequence = $hydration['Sequence'];
-			$adminDay = $hydration['adminDay'];
-			$adminTime = $hydration['adminTime'];
-			$fluidType = $infusion['fluidType'];
-		}
-		else {
-			//Therapy Section Hydration - 
-			//$drug = $hydration['drug'];
-			$dose = $hydration['regdose'];
-			$units = $hydration['regdoseunit'];
-			$route = $hydration['route'];
-			$adminDay = $hydration['adminDay'];
-			$fluidVol = $hydration['flvol'];
-			$fluidUnits = $hydration['flunit'];
-			$infusionTime = $hydration['infusion'];
-			$flowRate = $hydration['flowRate'];
-			$instructions = $hydration['instructions'];
-			$sequence = $hydration['sequence'];
-			$adminTime = $hydration['adminTime'];
-			$fluidType = $hydration['fluidType'];
-		}
-		echo "<tr>";
-		if ("" === $instructions) {
-			echo "<th>$sequence</th>\n";
-		} else {
-			echo "<th rowspan=\"2\">$sequence</th>\n";
-		}
+					$infusionTime = $infusion['infusionTime'];
+					$flowRate = $hydration['flowRate'];
+					$instructions = $hydration['description'];
+					$sequence = $hydration['Sequence'];
+					$adminDay = $hydration['adminDay'];
+					$adminTime = $hydration['adminTime'];
+					$fluidType = $infusion['fluidType'];
+				}
+			}
+			else {
+				//Therapy Section Hydration - 
+				//$drug = $hydration['drug'];
+				$dose = $hydration['regdose'];
+				$units = $hydration['regdoseunit'];
+				if (0 == $dose) {
+					$dose = '';
+					$units = '';
+				}
+				$route = $hydration['route'];
+				$adminDay = $hydration['adminDay'];
+				$fluidVol = $hydration['flvol'];
+				$fluidUnits = $hydration['flunit'];
+				$infusionTime = $hydration['infusion'];
+				$flowRate = $hydration['flowRate'];
+				$instructions = $hydration['instructions'];
+				$sequence = $hydration['sequence'];
+				$adminTime = $hydration['adminTime'];
+				$fluidType = $hydration['fluidType'];
+			}
+			echo "<tr>";
+			if ("" === $instructions) {
+				echo "<th>$sequence</th>\n";
+			} else {
+				echo "<th rowspan=\"2\">$sequence</th>\n";
+			}
 
-        $pos = strrpos($route, " : ");
-        if ($pos !== false) {
-            $R1 = explode(" : ", $route);
-            $route = $R1[0];
-        }
+			$pos = strrpos($route, " : ");
+			if ($pos !== false) {
+				$R1 = explode(" : ", $route);
+				$route = $R1[0];
+			}
 
 
-		echo "<td>$drug</td>\n";
-		echo "<td>$dose $units</td>\n";
-		echo "<td>$route</td>\n";
-		if ("IV" === $route || "IVPB" == $route || "INTRAVENOUS" === $route || "IV PIGGYBACK" === $route) {
-			echo "<td>$fluidVol $fluidUnits</td>\n";
-			echo "<td>$fluidType</td>\n";
-			echo "<td>$infusionTime</td>\n";
-		} else {
-			echo "<td>N/A</td>\n";
-			echo "<td>N/A</td>\n";
-			echo "<td>N/A</td>\n";
+			echo "<td>$drug</td>\n";
+			echo "<td>$dose $units</td>\n";
+			echo "<td>$route</td>\n";
+			if ("IV" === $route || "IVPB" == $route || "INTRAVENOUS" === $route || "IV PIGGYBACK" === $route) {
+				echo "<td>$fluidVol $fluidUnits</td>\n";
+				echo "<td>$fluidType</td>\n";
+				echo "<td>$infusionTime</td>\n";
+			} else {
+				echo "<td>N/A</td>\n";
+				echo "<td>N/A</td>\n";
+				echo "<td>N/A</td>\n";
+			}
+			echo "<td>$adminDay";
+			if ("" === $adminTime) {
+				echo "</td>\n";
+			}
+			else {
+				echo " @ $adminTime</td>\n";
+			}
+			if ("" === $instructions) {
+			} else {
+				echo "</tr><tr><td colspan=\"7\">$instructions</td>\n";
+			}
+			echo "</tr>\n";
 		}
-		echo "<td>$adminDay";
-		if ("" === $adminTime) {
-			echo "</td>\n";
-		}
-		else {
-			echo " @ $adminTime</td>\n";
-		}
-		if ("" === $instructions) {
-		} else {
-			echo "</tr><tr><td colspan=\"7\">$instructions</td>\n";
-		}
-		echo "</tr>\n";
+	}
+	else {
+		echo "<tr><th>&nbsp;</th><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>\n";
 	}
 	?>
 <!-- </tbody></table> -->
@@ -241,12 +282,30 @@ function renderTherapy($tData, $tag, $hydrations, $infusions) {
 	}
 	else {
 		renderTemplateHeading($templatedata[0], $references);
+
         echo "<table style=\"border:none;\" class=\"InformationTable\"><tbody>";
-		renderTherapy($templatedata[0], "Pre", $prehydrations, $preinfusions);
+		if (isset($prehydrations) && isset($preinfusions)) {
+			renderTherapy($templatedata[0], "Pre", $prehydrations, $preinfusions);
+		}
+		else {
+			renderTherapy($templatedata[0], "Pre", "", "");
+		}
+
         echo "<tr><td style=\"border-left-width: 0; border-right-width:0; colspan=\"8\">&nbsp;</td></tr>";
-		renderTherapy($templatedata[0], "", $regimens, "");
+		if (isset($regimens)) {
+			renderTherapy($templatedata[0], "", $regimens, "");
+		}
+		else {
+			renderTherapy($templatedata[0], "", "", "");
+		}
+
         echo "<tr><td style=\"border-left-width: 0; border-right-width:0; colspan=\"8\">&nbsp;</td></tr>";
-		renderTherapy($templatedata[0], "Post", $posthydrations, $postinfusions);
+		if (isset($posthydrations)) {
+			renderTherapy($templatedata[0], "Post", $posthydrations, $postinfusions);
+		}
+		else {
+			renderTherapy($templatedata[0], "Post", "", "");
+		}
         echo "</table>";
 	}
 	?>
