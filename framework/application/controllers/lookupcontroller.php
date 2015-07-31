@@ -147,7 +147,7 @@ error_log("Lookup Save - ");
         $Msg = "Generic Save";
         $jsonRecord = array();
         $jsonRecord['success'] = true;
-        $GUD = null;
+        $GUID = null;
 
         $name = $description = $id = $lookupid = "";
 
@@ -175,7 +175,7 @@ error_log("Lookup Save - " . json_encode($tmp));
         }
         else if ("POST" == $_SERVER['REQUEST_METHOD']) {
             $GUID = $this->LookUp->newGUID();
-            $query = "INSERT into LookUp (Lookup_ID, Lookup_Type, Name, Description) values ('$GUD', '$lookupid','$name','$description')";
+            $query = "INSERT into LookUp (Lookup_ID, Lookup_Type, Name, Description) values ('$GUID', '$lookupid','$name','$description')";
 
             $jsonRecord['msg'] = "$Msg Record Created";
             $jsonRecord['id'] = $GUID;
@@ -192,7 +192,7 @@ error_log("Lookup Save - " . json_encode($tmp));
         }
 
 error_log("save() = $query");
-        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)", $GUD);
+        $this->_ProcQuery($query, $jsonRecord, $ErrMsg, " (Record already exists)", $GUID);
 
     }
 
