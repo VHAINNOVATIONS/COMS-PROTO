@@ -302,7 +302,8 @@ Ext.ShowUnitPerWeightCalcs = function (PatientInfo, saveCalc, Dose, calcDose, or
 	);
 	var newFormula = html.applyTemplate(temp);
 	return newFormula;
-},
+};
+
 Ext.ShowAUCCalcs = function (PatientInfo, saveCalc, Dose, calcDose) {
 	var temp = Ext.apply(PatientInfo, {
 		dose: Dose,

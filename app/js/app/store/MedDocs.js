@@ -1,6 +1,7 @@
 Ext.define("COMS.store.MedDocs", {
 	extend : "Ext.data.Store",
 	model : Ext.COMSModels.MedDocs,
+/*
 	proxy: {
 		type: 'rest',
 		url : Ext.URLs.MedDoc,
@@ -9,6 +10,7 @@ Ext.define("COMS.store.MedDocs", {
 			root : 'records'
 		}
 	},
+*/
 	listeners: {
 		"load" : function(store, records, success) {
 			if(success){

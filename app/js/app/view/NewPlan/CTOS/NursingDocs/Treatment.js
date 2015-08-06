@@ -42,12 +42,12 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 			"editor" : { xtype: "textfield" } 
 		},
 		{ "header" : "Signature", "dataIndex" : "Treatment_User", "width" : 200, "renderer" : Ext.ND_TreatmentSignature },
-		{ "header" : "", "width" : 40, "xtype" : "actioncolumn", "hideable" : false, 
+		{ "header" : "&nbsp;", "width" : 40, "xtype" : "actioncolumn", "hideable" : false, 
 			"handler" : function (grid, rowIndex, colIndex, node, e, record, rowNode) {
-				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { record: record, scope: this });
+				var AmmendTreatment = Ext.widget("puWinTreatmentAmmend", { theGrid : grid, rIdx : rowIndex, record: record, scope: this });
 			},
 			"getClass" : function(v, meta, rec, row, col, store) {
-				if ("Administered" === rec.get("orderstatus")) {
+				if ("Administered" === rec.get("orderstatus") || ("" !== rec.get("User") && "Dispensed" === rec.get("orderstatus"))) {
 					this.items[0].tooltip = "Make addendum";
 					return "EditCell";
 				}

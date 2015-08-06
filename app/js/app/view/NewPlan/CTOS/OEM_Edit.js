@@ -65,7 +65,9 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"store": "DrugStore",
 	"allowBlank": false,
 	"displayField": "name",
-	"valueField": "id"
+	"valueField": "id",		// "valueField" : "IEN",
+	"queryMode" : "local",
+	"typeAhead" : true
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{

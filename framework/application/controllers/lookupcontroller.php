@@ -607,6 +607,75 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
         return $Patients;
     }
 
+
+
+	function _TemplateList() {
+        $query = "select 
+        lu.Name as name
+        ,mt.Template_ID as id
+        ,mt.Regimen_ID as regimenId
+        ,mt.Location_ID
+        ,l6.Name as Location
+        ,lu.Lookup_Type as type
+        ,case when l3.Name is not null then l3.Description else lu.Description end as description
+        ,mt.Cycle_Length as length
+        ,l1.Name as unit
+        ,mt.Total_Courses as totnum
+        ,mt.Course_Number as coursenum
+        ,mt.Version as version
+        ,l2.Name as emoLevel
+        ,mt.Febrile_Neutropenia_Risk as fnRisk
+        ,l4.Name as DiseaseName
+        ,mt.Disease_Stage_ID 
+        ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
+        from Master_Template mt
+        INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID
+        INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
+        INNER JOIN LookUp l2 ON l2.Lookup_ID = mt.Emotegenic_ID
+        LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+        INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
+        LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
+        LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)
+        WHERE Is_Active = 1 and mt.Patient_ID is null
+        Order By 'description'";
+        $Templates = $this->LookUp->query($query);
+        return $Templates;
+	}
+
+	function _TemplateListWithPatients() {
+        $TemplateList = $this->LookUp->getTemplates(null);
+        if (null !== $TemplateList) {
+            $Templates = array();
+            foreach($TemplateList as $templateRecord) {
+                $TemplateID = $templateRecord['id'];
+                $Patients = $this->getPatients4Template( $TemplateID );
+                $templateRecord["Patients"] = $Patients;
+                $templateRecord["PatientCount"] = count($Patients);
+                $Templates[] = $templateRecord;
+            }
+        }
+        return $Templates;
+	}
+
+	// error_log("Get Patients for specific Template - $TemplateID");
+	function _TemplatePatients($TemplateID) {
+        $this->set('templates', null);
+        $TemplateList = $this->LookUp->getTemplates($TemplateID);
+        if (null !== $TemplateList) {
+            $Templates = array();
+            foreach($TemplateList as $templateRecord) {
+                $Patients = array();
+                $TemplateID = $templateRecord['id'];
+                $Patients = $this->getPatients4Template( $TemplateID );
+                $templateRecord["Patients"] = $Patients;
+                $templateRecord["PatientCount"] = count($Patients);
+                $Templates[] = $templateRecord;
+            }
+        }
+        return $Templates;
+	}
+
+
     // Note: IF calling this service with only a single parameter the parameter will be the ID of a template 
     // but it would be in the "FIELD" position, not the "ID"
     // If field and id are NOT null then get Templates by either Cancer ID, Patient ID, Location ID
@@ -615,49 +684,32 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
     //  LookUp/Templates/Patient/PatientID
     //  LookUp/Templates/Location/LocationID
     function Templates($field = NULL, $id = NULL) {
-        if ($field == NULL && $id == NULL) {
-            $TemplateList = $this->LookUp->getTemplates(null);
-            if (null !== $TemplateList) {
-                $Templates = array();
-                foreach($TemplateList as $templateRecord) {
-                    $TemplateID = $templateRecord['id'];
-                    $Patients = $this->getPatients4Template( $TemplateID );
-                    $templateRecord["Patients"] = $Patients;
-                    $templateRecord["PatientCount"] = count($Patients);
-                    $Templates[] = $templateRecord;
-                }
-            }
+		$jsonRecord = array();
+		$jsonRecord["success"] = true;
 
+		if (NULL === $field) {
+			$templates = $this->_TemplateListWithPatients();
+		}
+		else if ("List" === $field) {
+			$templates = $this->_TemplateList();
+		}
+		else if (NULL === $id) {
+			$templates = $this->_TemplatePatients($field);
+		} else {
+			$templates = $this->LookUp->getTemplatesByType($field, $id);
+			if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
+				$jsonRecord["success"] = true;
+				$jsonRecord['msg'] = $this->get('frameworkErr');
+				$templates = null;
+			}
+		}
+		if(!is_null($templates)){
+			$jsonRecord["total"] = count($templates);
+			$jsonRecord["records"] = $templates;
+		}
+		$this->set('jsonRecord', $jsonRecord);
+	}
 
-            // $this->set('templates', $this->LookUp->getTemplates(null));
-            $this->set('templates', $Templates);
-        } else if ($field != NULL && $id == NULL) {
-            $this->set('templates', null);
-
-// error_log("Get Patients for specific Template - $field");
-            $TemplateList = $this->LookUp->getTemplates($field);
-            if (null !== $TemplateList) {
-                $Templates = array();
-                foreach($TemplateList as $templateRecord) {
-                    $Patients = array();
-                    $TemplateID = $templateRecord['id'];
-                    $Patients = $this->getPatients4Template( $TemplateID );
-                    $templateRecord["Patients"] = $Patients;
-                    $templateRecord["PatientCount"] = count($Patients);
-                    $Templates[] = $templateRecord;
-                }
-            }
-            // $this->set('templates', $this->LookUp->getTemplates($field));
-            $this->set('templates', $Templates);
-        } else {
-            $retVal = $this->LookUp->getTemplatesByType($field, $id);
-            if($this->checkForErrors('Get Template Data for id: '.$id.' Failed. ', $retVal)){
-                $this->set('templates', null);
-                return;
-            }
-            $this->set('templates', $retVal);
-        }
-    }
 
     function TemplateDetails($field = NULL, $name = NULL) {
 

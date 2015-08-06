@@ -9,7 +9,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 	"defaults": {
 		"labelAlign": "right",
 		"labelClsExtra": "NursingDocs-label",
-		"labelWidth" : 130,
+		"labelWidth" : 150,
 		"allowBlank" : false,
 		"margin": "10 0"
 	},
@@ -30,7 +30,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				"labelAlign": "right",
 				"labelClsExtra": "NursingDocs-label",
 				"width" : 350,
-				"labelWidth" : 130,
+				"labelWidth" : 150,
 				"allowBlank" : false,
 				"margin" : "5 5 5 0"
 			},
@@ -55,15 +55,33 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 		{
 			"xtype" : "combo",
 			"fieldLabel" : "Select Drug <em>*</em>",
-			"labelWidth" : 80,
+			"labelWidth" : 150,
 			"width" : 425,
 			"name" : "Drug",
-			"store" : "DrugStore",
+			"emptyText" : "Select Drug",
+			"allowBlank" : false,
+			"labelAlign" : "right",
+
 			"displayField" : "name",
 			"valueField" : "IEN",
 			"queryMode" : "local",
-			"typeahead" : true,
-			"allowBlank" : false,
+			"typeAhead" : true,
+			"editable" : true,
+
+			store : Ext.create('Ext.data.Store', {
+				model : Ext.COMSModels.Drugs,
+				proxy: {
+					type: 'rest',
+					api: {
+						read: Ext.URLs.Drugs + "/InPatient"
+					},
+					reader: {
+						type: 'json',
+						root : 'records',
+						successProperty : 'success'
+					}
+				}
+			})
 		},
 		{
 			"xtype": "ManagementBtns"
@@ -86,7 +104,8 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 				{
 					"text": "Emetic Level",
 					"dataIndex": "EmoLevelName",
-					"flex": 1
+					"flex": 1,
+					"hidden": true
 				},
 				{
 					"text": "Medication",

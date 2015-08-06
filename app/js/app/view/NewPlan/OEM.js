@@ -430,9 +430,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if (parent.Patient) {
 						this.Patient = parent.Patient;
 					}
-                    if (parent.SiteConfig) {
-                        this.SiteConfig = parent.SiteConfig;
-                    }
+					if (parent.SiteConfig) {
+						this.SiteConfig = parent.SiteConfig;
+					}
 					this.pIndex = xindex;
 					this.curCycle = Cycle;
 					this.curDay = Day;
@@ -444,26 +444,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					a2 = FluidType;		// + FluidVol + FlowRate;
 					flg = ("" !== a2.trim());
 					return flg;
-/*******************
-					try {
-						if ("" === AdminMethod) {
-							return false;
-						}
-						if ("IV" !== AdminMethod.substr(0,2)) {
-							return false;
-						}
-						a2 = FluidType + FluidVol + FlowRate;
-						try {
-							flg = ("" !== a2.trim());							
-						}
-						catch (e) {
-						}
-						return( flg );
-					}
-					catch (err) {
-						return( false );
-					}
- *******************/
+
 				},
 
 				CalcInfusionTime : function (vol, rate) {
@@ -485,7 +466,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					// var Cycle = parent[idx-1].Cycle;
 					var AdminDate = parent.AdminDate;
 					var today = new Date();
-                    today.setHours(0, 0, 0, 0);
+					today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
 						return "";	// No Edit link if the Admin Date is before today

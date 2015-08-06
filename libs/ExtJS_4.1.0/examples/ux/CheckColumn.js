@@ -1,3 +1,4 @@
+
 /**
  * @class Ext.ux.CheckColumn
  * @extends Ext.grid.column.Column
@@ -25,6 +26,9 @@
  * based on whether or not it is checked to alter the background image used
  * for a column.
  */
+
+
+
 Ext.define('Ext.ux.CheckColumn', {
     extend: 'Ext.grid.column.Column',
     alias: 'widget.checkcolumn',

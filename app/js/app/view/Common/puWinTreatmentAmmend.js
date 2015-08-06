@@ -22,7 +22,13 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 			enableColumnHide : false,
 			enableColumnMove : false,
 			viewConfig:{ markDirty: false },
-			store : {
+			// store : "ND_Treatment",
+			store : Ext.create('Ext.data.Store', {
+				model : 'COMS.model.ND_Treatment',
+			}),
+			
+		/**
+		{
 				fields : [
 					"Cycle",
 					"adminDay",
@@ -48,6 +54,7 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 					"orderstatus"
 				]
 			},
+		 ***/
 			columns : [
 				{ header : "Medication", dataIndex : "drug", width : 120 },
 				{ header : "Dose", dataIndex : "dose", width : 50, editor: { allowBlank: false } },
@@ -67,7 +74,12 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 		{ "xtype" : "RequiredInstr", "margin" : "0 0 0 100" },
 		{ "xtype" : "grid", margin: "10 5 10 5",
 			name : "ModifyData",
-			store : {
+			store : Ext.create('Ext.data.Store', {
+				model : 'COMS.model.ND_Treatment',
+			}),
+			// store : "ND_Treatment",
+			/**
+			{
 				fields : [
 					"Cycle",
 					"adminDay",
@@ -93,6 +105,7 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 					"orderstatus"
 				]
 			},
+			**/
 
 			autoScroll : true,
 			columnLines : true,

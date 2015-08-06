@@ -46,6 +46,7 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 		{  
 			"xtype" : "grid",  "name" : "Medications2TrackList", "title" : "Cumulative Dose Medications List", 
 			"store" : "CumulativeDosingMeds",
+			"multiSelect" : true,
 			"forceFit" : true,
 			"overflowY" : "scroll",
 			"minHeight" : 500,

@@ -196,7 +196,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSigns" ,{
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GenInfo" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_GenInfo",
 	name : "Nursing Documentation General Info Tab",
 	title: "General Information",

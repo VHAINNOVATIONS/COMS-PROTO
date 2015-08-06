@@ -27,8 +27,16 @@ Ext.define("COMS.model.ND_Treatment", {
 		"dose_originalValue",
 		"unit_originalValue",
 		"route_originalValue",
+		"Treatment_ID",
 		"orderstatus",
-		"ActualOrderStatus"
+		"ActualOrderStatus",
+		"DFN",
+		"FlowRate",
+		"flvol",
+		"fluidType",
+		"infusion",
+		"ndDose",
+		"Sequence"
 	],
 
 	proxy: {

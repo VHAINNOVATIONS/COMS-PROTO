@@ -70,8 +70,9 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"displayField" : "name",
 						"valueField" : "IEN",
 						"queryMode" : "local",
-						"typeahead" : true,
-						"allowBlank" : false
+						"typeAhead" : true,
+						"allowBlank" : false,
+						"editable" : true
 					}
 				]
 			},
@@ -120,7 +121,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"allowBlank" : false,
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"name" : "Units"
 					},
 					{
@@ -136,7 +137,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"allowBlank" : false,
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"name" : "Route"
 					}
 				]
@@ -162,14 +163,14 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"valueField" : "value",
 						"queryMode" : "local",
 						"editable" : true,
-						"typeahead" : true,
+						"typeAhead" : true,
 						"store" : "LookupStore"
 					},
 					{
 						"xtype" : "textfield",
 						"fieldLabel" : "Fluid Volume <em>*</em>",
 						"maskRe" : /[0-9\.]/,
-						"labelWidth" : 85,
+						"labelWidth" : 95,
 						"width" : 170,
 						"name" : "FluidVol",
 						"margin" : "5 0 5 5",

@@ -7,7 +7,6 @@ Ext.define("COMS.view.Common.selDisease" ,{
 	"alias" : "widget.selDisease",
 	"name" : "selDisease",
 	"store" : "DiseaseType",
-	"minChars" : 1,
 	"forceSelection" : true,
 	"triggerAction" : "all",
 	"emptyText" : "Select a Cancer Type",

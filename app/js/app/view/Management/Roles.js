@@ -115,6 +115,7 @@ Ext.define("COMS.view.Management.Roles", {
 			"name": "RolesList",
 			"title": "User Roles",
 			"autoScroll": "y",
+			"multiSelect" : true,
 			"cls" : "custom-grid",
 			"columnLines" : true,
 			"viewConfig" : {

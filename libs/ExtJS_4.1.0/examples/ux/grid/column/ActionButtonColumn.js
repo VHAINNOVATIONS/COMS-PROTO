@@ -62,7 +62,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
 
                 var evnts = {
                     'actionbuttonclick':true
-                }
+                };
                 Ext.Array.each(items, function(btn) {
                     if (btn.handler) { }
                     else if (btn.eventName) {
@@ -108,7 +108,7 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
                                 view.fireEvent('actionbuttonclick', this, view, rowIndex, colIndex);
                             }
                             view.fireEvent(eventName, view, rowIndex, colIndex);
-                        }
+                        };
                     })(item);
                 }
                 var hide;

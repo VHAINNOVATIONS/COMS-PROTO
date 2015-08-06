@@ -1,58 +1,3 @@
-/**************
-http://coms-mwb.dbitpro.com:355/NursingDoc/ReactAssess/820753A1-4706-E511-9B8C-000C2935B86F/C3E2C076-E327-4927-8FA5-86D780D0F734
-
-{
-"patientId" : "310E712D-E304-48E9-9835-94F31DA5595C",
-"Details" : [{
-"alertEvent" : false,
-"choice" : true,
-"comments" : "",
-"fieldLabel" : " Topical heating applied",
-"levelChosen" : 0,
-"sectionTitle" : "Extravasation",
-"sequence" : 0
-},
-{
-"alertEvent" : false,
-"choice" : true,
-"comments" : "",
-"fieldLabel" : " Topical cooling applied",
-"levelChosen" : 0,
-"sectionTitle" : "Extravasation",
-"sequence" : 1
-},
-{
-"alertEvent" : false,
-"choice" : true,
-"comments" : "",
-"fieldLabel" : " Interventions",
-"levelChosen" : 0,
-"sectionTitle" : "Extravasation",
-"sequence" : 2
-},
-{
-"alertEvent" : false,
-"choice" : true,
-"comments" : "",
-"fieldLabel" : " Other",
-"levelChosen" : 0,
-"sectionTitle" : "Other",
-"sequence" : 33
-}]}
- **************/
-/*****************************************************
- *    /LookUp/TemplateData/<Template_ID>
- *    /LookUp/TemplateMedDocs/<Template_ID>
- *    /Patient/Vitals/<Patient_ID>
- *    /Patient/Template/<Patient_ID>
- *    /Patient/Templates/<Patient_ID>
- *    /Patient/CumulativeDoseTracking/<Patient_ID>
- *    /Patient/OEM/<Patient_ID>
- *
- *    /NursingDoc/AdverseEventsHistory/<PAT_ID>
- *    /Patient/DischargeInstructions/<PAT_ID>
- *****************************************************/
-
 /***
  *
  *	Console Logging Code
@@ -153,7 +98,6 @@ BOOMR.init({
 
 });
 **/
-
 /**
  *
  * CONSTANTS FILE
@@ -617,7 +561,6 @@ Ext.URLs.ChemoHistory = theJSPath + "/data1/ChemoHistory.js";
 Ext.URLs.RadiationHistory = theJSPath + "/data1/RadiationHistory.js";
 // Used in the RadiationHistory Model.
 
-// Ext.URLs.Template = theJSPath + "/data1/Templates.js";
 Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Used in the LookupTable_CycleLengthMax model.
 
@@ -742,6 +685,9 @@ Ext.COMSModels.ToxGridModel = "COMS.model.ToxGridModel";
  * based on whether or not it is checked to alter the background image used
  * for a column.
  */
+
+
+
 Ext.define('Ext.ux.CheckColumn', {
     extend: 'Ext.grid.column.Column',
     alias: 'widget.checkcolumn',
@@ -832,7 +778,6 @@ Ext.define('Ext.ux.CheckColumn', {
         return '<div class="' + cls.join(' ') + '">&#160;</div>';
     }
 });
-
 
 /**
  * http://www.sencha.com/forum/showthread.php?198862
@@ -1134,7 +1079,6 @@ Ext.define('Ext.ux.CheckCombo', {
         }
     }
 });
-
 Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
 
     extend: 'Ext.grid.column.Column',
@@ -1298,7 +1242,6 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
         return [];
     }
 });
-
 
 /**
  *
@@ -1912,20 +1855,20 @@ Ext.ShowBSACalcs = function (PatientInfo, saveCalc, Dose, calcDose, OrigDose) {
 					x1 = Ext.AdjustedWeight(x.Weight, x.Height, x.Gender);
 					tmp1 = ("((" + WeightInKilos + " - " + Ext.IdealWeight(x.Height, x.Gender) + ") * 0.4) + " + Ext.IdealWeight(x.Height, x.Gender));
 					tmp1 += " = " + x1 + " kg";
-					// console.log("Calculating " + x.WeightFormula + " - " + x1);
+					//console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
 				case "Lean Weight":
 					x1 = Ext.LeanWeight(x.Weight, x.Height, x.Gender);
 					tmp1 = ("(" + ("M" === x.Gender ? "1.1" : "1.07") + " * " + WeightInKilos + ") - " + ("M" === x.Gender ? "128" : "148") + " * (" + WeightInKilos + "<sup>2</sup> / 100 * " + (2.54 * HeightInMeters) + "<sup>2</sup>))");
 					tmp1 += " = " + x1 + " kg";
-					// console.log("Calculating " + x.WeightFormula + " - " + x1);
+					//console.log("Calculating " + x.WeightFormula + " - " + x1);
 					break;
 				}
 
 				tmp += x.WeightFormula + "</td></tr>"; // The name of the Weight Method used (e.g. Actual, Ideal, Adjusted, etc).
 				tmp += "<tr><th>&nbsp;</th><td>= " + x.WF + " = " + x1 + " kg</td></tr>"; // The string for calculating the weight as well as the result of the calculation
 				tmp += "<tr><th>&nbsp;</th><td>= " + tmp1 + xtramsg; // The details of the calculation as well as the result.
-				// console.log("BSA_Weight - " + x1);
+				//console.log("BSA_Weight - " + x1);
 				x.BSA_Weight = x1;
 				//					this.locPatient.BSA_Weight = x.BSA_Weight;	//??????????????????????
 				return ("= " + tmp);
@@ -2563,7 +2506,6 @@ Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
         }
     }
 });
-
 // plugins: [ Ext.ND_cellEditing ],
 // plugins: [ Ext.create("Ext.grid.plugin.CellEditing", { clicksToEdit: 1 }) ],
 Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
@@ -2590,7 +2532,6 @@ Ext.ND_cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
         }
     }
 });
-
 
 
 Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
@@ -2758,7 +2699,6 @@ Ext.define('Ext.ux.grid.column.ActionButtonColumn', {
     }
 });
 
-
 Ext.define('COMS.model.ActiveWorkflowsTable', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -2780,7 +2720,6 @@ Ext.define('COMS.model.ActiveWorkflowsTable', {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.AppliedTemplateInfo', {
     extend: 'Ext.data.Model',
@@ -2820,7 +2759,6 @@ Ext.define('COMS.model.AllTemplatesApplied2Patient', {
     }
 });
 
-
 Ext.define('COMS.model.Allergies', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -2838,7 +2776,6 @@ Ext.define('COMS.model.Allergies', {
 		}
 	}
 });
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 
@@ -2907,7 +2844,6 @@ Ext.define('COMS.model.CTOS', {
     }
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 
@@ -2920,7 +2856,6 @@ Ext.define('COMS.model.CTOS_References', {
 	],
 	belongsTo : 'COMS.model.CTOS'
 });
-
 
 /* Note: This model may have to be refactored once we identify what type of info is held in the Chemo History */
 Ext.define('COMS.model.ChemoHistory', {
@@ -2937,7 +2872,6 @@ Ext.define('COMS.model.ChemoHistory', {
         }
     }
 });
-
 
 Ext.define("COMS.model.ClinicInfo", {
 	"extend" : "Ext.data.Model",
@@ -2958,20 +2892,16 @@ Ext.define("COMS.model.ClinicInfo", {
 		}
 	}
 });
-
-
 Ext.define('COMS.model.CumulativeDoseMedsInRegimen', {
 	extend: 'Ext.data.Model',
 	fields: [ "ID", "CumDosePerCycle", "CumDosePerCycleUnits", "CumDosePerRegimen", "CumulativeDoseAmt", "CumulativeDoseUnits", "MedID", "MedName", "UnitsID" ],
 	belongsTo : 'COMS.model.CTOS'
 });
 
-
 Ext.define('COMS.model.CumulativeDosingMeds', {
 	extend: 'Ext.data.Model',
 	fields: ["MedName", "CumulativeDoseAmt", "UnitsID", "ID", "CumulativeDoseUnits", "MedID"]
 });
-
 Ext.define('COMS.model.DeliveryMechanism', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -2989,7 +2919,6 @@ Ext.define('COMS.model.DeliveryMechanism', {
 		}
 	}
 });
-
 Ext.define('COMS.model.DischargeInstruction', {
 	extend: 'Ext.data.Model',
 	fields: ["ID", "Label", "Details"],
@@ -3009,8 +2938,6 @@ Ext.define('COMS.model.DischargeInstruction', {
 		}
 	}
 });
-
-
 Ext.define('COMS.model.DiseaseStage', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3027,12 +2954,10 @@ Ext.define('COMS.model.DiseaseStage', {
 	}
 });
 
-
 Ext.define("COMS.model.DiseaseStaging", {
 	extend: "Ext.data.Model",
 	fields: ["ID", "DiseaseID", "Disease", "Stage"]
 });
-
 
 Ext.define('COMS.model.DrugRegimen', {
 	extend: 'Ext.data.Model',
@@ -3075,8 +3000,6 @@ Ext.define('COMS.model.DrugRegimen', {
 		}
 	}
 });
-
-
 Ext.define('COMS.model.DrugUnits', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3094,7 +3017,6 @@ Ext.define('COMS.model.DrugUnits', {
 	}
 
 });
-
 Ext.define("COMS.model.Drugs", {
 	"extend" : "Ext.data.Model",
 	"fields" : [ "id", "name", "description", "IEN" ],
@@ -3108,7 +3030,6 @@ Ext.define("COMS.model.Drugs", {
 	}
 });
 
-
 Ext.define('COMS.model.EmeticMeds', {
 	extend: 'Ext.data.Model',
 	fields: [ "id", "EmoLevel", "EmoLevelName", "IEN", "MedID", "MedName", "MedType" ],
@@ -3121,8 +3042,6 @@ Ext.define('COMS.model.EmeticMeds', {
 		}
 	}
 });
-
-
 Ext.define("COMS.model.EoTSVitals", {
 	extend: "Ext.data.Model",
 	fields: [
@@ -3244,7 +3163,6 @@ Ext.define("COMS.model.EndTreatmentSummary", {
 	}
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 
@@ -3337,7 +3255,6 @@ Ext.define("COMS.model.Flowsheet", {
     }
 });
 
-
 Ext.define('COMS.model.GenericLookupModel', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3375,8 +3292,6 @@ Ext.define('COMS.model.GenericLookupModel', {
 	}
  **/
 });
-
-
 Ext.define('COMS.model.GlobalLookupModel', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3396,7 +3311,6 @@ Ext.define('COMS.model.GlobalLookupModel', {
 	}
 });
 
-
 Ext.define('COMS.model.GlobalsTable', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3415,7 +3329,6 @@ Ext.define('COMS.model.GlobalsTable', {
 		}
 	}
 });
-
 
 Ext.define("COMS.model.HydrationDrug", {
 	extend: "Ext.data.Model",
@@ -3474,19 +3387,15 @@ Ext.define("COMS.model.HydrationDrug", {
 	}
 
 });
-
-
 Ext.define("COMS.model.IDEntry", {
 	extend: "Ext.data.Model",
 	fields: ["Vital2Check", "MinMax", "MinValue", "MaxValue", "MinMaxMsg", "PctVarFromValue", "PctVarFromValuePct", "PctVarFromValueValue", "PctVarFromValueMsg", "PctVarFromLast", "PctVarFromLastPct", "PctVarFromLastMsg"]
 });
 
-
 Ext.define('COMS.model.IVFluidType', {
 	extend: 'Ext.data.Model',
 	fields: ["Med_ID", "FluidType_ID", "MedName", "FluidType"]
 });
-
 
 Ext.define('COMS.model.Infusion', {
 	extend: 'Ext.data.Model',
@@ -3500,7 +3409,6 @@ Ext.define('COMS.model.Infusion', {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.LUReferences', {
 	extend: 'Ext.data.Model',
@@ -3519,7 +3427,6 @@ Ext.define('COMS.model.LUReferences', {
 	}
 
 });
-
 
 Ext.define('COMS.model.LabInfo', {
 	extend: 'Ext.data.Model',
@@ -3550,7 +3457,6 @@ Ext.define('COMS.model.LabInfo', {
 	}
 
 });
-
 Ext.define("COMS.model.LookupTable", {
 	"extend" : "Ext.data.Model",
 	"fields" : [ "id", "value", "description", "lookupid" ],
@@ -3571,7 +3477,6 @@ Ext.define("COMS.model.LookupTable", {
 	}
 });
 
-
 Ext.define('COMS.model.LookupTable_CycleLengthMax', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3587,7 +3492,6 @@ Ext.define('COMS.model.LookupTable_CycleLengthMax', {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.LookupTable_CycleLengthStore', {
 	extend: 'Ext.data.Model',
@@ -3605,7 +3509,6 @@ Ext.define('COMS.model.LookupTable_CycleLengthStore', {
     }
 });
 
-
 Ext.define('COMS.model.LookupTable_DiseaseType', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3622,7 +3525,6 @@ Ext.define('COMS.model.LookupTable_DiseaseType', {
 	}
 });
 
-
 Ext.define('COMS.model.LookupTable_EmetogenicLevel', {
 	extend: 'Ext.data.Model',
 	fields: [ "id", "name", "description" ],
@@ -3635,7 +3537,6 @@ Ext.define('COMS.model.LookupTable_EmetogenicLevel', {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.LookupTable_FebrileNeutropeniaRisk', {
 	extend: 'Ext.data.Model',
@@ -3653,7 +3554,6 @@ Ext.define('COMS.model.LookupTable_FebrileNeutropeniaRisk', {
 	}
 });
 
-
 Ext.define('COMS.model.LookupTable_FluidType', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3670,7 +3570,6 @@ Ext.define('COMS.model.LookupTable_FluidType', {
 	}
 });
 
-
 Ext.define('COMS.model.LookupTable_Template', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3686,7 +3585,6 @@ Ext.define('COMS.model.LookupTable_Template', {
         }
     }
 });
-
 
 Ext.define('COMS.model.LookupTable_TemplateSources', {
 	extend: 'Ext.data.Model',
@@ -3705,7 +3603,6 @@ Ext.define('COMS.model.LookupTable_TemplateSources', {
 	}
 });
 
-
 Ext.define("COMS.model.LookupTable_Templates", {
     "extend" : "Ext.data.Model",
     "fields" : [ "id", "description", "force" ],
@@ -3721,7 +3618,6 @@ Ext.define("COMS.model.LookupTable_Templates", {
         }
     }
 });
-
 
 Ext.define('COMS.model.LookupTable_TimeFrameUnit', {
 	extend: 'Ext.data.Model',
@@ -3739,7 +3635,6 @@ Ext.define('COMS.model.LookupTable_TimeFrameUnit', {
 	}
 });
 
-
 Ext.define('COMS.model.LookupTable_TotalCoursesMax', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -3756,7 +3651,6 @@ Ext.define('COMS.model.LookupTable_TotalCoursesMax', {
 	}
 });
 
-
 Ext.define("COMS.model.MDWs", {
 	extend: "Ext.data.Model",
 	fields: [ "id", "data" ],	// These fields are a placeholder till we know what data MDWs will be sending back
@@ -3769,7 +3663,6 @@ Ext.define("COMS.model.MDWs", {
 		}
 	}
 });
-
 
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
@@ -3800,7 +3693,6 @@ Ext.define('COMS.model.MHMed', {
 //    }
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 
@@ -3828,31 +3720,28 @@ Ext.define('COMS.model.MHMedInfusion', {
 //    }
 });
 
-
 Ext.define('COMS.model.Med', {
 	extend: 'Ext.data.Model',
 	fields: [
-		{ name: 'id', type: 'string'},
-		{ name: 'Drug', type: 'string'},
-		{ name: 'MedicationType', type: 'string'},
-		{ name: 'Amt', type: 'string'},
-		{ name: 'Units', type: 'string'},		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string
-		{ name: 'Route', type: 'string'},	// Internally, use a GUID to the Infusion Method Lookup Table, but this should be the actual string
+		{ name : 'id', type: 'string'},
+		{ name : 'Drug', type: 'string'},
+		{ name : 'MedicationType', type: 'string'},
+		{ name : 'Amt', type: 'string'},
+		{ name : 'Units', type: 'string'},		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string
+		{ name : 'Route', type: 'string'},	// Internally, use a GUID to the Infusion Method Lookup Table, but this should be the actual string
 
-		{ name: 'Day', type: 'string'},
-		{ name: 'FluidVol', type: 'string'},
-		{ name: 'InfusionTime', type: 'string'},
-		{ name: 'FlowRate', type: 'string'},
-		{ name: 'Instructions', type: 'string'},
+		{ name : 'Day', type: 'string'},
+		{ name : 'FluidVol', type: 'string'},
+		{ name : 'InfusionTime', type: 'string'},
+		{ name : 'FlowRate', type: 'string'},
+		{ name : 'Instructions', type: 'string'},
 		{ name : 'FluidType', type : 'string' },	// raw data                                
 		{ name : 'Sequence', type: 'string'},
-		{ name: 'AdminTime', type: 'string'}
+		{ name : 'AdminTime', type: 'string'}
 	],
 
-    belongsTo : 'COMS.model.CTOS'
+	belongsTo : 'COMS.model.CTOS'
 });
-
-
 Ext.define('COMS.model.MedDocs', {
 	extend: 'Ext.data.Model',
 	fields: ["ID", "Med_ID", "MedName", "Documentation"],
@@ -3871,11 +3760,7 @@ Ext.define('COMS.model.MedDocs', {
 			"messageProperty" : "message"
 		}
 	}
-
-
-
 });
-
 Ext.define('COMS.model.MedReminder', {
 	extend: 'Ext.data.Model',
 	fields: ["MR_ID", "TemplateID", "Title", "Description", "ReminderWhenCycle", "ReminderWhenPeriod"],
@@ -3888,12 +3773,10 @@ Ext.define('COMS.model.MedReminder', {
 		}
 	}
 });
-
 Ext.define('COMS.model.MedRisks', {
 	extend: 'Ext.data.Model',
 	fields: ["ID", "Label", "Details"]
 });
-
 
 Ext.define('COMS.model.MedsNonRoundedTable', {
 	extend: 'Ext.data.Model',
@@ -3915,7 +3798,6 @@ Ext.define('COMS.model.MedsNonRoundedTable', {
 	}
 });
 
-
 Ext.define("COMS.model.Messages", {
 	extend: "Ext.data.Model",
 	fields: [ "mid", "MTo", "CC", "Subject", "Message", "Date", "MFrom", "rid", "wid", "dateSent", "OpenLink", "timeSent", "MStatus" ],
@@ -3928,7 +3810,6 @@ Ext.define("COMS.model.Messages", {
 		}
 	}
 });
-
 
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
@@ -3974,7 +3855,6 @@ Ext.define("COMS.model.ND_Assessment", {
     }
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 Ext.define("COMS.model.ND_CTCAE_Data", {
@@ -4005,7 +3885,6 @@ Ext.define("COMS.model.ND_CTCAE_Data", {
     }
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 Ext.define("COMS.model.ND_CTCAE_SOC", {
@@ -4027,7 +3906,6 @@ Ext.define("COMS.model.ND_CTCAE_SOC", {
         }
     }
 });
-
 
 Ext.define("COMS.model.ND_D_Instructions", {
 	extend: "Ext.data.Model",
@@ -4072,7 +3950,6 @@ Ext.define("COMS.model.ND_Discharge", {
     }
 });
 
-
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
 Ext.define("COMS.model.ND_GenInfo", {
@@ -4106,7 +3983,6 @@ Ext.define("COMS.model.ND_GenInfo", {
         }
     }
 });
-
 
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
@@ -4153,7 +4029,6 @@ Ext.define("COMS.model.ND_IVSite", {
         }
     }
 });
-
 
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
@@ -4312,49 +4187,45 @@ Ext.define("COMS.model.ND_ReactAssessHorA", {
     }
 });
 
-
 Ext.define("COMS.model.ND_Treatment", {
 	extend: "Ext.data.Model",
 	fields : [
-			"patientID",			// GUID for the Patient
+		"patientID",			// GUID for the Patient
 		"templateID",			// GUID for the Template
 		"PAT_ID",				// GUID for the Treatment record
-			"Order_ID",
+		"Order_ID",
 		"Cycle",
 		"adminDay",
-			"adminDate",
+		"adminDate",
 		"typeOrder",	// Used to display therapy type in grid in sorted order (Pre = 1, Therapy = 2, Post = 3)
-			"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
-			"drug",		// Includes sequence in the treatment type (e.g. "1. Ibuprofin" in Pre Therapy, "3. Mylanta" in Post Therapy
+		"type",			// Indicates type of Therapy this record is for e.g. PreTherapy, Therapy, PostTherapy
+		"drug",		// Includes sequence in the treatment type (e.g. "1. Ibuprofin" in Pre Therapy, "3. Mylanta" in Post Therapy
 		"MedID",
-			"Drug_ID",
-			"dose",
-			"unit",
+		"Drug_ID",
+		"dose",
+		"unit",
 		"UnitID",
-			"route",
-			"StartTime",
-			"EndTime",
-			"Comments",
+		"route",
+		"StartTime",
+		"EndTime",
+		"Comments",
 		"User",
-			"Treatment_User",
-			"Treatment_Date",		// Time/Date stamp of when the treatment was recorded
+		"Treatment_User",
+		"Treatment_Date",		// Time/Date stamp of when the treatment was recorded
 		"drug_originalValue",
 		"dose_originalValue",
 		"unit_originalValue",
 		"route_originalValue",
 		"Treatment_ID",
-			"orderstatus",
-			"ActualOrderStatus",
-"DFN",
-"FlowRate",
-"flvol",
-"fluidType",
-"infusion",
-"ndDose",
-"Sequence"
-
-
-
+		"orderstatus",
+		"ActualOrderStatus",
+		"DFN",
+		"FlowRate",
+		"flvol",
+		"fluidType",
+		"infusion",
+		"ndDose",
+		"Sequence"
 	],
 
 	proxy: {
@@ -4374,7 +4245,6 @@ Ext.define("COMS.model.ND_Treatment", {
 		}
 	}
 });
-
 Ext.define("COMS.model.OEMEditRecord", {
 	extend:	"Ext.data.Model",
 	fields : [
@@ -4428,7 +4298,6 @@ Ext.define("COMS.model.OEMEditRecord", {
 		}
 	}
 });
-
 
 // Loading Nested Data - See the Ext.data.reader.Reader intro docs for a full explanation.
 // http://docs.sencha.com/ext-js/4-0/#!/api/Ext.data.reader.Reader
@@ -4565,7 +4434,6 @@ Ext.define("COMS.model.OEMRecords", {
     }
 });
 
-
 Ext.define('COMS.model.OrdersTable', {
 	extend: 'Ext.data.Model',
 	fields: [ 'patientID', 'dfn', 'templateID', 'adminDay', "CourseNum", 'adminDate', 'drug', 'type', 'dose', 'unit', 'route', 'fluidVol', 'fluidType', 'flowRate', 'instructions', 'orderstatus', 'ActualOrderStatus', 'orderid', 'Last_Name' ],
@@ -4584,7 +4452,6 @@ Ext.define('COMS.model.OrdersTable', {
 	}
 });
 
-
 Ext.define('COMS.model.PatientCumulativeDosing', {
 	extend: 'Ext.data.Model',
 	fields: ["name", "LifetimeDose", "Units"],
@@ -4597,7 +4464,6 @@ Ext.define('COMS.model.PatientCumulativeDosing', {
 		}
 	}
 });
-
 
 /* Note: This model may have to be refactored once we identify what type of info is held in the Radiation History */
 Ext.define('COMS.model.PatientHistory', {
@@ -4620,7 +4486,6 @@ Ext.define('COMS.model.PatientHistory', {
         }
     }
 });
-
 
 /************* OLD MODEL ************************
 Ext.define('COMS.model.PatientInfo', {
@@ -4743,7 +4608,6 @@ Ext.define("COMS.model.PatientInfo", {
 		}
 	}
 });
-
 Ext.define("COMS.model.PatientInfoMDWSDiseases", {
 	extend: "Ext.data.Model",
 	fields: [
@@ -4843,7 +4707,6 @@ Ext.define("COMS.model.PatientInfoMDWS", {
 		}
 	}
 });
-
 Ext.define("COMS.model.PatientTemplates", {
 	extend: "Ext.data.Model",
 	queryMode: "local",
@@ -4881,7 +4744,6 @@ Ext.define("COMS.model.PatientTemplates", {
 		}
 	}
 });
-
 /* Note: This model may have to be refactored once we identify what type of info is held in the Radiation History */
 Ext.define('COMS.model.RadiationHistory', {
 	extend: 'Ext.data.Model',
@@ -4898,7 +4760,6 @@ Ext.define('COMS.model.RadiationHistory', {
 	}
 });
 
-
 Ext.define('COMS.model.References', {
 	extend: 'Ext.data.Model',
 	fields: [
@@ -4907,7 +4768,6 @@ Ext.define('COMS.model.References', {
 		{ name: 'ReferenceLink', type: 'string'}
 	]
 });
-
 
 Ext.define('COMS.model.TemperatureLocation', {
 	extend: 'Ext.data.Model',
@@ -4926,7 +4786,6 @@ Ext.define('COMS.model.TemperatureLocation', {
 		}
 	}
 });
-
 /***/
 Ext.define("COMS.model.TemplateListPatients", {
 	"extend" : "Ext.data.Model",
@@ -4948,7 +4807,6 @@ Ext.define("COMS.model.TemplateList", {
 	"hasMany" : { "model" : "COMS.model.TemplateListPatients", "name" : "Patients" }
 });
 
-
 Ext.define('COMS.model.ToxGridModel', {
 	extend: 'Ext.data.Model',
 	fields: ["id", "Label", "OtherTox", "Grade_Level", "Details", "Comments", {name: 'tDate', type: 'date', dateFormat:'m/d/Y'}, "Alert"],
@@ -4961,7 +4819,6 @@ Ext.define('COMS.model.ToxGridModel', {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.Toxicity', {
 	extend: 'Ext.data.Model',
@@ -4976,12 +4833,10 @@ Ext.define('COMS.model.Toxicity', {
 	}
 });
 
-
 Ext.define('COMS.model.ToxicityInstruction', {
 	extend: 'Ext.data.Model',
 	fields: ["ID", "Label", "Details"]
 });
-
 
 Ext.define('COMS.model.UsersTable', {
 	extend: 'Ext.data.Model',
@@ -5004,7 +4859,6 @@ Ext.define('COMS.model.UsersTable', {
 		}
 	}
 });
-
 
 Ext.define("COMS.model.Vitals", {
 	extend: "Ext.data.Model",
@@ -5049,7 +4903,6 @@ Ext.define("COMS.model.Vitals", {
 	}
 });
 
-
 Ext.define('COMS.store.ActiveWorkflowsStore', {
 	extend : 'Ext.data.Store',
         listeners: {
@@ -5072,12 +4925,10 @@ Ext.define('COMS.store.ActiveWorkflowsStore', {
         
 	model : Ext.COMSModels.ActiveWorkflowsTable
 });
-
 Ext.define('COMS.store.ChemoHistory', {
 	extend : 'Ext.data.Store',
 	model : 'COMS.model.ChemoHistory'
 });
-
 Ext.define('COMS.store.CTOS', {
 	extend : 'Ext.data.Store',
 //        autoDestroy: true,
@@ -5104,12 +4955,10 @@ Ext.define('COMS.store.CTOS', {
 
         model : Ext.COMSModels.CTOS
 });
-
 Ext.define('COMS.store.ChemoHistory', {
 	extend : 'Ext.data.Store',
 	model : 'COMS.model.ChemoHistory'
 });
-
 Ext.define('COMS.store.ClinicInfo', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.ClinicInfo,
@@ -5137,7 +4986,6 @@ Ext.define('COMS.store.ClinicInfo', {
 		}
 	}
 });
-
 Ext.define('COMS.store.CumulativeDosingMeds', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.CumulativeDosingMeds,
@@ -5150,22 +4998,18 @@ Ext.define('COMS.store.CumulativeDosingMeds', {
 		}
 	}
 });
-
 Ext.define('COMS.store.CycleLengthMax', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.CycleLengthMax
 });
-
 Ext.define('COMS.store.CycleLengthStore', {
     extend : 'Ext.data.Store',
     model : Ext.COMSModels.CycleLengthStore
 });
-
 Ext.define('COMS.store.DeliveryMechanism', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DeliveryMechanism
 });
-
 Ext.define('COMS.store.DischargeInstruction', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DischargeInstruction,
@@ -5183,7 +5027,6 @@ Ext.define('COMS.store.DischargeInstruction', {
 		}
 	}
 });
-
 Ext.define('COMS.store.DiseaseStage', {
 	extend : 'Ext.data.Store',
         // autoDestroy: true,
@@ -5202,7 +5045,6 @@ Ext.define('COMS.store.DiseaseStage', {
         
 	model : Ext.COMSModels.DiseaseStage
 });
-
 Ext.define('COMS.store.DiseaseStaging', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DiseaseStaging,
@@ -5216,7 +5058,6 @@ Ext.define('COMS.store.DiseaseStaging', {
 		}
 	}
 });
-
 Ext.define('COMS.store.DiseaseType', {
     extend : 'Ext.data.Store',
     /*
@@ -5243,12 +5084,10 @@ Ext.define('COMS.store.DiseaseType', {
 	model : Ext.COMSModels.DiseaseType
 });
 
-
 Ext.define('COMS.store.DrugRegimenStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DrugRegimen
 });
-
 Ext.define('COMS.store.DrugStore', {
     extend : 'Ext.data.Store',
     model : Ext.COMSModels.Drugs,
@@ -5269,13 +5108,11 @@ Ext.define('COMS.store.DrugStore', {
     }
 });
 
-
 Ext.define('COMS.store.DrugUnitsStore', {
     extend : 'Ext.data.Store',
     model : Ext.COMSModels.DrugUnits,
 	autoLoad: true
 });
-
 Ext.define('COMS.store.DrugUnitsStore2', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DrugUnits,
@@ -5293,18 +5130,15 @@ Ext.define('COMS.store.DrugUnitsStore2', {
 		}
 	]
 });
-
-Ext.define('COMS.store.EmeticMeds', {
-	extend : 'Ext.data.Store',
-	model : Ext.COMSModels.EmeticMeds,
-	groupField: "EmoLevelName"
+Ext.define("COMS.store.EmeticMeds", {
+	"extend" : "Ext.data.Store",
+	"model" : Ext.COMSModels.EmeticMeds,
+	"groupField" : "EmoLevelName"
 });
-
 Ext.define('COMS.store.EmetogenicLevel', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.EmetogenicLevel
 });
-
 Ext.define('COMS.store.FebrileNeutropeniaRisk', {
     extend : 'Ext.data.Store',
 	model : Ext.COMSModels.FebrileNeutropeniaRisk,
@@ -5315,23 +5149,19 @@ Ext.define('COMS.store.FebrileNeutropeniaRisk', {
 		{ id : '4', value : 'High' }
 	]
 });
-
 Ext.define("COMS.store.FlowSheetCombo", {
 	"extend" : "Ext.data.Store",
 	"fields" : ["label", "cols", "Cycle", "StartDate", "StartDay", "StartIdx", "EndDate", "EndDay", "EndIdx"]
 });
 
-
 Ext.define("COMS.store.FluidType", {
 	extend : "Ext.data.Store",
 	model : "COMS.model.LookupTable_FluidType"
 });
-
 Ext.define("COMS.store.GenericLookup", {
 	extend : "Ext.data.Store",
 	model : "COMS.model.GenericLookupModel"
 });
-
 Ext.define('COMS.store.GlobalStore', {
 	extend : 'Ext.data.Store',
         listeners: {
@@ -5340,7 +5170,7 @@ Ext.define('COMS.store.GlobalStore', {
                 if(options.params){
                     if(options.params.id!=null){
                         store.proxy.api.read = options.params.URL + options.params.id;
-                    }
+                    }                
                 }
             },
             'load': function(store, records, success) {
@@ -5354,7 +5184,6 @@ Ext.define('COMS.store.GlobalStore', {
         
 	model : Ext.COMSModels.GlobalsTable
 });
-
 Ext.define('COMS.store.HydrationStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Hydration,
@@ -5367,7 +5196,6 @@ Ext.define('COMS.store.HydrationStore', {
                 }
         
 });
-
 Ext.define('COMS.store.IDEntry', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.IDEntry,
@@ -5380,7 +5208,6 @@ Ext.define('COMS.store.IDEntry', {
 		}
 	}
 });
-
 Ext.define('COMS.store.IVFluidType', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.IVFluidType,
@@ -5393,7 +5220,6 @@ Ext.define('COMS.store.IVFluidType', {
 		}
 	}
 });
-
 Ext.define('COMS.store.InfusionReaction', {
 	extend : 'Ext.data.Store',
 	fields: [ "IReact_Detail_ID", "IReact_ID", "Sequence", "Field_Label", "Choice", "Comments", "sectionTitle", "alertEvent" ],
@@ -5407,13 +5233,11 @@ Ext.define('COMS.store.InfusionReaction', {
 	}
 });
 
-
 Ext.define('COMS.store.InfusionStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Infusion,
 	autoLoad: true
 });
-
 Ext.define('COMS.store.InventoryConsumption', {
 				extend : 'Ext.data.Store',
 				fields:["ID", "iReport_ID", "Drug", "Total", "Unit"],
@@ -5426,7 +5250,6 @@ Ext.define('COMS.store.InventoryConsumption', {
 					}
 				}
 			});
-
 Ext.define('COMS.store.InventoryList', {
 				extend : 'Ext.data.Store',
 				fields:["ID", "Date", "StartDate"],
@@ -5439,18 +5262,15 @@ Ext.define('COMS.store.InventoryList', {
 					}
 				}
 			});
-
 Ext.define('COMS.store.LUReferences', {
     extend : 'Ext.data.Store',
     model : Ext.COMSModels.LUReferences
 });
-
 Ext.define("COMS.store.LabInfo", {
 	extend : "Ext.data.Store",
 	model : "COMS.model.LabInfo",
 	groupField : "specimen"
 });
-
 Ext.define('COMS.store.Lockout', {
 	extend : 'Ext.data.Store',
 	fields:["id", "Patient_ID", "Section", "UserName", "dtLocked", "dtUnLocked", "Patient_DFN"],
@@ -5463,7 +5283,6 @@ Ext.define('COMS.store.Lockout', {
 		}
 	}
 });
-
 
 Ext.define('COMS.store.LookupStore', {
 	extend : 'Ext.data.Store',
@@ -5486,7 +5305,6 @@ Ext.define('COMS.store.LookupStore', {
         
 	model : Ext.COMSModels.LookupTable
 });
-
 Ext.define("COMS.store.MedDocs", {
 	extend : "Ext.data.Store",
 	model : Ext.COMSModels.MedDocs,
@@ -5515,12 +5333,10 @@ Ext.define("COMS.store.MedDocs", {
 		}
 	}
 });
-
 Ext.define("COMS.store.MedReminders", {
 	extend : "Ext.data.Store",
 	model : Ext.COMSModels.MedReminder
 });
-
 Ext.define('COMS.store.MedRisks', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.MedRisks,
@@ -5546,7 +5362,6 @@ Ext.define('COMS.store.MedRisks', {
 		}
 	}
 });
-
 Ext.define('COMS.store.MedsNonRounded', {
 	extend : 'Ext.data.Store',
         listeners: {
@@ -5569,7 +5384,6 @@ Ext.define('COMS.store.MedsNonRounded', {
         
 	model : Ext.COMSModels.MedsNonRoundedTable
 });
-
 Ext.define("COMS.store.Messages", {
 	extend : "Ext.data.Store",
 //	autoLoad: true,
@@ -5577,17 +5391,14 @@ Ext.define("COMS.store.Messages", {
 	model : "COMS.model.Messages",
 	groupField: 'MStatus'
 });
-
 Ext.define("COMS.store.ND_CTCAE_Data", {
 	extend : "Ext.data.Store",
 	model : Ext.COMSModels.ND_CTCAE_Data
 });
-
 Ext.define("COMS.store.ND_CTCAE_SOC", {
 	extend : "Ext.data.Store",
 	model : Ext.COMSModels.ND_CTCAE_SOC
 });
-
 Ext.define('COMS.store.ND_Treatment', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.ND_Treatment,
@@ -5601,12 +5412,10 @@ Ext.define('COMS.store.ND_Treatment', {
 		}
 	}
 });
-
 /* 
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 
 
 
@@ -5617,22 +5426,18 @@ Ext.define('COMS.store.OrdersStore', {
 	groupField: 'Last_Name'
 });
 
-
 Ext.define('COMS.store.PatientCumulativeDosing', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.PatientCumulativeDosing
 });
-
 Ext.define('COMS.store.PatientHistory', {
 	extend : 'Ext.data.Store',
 	model : 'COMS.model.PatientHistory'
 });
-
 Ext.define('COMS.store.Patients', {
 	extend : 'Ext.data.Store',
 	model : 'COMS.model.PatientInfo'
 });
-
 Ext.define('COMS.store.PerfStatStore', {
     extend : 'Ext.data.Store',
 //    autoLoad: true,
@@ -5648,7 +5453,6 @@ autoLoad: false,
         }
     }
 });
-
 Ext.define('COMS.store.ReasonStore', {
     extend : 'Ext.data.Store',
 //    autoLoad: true,          // KD 03/27/12 - When autoload is commented out then none of the Performance Status are available when Applying Template
@@ -5663,22 +5467,18 @@ Ext.define('COMS.store.ReasonStore', {
         }
     }
 });
-
 Ext.define('COMS.store.ReferencesStore', {
     extend : 'Ext.data.Store',
     model : Ext.COMSModels.References
 });
-
 Ext.define('COMS.store.TemperatureLocation', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.TemperatureLocation
 });
-
 Ext.define('COMS.store.Template', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Template
 });
-
 Ext.define('COMS.store.TemplateListByLocationStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.TemplateList,
@@ -5693,7 +5493,6 @@ Ext.define('COMS.store.TemplateListByLocationStore', {
 	}
 
 });
-
 
 Ext.define('COMS.store.TemplateListStore', {
     extend : 'Ext.data.Store',
@@ -5711,25 +5510,21 @@ Ext.define('COMS.store.TemplateListStore', {
 
 });
 
-
 Ext.define('COMS.store.TemplateSources', {
 	extend : 'Ext.data.Store',
     autoLoad: false,
 	model : Ext.COMSModels.TemplateSources
 });
 
-
 Ext.define("COMS.store.Templates", {
 	"extend" : "Ext.data.Store",
 	"autoLoad" : false,
 	"model" : Ext.COMSModels.Templates
 });
-
 Ext.define('COMS.store.TimeFrameUnit', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.TimeFrameUnit
 });
-
 Ext.define('COMS.store.TotalCoursesMax', {
     extend : 'Ext.data.Store',
 	model : Ext.COMSModels.TotalCoursesMax,
@@ -5746,7 +5541,6 @@ Ext.define('COMS.store.TotalCoursesMax', {
 		{ id : '10', value : '10' }
 	]
 });
-
 Ext.define('COMS.store.ToxGridStore', {
 	extend : 'Ext.data.Store',
 	autoSync : true,
@@ -5771,13 +5565,11 @@ Ext.define('COMS.store.ToxGridStore', {
 		COMS.Application.fireEvent("loadAdverseEventsHistory");
 	}
 });
-
 Ext.define('COMS.store.Toxicity', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Toxicity,
 	groupField : "Label"
 });
-
 Ext.define('COMS.store.ToxicityInstruction', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.ToxicityInstruction,
@@ -5807,7 +5599,6 @@ Ext.define('COMS.store.ToxicityInstruction', {
 	}
 ************/
 });
-
 Ext.define('COMS.store.UsersStore', {
 	extend : 'Ext.data.Store',
         listeners: {
@@ -5830,7 +5621,6 @@ Ext.define('COMS.store.UsersStore', {
         
 	model : Ext.COMSModels.UsersTable
 });
-
 /*
  *	Since this widget is a window, it's not a sub object to any other class when attempting to get a handle to it.
  *	Hence its reference is : Ext.ComponentQuery.query("AddDrugRegimen")[0].el.dom
@@ -6098,7 +5888,6 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 	}
 });
 
-/*global Ext */
 /*
  *	Since this widget is a window, it's not a sub object to any	other class when attempting to get a handle to it.
  *	Hence it's reference is	: Ext.ComponentQuery.query('AddHydrationDrug')[0].el.dom
@@ -6356,7 +6145,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 		this.callParent(arguments);
 	}
 });
-
 /*
  *	Since this widget is a window, it's not a sub object to any other class when attempting to get a handle to it.
  *	Hence it's reference is : Ext.ComponentQuery.query('AddReference')[0].el.dom
@@ -6398,7 +6186,6 @@ Ext.define('COMS.view.Authoring.AddReference', {
 		this.callParent(arguments);
 	}
 });
-
 /*
  *	MWB - 12/5/2011
  *	Template Authoring Tab View
@@ -6490,7 +6277,6 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 	}
 });
 
-
 /*
  *	MWB - 2/3/2012
  *	Create New Template View
@@ -6557,7 +6343,6 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 });
 
 
-
 Ext.define('COMS.view.Authoring.CycleLength' ,{
 	extend: 'Ext.container.Container',
 	alias : 'widget.CycleLength',
@@ -6592,7 +6377,6 @@ Ext.define('COMS.view.Authoring.CycleLength' ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.Authoring.DrugRegimen", {
 	"extend": "Ext.panel.Panel",
@@ -6711,7 +6495,6 @@ Ext.define("COMS.view.Authoring.DrugRegimen", {
 		"buttonAlign" : "left"
 	}]
 });
-
 Ext.define("COMS.view.Authoring.Hydration", {
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.TemplateHydration",
@@ -6929,7 +6712,6 @@ function renderFluidType(value, p, record) {
 	}
 	return Ext.String.format("{0}", value);
 }
-
 Ext.define('COMS.view.Authoring.HydrationSequence', {
 	extend: 'Ext.window.Window',
 	alias : 'widget.HydrationSequence',
@@ -6964,7 +6746,6 @@ Ext.define('COMS.view.Authoring.HydrationSequence', {
 		this.callParent(arguments);
 	}
 });
-
 Ext.define('COMS.view.Authoring.MedReminder' ,{
 	extend: 'Ext.form.Panel',
 	alias : 'widget.MedReminder',
@@ -6990,7 +6771,6 @@ Ext.define('COMS.view.Authoring.MedReminder' ,{
 			{ xtype : "MedRemindersForm", hidden : true }
 		]
 });
-
 
 Ext.define('COMS.view.Template.PostHydration' ,{
 	extend: 'Ext.container.Container',
@@ -7049,7 +6829,6 @@ Ext.define('COMS.view.Template.PostHydration' ,{
 		this.callParent();
     }
 });
-
 /*global Ext */
 Ext.define('COMS.view.Authoring.PreHydration' ,{
 	extend: 'Ext.container.Container',
@@ -7099,7 +6878,6 @@ Ext.define('COMS.view.Authoring.PreHydration' ,{
 
 	]
 });
-
 Ext.define('COMS.view.Authoring.References' ,{
 	extend: 'Ext.grid.Panel',
 	alias : 'widget.TemplateReferences',
@@ -7136,7 +6914,6 @@ function renderURI(value, p, record) {
 	}
 }
 
-
 Ext.define("COMS.view.CkBoxTArea" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.CkBoxTArea",
@@ -7148,7 +6925,6 @@ Ext.define("COMS.view.CkBoxTArea" ,{
 		{ "xtype" : "textarea", "rows" : 5, flex : 1, "grow" : true, "name" : "", "hidden" : true, "fieldLabel" : "Please Explain <em>*</em>", "labelAlign" : "top", "margin" : "2 0 5 5"}
 	]
 });
-
 
 /**
  * http://www.sencha.com/forum/showthread.php?198862
@@ -7436,9 +7212,6 @@ Ext.define('Ext.ux.CheckCombo', {
 		}
 	}
 });
-
-
-
 Ext.define("COMS.view.Common.selInPatientMed" ,{
 	"extend" : "Ext.form.field.ComboBox",
 	"alias" : "widget.selInPatientMed",
@@ -7455,7 +7228,6 @@ Ext.define("COMS.view.Common.selInPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
-			"allowBlank" : false,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -7490,7 +7262,6 @@ Ext.define("COMS.view.Common.selOutPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
-			"allowBlank" : false,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -7508,8 +7279,6 @@ Ext.define("COMS.view.Common.selOutPatientMed" ,{
 				}
 			})
 	});
-
-
 
 Ext.define("COMS.view.Common.DEMOpuWin", {
 	"extend" : "Ext.window.Window",
@@ -7530,7 +7299,6 @@ Ext.define("COMS.view.Common.DEMOpuWin", {
 });
 
 
-
 Ext.define("COMS.view.Common.EmeticInfo" ,{
 	"extend" : "Ext.Component",
 	"alias" : "widget.EmeticInfo",
@@ -7542,7 +7310,6 @@ Ext.define("COMS.view.Common.EmeticInfo" ,{
 		borderStyle: 'solid'
 	}
 });
-
 
 Ext.define("COMS.view.Common.MedRemindersForm", {
 	"extend": "Ext.form.Panel",
@@ -7624,7 +7391,6 @@ Ext.define("COMS.view.Common.MedRemindersForm", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Common.MedRemindersGrid", {
 	"extend": "Ext.grid.Panel",
 	"alias": "widget.MedRemindersGrid",
@@ -7656,13 +7422,11 @@ Ext.define("COMS.view.Common.MedRemindersGrid", {
 		me.callParent();
 	}
 });
-
 Ext.define("COMS.view.Common.NeutropeniaRiskPanel",{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.NeutropeniaRiskPanel",
 	"title" : "Neutropenia Risk - "
 });
-
 
 Ext.define('COMS.view.Common.Search4Template' ,{
 	extend: 'Ext.container.Container',
@@ -7688,7 +7452,6 @@ Ext.define('COMS.view.Common.Search4Template' ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.Common.SelectAdverseReactionAlerts", {
 	"extend" : "Ext.window.Window",
@@ -7727,7 +7490,6 @@ Ext.define("COMS.view.Common.SelectAdverseReactionAlerts", {
 
 	]
 });
-
 Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.VitalSignsHistory",
@@ -7955,7 +7717,6 @@ Ext.define("COMS.view.Common.VitalSignsHistory" ,{
 	)
 });
 
-
 Ext.define("COMS.view.Common.puWinAddCumDose", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinAddCumDose",
@@ -8016,7 +7777,6 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Common.puWinChangeAdminDate", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinChangeAdminDate",
@@ -8071,7 +7831,6 @@ Ext.define("COMS.view.Common.puWinChangeAdminDate", {
 });
 
 
-
 Ext.define("COMS.view.Common.puWinSelAmputation",{
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinSelAmputation",
@@ -8099,7 +7858,6 @@ Ext.define("COMS.view.Common.puWinSelAmputation",{
 		}
 	]
 });
-
 Ext.define("COMS.view.Common.puWinSelBSA",{
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinSelBSA",
@@ -8178,7 +7936,6 @@ Ext.define("COMS.view.Common.puWinSelBSA",{
 	]
 });
 
-
 Ext.define("COMS.view.Common.puWinSelCancer", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinSelCancer",
@@ -8207,7 +7964,6 @@ Ext.define("COMS.view.Common.puWinSelCancer", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinTreatmentAmmend",
@@ -8355,8 +8111,6 @@ Ext.define("COMS.view.Common.puWinTreatmentAmmend", {
 
 	]
 });
-
-
 Ext.define("COMS.view.Common.selCTOSTemplate", {
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.selCTOSTemplate",
@@ -8386,7 +8140,6 @@ Ext.define("COMS.view.Common.selCTOSTemplate", {
 		{ "xtype" : "selTemplate", "name" :"AllTemplates"}
 	]
 });
-
 /**
  * Front End Support for Remote Autocomplete
  * See: https://www.sencha.com/forum/showthread.php?29236-Combobox-typeAhead-autocomplete-for-mode-remote
@@ -8411,7 +8164,6 @@ Ext.define("COMS.view.Common.selDisease" ,{
 	"typeAhead" : true
 });
 
-
 Ext.define("COMS.view.Common.selDiseaseAndStage" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.selDiseaseAndStage",
@@ -8426,7 +8178,6 @@ Ext.define("COMS.view.Common.selDiseaseAndStage" ,{
 		{ "xtype" : "selDiseaseStage" }
 	]
 });
-
 Ext.define("COMS.view.Common.selDiseaseStage" ,{
 	"extend" : "Ext.form.field.ComboBox",
 	"alias" : "widget.selDiseaseStage",
@@ -8443,7 +8194,6 @@ Ext.define("COMS.view.Common.selDiseaseStage" ,{
 	"size " : 10,
 	"labelWidth" : 120
 });
-
 
 Ext.define("COMS.view.Common.selInfusionReactionCombo" ,{
 	"extend" : "Ext.form.field.ComboBox",
@@ -8467,7 +8217,6 @@ Ext.define("COMS.view.Common.selInfusionReactionCombo" ,{
 	"labelAlign" : "right",
 	"fieldLabel" : "Infusion Reactions"
 });
-
 
 Ext.define('COMS.view.Common.selSequence' ,{
     extend: 'Ext.form.field.ComboBox',
@@ -8497,7 +8246,6 @@ Ext.define('COMS.view.Common.selSequence' ,{
     }
 });
 
-
 Ext.define('COMS.view.Common.selTempLoc' ,{
     extend: 'Ext.form.field.ComboBox',
     alias : 'widget.selTemperatureLoc',
@@ -8510,7 +8258,6 @@ Ext.define('COMS.view.Common.selTempLoc' ,{
 	valueField: 'name',
     fieldLabel: "Temperature Location"
 });
-
 
 Ext.define("COMS.view.Common.selTemplate", {
 	"extend" : "Ext.form.field.ComboBox",
@@ -8526,7 +8273,6 @@ Ext.define("COMS.view.Common.selTemplate", {
 	"valueField" : "id",
 	"hidden" : true
 });
-
 
 Ext.define("COMS.view.Common.selTemplateSrc", {
 	"extend"      : "Ext.form.FieldContainer",
@@ -8559,7 +8305,6 @@ Ext.define("COMS.view.Common.selTemplateSrc", {
 		}
 	]
 });
-
 Ext.define('COMS.view.ExistingPlan.ExistingPlanTab' ,{
 	extend: 'Ext.container.Container',
 	alias : 'widget.ExistingPlanTab',
@@ -8575,7 +8320,6 @@ Ext.define('COMS.view.ExistingPlan.ExistingPlanTab' ,{
 		wccConsoleLog(this.name + " - Initialization complete...");
 	}
 });
-
 Ext.define('COMS.view.KnowledgeBase.KnowledgeBaseTab' ,{
 	extend: 'Ext.container.Container',
 	alias : 'widget.KnowledgeBaseTab',
@@ -8591,7 +8335,6 @@ Ext.define('COMS.view.KnowledgeBase.KnowledgeBaseTab' ,{
 		wccConsoleLog(this.name + " - Initialization complete...");
 	}
 });
-
 
 
 
@@ -8662,7 +8405,6 @@ Ext.define('COMS.view.Management.ActiveWorkflows', {
 	]
 });
 
-
 Ext.define("COMS.view.Management.AddLookups" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.AddLookups",
@@ -8732,7 +8474,6 @@ Ext.define("COMS.view.Management.AddLookups" ,{
 		}
 	]
 });
-
 Ext.define("COMS.view.Management.AdminTab" ,{
 	"extend" : "Ext.tab.Panel",
 	"alias" : "widget.AdminTab",
@@ -8801,7 +8542,6 @@ Ext.define("COMS.view.Management.AdminTab" ,{
 		}
 	]
 });
-
 Ext.define("COMS.view.Management.BlankTab" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.BlankTab",
@@ -8812,7 +8552,6 @@ Ext.define("COMS.view.Management.BlankTab" ,{
 		{ "xtype" : "htmleditor", "name" : "Documentation", "fieldLabel" : "Documentation", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 940, "margin" : "0 0 10 0" }
 	]
 });
-
 
 Ext.define("COMS.view.Management.Buttons" ,{
 	"extend" : "Ext.container.Container",
@@ -8835,7 +8574,6 @@ Ext.define("COMS.view.Management.Buttons" ,{
 });
 
 
-
 Ext.define("COMS.view.Management.CheckCombo" ,{
 	extend: "Ext.ux.CheckCombo",
 	alias: "widget.CheckCombo",
@@ -8855,7 +8593,6 @@ Ext.define("COMS.view.Management.CheckCombo" ,{
 		}
 	})
 });
-
 Ext.define("COMS.view.Management.ClinicInfo" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.ClinicInfo",
@@ -8884,7 +8621,6 @@ Ext.define("COMS.view.Management.ClinicInfo" ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.Management.CumulativeDosing" ,{
 	"extend" : "Ext.form.Panel",
@@ -8955,7 +8691,6 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 	]
 });
 
-
 Ext.define('COMS.view.Management.DeleteTemplate' ,{
 	extend: 'Ext.form.FormPanel',
 	alias : 'widget.DeleteTemplate',
@@ -9014,7 +8749,6 @@ Ext.define('COMS.view.Management.DeleteTemplate' ,{
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.Management.DischargeInstructionManagement" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.DischargeInstructionManagement",
@@ -9027,7 +8761,8 @@ Ext.define("COMS.view.Management.DischargeInstructionManagement" ,{
 
 		{ "xtype" : "ManagementBtns"},
 
-		{
+
+		{  
 			"xtype" : "grid",  "name" : "DischargeInstructionsList", "title" : "Discharge Instructions", 
 			"store" : "DischargeInstruction",
 			"forceFit" : true,
@@ -9043,7 +8778,6 @@ Ext.define("COMS.view.Management.DischargeInstructionManagement" ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.Management.DiseaseStaging" ,{
 	"extend" : "Ext.form.Panel",
@@ -9071,7 +8805,6 @@ Ext.define("COMS.view.Management.DiseaseStaging" ,{
 		}
 	]
 });
-
 
 Ext.define('COMS.view.Management.EditLookup', {
 	extend: 'Ext.window.Window',
@@ -9101,7 +8834,6 @@ Ext.define('COMS.view.Management.EditLookup', {
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.Management.EmeticMeds", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.EmeticMeds",
@@ -9170,7 +8902,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
-			"allowBlank" : false,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -9231,7 +8962,6 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Management.EmeticMedsTab" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.EmeticMedsTab",
@@ -9240,7 +8970,6 @@ Ext.define("COMS.view.Management.EmeticMedsTab" ,{
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ { "xtype" : "EmeticMeds" } ]
 });
-
 
 Ext.define('COMS.view.Management.Globals', {
 	extend: "Ext.grid.Panel",
@@ -9293,7 +9022,6 @@ Ext.define('COMS.view.Management.Globals', {
 //	})
 	]
 });
-
 
 Ext.define('COMS.view.Management.IV_Fluid_Types', {
 	extend: "Ext.form.Panel",
@@ -9354,7 +9082,6 @@ Ext.define('COMS.view.Management.IV_Fluid_Types', {
 		}
 	]
 });
-
 
 Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 	"extend" : "Ext.form.Panel",
@@ -9439,7 +9166,6 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 	]
 });
 
-
 Ext.define("COMS.view.Management.Inventory", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.Inventory",
@@ -9506,7 +9232,6 @@ Ext.define("COMS.view.Management.Inventory", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Management.Lockout", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.Lockout",
@@ -9564,7 +9289,6 @@ Ext.define("COMS.view.Management.Lockout", {
 		}
 	]
 });
-
 Ext.define("COMS.view.Management.LockoutButtons" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.LockoutButtons",
@@ -9584,7 +9308,6 @@ Ext.define("COMS.view.Management.LockoutButtons" ,{
 });
 
 
-
 Ext.define("COMS.view.Management.LockoutTab" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.LockoutTab",
@@ -9593,7 +9316,6 @@ Ext.define("COMS.view.Management.LockoutTab" ,{
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ { "xtype" : "Lockout" } ]
 });
-
 
 Ext.define("COMS.view.Management.MedRisks" ,{
 	"extend" : "Ext.form.Panel",
@@ -9641,7 +9363,6 @@ Ext.define("COMS.view.Management.MedRisks" ,{
 	]
 });
 
-
 Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.MedicationDocumentation",
@@ -9688,8 +9409,6 @@ Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 		}
 	]
 });
-
-
 Ext.define('COMS.view.Management.MedicationHolds', {
 	extend: "Ext.form.Panel",
 	alias: "widget.MedicationHolds",
@@ -9708,9 +9427,9 @@ Ext.define('COMS.view.Management.MedicationHolds', {
 	]
 });
 
-
 Ext.define('COMS.view.Management.MedsNonRounded', {
-	extend: "Ext.grid.Panel",
+	"extend": "Ext.panel.Panel",
+	// extend: "Ext.grid.Panel",
 	alias: "widget.MedsNonRounded",
 	name: "MedsNonRounded",
 	title: "Medication Except from Rounding",
@@ -9719,54 +9438,45 @@ Ext.define('COMS.view.Management.MedsNonRounded', {
 	autoEl: {
 		tag: "section"
 	},
+	items : [
+		{ 
+			"xtype" : "grid", 
+			autoScroll: 'y',
+			cls: 'custom-grid',
+			columnLines: true,
+			viewConfig: {
+				stripeRows: true,
+				height: 600,
+				forceFit: true
+			},
+			store: {
+				autoLoad: false,
+				fields: ["Lookup_ID", "Name", "NonRounding"],
+				proxy: {
+					type: "rest",
+					url: "/Admin/MedsNonRounded",
+					reader: {
+						type: "json",
+						root: "records"
+					}
+				}
+			},
 
-	autoScroll: 'y',
-	cls: 'custom-grid',
-	columnLines: true,
-	viewConfig: {
-		stripeRows: true,
-		height: 600,
-		forceFit: true
-	},
-	store: {
-		// autoLoad: true,
-        autoLoad: false,
-		fields: ["Lookup_ID", "Name", "NonRounding"],
-		proxy: {
-			type: "rest",
-			url: "/Admin/MedsNonRounded",
-			reader: {
-				type: "json",
-				root: "records"
-			}
+			columns: [
+				{
+					header: "Name",
+					dataIndex: "Name",
+					width: 120
+				},
+				{
+					header: "Non-Rounding Applied",
+					dataIndex: "NonRounding",
+					width: 120
+				}
+			]
 		}
-	},
-
-	columns: [
-//		{
-//			header: "Lookup ID",
-//			dataIndex: "Lookup_ID",
-//			width: 120
-//		},
-		{
-			header: "Name",
-			dataIndex: "Name",
-			width: 120
-		},
-		{
-			header: "Non-Rounding Applied",
-			dataIndex: "NonRounding",
-			width: 120
-		}
-//	selType: 'cellmodel',
-//	plugins: [
-//	Ext.create('Ext.grid.plugin.CellEditing',{
-//	clicksToEdit: 1
-//	})
 	]
 });
-
-
 Ext.define("COMS.view.Management.PatternsOfCareTab" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.PatternsOfCareTab",
@@ -9782,7 +9492,6 @@ Ext.define("COMS.view.Management.PatternsOfCareTab" ,{
 	} ]
 });
 
-
 Ext.define("COMS.view.Management.PharmacyManagement" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.PharmacyManagement",
@@ -9795,7 +9504,6 @@ Ext.define("COMS.view.Management.PharmacyManagement" ,{
 		{ "xtype" : "button", "name" : "Submit", "text" : "Synchronize Medication Lists", "formBind" : true }
 	]
 });
-
 Ext.define("COMS.view.Management.Roles", {
 	"extend": "Ext.form.Panel",
 	"alias": "widget.Roles",
@@ -9976,7 +9684,6 @@ Ext.define("COMS.view.Management.Roles", {
 		}
 	]
 });
-
 Ext.define('COMS.view.Management.RoundingRules', {
 	extend: "Ext.form.Panel",
 	alias: "widget.RoundingRules",
@@ -10006,7 +9713,6 @@ Ext.define('COMS.view.Management.RoundingRules', {
 		{ text : "Cancel", scope : this } 
 	]
 });
-
 Ext.define('COMS.view.Management.SelectGlobals' ,{
     extend: 'Ext.form.field.ComboBox',
     alias : 'widget.SelectGlobals',
@@ -10018,7 +9724,6 @@ Ext.define('COMS.view.Management.SelectGlobals' ,{
 	displayField: 'value',
 	valueField: 'sitelist'
 });
-
 Ext.define('COMS.view.Management.SelectLookups' ,{
     extend: 'Ext.form.field.ComboBox',
     alias : 'widget.SelectLookups',
@@ -10030,7 +9735,6 @@ Ext.define('COMS.view.Management.SelectLookups' ,{
 	displayField: 'value',
 	valueField: 'id'
 });
-
 Ext.define("COMS.view.Management.Toxicity" ,{
 	"extend" : "Ext.form.Panel",
 	"alias" : "widget.Toxicity",
@@ -10064,7 +9768,6 @@ Ext.define("COMS.view.Management.Toxicity" ,{
 		}
 	]
 });
-
 
 Ext.define('COMS.view.Management.Users', {
 	extend: "Ext.grid.Panel",
@@ -10133,7 +9836,6 @@ Ext.define('COMS.view.Management.Users', {
 	]
 });
 
-
 Ext.define("COMS.view.Messages.MessagesPanels" ,{
 	extend: "Ext.tab.Panel",
 	alias : "widget.MessagesPanels",
@@ -10150,7 +9852,6 @@ Ext.define("COMS.view.Messages.MessagesPanels" ,{
 		{ xtype : "MessagesUnread" }
 	]
 });
-
 
 Ext.define('COMS.view.Messages.MessagesTab', {
 	extend: "Ext.grid.Panel",
@@ -10257,7 +9958,6 @@ function renderURI(value, p, record) {
 	}
 	return ("");
 }
-
 Ext.define('COMS.view.Messages.MessagesUnread' ,{
 	extend : "Ext.grid.Panel",
 	alias : "widget.MessagesUnread",
@@ -10320,7 +10020,6 @@ function renderURI(value, p, record) {
         
     }
 }
-
 
 Ext.define('COMS.view.NavigationTabs' ,{
     extend: 'Ext.tab.Panel',
@@ -10437,7 +10136,6 @@ Ext.define('COMS.view.NavigationTabs' ,{
         this.callParent(arguments);
     }
 });
-
 Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.AdverseEventsHistory",
@@ -10497,7 +10195,6 @@ Ext.define("COMS.view.NewPlan.AdverseEventsHistory", {
 	)
 
 });
-
 Ext.define('COMS.view.NewPlan.AmputationSelection', {
 	"extend" : "Ext.container.Container",
 	alias : 'widget.AmputationSelection',
@@ -10525,7 +10222,6 @@ Ext.define('COMS.view.NewPlan.AmputationSelection', {
         }
     ]
 });
-
 var theMainItemsList = function(itemsInGroup) {
 	var IIG_Panel = {
 		xtype: "panel",
@@ -10773,7 +10469,6 @@ Ext.define("COMS.view.NewPlan.AskQues2ApplyTemplate", {
 		this.callParent(arguments);
 	}
 });
-
 Ext.define('COMS.view.NewPlan.BSASelection', {
 	extend: 'Ext.panel.Panel',
 	alias : 'widget.BSASelection',
@@ -10830,7 +10525,6 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
         }
     ]
 });
-
 
 /*
  *	MWB - 12/5/2011
@@ -10932,7 +10626,6 @@ Ext.define("COMS.view.NewPlan.CTOS", {
 	}
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.ChronologyOverview" ,{
 	extend: "Ext.container.Container",
 	alias : "widget.ChronologyOverview",
@@ -11030,7 +10723,6 @@ Ext.define("COMS.view.NewPlan.CTOS.Chronology" ,{
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.DiseaseResponsePUWin", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.DiseaseResponsePUWin",
@@ -11060,7 +10752,6 @@ Ext.define("COMS.view.NewPlan.CTOS.DiseaseResponsePUWin", {
 	]
 
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.DiseaseResponsePanel" ,{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.DiseaseResponsePanel",
@@ -11089,7 +10780,6 @@ Ext.define("COMS.view.NewPlan.CTOS.DiseaseResponsePanel" ,{
 		}
 	)
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.FS_Toxicity",
@@ -11184,7 +10874,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 
 
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 	"extend" : "Ext.grid.Panel",
 	"alias" : "widget.FS_ToxicityGrid",
@@ -11228,7 +10917,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityGrid" ,{
 });
 
 
-
 Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityHistory", {
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.FS_ToxicityHistory",
@@ -11268,7 +10956,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_ToxicityHistory", {
 		}
 	)
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.FlowSheet",
@@ -11286,7 +10973,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheet" ,{
 		{ "xtype" : "LabInfo" }
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FlowSheetOptionalQues", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.FlowSheetOptionalQues",
@@ -11328,7 +11014,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheetOptionalQues", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FlowSheetGrid" ,{
 	"extend" : "Ext.grid.Panel",
 	"alias" : "widget.FlowSheetGrid",
@@ -11378,7 +11063,6 @@ Ext.define("COMS.view.NewPlan.CTOS.FlowSheetGrid" ,{
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.KnowledgeBase" ,{
 	extend: "Ext.panel.Panel",
 	alias : "widget.KnowledgeBase",
@@ -11535,7 +11219,6 @@ Ext.define("COMS.view.NewPlan.CTOS.KnowledgeBase" ,{
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 	extend : "Ext.container.Container",
 	alias : "widget.NursingDocs",
@@ -11562,7 +11245,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs" ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.AssessmentCombo", {
 	extend : "Ext.form.field.ComboBox",
@@ -11628,7 +11310,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Assessment" ,{
 	]
 });
 
-
 Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
     extend: 'Ext.window.Window',
     alias : 'widget.Authenticate',
@@ -11656,7 +11337,6 @@ Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
     }
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
     extend: "Ext.form.FieldSet",
     alias : "widget.NursingDocs_Chemotherapy",
@@ -11682,7 +11362,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Chemotherapy" ,{
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 	"extend": "Ext.panel.Panel",
 	"alias": "widget.DischargeInstructions",
@@ -11799,7 +11478,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.DischargeInstructions", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Education", {
 	extend: "Ext.panel.Panel",
 	alias: "widget.NursingDocs_Education",
@@ -11807,7 +11485,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Education", {
 	title: "Discharge Instructions",
 	items: [{xtype : 'DischargeInstructions' }]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.FollowupDetails", {
 	"extend": "Ext.container.Container",
 	"alias": "widget.FollowupDetails",
@@ -11869,7 +11546,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.FollowupDetails", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GoalInfo" ,{
 	extend: "Ext.form.FieldSet",
 	alias : "widget.NursingDocs_PatientID",
@@ -12142,7 +11818,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.GenInfo" ,{
 	]
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedInstructions", {
 	"extend": "Ext.container.Container",
 	"alias": "widget.MedInstructions",
@@ -12153,7 +11828,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedInstructions", {
 
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.MedsInfoDisplay" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.MedsInfoDisplay",
@@ -12577,7 +12251,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PatientEducationDetails", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_PreTreatment",
@@ -12712,7 +12385,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
 		}
 	]
 });
-
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.RASection" ,{
 	extend: "Ext.form.RadioGroup",
@@ -12892,7 +12564,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess", {
 				}
 			]
 		},
-
 
 
 
@@ -13223,6 +12894,7 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.React_Assess", {
 	]
 });
 
+
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment_Meds", {
 	"extend" : "Ext.grid.Panel",
 	"alias" : "widget.NursingDocs_Treatment_Meds",
@@ -13307,8 +12979,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.Treatment" ,{
 		}
 	]
 });
-
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 	extend: "Ext.form.Panel",
     alias: "widget.VitalSignsEntryForm",
@@ -13548,7 +13218,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.VitalSignsEntryForm", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinViewInfusionReactions",
@@ -13562,7 +13231,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
 	"modal" : true,
 	"items" : [ { "xtype" : "selInfusionReaction" } ]
 });
-
 
 
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.selDischargeInstructions" ,{
@@ -13589,7 +13257,6 @@ Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.selDischargeInstructions" ,{
 		}
 	})
 });
-
 
 
 /*globals Ext */
@@ -13640,7 +13307,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEMClinicalTrial", {
 	]
 });
 
-
 // Note: Controller for this widget is the "NewPlan.OEM" controller ("app\controller\NewPlan\OEM.js")
 // Check out the "handleGoal_CTrial()" function which is attached via the "displayOEM_Record_Data()" function
 Ext.define("COMS.view.NewPlan.CTOS.OEMGoal", {
@@ -13685,7 +13351,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEMGoal", {
 		}
 	]
 });
-
 // Note: Controller for this widget is the "NewPlan.OEM" controller ("app\controller\NewPlan\OEM.js")
 Ext.define("COMS.view.NewPlan.CTOS.OEMPerformanceStatus", {
 	"extend" : "Ext.window.Window",
@@ -13722,7 +13387,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEMPerformanceStatus", {
 
 
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.FluidVol" ,{
 	"extend" : "Ext.form.field.Text",
 	"alias" : "widget.FluidVol",
@@ -13927,7 +13591,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OEM_Edit" ,{
 	]
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.OtherInfoPanel" ,{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.OtherInfoPanel",
@@ -13957,7 +13620,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OtherInfoPanel" ,{
 		}
 	)
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.OtherPUWin", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.OtherPUWin",
@@ -13987,7 +13649,6 @@ Ext.define("COMS.view.NewPlan.CTOS.OtherPUWin", {
 	]
 
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.PSummary_Overview", {
 //	extend : "Ext.form.FieldSet",
 	extend : "Ext.container.Container",
@@ -14115,7 +13776,6 @@ Ext.define("COMS.view.NewPlan.CTOS.PatientSummary" ,{
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPanel" ,{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.ToxicitySideEffectsPanel",
@@ -14146,7 +13806,6 @@ Ext.define("COMS.view.NewPlan.CTOS.ToxicitySideEffectsPanel" ,{
 		}
 	)
 });
-
 Ext.define("COMS.view.NewPlan.ConfirmPatient" ,{
 	extend: "Ext.container.Container",
 	alias : "widget.ConfirmPatient",
@@ -14155,7 +13814,6 @@ Ext.define("COMS.view.NewPlan.ConfirmPatient" ,{
 	html: "Click on Patient from <abbr title=\"Computerized Patient Record System\">CPRS</abbr>",
 	hidden : true
 });
-
 Ext.define('COMS.view.NewPlan.DiagImage' ,{
     extend: 'Ext.panel.Panel',
     alias : 'widget.DiagImage',
@@ -14169,7 +13827,6 @@ Ext.define('COMS.view.NewPlan.DiagImage' ,{
 	title : 'Diagnostic Imageing',
 	html: '<h2 class=\'Development\'>To Be Developed</h2>'
 });
-
 
 Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	extend: 'Ext.window.Window',
@@ -14416,7 +14073,6 @@ Ext.define('COMS.view.NewPlan.EndTreatmentSummary', {
 	}
 });
 
-
 Ext.define("COMS.view.NewPlan.KnownProblems" ,{
 	extend: "Ext.grid.Panel",
 	alias : "widget.KnownProblems",
@@ -14451,7 +14107,6 @@ Ext.define("COMS.view.NewPlan.KnownProblems" ,{
 		{ header : "Unverified", dataIndex : "unverified" }
 	]
 });
-
 
 Ext.define('COMS.view.NewPlan.LabInfo' ,{
     extend: 'Ext.grid.Panel',
@@ -14507,7 +14162,6 @@ Ext.define('COMS.view.NewPlan.LabInfo' ,{
 	]
 });
 
-
 Ext.define("COMS.view.NewPlan.MedRemindersPanel" ,{
 	"extend" : "Ext.panel.Panel",
 	"alias" : "widget.MedRemindersPanel",
@@ -14536,7 +14190,6 @@ Ext.define("COMS.view.NewPlan.MedRemindersPanel" ,{
 			{ "xtype" : "MedRemindersForm" }
 	]
 });
-
 
 Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 	extend: "Ext.container.Container",
@@ -14567,7 +14220,6 @@ Ext.define("COMS.view.NewPlan.NewPlanTab" ,{
 		this.callParent(arguments);
 	}
 });
-
 Ext.define("COMS.view.OEM.selAppliedTemplate" ,{
 	extend: "Ext.form.field.ComboBox",
 	alias : "widget.selAppliedTemplate",
@@ -15000,9 +14652,9 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					if (parent.Patient) {
 						this.Patient = parent.Patient;
 					}
-                    if (parent.SiteConfig) {
-                        this.SiteConfig = parent.SiteConfig;
-                    }
+					if (parent.SiteConfig) {
+						this.SiteConfig = parent.SiteConfig;
+					}
 					this.pIndex = xindex;
 					this.curCycle = Cycle;
 					this.curDay = Day;
@@ -15014,6 +14666,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					a2 = FluidType;		// + FluidVol + FlowRate;
 					flg = ("" !== a2.trim());
 					return flg;
+
 				},
 
 				CalcInfusionTime : function (vol, rate) {
@@ -15035,7 +14688,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					// var Cycle = parent[idx-1].Cycle;
 					var AdminDate = parent.AdminDate;
 					var today = new Date();
-                    today.setHours(0, 0, 0, 0);
+					today.setHours(0, 0, 0, 0);
 					var aDate = new Date(AdminDate);
 					if (aDate < today) {
 						return "";	// No Edit link if the Admin Date is before today
@@ -15148,7 +14801,6 @@ Ext.define("COMS.view.NewPlan.OEM", {
 });
 
 
-
 Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 	extend: "Ext.panel.Panel",
 	alias : "widget.PatientHistory",
@@ -15200,7 +14852,6 @@ Ext.define("COMS.view.NewPlan.PatientHistory" ,{
 	}
 });
 
-
 Ext.define("COMS.view.NewPlan.PatientInfo" ,{
 	extend: "Ext.form.FieldSet",
 	alias : "widget.PatientInfo",
@@ -15236,7 +14887,6 @@ items : [
 		{ xtype : "CTOS" }
 	]
 });
-
 
 Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 	extend: "Ext.panel.Panel",
@@ -15573,7 +15223,6 @@ Ext.define("COMS.view.NewPlan.PatientInfoTable", {
 		}
 	]
 });
-
 Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 	extend: "Ext.panel.Panel",
 	alias : "widget.PatientSelection",
@@ -15659,7 +15308,6 @@ Ext.define("COMS.view.NewPlan.PatientSelection" ,{
 		{ xtype : "SelectPatient" }
 	]
 });
-
 Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 	extend: "Ext.panel.Panel",
 	alias : "widget.PatientTemplates",
@@ -15797,7 +15445,6 @@ Ext.define("COMS.view.NewPlan.PatientTemplates" ,{
 		}
 	)
 });
-
 Ext.define('COMS.view.NewPlan.Pharmacy' ,{
     extend: 'Ext.panel.Panel',
     alias : 'widget.Pharmacy',
@@ -15811,7 +15458,6 @@ Ext.define('COMS.view.NewPlan.Pharmacy' ,{
 	title : 'Pharmacy',
 	html: '<h2 class=\'Development\'>To Be Developed</h2>'
 });
-
 Ext.define('COMS.view.NewPlan.Reason4EOTSAnswer', {
     extend: 'Ext.form.RadioGroup',
     alias : 'widget.Reason4EOTSAnswer',
@@ -15846,7 +15492,6 @@ Ext.define('COMS.view.NewPlan.Reason4EOTSAnswer', {
         { xtype : "textfield", margin: "0 10 0 20", hidden : true, name : "EOTS_ReasonOther", hideLabel : true }
     ]
 });
-
 Ext.define("COMS.view.NewPlan.SelectPatient" ,{
 	extend: "Ext.container.Container",
 	alias : "widget.SelectPatient",
@@ -15866,7 +15511,6 @@ Ext.define("COMS.view.NewPlan.SelectPatient" ,{
 		}
 	]
 });
-
 /**
  *
  * Based on ViewEndTreatmentSummary.js
@@ -16041,7 +15685,6 @@ Ext.define('COMS.view.NewPlan.TreatmentDetails', {
 		this.callParent(arguments);
 	}
 });
-
 
 Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 	extend: 'Ext.window.Window',
@@ -16305,7 +15948,6 @@ Ext.define('COMS.view.NewPlan.ViewEndTreatmentSummary', {
 		this.callParent(arguments);
 	}
 });
-
 
 Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 	extend: 'Ext.container.Container',
@@ -16619,7 +16261,6 @@ Ext.define('COMS.view.NewPlan.dspTemplateData' ,{
 		}
 	)
 });
-
 // create reusable renderer
 Ext.util.Format.comboRenderer = function (combo) {
 	return function (value) {
@@ -16817,7 +16458,6 @@ Ext.define("COMS.view.Orders.OrdersTab", {
 	buttonAlign: "left"
 });
 
-
 Ext.define("COMS.view.ProgrammerBtns" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.ProgrammerBtns",
@@ -16850,14 +16490,12 @@ Ext.define("COMS.view.ProgrammerBtns" ,{
 	]
 });
 
-
 Ext.define("COMS.view.RequiredInstr", {
 	"extend": "Ext.Component",
 	"alias": "widget.RequiredInstr",
 	"cls" : "RequiredInstr",
 	"html": "Fields with an <em class=\"required-field\">*</em> are required fields"
 });
-
 
 
 Ext.define("COMS.view.TemplateList.TemplateListTab", {
@@ -16899,7 +16537,6 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 		}
 	]
 });
-
 Ext.define("COMS.view.TemplateList.puWinListPatients", {
 	"extend" : "Ext.window.Window",
 	"alias" : "widget.puWinListPatients",
@@ -16931,7 +16568,6 @@ Ext.define("COMS.view.TemplateList.puWinListPatients", {
 		{ "text" : "Ok" }
 	]
 });
-
 
 
 // create the combo instance
@@ -17033,7 +16669,6 @@ Ext.define("COMS.view.TemplatePromotion.TemplatePromotionTab", {
 	buttonAlign: "left"
 
 });
-
 Ext.define("COMS.view.Testing.TestTab" ,{
 	extend: "Ext.tab.Panel",
 	alias : "widget.TestTab",
@@ -17049,8 +16684,6 @@ Ext.define("COMS.view.Testing.TestTab" ,{
 		{ xtype : "DischargeInstructions", title: "Patient Education" }
 	]
 });
-
-
 
 
 // var tmpRecord; MWB - 28 Dec 2011; Eliminated need for global variable by using the "getSelectedRecord()" function below
@@ -17172,58 +16805,58 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		},
 
 		// Template References
-	{
-		ref: "TemplateReferencesGrid",
-		selector: "AuthoringTab TemplateReferences"
-	},
-	{
-		ref: "RemoveReference",
-		selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
-	}, 
+		{
+			ref: "TemplateReferencesGrid",
+			selector: "AuthoringTab TemplateReferences"
+		},
+		{
+			ref: "RemoveReference",
+			selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
+		}, 
 
-	{
-		ref: 'EditReference',
-		selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
-	},
+		{
+			ref: 'EditReference',
+			selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
+		},
 
-	{
-		ref: 'ReferenceName',
-		selector: 'AddReference textfield[name="Reference"]'
-	}, 
-	{
-		ref: 'ReferenceLink',
-		selector: 'AddReference textfield[name="ReferenceLink"]'
-	}, 
-	{
-		ref: 'ReferenceCombo',
-		selector: 'AddReference combo[name="SelReference"]'
-	},
-	{
-		ref: "CourseNum",
-		selector: "AuthoringTab textfield[name=\"CourseNum\"]"
-	},
-	{
-		ref: "CourseNumMax",
-		selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
-	},
-		// Basic Fields (CycleLength, Regimen Name, Emetogenic Level, Febrile Neutropenia Risk)
-	{
-		ref: "CycleLength",
-		selector: "AuthoringTab combo[name=\"CycleLength\"]"
-	},
-	{
-		ref: "CycleLengthUnit",
-		selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
-	},
-	{
-		ref: "RegimenName",
-		selector: "AuthoringTab textfield[name=\"RegimenName\"]"
-	},
-	{
-		ref: "TemplateAlias",
-		selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
-	},
-	{
+		{
+			ref: 'ReferenceName',
+			selector: 'AddReference textfield[name="Reference"]'
+		}, 
+		{
+			ref: 'ReferenceLink',
+			selector: 'AddReference textfield[name="ReferenceLink"]'
+		}, 
+		{
+			ref: 'ReferenceCombo',
+			selector: 'AddReference combo[name="SelReference"]'
+		},
+		{
+			ref: "CourseNum",
+			selector: "AuthoringTab textfield[name=\"CourseNum\"]"
+		},
+		{
+			ref: "CourseNumMax",
+			selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
+		},
+			// Basic Fields (CycleLength, Regimen Name, Emetogenic Level, Febrile Neutropenia Risk)
+		{
+			ref: "CycleLength",
+			selector: "AuthoringTab combo[name=\"CycleLength\"]"
+		},
+		{
+			ref: "CycleLengthUnit",
+			selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
+		},
+		{
+			ref: "RegimenName",
+			selector: "AuthoringTab textfield[name=\"RegimenName\"]"
+		},
+		{
+			ref: "TemplateAlias",
+			selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
+		},
+		{
 		ref: "EmetogenicLevel",
 		selector: "AuthoringTab combo[name=\"EmetogenicLevel\"]"
 		},
@@ -17311,17 +16944,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			'AuthoringTab TemplateReferences button[title="EditReference"]': {
 				click: this.editReference
 			},
-
-
-
 			"AuthoringTab displayfield[name=\"PatientListCount\"]" : {
 				render : function(c) {
 					c.getEl().on('click', function(){ this.fireEvent('click', c); }, c);
 				},
 				click: this.ShowPatientListInfo
 			},
-
-
 			// Handlers for the "Reference" pop-up window
 			'AddReference combobox': { // Pop-up window
 				select: this.ReferenceSelected
@@ -17428,7 +17056,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	},
 
 
-
 	// User has selected what they want to do...
 	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
 		this.application.loadMask();
@@ -17466,7 +17093,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}, this);
 		task.delay(150);
 	},
-
 
 
 	clearTemplate: function (button) {
@@ -17663,53 +17289,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		drugstore.add(template.data.Meds);
 		postMhStore.add(template.data.PostMHMeds);
 		this.application.unMask();
-},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	},
 
 
 	saveTemplateAs: function (button) {
@@ -17718,115 +17298,115 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.SaveTemplate2DB(Template, button);
 	},
 
-    isDuplicateDescription: function(description, alias) {
-        if (description === alias) {
-            return true;
-        }
-        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
-        if (description.search(patt) > 0) {
-            description = description.replace(patt, "").trim();
-            return (description === alias);
-        }
-        return false;
-    },
-    
-    saveTemplate: function (button) {
-this.application.loadMask("Please wait; Saving Template");
-        var UserAlias = this.getTemplateAlias().getValue();
-        var haveDuplicate = false;
-        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
-        if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
-            UserAlias = UserAlias.replace(patt, "").trim();
-        }
+	isDuplicateDescription: function(description, alias) {
+		if (description === alias) {
+			return true;
+		}
+		var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+		if (description.search(patt) > 0) {
+			description = description.replace(patt, "").trim();
+			return (description === alias);
+		}
+		return false;
+	},
 
-        /* Get a list of all templates by alias */
-        Ext.Ajax.request({
-            url: Ext.URLs.TemplateAlias,
-            scope: this,
-            alias: UserAlias,
-            success: function(response, opts) {
+	saveTemplate: function (button) {
+	this.application.loadMask("Please wait; Saving Template");
+		var UserAlias = this.getTemplateAlias().getValue();
+		var haveDuplicate = false;
+		var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+		if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
+			UserAlias = UserAlias.replace(patt, "").trim();
+		}
+
+		/* Get a list of all templates by alias */
+		Ext.Ajax.request({
+			url: Ext.URLs.TemplateAlias,
+			scope: this,
+			alias: UserAlias,
+			success: function(response, opts) {
 				this.application.unMask();
-                var obj = Ext.decode(response.responseText);
-                var Records = obj.records;
-                var i, matchingRecord, record2Flag, Template,
-                    alias = opts.alias, 
-                    origAlias = this.getTemplateAlias().getValue(),
-                    dupCount = 0;
-                for (i = 0; i < obj.total; i++ ) {
-                    if (this.isDuplicateDescription(Records[i].description, alias)) {
-                        dupCount++;
-                        if (Records[i].description === alias) {
-                            matchingRecord = Records[i];
-                        }
-                        if (Records[i].description === origAlias) {
-                            record2Flag = Records[i];
-                        }
-                    }
-                }
-                if (dupCount > 0) {
-                    alias += " Ver " + (dupCount+1);
-                    this.getTemplateAlias().setValue(alias);
-                    var temp = this.getTemplateAlias().getValue();
-                    this.haveDuplicate = true;
-                }
-                if (this.haveDuplicate) {
-                    Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
-                        if ("yes" === btn) {
-                            Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
-                            this.application.loadMask("Please wait; Saving Template");
-                            Template = this.PrepareTemplate2Save(true);
+				var obj = Ext.decode(response.responseText);
+				var Records = obj.records;
+				var i, matchingRecord, record2Flag, Template,
+					alias = opts.alias, 
+					origAlias = this.getTemplateAlias().getValue(),
+					dupCount = 0;
+				for (i = 0; i < obj.total; i++ ) {
+					if (this.isDuplicateDescription(Records[i].description, alias)) {
+						dupCount++;
+						if (Records[i].description === alias) {
+							matchingRecord = Records[i];
+						}
+						if (Records[i].description === origAlias) {
+							record2Flag = Records[i];
+						}
+					}
+				}
+				if (dupCount > 0) {
+					alias += " Ver " + (dupCount+1);
+					this.getTemplateAlias().setValue(alias);
+					var temp = this.getTemplateAlias().getValue();
+					this.haveDuplicate = true;
+				}
+				if (this.haveDuplicate) {
+					Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
+						if ("yes" === btn) {
+							Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
+							this.application.loadMask("Please wait; Saving Template");
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
-                        }
-                        else {
-                            Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
-                            this.application.loadMask("Please wait; Saving Template");
-                            Template = this.PrepareTemplate2Save(true);
+						}
+						else {
+							Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
+							this.application.loadMask("Please wait; Saving Template");
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
-                            this.flagTemplateInactive(record2Flag.name);
-                        }
-                    }, this);
-                }
+							this.flagTemplateInactive(record2Flag.name);
+						}
+					}, this);
+				}
 				else {
-                            this.application.loadMask("Please wait; Saving Template");
+							this.application.loadMask("Please wait; Saving Template");
 
-                            Template = this.PrepareTemplate2Save(true);
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
 				}
 
-            },
-            failure: function(response, opts) {
+			},
+			failure: function(response, opts) {
 				this.application.unMask();
-                wccConsoleLog('server-side failure with status code ' + response.status);
-            }
-        });
-        return;
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+		return;
 	},
 
-    flagTemplateInactive: function (record2FlagID) {
-        var id2LookFor = record2FlagID;
-        Ext.Ajax.request({
-            url: Ext.URLs.FlagTemplateInactive,
-            method: "POST",
-            jsonData: {
-                id : id2LookFor
-            },
-            scope: this,
-            success: function(response, opts) {
-                var obj = Ext.decode(response.responseText);
-                var Records = obj.records;
-                var i, alias = opts.alias, dupCount = 0;
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-            }
-        });
-    },
+	flagTemplateInactive: function (record2FlagID) {
+		var id2LookFor = record2FlagID;
+		Ext.Ajax.request({
+			url: Ext.URLs.FlagTemplateInactive,
+			method: "POST",
+			jsonData: {
+				id : id2LookFor
+			},
+			scope: this,
+			success: function(response, opts) {
+				var obj = Ext.decode(response.responseText);
+				var Records = obj.records;
+				var i, alias = opts.alias, dupCount = 0;
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+	},
 
 	isHydration : function(Drug) {
 		var isHydration = Drug;
@@ -17912,7 +17492,9 @@ this.application.loadMask("Please wait; Saving Template");
 				Sequence: drugModel.data.Sequence,
 				AdminTime: drugModel.data.AdminTime,
 				FluidType: drugModel.data.FluidType
+
 			});
+
 			drugArray.push(drug);
 		}
 
@@ -17975,34 +17557,35 @@ this.application.loadMask("Please wait; Saving Template");
 			infusionArray = [];
 
 			if (('' != postMhModel.data.Amt1 && '' != postMhModel.data.Units1 && '' != postMhModel.data.Infusion1) || this.isHydration(postMhModel.data.Drug)) {
-				infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-					amt: postMhModel.data.Amt1,
-					unit: postMhModel.data.Units1,
-					type: postMhModel.data.Infusion1,
-					flowRate: postMhModel.data.FlowRate1,
-					fluidVol: postMhModel.data.FluidVol1,
-					fluidType: postMhModel.data.FluidType1,
-					infusionTime: postMhModel.data.InfusionTime1,
-					instruction: postMhModel.data.Instructions
-				});
+			infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+				amt: postMhModel.data.Amt1,
+				unit: postMhModel.data.Units1,
+				type: postMhModel.data.Infusion1,
+				flowRate: postMhModel.data.FlowRate1,
+				fluidVol: postMhModel.data.FluidVol1,
+				fluidType: postMhModel.data.FluidType1,
+				infusionTime: postMhModel.data.InfusionTime1,
+				instruction: postMhModel.data.Instructions
+			});
 				infusionArray.push(infusion1);
 			}
-
 			/**
 			if ('' != postMhModel.data.Amt2 && '' != postMhModel.data.Units2 && '' != postMhModel.data.Infusion2) {
-				infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-					amt: postMhModel.data.Amt2,
-					unit: postMhModel.data.Units2,
-					type: postMhModel.data.Infusion2,
-					flowRate: postMhModel.data.FlowRate1,
-					fluidVol: postMhModel.data.FluidVol1,
-					fluidType: postMhModel.data.FluidType1,
-					infusionTime: postMhModel.data.InfusionTime1,
-					instruction: postMhModel.data.Instructions
-				});
+			infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+				amt: postMhModel.data.Amt2,
+				unit: postMhModel.data.Units2,
+				type: postMhModel.data.Infusion2,
+				flowRate: postMhModel.data.FlowRate1,
+				fluidVol: postMhModel.data.FluidVol1,
+				fluidType: postMhModel.data.FluidType1,
+				infusionTime: postMhModel.data.InfusionTime1,
+				instruction: postMhModel.data.Instructions
+			});
+
 				infusionArray.push(infusion2);
 			}
 			**/
+
 
 			postMH = Ext.create(Ext.COMSModels.MHMed, {
 				drugid: postMhModel.data.Drug,
@@ -18014,7 +17597,6 @@ this.application.loadMask("Please wait; Saving Template");
 				adminTime: postMhModel.data.AdminTime
 			});
 			postMHArray.push(postMH);
-
 		}
 
 		var template = Ext.create(Ext.COMSModels.CTOS, {
@@ -18519,8 +18101,6 @@ this.application.loadMask("Please wait; Saving Template");
 		}
 	}
 });
-
-
 
 Ext.routeRequiresFluid = function (route) {
 	if ("undefined" !== typeof route && "" !== route) {
@@ -19517,8 +19097,6 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		this.insertNewDrugRegimenRecord(win, theStore, numRecords, values);
 	}
 });
-
-/*global Ext */
 Ext.validateHydrationIgnoreAmtAndUnitsIfHydration = function(config, value) {
 	var values = Ext.getHydrationFormValues(config, value);
 	if ("0" === values.Drug) {
@@ -20523,7 +20101,6 @@ DossageAmt
 
 });
 
-
 Ext.define("COMS.controller.CkBoxTArea", {
 	extend: "Ext.app.Controller",
 	views: [
@@ -20561,12 +20138,10 @@ Ext.define("COMS.controller.CkBoxTArea", {
 	}
 });
 
-
 Ext.define("COMS.controller.Common.DEMOpuWin", {
 	extend : "Ext.app.Controller",
 	views : [ "NewPlan.CTOS.FS_Toxicity", "Management.EmeticMeds" ]
 });
-
 Ext.define("COMS.controller.Common.EmeticInfo", {
 	"extend" : "Ext.app.Controller",
 	"views" : [
@@ -20599,7 +20174,6 @@ Ext.define("COMS.controller.Common.EmeticInfo", {
 		theEl.setHTML(data);
 	}
 });
-
 /* http://alvinalexander.com/javascript/sencha-touch-extjs-json-encode-post-examples */
 Ext.define("COMS.controller.Common.MedRemindersForm", {
 	extend: "Ext.app.Controller",
@@ -20829,7 +20403,6 @@ Ext.define("COMS.controller.Common.MedRemindersForm", {
 
 });
 
-
 Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 	"extend" : "Ext.app.Controller",
 	"records" : [],
@@ -20919,7 +20492,6 @@ Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 		theCombo.bindStore(theStore);
 	}
 });
-
 
 Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	extend : "Ext.app.Controller",
@@ -21191,7 +20763,6 @@ Ext.define("COMS.controller.Common.puWinAddCumDose", {
 		Ext.COMS_UnLockSection();
 	}
 });
-
 Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 	"extend" : "Ext.app.Controller",
 
@@ -21483,7 +21054,6 @@ Ext.define("COMS.controller.Common.puWinChangeAdminDate", {
 		}
 	}
 });
-
 Ext.define("COMS.controller.Common.puWinSelAmputation", {
 	extend : "Ext.app.Controller",
 	init: function() {
@@ -21572,7 +21142,6 @@ Ext.define("COMS.controller.Common.puWinSelAmputation", {
 		Ext.COMS_UnLockSection();
 	}
 });
-
 Ext.define("COMS.controller.Common.puWinSelBSA", {
 	extend : "Ext.app.Controller",
 	init: function() {
@@ -21637,7 +21206,6 @@ Ext.define("COMS.controller.Common.puWinSelBSA", {
 		Ext.COMS_UnLockSection();
 	}
 });
-
 Ext.define("COMS.controller.Common.puWinSelCancer", {
 	extend : "Ext.app.Controller",
 
@@ -21801,7 +21369,6 @@ Ext.define("COMS.controller.Common.puWinSelCancer", {
 		Ext.COMS_UnLockSection();
 	}
 });
-
 Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 	extend : "Ext.app.Controller",
 	views : [ "NewPlan.CTOS.NursingDocs.Authenticate", "Common.puWinTreatmentAmmend" ],
@@ -21885,8 +21452,6 @@ Ext.define("COMS.controller.Common.puWinTreatmentAmmend", {
 		}
 	}
 });
-
-
 Ext.define("COMS.controller.Common.selCTOSTemplate", {
 	"extend" : "Ext.app.Controller",
 	"views" : [
@@ -22101,17 +21666,14 @@ Ext.define("COMS.controller.Common.selCTOSTemplate", {
 
 });
 
-
 Ext.define('COMS.controller.ExistingPlan.ExistingPlanTab', {
 	extend : 'Ext.app.Controller',
 	views : [ 'ExistingPlan.ExistingPlanTab' ]
 });
-
 Ext.define('COMS.controller.KnowledgeBase.KnowledgeBaseTab', {
     extend : 'Ext.app.Controller',
 	views : [ 'KnowledgeBase.KnowledgeBaseTab' ]
 });
-
 Ext.define("COMS.controller.Management.AddLookups", {
 	extend : "Ext.app.Controller",
 	views : [ "Management.AddLookups" ],
@@ -22312,7 +21874,6 @@ Ext.define("COMS.controller.Management.AddLookups", {
 });
 
 
-
 Ext.define('COMS.controller.Management.AdminTab', {
 	extend : 'Ext.app.Controller',
 	stores : [ 'Lockout', 'LookupStore', "GlobalStore", "UsersStore", "ActiveWorkflowsStore", 'IVFluidType', 'MedDocs', 'DischargeInstruction', 'ClinicInfo', 'MedRisks', 'DiseaseStaging', 'InventoryConsumption'],
@@ -22476,7 +22037,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	/* Medication Documentation */
-	{
+{
 		ref : "MedDocs_Form",
 		selector : "MedicationDocumentation"
 	},
@@ -22653,7 +22214,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				beforerender: this.MedicationDocsLoadGrid
 			},
 			"MedicationDocumentation [name=\"DocumentedInPatientMedsList\"]" : {
-				select: this.selectMedDocsGridRow
+					select: this.selectMedDocsGridRow
 			},
 
 			"MedicationDocumentation [name=\"InPatient_Medication\"]" : {
@@ -22673,14 +22234,12 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				click: this.clickMedicationDocsDelete
 			},
 
-
-
 /* Discharge Instruction */
 			"DischargeInstructionManagement" : {
 				beforerender: this.DischargeInstructionLoadGrid
 			},
 			"DischargeInstructionManagement grid" : {
-				select: this.selectDischargeInstructionGridRow
+					select: this.selectDischargeInstructionGridRow
 			},
 			"DischargeInstructionManagement button[text=\"Cancel\"]" : {
 				click: this.clickDischargeInstructionCancel
@@ -22700,7 +22259,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				beforerender: this.ClinicInfoLoadGrid
 			},
 			"ClinicInfo grid" : {
-				select: this.selectClinicInfoGridRow
+					select: this.selectClinicInfoGridRow
 			},
 			"ClinicInfo button[text=\"Cancel\"]" : {
 				click: this.clickClinicInfoCancel
@@ -22714,6 +22273,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"ClinicInfo button[text=\"Delete\"]" : {
 				click: this.clickClinicInfoDelete
 			},
+
 /* Med Risks */
 			"MedRisks" : {
 				beforerender: this.MedRisksLoadGrid
@@ -22933,7 +22493,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 /************************************************************************************************************/
-
 /** 
  * Clinic Info
  *
@@ -24027,8 +23586,7 @@ vcode: null		// ignore
 				
 			}
 			
-		} 
-			
+		}
 	},
 	
 	deleteTemplateCall: function(mytemplate,ckRec){
@@ -24083,7 +23641,6 @@ vcode: null		// ignore
 		
 	}
 });
-
 Ext.define('COMS.controller.Management.CumulativeDosing', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.CumulativeDosing' ],
@@ -24297,19 +23854,7 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 			}
 		}, this);
 	}
-
-
-
-
-
-
-
-
-
-
-
 });
-
 
 
 Ext.define('COMS.controller.Management.DiseaseStaging', {
@@ -24528,7 +24073,6 @@ Ext.define('COMS.controller.Management.DiseaseStaging', {
 	}
 });
 
-
 Ext.define('COMS.controller.Management.EmeticMeds', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.EmeticMeds' ],
@@ -24549,7 +24093,7 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 				beforerender: this.RefreshPanel
 			},
 			"EmeticMeds radiogroup[name=\"patientRadio\"]" : {
-				change: this.selPatientType
+					change: this.selPatientType
 			},
 			"EmeticMeds combo[name=\"Drug\"]" : {
 				select: this.selDrug
@@ -24759,8 +24303,6 @@ Ext.define('COMS.controller.Management.EmeticMeds', {
 		}, this);
 	}
 });
-
-
 Ext.define('COMS.controller.Management.IntelligentDataElements', {
     extend : 'Ext.app.Controller',
     stores : ["IDEntry"],
@@ -24952,7 +24494,6 @@ Ext.define('COMS.controller.Management.IntelligentDataElements', {
 });
 
 
-
 Ext.define('COMS.controller.Management.Inventory', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.Inventory' ],
@@ -25072,7 +24613,6 @@ Ext.define('COMS.controller.Management.Inventory', {
 	}
 });
 
-
 Ext.define('COMS.controller.Management.Lockout', {
 	extend : 'Ext.app.Controller',
 	views : [ 'Management.Lockout' ],
@@ -25163,7 +24703,6 @@ Ext.define('COMS.controller.Management.Lockout', {
 		}, this);
 	}
 });
-
 
 Ext.define('COMS.controller.Management.Toxicity', {
 	extend : 'Ext.app.Controller',
@@ -25361,7 +24900,6 @@ Ext.define('COMS.controller.Management.Toxicity', {
 });
 
 
-
 Ext.define("COMS.controller.Messages.MessagesTab", {
 	extend : "Ext.app.Controller",
 	views : [ "Messages.MessagesTab" ],
@@ -25371,7 +24909,6 @@ Ext.define("COMS.controller.Messages.MessagesTab", {
         wccConsoleLog('Initialized Messages Tab Panel Controller!');
 	}
 });
-
 Ext.define('COMS.controller.Navigation', {
 	extend: 'Ext.app.Controller',
 	// Views can be referenced here before they are declared in 
@@ -25498,7 +25035,6 @@ Ext.define('COMS.controller.Navigation', {
 		wccConsoleLog('Main Navigation Tab Panel has been rendered');
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 	"extend" : "Ext.app.Controller",
 	"views" : [
@@ -25509,10 +25045,10 @@ Ext.define("COMS.controller.NewPlan.AdverseEventsHistory", {
 	],
 	"init" : function() {
 		wccConsoleLog("Initialized AdverseEventsHistory Controller!");
-		// console.log("AdverseEventsHistory PatientSelected Event");
+		// --- // console.log("AdverseEventsHistory PatientSelected Event");
 		
 		this.application.on({ PatientSelected : this.loadAdverseEventsHistory1, scope : this });
-		// console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
+		// --- // console.log("AdverseEventsHistory loadAdverseEventsHistory Event");
 		this.application.on({ loadAdverseEventsHistory : this.loadAdverseEventsHistory2, scope : this });
 		this.control({
 		});
@@ -25637,7 +25173,6 @@ MergeAssessmentAndReactionLists : function(assessments, reactions) {
 		}
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 	"extend" : "Ext.app.Controller",
 	"views" : [
@@ -25772,7 +25307,6 @@ Ext.define("COMS.controller.NewPlan.AmputationSelection", {
 		}
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 	extend : "Ext.app.Controller",
 	"views" : [
@@ -26031,7 +25565,6 @@ Ext.define("COMS.controller.NewPlan.AskQues2ApplyTemplate", {
 
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 	extend: "Ext.app.Controller",
 
@@ -26689,7 +26222,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.ChronologyTab", {
 	}
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.DiseaseResponsePanel", {
 	extend: "Ext.app.Controller",
 
@@ -26718,7 +26250,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.DiseaseResponsePanel", {
 	}
 
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.FS_Toxicity", {
 	extend: "Ext.app.Controller",
 	views : [ "RequiredInstr", "NewPlan.CTOS.FS_Toxicity", "NewPlan.CTOS.FS_ToxicityGrid" ],
@@ -27322,7 +26853,6 @@ f2.allowBlank = true;
 
 
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 	extend: "Ext.app.Controller",
 
@@ -27404,7 +26934,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetOptionalQues", {
 		btn.up('window').close();
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 	"extend" : "Ext.app.Controller",
 
@@ -27997,7 +27526,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.FlowSheetTab", {
 
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 	extend: "Ext.app.Controller",
 
@@ -28238,7 +27766,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.AssessmentTab", {
 		}
 	}
 });
-
 
 
 
@@ -28508,7 +28035,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.Chemotherapy", {
 
 
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 	extend: "Ext.app.Controller",
 	views: [
@@ -29162,7 +28688,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.DischargeInstructions" ,{
 		}
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab", {
 	extend: "Ext.app.Controller",
 
@@ -29218,7 +28743,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.EducationTab", {
 
 });
 
-
 			/*****************************
 			 *	Patient Record Structure
 			 *		id, 
@@ -29266,10 +28790,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	],
 
 	refs: [
-	    {
-		    ref: "CTOS",
+		{
+			ref: "CTOS",
 			selector: "NewPlanTab CTOS"
-	    },
+		},
 		{
 			ref : "NursingDocsTabSet",
 			selector : "NursingDocs"
@@ -29295,7 +28819,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			ref: "ndct_DualDosing", 
 			selector: "NursingDocs_GenInfo NursingDocs_DualDosingVerification"
 		},
-
 
 		{
 			ref: "rgPatientID", 
@@ -29639,6 +29162,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		return validity;
 	},
 
+
 	GenInfoAuthenticateUser : function (button) {
 		var win = button.up('window');
 		win.setLoading("Authenticating digital signature", false);
@@ -29691,9 +29215,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 	},
 
-
-
-
 	btnFirstSignature : function( button ) {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
@@ -29710,6 +29231,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
 		initialField.focus(true, true);
 	},
+
 
 	ConvertWeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
@@ -29746,23 +29268,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
-
 	ClearTabData : function(obj) {
-/********
-		var thisCtl;
-		try {
-			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-			if (!thisCtl.getNdct_GenInfoTab().rendered) {
-				return;		// Traps possible call from the PopulateNDTabs event
-			}
-		}
-		catch (e) {
-			Ext.MessageBox.alert("Loading Error", "ND - ClearTabData() - Error - " + e.message );
-			return;
-		}
-		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
- **********/
-
 		if (this.application.Patient.PAT_ID == "") {
 			// Reset form data
 			var giTab = this.getNdct_GenInfoTab().getForm();
@@ -30218,7 +29724,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 	extend: "Ext.app.Controller",
 
@@ -30286,7 +29791,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.NursingDocs", {
 
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	extend: "Ext.app.Controller",
 
@@ -30298,10 +29802,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	],
 
 	refs: [
-		{
-			ref: "CTOS",
+	    {
+		    ref: "CTOS",
 			selector: "NewPlanTab CTOS"
-		},
+	    },
 		{
 			ref : "NursingDocsTabSet",
 			selector : "NursingDocs"
@@ -30334,7 +29838,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 		panel.getForm().reset();
 	},
 
-
     SiteAssessmentCheckBoxCheck : function(btn, newValue, oldValue, eOpts) {
         var label = btn.boxLabel;
         var PainBox = Ext.ComponentQuery.query("NursingDocs_PreTreatment checkbox[name=\"ND_PT_SA_Pain\"]")[0];
@@ -30362,7 +29865,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	}
 
 });
-
 
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 	extend: "Ext.app.Controller",
@@ -30400,9 +29902,9 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 			"NursingDocs_React_Assess checkbox" : {
 				change : this.ClickCheckbox
 			},
-			"NursingDocs_React_Assess button[action=\"save\"]": {
-				click: this.SaveReact_Assess
-			}
+            "NursingDocs_React_Assess button[action=\"save\"]": {
+                click: this.SaveReact_Assess
+            }
 /*				
 				,
 
@@ -30438,54 +29940,54 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.React_AssessTab", {
 							theForm.reset();
 						}
 						/******************
-xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_OtherDetails",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_RashDesc", 
-xtype : "NursingDocs_RATextarea",name : "ND_RA_CR_Comments",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_HorA_OtherDetails",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_AntidotesGiven",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_CoolFreq",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_DiscomfortDetails",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_HeatFreq",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_InterventionsGiven",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_MeasurementsDetails",
-xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_OtherDetails",
-xtype : "textfield",name : "ND_RA_CRS_Temperature",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_OtherDetails",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_CRS_RashDesc", 
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_CR_Comments",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_HorA_OtherDetails",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_AntidotesGiven",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_CoolFreq",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_DiscomfortDetails",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_HeatFreq",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_InterventionsGiven",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_MeasurementsDetails",
+						xtype : "NursingDocs_RATextarea",name : "ND_RA_Xtrav_OtherDetails",
+						xtype : "textfield",name : "ND_RA_CRS_Temperature",
 
-xtype : "checkbox", name : "ND_RA_CRS_Asthenia", 
-xtype : "checkbox", name : "ND_RA_CRS_Chills", 
-xtype : "checkbox", name : "ND_RA_CRS_Dyspnea", 
-xtype : "checkbox", name : "ND_RA_CRS_Fever",
-xtype : "checkbox", name : "ND_RA_CRS_Headache", 
-xtype : "checkbox", name : "ND_RA_CRS_Hypotension", 
-xtype : "checkbox", name : "ND_RA_CRS_Nausea", 
-xtype : "checkbox", name : "ND_RA_CRS_Rash", 
-xtype : "checkbox", name : "ND_RA_CRS_Rigors", 
-xtype : "checkbox", name : "ND_RA_CRS_Tachycardia", 
-xtype : "checkbox", name : "ND_RA_CRS_TongueEdema", 
-xtype : "checkbox", name : "ND_RA_CR_Reaction", 
-xtype : "checkbox", name : "ND_RA_HorA_Abdominal", 
-xtype : "checkbox", name : "ND_RA_HorA_ChestTightness", 
-xtype : "checkbox", name : "ND_RA_HorA_Cramping", 
-xtype : "checkbox", name : "ND_RA_HorA_Diarrhea", 
-xtype : "checkbox", name : "ND_RA_HorA_Dyspnea", 
-xtype : "checkbox", name : "ND_RA_HorA_Hypotension", 
-xtype : "checkbox", name : "ND_RA_HorA_Nausea", 
-xtype : "checkbox", name : "ND_RA_HorA_PeriorbitalEdema", 
-xtype : "checkbox", name : "ND_RA_HorA_Uneasiness", 
-xtype : "checkbox", name : "ND_RA_HorA_Urticaria", 
-xtype : "checkbox", name : "ND_RA_HorA_Wheezing", 
-xtype : "checkbox", name: "ND_RA_CRS_Other",
-xtype : "checkbox", name: "ND_RA_HorA_Other",
-xtype : "checkbox", name: "ND_RA_Xtrav_Antidotes",
-xtype : "checkbox", name: "ND_RA_Xtrav_Cool",
-xtype : "checkbox", name: "ND_RA_Xtrav_Discomfort",
-xtype : "checkbox", name: "ND_RA_Xtrav_Edema",
-xtype : "checkbox", name: "ND_RA_Xtrav_Erythema",
-xtype : "checkbox", name: "ND_RA_Xtrav_Heat",
-xtype : "checkbox", name: "ND_RA_Xtrav_Interventions",
-xtype : "checkbox", name: "ND_RA_Xtrav_Measurements",
-xtype : "checkbox", name: "ND_RA_Xtrav_Other",
-xtype : "checkbox",name : "ND_InfusReact_None"
+						xtype : "checkbox", name : "ND_RA_CRS_Asthenia", 
+						xtype : "checkbox", name : "ND_RA_CRS_Chills", 
+						xtype : "checkbox", name : "ND_RA_CRS_Dyspnea", 
+						xtype : "checkbox", name : "ND_RA_CRS_Fever",
+						xtype : "checkbox", name : "ND_RA_CRS_Headache", 
+						xtype : "checkbox", name : "ND_RA_CRS_Hypotension", 
+						xtype : "checkbox", name : "ND_RA_CRS_Nausea", 
+						xtype : "checkbox", name : "ND_RA_CRS_Rash", 
+						xtype : "checkbox", name : "ND_RA_CRS_Rigors", 
+						xtype : "checkbox", name : "ND_RA_CRS_Tachycardia", 
+						xtype : "checkbox", name : "ND_RA_CRS_TongueEdema", 
+						xtype : "checkbox", name : "ND_RA_CR_Reaction", 
+						xtype : "checkbox", name : "ND_RA_HorA_Abdominal", 
+						xtype : "checkbox", name : "ND_RA_HorA_ChestTightness", 
+						xtype : "checkbox", name : "ND_RA_HorA_Cramping", 
+						xtype : "checkbox", name : "ND_RA_HorA_Diarrhea", 
+						xtype : "checkbox", name : "ND_RA_HorA_Dyspnea", 
+						xtype : "checkbox", name : "ND_RA_HorA_Hypotension", 
+						xtype : "checkbox", name : "ND_RA_HorA_Nausea", 
+						xtype : "checkbox", name : "ND_RA_HorA_PeriorbitalEdema", 
+						xtype : "checkbox", name : "ND_RA_HorA_Uneasiness", 
+						xtype : "checkbox", name : "ND_RA_HorA_Urticaria", 
+						xtype : "checkbox", name : "ND_RA_HorA_Wheezing", 
+						xtype : "checkbox", name: "ND_RA_CRS_Other",
+						xtype : "checkbox", name: "ND_RA_HorA_Other",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Antidotes",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Cool",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Discomfort",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Edema",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Erythema",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Heat",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Interventions",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Measurements",
+						xtype : "checkbox", name: "ND_RA_Xtrav_Other",
+						xtype : "checkbox",name : "ND_InfusReact_None"
 
 						 ******************/
 						/*********
@@ -30511,9 +30013,7 @@ xtype : "checkbox",name : "ND_InfusReact_None"
 				}
 			});
 		}
-
 	},
-
 
 	ClickNoneCheckbox : function(btn, newValue, oldValue, eOpts) {
 		var i, len, btn_i, AdverseReactionChecks = Ext.ComponentQuery.query("NursingDocs_React_Assess checkbox");
@@ -30752,8 +30252,8 @@ xtype : "checkbox",name : "ND_InfusReact_None"
 			}
 		}
 	}
-});
 
+});
 
 // Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - 89Patient is undefined
 //	init: function () {
@@ -30778,7 +30278,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	],
 
 	refs: [
-	    { ref: "CTOS", selector: "NewPlanTab CTOS" },
+		{ ref: "CTOS", selector: "NewPlanTab CTOS" },
 		{ ref : "NursingDocsTabSet", selector : "NursingDocs" },
 		{ ref : "ND_T_Tab", selector : "NursingDocs_Treatment" },
 		{ ref : "ND_T_T_Warning", selector : "NursingDocs_Treatment [name=\"ND_T_T_Warning\"]" },
@@ -30842,11 +30342,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				record.set("Treatment_User", "In Process...");
 					// Prompt user and issue AJAX call to verify their credentials and save this record if credentials verified.
 				var EditRecordWin = Ext.widget("Authenticate", { theView : tableView, theRow : rowIndex, curTreatmentRecord: record, retFcn : function(curTreatmentRecord, theScope, c) { 
-					// debugger; 
-					var pWin = Ext.ComponentQuery.query('puWinTreatmentAmmend')[0];
-					this.close();
-
-				} });
+						// debugger; 
+						var pWin = Ext.ComponentQuery.query('puWinTreatmentAmmend')[0];
+						this.close();
+					}
+				});
 				// EditRecordWin.curTreatmentRecord = record;
 				var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
 				initialField.focus(true, true);
@@ -30962,11 +30462,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 // ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
 
 
-        var timeMax = Ext.Date.format(new Date(), 'h:i A');
+		var timeMax = Ext.Date.format(new Date(), 'h:i A');
 		EndTimeField.setMaxValue(timeMax);
 		StartTimeField.setMaxValue(timeMax);
-        StartTimeField.setValue("07:00 AM");
-        StartTimeField.setRawValue("07:00 AM");
+		StartTimeField.setValue("07:00 AM");
+		StartTimeField.setRawValue("07:00 AM");
 
 		if ("" === eObj.record.get("Treatment_User")) {
 			var StartTimeFieldValue = eObj.record.get("StartTime");
@@ -31081,7 +30581,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var today4URL = Ext.Date.format( new Date(), "Y-m-d");
 		var reDate = new RegExp(today);
 		var reDispensed = new RegExp("Dispensed");
-
 		this.PatientID = Patient.id;
 		this.AdminDate = today;
 
@@ -31109,7 +30608,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		});
 	},
-
 
 
 	ClearTreatmentTab : function() {
@@ -31147,6 +30645,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	ClearTabData : function( ) {
 		this.ClearTreatmentTab();
 	},
+
 
 
 	TabRendered : function ( component, eOpts ) {
@@ -31246,7 +30745,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	}
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions", {
 	"extend" : "Ext.app.Controller",
 
@@ -31316,7 +30814,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.puWinViewInfusionReactions"
 		btn.up('window').close();
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.OtherInfoPanel", {
 	extend: "Ext.app.Controller",
 
@@ -31327,7 +30824,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.OtherInfoPanel", {
 		"NewPlan.CTOS.ToxicitySideEffectsPanel"
 	],
 
-	refs: [
+    refs: [
 		{ ref: "SaveBtn",					selector: "FlowSheetOptionalQues button[text=\"Save\"]"},
 		{ ref: "ToxDetails",				selector: "FlowSheetOptionalQues [name=\"ToxDetails\"]"}
 	],
@@ -31345,7 +30842,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.OtherInfoPanel", {
 	}
 
 });
-
 Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 	extend: "Ext.app.Controller",
 
@@ -31438,7 +30934,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.PatientSummaryTab", {
 	}
 });
 
-
 Ext.define("COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel", {
 	extend: "Ext.app.Controller",
 
@@ -31467,7 +30962,6 @@ Ext.define("COMS.controller.NewPlan.CTOS.ToxicitySideEffectsPanel", {
 	}
 
 });
-
 
 // End of Treatment Summary Controller
 // Requires the model: 
@@ -32301,7 +31795,6 @@ Patient.TreatmentStart = "";
 		}, this);
 	}
 });
-
 Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	/********************************
 	 *
@@ -33690,33 +33183,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 						PatientInfo[i].Patient_ID = Patient_ID;
 					}
 					ConfirmPatient.update( PatientInfo );
-
-/*****
-					var record = patientInfo.data;
-					Patient_ID = record.id;
-					NoPatientFound = "";
-					Patient_Name = "";
-					// Patient_Name = record.name;
-					if (record.VPR.data.items) {
-						Patient_Name = record.VPR.data.items[0].fullName;
-					}
-					else {
-						NoPatientFound = "No patient by that ID can be found in VistA";
-					}
-					var data = record;
-					this.application.TempPatient = record;
-
-					// Additional code here to perform proper query in MDWS for data
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var SelectPatientSection = thisCtl.getSelectPatientSection();
-					var SelectPatient = thisCtl.getSelectPatient();
-					var ConfirmPatient = thisCtl.getConfirmPatient();
-					SelectPatientSection.show();
-
-					PatientInfo.Patient_Name = Patient_Name;
-					PatientInfo.Patient_ID = Patient_ID;
-					ConfirmPatient.update( PatientInfo );
-*****/
 
 					if (theRecords.length == 0) {
 						thisCtl.getNoPatient().show();
@@ -35603,7 +35069,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 
-
 Ext.define("COMS.controller.NewPlan.OEM", {
 	extend: "Ext.app.Controller",
 
@@ -36670,7 +36135,6 @@ handleEditOEM_Record : function (event, element) {
 
 
 
-
 Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	extend: "Ext.app.Controller",
 	stores: [ "ReasonStore", "FluidType", "DrugStore", "DrugUnitsStore", "InfusionStore" ],
@@ -36684,8 +36148,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			ref: "SelectedMed",
 			selector : "EditOEMRecord SelectDrug"
 		},
-
-
 		{
 			ref: "FluidVol",
 			selector : "EditOEMRecord FluidVol[name=\"FluidVol\"]"
@@ -36702,10 +36164,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			ref: "FluidInfo",
 			selector : "EditOEMRecord container[name=\"fluidInfo\"]"
 		},
-        {
-            ref:  "SelectReason",
-            selector : "EditOEMRecord SelectReason"
-        }
+		{
+			ref:  "SelectReason",
+			selector : "EditOEMRecord SelectReason"
+		}
 	],
 
 
@@ -37038,7 +36500,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 });
 
-
 Ext.define("COMS.controller.NewPlan.PatientHistory", {
 	"extend" : "Ext.app.Controller",
 	"views" : [
@@ -37074,7 +36535,6 @@ Ext.define("COMS.controller.NewPlan.PatientHistory", {
 	}
 
 });
-
 /*************************************
  *
  *	Note: Once the BSA is calculated it's stored in the "this.application.Patient.BSA" variable for global access.
@@ -37410,7 +36870,6 @@ Ext.define("COMS.controller.NewPlan.PatientInfoTable", {
 	}
 });
 
-
 Ext.define("COMS.controller.NewPlan.Reason4EOTSAnswer", {
     extend : "Ext.app.Controller",
     stores : [
@@ -37737,7 +37196,6 @@ Ext.define("COMS.controller.NewPlan.Reason4EOTSAnswer", {
 
 
 });
-
 Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
     extend : "Ext.app.Controller",
 	TDData : {},		// This is used for storing the TD Data calculated within this controller rather than passing a variable around.
@@ -37817,7 +37275,6 @@ Ext.define("COMS.controller.NewPlan.TreatmentDetails", {
 		Ext.EventManager.removeResizeListener( this.ResizeTheTDWin, theWin );
 	}
 });
-
 
 Ext.define("COMS.controller.NewPlan.ViewEndTreatmentSummary", {
     extend : "Ext.app.Controller",
@@ -38004,7 +37461,6 @@ else {
 		Ext.EventManager.removeResizeListener( this.ResizeTheEoTSWin, theWin );
 	}
 });
-
 
 Ext.define("COMS.controller.Orders.OrdersTab", {
 	"extend" : "Ext.app.Controller",
@@ -38428,7 +37884,6 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 
 
 
-
 Ext.define('COMS.controller.TemplateList.TemplateListTab', {
     extend: 'Ext.app.Controller',
     stores: [
@@ -38517,7 +37972,6 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
     }
 });
 
-
 Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 	extend: 'Ext.app.Controller',
 	views: [ "TemplateList.puWinListPatients" ],
@@ -38556,7 +38010,6 @@ Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 		return true;
 	}
 });
-
 
 Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
     extend: 'Ext.app.Controller',
@@ -38699,7 +38152,6 @@ Ext.define('COMS.controller.TemplatePromotion.TemplatePromotionTab', {
 	}
 
 });
-
 
 Ext.application({
 	name: "COMS",

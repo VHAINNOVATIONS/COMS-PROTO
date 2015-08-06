@@ -18,6 +18,7 @@ Ext.define("COMS.view.Management.DischargeInstructionManagement" ,{
 			"overflowY" : "scroll",
 			"minHeight" : 500,
 			"margin" : "10 0 0 0",
+			"multiSelect" : true,
 
 			"columns" : [ 
 				{ "text" : "Instruction", "dataIndex" : "Label", "flex" : 1}, 

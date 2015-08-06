@@ -27,12 +27,15 @@ Ext.define("COMS.view.Management.MedicationDocumentation" ,{
 		{ "xtype" : "ManagementBtns"},
 
 		{  
-			"xtype" : "grid",  "name" : "DocumentedInPatientMedsList", "title" : "Documented Medications", 
+			"xtype" : "grid", 
+			"name" : "DocumentedInPatientMedsList", 
+			"title" : "Documented Medications", 
 			"store" : "MedDocs",
 			"forceFit" : true,
 			"overflowY" : "scroll",
 			"minHeight" : 500,
 			"margin" : "10 0 0 0",
+			"multiSelect" : true,
 
 			"columns" : [ 
 				{ "text" : "Medication", "dataIndex" : "MedName", "flex" : 1}, 

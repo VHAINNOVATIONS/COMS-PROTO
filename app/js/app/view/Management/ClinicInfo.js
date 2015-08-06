@@ -13,6 +13,7 @@ Ext.define("COMS.view.Management.ClinicInfo" ,{
 		{  
 			"xtype" : "grid",  "name" : "ClinicInfoList", "title" : "Clinic Information", 
 			"store" : "ClinicInfo",
+			"multiSelect" : true,
 			"forceFit" : true,
 			"overflowY" : "scroll",
 			"minHeight" : 500,

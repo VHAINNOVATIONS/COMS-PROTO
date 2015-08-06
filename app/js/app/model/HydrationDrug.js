@@ -5,6 +5,7 @@ Ext.define("COMS.model.HydrationDrug", {
 		"hydrationType",	// specifies pre or post hydration
 		"Sequence",
 		"Drug",
+		"MedicationType",
 
 		"Amt1",
 		"Units1",		// Internally, use a GUID to the Units Lookup Table, but this should be the actual string

@@ -161,22 +161,35 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 	/* Medication Documentation */
+{
+		ref : "MedDocs_Form",
+		selector : "MedicationDocumentation"
+	},
 	{
-		ref : "MedDocsGrid",
+		ref : "MedDocs_Grid",
 		selector : "MedicationDocumentation grid"
 	},
 	{
-		ref : "InPatient_MedicationCombo",
+		ref : "MedDocs_InPatient_MedicationCombo",
 		selector : "MedicationDocumentation [name=\"InPatient_Medication\"]"
 	},
 	{
 		ref : "MedDocs_Field",
 		selector : "MedicationDocumentation [name=\"Documentation\"]"
 	},
+	{
+		ref : "MedDocs_DeleteBtn", 
+		selector : "MedicationDocumentation button[text=\"Delete\"]" 
+	},
+
 
 	/* Discharge Instruction */
 	{
-		ref : "DischargeInstructionGrid",
+		ref : "DischargeInstruction_Form",
+		selector : "DischargeInstructionManagement"
+	},
+	{
+		ref : "DischargeInstruction_Grid",
 		selector : "DischargeInstructionManagement grid"
 	},
 	{
@@ -187,10 +200,19 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		ref : "DischargeInstruction_Documentation",
 		selector : "DischargeInstructionManagement [name=\"Details\"]"
 	},
+	{
+		ref : "DischargeInstruction_DeleteBtn", 
+		selector : "DischargeInstructionManagement button[text=\"Delete\"]" 
+	},
+
 
 	/* Clinic Info */
 	{
-		ref : "ClinicInfoGrid",
+		ref : "ClinicInfo_Form",
+		selector : "ClinicInfo"
+	},
+	{
+		ref : "ClinicInfo_Grid",
 		selector : "ClinicInfo grid"
 	},
 	{
@@ -200,6 +222,10 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	{
 		ref : "ClinicInfo_Details",
 		selector : "ClinicInfo [name=\"Details\"]"
+	},
+	{
+		ref : "ClinicInfo_DeleteBtn", 
+		selector : "ClinicInfo button[text=\"Delete\"]" 
 	},
 
 
@@ -328,7 +354,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"MedicationDocumentation button[text=\"Refresh\"]" : {
 				click: this.MedicationDocsLoadGrid
 			},
-
+			"MedicationDocumentation button[text=\"Delete\"]" : {
+				click: this.clickMedicationDocsDelete
+			},
 
 /* Discharge Instruction */
 			"DischargeInstructionManagement" : {
@@ -346,6 +374,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			"DischargeInstructionManagement button[text=\"Refresh\"]" : {
 				click: this.DischargeInstructionLoadGrid
 			},
+			"DischargeInstructionManagement button[text=\"Delete\"]" : {
+				click: this.clickDischargeInstructionDelete
+			},
 
 /* Clinic Info */
 			"ClinicInfo" : {
@@ -362,6 +393,9 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			},
 			"ClinicInfo button[text=\"Refresh\"]" : {
 				click: this.ClinicInfoLoadGrid
+			},
+			"ClinicInfo button[text=\"Delete\"]" : {
+				click: this.clickClinicInfoDelete
 			},
 
 /* Med Risks */
@@ -583,22 +617,26 @@ Ext.define('COMS.controller.Management.AdminTab', {
 
 
 /************************************************************************************************************/
-
 /** 
  * Clinic Info
  *
  * References:
- *		ClinicInfoGrid
+ *		ClinicInfo_Form
+ *		ClinicInfo_Grid
  *		ClinicInfo_Label
  *		ClinicInfo_Details
+ *		ClinicInfo_DeleteBtn
  *
  **/
 	ClinicInfoLoadGrid : function(panel) {
-		this.application.loadMask("Please wait; Loading Clinic Information");
-		var theGrid = this.getClinicInfoGrid();
+		var theGrid = this.getClinicInfo_Grid();
+		theGrid.setLoading( "Please wait; Loading Clinic Information", false );
 		var theStore = theGrid.getStore();
 		theStore.load();
-		this.application.unMask();
+		theGrid.setLoading( false, false );
+		var delBtn = this.getClinicInfo_DeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
 		return true;
 	},
 
@@ -614,14 +652,70 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var theDetailsField = this.getClinicInfo_Details();
 		theLabelField.setValue(Label);
 		theDetailsField.setValue(Details);
+		var delBtn = this.getClinicInfo_DeleteBtn();
+		if (record.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
 	},
 
-	clickClinicInfoCancel : function(theBtn, theEvent, eOpts) {
-		theBtn.up('form').getForm().reset();
+	deleteClinicInfoRecord : function(theRecords) {
+		var theGrid = this.getClinicInfo_Grid();
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.getData();
+			rID.id = rID.ID;
+			var ClinicInfoRecord = Ext.create(Ext.COMSModels.ClinicInfo, rID);
+
+			ClinicInfoRecord.destroy({
+				scope : this,
+				waitMsg : "Deleting Data...",
+				success: function(data) {
+					if (theRecords.length > 0) {
+						this.deleteClinicInfoRecord(theRecords);
+					}
+					else {
+						theGrid.setLoading( false, false );
+						this.ClinicInfoLoadGrid();
+					}
+				},
+				failure: function(err){
+					theGrid.setLoading( false, false );
+					Ext.MessageBox.alert("Invalid", "This reference has NOT been deleted.");
+				}
+			});
+		}
+		else {
+			theGrid.setLoading( false, false );
+		}
+	},
+
+	clickClinicInfoDelete : function() {
+		var theGrid = this.getClinicInfo_Grid();
+		
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Clinic Info records?", function(btn) {
+			if ("yes" === btn) {
+				this.getClinicInfo_Form().getForm().reset();
+				theGrid.setLoading( "Please wait; Deleting Selected Records", false );
+				this.deleteClinicInfoRecord(theRecords);
+			}
+		}, this);
+	},
+
+	clickClinicInfoCancel : function() {
+		this.getClinicInfo_Form().getForm().reset();
+		var theGrid = this.getClinicInfo_Grid();
+		theGrid.getSelectionModel().deselectAll();
 	},
 
 	clickClinicInfoSave : function(theBtn, theEvent, eOpts) {
-		var form = theBtn.up('form').getForm();
+		var mainForm = theBtn.up('form');
+		var form = mainForm.getForm();
+		mainForm.setLoading( "Please wait; Saving Clinic Info Record", false );
 		var theData = form.getValues(false, false, false, true);
 
 		if (form.isValid()) {
@@ -641,6 +735,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				jsonData : {"Label" : Label, "Details" : Details },
 				scope: this,
 				success: function( response, opts ){
+					mainForm.setLoading( false, false );
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentClinicInfoRecordID = "";
@@ -655,11 +750,12 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					}
 					else {
 						var thisCtl = this.getController("Management.AdminTab");
-						var theGrid = thisCtl.getClinicInfoGrid();
-						theGrid.getStore().load();
+						thisCtl.getClinicInfo_Form().getForm().reset();
+						thisCtl.ClinicInfoLoadGrid();
 					}
 				},
 				failure : function( response, opts ) {
+					mainForm.setLoading( false, false );
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentClinicInfoRecordID = "";
@@ -670,10 +766,13 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					theDetailsField.setValue("");
 
 					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Clinic Info, Save Error - " + "e.message" + "<br />" + resp.msg );
+					var thisCtl = this.getController("Management.AdminTab");
+					thisCtl.ClinicInfoLoadGrid();
 				}
 			});
 		}
 		else {
+			mainForm.setLoading( false, false );
 			var Msg = "";
 			if ("" === theData.Label) {
 				Msg += "<li>Missing Label Selection</li>";
@@ -688,13 +787,26 @@ Ext.define('COMS.controller.Management.AdminTab', {
 	},
 
 
-/* Discharge Instruction */
+/* Discharge Instruction 
+ *
+ * References:
+ *		DischargeInstruction_Form
+ *		DischargeInstruction_Grid
+ *		DischargeInstruction_Instruction
+ *		DischargeInstruction_Documentation
+ *		DischargeInstruction_DeleteBtn
+ *
+ */
+
 	DischargeInstructionLoadGrid : function(panel) {
-		this.application.loadMask("Please wait; Loading Discharge Instructions");
-		var theGrid = this.getDischargeInstructionGrid();
+		var theGrid = this.getDischargeInstruction_Grid();
+		theGrid.setLoading( "Please wait; Loading Discharge Instructions", false );
 		var theStore = theGrid.getStore();
 		theStore.load();
-		this.application.unMask();
+		theGrid.setLoading( false, false );
+		var delBtn = this.getDischargeInstruction_DeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
 		return true;
 	},
 
@@ -710,14 +822,72 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		var theDocsField = this.getDischargeInstruction_Documentation();
 		theInstructionField.setValue(Label);
 		theDocsField.setValue(Details);
+		var delBtn = this.getDischargeInstruction_DeleteBtn();
+		if (record.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
 	},
 
-	clickDischargeInstructionCancel : function(theBtn, theEvent, eOpts) {
-		theBtn.up('form').getForm().reset();
+
+	deleteDischargeInstructionRecord : function(theRecords) {
+		var theGrid = this.getClinicInfo_Grid();
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.getData();
+			rID.id = rID.ID;
+			var DischargeInstructionRecord = Ext.create(Ext.COMSModels.DischargeInstruction, rID);
+
+			DischargeInstructionRecord.destroy({
+				scope : this,
+				waitMsg : "Deleting Data...",
+				success: function(data) {
+					if (theRecords.length > 0) {
+						this.deleteDischargeInstructionRecord(theRecords);
+					}
+					else {
+						theGrid.setLoading( false, false );
+						this.DischargeInstructionLoadGrid();
+					}
+				},
+				failure: function(err){
+					theGrid.setLoading( false, false );
+					Ext.MessageBox.alert("Invalid", "This reference has NOT been deleted.");
+				}
+			});
+		}
+		else {
+			theGrid.setLoading( false, false );
+		}
+	},
+
+	clickDischargeInstructionDelete : function() {
+		var theGrid = this.getDischargeInstruction_Grid();
+		
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Discharge Instruction records?", function(btn) {
+			if ("yes" === btn) {
+				this.getDischargeInstruction_Form().getForm().reset();
+				theGrid.setLoading( "Please wait; Deleting Selected Records", false );
+				this.deleteDischargeInstructionRecord(theRecords);
+			}
+		}, this);
+	},
+
+
+	clickDischargeInstructionCancel : function() {
+		this.getDischargeInstruction_Form().getForm().reset();
+		var theGrid = this.getDischargeInstruction_Grid();
+		theGrid.getSelectionModel().deselectAll();
 	},
 
 	clickDischargeInstructionSave : function(theBtn, theEvent, eOpts) {
-		var form = theBtn.up('form').getForm();
+		var mainForm = theBtn.up('form');
+		var form = mainForm.getForm();
+		mainForm.setLoading( "Please wait; Saving Discharge Instruction", false );
 		var theData = form.getValues(false, false, false, true);
 
 		if (form.isValid()) {
@@ -737,6 +907,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 				jsonData : {"Label" : Label, "Details" : Details },
 				scope: this,
 				success: function( response, opts ){
+					mainForm.setLoading( false, false );
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentDischargeInstructionRecordID = "";
@@ -751,11 +922,11 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					}
 					else {
 						var thisCtl = this.getController("Management.AdminTab");
-						var theGrid = thisCtl.getDischargeInstructionGrid();
-						theGrid.getStore().load();
+						thisCtl.DischargeInstructionLoadGrid();
 					}
 				},
 				failure : function( response, opts ) {
+					mainForm.setLoading( false, false );
 					var text = response.responseText;
 					var resp = Ext.JSON.decode( text );
 					this.CurrentDischargeInstructionRecordID = "";
@@ -766,10 +937,13 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					theDocsField.setValue("");
 
 					Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Discharge Instruction, Save Error - " + "e.message" + "<br />" + resp.msg );
+					var thisCtl = this.getController("Management.AdminTab");
+					thisCtl.DischargeInstructionLoadGrid();
 				}
 			});
 		}
 		else {
+			mainForm.setLoading( false, false );
 			var Msg = "";
 			var Docs = "";
 			if (!theData.Label) {
@@ -784,41 +958,117 @@ Ext.define('COMS.controller.Management.AdminTab', {
 		}
 	},
 
-/* Medication Documentation */
+/* Medication Documentation 
+ *
+ * References:
+ *		MedDocs_Form
+ *		MedDocs_Grid
+ *		MedDocs_InPatient_MedicationCombo
+ *		MedDocs_Field
+ *		MedDocs_DeleteBtn
+ *
+ */
+ 
+	MedicationDocsLoadGrid : function (panel) {
+		var delBtn, theStore, theMedField, theGrid = this.getMedDocs_Grid();
+		theGrid.setLoading( "Please wait; Loading Medication Documentation", false );
+		theGrid = this.getMedDocs_Grid();
+		theStore = theGrid.getStore();
+		theGrid.getStore().load();
+		theMedField = this.getMedDocs_InPatient_MedicationCombo();
+		theMedField.getStore().load();
+		theGrid.setLoading(false, false);
+		delBtn = this.getMedDocs_DeleteBtn();
+		delBtn.setDisabled(true);
+		delBtn.show();
+		return true;
+	},
+
+
 	selectMed : function(theCombo, nValue, oValue, eOpts) {
 		var theRTE = theCombo.up("form").down("htmleditor");
 		theRTE.reset();
 	},
 
 	selectMedDocsGridRow : function(theRowModel, record, index, eOpts) {
-
 		var recID = record.get("ID");
 		var MedID = record.get("Med_ID");
 		var MedName = record.get("MedName");
 		var MedDocumentation = record.get("Documentation");
 
 
-		var theMedField = this.getInPatient_MedicationCombo();
+		var theMedField = this.getMedDocs_InPatient_MedicationCombo();
 		var theDocsField = this.getMedDocs_Field();
 		theMedField.setValue(MedID);
 		theDocsField.setValue(MedDocumentation);
+		var delBtn = this.getMedDocs_DeleteBtn();
+		if (record.length <= 0) {
+			delBtn.setDisabled(true);
+		}
+		else {
+			delBtn.setDisabled(false);
+		}
 	},
 
-	MedicationDocsLoadGrid : function (panel) {
-		this.application.loadMask("Please wait; Loading Medication Documentation");
-		var theGrid = this.getMedDocsGrid();
-		var theStore = theGrid.getStore();
-		theGrid.getStore().load();
+	deleteMedicationDocsRecord : function(theRecords) {
+		var theGrid = this.getMedDocs_Grid();
+		var record = theRecords.pop();
+		if (record) {
+			var rID = record.getData();
+			rID.id = rID.ID;
+			var MedDocsRecord = Ext.create(Ext.COMSModels.MedDocs, rID);
 
-		var theMedField = this.getInPatient_MedicationCombo();
-		theMedField.getStore().load();
-
-		this.application.unMask();
-		return true;
+			MedDocsRecord.destroy({
+				scope : this,
+				waitMsg : "Deleting Data...",
+				success: function(data) {
+					if (theRecords.length > 0) {
+						this.deleteMedicationDocsRecord(theRecords);
+					}
+					else {
+						theGrid.setLoading( false, false );
+						this.MedicationDocsLoadGrid();
+					}
+				},
+				failure: function(err){
+					theGrid.setLoading( false, false );
+					Ext.MessageBox.alert("Invalid", "This reference has NOT been deleted.");
+				}
+			});
+		}
+		else {
+			theGrid.setLoading( false, false );
+		}
 	},
+
+	clickMedicationDocsDelete : function() {
+		var theGrid = this.getMedDocs_Grid();
+		
+		var theRecords = theGrid.getSelectionModel().getSelection();
+		var len = theRecords.length, i, record;
+		Ext.MessageBox.confirm("Confirm Deletion", "Are you sure you want to delete the selected Medication Document records?", function(btn) {
+			if ("yes" === btn) {
+				this.getMedDocs_Form().getForm().reset();
+				theGrid.setLoading( "Please wait; Deleting Selected Records", false );
+				this.deleteMedicationDocsRecord(theRecords);
+			}
+		}, this);
+	},
+
+
+
+	clickMedDocCancel : function(theBtn) {
+		this.getMedDocs_Form().getForm().reset();
+		var theGrid = this.getMedDocs_Grid();
+		theGrid.getSelectionModel().deselectAll();
+	},
+
 
 	clickMedDocSave : function(theBtn, theEvent, eOpts) {
-			var form = theBtn.up('form').getForm();
+			var mainForm = this.getMedDocs_Form();
+			var form = mainForm.getForm();
+
+			mainForm.setLoading( "Please wait; Saving Medication Documentation Record", false );
 			var theData = form.getValues(false, false, false, true);
 
 			if (form.isValid()) {
@@ -832,6 +1082,7 @@ Ext.define('COMS.controller.Management.AdminTab', {
 					jsonData : { "Documentation" : Documentation },
 					scope: this,
 					success: function( response, opts ){
+						mainForm.setLoading( false, false );
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
 						if (!resp.success) {
@@ -839,14 +1090,18 @@ Ext.define('COMS.controller.Management.AdminTab', {
 						}
 						else {
 							var thisCtl = this.getController("Management.AdminTab");
-							var theGrid = thisCtl.getMedDocsGrid();
-							theGrid.getStore().load();
+							thisCtl.getMedDocs_Form().getForm().reset();
+							thisCtl.MedicationDocsLoadGrid();
 						}
 					},
 					failure : function( response, opts ) {
+						mainForm.setLoading( false, false );
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
 						Ext.MessageBox.alert("Saving Error", "Saving Error", "Site Configuration - Medications Documentation, Save Error - " + "e.message" + "<br />" + resp.msg );
+
+						var thisCtl = this.getController("Management.AdminTab");
+						thisCtl.MedicationDocsLoadGrid();
 					}
 				});
 			}
@@ -865,10 +1120,6 @@ Ext.define('COMS.controller.Management.AdminTab', {
 			}
 	},
 
-
-	clickMedDocCancel : function(theBtn) {
-		theBtn.up('form').getForm().reset();
-	},
 
 	selectRoleChange : function( combo, records, eOpts ) {
 		var selectedRole = records[0].getData().name;
@@ -1459,16 +1710,20 @@ vcode: null		// ignore
 				
 			}
 			
-		} 
-			
+		}
 	},
 	
 	deleteTemplateCall: function(mytemplate,ckRec){
+		var theGrid = this.getTemplateGrid();
+		theGrid.setLoading("Removing Template", false);
+
 		mytemplate.destroy({
 			scope: this,
 			success: function (record, op) {
 				this.getSelectedRecord(true, 'AdminTab DeleteTemplate grid'); // remove the selected record from the current store
 				this.getRemoveTemplate().disable();
+				var theGrid = this.getTemplateGrid();
+				theGrid.setLoading(false, false);
 				var adminCtl = this.getController("Management.AdminTab");
 				//Ext.MessageBox.alert('Success', 'Template ' + ckRec.record.get('description') + ' was deleted from the system.');
 				Ext.MessageBox.show({
@@ -1489,6 +1744,9 @@ vcode: null		// ignore
 				wccConsoleLog("Delete Template Failed");
 				this.getRemoveTemplate().disable();
 				this.application.unMask();
+				var theGrid = this.getTemplateGrid();
+				theGrid.setLoading(false, false);
+
 				var adminCtl = this.getController("Management.AdminTab");
 				Ext.MessageBox.show({
 					title: 'Information',
@@ -1502,80 +1760,8 @@ vcode: null		// ignore
 						}
 					}
 				});
-
-				//Ext.MessageBox.alert('Failure', 'Template was not deleted: ' + op.request.scope.reader.jsonData["frameworkErr"]);
 			}
 		});
 		
 	}
-
-/*************
-	editLookup : function(button){
-		var ckRec = this.getSelectedRecord(false, 'AdminTab grid');
-		if (ckRec.hasRecord) {
-			wccConsoleLog('Editing Lookup - ' + ckRec.record.get('id') + ' - ' + ckRec.record.get('name') + ' - ' + ckRec.record.get('description'));
-			var view = Ext.widget('EditLookup'); // Creates an instance of the "Add Reference" pop-up window
-			view.down('form').loadRecord(ckRec.record);
-		} else {
-			Ext.MessageBox.alert('Invalid', 'Please select a Row in the Lookup Grid.');
-		}
-	},
-
-
-	// Load the grid's store to see all the values for the selected type
-	LookupSelected : function ( combo, recs, eOpts ) {
-		wccConsoleLog('Admin Tab, Lookup Selected');
-		var theData = recs[0].data.value;
-		var thisCtl = this.getController('Management.AdminTab');
-		var theStore = thisCtl.getLookupGrid().getStore();
-		var theURL = Ext.URLs.BaseView + "/" + theData;
-		theStore.load({
-			url:theURL
-		});
-	},
-
-	updateLookup: function(button){
-		wccConsoleLog('clicked Save button');
-		var grid = Ext.ComponentQuery.query('AdminTab grid')[0]; // Get's a specific existing instance of the widget by it's CSS style reference
-		var store = grid.getStore();
-
-		var form = button.up('form');
-			
-		var values = form.form.getValues();
-			
-			
-		var lookupRecord = Ext.create('COMS.model.LookupTable', {
-			id: values.id,
-			value: values.value,
-			description: values.description
-		});
-
-		lookupRecord.save({
-			scope : this,
-			waitMsg : 'Saving Data...',
-			success: function(data) {
-				wccConsoleLog("Saved Lookup Type ID "+ data.getId() + " name " + data.data.value + " lookupid " + data.data.lookupid);
-					
-				var ref = Ext.create(Ext.COMSModels.GenericLookup, {
-					id: data.data.lookupid,
-					name: data.data.value,
-					description: data.data.description
-				});
-
-				store.insert(0, ref);
-					
-				var thisCtl = this.getController('Management.AdminTab');
-				var addLookups = thisCtl.getLookup();
-				addLookups.form.findField('value').setValue('');
-				addLookups.form.findField('id').setValue('');
-
-				addLookups.form.findField('description').setValue('');
-			},
-			failure: function(err){
-				Ext.MessageBox.alert('Invalid', 'This reference already exists.');
-			}
-		});
-			
-	}
-***************/
 });

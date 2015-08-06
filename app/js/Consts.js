@@ -461,7 +461,6 @@ Ext.URLs.ChemoHistory = theJSPath + "/data1/ChemoHistory.js";
 Ext.URLs.RadiationHistory = theJSPath + "/data1/RadiationHistory.js";
 // Used in the RadiationHistory Model.
 
-// Ext.URLs.Template = theJSPath + "/data1/Templates.js";
 Ext.URLs.CycleLengthMax = theJSPath + "/data1/CycleLengthMax.js";
 // Used in the LookupTable_CycleLengthMax model.
 

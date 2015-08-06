@@ -45,10 +45,10 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 	],
 
 	refs: [
-	    {
-		    ref: "CTOS",
+		{
+			ref: "CTOS",
 			selector: "NewPlanTab CTOS"
-	    },
+		},
 		{
 			ref : "NursingDocsTabSet",
 			selector : "NursingDocs"
@@ -73,6 +73,27 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		{
 			ref: "ndct_DualDosing", 
 			selector: "NursingDocs_GenInfo NursingDocs_DualDosingVerification"
+		},
+
+		{
+			ref: "rgPatientID", 
+			selector: "NursingDocs_PatientID [name=\"rgPatientID\"]"
+		},
+		{
+			ref: "rgConsent", 
+			selector: "NursingDocs_PatientID [name=\"rgConsent\"]"
+		},
+		{
+			ref: "PatientIDComment", 
+			selector: "NursingDocs_PatientID [name=\"PatientIDComment\"]"
+		},
+		{
+			ref: "rgEduAssess", 
+			selector: "NursingDocs_PatientTeaching [name=\"rgEduAssess\"]"
+		},
+		{
+			ref: "rgPlanReviewed", 
+			selector: "NursingDocs_PatientTeaching [name=\"rgPlanReviewed\"]"
 		},
 
 		{
@@ -146,7 +167,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		},
 		{
 			ref: "VitalSignsHistory",
-	        selector: "NursingDocs_GenInfo VitalSignsHistory"
+			selector: "NursingDocs_GenInfo VitalSignsHistory"
 		},
 		{
 			ref : "ND_PT_TabLabInfo",
@@ -177,25 +198,25 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 			"button[text=\"Calculations\"]" : {
 					click : this.HandleVSFormShowCalcButtons
 			},
-            "button[name=\"ShowBSA\"]" : {
-                click: this.NDGIVS_BSA_Calculations
-            },
+			"button[name=\"ShowBSA\"]" : {
+				click: this.NDGIVS_BSA_Calculations
+			},
 
-            "NursingDocs_GenInfo button[action=\"save\"]": {
-                click: this.btnSaveGenInfo
-            },
+			"NursingDocs_GenInfo button[action=\"save\"]": {
+				click: this.btnSaveGenInfo
+			},
 			"NursingDocs_DualDosingVerification button[name=\"DDV_FirstSig\"]" : {
-                click: this.btnFirstSignature
+				click: this.btnFirstSignature
 			},
 			"NursingDocs_DualDosingVerification button[name=\"DDV_SecSig\"]" : {
-                click: this.btnSecondSignature
+				click: this.btnSecondSignature
 			},
-            "Authenticate[title=\"Signature of first verifier\"] button[action=\"save\"]": {
-                click: this.AuthenticateUser
-            },
-            "Authenticate[title=\"Signature of second verifier\"] button[action=\"save\"]": {
-                click: this.AuthenticateUser
-            },
+			"Authenticate[title=\"Signature of first verifier\"] button[action=\"save\"]": {
+				click: this.GenInfoAuthenticateUser
+			},
+			"Authenticate[title=\"Signature of second verifier\"] button[action=\"save\"]": {
+				click: this.GenInfoAuthenticateUser
+			},
 			"NursingDocs_Chemotherapy [name=\"NeutropeniaInfo\"]" : {
 				afterrender : Ext.togglePanelOnTitleBarClick
 			},
@@ -396,8 +417,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		return validity;
 	},
 
-	AuthenticateUser : function (button) {
+
+	GenInfoAuthenticateUser : function (button) {
 		var win = button.up('window');
+		win.setLoading("Authenticating digital signature", false);
+		var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
+		initialField.focus(true, true);
+
 		var SigNameField = win.SigName;
 		var SigField = Ext.ComponentQuery.query("NursingDocs_DualDosingVerification displayfield[name=\"" + SigNameField + "\"]")[0];
 
@@ -419,10 +445,16 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 					scope : this,
 					url: "/Session/Authenticate?Access=" + values.AccessCode + "&Verify=" + values.VerifyCode,
 					success: function( response, opts ){
+						win.setLoading(false, false);
 						var text = response.responseText;
 						var resp = Ext.JSON.decode( text );
 						if (resp.success && "Failed" !== resp.records) {
-							win.close();
+							if (win.retFcn) {
+								win.retFcn(curTreatmentRecord, this);
+							}
+							else {
+								win.close();
+							}
 							SigField.setValue(resp.records);
 						}
 						else {
@@ -430,6 +462,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 						}
 					},
 					failure : function( response, opts ) {
+						win.setLoading(false, false);
 						Ext.MessageBox.alert("Authentication Error", "Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 					}
 				});
@@ -437,25 +470,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 		}
 	},
 
-
-
-
 	btnFirstSignature : function( button ) {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of first verifier", SigName : SigNameFld1, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
-		Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
-
-
-
+		var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
+		initialField.focus(true, true);
 	},
 
 	btnSecondSignature : function( button ) {
 		var SigNameFld1 = "DDV_FirstSig1";
 		var SigNameFld2 = "DDV_FirstSig4";
 		var EditRecordWin = Ext.widget("Authenticate", { title : "Signature of second verifier", SigName : SigNameFld2, SigName1 : SigNameFld1, SigName2 : SigNameFld2 });
-		Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
+		// Ext.ComponentQuery.query("Authenticate form")[0].getForm().getFields().getAt(0).focus("", true);
+		var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
+		initialField.focus(true, true);
 	},
+
 
 	ConvertWeight : function( fld, eOpts ) {
         var inValue = fld.getValue();
@@ -492,51 +523,50 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.GenInfoTab", {
 
 
 
-
-ClearTabData : function(obj) {
-		// obj.ClearNDTabs()
-		// obj.PopulateNDTabs()
-		// obj.scope
-
-        var thisCtl;
-		try {
-			thisCtl = this.getController("NewPlan.CTOS.NursingDocs.GenInfoTab");
-			if (!thisCtl.getNdct_GenInfoTab().rendered) {
-				return;		// Traps possible call from the PopulateNDTabs event
-			}
-		}
-		catch (e) {
-			Ext.MessageBox.alert("Loading Error", "ND - ClearTabData() - Error - " + e.message );
-		}
-		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
-
-		var f1 = thisCtl.getNdct_PatientID();
-		Ext.each(f1.query('field'), function(field) { 
-			field.reset(); 
-		}); 
-		var f2 = thisCtl.getNdct_PatientTeaching();
-		Ext.each(f2.query('field'), function(field) { 
-			field.reset(); 
-		});
-		var f3 = thisCtl.getNdct_DualDosing();
-		Ext.each(f3.query('field'), function(field) { 
-			field.reset(); 
-		});
-
-		var allForms = Ext.ComponentQuery.query("VitalSignsEntryForm");
-		var afLen = allForms.length;
-		var f, i;
-		if (this.application.Patient) {
-			this.initVitalSignsEntryForm(this.application.Patient);
+	ClearTabData : function(obj) {
+		if (this.application.Patient.PAT_ID == "") {
+			// Reset form data
+			var giTab = this.getNdct_GenInfoTab().getForm();
+			giTab.reset();
 		}
 		else {
-			var clearedFields = {"ndVitalsTempF" : "", "ndVitalsTempC" : "", "ndVitalsTempLoc" : "", "ndVitalsPulse" : "", "ndVitalsBP" : "", "ndVitalsSystolic" : "", "ndVitalsDiastolic" : "", "ndVitalsGender" : "", "ndVitalsHeightIN" : "", "ndVitalsHeightCM" : "", "ndVitalsResp" : "", "ndVitalsO2Level" : "", "ndVitalsAge" : "", "ndVitalsWeightP" : "", "ndVitalsWeightKG" : "", "ndVitalsPain" : "", "ndVitalsBSA" : "" };
-			for (i = 0; i < afLen; i++) {
-				f = allForms[i].getForm();
-				f.setValues(clearedFields);
-			}
-		}
+			Ext.Ajax.request({
+				scope : this,
+				url: Ext.URLs.AddND_GenInfo + "/" + this.application.Patient.PAT_ID,
+				method : "GET",
+				success: function( response, opts ){
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					if (!resp.success) {
+						Ext.MessageBox.alert("Data Retrieval Error", "ND - GenInfo - General Information Section, Error - " + resp.msg );
+					}
+					else {
+						var giTab = this.getNdct_GenInfoTab().getForm();
+						if (resp.total > 0) {
+							var RgPatientID = this.getRgPatientID();
+							var RgConsent = this.getRgConsent();
+							var RgEduAssess = this.getRgEduAssess();
+							var RgPlanReviewed = this.getRgPlanReviewed();
 
+							var theData = resp.records[0];
+							giTab.setValues({PatientIDComment:theData.comment});
+							RgPatientID.setValue({patientIDGood : theData.patientIDGood == "true"});
+							RgConsent.setValue({consentGood : theData.consentGood == "true"});
+							RgEduAssess.setValue({educationGood : theData.educationGood == "true"});
+							RgPlanReviewed.setValue({planReviewed : theData.planReviewed == "true"});
+						}
+						else {
+							giTab.reset();
+						}
+					}
+				},
+				failure : function( response, opts ) {
+					var text = response.responseText;
+					var resp = Ext.JSON.decode( text );
+					Ext.MessageBox.alert("Data Retrieval Error", "ND - GenInfo - General Information Section, Save Error - " + resp.msg );
+				}
+			});
+		}
 		thisCtl = this.getController("NewPlan.CTOS.NursingDocs.Chemotherapy");
 		thisCtl.ClearTabData();
 	},
@@ -794,7 +824,7 @@ ClearTabData : function(obj) {
 		var params = Ext.encode(record);
 		Ext.Ajax.request({
 			scope : this,
-			url: Ext.URLs.AddND_GenInfo,
+			url: Ext.URLs.AddND_GenInfo + "/" + this.application.Patient.PAT_ID,
 			method : "POST",
 			jsonData : params,
 			success: function( response, opts ){

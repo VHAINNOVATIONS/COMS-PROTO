@@ -1,4 +1,4 @@
-/*global Ext */
+
 /*
  *	Since this widget is a window, it's not a sub object to any	other class when attempting to get a handle to it.
  *	Hence it's reference is	: Ext.ComponentQuery.query('AddHydrationDrug')[0].el.dom
@@ -68,8 +68,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								"displayField" : "name",
 								"valueField" : "IEN",
 								"queryMode" : "local",
-								"typeahead" : true,
+								"typeAhead" : true,
 								"allowBlank" : false,
+								"editable" : true
 							}
 						]
 					},
@@ -119,7 +120,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
-							'typeahead' : true,
+							'typeAhead' : true,
 							'name' : 'Units1'
 						}, 
 						{
@@ -136,7 +137,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
-							'typeahead' : true,
+							'typeAhead' : true,
 							'name' : 'Infusion1'
 						}
 						]
@@ -160,10 +161,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								allowBlank: false,
 								displayField: 'value',
 								valueField: 'value',
-							'queryMode' : 'local',
-							'editable' : true,
-							'typeahead' : true,
-
+								'queryMode' : 'local',
+								'editable' : true,
+								'typeAhead' : true,
 								store: 'LookupStore'
 							},
 							{
@@ -171,9 +171,9 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								maskRe: /[0-9\.]/,
 								name: 'FluidVol1',
 								fieldLabel: 'Fluid Volume <em>*</em>',
-								labelWidth: 85,
+								labelWidth: 95,
 								margin: '0 0 5 15',
-								width: 175,
+								width: 185,
 								allowBlank: false
 							}, {
 								xtype: 'container',

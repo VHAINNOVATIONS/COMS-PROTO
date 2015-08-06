@@ -27,15 +27,23 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.PreTreatmentTab", {
 	// Ext.ComponentQuery.query("NursingDocs_Chemotherapy displayfield[name=\"ndctRegimen\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog("Initialized Nursing Docs Pre Treatment Tab Controller!");
+
+		this.application.on({ PatientSelected : this.ClearTabData, scope : this });
 		this.control({
-            "NursingDocs_PreTreatment checkbox" : {
+			"NursingDocs_PreTreatment checkbox" : {
 				change : this.SiteAssessmentCheckBoxCheck
 			},
-            "NursingDocs_PreTreatment" : { afterrender : this.TabRendered },
-            "NursingDocs_PreTreatment button[action=\"save\"]": { click: this.btnSaveIVSiteInfo }
+			"NursingDocs_PreTreatment" : { afterrender : this.TabRendered },
+			"NursingDocs_PreTreatment button[action=\"save\"]": { click: this.btnSaveIVSiteInfo }
 		});
 	},
 
+	ClearTabData : function (recs, opts) {
+		/* Currently there is no saved data for this process so only need to clear the panel on patient load */
+		var panel = this.getND_PT_Tab();
+		var URL = Ext.URLs.ND_IVSite;
+		panel.getForm().reset();
+	},
 
     SiteAssessmentCheckBoxCheck : function(btn, newValue, oldValue, eOpts) {
         var label = btn.boxLabel;

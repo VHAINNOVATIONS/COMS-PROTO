@@ -39,7 +39,7 @@ Ext.define("COMS.model.ND_ReactAssessXtrav", {
 		"ND_RA_Xtrav_Cooling",			// true/false
 		"ND_RA_Xtrav_CoolFreq",
 		"ND_RA_Xtrav_Interventions",	// true/false
-		"ND_RA_Xtrav_Interventions",
+		"ND_RA_Xtrav_InterventionsGiven",
 		"ND_RA_Xtrav_Antidotes",		// true/false
 		"ND_RA_Xtrav_AntidotesGiven",
 		"ND_RA_Xtrav_Measurements",		// true/false

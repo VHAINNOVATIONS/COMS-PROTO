@@ -6,6 +6,22 @@ Ext.define('COMS.model.GenericLookupModel', {
 		{ name: 'description', type: 'string'},
 		{ name: 'lookupid', type:'string'}
 	],
+	"proxy" : {
+		"type" : "rest",
+		"api" : {
+			"read" : Ext.URLs.Lookups,
+			"update" : Ext.URLs.Lookups,
+			"destroy" : Ext.URLs.Lookups,
+			"create" : Ext.URLs.Lookups
+		},
+		"reader" : {
+			"type" : "json",
+			"root" : "records",
+			"successProperty" : "success",
+			"messageProperty" : "message"
+		}
+	}
+/**
 	proxy: {
 		type: 'rest',
 		api: {
@@ -17,4 +33,5 @@ Ext.define('COMS.model.GenericLookupModel', {
 			successProperty : 'success'
 		}
 	}
+ **/
 });

@@ -211,16 +211,5 @@ Ext.define('COMS.controller.Management.CumulativeDosing', {
 			}
 		}, this);
 	}
-
-
-
-
-
-
-
-
-
-
-
 });
 

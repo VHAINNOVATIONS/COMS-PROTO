@@ -21,7 +21,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 	],
 
 	refs: [
-	    { ref: "CTOS", selector: "NewPlanTab CTOS" },
+		{ ref: "CTOS", selector: "NewPlanTab CTOS" },
 		{ ref : "NursingDocsTabSet", selector : "NursingDocs" },
 		{ ref : "ND_T_Tab", selector : "NursingDocs_Treatment" },
 		{ ref : "ND_T_T_Warning", selector : "NursingDocs_Treatment [name=\"ND_T_T_Warning\"]" },
@@ -63,7 +63,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			"Authenticate[title=\"Authenticate\"] button[action=\"save\"]": {
 				click: {
 					scope : this,
-					fn : this.AuthenticateUser
+					fn : this.TreatmentAuthenticateUser
 				}
 			},
 			"NursingDocs_Treatment button[text=\"Administration Complete\"]" : { click : this.TreatmentCompleteClicked }
@@ -84,8 +84,13 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				this.curTreatmentRecord = record;
 				record.set("Treatment_User", "In Process...");
 					// Prompt user and issue AJAX call to verify their credentials and save this record if credentials verified.
-				var EditRecordWin = Ext.widget("Authenticate");
-				EditRecordWin.curTreatmentRecord = record;
+				var EditRecordWin = Ext.widget("Authenticate", { theView : tableView, theRow : rowIndex, curTreatmentRecord: record, retFcn : function(curTreatmentRecord, theScope, c) { 
+						// debugger; 
+						var pWin = Ext.ComponentQuery.query('puWinTreatmentAmmend')[0];
+						this.close();
+					}
+				});
+				// EditRecordWin.curTreatmentRecord = record;
 				var initialField = Ext.ComponentQuery.query('Authenticate [name=\"AccessCode\"]')[0];
 				initialField.focus(true, true);
 			}
@@ -94,21 +99,32 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 
 
 	SaveTreatmentRecord : function(curTreatmentRecord) {
+		var rec;
 		var tData = curTreatmentRecord.getData();
-		var drug = curTreatmentRecord.get("drug");
+		var drug = tData.drug;
 		var res = drug.replace(/^\d+\. /, "");
 		curTreatmentRecord.set("drug", drug);
-		curTreatmentRecord.set("Treatment_User", curTreatmentRecord.get("User"));
+		curTreatmentRecord.set("Treatment_User", tData.User);
 		curTreatmentRecord.set("Treatment_Date", Ext.Date.format(new Date(), "m/d/Y - g:i a"));
-		curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
-		curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
+		//curTreatmentRecord.set("StartTime", Ext.Date.format(tData.StartTime, "h:i a"));
+		//curTreatmentRecord.set("EndTime", Ext.Date.format(tData.EndTime, "h:i a"));
+
+		rec = Ext.create(Ext.COMSModels.ND_Treatment, curTreatmentRecord.getData());
+		var TreatID = tData.Treatment_ID;
+		if ("" !== TreatID) {
+			rec.set("id", TreatID);
+		}
 
 		this.application.loadMask("Saving record of changes");
 		// POST Changed data row back to server then upon successful posting of the data...
-		curTreatmentRecord.save({
+		rec.save({
 			scope : this,
+			pRec : curTreatmentRecord,
 			callback : function(record, operation) {
 				var theData = record.getData();
+				operation.pRec.set("Treatment_ID", theData.Treatment_ID);
+				operation.pRec.dirty = false;
+
 				if ("Therapy" === theData.type) {
 							var thisCtl = this.getController("Common.puWinAddCumDose");
 							// var Info = { "MedID" : "B495474E-A99F-E111-903E-000C2935B86F", "UnitsID" : "AB85F3AA-0B21-E111-BF57-000C2935B86F", "AdministeredDose" : "54,321"};
@@ -122,20 +138,17 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			}
 		});
 		delete this.curTreatmentRecord;
+		// delete rec;
 	},
 
-	AuthenticateUser : function (button) {
-// debugger;
-// get Route
-// if Route !== Oral the End Time MUST be set before signing
-// IF the medication is ORAL, SubQ, IM or IVP then only a start time is required before the user can sign off on the record
-// ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
-		var curTreatmentRecord = button.up("Authenticate").curTreatmentRecord;
+	TreatmentAuthenticateUser : function (button) {		// Handler for Authenticate widget after user clicks "Sign"
+		var theWin = button.up("Authenticate");
+		var curTreatmentRecord = theWin.curTreatmentRecord;
 
 		this.SignRecordBtn = button;
 		button.hide();
-		this.application.loadMask("Authenticating digital signature");
 		var win = button.up('window');
+		win.setLoading("Authenticating digital signature", false);
 		var form = win.down('form');
 		var values = form.getValues();
 		var SignData = window.SessionUser + " - " + Ext.Date.format(new Date(), "m/d/Y - g:i a");
@@ -151,15 +164,24 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 			scope : this,
 			url: "/Session/Authenticate?Access=" + values.AccessCode + "&Verify=" + values.VerifyCode,
 			success: function( response, opts ){
-				this.application.unMask();
+				win.setLoading(false, false);
 				var text = response.responseText;
 				var resp = Ext.JSON.decode( text );
 				if (resp.success && "Failed" !== resp.records) {
-					win.close();
 					curTreatmentRecord.set("AccessCode", "");
 					curTreatmentRecord.set("User", resp.records);
 					curTreatmentRecord.set("VerifyCode", "");
+
+
+
+
 					this.SaveTreatmentRecord (curTreatmentRecord);
+					if (win.retFcn) {
+						win.retFcn(curTreatmentRecord, this);
+					}
+					else {
+						win.close();
+					}
 				}
 				else {
 					Ext.MessageBox.alert("Error", "Authentication failed! Please click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
@@ -167,7 +189,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 				}
 			},
 			failure : function( response, opts ) {
-				this.application.unMask();
+				win.setLoading(false, false);
 				Ext.MessageBox.alert("Error", "Authentication failed! \n\nPlease click the \"Sign to Verify\" button again and enter your proper Access and Verify Codes");
 				this.SignRecordBtn.show();
 			}
@@ -183,11 +205,11 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 // ELSE IF the medication is IV or IVPB, then a start AND End time are required before the user can sign off on the record
 
 
-        var timeMax = Ext.Date.format(new Date(), 'h:i A');
+		var timeMax = Ext.Date.format(new Date(), 'h:i A');
 		EndTimeField.setMaxValue(timeMax);
 		StartTimeField.setMaxValue(timeMax);
-        StartTimeField.setValue("07:00 AM");
-        StartTimeField.setRawValue("07:00 AM");
+		StartTimeField.setValue("07:00 AM");
+		StartTimeField.setRawValue("07:00 AM");
 
 		if ("" === eObj.record.get("Treatment_User")) {
 			var StartTimeFieldValue = eObj.record.get("StartTime");
@@ -214,7 +236,7 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		if (null === this.curTreatmentRecord) {
 			this.TreatmentStore = eObj.grid.getStore();
 			this.curTreatmentRecord = eObj.record;    // this.TreatmentStore.getAt(rowIndex);
-			this.curTreatmentRecord.set("TreatmentID", this.application.Patient.PAT_ID);
+			// ????? this.curTreatmentRecord.set("TreatmentID", this.application.Patient.PAT_ID);
 			this.curTreatmentRecord.set("PAT_ID", this.application.Patient.PAT_ID);
 			this.curTreatmentRecord.set("rowIdx", rowIndex);
 		}
@@ -302,16 +324,8 @@ Ext.define("COMS.controller.NewPlan.CTOS.NursingDocs.TreatmentTab", {
 		var today4URL = Ext.Date.format( new Date(), "Y-m-d");
 		var reDate = new RegExp(today);
 		var reDispensed = new RegExp("Dispensed");
-/*****
-		theStore.clearFilter(true);
-		theStore.filter([
-			{property: "patientID", value: re}
-			,{property: "adminDate", value: reDate}
-			,{property: "orderstatus", value: reDispensed}
-		]);
-*****/
-this.PatientID = Patient.id;
-this.AdminDate = today;
+		this.PatientID = Patient.id;
+		this.AdminDate = today;
 
 		/***
 		 *	Instead of a filter (which still loads all the data down to the client), set the proxy of the store with parameters to the Orders service call
@@ -339,14 +353,13 @@ this.AdminDate = today;
 	},
 
 
-	ClearTabData : function( ) {
-		// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+	ClearTreatmentTab : function() {
+			// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
 		try {
 			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.TreatmentTab");
 			if (!thisCtl.getND_T_Tab().rendered) {
 				return;		// Traps possible call from the PopulateNDTabs event
 			}
-
 			var theTreatmentGrid = Ext.ComponentQuery.query("NursingDocs_Treatment [name=\"AdministeredMedsGrid\"]")[0];
 			var Patient = this.application.Patient;
 			if (theTreatmentGrid && theTreatmentGrid.rendered && "" !== Patient.PAT_ID) {
@@ -354,9 +367,28 @@ this.AdminDate = today;
 			}
 		}
 		catch (e) {
-			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTabData() " + e.message );
+			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearTreatmentTab() " + e.message );
 		}
 	},
+
+	ClearAssessmentTab : function() {
+			// Event is fired off from the NursingDocs Tab Controller when a new patient is selected
+		try {
+			var thisCtl = this.getController("NewPlan.CTOS.NursingDocs.AssessmentTab");
+			if (!thisCtl.getND_T_Tab().rendered) {
+				return;		// Traps possible call from the PopulateNDTabs event
+			}
+		}
+		catch (e) {
+			Ext.MessageBox.alert("Error", "Loading Error - NursingDocs_TreatmentTab - Error - TreatmentTab.js - ClearAssessmentTab() " + e.message );
+		}
+	},
+
+
+	ClearTabData : function( ) {
+		this.ClearTreatmentTab();
+	},
+
 
 
 	TabRendered : function ( component, eOpts ) {

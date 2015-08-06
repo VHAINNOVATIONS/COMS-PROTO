@@ -14,30 +14,35 @@
 module.exports = function(grunt) {
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: grunt.file.readJSON("package.json"),
 
     concat: {
       options: {
-        separator: '\n\n'
+        process: function(src, filepath) {
+          f1 = "/***************** Source: " + filepath + " *************************/\n\r\n\r\n\r";
+          // return "\n\r" +f1+ src;
+          return src;
+        },
       },
       dist: {
-        src: ['app/LocalizedCode.js', 'app/js/Consts.js', 'libs/ExtJS_4.1.0/examples/ux/*.js', 'libs/ExtJS_4.1.0/examples/ux/**/*.js', 'app/js/Extensions.js', 'app/js/app/ux/**/*.js', 'app/js/app/model/*.js', 'app/js/app/store/*.js','app/js/app/view/**/*.js','app/js/app/controller/**/*.js', 'app/js/app.js' ],
-        dest: 'dist/<%= pkg.name %>.js'
+        src: ["app/LocalizedCode.js", "app/js/Consts.js", "libs/ExtJS_4.1.0/examples/ux/*.js", "libs/ExtJS_4.1.0/examples/ux/**/*.js", "app/js/Extensions.js", "app/js/app/ux/**/*.js", "app/js/app/model/*.js", "app/js/app/store/*.js","app/js/app/view/**/*.js","app/js/app/controller/**/*.js", "app/js/app.js" ],
+        dest: "app/js/<%= pkg.name %>-build.js"
       }
     },
 
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        banner: "/*! <%= pkg.name %> <%= grunt.template.today(\"dd-mm-yyyy\") %> */\n",
+		beautify: true
       },
       dist: {
         files: {
-          'dist/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+          "dist/<%= pkg.name %>.min.js": ["<%= concat.dist.dest %>"]
         }
       }
     },
 
-    jshint: {
+    jshint_OLD: {
 		options: {
 			"reporter" : require("jshint-junit-reporter"),
 			"reporterOutput" : "./reports/output/junit-output1.xml",
@@ -59,9 +64,45 @@ module.exports = function(grunt) {
 				"Ext",
 				"wccConsoleLog",
 				"dName"		/* global var set in main.php */
-			]
+			],
+
+
+    /* Use '===' to compare with ... (W041) */
+    "-W041": false,
+    /* Don't make functions within a loop. (W083) */
+    "-W083" : false,
+    /* Forgotten 'debugger' statement? (W087) */
+    "-W087" : false,
+    "-W099" : false,
+    "-W075" : false
+
+
 		},
-		files: ['app/js/**/*.js']
+		files: ["app/*.js", "app/js/**/*.js"]
+	},
+
+
+	jshint: {
+		options : {
+			reporter: require("jshint-html-reporter"),
+			reporterOutput: "./reports/output/jshint-report.html",
+			"debug" : true,
+			"-W030" : false,
+			"-W041" : false,
+			"-W083" : false
+		},
+		files: ["./app/LocalizedCode.js", "./app/js/**/*.js"],
+		ignores : [
+				"./app/js/COMS - 5Aug2015.js", 
+				"./app/js/COMS-build.js", 
+				"./app/js/COMS.js", 
+				"./app/jquery-1.7.1.min.js"
+		]
+	},
+
+	watch: {
+		files: ['<%= jshint.files %>'],
+		tasks: ['jshint']
 	},
 
 
@@ -75,24 +116,24 @@ module.exports = function(grunt) {
 
 	phplint: {
 		options: {
-			swapPath: '_Temp/'
+			swapPath: "_Temp/"
 		},
 		all: [
-			'app/*.php', 'framework/**/*.php'
+			"app/*.php", "framework/**/*.php"
 		]
 	},
 
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
+      files: ["<%= jshint.files %>"],
+      tasks: ["jshint", "qunit"]
     }
   });
 
-	grunt.loadNpmTasks('grunt-phplint');
-	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.loadNpmTasks('grunt-contrib-jshint');
-	grunt.loadNpmTasks('grunt-junit-report');
+	grunt.loadNpmTasks("grunt-phplint");
+	grunt.loadNpmTasks("grunt-contrib-concat");
+	grunt.loadNpmTasks("grunt-contrib-jshint");
+	grunt.loadNpmTasks("grunt-junit-report");
 
-	grunt.registerTask('default', ['jshint', 'junit_report', 'concat']);
+	grunt.registerTask("default", ["jshint", "junit_report", "concat", "grunt"]);
 
 };

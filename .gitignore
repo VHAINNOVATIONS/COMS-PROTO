@@ -16,6 +16,7 @@ web.xml
 /app/config_Constants.php
 /app/dbitcon.php
 /app/js_Files2Ignore/*
+/app/js/*.jscript
 /build/* 
 /aspnet_client/*
 /framework/config/* 
@@ -25,3 +26,7 @@ web.xml
 /reports/*
 /dist/*
 /NodeJS/coms-api/*.log
+
+PHP Log*.txt
+SQL_Scripts/*.txt
+

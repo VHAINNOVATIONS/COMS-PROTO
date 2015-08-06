@@ -116,56 +116,59 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		selector: "AuthoringTab container[name=\"courseInfo\"]"
 		},
 
-		// Reference Buttons
-	{
-		ref: "RemoveReference",
-		selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
-	}, 
+		// Template References
+		{
+			ref: "TemplateReferencesGrid",
+			selector: "AuthoringTab TemplateReferences"
+		},
+		{
+			ref: "RemoveReference",
+			selector: "AuthoringTab TemplateReferences button[title=\"RemoveReference\"]"
+		}, 
 
-	{
-		ref: 'EditReference',
-		selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
-	},
+		{
+			ref: 'EditReference',
+			selector: 'AuthoringTab TemplateReferences button[title="EditReference"]'
+		},
 
-		// Reference Fields
-	{
-		ref: 'ReferenceName',
-		selector: 'AddReference textfield[name="Reference"]'
-	}, 
-	{
-		ref: 'ReferenceLink',
-		selector: 'AddReference textfield[name="ReferenceLink"]'
-	}, 
-	{
-		ref: 'ReferenceCombo',
-		selector: 'AddReference combo[name="SelReference"]'
-	},
-	{
-		ref: "CourseNum",
-		selector: "AuthoringTab textfield[name=\"CourseNum\"]"
-	},
-	{
-		ref: "CourseNumMax",
-		selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
-	},
-		// Basic Fields (CycleLength, Regimen Name, Emetogenic Level, Febrile Neutropenia Risk)
-	{
-		ref: "CycleLength",
-		selector: "AuthoringTab combo[name=\"CycleLength\"]"
-	},
-	{
-		ref: "CycleLengthUnit",
-		selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
-	},
-	{
-		ref: "RegimenName",
-		selector: "AuthoringTab textfield[name=\"RegimenName\"]"
-	},
-	{
-		ref: "TemplateAlias",
-		selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
-	},
-	{
+		{
+			ref: 'ReferenceName',
+			selector: 'AddReference textfield[name="Reference"]'
+		}, 
+		{
+			ref: 'ReferenceLink',
+			selector: 'AddReference textfield[name="ReferenceLink"]'
+		}, 
+		{
+			ref: 'ReferenceCombo',
+			selector: 'AddReference combo[name="SelReference"]'
+		},
+		{
+			ref: "CourseNum",
+			selector: "AuthoringTab textfield[name=\"CourseNum\"]"
+		},
+		{
+			ref: "CourseNumMax",
+			selector: "AuthoringTab textfield[name=\"CourseNumMax\"]"
+		},
+			// Basic Fields (CycleLength, Regimen Name, Emetogenic Level, Febrile Neutropenia Risk)
+		{
+			ref: "CycleLength",
+			selector: "AuthoringTab combo[name=\"CycleLength\"]"
+		},
+		{
+			ref: "CycleLengthUnit",
+			selector: "AuthoringTab combo[name=\"CycleLengthUnits\"]"
+		},
+		{
+			ref: "RegimenName",
+			selector: "AuthoringTab textfield[name=\"RegimenName\"]"
+		},
+		{
+			ref: "TemplateAlias",
+			selector: "AuthoringTab textfield[name=\"TemplateAlias\"]"
+		},
+		{
 		ref: "EmetogenicLevel",
 		selector: "AuthoringTab combo[name=\"EmetogenicLevel\"]"
 		},
@@ -223,7 +226,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			},
 
 			"AuthoringTab MedReminder button[title=\"RemoveReminder\"]" : {
-				click: this.RemoveSelectedReminder
+				click: this.RemoveReminder
 			},
 			"AuthoringTab MedReminder button[title=\"EditReminder\"]" : {
 				click: this.EditSelectedReminder
@@ -233,16 +236,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				select: this.selectMedReminderGridRow,
 				deselect: this.deSelectMedReminderGridRow
 			},
-
-
-
-
-
-
-
-
-
-
 
 			// Handlers for the contents within the tab panel itself
 			"AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]": {
@@ -263,17 +256,12 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			'AuthoringTab TemplateReferences button[title="EditReference"]': {
 				click: this.editReference
 			},
-
-
-
 			"AuthoringTab displayfield[name=\"PatientListCount\"]" : {
 				render : function(c) {
 					c.getEl().on('click', function(){ this.fireEvent('click', c); }, c);
 				},
 				click: this.ShowPatientListInfo
 			},
-
-
 			// Handlers for the "Reference" pop-up window
 			'AddReference combobox': { // Pop-up window
 				select: this.ReferenceSelected
@@ -382,29 +370,41 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	// User has selected what they want to do...
 	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
-		wccConsoleLog("User has selected what to do");
-		var theController = this.getController("Common.selCTOSTemplate");
-		var radioType = rbtn.inputValue;
+		this.application.loadMask();
+		Ext.suspendLayouts();
 
-		var selCTOSTemplate = this.getCTOSTemplateSelection();
-		var lblReqFields = this.getReqInstr();
-		lblReqFields.show();
+/* MWB - 6/17/2015 
+ * this is a hack, but will display a wait wheel while the tab is rendering 
+ * otherwise there's a long delay before the radio button is displayed as set 
+ * and the page shows so the user thinks nothing is happening
+ */
+		var task = new Ext.util.DelayedTask(function(){
+			wccConsoleLog("User has selected what to do");
+			var theController = this.getController("Common.selCTOSTemplate");
+			var radioType = rbtn.inputValue;
 
-		if (0 == radioType && newValue) {		// Select Existing Template
-			selCTOSTemplate.show();
-			theController.showInitialSelector(selCTOSTemplate);
-			theController.resetTemplateSrc(selCTOSTemplate);
-			this.clearTemplate(null);
-			this.HideSelectedTemplateForm();
-		}
-		else if (1 == radioType && newValue) {	// Create New Template
-			selCTOSTemplate.hide();
-			this.clearTemplate(null);
-			this.ShowSelectedTemplateForm(null);
-			theController.hideInitialAndFilterSelector(selCTOSTemplate);
-		}
+			var selCTOSTemplate = this.getCTOSTemplateSelection();
+			var lblReqFields = this.getReqInstr();
+			lblReqFields.show();
+
+			if (0 == radioType && newValue) {		// Select Existing Template
+				selCTOSTemplate.show();
+				theController.showInitialSelector(selCTOSTemplate);
+				theController.resetTemplateSrc(selCTOSTemplate);
+				this.clearTemplate(null);
+				this.HideSelectedTemplateForm();
+			}
+			else if (1 == radioType && newValue) {	// Create New Template
+				selCTOSTemplate.hide();
+				this.clearTemplate(null);
+				this.ShowSelectedTemplateForm(null);
+				theController.hideInitialAndFilterSelector(selCTOSTemplate);
+			}
+			Ext.resumeLayouts(true);
+			this.application.unMask();
+		}, this);
+		task.delay(150);
 	},
-
 
 
 	clearTemplate: function (button) {
@@ -601,53 +601,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		drugstore.add(template.data.Meds);
 		postMhStore.add(template.data.PostMHMeds);
 		this.application.unMask();
-},
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	},
 
 
 	saveTemplateAs: function (button) {
@@ -656,111 +610,123 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.SaveTemplate2DB(Template, button);
 	},
 
-    isDuplicateDescription: function(description, alias) {
-        if (description === alias) {
-            return true;
-        }
-        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
-        if (description.search(patt) > 0) {
-            description = description.replace(patt, "").trim();
-            return (description === alias);
-        }
-        return false;
-    },
-    
-    saveTemplate: function (button) {
-        var UserAlias = this.getTemplateAlias().getValue();
-        var haveDuplicate = false;
-        var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
-        if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
-            UserAlias = UserAlias.replace(patt, "").trim();
-        }
+	isDuplicateDescription: function(description, alias) {
+		if (description === alias) {
+			return true;
+		}
+		var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+		if (description.search(patt) > 0) {
+			description = description.replace(patt, "").trim();
+			return (description === alias);
+		}
+		return false;
+	},
 
-        /* Get a list of all templates by alias */
-        Ext.Ajax.request({
-            url: Ext.URLs.TemplateAlias,
-            scope: this,
-            alias: UserAlias,
-            success: function(response, opts) {
-                var obj = Ext.decode(response.responseText);
-                var Records = obj.records;
-                var i, matchingRecord, record2Flag, Template,
-                    alias = opts.alias, 
-                    origAlias = this.getTemplateAlias().getValue(),
-                    dupCount = 0;
-                for (i = 0; i < obj.total; i++ ) {
-                    if (this.isDuplicateDescription(Records[i].description, alias)) {
-                        dupCount++;
-                        if (Records[i].description === alias) {
-                            matchingRecord = Records[i];
-                        }
-                        if (Records[i].description === origAlias) {
-                            record2Flag = Records[i];
-                        }
-                    }
-                }
-                if (dupCount > 0) {
-                    alias += " Ver " + (dupCount+1);
-                    this.getTemplateAlias().setValue(alias);
-                    var temp = this.getTemplateAlias().getValue();
-                    this.haveDuplicate = true;
-                }
-                if (this.haveDuplicate) {
-                    Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
-                        if ("yes" === btn) {
-                            Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
-                            this.application.loadMask("Please wait; Saving Template");
-                            Template = this.PrepareTemplate2Save(true);
+	saveTemplate: function (button) {
+	this.application.loadMask("Please wait; Saving Template");
+		var UserAlias = this.getTemplateAlias().getValue();
+		var haveDuplicate = false;
+		var patt = /Ver\s+\d+$/;    // If description ends in "Ver ###" then check to see if it's a duplicate version of another alias
+		if (UserAlias.search(patt) > 0) {   // strip off any version # from the alias
+			UserAlias = UserAlias.replace(patt, "").trim();
+		}
+
+		/* Get a list of all templates by alias */
+		Ext.Ajax.request({
+			url: Ext.URLs.TemplateAlias,
+			scope: this,
+			alias: UserAlias,
+			success: function(response, opts) {
+				this.application.unMask();
+				var obj = Ext.decode(response.responseText);
+				var Records = obj.records;
+				var i, matchingRecord, record2Flag, Template,
+					alias = opts.alias, 
+					origAlias = this.getTemplateAlias().getValue(),
+					dupCount = 0;
+				for (i = 0; i < obj.total; i++ ) {
+					if (this.isDuplicateDescription(Records[i].description, alias)) {
+						dupCount++;
+						if (Records[i].description === alias) {
+							matchingRecord = Records[i];
+						}
+						if (Records[i].description === origAlias) {
+							record2Flag = Records[i];
+						}
+					}
+				}
+				if (dupCount > 0) {
+					alias += " Ver " + (dupCount+1);
+					this.getTemplateAlias().setValue(alias);
+					var temp = this.getTemplateAlias().getValue();
+					this.haveDuplicate = true;
+				}
+				if (this.haveDuplicate) {
+					Ext.Msg.confirm("Saving Change of previous Template", "Do you wish to keep the original version of this template active?", function(btn) {
+						if ("yes" === btn) {
+							Ext.Msg.alert("Status", "Saving New Template, Old Template remains Active");
+							this.application.loadMask("Please wait; Saving Template");
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
-                        }
-                        else {
-                            Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
-                            this.application.loadMask("Please wait; Saving Template");
-                            Template = this.PrepareTemplate2Save(true);
+						}
+						else {
+							Ext.Msg.alert("Status", "Saving New Template, Old Template Flagged as In-Active");
+							this.application.loadMask("Please wait; Saving Template");
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
-                            this.flagTemplateInactive(record2Flag.name);
-                        }
-                    }, this);
-                }
+							this.flagTemplateInactive(record2Flag.name);
+						}
+					}, this);
+				}
 				else {
-                            this.application.loadMask("Please wait; Saving Template");
-                            Template = this.PrepareTemplate2Save(true);
+							this.application.loadMask("Please wait; Saving Template");
+
+							Template = this.PrepareTemplate2Save(true);
 							if (Template) {
 								this.SaveTemplate2DB(Template, button);
 							}
 				}
 
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-            }
-        });
-        return;
+			},
+			failure: function(response, opts) {
+				this.application.unMask();
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+		return;
 	},
 
-    flagTemplateInactive: function (record2FlagID) {
-        var id2LookFor = record2FlagID;
-        Ext.Ajax.request({
-            url: Ext.URLs.FlagTemplateInactive,
-            method: "POST",
-            jsonData: {
-                id : id2LookFor
-            },
-            scope: this,
-            success: function(response, opts) {
-                var obj = Ext.decode(response.responseText);
-                var Records = obj.records;
-                var i, alias = opts.alias, dupCount = 0;
-            },
-            failure: function(response, opts) {
-                wccConsoleLog('server-side failure with status code ' + response.status);
-            }
-        });
-    },
+	flagTemplateInactive: function (record2FlagID) {
+		var id2LookFor = record2FlagID;
+		Ext.Ajax.request({
+			url: Ext.URLs.FlagTemplateInactive,
+			method: "POST",
+			jsonData: {
+				id : id2LookFor
+			},
+			scope: this,
+			success: function(response, opts) {
+				var obj = Ext.decode(response.responseText);
+				var Records = obj.records;
+				var i, alias = opts.alias, dupCount = 0;
+			},
+			failure: function(response, opts) {
+				wccConsoleLog('server-side failure with status code ' + response.status);
+			}
+		});
+	},
+
+	isHydration : function(Drug) {
+		var isHydration = Drug;
+		isHydration = isHydration.split(":");
+		isHydration = isHydration[0].trim();
+		return ("HYDRATION" === isHydration);
+	},
+
 
 	PrepareTemplate2Save: function (KeepAlive) {
 		var diseaseId = null;
@@ -820,7 +786,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var postMhStore = postMHgrid.getStore();
 
 
-		var drugArray = [], drug, drugModel;
+		var limitCount, drugArray = [], drug, drugModel;
 		limitCount = drugstore.count();
 
 		for (i = 0; i < limitCount; i++) {
@@ -851,17 +817,21 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			preMhModel = preMhStore.getAt(i);
 			infusionArray = [];
 
-			infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
-				amt: preMhModel.data.Amt1,
-				unit: preMhModel.data.Units1,
-				type: preMhModel.data.Infusion1,
-				flowRate: preMhModel.data.FlowRate1,
-				fluidVol: preMhModel.data.FluidVol1,
-				fluidType: preMhModel.data.FluidType1,
-				infusionTime: preMhModel.data.InfusionTime1,
-				instruction: preMhModel.data.Instructions
-			});
+			if (('' != preMhModel.data.Amt1 && '' != preMhModel.data.Units1 && '' != preMhModel.data.Infusion1) || this.isHydration(preMhModel.data.Drug)) {
+				infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
+					amt: preMhModel.data.Amt1,
+					unit: preMhModel.data.Units1,
+					type: preMhModel.data.Infusion1,
+					flowRate: preMhModel.data.FlowRate1,
+					fluidVol: preMhModel.data.FluidVol1,
+					fluidType: preMhModel.data.FluidType1,
+					infusionTime: preMhModel.data.InfusionTime1,
+					instruction: preMhModel.data.Instructions
+				});
+				infusionArray.push(infusion1);
+			}
 
+			/*********
 			infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
 				amt: preMhModel.data.Amt2,
 				unit: preMhModel.data.Units2,
@@ -873,12 +843,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				instruction: preMhModel.data.Instructions
 			});
 
-			if ('' != preMhModel.data.Amt1 && '' != preMhModel.data.Units1 && '' != preMhModel.data.Infusion1) {
-				infusionArray.push(infusion1);
-			}
 			if ('' != preMhModel.data.Amt2 && '' != preMhModel.data.Units2 && '' != preMhModel.data.Infusion2) {
 				infusionArray.push(infusion2);
 			}
+			**********/
 
 			preMH = Ext.create(Ext.COMSModels.MHMed, {
 				drugid: preMhModel.data.Drug,
@@ -900,6 +868,7 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			postMhModel = postMhStore.getAt(i);
 			infusionArray = [];
 
+			if (('' != postMhModel.data.Amt1 && '' != postMhModel.data.Units1 && '' != postMhModel.data.Infusion1) || this.isHydration(postMhModel.data.Drug)) {
 			infusion1 = Ext.create(Ext.COMSModels.MHMedInfusion, {
 				amt: postMhModel.data.Amt1,
 				unit: postMhModel.data.Units1,
@@ -910,7 +879,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				infusionTime: postMhModel.data.InfusionTime1,
 				instruction: postMhModel.data.Instructions
 			});
-
+				infusionArray.push(infusion1);
+			}
+			/**
+			if ('' != postMhModel.data.Amt2 && '' != postMhModel.data.Units2 && '' != postMhModel.data.Infusion2) {
 			infusion2 = Ext.create(Ext.COMSModels.MHMedInfusion, {
 				amt: postMhModel.data.Amt2,
 				unit: postMhModel.data.Units2,
@@ -922,12 +894,10 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				instruction: postMhModel.data.Instructions
 			});
 
-			if ('' != postMhModel.data.Amt1 && '' != postMhModel.data.Units1 && '' != postMhModel.data.Infusion1) {
-				infusionArray.push(infusion1);
-			}
-			if ('' != postMhModel.data.Amt2 && '' != postMhModel.data.Units2 && '' != postMhModel.data.Infusion2) {
 				infusionArray.push(infusion2);
 			}
+			**/
+
 
 			postMH = Ext.create(Ext.COMSModels.MHMed, {
 				drugid: postMhModel.data.Drug,
@@ -1092,10 +1062,26 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		}
 	},
 
-	RemoveSelectedReminder : function(arg1, arg2, arg3) {
+	RemoveReminderConfirmed : function(YesNo) {
+		if ("yes" == YesNo) {
+			var theGrid = this.getMedRemindersGrid();
+			var theRecord = theGrid.getSelectionModel().getSelection();
+			var theStore = theGrid.getStore();
+			theStore.remove(theRecord);
+			var theForm = this.getMedRemindersForm().getForm();
+			theForm.reset();
+			this.getMedRemindersForm().hide();
+			var theBtn = this.getAddReminderBtn();
+			theBtn.setText("Add Reminder");
+		}
+	},
+
+	RemoveReminder: function () {
+		Ext.Msg.confirm("Remove Reminder", "Are you sure you want to remove this Reminder from this template?", this.RemoveReminderConfirmed, this);
 	},
 	
 	EditSelectedReminder : function(arg1, arg2, arg3) {
+		debugger;
 	},
 
 	getAnyMedReminders4Template : function(TemplateID) {
@@ -1223,28 +1209,16 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		this.getReferenceLink().setValue(piData.description);
 	},
 
-	removeReference: function (button) {
-		var ckRec = this.getSelectedRecord(false, 'AuthoringTab TemplateReferences');
-		if (ckRec.hasRecord) {
-			wccConsoleLog('Remove Reference - ' + ckRec.record.get('Reference') + ' - ' + ckRec.record.get('ReferenceLink'));
-			var reference = Ext.create('COMS.model.LookupTable', {
-				id: ckRec.record.get('id'),
-				value: ckRec.record.get('Reference'),
-				description: ckRec.record.get('ReferenceLink')
-			});
-/************** this attempts to remove the reference from the Lookup Table NOT the Template *****************
-			reference.destroy({
-				scope: this,
-				success: function (data) {
-					this.getSelectedRecord(true, 'AuthoringTab TemplateReferences'); // remove the selected record from the current store
-					this.getRemoveReference().disable();
-					this.getEditReference().disable();
-				}
-			});
-**********************************************************************************************************/
-		} else {
-			Ext.MessageBox.alert('Invalid', 'Please select a Row in the References Grid.');
+	removeReferenceConfirmed: function (YesNo) {
+		if ("yes" == YesNo) {
+			var theGrid = this.getTemplateReferencesGrid();
+			var theRecord = theGrid.getSelectionModel().getSelection();
+			var theStore = theGrid.getStore();
+			theStore.remove(theRecord);
 		}
+	},
+	removeReference: function () {
+		Ext.Msg.confirm("Remove Reference", "Are you sure you want to remove this Reference from this template?", this.removeReferenceConfirmed, this);
 	},
 
 	editReference: function (grid, record) {
@@ -1433,16 +1407,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				store.insert(0, ref);
 			}
 
-			// Reference to add to the Select Reference Combo Store in the Pop Up Window.
-			// This shouldn't be necessary as the combo refreshes on selection.
-			/**
-			var comboReference = Ext.create(Ext.COMSModels.LUReferences, {
-				id : crData.id,
-				name: crData.name,
-				description: crData.description
-			});
-			this.getReferenceCombo().getStore().insert(0, comboReference);
-			**/
 			this.getRemoveReference().disable();
 			this.getEditReference().disable();
 			win.close();

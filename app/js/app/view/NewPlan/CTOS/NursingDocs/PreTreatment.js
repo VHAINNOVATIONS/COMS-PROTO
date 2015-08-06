@@ -1,5 +1,5 @@
 Ext.define("COMS.view.NewPlan.CTOS.NursingDocs.PreTreatment" ,{
-	extend: "Ext.panel.Panel",
+	extend: "Ext.form.Panel",
 	alias : "widget.NursingDocs_PreTreatment",
 	name : "Nursing Documentation Pre Treatment Tab",
 	title: "IV Site",

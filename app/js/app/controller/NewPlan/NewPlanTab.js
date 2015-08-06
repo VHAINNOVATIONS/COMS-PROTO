@@ -1164,6 +1164,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 	},
 
 	TemplateTypeSelected : function(rbtn, newValue, oldValue, eOpts ) {
+		this.application.loadMask();
+		Ext.suspendLayouts();
 		wccConsoleLog("What to do has been selected");
 		var selCTOSTemplateObj = this.getSelCTOSTemplate();
 		this.application.Patient.AppliedTemplateID = null;
@@ -1190,6 +1192,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				selCTOSTemplateObj.show();
 			}
 		}
+		Ext.resumeLayouts(true);
+		this.application.unMask();
 	},
 
 
@@ -1333,11 +1337,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				this.application.unMask();
 
 				/* We now have a Match of data including the VPR */
-				var theRecords = response.resultSet.records;
+				var i, aRecord, theData, theRecords = response.resultSet.records;
 				this.application.PossiblePatients = [];
 				for (i = 0; i < theRecords.length; i++) {
-					var aRecord = theRecords[i];
-					var theData = aRecord.getData();
+					aRecord = theRecords[i];
+					theData = aRecord.getData();
 					this.application.PossiblePatients[theData.id] = theData;
 				}
 
@@ -1350,33 +1354,40 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 					query = CPRS_QueryString.getValue();
 				}
 
+				PatientInfo = [];
+				this.application.TempPatients = theRecords;
+				var thisCtl;
+				var SelectPatientSection;
+				var SelectPatient;
+				var ConfirmPatient;
 				if ("" !== query) {
-					var record = patientInfo.data;
-					Patient_ID = record.id;
-					NoPatientFound = "";
-					Patient_Name = "";
-					// Patient_Name = record.name;
-					if (record.VPR.data.items) {
-						Patient_Name = record.VPR.data.items[0].fullName;
-					}
-					else {
-						NoPatientFound = "No patient by that ID can be found in VistA";
-					}
-					var data = record;
-					this.application.TempPatient = record;
+					for (i = 0; i < theRecords.length; i++) {
+						aRecord = theRecords[i];
+						theData = aRecord.getData();
+						Patient_ID = theData.id;
+						NoPatientFound = "";
+						Patient_Name = "";
+						if (theData.VPR.data.items) {
+							Patient_Name = theData.VPR.data.items[0].fullName;
+						}
+						else {
+							NoPatientFound = "No patient by that ID can be found in VistA";
+						}
 
-					// Additional code here to perform proper query in MDWS for data
-					var thisCtl = this.getController("NewPlan.NewPlanTab");
-					var SelectPatientSection = thisCtl.getSelectPatientSection();
-					var SelectPatient = thisCtl.getSelectPatient();
-					var ConfirmPatient = thisCtl.getConfirmPatient();
-					SelectPatientSection.show();
+						// Additional code here to perform proper query in MDWS for data
+						thisCtl = this.getController("NewPlan.NewPlanTab");
+						SelectPatientSection = thisCtl.getSelectPatientSection();
+						SelectPatient = thisCtl.getSelectPatient();
+						ConfirmPatient = thisCtl.getConfirmPatient();
+						SelectPatientSection.show();
 
-					PatientInfo.Patient_Name = Patient_Name;
-					PatientInfo.Patient_ID = Patient_ID;
+						PatientInfo[i] = [];
+						PatientInfo[i].Patient_Name = Patient_Name;
+						PatientInfo[i].Patient_ID = Patient_ID;
+					}
 					ConfirmPatient.update( PatientInfo );
 
-					if ("" === Patient_Name) {
+					if (theRecords.length == 0) {
 						thisCtl.getNoPatient().show();
 						ConfirmPatient.hide();
 					}
@@ -1478,6 +1489,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 	ConfirmPatientClick : function(evt, btn) {
 		var patientMDWSGUID = btn.getAttribute("pid");
+		this.application.TempPatient = this.application.PossiblePatients[patientMDWSGUID];		// this.application.TempPatients[patientMDWSGUID].data;
 		this.LoadAllData4PatientByMDWSGUID( patientMDWSGUID );
 	},
 
@@ -1975,8 +1987,9 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				}
 				var rawData = Ext.JSON.decode(response.response.responseText);
 				if (rawData && rawData.records) {
-					var mergedVitals = this.MergeWithVPR_Array(rawData.records);
-					this.application.Patient.Vitals = mergedVitals;
+					// var mergedVitals = this.MergeWithVPR_Array(rawData.records);
+					// this.application.Patient.Vitals = mergedVitals;
+					this.application.Patient.Vitals = rawData.records;
 				}
 				this.DataLoadCountDecrement("loadVitals PASS");
 				this.PatientDataLoadComplete(RetCode);

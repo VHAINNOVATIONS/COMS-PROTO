@@ -11,23 +11,26 @@
     "url": "https://github.com/DBITPRO/COMS/issues"
   },
   "homepage": "https://github.com/DBITPRO/COMS",
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-copy": "~0.8.0",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-junit-report": "0.0.4",
-    "grunt-phplint": "0.0.5",
-    "grunt-xsltproc": "^0.5.1"
+  "dependencies": {
+    "buildify": "latest",
+    "concat": "latest",
+    "concat-cli": "latest",
+    "uglify": "latest",
+    "grunt": "latest",
+    "grunt-cli": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-contrib-watch" : "latest",
+    "grunt-contrib-concat" : "latest",
+    "grunt-contrib-jshint" : "latest",
+    "grunt-junit-report" : "latest",
+    "grunt-phplint" : "latest",
+    "grunt-xsltproc" : "latest",
+    "jshint-junit-reporter" : "latest",
+    "jshint-html-reporter" : "latest"
   },
-
-    "scripts": {
-    "preenv"  : "config set npm_config_editor=editplus.exe && config set npm_config_loglevel=silly && set > FooBar.txt",
-    "prelint" : "set npm_config_editor=editplus.exe && set npm_config_loglevel=silly && set > FooBar.txt",
-    "lint"    : "jshint --verbose --config jshintConfig.json ./app/js/COMS.js",
-    "test"    : "mocha test/",
-    "env"     : "set",
-    "t1"      : "dir ./app/js/*.js",
-    "t2"      : "dir ./app/js/*/*.js"
+  "scripts": {
+    "build": "buildify().concat(['app/LocalizedCode.js', 'app/js/Consts.js'])",
+    "t1": "dir ./app/js/*.js",
+    "t2": "dir ./app/js/*/*.js"
   }
 }
