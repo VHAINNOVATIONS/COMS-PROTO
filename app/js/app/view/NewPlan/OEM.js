@@ -488,7 +488,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					var buf = "href=\"#Cycle_" + Cycle + "_Day_" + Day + "_Med_" + idx + "\" " + 
 						"cycle=\"" + Cycle + "\" " + 
 						"day=\"" + Day + "\" " + 
-						"type=\"" + Type + "\" " + 
+						"thType=\"" + Type + "\" " + 
 						"medidx=\"" + idx + "\" " + 
 						"typeidx=\"" + pIndex + "\"" ;
                     var buf2 = "med=\"" + current.Med + "\" " + 

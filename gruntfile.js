@@ -30,17 +30,21 @@ module.exports = function(grunt) {
       }
     },
 
-    uglify: {
-      options: {
-        banner: "/*! <%= pkg.name %> <%= grunt.template.today(\"dd-mm-yyyy\") %> */\n",
-		beautify: true
-      },
-      dist: {
-        files: {
-          "dist/<%= pkg.name %>.min.js": ["<%= concat.dist.dest %>"]
-        }
-      }
-    },
+	uglify: {
+		options: {
+			quoteStyle: 0,
+			beautify : true,
+			mangle : false,
+			preserveComments : "all"
+		},
+		COMS: {
+			files: [{
+				expand: true,
+				src: ["app/*.js", "app/js/**/*.js"],
+				dest: "build/scripts"
+			}]
+		}
+	},
 
     jshint_OLD: {
 		options: {
@@ -133,7 +137,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-contrib-concat");
 	grunt.loadNpmTasks("grunt-contrib-jshint");
 	grunt.loadNpmTasks("grunt-junit-report");
+	grunt.loadNpmTasks("grunt-contrib-uglify");
 
-	grunt.registerTask("default", ["jshint", "junit_report", "concat", "grunt"]);
+	grunt.registerTask("default1", ["jshint", "junit_report", "concat", "uglify"]);
+	grunt.registerTask("default", ["uglify"]);
 
 };

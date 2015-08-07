@@ -5694,6 +5694,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"valueField" : "IEN",
 						"queryMode" : "local",
 						"typeAhead" : true,
+						"typeAheadDelay" : 1000,
 						"allowBlank" : false,
 						"editable" : true
 					}
@@ -5958,6 +5959,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								"valueField" : "IEN",
 								"queryMode" : "local",
 								"typeAhead" : true,
+								"typeAheadDelay" : 1000,
 								"allowBlank" : false,
 								"editable" : true
 							}
@@ -7228,6 +7230,7 @@ Ext.define("COMS.view.Common.selInPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -7262,6 +7265,7 @@ Ext.define("COMS.view.Common.selOutPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -8902,6 +8906,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -13456,7 +13461,8 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"displayField": "name",
 	"valueField": "id",		// "valueField" : "IEN",
 	"queryMode" : "local",
-	"typeAhead" : true
+	"typeAhead" : true,
+	"typeAheadDelay" : 1000
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
@@ -14410,6 +14416,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"</tr>",
 
 				"<tpl for=\"Therapy\">",
+					"{[this.CheckOnEdit( values, parent )]}",
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
 							"{[this.stripIENfromDrug( values.Med )]} ({Dose} {DoseUnits})",
@@ -14550,6 +14557,15 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 				SiteConfig : {},
 				debuggerFcn : function ( current, prev ) {
 					// debugger;
+				},
+
+				CheckOnEdit : function(values, parent) {
+					var v1 = values;
+					var me = this;
+					var Reason;
+					Reason = values.Reason;
+					var AdminDate = parent.AdminDate;
+					return "";
 				},
 
 				showReason : function(values, parent) {
@@ -14710,7 +14726,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					var buf = "href=\"#Cycle_" + Cycle + "_Day_" + Day + "_Med_" + idx + "\" " + 
 						"cycle=\"" + Cycle + "\" " + 
 						"day=\"" + Day + "\" " + 
-						"type=\"" + Type + "\" " + 
+						"thType=\"" + Type + "\" " + 
 						"medidx=\"" + idx + "\" " + 
 						"typeidx=\"" + pIndex + "\"" ;
                     var buf2 = "med=\"" + current.Med + "\" " + 
@@ -35769,13 +35785,15 @@ Ext.define("COMS.controller.NewPlan.OEM", {
  **********************************************************************************************/
     handleOEM_RecordMedCancel : function( event, element) {
         event.stopEvent(  );
-        var dlgMsg, dlgTitle, newStat;
+        var dlgMsg, dlgTitle, newStat, med4Title;
             dlgTitle = "Cancel Medication - ";
             dlgMsg = "Cancel medication for this date only or all future Administration dates";
             newStat = "Cancel";
+			med4Title = element.getAttribute("med");
+			med4Title = med4Title.split(":")[0].trim();
 /*******************************************************************/
         Ext.Msg.show({
-            title: dlgTitle + element.getAttribute("med"),
+            title: dlgTitle + med4Title,
             msg: dlgMsg,
             buttonText: {
                 yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
@@ -35790,10 +35808,13 @@ Ext.define("COMS.controller.NewPlan.OEM", {
                 var records = Data.OEMRecords;
                 var TherapyID;
                 var idx = opt.el.getAttribute("typeidx");
+                var med4Title = opt.el.getAttribute("med");
+                med4Title = med4Title.split(":")[0].trim();
+
                 idx--;
                 record = records[idx];
 
-                var type = opt.el.getAttribute("type");
+                var type = opt.el.getAttribute("thType");
                 var medIdx = opt.el.getAttribute("medidx");
                 if ("Pre" === type) {
                     DrugSection = record.PreTherapy;
@@ -35811,12 +35832,13 @@ Ext.define("COMS.controller.NewPlan.OEM", {
                     TherapyID = matchRecord.id;
                 }
 
+
                 if ("cancel" === btnID) {
 					if("Clear" == opt.status) {
-						Ext.MessageBox.alert("Cancel Medication", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+						Ext.MessageBox.alert("Cancel Medication", "Release Hold of - " + med4Title + " has been cancelled");
 					}
 					else {
-						Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+						Ext.MessageBox.alert("Cancel Medication", opt.status + " Medication - " + med4Title + " has been cancelled");
 					}
                 }
                 else {
@@ -35928,8 +35950,11 @@ handleOEM_RecordMedHold : function( event, element) {
         dlgMsg = "Cancel medication for this date only or all future Administration dates";
         newStat = "Cancel";
     }
+    var med4Title = element.getAttribute("med");
+    med4Title = med4Title.split(":")[0].trim();
+
     Ext.Msg.show({
-        title: dlgTitle + element.getAttribute("med"),
+        title: dlgTitle + med4Title,
         msg: dlgMsg,
         buttonText: {
             yes: 'This date Only', no: 'All Future', cancel: 'Cancel'
@@ -35944,10 +35969,12 @@ handleOEM_RecordMedHold : function( event, element) {
             var Data = this.application.Patient.OEMRecords;
             var records = Data.OEMRecords;
             var idx = opt.el.getAttribute("typeidx");
+            var med4Title = opt.el.getAttribute("med");
+            med4Title = med4Title.split(":")[0].trim();
+
             idx--;
             record = records[idx];
-
-            var type = opt.el.getAttribute("type");
+            var type = opt.el.getAttribute("thType");
             var medIdx = opt.el.getAttribute("medidx");
             if ("Pre" === type) {
                 DrugSection = record.PreTherapy;
@@ -35966,10 +35993,10 @@ handleOEM_RecordMedHold : function( event, element) {
 
             if ("cancel" === btnID) {
 				if("Clear" == opt.status) {
-					Ext.MessageBox.alert("Medication Hold", "Release Hold of - " + opt.el.getAttribute("med") + " has been cancelled");
+					Ext.MessageBox.alert("Medication Hold", "Release Hold of - " + med4Title + " has been cancelled");
 				}
 				else {
-					Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + opt.el.getAttribute("med") + " has been cancelled");
+					Ext.MessageBox.alert("Medication Hold", opt.status + " Medication - " + med4Title + " has been cancelled");
 				}
             }
             else {
@@ -35999,7 +36026,7 @@ handleEditOEM_Record : function (event, element) {
 		var anchorName = element.getAttribute("name");
 		var anchorCycle = element.getAttribute("cycle");
 		var anchorDay = element.getAttribute("day");
-		var anchorType = element.getAttribute("type");
+		var anchorType = element.getAttribute("thType");
 		var anchorIdx = element.getAttribute("typeidx");	// The index which specifies the index into the arrays of Admin Days
 		var medIdx = element.getAttribute("medidx");		// The index into the array of Meds for the specified therapy
 		var Data = this.application.Patient.OEMRecords;
