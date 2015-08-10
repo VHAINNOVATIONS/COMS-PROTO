@@ -993,8 +993,7 @@ $observed = $ob2;
     function updateOEMRecord ($form_data)
     {
 
-// error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
-
+error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
 
         $templateid = $form_data->{'TemplateID'};
         $oemrecordid = $form_data->{'OEMRecordID'};
@@ -1007,7 +1006,7 @@ $observed = $ob2;
         $med = $form_data->{'Med'};
         $dose = $form_data->{'Dose'};
         $bsadose = $form_data->{'BSA_Dose'};
-        
+
         $units = $form_data->{'Units'};
         $infusionmethod = $form_data->{'InfusionMethod'};
         $fluidtype = $this->escapeString($form_data->{'FluidType'});
@@ -1022,7 +1021,10 @@ $observed = $ob2;
         $fluidtype2 = $this->escapeString($form_data->{'FluidType'});
         $fluidvol2 = $form_data->{'FluidVol'};
         $flowrate2 = $form_data->{'FlowRate'};
-        $infusiontime2 = $form_data->{'InfusionTime2'};
+        $infusiontime2 = "";
+        if (property_exists($form_data, 'InfusionTime2')) {
+            $infusiontime2 = $form_data->{'InfusionTime2'};
+        }
 
         $Reason = $form_data->{'Reason'};
         if (0 == intval($Reason)) {

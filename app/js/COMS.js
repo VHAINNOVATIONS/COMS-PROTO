@@ -14374,7 +14374,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, false, parent)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
 								"</tr>",
@@ -14444,7 +14444,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose} {DoseUnits}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, true, parent)]}</td>",
 									"</td>",
 									/* "<td>{AdminMethod}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
@@ -14512,7 +14512,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, false, parent)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
 
@@ -14601,25 +14601,50 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					return false;
 				},
 
-				CalculateBSA_Dosing : function (values, therapy) {
-					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
+				CalculateBSA_Dosing : function (values, therapy, parent) {
+					var AdminDate = parent.AdminDate;
+					if (therapy) {
+						var foo = 1;
+					}
+					try
+					{
+					var du = du1 = duuc = duuc1 = calcDose = calcDose1 = BSA_Dose = BSA_Dose1 = dspCalcDose = dspCalcDose1 = WeightInKilos = Dose = Dose1 = Units = Units1 = "", 
+						ret = "N/A";
 					// debugger;
 					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
 
-					if (therapy) {
-						du = values.DoseUnits;
-						Dose = values.Dose;
-						BSA_Dose = values.BSA_Dose;
-					}
-					else {
-						du = values.DoseUnits1;
-						Dose = values.Dose1;
-						BSA_Dose = values.BSA_Dose1;
-					}
-					if (!BSA_Dose) {
-						BSA_Dose = "";
-					}
-					duuc = du.toUpperCase();
+
+						if (values.hasOwnProperty("DoseUnits")) {
+							du = values.DoseUnits;
+						}
+						if (values.hasOwnProperty("DoseUnits1")) {
+							du1 = values.DoseUnits1;
+						}
+						du = du || du1;
+						if (du) {
+							duuc = du.toUpperCase();
+						}
+						else {
+							duuc = "UNK";
+						}
+
+						if (values.hasOwnProperty("Dose")) {
+							Dose = values.Dose;
+						}
+						if (values.hasOwnProperty("Dose1")) {
+							Dose1 = values.Dose1;
+						}
+						Dose = Dose || Dose1;
+
+						if (values.hasOwnProperty("BSA_Dose")) {
+							BSA_Dose = values.BSA_Dose;
+						}
+						if (values.hasOwnProperty("BSA_Dose1")) {
+							BSA_Dose1 = values.BSA_Dose1;
+						}
+						BSA_Dose = BSA_Dose || BSA_Dose1;
+
+
 					calcDose = du.substr(0, du.search("/"));
 					if (duuc.search("M2") > 0) {
 						BSA_Dose = Dose * CalcBSA_Dose;
@@ -14648,6 +14673,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 							"title=\"Show Dosage Calculation\">" + dspCalcDose + "</button>";
 					}
 					return (ret);
+					}
+					catch (e)
+					{
+						debugger;
+					}
+
 				},
 
 
@@ -36301,25 +36332,53 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		MedRecord.Reason = values.Reason;
 
 		var MedRecord1 = {};
+		// debugger;
 
-		MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
+		MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
+		MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
+		MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 		MedRecord1.AdminTime = MedRecord.AdminTime;
-		MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
-		MedRecord1.Dose1 = MedRecord.Dose1;
-		MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
-		MedRecord1.FlowRate1 = MedRecord.FlowRate1;
-		MedRecord1.FluidType1 = MedRecord.FluidType1;
-		MedRecord1.FluidVol1 = MedRecord.FluidVol1;
-		MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
 		MedRecord1.Instructions = values.Instructions;
 		MedRecord1.Med = MedRecord.Med;
 		MedRecord1.MedID = MedRecord.MedID;
 		MedRecord1.id = MedRecord.id;
 		MedRecord1.Reason = MedRecord.Reason;
+		MedRecord1.CycleIdx = MedRecord.CycleIdx;
 
-		MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
-		MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
-		MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
+		MedRecord1.DayIdx = MedRecord.DayIdx;
+		MedRecord1.InfusionMethod = MedRecord.InfusionMethod;
+		MedRecord1.InfusionMethodIEN = MedRecord.InfusionMethodIEN;
+		MedRecord1.MedIEN = MedRecord.MedIEN;
+		MedRecord1.OEMRecordID = MedRecord.OEMRecordID;
+		MedRecord1.Order_ID = MedRecord.Order_ID;
+		MedRecord1.TemplateID = MedRecord.TemplateID;
+		MedRecord1.TherapyID = MedRecord.TherapyID;
+		MedRecord1.Units = MedRecord.Units;
+		MedRecord1.TherapyType = MedRecord.TherapyType;
+
+		if ("Therapy" == TherapyType) {
+				MedRecord1.AdminMethod = MedRecord.AdminMethod1;
+				MedRecord1.BSA_Dose = MedRecord.BSA_Dose1;
+				MedRecord1.Dose = MedRecord.Dose1;
+				MedRecord1.DoseUnits = MedRecord.DoseUnits1;
+				MedRecord1.FlowRate = MedRecord.FlowRate1;
+				MedRecord1.FluidType = MedRecord.FluidType1;
+				MedRecord1.FluidVol = MedRecord.FluidVol1;
+				MedRecord1.InfusionTime = MedRecord.InfusionTime1;
+		}
+		else {
+				MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
+				MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
+				MedRecord1.Dose1 = MedRecord.Dose1;
+				MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
+				MedRecord1.FlowRate1 = MedRecord.FlowRate1;
+				MedRecord1.FluidType1 = MedRecord.FluidType1;
+				MedRecord1.FluidVol1 = MedRecord.FluidVol1;
+				MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
+		}
+
+
+
 
 
 		if (multipleRecords) {

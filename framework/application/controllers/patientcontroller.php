@@ -1365,7 +1365,7 @@ $this->Patient->query( $query );
             } else {
                 $jsonRecord[ "success" ]      = false;
                 $jsonRecord[ "msg" ]          = "No records found.";
-                $jsonRecord[ "frameworkErr" ] = $frameworkErr;
+                $jsonRecord[ "frameworkErr" ] = $this->get( 'frameworkErr' );
             }
             $this->set( 'jsonRecord', $jsonRecord );
         }
@@ -1416,14 +1416,14 @@ $this->Patient->query( $query );
             } else if ( $form_data ) {
                 $this->Patient->beginTransaction();
                 $this->set( 'oemrecords', null );
-// error_log("PatientController.OEM - Begin Transaction");
-// error_log(json_encode($form_data));
+error_log("PatientController.OEM - Begin Transaction");
+error_log(json_encode($form_data));
 
 
 
                 $retVal = $this->Patient->updateOEMRecord( $form_data );
-// error_log("PatientController.OEM - UpdatedOEMRecord - ");
-// error_log(json_encode($retVal));
+error_log("PatientController.OEM - UpdatedOEMRecord - ");
+error_log(json_encode($retVal));
 
                 if ( null != $retVal && array_key_exists( 'apperror', $retVal ) ) {
                     $errorMsg = $retVal[ 'apperror' ];
@@ -1433,8 +1433,12 @@ $this->Patient->query( $query );
                     $jsonRecord                   = array( );
                     $jsonRecord[ "success" ]      = false;
                     $jsonRecord[ "msg" ]          = $retVal["apperror"];
-                    $jsonRecord[ "frameworkErr" ] = $frameworkErr;
-// error_log("PatientController.OEM - UpdatedOEMRecord - " . $retVal["apperror"]);
+                    $jsonRecord[ "frameworkErr" ] = $this->get( 'frameworkErr' );
+error_log("PatientController.OEM - UpdatedOEMRecord - " . $retVal["apperror"]);
+
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    $this->set( 'frameworkErr', null );
+
 
                     return;
                 }
@@ -1444,8 +1448,11 @@ $this->Patient->query( $query );
                     $jsonRecord                   = array( );
                     $jsonRecord[ "success" ]      = false;
                     $jsonRecord[ "msg" ]          = "Update Records Fail.";
-                    $jsonRecord[ "frameworkErr" ] = $frameworkErr;
-// error_log("PatientController.OEM - UpdatedOEMRecord - Update OEM Record Failed");
+                    $jsonRecord[ "frameworkErr" ] = $this->get( 'frameworkErr' );
+error_log("PatientController.OEM - UpdatedOEMRecord - Update OEM Record Failed");
+
+                    $this->set( 'jsonRecord', $jsonRecord );
+                    $this->set( 'frameworkErr', null );
 
                     return;
                 }
@@ -1455,8 +1462,8 @@ $this->Patient->query( $query );
 
                 if ( !empty( $form_data->Reason ) && !empty( $form_data->Order_ID ) ) {
 
-// error_log("PatientController.OEM - Workflow");
-// error_log(json_encode($form_data));
+error_log("PatientController.OEM - Workflow");
+error_log(json_encode($form_data));
 
                     if ( $form_data->Reason == Workflow::REASON_CANCELLED ) {
                         $this->Patient->updateOrderStatus( $form_data->Order_ID, Orders::STATUS_CANCELLED );
@@ -1467,13 +1474,13 @@ $this->Patient->query( $query );
                         // Update order status of this order if number of steps for
                         // the given reason is greater than 1
                         $workflows = $workflow->getWorkflowsByReasonNo( $form_data->Reason );
-// error_log("PatientController.OEM - getWorkflowsByReasonNo - ");
-// error_log(json_encode($workflows));
+error_log("PatientController.OEM - getWorkflowsByReasonNo - ");
+error_log(json_encode($workflows));
 
 
                         if ( !empty( $workflows[ 0 ][ 'NoSteps' ] ) && $workflows[ 0 ][ 'NoSteps' ] > 1 ) {
                             $this->Patient->updateOrderStatus( $form_data->Order_ID, Orders::STATUS_INCOORDINATION );
-// error_log("PatientController.OEM - Update Order Status - ");
+error_log("PatientController.OEM - Update Order Status - ");
                         }
                         
                         // Update order status for all instances of this drug for
@@ -1481,7 +1488,7 @@ $this->Patient->query( $query );
                         $patientIds = $this->Patient->getPatientIdByOrderId( $form_data->Order_ID );
                         if ( !empty( $form_data->InfusionMethod ) && !empty( $patientIds[ 0 ][ 'Patient_ID' ] ) && $form_data->InfusionMethod == 'Oral' ) {
                             $this->Patient->updateOrderStatusByPatientIdAndDrugName( $patientIds[ 0 ][ 'Patient_ID' ], $form_data->Med, Orders::STATUS_INCOORDINATION, $form_data->Order_ID );
-// error_log("PatientController.OEM - update Order Status By Patient Id And DrugName- ");
+error_log("PatientController.OEM - update Order Status By Patient Id And DrugName- ");
                         }
                     }
                 }
