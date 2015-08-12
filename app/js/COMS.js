@@ -5782,7 +5782,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"fieldLabel" : "Fluid Type <em>*</em>",
 						"width" : 220,
 						"lableWidth" : 85,
-						"allowBlank" : false,
+						// "allowBlank" : false,
 						"displayField" : "value",
 						"valueField" : "value",
 						"queryMode" : "local",
@@ -5798,8 +5798,8 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"width" : 170,
 						"name" : "FluidVol",
 						"margin" : "5 0 5 5",
-						"colspan" : 1,
-						"allowBlank" : false
+						"colspan" : 1
+							// ,"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -5815,8 +5815,8 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"labelWidth" : 70,
 						"width" : 120,
 						"name" : "FlowRate",
-						"colspan" : 1,
-						"allowBlank" : false
+						"colspan" : 1
+							// ,"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -36448,11 +36448,21 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			theMed = thisCtl.getSelectedMed(),
 			medName = theMed.getValue();
 
-		if (!form.form.isValid()) {
-			Ext.MessageBox.alert("Medication Edits", "Please select a reason for the change in medication");
+		var InvalidFields = form.query("field{isValid()==false}");
+		if (InvalidFields.length > 0) {
+			var FieldLabelBuf = "", x, y, msg;
+			for (i = 0; i < InvalidFields.length; i++) {
+				x = InvalidFields[i].fieldLabel;
+				FieldLabelBuf = FieldLabelBuf + "<li>" + x.substring(0, x.indexOf("<")).trim() + "</li>";
+			}
+			msg = "The following field is invalid:";
+			if (InvalidFields.length > 1) {
+				msg = "The following fields are invalid:";
+			}
+			msg = msg + "<ul>" + FieldLabelBuf + "</ul>";
+			Ext.MessageBox.alert("Medication Edits", msg);
 			return;
 		}
-
 		values.Reason = strReason;
 
 		Ext.Msg.show({
@@ -36581,6 +36591,11 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 
 		theForm.loadRecord(aRecord);
+
+		var FluidVol = thisCtl.getFluidVol();
+		var FlowRate = thisCtl.getFlowRate();
+		var InfusionTime = thisCtl.getInfusionTime();
+		InfusionTime.setValue( Ext.CalcInfusionTime(FluidVol.getValue(), FlowRate.getValue(), true) );
 	}
 
 
