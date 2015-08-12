@@ -1072,15 +1072,24 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
         
 
         $info = $lookup->getLookupInfoById($medid);
+error_log("Patient.Model.updateOEMRecord - getLookupInfoById($medid) - " . json_encode($info));
         if (null != $info && array_key_exists('error', $info)) {
             return $info;
         }
-        
-        if ($med != $info[0]['Name']) {
-            $record = $lookup->getLookupIdByNameAndType($med, 2);
-            $medid = $record[0]['id'];
+
+        if (array_key_exists ( "id" , $info[0] )) {
+            $medid = $info[0]['id'];
         }
-        
+        else {
+            if ($med != $info[0]['Name']) {
+                $record = $lookup->getLookupIdByNameAndType($med, 2);
+                $medid = $record[0]['id'];
+error_log("Patient.Model.updateOEMRecord - getLookupIdByNameAndType($med) - " . json_encode($record));
+            }
+        }
+
+
+
         if ('Therapy' === $therapytype) {
             // Magic # "12" is for the Regimen Route Type
             // Magic # "11" is for the Medication Unit Measurement
@@ -1127,7 +1136,7 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
             Reason = '$Reason'
             where Patient_Regimen_ID = '$therapyid'";
 
-// error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
+error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
 
 
             $retVal = $this->query($query);
@@ -1137,7 +1146,7 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
         } 
         else if ('Pre' === $therapytype || 'Post' === $therapytype) {
             $query = "select * from MH_Infusion where MH_ID = '$therapyid'";
-// error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
+error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
 
             $infusionRecord = $this->query($query);
             if (null != $infusionRecord && array_key_exists('error', $infusionRecord)) {
@@ -1151,7 +1160,7 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
                 Status = '$Status',
                 Reason = '$Reason'
                 where MH_ID = '$therapyid'";
-// error_log("Patient.Model.updateOEMRecord - Update - $query" );
+error_log("Patient.Model.updateOEMRecord - Update - $query" );
 
             $retVal = $this->query($query);
             if (null != $retVal && array_key_exists('error', $retVal)) {
@@ -1208,6 +1217,8 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
                 Fluid_Vol='$fluidvol',
                 Infusion_Time='$infusiontime'
                 where Infusion_ID ='" .$infusionRecord[$index]['Infusion_ID'] . "'";
+
+error_log("Patient.Model.updateOEMRecord - $therapytype - $query" );
                 $retVal = $this->query($query);
                 if (null != $retVal && array_key_exists('error', $retVal)) {
                     return $retVal;

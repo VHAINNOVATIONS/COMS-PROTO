@@ -1438,8 +1438,6 @@ error_log("PatientController.OEM - UpdatedOEMRecord - " . $retVal["apperror"]);
 
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
-
-
                     return;
                 }
                 if ( $this->checkForErrors( 'Update OEM Record Failed. ', $retVal ) ) {
@@ -1453,7 +1451,6 @@ error_log("PatientController.OEM - UpdatedOEMRecord - Update OEM Record Failed")
 
                     $this->set( 'jsonRecord', $jsonRecord );
                     $this->set( 'frameworkErr', null );
-
                     return;
                 }
                 

@@ -11,7 +11,12 @@ class Workflow extends Model {
      */
     public function getWorkflowsByReasonNo($reasonNo)
     {
-        $query = "SELECT * FROM Workflows WHERE ReasonNo = '$reasonNo'";
+		if (is_int ( $reasonNo )) {
+			$query = "SELECT * FROM Workflows WHERE ReasonNo = '$reasonNo'";
+		}
+		else {
+			$query = "SELECT * FROM Workflows WHERE WorkFlowName = '$reasonNo'";
+		}
         return $this->query($query);
     }
     

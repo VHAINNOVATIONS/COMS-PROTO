@@ -5782,7 +5782,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"fieldLabel" : "Fluid Type <em>*</em>",
 						"width" : 220,
 						"lableWidth" : 85,
-						// "allowBlank" : false,
+						"allowBlank" : false,
 						"displayField" : "value",
 						"valueField" : "value",
 						"queryMode" : "local",
@@ -5798,8 +5798,8 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"width" : 170,
 						"name" : "FluidVol",
 						"margin" : "5 0 5 5",
-						"colspan" : 1
-							// ,"allowBlank" : false
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -5815,8 +5815,8 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"labelWidth" : 70,
 						"width" : 120,
 						"name" : "FlowRate",
-						"colspan" : 1
-							// ,"allowBlank" : false
+						"colspan" : 1,
+						"allowBlank" : false
 					},
 					{
 						"xtype" : "container",
@@ -36264,9 +36264,17 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var aContainer;
 		if (Ext.routeRequiresFluid(route)) {
 			theContainer.show();
+			var f1 = this.getFluidVol();
+			f1.allowBlank = false;
+			f1 = this.getFlowRate();
+			f1.allowBlank = false;
 		}
 		else {
 			theContainer.hide();
+			var f1 = this.getFluidVol();
+			f1.allowBlank = true;
+			f1 = this.getFlowRate();
+			f1.allowBlank = true;
 		}
 	},
 	CalcInfusionTime : function() {
@@ -36580,9 +36588,17 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 		if (Ext.routeRequiresFluid(MedRecord.InfusionMethod)) {
 			this.getFluidInfo().show();
+			var f1 = this.getFluidVol();
+			f1.allowBlank = false;
+			f1 = this.getFlowRate();
+			f1.allowBlank = false;
 		}
 		else {
 			this.getFluidInfo().hide();
+			var f1 = this.getFluidVol();
+			f1.allowBlank = true;
+			f1 = this.getFlowRate();
+			f1.allowBlank = true;
 		}
 
 		MedRecord.State = "";
