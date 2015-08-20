@@ -33,9 +33,10 @@
 	$ProjType = "Release 1.16";	// July 31, 2015; Fix Defect on saving template with a refernces causes template to not be available.
 	$ProjType = "Release 1.16a";	// Aug 07, 2015; Fix Defect Identified in MS-IE Edit/Cancel/Hold links in Editing an OEM Order. Also added delay to TypeAhead of Select Drug combo to prevent dropping of first char when typing.
 	$ProjType = "Release 1.16b";	// Aug 10, 2015; Fix Defect where Editing a therapy order in OEM truncates the display. Also resolved issue where OEM edited Panel order is not properly updated / shows up in Orders panel.
+	$ProjType = "Release 1.16c";	// Aug 12, 2015; Orders edited in the OEM Panel are now updated but not pushed to the orders tab
 	*/
 
-	$ProjType = "Release 1.17";	// Aug 12, 2015; Orders edited in the OEM Panel are now updated but not pushed to the orders tab
+	$ProjType = "Release 1.16d";	// Aug 20, 2015; Finally fixed defect where edits in OEM panel are updated AND pushed to the Orders Tab
 
 
 /* <!doctype html> */

@@ -173,6 +173,7 @@ Ext.URLs.SiteConfig              = "/LookUp/SiteConfig";
 Ext.URLs.LookupIVFluidType4Med   = "/LookUp/IVFluidType4Med/";
 Ext.URLs.DiseaseType             = "/LookUp/view/DiseaseType";
 Ext.URLs.DrugInfo                = "/LookUp/DrugInfo";
+Ext.URLs.DrugRoutes              = "/LookUp/DrugRoutes";
 // No Params,
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
@@ -606,6 +607,7 @@ Ext.COMSModels.FluidType = "COMS.model.LookupTable_FluidType";
 Ext.COMSModels.GenericLookup = "COMS.model.GenericLookupModel";
 Ext.COMSModels.Hydration = "COMS.model.HydrationDrug"; // MWB 12/28/2011 - Added for the Hydration Drugs
 Ext.COMSModels.Infusion = "COMS.model.Infusion"; // MWB - 12/30/2011 - Added Infusion
+Ext.COMSModels.DrugRoutes = "COMS.model.DrugRoutes";
 Ext.COMSModels.LabInfo = "COMS.model.LabInfo";
 Ext.COMSModels.LUReferences = "COMS.model.LUReferences"; // MWB 12/27/2011 - Added for the AddReference Combo
 Ext.COMSModels.LookupTable = "COMS.model.LookupTable"; //KD - 12/20/11 - Model associated with adding data to the lookup table
@@ -2350,6 +2352,34 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 };
 
 
+Ext.getDrugInfoFromVistA = function (drugName, drugIEN, theWin, theScope, fnc) {
+	// debugger;
+	var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
+	// var theWin = this.getAddDrugPUWindow();
+	if (theWin) {
+		theWin.setLoading( "Loading Drug Information");
+	}
+	Ext.Ajax.request({
+		url: URL,
+		scope: theScope,
+		fnc : fnc,
+		success: function(response, opts) {
+			var respObj = Ext.decode(response.responseText);
+			if (theWin) {
+				theWin.setLoading( false );
+			}
+			opts.fnc(respObj, opts.scope);
+		},
+		failure: function(response, opts) {
+			// var theWin = this.getAddDrugPUWindow();
+			if (theWin) {
+				theWin.setLoading( false );
+			}
+			wccConsoleLog('server-side failure with status code ' + response.status);
+		}
+	});
+};
+
 
 Ext.define('COMS.Ajax', {
 	extend: 'Ext.data.Connection',
@@ -2405,6 +2435,11 @@ Ext.override(Ext.grid.feature.Grouping, {
 		}
 	}
 });
+
+
+
+
+
 
 
 
@@ -3397,18 +3432,34 @@ Ext.define('COMS.model.IVFluidType', {
 	fields: ["Med_ID", "FluidType_ID", "MedName", "FluidType"]
 });
 
-Ext.define('COMS.model.Infusion', {
-	extend: 'Ext.data.Model',
-	fields: [ "id", "name", "description" ],
-	proxy: {
-		type: 'rest',
-		url : Ext.URLs.Infusion,
-		reader: {
-			type: 'json',
-			root : 'records'
+
+Ext.define("COMS.model.DrugRoutes", {
+	"extend" : "Ext.data.Model",
+	"fields" : [ "ien", "name", "code" ],
+	"proxy" : {
+		"type" : "rest",
+		"url" : Ext.URLs.DrugRoutes,
+		"reader" : {
+			"type" : "json",
+			"root" : "records"
 		}
 	}
 });
+
+
+Ext.define("COMS.model.Infusion", {
+	"extend" : "Ext.data.Model",
+	"fields" : [ "id", "name", "description" ],
+	"proxy" : {
+		"type" : "rest",
+		"url" : Ext.URLs.Infusion,
+		"reader" : {
+			"type" : "json",
+			"root" : "records"
+		}
+	}
+});
+
 
 Ext.define('COMS.model.LUReferences', {
 	extend: 'Ext.data.Model',
@@ -5233,11 +5284,20 @@ Ext.define('COMS.store.InfusionReaction', {
 	}
 });
 
+Ext.define('COMS.store.DrugRoutesStore', {
+	extend : 'Ext.data.Store',
+	model : Ext.COMSModels.DrugRoutes,
+	autoLoad: false
+});
+
+
 Ext.define('COMS.store.InfusionStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Infusion,
 	autoLoad: true
 });
+
+
 Ext.define('COMS.store.InventoryConsumption', {
 				extend : 'Ext.data.Store',
 				fields:["ID", "iReport_ID", "Drug", "Total", "Unit"],
@@ -6014,23 +6074,40 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'typeAhead' : true,
 							'name' : 'Units1'
 						}, 
+
 						{
 							'xtype' : 'combo',
 							'fieldLabel' : 'Route <em>*</em>',
 							'width' : 210,
 							'labelWidth' : 65,
+							// "store" : "DrugRoutesStore",
+							"store" : Ext.create("Ext.data.Store", {
+								// "fields" : [ "id", "name", "description" ]
+								"model" : Ext.COMSModels.DrugRoutes
+							}),
+
+/************ Get Routes from VistA based on Drug Selected
 							// 'store' : 'InfusionStore',
 							"store" : Ext.create('Ext.data.Store', {
 								"fields" : [ "id", "name", "description" ]
 							}),
+*****************/
 							'displayField' : 'name',
-							'valueField' : 'id' ,
+							'valueField' : 'ien' ,
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
 							'typeAhead' : true,
 							'name' : 'Infusion1'
 						}
+
+/**************
+						{ "xtype" : "InfusionMethod", "name" : "Infusion1", 
+							'width' : 210,
+							'labelWidth' : 65,
+							"colspan" : 2, "margin" : "2 2 2 2" 
+						}
+**********************/
 						]
 					},
 					{
@@ -13476,15 +13553,23 @@ Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
 	"valueField" : "name"
 });
 
+
 Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 	"extend" : "Ext.form.field.ComboBox",
 	"alias" : "widget.InfusionMethod",
 	"fieldLabel": "Route <em class=\"required-field\">*</em>",
 	"width": 240,
 	"labelWidth": 70,
-	"store": "InfusionStore",
+	// "store": "DrugRoutesStore",
+							"store" : Ext.create("Ext.data.Store", {
+								// "fields" : [ "ien", "name", "code" ]
+								"model" : Ext.COMSModels.DrugRoutes
+							}),
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeAhead' : true,
 	"displayField": "name",
-	"valueField": "name"
+	"valueField": "ien"
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectReason" ,{
@@ -18359,7 +18444,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				blur: this.calcInfusionTime
 			},
 			"AddDrugRegimen combo[name=\"Drug\"]": {
-				select: this.drugSelected,
+				select: this.AddTherapyDrugSelected,
 				change : this.ComboSearch,
 				beforequery: function(record){
 					record.query = new RegExp(record.query, 'i');
@@ -18515,7 +18600,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 							this.theDrugName = theDrug[0];
 							combo.setValue(this.theDrugIEN);
 							combo.setRawValue(this.theDrugName);
-							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							var theWin = this.getAddDrugPUWindow();
+							// this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							console.log("Ext.getDrugInfoFromVistA - From 18549");
+							Ext.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 						}
 						else {
 							combo.setValue(theDrug);
@@ -18526,9 +18614,9 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
-
-	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
-		var URL = Ext.URLs.DrugInfo + "/" + drugID;
+/**************
+	getDrugInfoFromVistA : function (drugName, drugIEN, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
 		var theWin = this.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( "Loading Drug Information");
@@ -18550,6 +18638,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			}
 		});
 	},
+**************/
 
 	isDrugHydration : function(medInfo) {
 		if ("0000" === medInfo.IEN) {
@@ -18592,13 +18681,17 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 	},
 
-	drugSelected : function(combo, recs, eOpts){
+	AddTherapyDrugSelected : function(combo, recs, eOpts){
 		this.getDrugPUWindow_DoseRouteFields().hide();
 		var drugName, drugID;
 		if(null !== recs){
 			drugName = recs[0].data.name;
-			drugID = recs[0].data.IEN;
-			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			drugIEN = recs[0].data.IEN;
+
+			var theWin = this.getAddDrugPUWindow();
+			// this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			console.log("Ext.getDrugInfoFromVistA - From 18635");
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 		}
 	},
 
@@ -19378,7 +19471,7 @@ DossageAmt
 				blur: this.calcInfusionTime
 			},
 			'AddHydrationDrug combo[name="Drug"]' : {
-				select: this.drugSelected,
+				select: this.AddHydrationDrugSelected,
 				change : this.ComboSearch,
 				beforequery: function(record){
 					record.query = new RegExp(record.query, 'i');
@@ -19536,7 +19629,10 @@ DossageAmt
 							this.theDrugName = theDrug[0];
 							combo.setValue(this.theDrugIEN);
 							combo.setRawValue(this.theDrugName);
-							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							var theWin = this.getAddDrugPUWindow();
+							console.log("Ext.getDrugInfoFromVistA - From 19575");
+							// this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							Ext.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 						}
 						else {
 							combo.setValue(theDrug);
@@ -19547,8 +19643,9 @@ DossageAmt
 		});
 	},
 
-	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
-		var URL = Ext.URLs.DrugInfo + "/" + drugID;
+/**
+	getDrugInfoFromVistA : function (drugName, drugIEN, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
 		var theWin = this.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( "Loading Drug Information");
@@ -19570,6 +19667,7 @@ DossageAmt
 			}
 		});
 	},
+**/
 
 	isDrugHydration : function(medInfo) {
 		if ("0000" === medInfo.IEN) {
@@ -19617,13 +19715,16 @@ DossageAmt
 		}
 	},
 
-	drugSelected : function(combo, recs, eOpts){
+	AddHydrationDrugSelected : function(combo, recs, eOpts){
 		this.getDrugPUWindow_DoseRouteFields().hide();
-		var drugName, drugID;
+		var drugName, drugIEN;
 		if(null !== recs){
 			drugName = recs[0].data.name;
-			drugID = recs[0].data.IEN;
-			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			drugIEN = recs[0].data.IEN;
+			var theWin = this.getAddDrugPUWindow();
+			// this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			console.log("getDrugInfoFromVistA @ 19666");
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 		}
 	},
 
@@ -36199,6 +36300,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	views: [ "NewPlan.CTOS.OEM_Edit" ],
 	refs: [
 		{
+			ref: "theWin",
+			selector : "EditOEMRecord"
+		},
+		{
 			ref: "theForm",
 			selector : "EditOEMRecord form"
 		},
@@ -36225,6 +36330,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		{
 			ref:  "SelectReason",
 			selector : "EditOEMRecord SelectReason"
+		},
+		{
+			ref:  "SelectRoute",
+			selector : "EditOEMRecord InfusionMethod"
 		}
 	],
 
@@ -36236,13 +36345,12 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		this.application.on({ OEMEditRecord : this.OEMEditRecord, scope : this });
 
 		this.control({
-
-            "EditOEMRecord button[text=\"Save\"]" : {
-                click: this.SaveChanges
-            },
-            "EditOEMRecord button[text=\"Cancel\"]" : {
-                click: this.CloseWidget
-            },
+			"EditOEMRecord button[text=\"Save\"]" : {
+				click: this.SaveChanges
+			},
+			"EditOEMRecord button[text=\"Cancel\"]" : {
+				click: this.CloseWidget
+			},
 
 			"EditOEMRecord FlowRate[name=\"FlowRate\"]" : { 
 				blur : this.CalcInfusionTime
@@ -36252,10 +36360,67 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			},
 			"EditOEMRecord InfusionMethod[name=\"InfusionMethod\"]" : {
 				select: this.routeSelected
+			},
+			"EditOEMRecord SelectDrug" : {
+				select: this.EditOEM_DrugSelected
 			}
 		});
 	},
 
+
+
+	// Grab the list of routes from the Drug Info and build the Route Combo Store from that list
+	AddDrugInfoFromVistA2OEMEditRouteStore : function(respObj, theScope) {
+		// debugger;
+		respObj.MedInfo;		// { Dosages : [{key: "", name: "", value: ""}], IEN : "", Name : "", Routes : [{ code : "", ien : "", name : "" }]
+		var RouteCombo = theScope.getSelectRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		RouteStore.loadData(theRoutes, false);
+
+/*
+		var RouteCombo = theScope.getSelectRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		var RoutesData4Store = [];
+		var aRoute;
+		var i, rLen = theRoutes.length;
+		for (i = 0; i < rLen; i++ ) {
+			aRoute = {};
+			aRoute.id = theRoutes[i].ien;
+			aRoute.name = theRoutes[i].name;
+			aRoute.description = theRoutes[i].ien;
+			RoutesData4Store.push(aRoute);
+		}
+		RouteStore.loadData(RoutesData4Store);
+		theScope.getDrugPUWindow_DoseRouteFields().show();
+
+		if (theScope.isDrugHydration(respObj.MedInfo)) {
+			theScope.getDrugPUWindow_DoseRouteFields().show();
+			theScope.getDrugRegimenAmt().hide();
+			theScope.getDrugRegimenUnits().hide();
+		}
+		else {
+			theScope.getDrugPUWindow_DoseRouteFields().show();
+			theScope.getDrugRegimenAmt().show();
+			theScope.getDrugRegimenUnits().show();
+		}
+*/
+	},
+
+	EditOEM_DrugSelected : function(combo, records, eOpts) {
+		// debugger;
+		this.getSelectRoute().hide();
+		var drugName, drugIEN;
+		if(null !== records){
+			drugName = records[0].data.name;
+			drugIEN = records[0].data.IEN;
+			var theWin = this.getTheWin();
+			// this.getDrugInfoFromVistA(drugName, drugIEN, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+			console.log("getDrugInfoFromVistA @ 36515"); 
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+		}
+	},
 
 	routeSelected : function(combo, records, eOpts) {
 		var thisCtl = this.getController("NewPlan.OEM_Edit");
@@ -36455,6 +36620,16 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			newStat = "Cancel",
 			theMed = thisCtl.getSelectedMed(),
 			medName = theMed.getValue();
+		var theRouteField = this.getSelectRoute();
+		var theRouteStore = theRouteField.getStore();
+		var idx = theRouteStore.find("name", values.InfusionMethod);
+		if (idx < 0) {
+			idx = theRouteStore.find("ien", values.InfusionMethod);
+		}
+		if (idx >= 0) {
+			var theRecord = theRouteStore.getRange(idx, idx)[0].getData();
+			values.InfusionMethod = theRecord.name + " : " + theRecord.ien;
+		}
 
 		var InvalidFields = form.query("field{isValid()==false}");
 		if (InvalidFields.length > 0) {
@@ -36607,11 +36782,24 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 
 		theForm.loadRecord(aRecord);
+		// Get Med Info and add list of Routes to the Route Store...
+		// debugger;
+
+		var drugName = MedRecord.Med;
+		var drugIEN = MedRecord.MedIEN;
+		var theWin = this.getTheWin();
+		// this.getDrugInfoFromVistA(drugName, drugIEN, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+		// console.log("getDrugInfoFromVistA @ 36875"); 
+		Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+
+
+
 
 		var FluidVol = thisCtl.getFluidVol();
 		var FlowRate = thisCtl.getFlowRate();
 		var InfusionTime = thisCtl.getInfusionTime();
 		InfusionTime.setValue( Ext.CalcInfusionTime(FluidVol.getValue(), FlowRate.getValue(), true) );
+
 	}
 
 

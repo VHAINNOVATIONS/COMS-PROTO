@@ -993,10 +993,14 @@ $observed = $ob2;
     function updateOEMRecord ($form_data)
     {
 
-error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
-
+error_log("Patient.Model.updateOEMRecord - Form Data = " . json_encode($form_data));
+/**
+ *	Get and check all the data needed 
+ *
+ **/
         $templateid = $form_data->{'TemplateID'};
         $oemrecordid = $form_data->{'OEMRecordID'};
+        $order_id = $form_data->{'Order_ID'};
         $therapyid = $form_data->{'TherapyID'};
         $therapytype = $form_data->{'TherapyType'};
         $instructions = $form_data->{'Instructions'};
@@ -1008,11 +1012,15 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
         $bsadose = $form_data->{'BSA_Dose'};
 
         $units = $form_data->{'Units'};
-        $infusionmethod = $form_data->{'InfusionMethod'};
+        $infusionmethod = $form_data->{'InfusionMethod'};	// This is the VistA IEN for the Drug Route selected
         $fluidtype = $this->escapeString($form_data->{'FluidType'});
         $fluidvol = $form_data->{'FluidVol'};
         $flowrate = $form_data->{'FlowRate'};
-        $infusiontime = $form_data->{'InfusionTime'}; 
+        $infusiontime = $form_data->{'InfusionTime'};
+
+        $id = $form_data->{'id'};
+
+
 
         $dose2 = $form_data->{'Dose'};
         $bsadose2 = $form_data->{'BSA_Dose'};
@@ -1037,6 +1045,30 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
             }
         }
 
+/**
+{
+$templateid    "TemplateID": "63008D40-88C2-4D9B-B87E-70EA48A17627",
+$oemrecordid    "OEMRecordID": "EE250B8C-03E2-42F7-BF00-5B33D08ED718",
+$order_id    "Order_ID": "E9831A22-E58F-4C23-B5A8-1FDBDD1D3DC0",
+$therapyid    "TherapyID": "",
+$therapytype    "TherapyType": "Pre",
+$instructions    "Instructions": "Patient to take 4mg by mouth prior to chemotherapy",
+$Status    "Status": "",
+$admintime    "AdminTime": "",
+$medid    "MedID": "280C5615-A204-E511-9B8C-000C2935B86F",
+$med    "Med": "DECADRON     (DEXAMETHASONE TAB )",
+$Reason    "Reason": "Change Administration Time",
+$dose    "Dose": "4000",
+$bsadose    "BSA_Dose": "",
+$units    "Units": "mg",
+$infusionmethod    "InfusionMethod": "ORAL (BY MOUTH) : 12",
+$fluidtype    "FluidType": "",
+$fluidvol    "FluidVol": "0",
+$flowrate    "FlowRate": "",
+$infusiontime    "InfusionTime": "",
+    "id": null
+}
+**/
         
         $retVal = array();
         
@@ -1044,35 +1076,66 @@ error_log("Patient.Model.updateOEMRecord - " . json_encode($form_data));
             $retVal['apperror'] = "Therapy Type not provided.";
             return $retVal;
         }
-        
+
         if (empty($therapyid)) {
-            $retVal['apperror'] = "Therapy ID not provided.";
-            return $retVal;
+            if ("Therapy" === $therapytype) {
+                $q = "select Patient_Regimen_ID as Therapy_ID from Template_Regimen where Order_ID = '$order_id'";
+            }
+            else {
+                $q = "select MH_ID as Therapy_ID from Medication_Hydration where Order_ID = '$order_id'";
+            }
+// error_log("Therapy ID not provided. Looking it up via $q");
+            $retVal = $this->query($q);
+            if (null != $retVal && array_key_exists('error', $retVal)) {
+                $retVal['apperror'] = "Therapy ID not provided.";
+// error_log(sprintf("%s; %d; %s; \n %s", __FILE__, __LINE__, $retVal['apperror'], $q));
+                return $retVal;
+            }
+			$therapyid = $retVal[0]["Therapy_ID"];
+// error_log(sprintf("%s; %d; GOT Therapy ID - $therapyid; \n %s", __FILE__, __LINE__, $q));
         }
-        
+
         if (empty($oemrecordid)) {
             $retVal['apperror'] = "OEM Record ID not provided.";
+// error_log(sprintf("%s; %d; %s", __FILE__, __LINE__, $retVal['apperror']));
             return $retVal;
         }
         
         if (empty($templateid)) {
             $retVal['apperror'] = "Template ID not provided.";
+// error_log(sprintf("%s; %d; %s", __FILE__, __LINE__, $retVal['apperror']));
             return $retVal;
         }
         
         if (empty($med)) {
             $retVal['apperror'] = "Med not provided.";
+// error_log(sprintf("%s; %d; %s", __FILE__, __LINE__, $retVal['apperror']));
             return $retVal;
         }
         
         if (empty($admintime)) {
             $admintime = '00:00:00';
         }
-        $lookup = new LookUp();
-        
 
+// error_log("All input validations passed...");
+
+
+		$query = "select Lookup_Type_ID from LookUp where Lookup_ID = '$medid'";
+		$medIEN = $this->query($query);
+        if (null != $medIEN && array_key_exists('error', $medIEN)) {
+// error_log(sprintf("%s; %d; %s", __FILE__, __LINE__, json_encode($medIEN)));
+            return $medIEN;
+        }
+		$medIEN = $medIEN[0]["Lookup_Type_ID"];
+
+
+// error_log("Getting additional data via lookups...");
+
+// error_log("Patient.Model.updateOEMRecord - 1 MedID = $medid");
+/****************** already have MedID passed as part of the form... **/
+		$lookup = new LookUp();
         $info = $lookup->getLookupInfoById($medid);
-error_log("Patient.Model.updateOEMRecord - getLookupInfoById($medid) - " . json_encode($info));
+// error_log("Patient.Model.updateOEMRecord - 2 getLookupInfoById($medid) - " . json_encode($info));
         if (null != $info && array_key_exists('error', $info)) {
             return $info;
         }
@@ -1084,18 +1147,21 @@ error_log("Patient.Model.updateOEMRecord - getLookupInfoById($medid) - " . json_
             if ($med != $info[0]['Name']) {
                 $record = $lookup->getLookupIdByNameAndType($med, 2);
                 $medid = $record[0]['id'];
-error_log("Patient.Model.updateOEMRecord - getLookupIdByNameAndType($med) - " . json_encode($record));
+// error_log("Patient.Model.updateOEMRecord - 3 getLookupIdByNameAndType($med) - " . json_encode($record));
             }
         }
+ /*******************/
+// error_log("Patient.Model.updateOEMRecord - 4 MedID = $medid");
 
-
-
+/**
+ *	Update Template_Regimen (for Therapy meds) or Medication_Hydration and MH_Infusion (for Pre/Post therapy meds)
+ *
+ **/
+// error_log("Patient.Model.updateOEMRecord - 5 $therapytype - $infusionmethod");
         if ('Therapy' === $therapytype) {
-            // Magic # "12" is for the Regimen Route Type
-            // Magic # "11" is for the Medication Unit Measurement
+			/* ------------ We're already passed the IEN of the Route of infusion ----------------
+			// Magic # "12" is for the Regimen Route Type
             $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 12);
-            $unitid = $lookup->getLookupIdByNameAndType($units, 11);
-            
             if ($infusionTypeid) {
                 $infusionTypeid = $infusionTypeid[0]["id"];
             } else {
@@ -1103,11 +1169,18 @@ error_log("Patient.Model.updateOEMRecord - getLookupIdByNameAndType($med) - " . 
             }
             
             if (null == $infusionTypeid) {
+error_log("Patient.Model.updateOEMRecord - infusionTypeid is NULL");
                 $retVal = array();
                 $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The Route could not be determined.";
                 return $retVal;
             }
-            
+			------------ We're already passed the IEN of the Route of infusion ---------------- */
+
+
+
+
+            // Magic # "11" is for the Medication Unit Measurement
+            $unitid = $lookup->getLookupIdByNameAndType($units, 11);
             if ($unitid) {
                 $unitid = $unitid[0]["id"];
             } else {
@@ -1115,17 +1188,19 @@ error_log("Patient.Model.updateOEMRecord - getLookupIdByNameAndType($med) - " . 
             }
             
             if (null == $unitid) {
+// error_log("Patient.Model.updateOEMRecord - unitid is NULL");
                 $retVal = array();
                 $retVal['error'] = "Insert int MH_ID for $type Therapy failed. The unit id could not be determined.";
                 return $retVal;
             }
-            
+
+			// Route_ID ='$infusionTypeid',		No longer use GUID so need to update the VistA_Route field
             $query = "Update Template_Regimen 
             set Drug_ID = '$medid',
             Admin_Time ='$admintime', 
             Instructions ='$instructions', 
             Status = '$Status',
-            Route_ID ='$infusionTypeid', 
+            VistA_RouteInfo = '$infusionmethod',
             Regimen_Dose_Unit_ID ='$unitid', 
             Regimen_Dose ='$dose', 
             Flow_Rate ='$flowrate', 
@@ -1143,7 +1218,7 @@ error_log("Patient.Model.updateOEMRecord - Therapy - $query" );
             if (null != $retVal && array_key_exists('error', $retVal)) {
                 return $retVal;
             }
-        } 
+        }
         else if ('Pre' === $therapytype || 'Post' === $therapytype) {
             $query = "select * from MH_Infusion where MH_ID = '$therapyid'";
 error_log("Patient.Model.updateOEMRecord - Pre/Post - $query" );
@@ -1167,6 +1242,10 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
                 return $retVal;
             }
 
+// error_log(sprintf("%s %d %s, = Update - $query", __FILE__, __LINE__, __FUNCTION__));
+
+// error_log(sprintf("%s %d %s, = Walking Infusion Data; %d", __FILE__, __LINE__, __FUNCTION__, count($infusionRecord)));
+
             for ($index = 0; $index < count($infusionRecord); $index ++) {
                 if (1 == $index) {
                     $infusionmethod = $infusionmethod2;
@@ -1178,41 +1257,45 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
                     $fluidvol = $fluidvol2;
                     $infusiontime = $infusiontime2;
                 }
+
+
+				/* ------------ We're already passed the IEN of the Route of infusion ----------------
                 $infusionTypeid = $lookup->getLookupIdByNameAndType($infusionmethod, 12);
-                $unitid = $lookup->getLookupIdByNameAndType($units, 11);
-                
                 if ($infusionTypeid) {
                     $infusionTypeid = $infusionTypeid[0]["id"];
                 } else {
                     $infusionTypeid = null;
                 }
-                
                 if (null == $infusionTypeid) {
                     $retVal = array();
-                    $retVal['error'] = "Insert int MH_ID for $therapytype Therapy failed. The Route could not be determined.";
+                    $retVal['error'] = "Insert into MH_ID for $therapytype Therapy failed. The Route could not be determined.";
+error_log(sprintf("%s %d %s, = %s; $infusionmethod", __FILE__, __LINE__, __FUNCTION__, $retVal['error']));
                     return $retVal;
                 }
-                
+				------------ We're already passed the IEN of the Route of infusion ---------------- */
+
+
+                $unitid = $lookup->getLookupIdByNameAndType($units, 11);
                 if ($unitid) {
                     $unitid = $unitid[0]["id"];
                 } else {
                     $unitid = null;
                 }
-
                 if (null == $unitid) {
                     $retVal = array();
                     $retVal['error'] = "Insert int MH_ID for $therapytype Therapy failed. The unit id could not be determined.";
+// error_log(sprintf("%s %d %s, = %s; $units", __FILE__, __LINE__, __FUNCTION__, $retVal['error']));
                     return $retVal;
                 }
 
 
-
+                // Infusion_Type_ID='$infusionTypeid',		No longer use GUID so need to update the VistA_Route field
                 $query = "Update MH_Infusion 
                 set Infusion_Amt = '$dose',
                 BSA_DOSE ='$bsadose',
                 Infusion_Unit_ID='$unitid',
-                Infusion_Type_ID='$infusionTypeid',
-                Fluid_Type='$escFT',
+                VistA_RouteInfo = '$infusionmethod',
+                Fluid_Type='$fluidtype',
                 Flow_Rate='$flowrate',
                 Fluid_Vol='$fluidvol',
                 Infusion_Time='$infusiontime'
@@ -1221,10 +1304,45 @@ error_log("Patient.Model.updateOEMRecord - Update - $query" );
 error_log("Patient.Model.updateOEMRecord - $therapytype - $query" );
                 $retVal = $this->query($query);
                 if (null != $retVal && array_key_exists('error', $retVal)) {
-                    return $retVal;
+// error_log(sprintf("%s %d %s, = Update Failed", __FILE__, __LINE__, __FUNCTION__));
+// error_log(json_encode($retVal));
+					return $retVal;
                 }
             }
+// error_log(sprintf("%s %d %s, = Walking Infusion Data Complete", __FILE__, __LINE__, __FUNCTION__));
         }
+
+// error_log("Patient.Model.updateOEMRecord - 6 Finishing Up...");
+
+		$medName = $med . " : " . $medIEN;
+/**
+Cols are too small for Fluid Type and all other records are NULL
+      FluidType = '$fluidtype',
+      FluidVol = '$fluidvol',
+      FlowRate = '$flowrate',
+
+ **/
+		$query = "UPDATE Order_Status
+   SET 
+      Drug_Name = '$medName',
+      Drug_ID = '$medid',
+      Amt = '$dose',
+      Unit = '$units',
+      Route = '$infusionmethod',
+      flvol = '$fluidvol',
+      infusion = '$infusiontime',
+      bsaDose = '$bsadose'
+ WHERE Order_ID = '$order_id'";
+
+// error_log("Patient.Model.updateOEMRecord - Order_Status - $query" );
+        $retVal = $this->query($query);
+        if (null != $retVal && array_key_exists('error', $retVal)) {
+            return $retVal;
+        }
+
+
+
+
     }
 
     function addNewPatient ($patient, $SSN_ID, $GUID)

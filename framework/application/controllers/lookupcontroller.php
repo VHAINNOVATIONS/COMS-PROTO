@@ -828,25 +828,25 @@ error_log("Lookup Controller - EFNR() FNR - $query");
     function TemplateData($id = NULL) {
         $TemplateDataReturn = array();
         if ($id != NULL) {
-error_log("Lookup Controller - TemplateData - ID = $id");
+// error_log("Lookup Controller - TemplateData - ID = $id");
 
             $retVal = $this->LookUp->getTopLevelTemplateDescriptionById($id);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
-error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed.");
+// error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed.");
                 $this->set('templatedata', null);
                 return;
             }
-error_log("Lookup Controller - TemplateData - Initial Data - " . json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - Initial Data - " . json_encode($retVal));
 
 
             $Regimen_ID = $retVal[0]["Regimen_ID"];
             $retVal = $this->LookUp->getTopLevelTemplateDataById($id, $Regimen_ID);
             if($this->checkForErrors('Get Top Level Template Data Failed. ', $retVal)){
-error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed. 2");
+// error_log("Lookup Controller - TemplateData - Error; Get Top Level Template Data Failed. 2");
                 $this->set('templatedata', null);
                 return;
             }
-error_log("Lookup Controller - TemplateData - TopLevelTemplateDataById - $id, $Regimen_ID" . json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - TopLevelTemplateDataById - $id, $Regimen_ID" . json_encode($retVal));
 
 
             $EmoLevel = "";
@@ -863,27 +863,27 @@ error_log("Lookup Controller - TemplateData - TopLevelTemplateDataById - $id, $R
             else {
                 error_log("Lookup Controller - TemplateData - NO EMO Data for $EmoLevel");
             }
-error_log("Lookup Controller - TemplateData - get EMO Data for $EmoLevel - " . json_encode($retVal1));
+// error_log("Lookup Controller - TemplateData - get EMO Data for $EmoLevel - " . json_encode($retVal1));
 
 
-error_log("Lookup Controller - TemplateData - Getting FNRisk");
+// error_log("Lookup Controller - TemplateData - Getting FNRisk");
             $FNRisk = $retVal[0]["fnRisk"];
             $retVal1 = $this->LookUp->getNeutroData($FNRisk);
             $retVal[0]["fnrDetails"] = $retVal1;
             $this->set('templatedata', $retVal);
-error_log("Lookup Controller - TemplateData - Get FNRisk Data for $FNRisk - " . json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - Get FNRisk Data for $FNRisk - " . json_encode($retVal));
 
 
-error_log("Lookup Controller - getTemplateReferences  - $id");
+// error_log("Lookup Controller - getTemplateReferences  - $id");
             $retVal1 = $this->LookUp->getTemplateReferences($id);
             if($this->checkForErrors('Get Template References Failed. ', $retVal1)){
                 $this->set('templatedata', null);
-error_log("Lookup Controller - TemplateData - Error; Get Template References Failed.");
-error_log("Lookup Controller - TemplateData - Error; " . json_encode($retVal1));
+// error_log("Lookup Controller - TemplateData - Error; Get Template References Failed.");
+// error_log("Lookup Controller - TemplateData - Error; " . json_encode($retVal1));
                 // return;
             }
             $this->set('references', $retVal1);
-error_log("Lookup Controller - References - " . json_encode($retVal1));
+// error_log("Lookup Controller - References - " . json_encode($retVal1));
 
 
 
@@ -894,12 +894,12 @@ error_log("Lookup Controller - References - " . json_encode($retVal1));
 
 
 /******************* PRE THERAPY *********************/
-// 			error_log("Lookup Controller - getHydrations  - PRE THERAPY - $id");
+// error_log("Lookup Controller - getHydrations  - PRE THERAPY - $id");
 			$retVal = $this->LookUp->getHydrations($id, 'pre');
-// 			error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
-// 			error_log(json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - Got Pre Therapy - ");
+// error_log(json_encode($retVal));
 			if($this->checkForErrors('Get Pre Therapy Failed. 1', $retVal)){
-// 				error_log("Lookup Controller - TemplateData - Error; Exit 1");
+// error_log("Lookup Controller - TemplateData - Error; Exit 1");
 				$this->set('templatedata', null);
 				return;
 			}
@@ -909,27 +909,27 @@ error_log("Lookup Controller - References - " . json_encode($retVal1));
 				$infusionMap = array();
 				foreach ($prehydrations as $prehydration) {
 					$key = $prehydration['id'];
-// 					error_log("Lookup Controller - TemplateData - $key - prehydration - ");
-// 					error_log(json_encode($prehydration));
+// error_log("Lookup Controller - TemplateData - $key - prehydration - ");
+// error_log(json_encode($prehydration));
 					$infusions = $this->LookUp->getMHInfusions($key);
 					$infusionMap[$key] = $infusions;
 				}
 				$this->set('prehydrations', $prehydrations);
-// 				error_log("Lookup Controller - TemplateData - prehydrations - ");
-// 				error_log(json_encode($prehydrations));
+// error_log("Lookup Controller - TemplateData - prehydrations - ");
+// error_log(json_encode($prehydrations));
 
 				$this->set('preinfusions', $infusionMap);
-				error_log("Lookup Controller - TemplateData - preinfusions - ");
-				error_log(json_encode($infusionMap));
+// error_log("Lookup Controller - TemplateData - preinfusions - ");
+// error_log(json_encode($infusionMap));
 			}
 
 /******************* POST THERAPY *********************/
-// 			error_log("Lookup Controller - getHydrations  - POST THERAPY - $id");
+// error_log("Lookup Controller - getHydrations  - POST THERAPY - $id");
 			$retVal = $this->LookUp->getHydrations($id, 'post');
-// 			error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
-// 			error_log(json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - Got Post Therapy - ");
+// error_log(json_encode($retVal));
 			if($this->checkForErrors('Get Post Therapy Failed. 1', $retVal)){
-// 				error_log("Lookup Controller - TemplateData - Error; Exit 1");
+// error_log("Lookup Controller - TemplateData - Error; Exit 1");
 				$this->set('templatedata', null);
 				return;
 			}
@@ -939,24 +939,24 @@ error_log("Lookup Controller - References - " . json_encode($retVal1));
 				$infusionMap = array();
 				foreach ($posthydrations as $posthydration) {
 					$key = $posthydration['id'];
-// 					error_log("Lookup Controller - TemplateData - $key - posthydration - ");
-// 					error_log(json_encode($posthydration));
+// error_log("Lookup Controller - TemplateData - $key - posthydration - ");
+// error_log(json_encode($posthydration));
 					$infusions = $this->LookUp->getMHInfusions($key);
 					$infusionMap[$key] = $infusions;
 				}
 				$this->set('posthydrations', $posthydrations);
-// 				error_log("Lookup Controller - TemplateData - posthydrations - ");
-// 				error_log(json_encode($posthydrations));
+// error_log("Lookup Controller - TemplateData - posthydrations - ");
+// error_log(json_encode($posthydrations));
 
 				$this->set('postinfusions', $infusionMap);
-// 				error_log("Lookup Controller - TemplateData - preinfusions - ");
-// 				error_log(json_encode($infusionMap));
+// error_log("Lookup Controller - TemplateData - preinfusions - ");
+// error_log(json_encode($infusionMap));
 			}
 
 /******************* THERAPY *********************/
 			$retVal = $this->LookUp->getRegimens($id);
-			error_log("Lookup Controller - TemplateData - Got Therapy - ");
-			error_log(json_encode($retVal));
+// error_log("Lookup Controller - TemplateData - Got Therapy - ");
+// error_log(json_encode($retVal));
 			if($this->checkForErrors('Get Template_Regimen Failed. 1', $retVal)){
 				error_log("Lookup Controller - TemplateData - Error; Exit 1");
 				$this->set('templatedata', null);
@@ -990,25 +990,17 @@ error_log("Lookup Controller - References - " . json_encode($retVal1));
             }
 
 
-/************
-            else {
-                $this->set('frameworkErr', 'Get Template_Regimen Failed. 2');
-                $this->set('templatedata', null);
-                return;
-            }
-*************/
-
             $Patients = $this->getPatients4Template( $id );
             $this->set("PatientList", $Patients);
-error_log("Lookup Controller - TemplateData - Error; Exit 3");
+// error_log("Lookup Controller - TemplateData - Error; Exit 3");
 
 
         } else {
-error_log("Lookup Controller - TemplateData - Error; Exit 4");
+// error_log("Lookup Controller - TemplateData - Error; Exit 4");
             $this->set('templatedata', null);
             $this->set('frameworkErr', 'Template id must be provided.');
         }
-error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
+// error_log("Lookup Controller - TemplateData - Default Exit; Exit 5");
     }
 
     function DiseaseStage($id = null) {
@@ -2763,6 +2755,33 @@ error_log("Lookup Controller - getDrugInfoFromVistA - ID= $drugID; Info = " . js
         return $MedInfoObj;
     }
 
+
+
+/**
+ * Returns a JSON object from VistA that resembles:
+ * {
+ *     "success": true,
+ *     "MedInfo": {
+ *         "Name": "",
+ *         "IEN": "",
+ *         "Routes": [
+ *             {
+ *                 "ien": "",
+ *                 "name": "",
+ *                 "code": ""
+ *             }
+ *         ],
+ *         "Dosages": [
+ *             {
+ *                 "key": "",
+ *                 "name": "",
+ *                 "value": ""
+ *             }
+ *         ]
+ *     }
+ * }
+ *
+ **/
     function DrugInfo($drugID) {
         // $nodevista               = new NodeVista();
         $jsonRecord              = array( );
@@ -2814,6 +2833,38 @@ error_log("Lookup Controller - getDrugInfoFromVistA - ID= $drugID; Info = " . js
 				$jsonRecord["MedInfo"] = $MedInfo;
 			}
             $this->set( "jsonRecord", $jsonRecord );
+        }
+        else {
+            $msg                     = "Wrong Service Call Type... Expected a GET";
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = $msg;
+        }
+        $this->set( "jsonRecord", $jsonRecord );
+    }
+
+    function DrugRoutes($drugID) {
+        $jsonRecord              = array( );
+        $jsonRecord[ "success" ] = true;
+        $records                 = array( );
+        $msg                     = "";
+
+        if ("" === $drugID || null === $drugID) {
+            $msg                     = "ERROR: No Drug passed";
+            $jsonRecord[ "success" ] = false;
+            $jsonRecord[ "msg" ]     = $msg;
+            $this->set( "jsonRecord", $jsonRecord );
+            return;
+        }
+        if ( "GET" == $_SERVER[ "REQUEST_METHOD" ] ) {
+			if ("0" === $drugID) {
+				$Route4PCH = array("ien" => "14", "name" => "INTRAVENOUS", "code" => "IV");
+				$jsonRecord["Routes"] = array($Route4PCH);
+			}
+			else {
+				$MedInfoObj = $this->getDrugInfoFromVistA($drugID);
+				$Routes     = $MedInfoObj->{"Route"};
+				$jsonRecord["Routes"] = $Routes;
+			}
         }
         else {
             $msg                     = "Wrong Service Call Type... Expected a GET";

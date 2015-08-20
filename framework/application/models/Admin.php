@@ -1,7 +1,13 @@
 <?php
 
 class Admin extends Model {
-    
+
+	const GUIDDesc = " Passed as GUID by Calling Function";
+	const NullDesc = "Never used, always NULL";
+	const BlankDesc = "Never used, always BLANK";
+	const NoMeaningDesc = "Used but data is meaningless";
+
+
     function getGlobals() {
         
         $query = "SELECT domain as domain,sitelist as sitelist,mdws as mdws FROM Globals";
