@@ -609,7 +609,7 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
 
 
 
-	function _TemplateList() {
+	function _TemplateList($Location_ID) {
         $query = "select 
         lu.Name as name
         ,mt.Template_ID as id
@@ -636,8 +636,9 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
         INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
         LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
         LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)
-        WHERE Is_Active = 1 and mt.Patient_ID is null
-        Order By 'description'";
+        WHERE Is_Active = 1 and mt.Patient_ID is null";
+		$query = $query . ($Location_ID == null ? "" : " and mt.Location_ID = '$Location_ID'") . "Order By 'description'";
+error_log("TemplateList = $query");
         $Templates = $this->LookUp->query($query);
         return $Templates;
 	}
@@ -691,7 +692,7 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
 			$templates = $this->_TemplateListWithPatients();
 		}
 		else if ("List" === $field) {
-			$templates = $this->_TemplateList();
+			$templates = $this->_TemplateList($id);
 		}
 		else if (NULL === $id) {
 			$templates = $this->_TemplatePatients($field);
