@@ -146,7 +146,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, false, parent)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
 								"</tr>",
@@ -188,6 +188,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					"</tr>",
 
 				"<tpl for=\"Therapy\">",
+					"{[this.CheckOnEdit( values, parent )]}",
 					"<tr>",
 						"<th class=\"BorderLeft BorderBottom\" style=\"vertical-align: top;\">",
 							"{[this.stripIENfromDrug( values.Med )]} ({Dose} {DoseUnits})",
@@ -215,7 +216,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose} {DoseUnits}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, true)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, true, parent)]}</td>",
 									"</td>",
 									/* "<td>{AdminMethod}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
@@ -283,7 +284,7 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 								"<tr>",
 									"<td>{[this.stripIENfromDrug( values.Med )]}</td>",
 									"<td>{Dose1} {DoseUnits1}</td>",
-									"<td>{[this.CalculateBSA_Dosing(values, false)]}</td>",
+									"<td>{[this.CalculateBSA_Dosing(values, false, parent)]}</td>",
 									/* "<td>{AdminMethod1}</td>", */
 									"<td>{[this.calcRoute(values)]}</td>",
 
@@ -330,6 +331,15 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					// debugger;
 				},
 
+				CheckOnEdit : function(values, parent) {
+					var v1 = values;
+					var me = this;
+					var Reason;
+					Reason = values.Reason;
+					var AdminDate = parent.AdminDate;
+					return "";
+				},
+
 				showReason : function(values, parent) {
 					if ("" !== values.Reason) {
 						return "<div style=\"text-align: left;\">Medication Changed from Template: <span>" + values.Reason + "</span></div>";
@@ -363,25 +373,64 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					return false;
 				},
 
-				CalculateBSA_Dosing : function (values, therapy) {
-					var du, duuc, calcDose, BSA_Dose, dspCalcDose, WeightInKilos, Dose, Units, ret = "N/A";
+				CalculateBSA_Dosing : function (values, therapy, parent) {
+					var AdminDate = parent.AdminDate;
+					if (therapy) {
+						var foo = 1;
+					}
+					try
+					{
+					var du = "",
+						du1 = "",
+						duuc = "",
+						duuc1 = "",
+						calcDose = "",
+						calcDose1 = "",
+						BSA_Dose = "",
+						BSA_Dose1 = "",
+						dspCalcDose = "",
+						dspCalcDose1 = "",
+						WeightInKilos = "",
+						Dose = "",
+						Dose1 = "",
+						Units = "",
+						Units1 = "", 
+						ret = "N/A";
 					// debugger;
 					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
 
-					if (therapy) {
-						du = values.DoseUnits;
-						Dose = values.Dose;
-						BSA_Dose = values.BSA_Dose;
-					}
-					else {
-						du = values.DoseUnits1;
-						Dose = values.Dose1;
-						BSA_Dose = values.BSA_Dose1;
-					}
-					if (!BSA_Dose) {
-						BSA_Dose = "";
-					}
-					duuc = du.toUpperCase();
+
+						if (values.hasOwnProperty("DoseUnits")) {
+							du = values.DoseUnits;
+						}
+						if (values.hasOwnProperty("DoseUnits1")) {
+							du1 = values.DoseUnits1;
+						}
+						du = du || du1;
+						if (du) {
+							duuc = du.toUpperCase();
+						}
+						else {
+							duuc = "UNK";
+						}
+
+						if (values.hasOwnProperty("Dose")) {
+							Dose = values.Dose;
+						}
+						if (values.hasOwnProperty("Dose1")) {
+							Dose1 = values.Dose1;
+						}
+						Dose = Dose || Dose1;
+
+						if (values.hasOwnProperty("BSA_Dose")) {
+							BSA_Dose = values.BSA_Dose;
+						}
+						if (values.hasOwnProperty("BSA_Dose1")) {
+							BSA_Dose1 = values.BSA_Dose1;
+						}
+						BSA_Dose = BSA_Dose || BSA_Dose1;
+
+
 					calcDose = du.substr(0, du.search("/"));
 					if (duuc.search("M2") > 0) {
 						BSA_Dose = Dose * CalcBSA_Dose;
@@ -410,6 +459,12 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 							"title=\"Show Dosage Calculation\">" + dspCalcDose + "</button>";
 					}
 					return (ret);
+					}
+					catch (e)
+					{
+						debugger;
+					}
+
 				},
 
 

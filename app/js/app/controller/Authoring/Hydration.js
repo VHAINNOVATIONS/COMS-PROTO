@@ -232,7 +232,7 @@ DossageAmt
 				blur: this.calcInfusionTime
 			},
 			'AddHydrationDrug combo[name="Drug"]' : {
-				select: this.drugSelected,
+				select: this.AddHydrationDrugSelected,
 				change : this.ComboSearch,
 				beforequery: function(record){
 					record.query = new RegExp(record.query, 'i');
@@ -390,7 +390,10 @@ DossageAmt
 							this.theDrugName = theDrug[0];
 							combo.setValue(this.theDrugIEN);
 							combo.setRawValue(this.theDrugName);
-							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							var theWin = this.getAddDrugPUWindow();
+							console.log("Ext.getDrugInfoFromVistA - From 19575");
+							// this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							Ext.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 						}
 						else {
 							combo.setValue(theDrug);
@@ -401,8 +404,9 @@ DossageAmt
 		});
 	},
 
-	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
-		var URL = Ext.URLs.DrugInfo + "/" + drugID;
+/**
+	getDrugInfoFromVistA : function (drugName, drugIEN, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
 		var theWin = this.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( "Loading Drug Information");
@@ -424,6 +428,7 @@ DossageAmt
 			}
 		});
 	},
+ **/
 
 	isDrugHydration : function(medInfo) {
 		if ("0000" === medInfo.IEN) {
@@ -471,13 +476,16 @@ DossageAmt
 		}
 	},
 
-	drugSelected : function(combo, recs, eOpts){
+	AddHydrationDrugSelected : function(combo, recs, eOpts){
 		this.getDrugPUWindow_DoseRouteFields().hide();
-		var drugName, drugID;
+		var drugName, drugIEN;
 		if(null !== recs){
 			drugName = recs[0].data.name;
-			drugID = recs[0].data.IEN;
-			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			drugIEN = recs[0].data.IEN;
+			var theWin = this.getAddDrugPUWindow();
+			// this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			console.log("getDrugInfoFromVistA @ 19666");
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 		}
 	},
 

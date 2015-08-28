@@ -1104,7 +1104,33 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 	}
 };
 
-
+Ext.getDrugInfoFromVistA = function (drugName, drugIEN, theWin, theScope, fnc) {
+	// debugger;
+	var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
+	// var theWin = this.getAddDrugPUWindow();
+	if (theWin) {
+		theWin.setLoading( "Loading Drug Information");
+	}
+	Ext.Ajax.request({
+		url: URL,
+		scope: theScope,
+		fnc : fnc,
+		success: function(response, opts) {
+			var respObj = Ext.decode(response.responseText);
+			if (theWin) {
+				theWin.setLoading( false );
+			}
+			opts.fnc(respObj, opts.scope);
+		},
+		failure: function(response, opts) {
+			// var theWin = this.getAddDrugPUWindow();
+			if (theWin) {
+				theWin.setLoading( false );
+			}
+			wccConsoleLog('server-side failure with status code ' + response.status);
+		}
+	});
+};
 
 Ext.define('COMS.Ajax', {
 	extend: 'Ext.data.Connection',

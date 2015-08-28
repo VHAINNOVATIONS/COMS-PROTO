@@ -1,9 +1,9 @@
-Ext.define("COMS.model.Infusion", {
+Ext.define("COMS.model.DrugRoutes", {
 	"extend" : "Ext.data.Model",
-	"fields" : [ "id", "name", "description" ],
+	"fields" : [ "ien", "name", "code" ],
 	"proxy" : {
 		"type" : "rest",
-		"url" : Ext.URLs.Infusion,
+		"url" : Ext.URLs.DrugRoutes,
 		"reader" : {
 			"type" : "json",
 			"root" : "records"

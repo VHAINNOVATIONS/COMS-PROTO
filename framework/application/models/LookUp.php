@@ -1010,7 +1010,7 @@ if ("0" === $drugIEN) {
                 lu0.Description as Description, 
                 lu.name as Name 
                 FROM LookUp lu0
-                JOIN LookUp lu ON lu.lookup_ID = lu0.Name                
+                JOIN LookUp lu ON lu.lookup_ID = lu0.Name
                 WHERE lu0.Lookup_Type = ( 
                     SELECT 
                         l.Lookup_Type_ID 
@@ -1154,11 +1154,11 @@ if ("0" === $drugIEN) {
                     LEFT JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                     LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID)";
             if (NULL != $id) {
-                $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = 1";
+                $query .= " WHERE mt.Template_ID = '" . $id . "' and Is_Active = 1 ";
             }else{
-                $query .= " WHERE Is_Active = 1 and mt.Patient_ID is null";
+                $query .= " WHERE Is_Active = 1 and mt.Patient_ID is null ";
             }
-            $query .= " Order By 'description'";
+            $query .= " order By 'description'";
 // error_log("Lookup Model - getTemplates($id) Query = $query");
         return $this->query($query);
     }

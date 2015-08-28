@@ -66,6 +66,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {

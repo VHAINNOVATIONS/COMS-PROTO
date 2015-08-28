@@ -208,7 +208,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 				blur: this.calcInfusionTime
 			},
 			"AddDrugRegimen combo[name=\"Drug\"]": {
-				select: this.drugSelected,
+				select: this.AddTherapyDrugSelected,
 				change : this.ComboSearch,
 				beforequery: function(record){
 					record.query = new RegExp(record.query, 'i');
@@ -364,7 +364,10 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 							this.theDrugName = theDrug[0];
 							combo.setValue(this.theDrugIEN);
 							combo.setRawValue(this.theDrugName);
-							this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							var theWin = this.getAddDrugPUWindow();
+							// this.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, this.AddDrugInfoFromVistA2Store);
+							console.log("Ext.getDrugInfoFromVistA - From 18549");
+							Ext.getDrugInfoFromVistA(this.theDrugName, this.theDrugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 						}
 						else {
 							combo.setValue(theDrug);
@@ -376,8 +379,9 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 	},
 
 
-	getDrugInfoFromVistA : function (drugName, drugID, fnc) {
-		var URL = Ext.URLs.DrugInfo + "/" + drugID;
+/**************
+	getDrugInfoFromVistA : function (drugName, drugIEN, fnc) {
+		var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
 		var theWin = this.getAddDrugPUWindow();
 		if (theWin) {
 			theWin.setLoading( "Loading Drug Information");
@@ -399,6 +403,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 			}
 		});
 	},
+**************/
 
 	isDrugHydration : function(medInfo) {
 		if ("0000" === medInfo.IEN) {
@@ -441,13 +446,17 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		}
 	},
 
-	drugSelected : function(combo, recs, eOpts){
+	AddTherapyDrugSelected : function(combo, recs, eOpts){
 		this.getDrugPUWindow_DoseRouteFields().hide();
 		var drugName, drugID;
 		if(null !== recs){
 			drugName = recs[0].data.name;
-			drugID = recs[0].data.IEN;
-			this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			drugIEN = recs[0].data.IEN;
+
+			var theWin = this.getAddDrugPUWindow();
+			// this.getDrugInfoFromVistA(drugName, drugID, this.AddDrugInfoFromVistA2Store);
+			console.log("Ext.getDrugInfoFromVistA - From 18635");
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2Store);
 		}
 	},
 

@@ -22,6 +22,7 @@ Ext.application({
 		"Common.puWinChangeAdminDate",
 		"Common.MedRemindersForm",
 		"Common.puWinTreatmentAmmend",
+		"Common.TemplateSelectorController",
 		"NewPlan.AdverseEventsHistory",
 		"NewPlan.AskQues2ApplyTemplate",
 		"NewPlan.NewPlanTab",

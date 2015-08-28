@@ -14,6 +14,7 @@ Ext.define("COMS.view.Common.selInPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {
@@ -48,6 +49,7 @@ Ext.define("COMS.view.Common.selOutPatientMed" ,{
 			"valueField" : "IEN",
 			"queryMode" : "local",
 			"typeAhead" : true,
+			"typeAheadDelay" : 1000,
 			"editable" : true,
 
 			store : Ext.create('Ext.data.Store', {

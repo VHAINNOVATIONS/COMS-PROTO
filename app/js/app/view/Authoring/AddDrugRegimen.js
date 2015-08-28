@@ -71,6 +71,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 						"valueField" : "IEN",
 						"queryMode" : "local",
 						"typeAhead" : true,
+						"typeAheadDelay" : 1000,
 						"allowBlank" : false,
 						"editable" : true
 					}

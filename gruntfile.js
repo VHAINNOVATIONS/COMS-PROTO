@@ -10,11 +10,26 @@
  * npm install grunt-xsltproc --save-dev
  * npm install grunt-phplint
  * Ensure PHP is in the path
+ *
+ * grunt jshint
+ * grunt concat
  */
 module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
+	src: {
+		files: [
+			"app/LocalizedCode.js", "app/js/Consts.js", 
+			"libs/ExtJS_4.1.0/examples/ux/*.js", "libs/ExtJS_4.1.0/examples/ux/**/*.js", 
+			"app/js/Extensions.js", "app/js/app/ux/**/*.js", 
+			"app/js/app/model/*.js", 
+			"app/js/app/store/*.js",
+			"app/js/app/view/**/*.js",
+			"app/js/app/controller/**/*.js", 
+			"app/js/app.js"
+		]
+	},
 
     concat: {
       options: {
@@ -25,7 +40,7 @@ module.exports = function(grunt) {
         },
       },
       dist: {
-        src: ["app/LocalizedCode.js", "app/js/Consts.js", "libs/ExtJS_4.1.0/examples/ux/*.js", "libs/ExtJS_4.1.0/examples/ux/**/*.js", "app/js/Extensions.js", "app/js/app/ux/**/*.js", "app/js/app/model/*.js", "app/js/app/store/*.js","app/js/app/view/**/*.js","app/js/app/controller/**/*.js", "app/js/app.js" ],
+        src: "<%= src.files %>",
         dest: "app/js/<%= pkg.name %>-build.js"
       }
     },
@@ -86,7 +101,7 @@ module.exports = function(grunt) {
 	},
 
 
-	jshint: {
+	jshint_001: {
 		options : {
 			reporter: require("jshint-html-reporter"),
 			reporterOutput: "./reports/output/jshint-report.html",
@@ -103,6 +118,36 @@ module.exports = function(grunt) {
 				"./app/jquery-1.7.1.min.js"
 		]
 	},
+
+	jshint_Works: {
+		options : {
+			reporter: require("jshint-html-reporter"),
+			reporterOutput: "./reports/output/jshint-report.html",
+			"debug" : true,
+			"-W030" : false,
+			"-W041" : false,
+			"-W083" : false
+		},
+		files: ["!./app/js/COMS.js", 
+				"!./app/jquery-1.7.1.min.js",
+				"./app/LocalizedCode.js",
+				"./app/js/**/*.js"
+		]
+	},
+
+	jshint: {
+		options : {
+			reporter: require("jshint-html-reporter"),
+			reporterOutput: "./reports/output/jshint-report.html",
+			"debug" : true,
+			"-W030" : false,
+			"-W041" : false,
+			"-W083" : false
+		},
+		files: "<%= src.files %>"
+	},
+
+
 
 	watch: {
 		files: ['<%= jshint.files %>'],

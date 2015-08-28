@@ -1,31 +1,30 @@
 Ext.define('COMS.controller.TemplateList.TemplateListTab', {
-    extend: 'Ext.app.Controller',
-    stores: [
-        "TemplateListStore",
+	extend: 'Ext.app.Controller',
+	stores: [
+		"TemplateListStore",
 		"TemplateListByLocationStore"
-    ],
-    views: [
-        'TemplateList.TemplateListTab',
+	],
+	views: [
+		'TemplateList.TemplateListTab',
 		"Common.selCTOSTemplate"
-    ],
+	],
 
-    refs: [
-        { ref: "theGrid", selector: "TemplateListTab grid"},
-        {
-            ref: "TemplateType",
-            selector: "TemplateListTab selCTOSTemplate selTemplateType"
-        }
-    ],
+	refs: [
+		{ ref: "theGrid",      selector: "TemplateListTab grid" },
+		{ ref: "TemplateType", selector: "TemplateListTab selCTOSTemplate selTemplateType" }
+	],
 
 	init: function () {
 		this.control({
 			"scope" : this,
-
 			"TemplateListTab" : {
 				"beforerender" : this.renderPanel
 			},
 			"TemplateListTab selCTOSTemplate selTemplateType": {
 				"select" : this.TemplateTypeChange
+			},
+			"TemplateListTab selCTOSTemplate selTemplateSrc" : {
+				"change" : this.onTemplateSrcSelect
 			},
 			"TemplateListTab selCTOSTemplate button": {
 				"click" : this.ShowAllTemplates
@@ -34,6 +33,27 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 				"cellclick" : this.clickCell
 			}
 		});
+	},
+
+	onTemplateSrcSelect : function(obj, value) {
+		debugger;
+
+	  var theStore = this.getCancerSelector().getStore();
+	  theStore.load({
+		  "scope" : this,
+		  "params" : {
+			  "location" : value.templateSrc
+		  },
+		  "failure" : function( records, operation, a, b) {
+			  debugger;
+		  },
+		  "success" : function( records, operation, a, b) {
+			  debugger;
+		  },
+		  "callback" : function( records, operation, a, b) {
+			  debugger;
+		  }		  
+	  });
 	},
 
 	showPatientListWidget : function(thePatients, theTemplateDesc) {

@@ -4,6 +4,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	views: [ "NewPlan.CTOS.OEM_Edit" ],
 	refs: [
 		{
+			ref: "theWin",
+			selector : "EditOEMRecord"
+		},
+		{
 			ref: "theForm",
 			selector : "EditOEMRecord form"
 		},
@@ -30,6 +34,10 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		{
 			ref:  "SelectReason",
 			selector : "EditOEMRecord SelectReason"
+		},
+		{
+			ref:  "SelectRoute",
+			selector : "EditOEMRecord InfusionMethod"
 		}
 	],
 
@@ -41,14 +49,12 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		this.application.on({ OEMEditRecord : this.OEMEditRecord, scope : this });
 
 		this.control({
-
-            "EditOEMRecord button[text=\"Save\"]" : {
-                click: this.SaveChanges
-            },
-            "EditOEMRecord button[text=\"Cancel\"]" : {
-                click: this.CloseWidget
-            },
-
+			"EditOEMRecord button[text=\"Save\"]" : {
+				click: this.SaveChanges
+			},
+			"EditOEMRecord button[text=\"Cancel\"]" : {
+				click: this.CloseWidget
+			},
 			"EditOEMRecord FlowRate[name=\"FlowRate\"]" : { 
 				blur : this.CalcInfusionTime
 			},
@@ -57,21 +63,85 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			},
 			"EditOEMRecord InfusionMethod[name=\"InfusionMethod\"]" : {
 				select: this.routeSelected
+			},
+			"EditOEMRecord SelectDrug" : {
+				select: this.EditOEM_DrugSelected
 			}
 		});
 	},
 
+	// Grab the list of routes from the Drug Info and build the Route Combo Store from that list
+	AddDrugInfoFromVistA2OEMEditRouteStore : function(respObj, theScope) {
+		// debugger;
+		respObj.MedInfo;		// { Dosages : [{key: "", name: "", value: ""}], IEN : "", Name : "", Routes : [{ code : "", ien : "", name : "" }]
+		var RouteCombo = theScope.getSelectRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		RouteStore.loadData(theRoutes, false);
+
+/*
+		var RouteCombo = theScope.getSelectRoute();
+		var RouteStore = RouteCombo.getStore();
+		var theRoutes = respObj.MedInfo.Routes;
+		var RoutesData4Store = [];
+		var aRoute;
+		var i, rLen = theRoutes.length;
+		for (i = 0; i < rLen; i++ ) {
+			aRoute = {};
+			aRoute.id = theRoutes[i].ien;
+			aRoute.name = theRoutes[i].name;
+			aRoute.description = theRoutes[i].ien;
+			RoutesData4Store.push(aRoute);
+		}
+		RouteStore.loadData(RoutesData4Store);
+		theScope.getDrugPUWindow_DoseRouteFields().show();
+
+		if (theScope.isDrugHydration(respObj.MedInfo)) {
+			theScope.getDrugPUWindow_DoseRouteFields().show();
+			theScope.getDrugRegimenAmt().hide();
+			theScope.getDrugRegimenUnits().hide();
+		}
+		else {
+			theScope.getDrugPUWindow_DoseRouteFields().show();
+			theScope.getDrugRegimenAmt().show();
+			theScope.getDrugRegimenUnits().show();
+		}
+*/
+	},
+
+	EditOEM_DrugSelected : function(combo, records, eOpts) {
+		// debugger;
+		this.getSelectRoute().hide();
+		var drugName, drugIEN;
+		if(null !== records){
+			drugName = records[0].data.name;
+			drugIEN = records[0].data.IEN;
+			var theWin = this.getTheWin();
+			// this.getDrugInfoFromVistA(drugName, drugIEN, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+			console.log("getDrugInfoFromVistA @ 36515"); 
+			Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+		}
+	},
 
 	routeSelected : function(combo, records, eOpts) {
 		var thisCtl = this.getController("NewPlan.OEM_Edit");
 		var route = combo.getValue();
 		var theContainer = this.getFluidInfo();
 		var aContainer;
+		var f1;
 		if (Ext.routeRequiresFluid(route)) {
 			theContainer.show();
+			f1 = this.getFluidVol();
+			f1.allowBlank = false;
+			f1 = this.getFlowRate();
+			f1.allowBlank = false;
 		}
 		else {
 			theContainer.hide();
+			f1 = this.getFluidVol();
+			f1.allowBlank = true;
+			f1 = this.getFlowRate();
+			f1.allowBlank = true;
 		}
 	},
 	CalcInfusionTime : function() {
@@ -137,26 +207,50 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		MedRecord.Reason = values.Reason;
 
 		var MedRecord1 = {};
+		// debugger;
 
-		MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
+		MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
+		MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
+		MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
 		MedRecord1.AdminTime = MedRecord.AdminTime;
-		MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
-		MedRecord1.Dose1 = MedRecord.Dose1;
-		MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
-		MedRecord1.FlowRate1 = MedRecord.FlowRate1;
-		MedRecord1.FluidType1 = MedRecord.FluidType1;
-		MedRecord1.FluidVol1 = MedRecord.FluidVol1;
-		MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
 		MedRecord1.Instructions = values.Instructions;
 		MedRecord1.Med = MedRecord.Med;
 		MedRecord1.MedID = MedRecord.MedID;
 		MedRecord1.id = MedRecord.id;
 		MedRecord1.Reason = MedRecord.Reason;
+		MedRecord1.CycleIdx = MedRecord.CycleIdx;
 
-		MedRecord1.MedIdx = PatientInfo.MedRecord.MedIdx;
-		MedRecord1.TherapyType = PatientInfo.MedRecord.TherapyType;
-		MedRecord1.AdminDaysPerCycle = PatientInfo.OEMRecords.AdminDaysPerCycle;
+		MedRecord1.DayIdx = MedRecord.DayIdx;
+		MedRecord1.InfusionMethod = MedRecord.InfusionMethod;
+		MedRecord1.InfusionMethodIEN = MedRecord.InfusionMethodIEN;
+		MedRecord1.MedIEN = MedRecord.MedIEN;
+		MedRecord1.OEMRecordID = MedRecord.OEMRecordID;
+		MedRecord1.Order_ID = MedRecord.Order_ID;
+		MedRecord1.TemplateID = MedRecord.TemplateID;
+		MedRecord1.TherapyID = MedRecord.TherapyID;
+		MedRecord1.Units = MedRecord.Units;
+		MedRecord1.TherapyType = MedRecord.TherapyType;
 
+		if ("Therapy" == TherapyType) {
+				MedRecord1.AdminMethod = MedRecord.AdminMethod1;
+				MedRecord1.BSA_Dose = MedRecord.BSA_Dose1;
+				MedRecord1.Dose = MedRecord.Dose1;
+				MedRecord1.DoseUnits = MedRecord.DoseUnits1;
+				MedRecord1.FlowRate = MedRecord.FlowRate1;
+				MedRecord1.FluidType = MedRecord.FluidType1;
+				MedRecord1.FluidVol = MedRecord.FluidVol1;
+				MedRecord1.InfusionTime = MedRecord.InfusionTime1;
+		}
+		else {
+				MedRecord1.AdminMethod1 = MedRecord.AdminMethod1;
+				MedRecord1.BSA_Dose1 = MedRecord.BSA_Dose1;
+				MedRecord1.Dose1 = MedRecord.Dose1;
+				MedRecord1.DoseUnits1 = MedRecord.DoseUnits1;
+				MedRecord1.FlowRate1 = MedRecord.FlowRate1;
+				MedRecord1.FluidType1 = MedRecord.FluidType1;
+				MedRecord1.FluidVol1 = MedRecord.FluidVol1;
+				MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
+		}
 
 		if (multipleRecords) {
 			for (i = CalcDayIndex; i < MaxRecords; i++) {
@@ -224,9 +318,30 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			newStat = "Cancel",
 			theMed = thisCtl.getSelectedMed(),
 			medName = theMed.getValue();
+		var theRouteField = this.getSelectRoute();
+		var theRouteStore = theRouteField.getStore();
+		var idx = theRouteStore.find("name", values.InfusionMethod);
+		if (idx < 0) {
+			idx = theRouteStore.find("ien", values.InfusionMethod);
+		}
+		if (idx >= 0) {
+			var theRecord = theRouteStore.getRange(idx, idx)[0].getData();
+			values.InfusionMethod = theRecord.name + " : " + theRecord.ien;
+		}
 
-		if (!form.form.isValid()) {
-			Ext.MessageBox.alert("Medication Edits", "Please select a reason for the change in medication");
+		var InvalidFields = form.query("field{isValid()==false}");
+		if (InvalidFields.length > 0) {
+			var FieldLabelBuf = "", x, y, msg;
+			for (i = 0; i < InvalidFields.length; i++) {
+				x = InvalidFields[i].fieldLabel;
+				FieldLabelBuf = FieldLabelBuf + "<li>" + x.substring(0, x.indexOf("<")).trim() + "</li>";
+			}
+			msg = "The following field is invalid:";
+			if (InvalidFields.length > 1) {
+				msg = "The following fields are invalid:";
+			}
+			msg = msg + "<ul>" + FieldLabelBuf + "</ul>";
+			Ext.MessageBox.alert("Medication Edits", msg);
 			return;
 		}
 
@@ -261,7 +376,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	},
 
 	CloseWidget : function(button, event, eOpts) {
-        var win = button.up('window');
+		var win = button.up('window');
 		win.close();
 	},
 
@@ -344,12 +459,21 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var theForm = thisCtl.getTheForm();
 		var ShowOptional = false;
 		var ShowFluid = false, ShowFluid2 = false;
+		var f1;
 
 		if (Ext.routeRequiresFluid(MedRecord.InfusionMethod)) {
 			this.getFluidInfo().show();
+			f1 = this.getFluidVol();
+			f1.allowBlank = false;
+			f1 = this.getFlowRate();
+			f1.allowBlank = false;
 		}
 		else {
 			this.getFluidInfo().hide();
+			f1 = this.getFluidVol();
+			f1.allowBlank = true;
+			f1 = this.getFlowRate();
+			f1.allowBlank = true;
 		}
 
 		MedRecord.State = "";
@@ -358,6 +482,24 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 
 
 		theForm.loadRecord(aRecord);
+		// Get Med Info and add list of Routes to the Route Store...
+		// debugger;
+
+		var drugName = MedRecord.Med;
+		var drugIEN = MedRecord.MedIEN;
+		var theWin = this.getTheWin();
+		// this.getDrugInfoFromVistA(drugName, drugIEN, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+		// console.log("getDrugInfoFromVistA @ 36875"); 
+		Ext.getDrugInfoFromVistA(drugName, drugIEN, theWin, this, this.AddDrugInfoFromVistA2OEMEditRouteStore);
+
+
+
+
+		var FluidVol = thisCtl.getFluidVol();
+		var FlowRate = thisCtl.getFlowRate();
+		var InfusionTime = thisCtl.getInfusionTime();
+		InfusionTime.setValue( Ext.CalcInfusionTime(FluidVol.getValue(), FlowRate.getValue(), true) );
+
 	}
 
 

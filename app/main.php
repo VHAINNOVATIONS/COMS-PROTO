@@ -35,9 +35,10 @@
 	$ProjType = "Release 1.16b";	// Aug 10, 2015; Fix Defect where Editing a therapy order in OEM truncates the display. Also resolved issue where OEM edited Panel order is not properly updated / shows up in Orders panel.
 	$ProjType = "Release 1.16c";	// Aug 12, 2015; Orders edited in the OEM Panel are now updated but not pushed to the orders tab
 	$ProjType = "Release 1.16d";	// Aug 20, 2015; Finally fixed defect where edits in OEM panel are updated AND pushed to the Orders Tab
+	$ProjType = "Release 1.17";		// Aug 21, 2015; Promote to 1.17
 	*/
 
-	$ProjType = "Release 1.17";		// Aug 21, 2015; Promote to 1.17
+	$ProjType = "Release 1.17a";		// Aug 27, 2015; 
 
 
 /* <!doctype html> */
@@ -197,14 +198,18 @@
 
 <script type="text/javascript" src="/libs/prettyPrint.js"></script>
 
-<!-- <script type="text/javascript" src="LocalizedCode.js"> </script>
+
+
+<!-- 
+<script type="text/javascript" src="LocalizedCode.js"> </script>
 <script type="text/javascript" src="js/Consts.js"></script>
 <script type="text/javascript" src="js/Requires.js"></script>
 <script type="text/javascript" src="js/Extensions.js"></script>
-<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script> -->
-
+<script type="text/javascript" <?php echo "src=\"$Version/$Deployment\""; ?>></script>
+-->
 
 <script type="text/javascript" src="js/COMS.js"></script>
+
 
 <script>
 var UseNewQueryMethod = true;

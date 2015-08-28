@@ -69,6 +69,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								"valueField" : "IEN",
 								"queryMode" : "local",
 								"typeAhead" : true,
+								"typeAheadDelay" : 1000,
 								"allowBlank" : false,
 								"editable" : true
 							}
@@ -128,18 +129,34 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'fieldLabel' : 'Route <em>*</em>',
 							'width' : 210,
 							'labelWidth' : 65,
+							// "store" : "DrugRoutesStore",
+							"store" : Ext.create("Ext.data.Store", {
+								// "fields" : [ "id", "name", "description" ]
+								"model" : Ext.COMSModels.DrugRoutes
+							}),
+
+/************ Get Routes from VistA based on Drug Selected
 							// 'store' : 'InfusionStore',
 							"store" : Ext.create('Ext.data.Store', {
 								"fields" : [ "id", "name", "description" ]
 							}),
+*****************/
 							'displayField' : 'name',
-							'valueField' : 'id' ,
+							'valueField' : 'ien' ,
 							'allowBlank' : false,
 							'queryMode' : 'local',
 							'editable' : true,
 							'typeAhead' : true,
 							'name' : 'Infusion1'
 						}
+
+/**************
+						{ "xtype" : "InfusionMethod", "name" : "Infusion1", 
+							'width' : 210,
+							'labelWidth' : 65,
+							"colspan" : 2, "margin" : "2 2 2 2" 
+						}
+**********************/
 						]
 					},
 					{

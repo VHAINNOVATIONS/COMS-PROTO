@@ -194,6 +194,14 @@ Ext.URLs.TemplateList            = "/LookUp/Templates";
 
 Ext.URLs.TemplateListByLocation  = "/LookUp/Templates/Location"; // Requires LocationID as the last parameter
 
+Ext.URLs.TemplateListFilterByLocation  = "/LookUp/Templates/List"; // Requires LocationID as the last parameter (/LookUp/Templates/List/<ID>)
+Ext.URLs.CancerListFilterByLocation  = "/LookUp/Templates/Cancer"; // Requires LocationID as the last parameter (/LookUp/Templates/Cancer/<ID>)
+
+
+
+
+
+
 Ext.URLs.FlagTemplateInactive    = "/LookUp/flagTemplateInactive";
 
 Ext.URLs.BaseView                = "/LookUp/view";
@@ -2351,7 +2359,6 @@ Ext.SetForm2ReadOnly = function(formID, readOnly) {
 	}
 };
 
-
 Ext.getDrugInfoFromVistA = function (drugName, drugIEN, theWin, theScope, fnc) {
 	// debugger;
 	var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
@@ -2379,7 +2386,6 @@ Ext.getDrugInfoFromVistA = function (drugName, drugIEN, theWin, theScope, fnc) {
 		}
 	});
 };
-
 
 Ext.define('COMS.Ajax', {
 	extend: 'Ext.data.Connection',
@@ -2435,11 +2441,6 @@ Ext.override(Ext.grid.feature.Grouping, {
 		}
 	}
 });
-
-
-
-
-
 
 
 
@@ -2892,6 +2893,26 @@ Ext.define('COMS.model.CTOS_References', {
 	belongsTo : 'COMS.model.CTOS'
 });
 
+Ext.define("COMS.model.Cancer", {
+  "extend" : "Ext.data.Model",
+  "fields" : ["ien", "name", "description"],
+  "proxy"  : {
+    "type" : "rest",
+    "pageParam": false, //to remove param "page"
+    "startParam": false, //to remove param "start"
+    "limitParam": false, //to remove param "limit"
+    "noCache": false, //to remove param "_dc"
+	"url" : "data/CancerList",
+    "reader" : {
+      "type" : "json",
+      "root" : "records"
+    }
+  }
+});
+Ext.define("COMS.model.CancerStage", {
+  "extend" : "Ext.data.Model",
+  "fields" : ["ien", "name", "description"]
+});
 /* Note: This model may have to be refactored once we identify what type of info is held in the Chemo History */
 Ext.define('COMS.model.ChemoHistory', {
 	extend: 'Ext.data.Model',
@@ -3032,6 +3053,18 @@ Ext.define('COMS.model.DrugRegimen', {
 		reader: {
 			type: 'json',
 			root : 'records'
+		}
+	}
+});
+Ext.define("COMS.model.DrugRoutes", {
+	"extend" : "Ext.data.Model",
+	"fields" : [ "ien", "name", "code" ],
+	"proxy" : {
+		"type" : "rest",
+		"url" : Ext.URLs.DrugRoutes,
+		"reader" : {
+			"type" : "json",
+			"root" : "records"
 		}
 	}
 });
@@ -3432,21 +3465,6 @@ Ext.define('COMS.model.IVFluidType', {
 	fields: ["Med_ID", "FluidType_ID", "MedName", "FluidType"]
 });
 
-
-Ext.define("COMS.model.DrugRoutes", {
-	"extend" : "Ext.data.Model",
-	"fields" : [ "ien", "name", "code" ],
-	"proxy" : {
-		"type" : "rest",
-		"url" : Ext.URLs.DrugRoutes,
-		"reader" : {
-			"type" : "json",
-			"root" : "records"
-		}
-	}
-});
-
-
 Ext.define("COMS.model.Infusion", {
 	"extend" : "Ext.data.Model",
 	"fields" : [ "id", "name", "description" ],
@@ -3459,7 +3477,6 @@ Ext.define("COMS.model.Infusion", {
 		}
 	}
 });
-
 
 Ext.define('COMS.model.LUReferences', {
 	extend: 'Ext.data.Model',
@@ -4837,6 +4854,10 @@ Ext.define('COMS.model.TemperatureLocation', {
 		}
 	}
 });
+Ext.define("COMS.model.Template", {
+  "extend" : "Ext.data.Model",
+  "fields" : ["TemplateID", "name", "description"]
+});
 /***/
 Ext.define("COMS.model.TemplateListPatients", {
 	"extend" : "Ext.data.Model",
@@ -5006,6 +5027,21 @@ Ext.define('COMS.store.CTOS', {
 
         model : Ext.COMSModels.CTOS
 });
+Ext.define("COMS.store.CancerList", {
+  "extend" : "Ext.data.Store",
+  "model"  : "COMS.model.Cancer"
+});
+Ext.define("COMS.store.CancerStageList", {
+  "extend" : "Ext.data.Store",
+  "model"  : "COMS.model.CancerStage",
+  "proxy"  : {
+    "type" : "ajax",
+    "url"  : "data/CancerStageList.json",
+    "reader" : {
+      "type" : "json"
+    }
+  }
+});
 Ext.define('COMS.store.ChemoHistory', {
 	extend : 'Ext.data.Store',
 	model : 'COMS.model.ChemoHistory'
@@ -5138,6 +5174,11 @@ Ext.define('COMS.store.DiseaseType', {
 Ext.define('COMS.store.DrugRegimenStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.DrugRegimen
+});
+Ext.define('COMS.store.DrugRoutesStore', {
+	extend : 'Ext.data.Store',
+	model : Ext.COMSModels.DrugRoutes,
+	autoLoad: false
 });
 Ext.define('COMS.store.DrugStore', {
     extend : 'Ext.data.Store',
@@ -5284,20 +5325,11 @@ Ext.define('COMS.store.InfusionReaction', {
 	}
 });
 
-Ext.define('COMS.store.DrugRoutesStore', {
-	extend : 'Ext.data.Store',
-	model : Ext.COMSModels.DrugRoutes,
-	autoLoad: false
-});
-
-
 Ext.define('COMS.store.InfusionStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Infusion,
 	autoLoad: true
 });
-
-
 Ext.define('COMS.store.InventoryConsumption', {
 				extend : 'Ext.data.Store',
 				fields:["ID", "iReport_ID", "Drug", "Total", "Unit"],
@@ -5538,6 +5570,17 @@ Ext.define('COMS.store.TemperatureLocation', {
 Ext.define('COMS.store.Template', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.Template
+});
+Ext.define("COMS.store.TemplateList", {
+  "extend" : "Ext.data.Store",
+  "model"  : "COMS.model.Template",
+  "proxy"  : {
+    "type" : "ajax",
+    "url"  : "data/TemplateList.json",
+    "reader" : {
+      "type" : "json"
+    }
+  }
 });
 Ext.define('COMS.store.TemplateListByLocationStore', {
 	extend : 'Ext.data.Store',
@@ -6074,7 +6117,6 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							'typeAhead' : true,
 							'name' : 'Units1'
 						}, 
-
 						{
 							'xtype' : 'combo',
 							'fieldLabel' : 'Route <em>*</em>',
@@ -7569,6 +7611,61 @@ Ext.define("COMS.view.Common.SelectAdverseReactionAlerts", {
 			]
 		}
 
+	]
+});
+Ext.define("COMS.view.Common.TemplateSelector" ,{
+	"extend" : "Ext.container.Container",
+	"alias" : "widget.TemplateSelector",
+	"autoEl" : { "tag" : "section" },
+	"items"  : [
+		{
+			"xtype"      : "radiogroup",
+			"cls"        : "TemplateSelectorRB",
+			"fieldLabel" : "Select a Template Source <em>*</em>",
+			"width"        : "75%",
+			"labelWidth"   : "25%",
+
+			"columns"    : 3,
+			"items"      : [
+				{ "boxLabel" : "My Templates", "name" : "templateSrc", "inputValue" : "1" },
+				{ "boxLabel" : "Local Templates", "name" : "templateSrc", "inputValue" : "2"},
+				{ "boxLabel" : "National Templates", "name" : "templateSrc", "inputValue" : "3" }
+			]
+		},
+		{
+			"xtype"        : "combo",
+			"name"         : "CancerSelector",
+			"cls"          : "TemplateSelectorC",
+			"hidden"       : false,
+			"width"        : "75%",
+			"labelWidth"   : "25%",
+			"fieldLabel"   : "Select type of Cancer",
+			"displayField" : "name",
+			"valueField"   : "ien",
+			"store"        : "CancerList"
+		},
+		{
+			"xtype"        : "combo",
+			"cls"          : "TemplateSelectorS",
+			"hidden"       : false,
+			"width"        : "75%",
+			"labelWidth"   : "25%",
+			"fieldLabel"   : "Select Cancer Stage",
+			"displayField" : "name",
+			"valueField"   : "ien",
+			"store"        : "CancerStageList"
+		},
+		{
+			"xtype"        : "combo",
+			"cls"          : "TemplateSelectorT",
+			"hidden"       : false,
+			"width"        : "75%",
+			"labelWidth"   : "25%",
+			"fieldLabel"   : "Select Template",
+			"displayField" : "name",
+			"valueField"   : "ien",
+			"store"        : "TemplateList"
+		}
 	]
 });
 Ext.define("COMS.view.Common.VitalSignsHistory" ,{
@@ -13553,14 +13650,13 @@ Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
 	"valueField" : "name"
 });
 
-
 Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 	"extend" : "Ext.form.field.ComboBox",
 	"alias" : "widget.InfusionMethod",
 	"fieldLabel": "Route <em class=\"required-field\">*</em>",
 	"width": 240,
 	"labelWidth": 70,
-	// "store": "DrugRoutesStore",
+// "store": "DrugRoutesStore",
 							"store" : Ext.create("Ext.data.Store", {
 								// "fields" : [ "ien", "name", "code" ]
 								"model" : Ext.COMSModels.DrugRoutes
@@ -14693,7 +14789,21 @@ Ext.define("COMS.view.OEM.dspOEMTemplateData" ,{
 					}
 					try
 					{
-					var du = du1 = duuc = duuc1 = calcDose = calcDose1 = BSA_Dose = BSA_Dose1 = dspCalcDose = dspCalcDose1 = WeightInKilos = Dose = Dose1 = Units = Units1 = "", 
+					var du = "",
+						du1 = "",
+						duuc = "",
+						duuc1 = "",
+						calcDose = "",
+						calcDose1 = "",
+						BSA_Dose = "",
+						BSA_Dose1 = "",
+						dspCalcDose = "",
+						dspCalcDose1 = "",
+						WeightInKilos = "",
+						Dose = "",
+						Dose1 = "",
+						Units = "",
+						Units1 = "", 
 						ret = "N/A";
 					// debugger;
 					var CalcBSA_Dose = Ext.BSA_Calc(this.Patient);
@@ -16817,7 +16927,6 @@ Ext.define("COMS.view.Testing.TestTab" ,{
 	]
 });
 
-
 // var tmpRecord; MWB - 28 Dec 2011; Eliminated need for global variable by using the "getSelectedRecord()" function below
 // Also cleaned up code below to not require the tmpRecord variable
 Ext.apply(Ext.data.validations, {
@@ -18614,6 +18723,7 @@ Ext.define("COMS.controller.Authoring.DrugRegimen", {
 		});
 	},
 
+
 /**************
 	getDrugInfoFromVistA : function (drugName, drugIEN, fnc) {
 		var URL = Ext.URLs.DrugInfo + "/" + drugIEN;
@@ -19667,7 +19777,7 @@ DossageAmt
 			}
 		});
 	},
-**/
+ **/
 
 	isDrugHydration : function(medInfo) {
 		if ("0000" === medInfo.IEN) {
@@ -20641,6 +20751,51 @@ Ext.define("COMS.controller.Common.SelectAdverseReactionAlerts", {
 	}
 });
 
+Ext.define("COMS.controller.Common.TemplateSelectorController", {
+	"extend": "Ext.app.Controller",
+
+	"models": [
+		"Cancer", "CancerStage", "Template"
+	],
+	"stores": [
+		"CancerList", "CancerStageList", "TemplateList"
+	],
+	"views": [
+		"Common.TemplateSelector"
+	],
+
+	"refs": [{
+		"ref": "CancerSelector",
+		"selector": "TemplateSelector [name=\"CancerSelector\"]"
+	}],
+
+	"init": function() {
+		this.control({
+			"TemplateSelector radiogroup": {
+				"change": this.onTemplateSrcSelect
+			}
+		});
+	},
+	"onTemplateSrcSelect": function(obj, value) {
+		debugger;
+		var theStore = this.getCancerSelector().getStore();
+		theStore.load({
+			"scope": this,
+			"params": {
+				"location": value.templateSrc
+			},
+			"failure": function(records, operation, a, b) {
+				debugger;
+			},
+			"success": function(records, operation, a, b) {
+				debugger;
+			},
+			"callback": function(records, operation, a, b) {
+				debugger;
+			}
+		});
+	}
+});
 Ext.define("COMS.controller.Common.puWinAddCumDose", {
 	extend : "Ext.app.Controller",
 
@@ -36351,7 +36506,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			"EditOEMRecord button[text=\"Cancel\"]" : {
 				click: this.CloseWidget
 			},
-
 			"EditOEMRecord FlowRate[name=\"FlowRate\"]" : { 
 				blur : this.CalcInfusionTime
 			},
@@ -36366,8 +36520,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			}
 		});
 	},
-
-
 
 	// Grab the list of routes from the Drug Info and build the Route Combo Store from that list
 	AddDrugInfoFromVistA2OEMEditRouteStore : function(respObj, theScope) {
@@ -36427,16 +36579,17 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var route = combo.getValue();
 		var theContainer = this.getFluidInfo();
 		var aContainer;
+		var f1;
 		if (Ext.routeRequiresFluid(route)) {
 			theContainer.show();
-			var f1 = this.getFluidVol();
+			f1 = this.getFluidVol();
 			f1.allowBlank = false;
 			f1 = this.getFlowRate();
 			f1.allowBlank = false;
 		}
 		else {
 			theContainer.hide();
-			var f1 = this.getFluidVol();
+			f1 = this.getFluidVol();
 			f1.allowBlank = true;
 			f1 = this.getFlowRate();
 			f1.allowBlank = true;
@@ -36550,10 +36703,6 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 				MedRecord1.InfusionTime1 = MedRecord.InfusionTime1;
 		}
 
-
-
-
-
 		if (multipleRecords) {
 			for (i = CalcDayIndex; i < MaxRecords; i++) {
 				CkRecord2Match = PatientInfo.OEMRecords.OEMRecords[i];
@@ -36646,6 +36795,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 			Ext.MessageBox.alert("Medication Edits", msg);
 			return;
 		}
+
 		values.Reason = strReason;
 
 		Ext.Msg.show({
@@ -36677,7 +36827,7 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 	},
 
 	CloseWidget : function(button, event, eOpts) {
-        var win = button.up('window');
+		var win = button.up('window');
 		win.close();
 	},
 
@@ -36760,17 +36910,18 @@ Ext.define("COMS.controller.NewPlan.OEM_Edit", {
 		var theForm = thisCtl.getTheForm();
 		var ShowOptional = false;
 		var ShowFluid = false, ShowFluid2 = false;
+		var f1;
 
 		if (Ext.routeRequiresFluid(MedRecord.InfusionMethod)) {
 			this.getFluidInfo().show();
-			var f1 = this.getFluidVol();
+			f1 = this.getFluidVol();
 			f1.allowBlank = false;
 			f1 = this.getFlowRate();
 			f1.allowBlank = false;
 		}
 		else {
 			this.getFluidInfo().hide();
-			var f1 = this.getFluidVol();
+			f1 = this.getFluidVol();
 			f1.allowBlank = true;
 			f1 = this.getFlowRate();
 			f1.allowBlank = true;
@@ -38190,33 +38341,32 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 
 
 Ext.define('COMS.controller.TemplateList.TemplateListTab', {
-    extend: 'Ext.app.Controller',
-    stores: [
-        "TemplateListStore",
+	extend: 'Ext.app.Controller',
+	stores: [
+		"TemplateListStore",
 		"TemplateListByLocationStore"
-    ],
-    views: [
-        'TemplateList.TemplateListTab',
+	],
+	views: [
+		'TemplateList.TemplateListTab',
 		"Common.selCTOSTemplate"
-    ],
+	],
 
-    refs: [
-        { ref: "theGrid", selector: "TemplateListTab grid"},
-        {
-            ref: "TemplateType",
-            selector: "TemplateListTab selCTOSTemplate selTemplateType"
-        }
-    ],
+	refs: [
+		{ ref: "theGrid",      selector: "TemplateListTab grid" },
+		{ ref: "TemplateType", selector: "TemplateListTab selCTOSTemplate selTemplateType" }
+	],
 
 	init: function () {
 		this.control({
 			"scope" : this,
-
 			"TemplateListTab" : {
 				"beforerender" : this.renderPanel
 			},
 			"TemplateListTab selCTOSTemplate selTemplateType": {
 				"select" : this.TemplateTypeChange
+			},
+			"TemplateListTab selCTOSTemplate selTemplateSrc" : {
+				"change" : this.onTemplateSrcSelect
 			},
 			"TemplateListTab selCTOSTemplate button": {
 				"click" : this.ShowAllTemplates
@@ -38225,6 +38375,27 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 				"cellclick" : this.clickCell
 			}
 		});
+	},
+
+	onTemplateSrcSelect : function(obj, value) {
+		debugger;
+
+	  var theStore = this.getCancerSelector().getStore();
+	  theStore.load({
+		  "scope" : this,
+		  "params" : {
+			  "location" : value.templateSrc
+		  },
+		  "failure" : function( records, operation, a, b) {
+			  debugger;
+		  },
+		  "success" : function( records, operation, a, b) {
+			  debugger;
+		  },
+		  "callback" : function( records, operation, a, b) {
+			  debugger;
+		  }		  
+	  });
 	},
 
 	showPatientListWidget : function(thePatients, theTemplateDesc) {
@@ -38482,6 +38653,7 @@ Ext.application({
 		"Common.puWinChangeAdminDate",
 		"Common.MedRemindersForm",
 		"Common.puWinTreatmentAmmend",
+		"Common.TemplateSelectorController",
 		"NewPlan.AdverseEventsHistory",
 		"NewPlan.AskQues2ApplyTemplate",
 		"NewPlan.NewPlanTab",

@@ -73,6 +73,7 @@ Ext.URLs.SiteConfig              = "/LookUp/SiteConfig";
 Ext.URLs.LookupIVFluidType4Med   = "/LookUp/IVFluidType4Med/";
 Ext.URLs.DiseaseType             = "/LookUp/view/DiseaseType";
 Ext.URLs.DrugInfo                = "/LookUp/DrugInfo";
+Ext.URLs.DrugRoutes              = "/LookUp/DrugRoutes";
 // No Params,
 // Returns list of all Diseases, used in "Select Disease Type" combobox
 // Example Usage - https://devtest.dbitpro.com/LookUp/view/DiseaseType
@@ -92,6 +93,14 @@ Ext.URLs.Templates               = "/LookUp/Templates";
 Ext.URLs.TemplateList            = "/LookUp/Templates";
 
 Ext.URLs.TemplateListByLocation  = "/LookUp/Templates/Location"; // Requires LocationID as the last parameter
+
+Ext.URLs.TemplateListFilterByLocation  = "/LookUp/Templates/List"; // Requires LocationID as the last parameter (/LookUp/Templates/List/<ID>)
+Ext.URLs.CancerListFilterByLocation  = "/LookUp/Templates/Cancer"; // Requires LocationID as the last parameter (/LookUp/Templates/Cancer/<ID>)
+
+
+
+
+
 
 Ext.URLs.FlagTemplateInactive    = "/LookUp/flagTemplateInactive";
 
@@ -506,6 +515,7 @@ Ext.COMSModels.FluidType = "COMS.model.LookupTable_FluidType";
 Ext.COMSModels.GenericLookup = "COMS.model.GenericLookupModel";
 Ext.COMSModels.Hydration = "COMS.model.HydrationDrug"; // MWB 12/28/2011 - Added for the Hydration Drugs
 Ext.COMSModels.Infusion = "COMS.model.Infusion"; // MWB - 12/30/2011 - Added Infusion
+Ext.COMSModels.DrugRoutes = "COMS.model.DrugRoutes";
 Ext.COMSModels.LabInfo = "COMS.model.LabInfo";
 Ext.COMSModels.LUReferences = "COMS.model.LUReferences"; // MWB 12/27/2011 - Added for the AddReference Combo
 Ext.COMSModels.LookupTable = "COMS.model.LookupTable"; //KD - 12/20/11 - Model associated with adding data to the lookup table

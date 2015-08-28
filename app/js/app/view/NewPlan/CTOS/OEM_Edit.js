@@ -67,7 +67,8 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"displayField": "name",
 	"valueField": "id",		// "valueField" : "IEN",
 	"queryMode" : "local",
-	"typeAhead" : true
+	"typeAhead" : true,
+	"typeAheadDelay" : 1000
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.DrugUnits" ,{
@@ -87,9 +88,16 @@ Ext.define("COMS.view.NewPlan.CTOS.InfusionMethod" ,{
 	"fieldLabel": "Route <em class=\"required-field\">*</em>",
 	"width": 240,
 	"labelWidth": 70,
-	"store": "InfusionStore",
+// "store": "DrugRoutesStore",
+							"store" : Ext.create("Ext.data.Store", {
+								// "fields" : [ "ien", "name", "code" ]
+								"model" : Ext.COMSModels.DrugRoutes
+							}),
+							'queryMode' : 'local',
+							'editable' : true,
+							'typeAhead' : true,
 	"displayField": "name",
-	"valueField": "name"
+	"valueField": "ien"
 });
 
 Ext.define("COMS.view.NewPlan.CTOS.SelectReason" ,{
