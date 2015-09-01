@@ -608,14 +608,29 @@ error_log("Lookup Controller - saveTemplate() - Save Therapy Complete");
     }
 
 	function _TemplateCancerList($Location_ID) {
-        $query = "select Distinct l4.Name as DiseaseName
-        ,mt.Location_ID
-        ,l6.Name as Location
-        from Master_Template mt
-        LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
-        INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
-        WHERE Is_Active = 1 and mt.Patient_ID is null";
-		$query = $query . ($Location_ID == null ? "" : " and mt.Location_ID = '$Location_ID'") . " Order By 'DiseaseName'";
+
+		switch ($Location_ID) {
+			case 1:
+				$LocationName = "My Templates";
+				break;
+			case 2:
+				$LocationName = "Local Templates";
+				break;
+			case 3:
+				$LocationName = "National Templates";
+				break;
+		}
+
+        $query = "select Distinct 
+		l4.Name as name,
+		mt.Location_ID,
+		mt.Cancer_ID as CancerID,
+		l6.Name as Location
+		from Master_Template mt
+		LEFT OUTER JOIN LookUp l4 ON l4.Lookup_ID = mt.Cancer_ID 
+		INNER JOIN LookUp l6 ON l6.Lookup_ID = mt.Location_ID 
+		WHERE Is_Active = 1 and mt.Patient_ID is null";
+		$query = $query . ($Location_ID == null ? "" : " and l6.Name = '$LocationName'") . " Order By 'name'";
 error_log("TemplateList = $query");
         $Templates = $this->LookUp->query($query);
         return $Templates;
@@ -699,17 +714,28 @@ error_log("TemplateList = $query");
     //  LookUp/Templates/Patient/PatientID
     //  LookUp/Templates/Location/LocationID
     function Templates($field = NULL, $id = NULL) {
+error_log("LookUp Controller - Templates - $field; $id");
+
 		$jsonRecord = array();
 		$jsonRecord["success"] = true;
+		$Location = htmlspecialchars($_GET["location"]);
+		$CancerID = htmlspecialchars($_GET["cancerid"]);
+
 
 		if (NULL === $field) {
-			$templates = $this->_TemplateListWithPatients();
+			if ("" !== $CancerID) {
+error_log("LookUp Controller - Templates get by Cancer ID - $CancerID");
+				$templates = $this->LookUp->getTemplatesByType("CANCER", $CancerID);
+			}
+			else {
+				$templates = $this->_TemplateListWithPatients();
+			}
 		}
 		else if ("List" === $field) {
 			$templates = $this->_TemplateList($id);
 		}
 		else if ("Cancer" === $field) {
-			$templates = $this->_TemplateCancerList($id);
+			$templates = $this->_TemplateCancerList($Location);
 		}
 		else if (NULL === $id) {
 			$templates = $this->_TemplatePatients($field);
@@ -1022,6 +1048,10 @@ error_log("Lookup Controller - EFNR() FNR - $query");
     }
 
     function DiseaseStage($id = null) {
+		$CancerParameterID = htmlspecialchars($_GET["cancerid"]);
+		if ($id === null && "" !== $CancerParameterID) {
+			$id = $CancerParameterID;
+		}
         if ($id != null) {
             $Msg = "Disease Stages";
             $jsonRecord = array();
@@ -1050,7 +1080,7 @@ error_log("Lookup Controller - EFNR() FNR - $query");
             return;
         } else {
             $this->set('diseasestages', null);
-            $this->set('frameworkErr', 'No Disease ID provided.');
+	        $this->set('frameworkErr', 'No Disease ID provided.');
         }
     }
 

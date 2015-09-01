@@ -1145,6 +1145,7 @@ if ("0" === $drugIEN) {
                     ,l4.Name as DiseaseName
                     ,mt.Disease_Stage_ID 
                     ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
+                    ,lu.Name + '/ ' + case when l3.Name is not null then l3.Description else lu.Description end AS Name_Desc
                     from Master_Template mt
                     INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID
                     INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID
@@ -1164,6 +1165,7 @@ if ("0" === $drugIEN) {
     }
 
     function getTemplatesByType($field, $id) {
+error_log("LookUp Controller - Templates getTemplatesByType");
             $query = "
             select 
                 lu.Name as name
@@ -1178,11 +1180,10 @@ if ("0" === $drugIEN) {
                 , mt.Version as version
                 , l2.Name as emoLevel
                 , mt.Febrile_Neutropenia_Risk as fnRisk 
-
-                    ,l4.Name as DiseaseName
-                    ,mt.Disease_Stage_ID 
-                    ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
-
+                ,l4.Name as DiseaseName
+                ,mt.Disease_Stage_ID 
+                ,CASE WHEN l5.Name IS NOT NULL THEN l5.Name ELSE '' END AS  DiseaseStageName
+                ,lu.Name + '/ ' + case when l3.Name is not null then l3.Description else lu.Description end AS Name_Desc
                 from Master_Template mt 
                 INNER JOIN LookUp lu ON lu.Lookup_ID = mt.Regimen_ID 
                 INNER JOIN LookUp l1 ON l1.Lookup_ID = mt.Cycle_Time_Frame_ID 
@@ -1191,7 +1192,12 @@ if ("0" === $drugIEN) {
                 LEFT  JOIN LookUp l5 ON l5.Lookup_ID = mt.Disease_Stage_ID
                 LEFT OUTER JOIN LookUp l3 ON l3.Name = convert(nvarchar(max),mt.Regimen_ID) ";
             if ($field != NULL && strtoupper($field) == 'CANCER') {
-                $query .= "WHERE mt.Cancer_ID = '$id' and Is_Active = 1 and mt.Patient_ID is null";
+				if ("ALL" === strtoupper($id) ) {
+					$query .= "WHERE Is_Active = 1 and mt.Patient_ID is null";
+				}
+				else {
+	                $query .= "WHERE mt.Cancer_ID = '$id' and Is_Active = 1 and mt.Patient_ID is null";
+				}
             } else if ($field != NULL && strtoupper($field) == 'PATIENT') {
                 $query .= "INNER JOIN Patient_Assigned_Templates pat ON pat.Template_ID = mt.Template_ID " .
                         "WHERE pat.Patient_ID = '$id' and pat.Is_Active = 1";
@@ -1201,7 +1207,7 @@ if ("0" === $drugIEN) {
                 $query .= "WHERE Is_Active = 1 and mt.Patient_ID is null";
             }
             $query .= " Order By description";
-            
+error_log("LookUp Controller - Templates Query = $query");
         return $this->query($query);
     }
 
