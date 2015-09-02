@@ -720,12 +720,26 @@ error_log("LookUp Controller - Templates - $field; $id");
 		$jsonRecord["success"] = true;
 		$Location = htmlspecialchars($_GET["location"]);
 		$CancerID = htmlspecialchars($_GET["cancerid"]);
+		$getPatients = htmlspecialchars($_GET["patients"]);
 
 
 		if (NULL === $field) {
 			if ("" !== $CancerID) {
 error_log("LookUp Controller - Templates get by Cancer ID - $CancerID");
 				$templates = $this->LookUp->getTemplatesByType("CANCER", $CancerID);
+				if ("1" == $getPatients) {
+					if (null !== $templates) {
+						$TemplatesWithPatients = array();
+						foreach($templates as $templateRecord) {
+							$TemplateID = $templateRecord['id'];
+							$Patients = $this->getPatients4Template( $TemplateID );
+							$templateRecord["Patients"] = $Patients;
+							$templateRecord["PatientCount"] = count($Patients);
+							$TemplatesWithPatients[] = $templateRecord;
+						}
+					}
+					$templates = $TemplatesWithPatients;
+				}
 			}
 			else {
 				$templates = $this->_TemplateListWithPatients();

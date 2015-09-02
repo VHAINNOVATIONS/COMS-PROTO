@@ -5633,6 +5633,11 @@ Ext.define('COMS.store.TemplateListByLocationStore', {
 	extend : 'Ext.data.Store',
 	model : Ext.COMSModels.TemplateList,
 	groupField: 'DiseaseName',
+
+  remoteSort:false,
+  remoteFilter:false,
+  remoteGroup:false,
+
 	proxy: {
 		type: 'rest',
 		url: Ext.URLs.TemplateListByLocation,
@@ -5645,19 +5650,22 @@ Ext.define('COMS.store.TemplateListByLocationStore', {
 });
 
 Ext.define('COMS.store.TemplateListStore', {
-    extend : 'Ext.data.Store',
-    model : Ext.COMSModels.TemplateList,
-    groupField: 'DiseaseName',
-	autoLoad: true,
-	proxy: {
-		type: 'rest',
-		url: Ext.URLs.TemplateList,
-		reader: {
-			type: 'json',
-			root: 'records'
+	extend : 'Ext.data.Store',
+	model : Ext.COMSModels.TemplateList,
+	groupField: 'DiseaseName',
+//	autoLoad: true,
+	"proxy"  : {
+		"type" : "rest",
+		"pageParam": false, //to remove param "page"
+		"startParam": false, //to remove param "start"
+		"limitParam": false, //to remove param "limit"
+		"noCache": false, //to remove param "_dc"
+		"url": Ext.URLs.TemplateList,
+		"reader" : {
+			"type" : "json",
+			"root" : "records"
 		}
 	}
-
 });
 
 Ext.define('COMS.store.TemplateSources', {
@@ -16882,9 +16890,15 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 
 	"items" : [
 		{"xtype" : "RequiredInstr", "hidden" : false },
-		// { "xtype" : "selCTOSTemplate", "name" : "tltSelTemplateByStages" },
-		{ "xtype" : "TemplateSelector", "name" : "tltTemplateSelector" }
-/**		,
+		{ "xtype" : "TemplateSelector", "name" : "tltTemplateSelector" },
+		{ "xtype" : "container", 
+			"layout" : "hbox", 
+			"defaults" : { "xtype" : "button" }, 
+			"items" : [
+				{ "text" : "Show All", "name" : "ShowAll" },
+				{ "text" : "Show All for Cancer", "name" : "Show4Cancer", "hidden" : true }
+			] 
+		},
 		{
 			"xtype" : "grid", 
 			"name" : "tltGrid",
@@ -16908,7 +16922,6 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 				}
 			]
 		}
-**/
 	]
 });
 Ext.define("COMS.view.TemplateList.puWinListPatients", {
@@ -21004,8 +21017,6 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		}
 		qStr = query + " TemplateSelector [name=\"" + endObj + "\"]";
 		var theObj = Ext.ComponentQuery.query(qStr);
-// console.log(qStr);
-// console.log(theObj.length);
 		return theObj[0];
 	},
 
@@ -21054,7 +21065,12 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 	},
 
 	"onTemplateSelectorLoaded" : function(obj) {
-		// debugger;
+		if ("Template List" == obj.up("panel").title) {
+			this.BtnResetFilter(obj).hide();
+		}
+		else {
+			this.BtnResetFilter(obj).show();
+		}
 	},
 
 	"resetAllCombos" : function(obj) {
@@ -21130,9 +21146,12 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		var qParam = value.templateSrc;
 		this.resetAllCombos(obj);
 
+if ("Template List" == obj.up("panel").title) {
+}
+else {
 		var theBtn = this.BtnResetFilter(obj);
 		theBtn.show();
-
+}
 		var theCombo = this.CancerSelector(obj);
 		theCombo.show();
 		var theStore = theCombo.getStore();
@@ -21145,55 +21164,57 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 	},
 
 	"onCancerSelect" : function(obj, value) {
-		var theCombo = this.CancerStageSelector(obj)
+		var theCombo = this.CancerStageSelector(obj);
+		var SrcPanel = theCombo.up("panel");
 		theCombo.hide();
 		theCombo.reset();
 
-		var tmpCombo = this.NoCancerStageMsg(obj);
-		tmpCombo.hide();
-		tmpCombo = this.TemplateByLocationList(obj);
-		tmpCombo.hide();
-		tmpCombo.reset();
+		if ("Template List" !== SrcPanel.title) {
+			var tmpCombo = this.NoCancerStageMsg(obj);
+			tmpCombo.hide();
+			tmpCombo = this.TemplateByLocationList(obj);
+			tmpCombo.hide();
+			tmpCombo.reset();
+			var theCancer = value[0].getData();
+			this.selectedCancer = theCancer;
 
-		var theCancer = value[0].getData();
-		this.selectedCancer = theCancer;
+			var theMsg;
+			var theStore = theCombo.getStore();
+			theCombo.lastQuery = null; 
+			theStore.loadData([],false);
+			theCombo.show();
 
-		var theMsg;
-		var theStore = theCombo.getStore();
-		theCombo.lastQuery = null; 
-		theStore.loadData([],false);
-		theCombo.show();
-
-		theStore.load({
-			"scope": this,
-			"params": {
-				"cancerid": theCancer.CancerID
-			},
-			"callback" : function( records, operation, a, b) {
-					// debugger;
-				theCombo = this.CancerStageSelector(obj);
-				if (records.length > 0) {
-					theCombo.show();
+			theStore.load({
+				"scope": this,
+				"params": {
+					"cancerid": theCancer.CancerID
+				},
+				"callback" : function( records, operation, a, b) {
+						// debugger;
+					theCombo = this.CancerStageSelector(obj);
+					if (records.length > 0) {
+						theCombo.show();
+					}
+					else {
+						theCombo.hide();
+						theMsg = this.NoCancerStageMsg(obj);
+						theMsg.show();
+						var theCombo = this.TemplateByLocationList(obj);
+						theCombo.show();
+						var theStore = theCombo.getStore();
+						theCombo.lastQuery = null; 
+						theStore.load({
+							"scope": this,
+							"params": {
+								"cancerid": theCancer.CancerID
+							},
+							"callback" : function( records, operation, a, b) {
+							}
+						});
+					}
 				}
-				else {
-					theCombo.hide();
-					theMsg = this.NoCancerStageMsg(obj);
-					theMsg.show();
-					var theCombo = this.TemplateByLocationList(obj);
-					theCombo.show();
-					var theStore = theCombo.getStore();
-					theCombo.lastQuery = null; 
-					theStore.load({
-						"scope": this,
-						"params": {
-							"cancerid": theCancer.CancerID
-						},
-						"callback" : function( records, operation, a, b) {
-						}
-					});
-				}
-			}
-		});
+			});
+		}
 	},
 
 	"onCancerStageSelect" : function(obj, value) {
@@ -38825,6 +38846,30 @@ Ext.define("COMS.controller.ProgrammerBtns", {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 	extend: 'Ext.app.Controller',
 	stores: [
@@ -38838,14 +38883,29 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 	],
 
 	refs: [
-		{ ref: "theGrid",      selector: "TemplateListTab grid" },
-		{ ref: "TemplateType", selector: "TemplateListTab selCTOSTemplate selTemplateType" }
+		{ ref: "ShowAllBtn",     selector: "TemplateListTab button[name=\"ShowAll\"]" },
+		{ ref: "Show4CancerBtn", selector: "TemplateListTab button[name=\"Show4Cancer\"]" },
+		{ ref: "theGrid",        selector: "TemplateListTab grid" },
+		{ ref: "TemplateType",   selector: "TemplateListTab TemplateSelector [name=\"AllTemplateSelector\"]" },
+		{ ref: "CancerType",   selector: "TemplateListTab TemplateSelector [name=\"CancerSelector\"]" },
+		// { ref: "TemplateType",   selector: "TemplateListTab selCTOSTemplate selTemplateType" }
 	],
 
 	init: function () {
 		this.application.on({ TemplateSelected : this.HandleTemplateSelected, scope : this });
 		this.control({
 			"scope" : this,
+			"TemplateListTab button[name=\"Show4Cancer\"]" : {
+				"click" : this.handleShow4CancerClick
+			},
+			"TemplateListTab button[name=\"ShowAll\"]" : {
+				"click" : this.handleShowAllBtnClick
+			},
+			"TemplateListTab TemplateSelector [name=\"CancerSelector\"]": {
+				"select" : this.CancerTypeChange
+			},
+
+/**
 			"TemplateListTab" : {
 				"beforerender" : this.renderPanel
 			},
@@ -38858,22 +38918,41 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 			"TemplateListTab selCTOSTemplate button": {
 				"click" : this.ShowAllTemplates
 			},
+*/
 			"TemplateListTab grid" : {
 				"cellclick" : this.clickCell
 			}
 		});
 	},
 
+	handleShow4CancerClick : function(btn, b, c) {
+		var theCancer = this.getCancerType();
+		var theGrid = this.getTheGrid();
+		theGrid.getStore().load({"params" : { "cancerid" : theCancer.value, "patients" : "1" }});
+	},
+
+	handleShowAllBtnClick : function(btn, b, c) {
+		var theGrid = this.getTheGrid();
+		theGrid.reconfigure("TemplateListStore");
+		theGrid.getStore().load();
+
+	},
+
+	CancerTypeChange : function(obj, b, c) {
+		this.getShow4CancerBtn().show();
+	},
+
 	HandleTemplateSelected : function( opts ) {
 		if ("Template List" === opts.src.title) {
 			var theTemplate = opts.template;
 			// this.ShowSelectedTemplate(theTemplate);
+			var theGrid = opts.src.down("grid");
+			var theStore = theGrid.getStore();
+			theStore.load({"params" : { "template" : theTemplate.id, "patients" : "1" }});
 		}
 	},
 
 	onTemplateSrcSelect : function(obj, value) {
-		debugger;
-
 	  var theStore = this.getCancerSelector().getStore();
 	  theStore.load({
 		  "scope" : this,
@@ -38921,11 +39000,14 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 		}
 	},
 
+/*
 	renderPanel: function (panel) {
 		var theGrid = this.getTheGrid();
 		//////////////////////////////////////////// theGrid.getStore().load();
 		return true;
-	},
+	}
+
+
     TemplateTypeChange: function (combo, recs, eOpts) {
         var guid = combo.getValue();
         var text = combo.getRawValue();
@@ -38940,7 +39022,44 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
         theGrid.reconfigure("TemplateListStore");
         theGrid.getStore().load();
     }
+*/
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Ext.define('COMS.controller.TemplateList.puWinListPatients', {
 	extend: 'Ext.app.Controller',
