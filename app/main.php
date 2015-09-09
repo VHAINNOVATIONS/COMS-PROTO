@@ -37,9 +37,10 @@
 	$ProjType = "Release 1.16d";	// Aug 20, 2015; Finally fixed defect where edits in OEM panel are updated AND pushed to the Orders Tab
 	$ProjType = "Release 1.17";		// Aug 21, 2015; Promote to 1.17
 	$ProjType = "Release 1.17a";	// Aug 27, 2015; 
+	$ProjType = "Release 1.17b";		// Sept 1, 2015; - Major work done on the "Disease/Stage/Template" selection process
 	*/
 
-	$ProjType = "Release 1.17b";		// Sept 1, 2015; - Major work done on the "Disease/Stage/Template" selection process
+	$ProjType = "Release 1.17c";		// Sept 9, 2015; - Final changes on Disease/Stage/Template selection process
 
 
 /* <!doctype html> */

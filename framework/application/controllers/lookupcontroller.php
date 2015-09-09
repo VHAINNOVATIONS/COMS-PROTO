@@ -1062,10 +1062,11 @@ error_log("Lookup Controller - EFNR() FNR - $query");
     }
 
     function DiseaseStage($id = null) {
-		$CancerParameterID = htmlspecialchars($_GET["cancerid"]);
-		if ($id === null && "" !== $CancerParameterID) {
-			$id = $CancerParameterID;
-		}
+        $CancerParameterID = htmlspecialchars($_GET["cancerid"]);
+        if ($id === null && "" !== $CancerParameterID) {
+            $id = $CancerParameterID;
+        }
+
         if ($id != null) {
             $Msg = "Disease Stages";
             $jsonRecord = array();
@@ -1090,12 +1091,12 @@ error_log("Lookup Controller - EFNR() FNR - $query");
                     $jsonRecord['records'] = $retVal;
                 }
             }
-            $this->set('jsonRecord', $jsonRecord);
-            return;
         } else {
             $this->set('diseasestages', null);
-	        $this->set('frameworkErr', 'No Disease ID provided.');
+            $this->set('frameworkErr', 'No Disease ID provided.');
+            $jsonRecord['msg'] = "No Disease ID provided.";
         }
+        $this->set('jsonRecord', $jsonRecord);
     }
 
     function viewall($name = NULL, $description = NULL) {

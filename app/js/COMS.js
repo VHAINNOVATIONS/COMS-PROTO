@@ -2821,6 +2821,7 @@ Ext.define('COMS.model.CTOS', {
             'id',					// GUID for this record
 			'Order_IDR',
             'Disease',
+			'DiseaseName',
             'DiseaseStage',
             'RegimenName',			// via lookup into Lookup Table for Regimen Name Data Type
 			'Description',			// raw data
@@ -6388,11 +6389,12 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 			},
 			"items" : [
 				{
-					"xtype" : "fieldcontainer", 
+					"xtype" : "radiogroup", 
+					"columns" : 1,
+					"name" : "SelectTemplateType",
 					"fieldLabel" : "What do you want to do?", 
 					"labelAlign" : "right", 
 					"labelWidth" : 180,
-					"defaultType" : "radiofield", 
 					"defaults" : {
 						"flex" : 1
 					},
@@ -7675,6 +7677,35 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 	"autoEl" : { "tag" : "section" },
 	"resizable" : false,
 	"items"  : [
+		{ "xtype" : "container",
+			"name" : "CSelectAllTemplates",
+			"layout" : "hbox",
+			"hidden" : true,
+			"resizable" : false,
+			"items" : [
+				{
+					"xtype"        : "combo",
+					"name"         : "AllTemplateSelector",
+					"hidden"       : false,
+					"width"        : 600,
+					"labelWidth"   : 190,
+					"margin"       : "0 0 5 0",
+					"fieldLabel"   : "Select Template <em>*</em>",
+					"labelAlign"   : "right",
+					"displayField" : "Name_Desc",
+					"valueField"   : "id",
+					"store"        : "TemplateList",
+					"queryMode"    : "local"
+				},
+				{ 
+					"xtype" : "button", 
+					"title" : "SetFilter",
+					"name" : "SelectTemplateByLocationBtn",
+					"text" : " Select Template by Location ", 
+					"margin" : "0 0 0 5"
+				}
+			]
+		},
 
 
 		{ "xtype" : "container",
@@ -7684,6 +7715,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 				{ "xtype" : "container",
 					"resizable" : false,
 					"layout" : "hbox",
+					"name" : "cLocationSelector",
 					"items" : [
 						{
 							"xtype"      : "radiogroup",
@@ -7721,11 +7753,24 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 							"hidden"       : true,
 							"width"        : 600,
 							"labelWidth"   : 190,
-							"fieldLabel"   : "Select type of Cancer",
+							"fieldLabel"   : "Select type of Cancer.",
 							"labelAlign"   : "right",
 							"displayField" : "name",
 							"valueField"   : "CancerID",
 							"store"        : "CancerList",
+							"queryMode"    : "local"
+						},
+						{
+							"xtype"        : "combo",
+							"name"         : "CancerSelectorAllTypes",
+							"hidden"       : true,
+							"width"        : 600,
+							"labelWidth"   : 190,
+							"fieldLabel"   : "Select type of Cancer-",
+							"labelAlign"   : "right",
+							"displayField" : "name",
+							"valueField"   : "id",
+							"store"        : "DiseaseType",
 							"queryMode"    : "local"
 						},
 						{
@@ -7742,58 +7787,44 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 							"width"        : 300,
 							"labelWidth"   : 190,
 							"labelAlign"   : "right",
-							"fieldLabel"   : "Select Cancer Stage",
+							"fieldLabel"   : "Select Disease Stage",
 							"displayField" : "Stage",
 							"valueField"   : "ID",
 							"store"        : "CancerStageList",
 							"queryMode"    : "local"
 						},
-						{
-							"xtype"        : "combo",
-							"name"         : "TemplateByLocationList",
-							"hidden"       : true,
-							"width"        : 600,
-							"labelWidth"   : 190,
-							"labelAlign"   : "right",
-							"fieldLabel"   : "Select Template <em>*</em>",
-							"displayField" : "Name_Desc",
-							"valueField"   : "id",
-							"store"        : "TemplateList",
-							"queryMode"    : "local"
+						{ "xtype" : "container",
+							"resizable" : false,
+							"layout" : "hbox",
+							"items" : [
+								{
+									"xtype"        : "combo",
+									"name"         : "TemplateByLocationList",
+									"hidden"       : true,
+									"width"        : 600,
+									"labelWidth"   : 190,
+									"labelAlign"   : "right",
+									"fieldLabel"   : "Select Template <em>*</em>",
+									"displayField" : "Name_Desc",
+									"valueField"   : "id",
+									"store"        : "TemplateList",
+									"queryMode"    : "local"
+								},
+								{ 
+									"xtype"  : "button", 
+									"title"  : "SetFilter1",
+									"name"   : "SelectTemplateByLocationBtn1",
+									"text"   : " Select Template by Location ", 
+									"margin" : "0 0 5 5",
+									"hidden" : true
+								}
+							]
 						}
 					]
 				}
 			]
-		},
-
-		{ "xtype" : "container",
-			"name" : "CSelectAllTemplates",
-			"layout" : "hbox",
-			"hidden" : true,
-			"resizable" : false,
-			"items" : [
-				{
-					"xtype"        : "combo",
-					"name"         : "AllTemplateSelector",
-					"hidden"       : false,
-					"width"        : 600,
-					"labelWidth"   : 190,
-					"fieldLabel"   : "Select Template <em>*</em>",
-					"labelAlign"   : "right",
-					"displayField" : "Name_Desc",
-					"valueField"   : "id",
-					"store"        : "TemplateList",
-					"queryMode"    : "local"
-				},
-				{ 
-					"xtype" : "button", 
-					"title" : "SetFilter",
-					"name" : "SelectTemplateByLocationBtn",
-					"text" : " Select Template by Location ", 
-					"margin" : "5 0 0 5"
-				}
-			]
 		}
+
 	]
 });
 Ext.define("COMS.view.Common.VitalSignsHistory" ,{
@@ -17382,7 +17413,6 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 	HandleTemplateSelected : function( opts ) {
 		if ("Template Authoring" === opts.src.title) {
 			var theTemplate = opts.template;
-			// debugger;
 			this.ShowSelectedTemplateForm(theTemplate);
 		}
 	},
@@ -17435,10 +17465,17 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		var thisTab = this.getAuthoringTab();
 		this.getCourseInfo(thisTab).show();
 		this.getNewTemplateForm(thisTab).show();
+
+//		var tsController = this.getController("Common.TemplateSelectorController");
+//		tsController.ShowHideBlk2(thisTab, true);
+
+/***
 		var dANDs = this.getNewTemplateDiseaseAndStage(thisTab)
 		if (dANDs) {
 			dANDs.show();
 		}
+ ***/
+
 		if (theTemplate) {
 			this.selTemplateChange(theTemplate);
 		}
@@ -17452,28 +17489,40 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		// var CTOSModelParam = theTemplate.id;
 		this.application.Template = theTemplate;
 		// combo.hiddenValue = this.application.Template.description;
-		this.application.loadMask();
+		var thisTab = this.getAuthoringTab();
+		thisTab.setLoading("One moment please, loading data...", false);
+		// this.application.loadMask();
 		var mytemplate;
 		var authoringCtl = this.getController("Authoring.AuthoringTab");
+		var tsctrl = this.getController("Common.TemplateSelectorController");
 
 		this.getStore('CTOS').load({
+			scope : this,
 			params: {
 				URL: Ext.URLs.CTOS,
 				id: theTemplate.id
 			},
 			callback: function (records, operation, success) {
 				if (success) {
-					mytemplate = this.getAt(0);
+					// mytemplate = records[0].getData();
+					mytemplate = records[0];
 					authoringCtl.afterCTOSLoaded(mytemplate);
+this.application.fireEvent("setCancerTypeFromTemplate", {"panel" : "Template Authoring", "template": mytemplate});
+					// tsctrl.setCancerType(mytemplate);
+					var thisTab = this.getAuthoringTab();
+					thisTab.setLoading(false, false);
 				} else {
-					authoringCtl.application.unMask();
+					// authoringCtl.application.unMask();
+					var thisTab = this.getAuthoringTab();
+					thisTab.setLoading(false, false);
+
 					var errMsg = "Unknown Error";
-					if (operation.request.scope.reader.jsonData.frameworkErr) {
-						errMsg = operation.request.scope.reader.jsonData.frameworkErr;
-					}
-					else if (operation.error) {
-						errMsg = operation.error;
-					}
+					//if (operation.request.scope.reader.jsonData.frameworkErr) {
+					//	errMsg = operation.request.scope.reader.jsonData.frameworkErr;
+					//}
+					//else if (operation.error) {
+					//	errMsg = operation.error;
+					//}
 					Ext.MessageBox.alert('Failure', 'Load Template Failed: ' + errMsg);
 				}
 
@@ -17484,7 +17533,8 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 
 	// User has selected what they want to do...
 	TemplateTypeSelected: function (rbtn, newValue, oldValue, eOpts) {
-		this.application.loadMask();
+		rbtn.up("panel").setLoading("One moment please, loading data...", false);
+		// this.application.loadMask();
 		Ext.suspendLayouts();
 
 /* MWB - 6/17/2015 
@@ -17496,26 +17546,30 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 			wccConsoleLog("User has selected what to do");
 			// var theController = this.getController("Common.selCTOSTemplate");
 			var radioType = rbtn.inputValue;
+			var panelObj = rbtn.up("panel");
 
 			var selCTOSTemplate = this.getCTOSTemplateSelection();
 			var lblReqFields = this.getReqInstr();
 			lblReqFields.show();
 
+			selCTOSTemplate.show();
+
+			var tsController = this.getController("Common.TemplateSelectorController");
+
+
 			if (0 == radioType && newValue) {		// Select Existing Template
-				selCTOSTemplate.show();
-				// theController.showInitialSelector(selCTOSTemplate);
-				// theController.resetTemplateSrc(selCTOSTemplate);
+				tsController.StateMachine(panelObj, "ByLocation", null);
 				this.clearTemplate(null);
 				this.HideSelectedTemplateForm();
 			}
 			else if (1 == radioType && newValue) {	// Create New Template
-				selCTOSTemplate.hide();
+				tsController.StateMachine(panelObj, "AllCancer", null);
 				this.clearTemplate(null);
 				this.ShowSelectedTemplateForm(null);
-				// theController.hideInitialAndFilterSelector(selCTOSTemplate);
 			}
 			Ext.resumeLayouts(true);
-			this.application.unMask();
+			// this.application.unMask();
+			panelObj.setLoading(false, false);
 		}, this);
 		task.delay(150);
 	},
@@ -20954,60 +21008,613 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		"Common.TemplateSelector"
 	],
 
-	"refs": [
-		
-		{ "ref" : "SelectByCancer",            "selector" : "TemplateSelector [name=\"CSelectByCancer\"]" },
-		{ "ref" : "LocationSelector",          "selector" : "TemplateSelector radiogroup" },
-		{ "ref" : "BtnResetFilter",             "selector" : "TemplateSelector button[title=\"ResetFilter\"]" },
-
-		{ "ref" : "CancerSelector",            "selector" : "TemplateSelector [name=\"CancerSelector\"]" },
-		{ "ref" : "NoCancerStageMsg",          "selector" : "TemplateSelector [name=\"NoCancerStageSpecified\"]" },
-		{ "ref" : "CancerStageSelector",       "selector" : "TemplateSelector [name=\"CancerStageSelector\"]" },
-		{ "ref" : "TemplateByLocationList",    "selector" : "TemplateSelector [name=\"TemplateByLocationList\"]" },
-
-		{ "ref" : "SelectAllTemplates",        "selector" : "TemplateSelector [name=\"CSelectAllTemplates\"]" },
-		{ "ref" : "AllTemplateSelector",      "selector" : "TemplateSelector [name=\"AllTemplateSelector\"]" },
-		{ "ref" : "BtnSetFilter",              "selector" : "TemplateSelector button[title=\"SetFilter\"]" }
-	],
 
 
 	"init": function() {
+		this.application.on({ "SetSelectedCancerName" : this.SetSelectedCancerName, "scope" : this });
+		this.application.on({"setCancerTypeFromTemplate" : this.setCancerTypeFromTemplate, "scope" : this });		// {"panel" : "Template Authoring", "template": mytemplate});
 		this.control({
-			"TemplateSelector" : {
-				"afterrender" : this.onTemplateSelectorLoaded
-			},
+//			"TemplateSelector" : {
+//				"afterrender" : this.onTemplateSelectorLoaded
+//			},
 			"TemplateSelector button[name=\"ShowAllTemplatesBtn\"]" : {
 				"click" : this.onResetFilter
 			},
-			"TemplateSelector button[title=\"SetFilter\"]" : {
-				"click" : this.onSetFilter
+			"TemplateSelector button[name=\"SelectTemplateByLocationBtn\"]" : {
+				"click" : this.onSelectTemplateByLocationBtn
+			},
+			"TemplateSelector button[name=\"SelectTemplateByLocationBtn1\"]" : {
+				"click" : this.onSelectTemplateByLocationBtn1
 			},
 			"TemplateSelector radiogroup": {
 				"change": this.onTemplateLocSelect
 			},
 			"TemplateSelector [name=\"CancerSelector\"]" : {
 				"select" : this.onCancerSelect
-				// "change" : this.onCancerSelect
+			},
+			"TemplateSelector [name=\"CancerSelectorAllTypes\"]" : {
+				"select" : this.onCancerSelectAllTypes
 			},
 			"TemplateSelector [name=\"CancerStageSelector\"]" : {
 				"select" : this.onCancerStageSelect
-				// "change" : this.onCancerStageSelect
 			},
 			"TemplateSelector [name=\"AllTemplateSelector\"]" : {
-				"select" : this.onAllTemplateSelect
-				// "change" : this.onAllTemplateSelect
+				"select" : this.onSelectTemplateFromAllTemplates
 			},
 			"TemplateSelector [name=\"TemplateByLocationList\"]" : {
 				"select" : this.onTemplateByLocationSelect
-				// "change" : this.onTemplateByLocationSelect
 			}
 		});
 	},
 
+	"SetSelectedCancerName" : function(a, b, c) {
+debugger;
+	},
+
+	"onResetFilter" : function(obj) {
+		// Clicked the "Show All Templates" button from the Template Authoring Panel
+		this.StateMachine(obj.up("panel"), "ShowAllTemplates");
+	},
+
+	"onSelectTemplateByLocationBtn" : function(obj) {
+		// Cancel the loading of the AllTemplates store
+		var nObj = obj.up("panel");
+		var Combo = this.AllTemplateSelector(nObj);
+		var Store = Combo.getStore();
+		Ext.Ajax.abort(Store.lastRequest);
+
+		Combo.hide();
+		obj.hide();
+
+		this.cLocationSelector(nObj).show();
+		this.rbSelectLocation(nObj).show();
+		this.rbSelectLocation(nObj).reset();
+		this.ShowAllTemplatesBtn(nObj).show();
+
+		this.CancerSelector(nObj).hide();
+		this.CancerSelectorAllTypes(nObj).hide();
+		this.NoCancerStageSpecified(nObj).hide();
+		this.CancerStageSelector(nObj).hide();
+		this.TemplateByLocationList(nObj).hide();
+		this.SelectTemplateByLocationBtn1(nObj).hide();
+		this.CSelectAllTemplates(nObj).hide();
+		this.AllTemplateSelector(nObj).hide();
+	},
+
+	"onSelectTemplateByLocationBtn1" : function(obj) {
+		var Combo = this.AllTemplateSelector(obj);
+		var Store = Combo.getStore();
+		Ext.Ajax.abort(Store.lastRequest);
+	},
+	"onTemplateLocSelect": function(obj, value) {
+		this.StateMachine(obj.up("panel"), "TemplateLocSelect", value.templateSrc);
+	},
+	"onCancerSelect" : function(obj, value) {
+		this.StateMachine(obj.up("panel"), "ShowStage_Template", value[0].data.CancerID);
+	},
+	"onCancerSelectAllTypes" : function(obj, value) {
+		this.StateMachine(obj.up("panel"), "ShowStage_TemplateAllCancer", value[0].data.id);
+	},
+	"onCancerStageSelect": function(obj, value) {
+		debugger;
+	},
+	"onSelectTemplateFromAllTemplates" : function(obj, value) {
+		this.StateMachine(obj.up("panel"), "ShowAllTemplateData", value[0].data);
+	},
+	"onTemplateByLocationSelect" : function(obj, value) {
+		this.StateMachine(obj.up("panel"), "ShowTemplateData", value[0].data);
+	},
+
+	"StateMachine" : function(obj, state, Data) {
+		var thePanel;
+		if (obj.hasOwnProperty("title")) {
+			thePanel = obj.title;
+		}
+		else {
+			thePanel = obj.name;
+		}
+		switch (state) {
+			case "Null":
+				switch (thePanel) {
+					case "Template Authoring":
+						break;
+					case "Template List":
+						debugger;
+						break;
+					case "NewPlan_CTOS_Form":
+						debugger;
+						break;
+				}
+				break;
+			case "ByLocation":
+				switch (thePanel) {
+					case "Template Authoring":
+						this.cLocationSelector(obj).show();
+						this.rbSelectLocation(obj).show();
+						this.rbSelectLocation(obj).reset();
+						this.ShowAllTemplatesBtn(obj).show();
+
+						this.CancerSelector(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.NoCancerStageSpecified(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+					case "Template List":
+						this.ShowAllTemplatesBtn(obj).hide();
+						break;
+					case "NewPlan_CTOS_Form":
+						this.cLocationSelector(obj).show();
+						this.rbSelectLocation(obj).show();
+						this.rbSelectLocation(obj).reset();
+						this.ShowAllTemplatesBtn(obj).show();
+
+						this.CancerSelector(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.NoCancerStageSpecified(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+				}
+				break;
+			case "TemplateLocSelect":
+				switch (thePanel) {
+					case "Template Authoring":
+						var Combo = this.CancerSelector(obj);
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						delete Combo.lastQuery;
+						Store.loadData([],false);
+						Store.load({
+							"params": {
+								"location": Data
+							},
+							"callback" : function( records, operation) {
+							}
+						});
+						Store.lastRequest = Ext.Ajax.getLatest();
+
+						this.CancerSelectorAllTypes(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+					case "Template List":
+						var Combo = this.CancerSelector(obj);
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						delete Combo.lastQuery;
+						Store.loadData([],false);
+						Store.load({
+							"params": {
+								"location": Data
+							},
+							"callback" : function( records, operation) {
+							}
+						});
+						Store.lastRequest = Ext.Ajax.getLatest();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+
+
+						this.TL_ShowTemplatesBtn(obj).hide();
+						break;
+					case "NewPlan_CTOS_Form":
+						var Combo = this.CancerSelector(obj);
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						delete Combo.lastQuery;
+						Store.loadData([],false);
+						Store.load({
+							"params": {
+								"location": Data
+							},
+							"callback" : function( records, operation) {
+							}
+						});
+						Store.lastRequest = Ext.Ajax.getLatest();
+
+						this.CancerSelectorAllTypes(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+				}
+				break;
+			case "ShowStage_Template":
+				switch (thePanel) {
+					case "Template Authoring":
+						this.NoCancerStageSpecified(obj).hide();
+						var Combo = this.CancerStageSelector(obj);
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						delete Combo.lastQuery;
+						Store.loadData([],false);
+						Store.load({
+							"params": { "cancerid": Data },
+							"callback" : function( records, operation) {
+								if (records) {
+									if (0 === records.count) {
+										this.NoCancerStageSpecified(obj).show();
+										Combo.hide();
+									}
+								}
+							}
+						});
+						Store.lastRequest = Ext.Ajax.getLatest();
+
+						var Combo2 = this.TemplateByLocationList(obj);
+						var Store2 = Combo2.getStore();
+						Combo2.show();
+						Combo2.reset();
+						Combo2.lastQuery = null; 
+						Store2.loadData([],false);
+						Store2.load({
+							"params": { "cancerid": Data },
+							"callback" : function( records, operation) {
+								if (records) {
+									if (0 === records.count) {
+										debugger;
+									}
+								}
+							}
+						});
+						Store2.lastRequest = Ext.Ajax.getLatest();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+					case "Template List":
+						this.TL_ShowTemplatesBtn(obj).hide();
+						break;
+					case "NewPlan_CTOS_Form":
+						this.NoCancerStageSpecified(obj).hide();
+						var Combo = this.CancerStageSelector(obj);
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						delete Combo.lastQuery;
+						Store.loadData([],false);
+						Store.load({
+							"params": { "cancerid": Data },
+							"callback" : function( records, operation) {
+								if (records) {
+									if (0 === records.count) {
+										this.NoCancerStageSpecified(obj).show();
+										Combo.hide();
+									}
+								}
+							}
+						});
+						Store.lastRequest = Ext.Ajax.getLatest();
+
+						var Combo2 = this.TemplateByLocationList(obj);
+						var Store2 = Combo2.getStore();
+						Combo2.show();
+						Combo2.reset();
+						Combo2.lastQuery = null; 
+						Store2.loadData([],false);
+						Store2.load({
+							"params": { "cancerid": Data },
+							"callback" : function( records, operation) {
+								if (records) {
+									if (0 === records.count) {
+										debugger;
+									}
+								}
+							}
+						});
+						Store2.lastRequest = Ext.Ajax.getLatest();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+				}
+				break;
+
+
+			case "ShowStage_TemplateAllCancer":
+				switch (thePanel) {
+					case "Template Authoring":
+						var theTemplateType = this.SelectedTemplateType(obj);
+						this.setCancerStage(obj, Data);
+
+						if (1 !== theTemplateType) {
+							var Combo2 = this.TemplateByLocationList(obj);
+							var Store2 = Combo2.getStore();
+							Combo2.show();
+							Combo2.reset();
+							Combo2.lastQuery = null; 
+							Store2.loadData([],false);
+							Store2.load({
+								"params": { "cancerid": Data },
+								"callback" : function( records, operation) {
+									if (records) {
+										if (0 === records.count) {
+											debugger;
+										}
+									}
+								}
+							});
+							Store2.lastRequest = Ext.Ajax.getLatest();
+						}
+
+						this.CancerSelector(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+					case "Template List":
+						this.TL_ShowTemplatesBtn(obj).hide();
+						break;
+					case "NewPlan_CTOS_Form":
+						var theTemplateType = this.SelectedTemplateType(obj);
+						this.setCancerStage(obj, Data);
+
+						if (1 !== theTemplateType) {
+							var Combo2 = this.TemplateByLocationList(obj);
+							var Store2 = Combo2.getStore();
+							Combo2.show();
+							Combo2.reset();
+							Combo2.lastQuery = null; 
+							Store2.loadData([],false);
+							Store2.load({
+								"params": { "cancerid": Data },
+								"callback" : function( records, operation) {
+									if (records) {
+										if (0 === records.count) {
+											debugger;
+										}
+									}
+								}
+							});
+							Store2.lastRequest = Ext.Ajax.getLatest();
+						}
+
+						this.CancerSelector(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+						break;
+				}
+				break;
+			case "AllCancer":
+				switch (thePanel) {
+					case "Template Authoring":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelector(obj).hide();
+						// this.CancerSelectorAllTypes(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+
+						var Combo = this.CancerSelectorAllTypes(obj)
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						Combo.lastQuery = null; 
+						Store.loadData([],false);
+						Store.load();
+						Store.lastRequest = Ext.Ajax.getLatest();
+						break;
+
+					case "Template List":
+						break;
+					case "NewPlan_CTOS_Form":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelector(obj).hide();
+						// this.CancerSelectorAllTypes(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+
+						var Combo = this.CancerSelectorAllTypes(obj)
+						var Store = Combo.getStore();
+						Combo.show();
+						Combo.reset();
+						Combo.lastQuery = null; 
+						Store.loadData([],false);
+						Store.load();
+						Store.lastRequest = Ext.Ajax.getLatest();
+						break;
+				}
+				break;
+			case "ShowTemplateData":
+				switch (thePanel) {
+					case "Template Authoring":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+
+						this.CancerSelector(obj).show();
+						this.CancerStageSelector(obj).show();
+						this.TemplateByLocationList(obj).show();
+
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+
+						var Template = Data;
+						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
+
+						// NOTE: Make sure to pull the Cancer and Stage frome the Template Info.
+							// Show Cancer/Stage and keep Template name visible
+
+						break;
+					case "Template List":
+						debugger;
+						break;
+					case "NewPlan_CTOS_Form":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+
+						this.CancerSelector(obj).show();
+						this.CancerStageSelector(obj).show();
+						this.TemplateByLocationList(obj).show();
+
+						this.SelectTemplateByLocationBtn1(obj).hide();
+						this.CSelectAllTemplates(obj).hide();
+						this.AllTemplateSelector(obj).hide();
+
+						var Template = Data;
+						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
+						break;
+				}
+				break;
+
+			case "ShowAllTemplateData":
+				switch (thePanel) {
+					case "Template Authoring":
+
+						this.SelectTemplateByLocationBtn(obj).hide();
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+
+						this.showCancerSelectorAllTypes(obj);
+						this.CancerStageSelector(obj).show();
+						this.showAllTemplateSelector(obj);
+
+						var Template = Data;
+						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
+						break;
+					case "Template List":
+						debugger;
+						break;
+					case "NewPlan_CTOS_Form":
+						debugger;
+						break;
+				}
+				break;
+
+			case "ShowAllTemplates":
+				switch (thePanel) {
+					case "Template Authoring":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.CancerSelector(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+
+						this.CSelectAllTemplates(obj).show();
+						this.SelectTemplateByLocationBtn(obj).show();
+						this.showAllTemplateSelector(obj);
+						break;
+					case "Template List":
+						debugger;
+						break;
+					case "NewPlan_CTOS_Form":
+						this.cLocationSelector(obj).hide();
+						this.rbSelectLocation(obj).hide();
+						this.CancerSelectorAllTypes(obj).hide();
+						this.CancerSelector(obj).hide();
+						this.CancerStageSelector(obj).hide();
+						this.TemplateByLocationList(obj).hide();
+						this.SelectTemplateByLocationBtn1(obj).hide();
+
+						this.CSelectAllTemplates(obj).show();
+						this.SelectTemplateByLocationBtn(obj).show();
+						this.showAllTemplateSelector(obj);
+						break;
+				}
+				break;
+		}
+	},
+
+	showAllTemplateSelector(obj) {
+		this.CSelectAllTemplates(obj).show();
+		var Combo = this.AllTemplateSelector(obj);
+		var Store = Combo.getStore();
+		this.theTemplateID = Combo.getValue();
+		this.TemplateCombo = Combo;
+		Combo.show();
+		Combo.reset();
+		delete Combo.lastQuery;
+		// Store.loadData([],false);
+
+		if (Combo.PreviouslyLoaded) {
+			obj.setLoading("Loading Data", false);
+			Store.load({
+				scope : this,
+				callback : function() {
+					obj.setLoading(false, false);
+					this.TemplateCombo.setValue(this.theTemplateID);
+					delete this.theTemplateID;
+					delete this.TemplateCombo;
+				}
+			});
+		}
+		else {
+			Combo.PreviouslyLoaded = true;
+			Store.load();
+		}
+		Store.lastRequest = Ext.Ajax.getLatest();
+	},
+	
+	showCancerSelectorAllTypes(obj) {
+		var Combo = this.CancerSelectorAllTypes(obj);
+		var Store = Combo.getStore();
+		this.theCancerID = Combo.getValue();
+		this.CancerCombo = Combo;
+		Combo.show();
+		Combo.reset();
+		delete Combo.lastQuery;
+		// Store.loadData([],false);
+		if (Combo.PreviouslyLoaded) {
+			obj.up("panel").setLoading("Loading Data", false);
+			Store.load({
+				scope : this,
+				callback : function() {
+					obj.up("panel").setLoading(false, false);
+					this.CancerCombo.setValue(this.theCancerID);
+					delete this.theCancerID;
+					delete this.CancerCombo;
+				}
+			});
+		}
+		else {
+			Combo.PreviouslyLoaded = true;
+			Store.load();
+		}
+		Store.lastRequest = Ext.Ajax.getLatest();
+
+		Store.lastRequest = Ext.Ajax.getLatest();
+	},
 
 
 	"baseSelector" : function(obj, endObj) {
-		var thePanel = obj.up("panel");
+		var thePanel = obj;		//  = obj.up("panel");
 		var query, qStr;
 		if (thePanel.name) {
 			query = "[name=\"" + thePanel.name + "\"]";
@@ -21020,19 +21627,28 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		return theObj[0];
 	},
 
-	"SelectByCancer" : function(obj) {
+	"CSelectByCancer" : function(obj) {
 		return this.baseSelector(obj, "CSelectByCancer");
 	},
 
-	"LocationSelector" : function(obj) {
+	"rbSelectLocation" : function(obj) {
 		return this.baseSelector(obj, "rbSelectLocation");
 	},
+
+	"cLocationSelector" : function(obj) {
+		return this.baseSelector(obj, "cLocationSelector");
+	},
+
 
 	"CancerSelector" : function(obj) {
 		return this.baseSelector(obj, "CancerSelector");
 	},
 
-	"NoCancerStageMsg" : function(obj) {
+	"CancerSelectorAllTypes" : function(obj) {
+		return this.baseSelector(obj, "CancerSelectorAllTypes");
+	},
+
+	"NoCancerStageSpecified" : function(obj) {
 		return this.baseSelector(obj, "NoCancerStageSpecified");
 	},
 
@@ -21048,85 +21664,509 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		return this.baseSelector(obj, "AllTemplateSelector");
 	},
 
-	"BtnSetFilter" : function(obj) {
+	"SelectTemplateByLocationBtn" : function(obj) {
 		return this.baseSelector(obj, "SelectTemplateByLocationBtn");
 	},
 
-	"BtnResetFilter" : function(obj) {
+	"SelectTemplateByLocationBtn1" : function(obj) {
+		return this.baseSelector(obj, "SelectTemplateByLocationBtn1");
+	},
+
+	"ShowAllTemplatesBtn" : function(obj) {
 		return this.baseSelector(obj, "ShowAllTemplatesBtn");
 	},
 
-	"SelectAllTemplates" : function(obj) {
+	"CSelectAllTemplates" : function(obj) {
 		return this.baseSelector(obj, "CSelectAllTemplates");
 	},
 
-	"NoCancerStageSpecified" : function(obj) {
-		return this.baseSelector(obj, "NoCancerStageSpecified");
-	},
-
-	"onTemplateSelectorLoaded" : function(obj) {
-		if ("Template List" == obj.up("panel").title) {
-			this.BtnResetFilter(obj).hide();
+	"SelectedTemplateType" : function(obj) {
+		var thePanel = obj;		//  = obj.up("panel");
+		var query, qStr;
+		if (thePanel.name) {
+			query = "[name=\"" + thePanel.name + "\"]";
 		}
 		else {
-			this.BtnResetFilter(obj).show();
+			query = "[title=\"" + thePanel.title + "\"]";
+		}
+		qStr = query + " [name=\"SelectTemplateType\"]";
+		var theObj = Ext.ComponentQuery.query(qStr);
+		return theObj[0].getValue().Authoring_SelectTemplateType;
+	},
+
+	"TL_ShowTemplatesBtn" : function(thePanel) {
+		var query, qStr;
+		if (thePanel.name) {
+			query = "[name=\"" + thePanel.name + "\"]";
+		}
+		else {
+			query = "[title=\"" + thePanel.title + "\"]";
+		}
+		qStr = query + " TemplateListTab button[name=\"Show4Cancer\"]";
+		var theObj = Ext.ComponentQuery.query(qStr);
+		return theObj[0];
+	},
+
+
+	"setCancerStage" : function(obj, CancerID) {
+		this.NoCancerStageSpecified(obj).hide();
+		var Combo = this.CancerStageSelector(obj);
+		var Store = Combo.getStore();
+		Combo.show();
+		Combo.reset();
+		delete Combo.lastQuery; 
+		// Store.loadData([],false);
+		Store.load({
+			"params": { "cancerid": CancerID },
+			"callback" : function( records, operation) {
+				if (records) {
+					if (0 === records.count) {
+						this.NoCancerStageSpecified(obj).show();
+						Combo.hide();
+					}
+				}
+			}
+		});
+		Store.lastRequest = Ext.Ajax.getLatest();
+	},
+
+	"setCancerType" : function(templateData) {
+		query = "[title=\"Template Authoring\"] [name=\"CancerSelectorAllTypes\"]";
+		var theObj = Ext.ComponentQuery.query(query);
+		theCombo = theObj[0];
+		theCombo.setValue(templateData.DiseaseName);
+		var panel = theObj[0].up("panel");
+		this.setCancerStage(panel, templateData.Disease);
+	},
+
+
+	"setCancerTypeFromTemplate" : function(obj) {
+		// obj = {"panel" : "Template Authoring", "template": mytemplate.getData()???}
+		var template = obj.template.getData();
+		this.setCancerType(template);
+	},
+
+
+
+	ShowHideBlk2 : function(obj, show) {
+		if (show) {
+			this.CancerSelector(obj).show();
+			this.CancerSelector(obj).reset();
+
+			this.CancerSelectorAllTypes(obj).hide();
+			this.NoCancerStageSpecified(obj).hide();
+			this.CancerStageSelector(obj).hide();
+			this.TemplateByLocationList(obj).hide();
+		}
+		else {
+			this.CancerSelector(obj).hide();
+			this.CancerSelectorAllTypes(obj).hide();
+			this.NoCancerStageSpecified(obj).hide();
+			this.CancerStageSelector(obj).hide();
+			this.TemplateByLocationList(obj).hide();
 		}
 	},
 
-	"resetAllCombos" : function(obj) {
-		// console.log("Reset All Combos");
-		var theCombo;
-		this.selectedCancer = "";
 
-		theCombo = this.CancerSelector(obj);
-		theCombo.lastQuery = null;
-		theCombo.reset();
-		theCombo.hide();
 
-		theCombo = this.CancerStageSelector(obj);
-		theCombo.lastQuery = null;
-		theCombo.reset();
-		theCombo.hide();
 
-		theCombo = this.TemplateByLocationList(obj);
-		theCombo.lastQuery = null;
-		theCombo.reset();
-		theCombo.hide();
 
-		theCombo = this.AllTemplateSelector(obj);
-		theCombo.lastQuery = null;
-		theCombo.reset();
-		theCombo.hide();
 
-		theCombo = this.NoCancerStageMsg(obj);
-		theCombo.hide();
+
+
+
+
+
+
+/**
+	ShowHideBlk1 : function(obj, show) {
+		if (show) {
+			this.cLocationSelector(obj).show();
+			this.rbSelectLocation(obj).show();
+			this.rbSelectLocation(obj).reset();
+			this.ShowAllTemplatesBtn(obj).show();
+		}
+		else {
+			this.cLocationSelector(obj).hide();
+			this.rbSelectLocation(obj).hide();
+			this.ShowAllTemplatesBtn(obj).hide();
+		}
+	},
+	ShowHideBlk2 : function(obj, show) {
+		if (show) {
+			this.CancerSelector(obj).show();
+			this.CancerSelector(obj).reset();
+
+			this.CancerSelectorAllTypes(obj).hide();
+			this.NoCancerStageSpecified(obj).hide();
+			this.CancerStageSelector(obj).hide();
+			this.TemplateByLocationList(obj).hide();
+		}
+		else {
+			this.CancerSelector(obj).hide();
+			this.CancerSelectorAllTypes(obj).hide();
+			this.NoCancerStageSpecified(obj).hide();
+			this.CancerStageSelector(obj).hide();
+			this.TemplateByLocationList(obj).hide();
+		}
 	},
 
-	"onSetFilter" : function(obj) {
-		this.resetAllCombos(obj);
-		this.SelectByCancer(obj).show();
-		this.SelectAllTemplates(obj).hide();
-		this.LocationSelector(obj).reset();
+	ShowHideBlk3 : function(obj, show) {
+		if (show) {
+			this.CancerSelector(obj).show();
+			this.CancerSelector(obj).reset();
+		}
+		else {
+			this.CSelectAllTemplates(obj).hide();
+			this.AllTemplateSelector(obj).hide();
+			this.SelectTemplateByLocationBtn(obj).hide();
+			this.SelectTemplateByLocationBtn1(obj).hide();
+		}
 	},
 
-	"onResetFilter" : function(obj) {
-		this.resetAllCombos(obj);
-		this.LocationSelector(obj).reset();
 
-		this.SelectByCancer(obj).hide();
-		this.SelectAllTemplates(obj).show();
 
-		var theCombo = this.AllTemplateSelector(obj);
-		theCombo.show();
-		var theStore = theCombo.getStore();
+	state1a : function(obj, flg) {	// ByLocation
+		if (flg) {		// Clicked "Select Existing Template (by Location) button
+			this.ShowHideBlk1(obj, true);
+			this.ShowHideBlk2(obj, false);
+			this.ShowHideBlk3(obj, false);
+		}
+		else {			// 
+			this.ShowHideBlk1(obj, false);
+			this.ShowHideBlk2(obj, false);
+			this.ShowHideBlk3(obj, false);
+			obj.setLoading("Loading Data", false);
+
+			this.TemplateByLocationList(obj).show();
+			this.TemplateByLocationList(obj).reset();
+			this.TemplateByLocationList(obj).getStore().load({
+				// "scope": this,
+				"callback" : function( records, operation) {
+					obj.setLoading(false, false);
+				}
+			});
+			this.SelectTemplateByLocationBtn1(obj).show();
+		}
+	},
+
+
+
+	state1aTS : function(obj, flg) {	// ByLocation
+		if (flg) {		// Clicked "Select Existing Template (by Location) button
+			this.ShowHideBlk1(obj, true);
+			this.ShowHideBlk2(obj, false);
+			this.ShowHideBlk3(obj, false);
+			this.ShowAllTemplatesBtn(obj).hide();
+		}
+		else {
+			this.ShowHideBlk1(obj, false);
+			this.ShowHideBlk2(obj, false);
+			this.ShowHideBlk3(obj, false);
+			obj.setLoading("Loading Data", false);
+
+			this.TemplateByLocationList(obj).show();
+			this.TemplateByLocationList(obj).reset();
+			this.TemplateByLocationList(obj).getStore().load({
+				// "scope": this,
+				"callback" : function( records, operation) {
+					obj.setLoading(false, false);
+				}
+			});
+			this.SelectTemplateByLocationBtn1(obj).show();
+		}
+	},
+
+	state1b : function(obj) {		// Click "Create New Template" radio button
+		var theObj = this.CancerSelectorAllTypes(obj);
+		theObj.show();
+		theObj.reset();
+		theObj.setLoading("Loading Data", false);
+		theObj.getStore().load({
+			// "scope": this,
+			"callback" : function( records, operation) {
+				theObj.setLoading(false, false);
+			}
+		});
+
+		this.rbSelectLocation(obj).hide();
+		this.ShowAllTemplatesBtn(obj).hide();
+		this.CancerSelector(obj).hide();
+		this.NoCancerStageSpecified(obj).hide();
+		this.CancerStageSelector(obj).hide();
+		this.TemplateByLocationList(obj).hide();
+
+		this.CSelectAllTemplates(obj).hide();
+		this.AllTemplateSelector(obj).hide();
+		this.SelectTemplateByLocationBtn(obj).hide();
+	},
+
+
+	state1c : function(obj, flg) {
+		obj = obj.up("panel");
+		this.rbSelectLocation(obj).hide();
+		this.ShowAllTemplatesBtn(obj).hide();
+		this.CancerSelector(obj).hide();
+		this.CancerSelectorAllTypes(obj).hide();
+		this.NoCancerStageSpecified(obj).hide();
+		this.CancerStageSelector(obj).hide();
+		this.TemplateByLocationList(obj).hide();
+		this.CSelectAllTemplates(obj).hide();
+		this.AllTemplateSelector(obj).hide();
+		this.SelectTemplateByLocationBtn(obj).hide();
+		this.SelectTemplateByLocationBtn1(obj).hide();
+	},
+	state1d : function(obj, flg) {
+		obj = obj.up("panel");
+		this.CSelectByCancer(obj).show();
+		this.CSelectAllTemplates(obj).hide();
+		this.rbSelectLocation(obj).reset();
+	},
+
+	state2 : function(obj, id) {
+		var combo = this.CancerSelector(obj);
+		// combo.reset();
+		// combo.show();
+		this.ShowHideBlk2(obj, true);
+
+		var theStore = combo.getStore();
 		theStore.load({
 			"scope": this,
 			"params": {
-				"cancerid": "ALL"
+				"location": id
+			}
+		});
+
+		if ("Template List" == obj.title) {
+			this.TL_ShowTemplatesBtn(obj).hide();
+			// TemplateListTab button[name=\"Show4Cancer\"]
+		}
+	},
+
+
+	state3 : function(obj) {
+		this.ShowHideBlk1(obj, true);
+		this.ShowHideBlk2(obj, false);
+		this.ShowHideBlk3(obj, false);
+	},
+
+
+	CancerSelectedStateWithTemplate : function(obj, id) {
+		var theCSSCombo, theStore, theTBLLCombo, theMsg, theParams = "";
+		theCSSCombo = this.CancerStageSelector(obj);
+		theCSSCombo.reset();
+		theStore = theCSSCombo.getStore();
+		theCSSCombo.lastQuery = null; 
+		theStore.loadData([],false);
+		if (id) {
+			theParams = { "cancerid" : id };
+		}
+
+		theStore.load({
+			"scope": this,
+			"params": theParams,
+			"callback" : function( records, operation) {
+				theCSSCombo = this.CancerStageSelector(obj);
+				theMsg = this.NoCancerStageSpecified(obj);
+				if (records.length > 0) {
+					theCSSCombo.show();
+					theMsg.hide();
+				}
+				else {
+					theCSSCombo.hide();
+					theMsg.show();
+				}
+			}
+		});
+
+		theTBLLCombo = this.TemplateByLocationList(obj);
+		theTBLLCombo.lastQuery = null; 
+		theTBLLCombo.show();
+		theTBLLCombo.reset();
+		theStore = theTBLLCombo.getStore();
+		theStore.load({
+			"scope": this,
+			"params": theParams,
+			"callback" : function( records, operation) {
 			}
 		});
 	},
 
+	CancerSelectedStateNoTemplate : function(obj, id) {
+		var theCSSCombo, theStore, theMsg;
+		theCSSCombo = this.CancerStageSelector(obj);
+		theStore = theCSSCombo.getStore();
+		theCSSCombo.lastQuery = null; 
+		theStore.loadData([],false);
+
+		theStore.load({
+			"scope": this,
+			"params": {
+				"cancerid": id
+			},
+			"callback" : function( records, operation) {
+				theCSSCombo = this.CancerStageSelector(obj);
+				theMsg = this.NoCancerStageSpecified(obj);
+				if (records.length > 0) {
+					theCSSCombo.show();
+					theMsg.hide();
+				}
+				else {
+					theCSSCombo.hide();
+					theMsg.show();
+				}
+			}
+		});
+	},
+
+	CancerSelectedStateNoTemplateTL : function(obj, id) {
+	},
+**/
+
+/**
+	 *	State: "Null" <- Initial Load, everything hidden used in Template Authoring for create new template
+	 *		Hide rbSelectLocation
+	 *		Hide ShowAllTemplatesBtn
+	 *
+	 *		Hide CancerSelector
+	 *		Hide CancerSelectorAllTypes
+	 *		Hide NoCancerStageSpecified
+	 *		Hide CancerStageSelector
+	 *		Hide TemplateByLocationList
+	 *
+	 *		Hide SelectAllTemplates
+	 *		Hide AllTemplateSelector
+	 *		Hide SelectTemplateByLocationBtn
+	 *
+	 *	State: "ByLocation" <- Initial Load, used in Template Authoring for Selecting existing template, and CTOS panel
+	 *		Show rbSelectLocation
+	 *		Show ShowAllTemplatesBtn
+	 *
+	 *		Hide CancerSelector
+	 *		Hide CancerSelectorAllTypes
+	 *		Hide NoCancerStageSpecified
+	 *		Hide CancerStageSelector
+	 *		Hide TemplateByLocationList
+	 *
+	 *		Hide SelectAllTemplates
+	 *		Hide AllTemplateSelector
+	 *		Hide SelectTemplateByLocationBtn
+	 *
+	 *	State: "ByLocationCancer" <- Selected Location
+	 *		Show CancerSelector
+	 *		Reset CancerSelector
+	 *		Load CancerSelector with LocationData
+	 *
+	 *	State: "ByLocationCancerStage" <- Selected Cancer that has Stages
+	 *		Show CancerStageSelector
+	 *		Load CancerStageSelector with CancerData
+	 *		Show TemplateByLocationList
+	 *		Load TemplateByLocationList with CancerData
+	 *
+	 *	State: "ByLocationCancerNoStage" <- Selected Cancer that has NO Stages
+	 *		Show NoCancerStageSpecified
+	 *		Show TemplateByLocationList
+	 *		Load TemplateByLocationList with CancerData
+	 *
+	 *	State: "AllCancer" <- Used in Template Authoring for creating new template
+	 *		Show CancerSelectorAllTypes
+	 *		Reset CancerSelectorAllTypes
+	 *		Load CancerSelectorAllTypes
+	 *
+	 *		Hide rbSelectLocation
+	 *		Hide ShowAllTemplatesBtn
+	 *		Hide CancerSelector
+	 *		Hide NoCancerStageSpecified
+	 *		Hide CancerStageSelector
+	 *		Hide TemplateByLocationList
+	 *
+	 *	State: "AllCancerStage" <- Selected Cancer that has Stages
+	 *		Show CancerStageSelector
+	 *		Load CancerStageSelector with CancerData
+	 *
+	 *	State: "AllCancerNoStage" <- Selected Cancer that has NO Stages
+	 *		Show NoCancerStageSpecified
+	 *
+	 *	State: "All"
+	 *		Show CSelectAllTemplates
+	 *		Show AllTemplateSelector
+	 *		Show SelectTemplateByLocationBtn
+	 *
+	 *		Hide rbSelectLocation
+	 *		Hide ShowAllTemplatesBtn
+	 *		Hide CancerSelector
+	 *		Hide CancerSelectorAllTypes
+	 *		Hide NoCancerStageSpecified
+	 *		Hide CancerStageSelector
+	 *		Hide TemplateByLocationList
+	 **/
+/**
+	"StateMachine" : function(obj, state, Data) {
+		
+		if (obj.title) {
+			console.log("State = " + state + "; Panel = " + obj.title);
+		}
+		else {
+			console.log("State = " + state + "; Panel = " + obj.name);
+		}
+
+		switch(state) {
+			case "ByLocationTS":	// Template List - By Location
+				this.state1aTS(obj, true);
+				break;
+			case "ByLocation":
+				this.state1a(obj, true);
+				break;
+			case "All":
+				this.state1a(obj, false);
+				break;
+			case "AllCancer":
+				this.state1b(obj);
+				break;
+			case "Null":
+				this.state1c(obj, false);
+				break;
+			case "ShowAllTemplates":
+				this.state1d(obj);
+				break;
+			case "ByLocationCancer":
+				this.state2(obj, Data);
+				break;
+			case "ShowLocationSelector": 
+				this.state3(obj);
+				break;
+			case "CancerSelected":
+				this.CancerSelectedStateWithTemplate(obj, ID);
+				break;
+			case "CancerSelectedNoTemplate":
+				this.CancerSelectedStateNoTemplate(obj, ID);
+				break;
+			case "CancerSelectedStateNoTemplateTL":
+				this.CancerSelectedStateNoTemplateTL(obj, ID);
+				break;
+		}
+	},
+
+
+	"onTemplateSelectorLoaded" : function(obj) {
+	},
+
+	"onSelectTemplateByLocationBtn1" : function(obj) {
+		this.StateMachine(obj.up("panel"), "ShowLocationSelector");
+	},
+
+	"onSelectTemplateByLocationBtn" : function(obj) {
+		this.StateMachine(obj.up("panel"), "ShowAllTemplates");
+	},
+
+	"onResetFilter" : function(obj) {
+		this.StateMachine(obj.up("panel"), "All");
+	},
+
+
+	"selectAllCancerProcess" : function(obj, state) {
+		debugger;
+	},
 
 	
 
@@ -21134,105 +22174,64 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		var SrcPanel = theCombo.up("panel");
 		var Template = value[0].getData();
 		this.application.fireEvent("TemplateSelected", {"src" : SrcPanel, "template": Template});
+
 	},
 	"onAllTemplateSelect" : function(theCombo, value) {
 		var SrcPanel = theCombo.up("panel");
 		var Template = value[0].getData();
 		this.application.fireEvent("TemplateSelected", {"src" : SrcPanel, "template": Template});
+
 	},
 
 
 	"onTemplateLocSelect": function(obj, value) {
-		var qParam = value.templateSrc;
-		this.resetAllCombos(obj);
-
-if ("Template List" == obj.up("panel").title) {
-}
-else {
-		var theBtn = this.BtnResetFilter(obj);
-		theBtn.show();
-}
-		var theCombo = this.CancerSelector(obj);
-		theCombo.show();
-		var theStore = theCombo.getStore();
-		theStore.load({
-			"scope": this,
-			"params": {
-				"location": qParam
-			}
-		});
+		this.StateMachine(obj.up("panel"), "ByLocationCancer", value.templateSrc);
 	},
 
-	"onCancerSelect" : function(obj, value) {
-		var theCombo = this.CancerStageSelector(obj);
-		var SrcPanel = theCombo.up("panel");
-		theCombo.hide();
-		theCombo.reset();
+	"onCancerSelectAllTypes" : function(obj, value) {
+		var id = value[0].data.id;
+		var thePanel = obj.up("panel");
+		var TemplateType = this.SelectedTemplateType(thePanel);
 
-		if ("Template List" !== SrcPanel.title) {
-			var tmpCombo = this.NoCancerStageMsg(obj);
-			tmpCombo.hide();
-			tmpCombo = this.TemplateByLocationList(obj);
-			tmpCombo.hide();
-			tmpCombo.reset();
-			var theCancer = value[0].getData();
-			this.selectedCancer = theCancer;
-
-			var theMsg;
-			var theStore = theCombo.getStore();
-			theCombo.lastQuery = null; 
-			theStore.loadData([],false);
-			theCombo.show();
-
-			theStore.load({
-				"scope": this,
-				"params": {
-					"cancerid": theCancer.CancerID
-				},
-				"callback" : function( records, operation, a, b) {
-						// debugger;
-					theCombo = this.CancerStageSelector(obj);
-					if (records.length > 0) {
-						theCombo.show();
-					}
-					else {
-						theCombo.hide();
-						theMsg = this.NoCancerStageMsg(obj);
-						theMsg.show();
-						var theCombo = this.TemplateByLocationList(obj);
-						theCombo.show();
-						var theStore = theCombo.getStore();
-						theCombo.lastQuery = null; 
-						theStore.load({
-							"scope": this,
-							"params": {
-								"cancerid": theCancer.CancerID
-							},
-							"callback" : function( records, operation, a, b) {
-							}
-						});
-					}
-				}
-			});
+		if (1 == TemplateType) {
+			this.StateMachine(thePanel, "CancerSelectedNoTemplate", id);
+		}
+		else {
+			this.StateMachine(thePanel, "CancerSelected", id);
 		}
 	},
 
-	"onCancerStageSelect" : function(obj, value) {
-		var theCancer = this.selectedCancer;
-		this.selectedCancer = "";
-		var theCombo = this.TemplateByLocationList(obj);
-		theCombo.show();
-		var theStore = theCombo.getStore();
-		theCombo.lastQuery = null; 
-		theStore.load({
-			"scope": this,
-			"params": {
-				"cancerid": theCancer.CancerID
-			},
-			"callback" : function( records, operation, a, b) {
+	"onCancerSelect" : function(obj, value) {
+		var id = value[0].data.CancerID;
+		var thePanel = obj.up("panel");
+
+		if ("Template List" === thePanel.title) {
+			this.StateMachine(thePanel, "CancerSelectedStateNoTemplateTL", id);
+		}
+		else if ("NewPlan_CTOS_Form" === thePanel.name) {
+			this.StateMachine(thePanel, "CancerSelected", id);
+		}
+		else {
+			var TemplateType = this.SelectedTemplateType(thePanel);
+			if (1 == TemplateType) {
+				this.StateMachine(thePanel, "CancerSelectedNoTemplate", id);
 			}
-		});
+			else {
+				this.StateMachine(thePanel, "CancerSelected", id);
+			}
+		}
+	},
+
+
+	"onAllCancerSelect" : function(obj, value) {
+		debugger;
+
+	},
+
+	"onCancerStageSelect" : function(obj, value) {
 	}
+
+ ***/
 });
 
 
@@ -25723,7 +26722,8 @@ Ext.define('COMS.controller.Navigation', {
 		this.control({
 			'NavigationTabs': {
 				render: this.onPanelRendered,
-				beforetabchange: this.tabChanged
+				beforetabchange: this.tabChanged,
+				tabchange : this.TabChange
 			}
 		});
 
@@ -25746,6 +26746,21 @@ Ext.define('COMS.controller.Navigation', {
 				alert("load Site Configuration - FAILED");
 			}
 		});
+	},
+
+	TabChange : function( tabPanel, tab ) {
+		var thePanel = tab.title;
+		var tsController = this.getController("Common.TemplateSelectorController");
+		switch(thePanel) {
+			case "Template Authoring":
+				tsController.StateMachine(tab, "Null");
+				break;
+			case "Template List":
+				tsController.StateMachine(tab, "ByLocation");
+				break;
+			default:
+				break;
+		}
 	},
 
 	tabChanged: function (tabPanel, newCard, oldCard, eOpts) {
@@ -35579,6 +36594,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		if (thePanel) {
 			thePanel.setLoading("Loading Selected Template", false);
 		}
+
 		var CTOSModel = this.getModel("CTOS");
 		var CTOSModelParam = TemplateID;
 		wccConsoleLog("Template Params = " + CTOSModelParam );
@@ -35659,6 +36675,11 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				if (response.thePanel) {
 					response.thePanel.setLoading(false, false);
 				}
+				var thePanel = Ext.ComponentQuery.query("NewPlanTab PatientInfo CTOS dspTemplateData");
+				if (thePanel.length > 0) {
+					thePanel[0].setLoading(false, false);
+				}
+
 			},
 
 			failure : function (err, response) {
@@ -38905,10 +39926,13 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 				"select" : this.CancerTypeChange
 			},
 
+
 /**
+
 			"TemplateListTab" : {
 				"beforerender" : this.renderPanel
 			},
+
 			"TemplateListTab selCTOSTemplate selTemplateType": {
 				"select" : this.TemplateTypeChange
 			},
@@ -39002,8 +40026,13 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 
 /*
 	renderPanel: function (panel) {
+		var tsController = this.getController("Common.TemplateSelectorController");
+		tsController.StateMachine(panel, "ByLocationTS", null);
+
+	
 		var theGrid = this.getTheGrid();
-		//////////////////////////////////////////// theGrid.getStore().load();
+		// theGrid.getStore().load();
+	 
 		return true;
 	}
 
