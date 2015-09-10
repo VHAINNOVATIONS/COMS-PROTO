@@ -38,9 +38,10 @@
 	$ProjType = "Release 1.17";		// Aug 21, 2015; Promote to 1.17
 	$ProjType = "Release 1.17a";	// Aug 27, 2015; 
 	$ProjType = "Release 1.17b";		// Sept 1, 2015; - Major work done on the "Disease/Stage/Template" selection process
+	$ProjType = "Release 1.17c";		// Sept 9, 2015; - Final changes on Disease/Stage/Template selection process
 	*/
 
-	$ProjType = "Release 1.17c";		// Sept 9, 2015; - Final changes on Disease/Stage/Template selection process
+	$ProjType = "Release 1.17d";		// Sept 9, 2015; - minor changes to some button labels and adding red to EM tags for required fields.
 
 
 /* <!doctype html> */

@@ -5844,7 +5844,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 				"items" : [
 					{
 						"xtype" : "combo",
-						"fieldLabel" : "Select Drug <em>*</em>",
+						"fieldLabel" : "Select Drug <em class=\"required-field\">*</em>",
 						"labelWidth" : 80,
 						"width" : 425,
 						"name" : "Drug",
@@ -5887,7 +5887,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					{
 						"xtype" : "textfield",
 						"maskRe" : /[0-9\.]/,
-						"fieldLabel" : "Dosage Amount <em>*</em>",
+						"fieldLabel" : "Dosage Amount <em class=\"required-field\">*</em>",
 						"width" : 180,
 						"labelWidth" : 130,
 						"allowBlank" : false,
@@ -5895,7 +5895,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					},
 					{
 						"xtype" : "combo",
-						"fieldLabel" : "Units <em>*</em>",
+						"fieldLabel" : "Units <em class=\"required-field\">*</em>",
 						"width" : 150,
 						"labelWidth" : 45,
 						"store" : "DrugUnitsStore",
@@ -5909,7 +5909,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					},
 					{
 						"xtype" : "combo",
-						"fieldLabel" : "Route <em>*</em>",
+						"fieldLabel" : "Route <em class=\"required-field\">*</em>",
 						"width" : 210,
 						"labelWidth" : 65,
 						"store" : Ext.create('Ext.data.Store', {
@@ -5938,7 +5938,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					{
 						"xtype" : "combo",
 						"name" : "FluidType",
-						"fieldLabel" : "Fluid Type <em>*</em>",
+						"fieldLabel" : "Fluid Type <em class=\"required-field\">*</em>",
 						"width" : 220,
 						"lableWidth" : 85,
 						"allowBlank" : false,
@@ -5951,7 +5951,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					},
 					{
 						"xtype" : "textfield",
-						"fieldLabel" : "Fluid Volume <em>*</em>",
+						"fieldLabel" : "Fluid Volume <em class=\"required-field\">*</em>",
 						"maskRe" : /[0-9\.]/,
 						"labelWidth" : 95,
 						"width" : 170,
@@ -5969,7 +5969,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 					},
 					{
 						"xtype" : "textfield",
-						"fieldLabel" : "Flow Rate <em>*</em>",
+						"fieldLabel" : "Flow Rate <em class=\"required-field\">*</em>",
 						"maskRe" : /[0-9\.]/,
 						"labelWidth" : 70,
 						"width" : 120,
@@ -6008,7 +6008,7 @@ Ext.define("COMS.view.Authoring.AddDrugRegimen", {
 				"items" : [
 					{
 						"xtype" : "textfield",
-						"fieldLabel" : "Administration Day(s) <em>*</em>",
+						"fieldLabel" : "Administration Day(s) <em class=\"required-field\">*</em>",
 						"labelWidth" : 140,
 						"width" : 285,
 						"maskRe" : /^[-,0-9 ]+$/,
@@ -6109,7 +6109,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						items: [
 							{
 								"xtype" : "combo",
-								"fieldLabel" : "Select Drug <em>*</em>",
+								"fieldLabel" : "Select Drug <em class=\"required-field\">*</em>",
 								"labelWidth" : 80,
 								"width" : 425,
 								"name" : "Drug",
@@ -6153,7 +6153,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						{
 							'xtype' : 'textfield',
 							'maskRe' : /[0-9\.]/,
-							'fieldLabel' : 'Dosage Amount <em>*</em>',
+							'fieldLabel' : 'Dosage Amount <em class=\"required-field\">*</em>',
 							'width' : 180,
 							'labelWidth' : 130,
 							'allowBlank' : false,
@@ -6161,7 +6161,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						}, 
 						{
 							'xtype' : 'combo',
-							'fieldLabel' : 'Units <em>*</em>',
+							'fieldLabel' : 'Units <em class=\"required-field\">*</em>',
 							'width' : 150,
 							'labelWidth' : 45,
 							'store' : 'DrugUnitsStore',
@@ -6175,7 +6175,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 						}, 
 						{
 							'xtype' : 'combo',
-							'fieldLabel' : 'Route <em>*</em>',
+							'fieldLabel' : 'Route <em class=\"required-field\">*</em>',
 							'width' : 210,
 							'labelWidth' : 65,
 							// "store" : "DrugRoutesStore",
@@ -6221,7 +6221,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							{
 								xtype: 'combo',
 								name: 'FluidType1',
-								fieldLabel: 'Fluid Type <em>*</em>',
+								fieldLabel: 'Fluid Type <em class=\"required-field\">*</em>',
 								width: 205,
 								lableWidth: 85,
 								allowBlank: false,
@@ -6236,7 +6236,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								xtype: 'textfield',
 								maskRe: /[0-9\.]/,
 								name: 'FluidVol1',
-								fieldLabel: 'Fluid Volume <em>*</em>',
+								fieldLabel: 'Fluid Volume <em class=\"required-field\">*</em>',
 								labelWidth: 95,
 								margin: '0 0 5 15',
 								width: 185,
@@ -6252,7 +6252,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 								xtype: 'textfield',
 								name: 'FlowRate1',
 								maskRe: /[0-9\.]/,
-								fieldLabel: 'Flow Rate <em>*</em>',
+								fieldLabel: 'Flow Rate <em class=\"required-field\">*</em>',
 								width: 140,
 								labelWidth: 95,
 								allowBlank: false
@@ -6285,7 +6285,7 @@ Ext.define('COMS.view.Authoring.AddHydrationDrug', {
 							xtype: 'textfield',
 							maskRe: /^[-,0-9 ]+$/,
 							name: 'Day',
-							fieldLabel: 'Administration Day(s) <em>*</em>',
+							fieldLabel: 'Administration Day(s) <em class=\"required-field\">*</em>',
 							width: 270,
 							labelWidth: 150,
 							allowBlank: false,
@@ -6435,7 +6435,7 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 						{
 							xtype : "textfield", 
 							name : "CourseNumMax", 
-							fieldLabel : "Max Cycles  <em>*</em>", 
+							fieldLabel : "Max Cycles  <em class=\"required-field\">*</em>", 
 							labelAlign : "right", 
 							allowBlank : false,
 							width : 140, 
@@ -6472,7 +6472,7 @@ Ext.define('COMS.view.Authoring.CreateNewTemplate' ,{
 			layout: 'hbox', 
 			defaults : {displayField: 'value', valueField: 'id' },
 			items: [
-				{ xtype: 'combo', name: 'EmetogenicLevel', fieldLabel: 'Emetogenic Level <em>*</em>', labelAlign: 'right', 
+				{ xtype: 'combo', name: 'EmetogenicLevel', fieldLabel: 'Emetogenic Level <em class=\"required-field\">*</em>', labelAlign: 'right', 
 					width: 400, labelWidth: 120, allowBlank: false,
 					store: 'EmetogenicLevel', displayField : 'name', valueField : 'id'
 				},
@@ -6530,7 +6530,7 @@ Ext.define('COMS.view.Authoring.CycleLength' ,{
 	layout: 'hbox', 
 
 	items : [
-		{name: 'CycleLength', fieldLabel: 'Cycle Length <em>*</em>', labelAlign: 'right',
+		{name: 'CycleLength', fieldLabel: 'Cycle Length <em class=\"required-field\">*</em>', labelAlign: 'right',
 			width: 155, labelWidth: 95,allowBlank : false,
 			store: Ext.create('Ext.data.Store', {
 				fields: ["id", "value"],
@@ -7101,7 +7101,7 @@ Ext.define("COMS.view.CkBoxTArea" ,{
 	"margin" : "5 0 5 0",
 	"items" : [
 		{ "xtype" : "checkbox", flex: 0 }, 
-		{ "xtype" : "textarea", "rows" : 5, flex : 1, "grow" : true, "name" : "", "hidden" : true, "fieldLabel" : "Please Explain <em>*</em>", "labelAlign" : "top", "margin" : "2 0 5 5"}
+		{ "xtype" : "textarea", "rows" : 5, flex : 1, "grow" : true, "name" : "", "hidden" : true, "fieldLabel" : "Please Explain <em class=\"required-field\">*</em>", "labelAlign" : "top", "margin" : "2 0 5 5"}
 	]
 });
 
@@ -7523,7 +7523,7 @@ Ext.define("COMS.view.Common.MedRemindersForm", {
 					xtype: 'combo',
 					name: 'ReminderWhenCycle',
 					labelAlign: "right",
-					fieldLabel: 'When <em>*</em>',
+					fieldLabel: 'When <em class=\"required-field\">*</em>',
 					labelWidth: 75,
 					margin: "5 10 0 0",
 					queryMode: 'local',
@@ -7544,7 +7544,7 @@ Ext.define("COMS.view.Common.MedRemindersForm", {
 			margin: '5 5 5 0',
 			labelWidth: 75,
 			anchor: '95%',
-			fieldLabel: "Title <em>*</em>",
+			fieldLabel: "Title <em class=\"required-field\">*</em>",
 			name: 'Title'
 		},
 		{
@@ -7690,7 +7690,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 					"width"        : 600,
 					"labelWidth"   : 190,
 					"margin"       : "0 0 5 0",
-					"fieldLabel"   : "Select Template <em>*</em>",
+					"fieldLabel"   : "Select Template <em class=\"required-field\">*</em>",
 					"labelAlign"   : "right",
 					"displayField" : "Name_Desc",
 					"valueField"   : "id",
@@ -7701,7 +7701,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 					"xtype" : "button", 
 					"title" : "SetFilter",
 					"name" : "SelectTemplateByLocationBtn",
-					"text" : " Select Template by Location ", 
+					"text" : " Select by Template Source ", 
 					"margin" : "0 0 0 5"
 				}
 			]
@@ -7720,7 +7720,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 						{
 							"xtype"      : "radiogroup",
 							// "cls"     : "TemplateSelectorRB",
-							"fieldLabel" : "Select a Template Source <em>*</em>",
+							"fieldLabel" : "Select a Template Source <em class=\"required-field\">*</em>",
 							"name"       : "rbSelectLocation",
 							"width"      : 600,
 							"labelWidth" : 190,
@@ -7804,7 +7804,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 									"width"        : 600,
 									"labelWidth"   : 190,
 									"labelAlign"   : "right",
-									"fieldLabel"   : "Select Template <em>*</em>",
+									"fieldLabel"   : "Select Template <em class=\"required-field\">*</em>",
 									"displayField" : "Name_Desc",
 									"valueField"   : "id",
 									"store"        : "TemplateList",
@@ -7814,7 +7814,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 									"xtype"  : "button", 
 									"title"  : "SetFilter1",
 									"name"   : "SelectTemplateByLocationBtn1",
-									"text"   : " Select Template by Location ", 
+									"text"   : " Select by Template Source ", 
 									"margin" : "0 0 5 5",
 									"hidden" : true
 								}
@@ -8079,7 +8079,7 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 				{ 
 					"xtype" : "combobox", 
 					"name" : "value", 
-					"fieldLabel" : "Medication <em>*</em>",  
+					"fieldLabel" : "Medication <em class=\"required-field\">*</em>",  
 					"labelWidth" : 140,
 					"width" : 922,
 					"displayField" : "MedName",
@@ -8092,7 +8092,7 @@ Ext.define("COMS.view.Common.puWinAddCumDose", {
 					{ 
 						"xtype" : "textfield", 
 						"name" : "LifetimeDose", 
-						"fieldLabel" : "Historical Dose <em>*</em>", 
+						"fieldLabel" : "Historical Dose <em class=\"required-field\">*</em>", 
 						"labelWidth" : 140,
 						"emptyText" : "Enter Historical dose"
 					},
@@ -8137,14 +8137,14 @@ Ext.define("COMS.view.Common.puWinChangeAdminDate", {
 				{ "xtype": "RequiredInstr"},
 				{ "xtype" : "displayfield", "name" : "CurAdminDate", "fieldLabel" : "Current Administration Date", "value" : Ext.Date.format( new Date(), "m/d/Y" ) },
 				{ "xtype" : "datefield", 
-					"fieldLabel" : "Enter new Administration Date <em>*</em>", 
+					"fieldLabel" : "Enter new Administration Date <em class=\"required-field\">*</em>", 
 					"minValue" : new Date(), 
 					"name" : "NewAdminDate", 
 					"width" : 370 
 				},
 				{ "xtype" : "box", "name" : "ChangeAdminDateOffsetMsg", "margin" : "0 0 5 70", "width" : 300 },
 				{ "xtype" : "combobox",
-					"fieldLabel" : "Dates to change <em>*</em>",
+					"fieldLabel" : "Dates to change <em class=\"required-field\">*</em>",
 					"queryMode" : "local",
 					"displayField" : "name",
 					"valueField" : "data",
@@ -8226,7 +8226,7 @@ Ext.define("COMS.view.Common.puWinSelBSA",{
 				{
 					"xtype" : "combo",
 					"name" : "WeightFormula",
-					"fieldLabel" : "Weight to use <em>*</em>",
+					"fieldLabel" : "Weight to use <em class=\"required-field\">*</em>",
 					"labelAlign" : "top",
 					"width" : 178,
 					"labelStyle" : "font-weight: bold",
@@ -8246,7 +8246,7 @@ Ext.define("COMS.view.Common.puWinSelBSA",{
 				{
 					"xtype" : "combo",
 					"name" : "BSAFormula",
-					"fieldLabel" : "BSA Formula <em>*</em>",
+					"fieldLabel" : "BSA Formula <em class=\"required-field\">*</em>",
 					"labelAlign" : "top",
 					"width" : 178,
 					"labelStyle" : "font-weight: bold",
@@ -8500,7 +8500,7 @@ Ext.define("COMS.view.Common.selDisease" ,{
 	"width" : 600,
 	"size" : 60,
 	"labelWidth" : 190,
-	"fieldLabel" : "Select a type of cancer <em>*</em>",
+	"fieldLabel" : "Select a type of cancer <em class=\"required-field\">*</em>",
 	"labelAlign" : "right",
 	"displayField" : "name",
 	"valueField" : "id",
@@ -8575,7 +8575,7 @@ Ext.define('COMS.view.Common.selSequence' ,{
         emptyText: "",
 	width: 250,
 	labelWidth: 125,
-	fieldLabel: 'Select Sequence <em>*</em>',
+	fieldLabel: 'Select Sequence <em class=\"required-field\">*</em>',
 	labelAlign: 'right',
 	displayField: 'id',
 	valueField: 'id',
@@ -8610,7 +8610,7 @@ Ext.define("COMS.view.Common.selTemplate", {
 	"width" : 600,
 	"size" : 60,
 	"labelWidth" : 190,
-	"fieldLabel" : "Select a Template <em>*</em>",
+	"fieldLabel" : "Select a Template <em class=\"required-field\">*</em>",
 	"labelAlign" : "right",
 	"displayField" : "description",
 	"valueField" : "id",
@@ -8622,7 +8622,7 @@ Ext.define("COMS.view.Common.selTemplateSrc", {
 	"alias"       : "widget.selTemplateSrc",
 	"width"       : 620,
 	"labelWidth"  : 190,
-	"fieldLabel"  : "Select a Template Source <em>*</em>",
+	"fieldLabel"  : "Select a Template Source <em class=\"required-field\">*</em>",
 	"labelAlign"  : "right",
 	"margin"      : "5 0 5 0",
 	"layout"      : "hbox",
@@ -8997,7 +8997,7 @@ Ext.define("COMS.view.Management.CumulativeDosing" ,{
 			{ "xtype" : "textfield", "name" : "CumulativeDoseAmt", "emptyText" : "Enter Lifetime Max Allowable", "fieldLabel" : "Max Dosage", "labelWidth" : 200,  "labelAlign" : "right", "width" : 400 },
 			{
 				"xtype" : "combo",
-				"fieldLabel" : "Units <em>*</em>",
+				"fieldLabel" : "Units <em class=\"required-field\">*</em>",
 				"width" : 150,
 				"labelWidth" : 60,
 				
@@ -9196,7 +9196,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 		{
 			"xtype" : "combo",
 			"name" : "EmetogenicLevel",
-			"fieldLabel" : "Emotegenic Level <em>*</em>",
+			"fieldLabel" : "Emotegenic Level <em class=\"required-field\">*</em>",
 			"labelAlign" : "right",
 			"store" : "EmetogenicLevel",
 			"displayField" : "name",
@@ -9233,7 +9233,7 @@ Ext.define("COMS.view.Management.EmeticMeds", {
 		},
 		{
 			"xtype" : "combo",
-			"fieldLabel" : "Select Drug <em>*</em>",
+			"fieldLabel" : "Select Drug <em class=\"required-field\">*</em>",
 			"labelWidth" : 150,
 			"width" : 425,
 			"name" : "Drug",
@@ -9438,7 +9438,7 @@ Ext.define("COMS.view.Management.IntelligentDataElements" ,{
 	{ 
 		"xtype" : "combo", 
 		"name" : "Vital2Check",
-		"fieldLabel" : "Select Data Element to configure <em>*</em>",
+		"fieldLabel" : "Select Data Element to configure <em class=\"required-field\">*</em>",
 		"width" : 400, 
 		"allowBlank" : false,
 		"margin" : "0 5 5 0",
@@ -9535,7 +9535,7 @@ Ext.define("COMS.view.Management.Inventory", {
 				"allowBlank" : false,
 				"width" : 360,
 				"labelWidth" : 180,
-				"fieldLabel" : "Select an Inventory Date <em>*</em>",
+				"fieldLabel" : "Select an Inventory Date <em class=\"required-field\">*</em>",
 				"labelAlign" : "right",
 				"displayField" : "Date",
 				"valueField" : "id"
@@ -10086,9 +10086,9 @@ Ext.define("COMS.view.Management.Toxicity" ,{
 	"autoEl" : { tag : "section" },
 	"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label" },
 	"items" : [ 
-		{ "xtype" : "textfield", "allowBlank": false, "name" : "Label", "fieldLabel" : "Toxicity <em>*</em>", "labelWidth" : 160, "width" : 922},
-		{ "xtype" : "textfield", "allowBlank": false, "name" : "Grade_Level", "fieldLabel" : "Grade <em>*</em>", "labelWidth" : 160, "width" : 922},
-		{ "xtype" : "htmleditor", "allowBlank": false, "style" : "color: white", "name" : "Details", "fieldLabel" : "Documentation <em>*</em>", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 922, "margin" : "0 0 10 0" },
+		{ "xtype" : "textfield", "allowBlank": false, "name" : "Label", "fieldLabel" : "Toxicity <em class=\"required-field\">*</em>", "labelWidth" : 160, "width" : 922},
+		{ "xtype" : "textfield", "allowBlank": false, "name" : "Grade_Level", "fieldLabel" : "Grade <em class=\"required-field\">*</em>", "labelWidth" : 160, "width" : 922},
+		{ "xtype" : "htmleditor", "allowBlank": false, "style" : "color: white", "name" : "Details", "fieldLabel" : "Documentation <em class=\"required-field\">*</em>", "labelAlign" : "top", "resizable" : true, "height" : 250, "width" : 922, "margin" : "0 0 10 0" },
 		{ "xtype" : "ManagementBtns"},
 		{  
 			"xtype" : "grid",  "name" : "ToxicityInstructionsList", "title" : "Toxicity", 
@@ -10569,7 +10569,7 @@ Ext.define('COMS.view.NewPlan.AmputationSelection', {
 var theMainItemsList = function(itemsInGroup) {
 	var IIG_Panel = {
 		xtype: "panel",
-		title : "Performance Status <em>*</em>",
+		title : "Performance Status <em class=\"required-field\">*</em>",
 		name : "perfStatus",
 		defaults : { labelAlign : "right", labelWidth: 300},
 		items : [
@@ -10602,7 +10602,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "startdate",
 					"labelWidth" : 100,
 					"width" : 178,
-					"fieldLabel" : "Enter a Start Date <em>*</em>"
+					"fieldLabel" : "Enter a Start Date <em class=\"required-field\">*</em>"
 				}, 
 				{
 					"xtype" : "container",
@@ -10613,7 +10613,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"items" : [{
 						"xtype" : "combo",
 						"name" : "BSA_FormulaWeight",
-						"fieldLabel" : "Weight to use <em>*</em>",
+						"fieldLabel" : "Weight to use <em class=\"required-field\">*</em>",
 						"labelAlign" : "top",
 						"width" : 178,
 						"labelStyle" : "font-weight: bold",
@@ -10636,7 +10636,7 @@ var theMainItemsList = function(itemsInGroup) {
 					}, {
 						"xtype" : "combo",
 						"name" : "BSA_Formula",
-						"fieldLabel" : "BSA Formula <em>*</em>",
+						"fieldLabel" : "BSA Formula <em class=\"required-field\">*</em>",
 						"labelAlign" : "top",
 						"width" : 178,
 						"labelStyle" : "font-weight: bold",
@@ -10672,7 +10672,7 @@ var theMainItemsList = function(itemsInGroup) {
 						{
 							"xtype" : "textfield", 
 							"name" : "OtherWeight", 
-							"fieldLabel" : "Other weight to use <em>*</em>", 
+							"fieldLabel" : "Other weight to use <em class=\"required-field\">*</em>", 
 							"labelWidth" : 170, 
 							"labelAlign" : "right", 
 							"width" : 220, 
@@ -10690,7 +10690,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"labelAlign" : "top",
 					"name" : "goalRadio",
 					"layout" : "hbox",
-					"fieldLabel" : "Select the goal for this Regimen <em>*</em>",
+					"fieldLabel" : "Select the goal for this Regimen <em class=\"required-field\">*</em>",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Curative",
@@ -10709,7 +10709,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "ConcurRadTherapyRadio",
 					"labelAlign" : "top",
 					"layout" : "hbox",
-					"fieldLabel" : "Patient undergoing concurrent radiation treatment <em>*</em>",
+					"fieldLabel" : "Patient undergoing concurrent radiation treatment <em class=\"required-field\">*</em>",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -10729,7 +10729,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "clinicalTrialRadio",
 					"labelAlign" : "top",
 					"layout" : "hbox",
-					"fieldLabel" : "Specify the type of clinical trial <em>*</em>",
+					"fieldLabel" : "Specify the type of clinical trial <em class=\"required-field\">*</em>",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -10756,7 +10756,7 @@ var theMainItemsList = function(itemsInGroup) {
 					"name" : "amputeeRadio",
 					"labelAlign" : "top",
 					"layout" : "hbox",
-					"fieldLabel" : "Is the Patient an Amputee? <em>*</em>",
+					"fieldLabel" : "Is the Patient an Amputee? <em class=\"required-field\">*</em>",
 					"columns" : 1,
 					"items" : [{
 						"boxLabel" : "Yes",
@@ -10775,7 +10775,7 @@ var theMainItemsList = function(itemsInGroup) {
 				// IIG_Panel
 {
 		xtype: "panel",
-		title : "Performance Status <em>*</em>",
+		title : "Performance Status <em class=\"required-field\">*</em>",
 		name : "perfStatus",
 		defaults : { labelAlign : "right", labelWidth: 300},
 		items : [
@@ -10829,7 +10829,7 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
         {
             xtype: "combo",
             name: "WeightFormula",
-            fieldLabel: "Weight to use <em>*</em>",
+            fieldLabel: "Weight to use <em class=\"required-field\">*</em>",
             labelAlign: "top",
             width: 178,
             labelStyle: "font-weight: bold",
@@ -10849,7 +10849,7 @@ Ext.define('COMS.view.NewPlan.BSASelection', {
         {
             xtype: "combo",
             name: "BSAFormula",
-            fieldLabel: "BSA Formula <em>*</em>",
+            fieldLabel: "BSA Formula <em class=\"required-field\">*</em>",
             labelAlign: "top",
             width: 178,
             labelStyle: "font-weight: bold",
@@ -11163,10 +11163,10 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 									"queryMode" : "local",
 									"displayField" : "Label", 
 									"valueField" : "Label", 
-									"fieldLabel" : "Toxicity <em>*</em>",
+									"fieldLabel" : "Toxicity <em class=\"required-field\">*</em>",
 									"allowBlank" : false
 								},
-								{ "xtype" : "textfield", "anchor" : "100%", "labelWidth" : 105, "fieldLabel" : "Other Toxicity <em>*</em>", "name" : "OtherTox", "hidden": true, "allowBlank" : true }
+								{ "xtype" : "textfield", "anchor" : "100%", "labelWidth" : 105, "fieldLabel" : "Other Toxicity <em class=\"required-field\">*</em>", "name" : "OtherTox", "hidden": true, "allowBlank" : true }
 							]
 						},
 						{ 
@@ -11177,7 +11177,7 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 							"queryMode" : "local",
 							"displayField" : "Grade_Level", 
 							"valueField" : "Grade_Level", 
-							"fieldLabel" : "Grade <em>*</em>",
+							"fieldLabel" : "Grade <em class=\"required-field\">*</em>",
 							"allowBlank" : false
 						},
 
@@ -11188,8 +11188,8 @@ Ext.define("COMS.view.NewPlan.CTOS.FS_Toxicity", {
 							"margin" : 0,
 							"defaults": { "labelAlign": "right", "labelClsExtra": "NursingDocs-label", "labelWidth" : 200, "margin" : "5 10" },
 							"items" : [
-								{ "xtype" : "textfield", "anchor" : "100%", "name" : "ToxEditLevel", "fieldLabel" : "Grade <em>*</em>", "hidden": true, "allowBlank" : true },
-								{ "xtype" : "textareafield", "anchor" : "100%", "grow" : true, "height" : 90,  "name" : "ToxEditDetails", "fieldLabel" : "Details <em>*</em>", "hidden": true, "allowBlank" : true },
+								{ "xtype" : "textfield", "anchor" : "100%", "name" : "ToxEditLevel", "fieldLabel" : "Grade <em class=\"required-field\">*</em>", "hidden": true, "allowBlank" : true },
+								{ "xtype" : "textareafield", "anchor" : "100%", "grow" : true, "height" : 90,  "name" : "ToxEditDetails", "fieldLabel" : "Details <em class=\"required-field\">*</em>", "hidden": true, "allowBlank" : true },
 								{ "xtype" : "displayfield", "anchor" : "100%", "value" : "&nbsp;",  "name" : "ToxDetails", "fieldLabel" : "Details", "fieldCls" : "coms-displayfield-box x-form-display-field " },
 								{ "xtype" : "textareafield", "anchor" : "100%", "grow" : true, "height" : 90,  "name" : "Data", "fieldLabel" : "Comments", "allowBlank" : true},
 								{ 
@@ -11671,8 +11671,8 @@ Ext.define('COMS.view.NewPlan.CTOS.NursingDocs.Authenticate', {
             defaults : { labelAlign: 'top', margin: '5'},
             items: [
                 { xtype : "RequiredInstr" },
-                { xtype: "textfield", inputType: "password", name : "AccessCode", labelWidth: 100, width: 178, fieldLabel: "Access Code <em>*</em>"  },
-                { xtype: "textfield", inputType: "password", name : "VerifyCode", labelWidth: 100, width: 178, fieldLabel: "Verify Code <em>*</em>"  }
+                { xtype: "textfield", inputType: "password", name : "AccessCode", labelWidth: 100, width: 178, fieldLabel: "Access Code <em class=\"required-field\">*</em>"  },
+                { xtype: "textfield", inputType: "password", name : "VerifyCode", labelWidth: 100, width: 178, fieldLabel: "Verify Code <em class=\"required-field\">*</em>"  }
             ]
         } ];
         this.buttons = [
@@ -13794,7 +13794,7 @@ Ext.define("COMS.view.NewPlan.CTOS.SelectFluidType" ,{
 Ext.define("COMS.view.NewPlan.CTOS.SelectDrug" ,{
 	"extend" : "Ext.form.field.ComboBox",
 	"alias" : "widget.SelectDrug",
-	"fieldLabel": "Select Drug <em>*</em>",
+	"fieldLabel": "Select Drug <em class=\"required-field\">*</em>",
 	"labelWidth": 115,
 	"width": 425,
 	"store": "DrugStore",
@@ -16926,8 +16926,8 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 			"layout" : "hbox", 
 			"defaults" : { "xtype" : "button" }, 
 			"items" : [
-				{ "text" : "Show All", "name" : "ShowAll" },
-				{ "text" : "Show All for Cancer", "name" : "Show4Cancer", "hidden" : true }
+				{ "text" : "Show All Templates", "name" : "ShowAll" },
+				{ "text" : "Show All for Selected Cancer", "name" : "Show4Cancer", "hidden" : true }
 			] 
 		},
 		{
@@ -34510,20 +34510,6 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 		thisCtl.getExistingDisease().setRawValue(diseaseRecord.data.name);
 		thisCtl.DiseaseSelected(thisCtl.getExistingDisease(),diseaseRecords,null);
-/**
-		var diseaseStage = this.getDiseaseStage();
-		var diseaseStageRecord = diseaseStage.getStore().getById(diseaseStage.value.id);
-		var diseaseStageRecords = [];
-**/
-/**
-		if(null != diseaseStageRecord){
-			diseaseStageRecords.push(diseaseStageRecord);
-			thisCtl.getExistingDiseaseStage().setRawValue(diseaseStageRecord.data.name);
-			thisCtl.onDiseaseStageChange(thisCtl.getExistingDiseaseStage(),diseaseStageRecords,null);
-		}else{
-			thisCtl.getExistingDiseaseStage().setRawValue('');
-		}
-**/
 		var templateRecord;
 		if(null!=this.application.Patient.AppliedTemplateID){
 			templateRecord = template.getStore().getById(this.application.Patient.AppliedTemplateID);
