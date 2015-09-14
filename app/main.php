@@ -39,9 +39,10 @@
 	$ProjType = "Release 1.17a";	// Aug 27, 2015; 
 	$ProjType = "Release 1.17b";		// Sept 1, 2015; - Major work done on the "Disease/Stage/Template" selection process
 	$ProjType = "Release 1.17c";		// Sept 9, 2015; - Final changes on Disease/Stage/Template selection process
+	$ProjType = "Release 1.17d";		// Sept 9, 2015; - minor changes to some button labels and adding red to EM tags for required fields.
 	*/
 
-	$ProjType = "Release 1.17d";		// Sept 9, 2015; - minor changes to some button labels and adding red to EM tags for required fields.
+	$ProjType = "Release 1.17e";		// Sept 14, 2015; - Fix defect for "Edit Template" on Patient Info Panel.
 
 
 /* <!doctype html> */

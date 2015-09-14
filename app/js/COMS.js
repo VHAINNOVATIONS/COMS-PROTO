@@ -6382,7 +6382,7 @@ Ext.define("COMS.view.Authoring.AuthoringTab" ,{
 		{
 			"xtype" : "container",
 			"autoEl" : { "tag" : "section" },
-			"title" : "Create New Template",
+			// "title" : "Template Authoring...",
 			"defaults" : {
 				"xtype" : "container", 
 				"labelAlign" : "right"
@@ -7671,12 +7671,63 @@ Ext.define("COMS.view.Common.SelectAdverseReactionAlerts", {
 
 	]
 });
+
+
 Ext.define("COMS.view.Common.TemplateSelector" ,{
 	"extend" : "Ext.container.Container",
 	"alias" : "widget.TemplateSelector",
 	"autoEl" : { "tag" : "section" },
 	"resizable" : false,
 	"items"  : [
+		{
+			"xtype" : "container",
+			"name" : "TemplateCancerDisplay",
+			"hidden" : true,
+			"resizable" : false,
+			"items" : [
+				{
+					"xtype" : 'displayfield',
+					"fieldLabel" : "Selected Template",
+					"width"        : 600,
+					"labelWidth"   : 190,
+					"labelAlign"   : "right",
+					"name" : "SelectedTemplateName"
+				},
+				{
+					"xtype" : 'displayfield',
+					"fieldLabel" : "&nbsp;&nbsp;&nbsp;&nbsp;",
+					"labelSeparator" : "",
+					"width"        : 600,
+					"style" : { "fontWeight" : "800" },
+					"labelWidth"   : 190,
+					"labelAlign"   : "right",
+					"name" : "SelectedTemplateDesc"
+				},
+				{
+					"xtype" : 'displayfield',
+					"fieldLabel" : "Selected Cancer",
+					"width"        : 600,
+					"labelWidth"   : 190,
+					"labelAlign"   : "right",
+					"name" : "SelectedCancer"
+				},
+				{
+					"xtype" : 'displayfield',
+					"fieldLabel" : "Selected Cancer Stage",
+					"width"        : 600,
+					"labelWidth"   : 190,
+					"labelAlign"   : "right",
+					"name" : "SelectedStage"
+				},
+				{
+					"xtype"        : "box",
+					"name"         : "DisplayNoCancerStageSpecified",
+					"hidden"       : true,
+					"html"         : "No stage selected for specified Cancer",
+					"style"        : { "textAlign" : "center", "fontWeight" : "bold" }
+				}
+			]
+		},
 		{ "xtype" : "container",
 			"name" : "CSelectAllTemplates",
 			"layout" : "hbox",
@@ -7753,7 +7804,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 							"hidden"       : true,
 							"width"        : 600,
 							"labelWidth"   : 190,
-							"fieldLabel"   : "Select type of Cancer.",
+							"fieldLabel"   : "Select type of Cancer",
 							"labelAlign"   : "right",
 							"displayField" : "name",
 							"valueField"   : "CancerID",
@@ -7766,7 +7817,7 @@ Ext.define("COMS.view.Common.TemplateSelector" ,{
 							"hidden"       : true,
 							"width"        : 600,
 							"labelWidth"   : 190,
-							"fieldLabel"   : "Select type of Cancer-",
+							"fieldLabel"   : "Select type of Cancer",
 							"labelAlign"   : "right",
 							"displayField" : "name",
 							"valueField"   : "id",
@@ -17334,17 +17385,22 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 		ref: "Active",
 		selector: "AuthoringTab textfield[name=\"KeepActive\"]"
 		},
-	{
+		{
 		ref: "PatientListCount",
 		selector: "AuthoringTab displayfield[name=\"PatientListCount\"]"
-	}
+		},
+		{
+		ref: "RBSelectedTemplateType",
+		selector: "AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]"
+		}
 	],
 
 	// Ext.ComponentQuery.query("AddReference combo[name=\"CycleLength\"]")[0].el.dom
 	init: function () {
 		wccConsoleLog('Initialized Authoring Tab Panel Navigation Controller!');
 
-		this.application.on({ TemplateSelected : this.HandleTemplateSelected, scope : this });
+		this.application.on({ "TemplateSelected" : this.HandleTemplateSelected, scope : this });
+		this.on({ "EditExistingTemplate" : this.HandleEditExistingTemplate, scope : this });
 
 		this.control({
 			"AuthoringTab MedReminder button[title=\"AddReminder\"]" : {
@@ -17408,6 +17464,18 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 				click: this.clearTemplate
 			}
 		});
+	},
+
+	HandleEditExistingTemplate : function (opts) {
+		var query = "[title=\"Template Authoring\"]";
+		var thePanel = Ext.ComponentQuery.query(query);
+		thePanel = thePanel[0];
+
+		var tsCtrl = this.getController("Common.TemplateSelectorController");
+		// tsCtrl.setCancerType(opts.disease);
+		// var theRB = this.getRBSelectedTemplateType();
+		// theRB.setValue(true);
+		tsCtrl.StateMachine(thePanel, "EditExistingTemplate", opts);
 	},
 
 	HandleTemplateSelected : function( opts ) {
@@ -18254,7 +18322,7 @@ this.application.fireEvent("setCancerTypeFromTemplate", {"panel" : "Template Aut
 	},
 	
 	EditSelectedReminder : function(arg1, arg2, arg3) {
-		debugger;
+		// debugger;
 	},
 
 	getAnyMedReminders4Template : function(TemplateID) {
@@ -21048,7 +21116,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 	},
 
 	"SetSelectedCancerName" : function(a, b, c) {
-debugger;
+// debugger;
 	},
 
 	"onResetFilter" : function(obj) {
@@ -21096,7 +21164,7 @@ debugger;
 		this.StateMachine(obj.up("panel"), "ShowStage_TemplateAllCancer", value[0].data.id);
 	},
 	"onCancerStageSelect": function(obj, value) {
-		debugger;
+		// debugger;
 	},
 	"onSelectTemplateFromAllTemplates" : function(obj, value) {
 		this.StateMachine(obj.up("panel"), "ShowAllTemplateData", value[0].data);
@@ -21117,12 +21185,22 @@ debugger;
 			case "Null":
 				switch (thePanel) {
 					case "Template Authoring":
+						// Show the "What you want to do buttons";
+						var qStrBase = "[title=\"Template Authoring\"]";
+						var qStrTemplateType = qStrBase + " [name=\"SelectTemplateType\"]";
+						var theObj = Ext.ComponentQuery.query(qStrTemplateType);
+						theObj[0].show();
+
+						var qDspInfoBase = qStrBase + " TemplateSelector [name=\"TemplateCancerDisplay\"]";
+						var theObj = Ext.ComponentQuery.query(qDspInfoBase);
+						theObj[0].hide();
+
 						break;
 					case "Template List":
-						debugger;
+						// debugger;
 						break;
 					case "NewPlan_CTOS_Form":
-						debugger;
+						// debugger;
 						break;
 				}
 				break;
@@ -21468,7 +21546,7 @@ debugger;
 
 						break;
 					case "Template List":
-						debugger;
+						// debugger;
 						break;
 					case "NewPlan_CTOS_Form":
 						this.cLocationSelector(obj).hide();
@@ -21508,10 +21586,10 @@ debugger;
 						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
 						break;
 					case "Template List":
-						debugger;
+						// debugger;
 						break;
 					case "NewPlan_CTOS_Form":
-						debugger;
+						// debugger;
 						break;
 				}
 				break;
@@ -21532,7 +21610,7 @@ debugger;
 						this.showAllTemplateSelector(obj);
 						break;
 					case "Template List":
-						debugger;
+						// debugger;
 						break;
 					case "NewPlan_CTOS_Form":
 						this.cLocationSelector(obj).hide();
@@ -21548,6 +21626,61 @@ debugger;
 						this.showAllTemplateSelector(obj);
 						break;
 				}
+				break;
+			case "EditExistingTemplate" : 
+				var qStrBase = "[title=\"Template Authoring\"]";
+				var qStrTemplateType = qStrBase + " [name=\"SelectTemplateType\"]";
+				var qStr = qStrBase + " TemplateSelector";
+				var qDspInfoBase = qStrBase + " TemplateSelector [name=\"TemplateCancerDisplay\"]";
+
+				var qShowTemplateName = qDspInfoBase + " [name=\"SelectedTemplateName\"]";
+				var qShowTemplateDesc = qDspInfoBase + " [name=\"SelectedTemplateDesc\"]";
+				var qShowCancer = qDspInfoBase + " [name=\"SelectedCancer\"]";
+				var qShowStage = qDspInfoBase + " [name=\"SelectedStage\"]";
+				var qShowNoStage = qDspInfoBase + " [name=\"DisplayNoCancerStageSpecified\"]";
+
+				var theObj = Ext.ComponentQuery.query(qStrTemplateType);
+				theObj[0].hide();
+
+				theObj = Ext.ComponentQuery.query(qStr);
+				theObj[0].show();
+
+				theObj = Ext.ComponentQuery.query(qDspInfoBase);
+				theObj[0].show();
+
+				theObj = Ext.ComponentQuery.query(qShowTemplateName);
+				theObj[0].setValue(Data.template.name);
+
+				theObj = Ext.ComponentQuery.query(qShowTemplateDesc);
+				theObj[0].setValue(Data.template.description);
+
+
+				theObj = Ext.ComponentQuery.query(qShowCancer);
+				theObj[0].setValue(Data.disease.DiseaseName);
+
+				theObj = Ext.ComponentQuery.query(qShowStage);
+				theObj[0].show();
+
+				this.CSelectAllTemplates(obj).hide();
+				this.AllTemplateSelector(obj).hide();
+				this.CSelectByCancer(obj).hide();
+				this.CancerSelectorAllTypes(obj).hide();
+
+				this.SelectTemplateByLocationBtn(obj).hide();
+				this.rbSelectLocation(obj).hide();
+				this.ShowAllTemplatesBtn(obj).hide();
+				this.CancerSelector(obj).hide();
+				this.NoCancerStageSpecified(obj).hide();
+				this.CancerStageSelector(obj).hide();
+				this.TemplateByLocationList(obj).hide();
+				this.SelectTemplateByLocationBtn1(obj).hide();
+
+				this.setCancerType(Data.disease);
+
+				var Template = Data.template;
+				this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
+
+
 				break;
 		}
 	},
@@ -34413,10 +34546,74 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 
 
 	editTemplate : function(button){
+		// this.application.loadMask("Edit Template");
+
+		this.application.btnEditTemplatClicked=true;
+
+		var diseaseRecord = {};
+		diseaseRecord.Disease = this.application.SelectedTemplate.data.Disease;
+		diseaseRecord.DiseaseName = this.application.SelectedTemplate.data.DiseaseName;
+		this.afterFindDisease(diseaseRecord);
+	},
+
+	setTemplateObj4AuthoringTab : function() {
+		var templateRecord = this.application.SelectedTemplate.data, template = {};
+		template.Name_Desc = templateRecord.RegimenName + " / " + templateRecord.Description;
+		template.TemplateID = "";
+		template.description = templateRecord.Description;
+		template.id = templateRecord.id;
+		template.name = templateRecord.RegimenName;
+			/*
+Name_Desc: "CARBOPLATIN INJ 3 DIGOXIN TAB 0.5 / COMS_Fictional_Testing"
+TemplateID: ""
+description: "COMS_Fictional_Testing"
+id: "D5600BCD-405B-4122-BABB-292F855114D8"
+name: "CARBOPLATIN INJ 3 DIGOXIN TAB 0.5 "
+			 */
+		return template;
+	},
+
+
+	afterFindDisease : function(diseaseRecord){
+		var thisCtl = this.getController("Authoring.AuthoringTab");
+		var templateRecord = this.setTemplateObj4AuthoringTab();
+
+//		var rbtn = Ext.create(Ext.form.Radio,{
+//			inputValue : 0
+//		});
+//		thisCtl.AuthorTypeSelected(rbtn,true,null,null);
+//		thisCtl.getPatientNameField().setValue(this.application.Patient.name);
+//		thisCtl.getPatientNameField().show();
+		var allTabs = this.getNavigationTabs().items;
+		allTabs.findBy(function(aTabPanel) {
+			if ("Template Authoring" === aTabPanel.title) {
+				this.getNavigationTabs().setActiveTab(aTabPanel);
+			}
+		},
+		this );
+
+		thisCtl.fireEvent("EditExistingTemplate", { "disease" : diseaseRecord, "template" : templateRecord } );
+	},
+
+	afterFindTemplate : function(templateRecord,controller,template){
+		var allTabs = this.getNavigationTabs().items;
+		allTabs.findBy(function(aTabPanel) {
+			if ("Template Authoring" === aTabPanel.title) {
+				this.getNavigationTabs().setActiveTab(aTabPanel);
+			}
+		},
+		this );
+	},
+
+	oldEditTemplate : function(button){
 		this.application.loadMask("Edit Template");
 
 		this.application.btnEditTemplatClicked=true;
 
+		var diseaseRecord = {};
+		diseaseRecord.Disease = this.application.SelectedTemplate.data.Disease;
+		diseaseRecord.DiseaseName = this.application.SelectedTemplate.data.DiseaseName;
+/*** NEED TO FIX - MWB - 9/9/2015
 		var disease = this.getDisease();
 
 		var diseaseRecord = disease.getStore().getById(disease.getValue());
@@ -34425,7 +34622,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			this.getSelTemplateType().getStore().load();
 		}
 
-
+***/
 		if(null === diseaseRecord){
 			var newPlanCtl = this.getController("NewPlan.NewPlanTab");
 			disease.getStore().load({
@@ -34448,23 +34645,31 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 		}
 	},
 
-	afterFindDisease : function(diseaseRecord){
+	oldAfterFindDiseaseFcn : function( diseaseRecord ) {
 		var thisCtl = this.getController("Authoring.AuthoringTab");
 		var existingTemplate = Ext.ComponentQuery.query('AuthoringTab fieldcontainer radiofield[name=\"Authoring_SelectTemplateType\"]')[0];
 
 
 		var template=null;
-		var templateTypeModel, templateType = this.getSelTemplateType();
+		var templateTypeModel, templateType;		//  = this.getSelTemplateType();
+templateTypeModel = this.application.SelectedTemplate;
+templateType = templateTypeModel.data.RegimenName;	//??
+var What2Do = Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]');
+var SelectCurrentAppliedTemplate = What2Do[0].getValue();
+var SelectExistingStandardTemplate = What2Do[1].getValue();
+var ApprovePendingTemplate = What2Do[2].getValue();
 
-		if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[0].getValue()){
+		if(SelectCurrentAppliedTemplate){
 			/*
 			 * Assigning the template type to a Local Template. Not correct logic
 			 * but just something to get past the error when editing a template.
 			 */
-			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
-			templateType.setValue(templateTypeModel);
-			template = this.getMyTemplates();
-		}else if(Ext.ComponentQuery.query('NewPlanTab fieldcontainer radiofield[name=\"NewPlan_What2Do\"]')[1].getValue()){
+			// templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			// templateType.setValue(templateTypeModel);
+			// template = this.getMyTemplates();
+			template = templateTypeModel;
+		}
+		else if(SelectExistingStandardTemplate){
 			template = this.getTemplate();
 		}
 
@@ -34473,29 +34678,31 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			 * Assigning the template type to a Local Template. Not correct logic
 			 * but just something to get past the error when editing a template.
 			 */
-			templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			// templateTypeModel = this.getSelTemplateType().getStore().getAt(1);
+			template = templateTypeModel;
 			templateType.setValue(templateTypeModel);
 			template = this.getMyTemplates();
 		}
 		existingTemplate.setValue(true);
 
+
+
 		var rbtn = Ext.create(Ext.form.Radio,{
 			inputValue : 0
 		});
-
 		thisCtl.AuthorTypeSelected(rbtn,true,null,null);
 		thisCtl.getPatientNameField().setValue(this.application.Patient.name);
 		thisCtl.getPatientNameField().show();
 
-		var templateSourceRecord = this.getSelTemplateType().getStore().findBy(
 
+
+		var SelectedTemplateType = this.getSelTemplateType();
+		var templateSourceRecord = SelectedTemplateType.getStore().findBy(
 			function (record, id) {
-
-					if(record.data.id == templateType.getValue()){
-						return true;
-					}
-
-					return false;
+				if(record.data.id == templateType.getValue()){
+					return true;
+				}
+				return false;
 			});
 
 		var templateSourceRecords = [];
@@ -34538,7 +34745,8 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 			this.afterFindTemplate(templateRecord,thisCtl,template);
 		}
 	},
-	afterFindTemplate : function(templateRecord,controller,template){
+
+	oldAfterFindTemplate : function(templateRecord,controller,template){
 		var templateRecords = [];
 		this.collapseCombo(template,null);
 		this.collapseCombo(this.getDiseaseStage(),null);
@@ -36594,6 +36802,7 @@ Ext.define("COMS.controller.NewPlan.NewPlanTab", {
 				var CTOSData = thisCtl.getCTOSDataDsp();
 				var ApplyBtn = this.getApplyTemplateBtn();
 				var TemplateApplied = false;
+				this.application.SelectedTemplate = CTOSTemplateData;
 
 
 				CTOSTemplateData.data.ELevelRecommendation = CTOSTemplateData.data.ELevel[0].details;
@@ -39970,13 +40179,13 @@ Ext.define('COMS.controller.TemplateList.TemplateListTab', {
 			  "location" : value.templateSrc
 		  },
 		  "failure" : function( records, operation, a, b) {
-			  debugger;
+			  // debugger;
 		  },
 		  "success" : function( records, operation, a, b) {
-			  debugger;
+			  // debugger;
 		  },
 		  "callback" : function( records, operation, a, b) {
-			  debugger;
+			  // debugger;
 		  }		  
 	  });
 	},
