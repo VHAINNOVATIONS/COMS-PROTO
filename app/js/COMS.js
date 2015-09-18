@@ -16965,7 +16965,6 @@ Ext.define("COMS.view.TemplateList.TemplateListTab", {
 	"alias" : "widget.TemplateListTab",
 	"height" : "auto",
 	"margin" : "10",
-	"resizable" : true,
 	"bodyStyle" : "padding:5px",
 	"autoScroll" : true,
 	"resizable" : false,
@@ -17577,11 +17576,11 @@ Ext.define('COMS.controller.Authoring.AuthoringTab', {
 					authoringCtl.afterCTOSLoaded(mytemplate);
 this.application.fireEvent("setCancerTypeFromTemplate", {"panel" : "Template Authoring", "template": mytemplate});
 					// tsctrl.setCancerType(mytemplate);
-					var thisTab = this.getAuthoringTab();
+					thisTab = this.getAuthoringTab();
 					thisTab.setLoading(false, false);
 				} else {
 					// authoringCtl.application.unMask();
-					var thisTab = this.getAuthoringTab();
+					thisTab = this.getAuthoringTab();
 					thisTab.setLoading(false, false);
 
 					var errMsg = "Unknown Error";
@@ -21192,7 +21191,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						theObj[0].show();
 
 						var qDspInfoBase = qStrBase + " TemplateSelector [name=\"TemplateCancerDisplay\"]";
-						var theObj = Ext.ComponentQuery.query(qDspInfoBase);
+						theObj = Ext.ComponentQuery.query(qDspInfoBase);
 						theObj[0].hide();
 
 						break;
@@ -21267,8 +21266,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.AllTemplateSelector(obj).hide();
 						break;
 					case "Template List":
-						var Combo = this.CancerSelector(obj);
-						var Store = Combo.getStore();
+						Combo = this.CancerSelector(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						delete Combo.lastQuery;
@@ -21292,8 +21291,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.TL_ShowTemplatesBtn(obj).hide();
 						break;
 					case "NewPlan_CTOS_Form":
-						var Combo = this.CancerSelector(obj);
-						var Store = Combo.getStore();
+						Combo = this.CancerSelector(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						delete Combo.lastQuery;
@@ -21320,8 +21319,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 				switch (thePanel) {
 					case "Template Authoring":
 						this.NoCancerStageSpecified(obj).hide();
-						var Combo = this.CancerStageSelector(obj);
-						var Store = Combo.getStore();
+						Combo = this.CancerStageSelector(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						delete Combo.lastQuery;
@@ -21366,8 +21365,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						break;
 					case "NewPlan_CTOS_Form":
 						this.NoCancerStageSpecified(obj).hide();
-						var Combo = this.CancerStageSelector(obj);
-						var Store = Combo.getStore();
+						Combo = this.CancerStageSelector(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						delete Combo.lastQuery;
@@ -21385,8 +21384,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						});
 						Store.lastRequest = Ext.Ajax.getLatest();
 
-						var Combo2 = this.TemplateByLocationList(obj);
-						var Store2 = Combo2.getStore();
+						Combo2 = this.TemplateByLocationList(obj);
+						Store2 = Combo2.getStore();
 						Combo2.show();
 						Combo2.reset();
 						Combo2.lastQuery = null; 
@@ -21418,8 +21417,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.setCancerStage(obj, Data);
 
 						if (1 !== theTemplateType) {
-							var Combo2 = this.TemplateByLocationList(obj);
-							var Store2 = Combo2.getStore();
+							Combo2 = this.TemplateByLocationList(obj);
+							Store2 = Combo2.getStore();
 							Combo2.show();
 							Combo2.reset();
 							Combo2.lastQuery = null; 
@@ -21446,12 +21445,12 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.TL_ShowTemplatesBtn(obj).hide();
 						break;
 					case "NewPlan_CTOS_Form":
-						var theTemplateType = this.SelectedTemplateType(obj);
+						theTemplateType = this.SelectedTemplateType(obj);
 						this.setCancerStage(obj, Data);
 
 						if (1 !== theTemplateType) {
-							var Combo2 = this.TemplateByLocationList(obj);
-							var Store2 = Combo2.getStore();
+							Combo2 = this.TemplateByLocationList(obj);
+							Store2 = Combo2.getStore();
 							Combo2.show();
 							Combo2.reset();
 							Combo2.lastQuery = null; 
@@ -21489,8 +21488,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.CSelectAllTemplates(obj).hide();
 						this.AllTemplateSelector(obj).hide();
 
-						var Combo = this.CancerSelectorAllTypes(obj)
-						var Store = Combo.getStore();
+						Combo = this.CancerSelectorAllTypes(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						Combo.lastQuery = null; 
@@ -21512,8 +21511,8 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.CSelectAllTemplates(obj).hide();
 						this.AllTemplateSelector(obj).hide();
 
-						var Combo = this.CancerSelectorAllTypes(obj)
-						var Store = Combo.getStore();
+						Combo = this.CancerSelectorAllTypes(obj);
+						Store = Combo.getStore();
 						Combo.show();
 						Combo.reset();
 						Combo.lastQuery = null; 
@@ -21561,7 +21560,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.CSelectAllTemplates(obj).hide();
 						this.AllTemplateSelector(obj).hide();
 
-						var Template = Data;
+						Template = Data;
 						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
 						break;
 				}
@@ -21582,7 +21581,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 						this.CancerStageSelector(obj).show();
 						this.showAllTemplateSelector(obj);
 
-						var Template = Data;
+						Template = Data;
 						this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
 						break;
 					case "Template List":
@@ -21628,10 +21627,10 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 				}
 				break;
 			case "EditExistingTemplate" : 
-				var qStrBase = "[title=\"Template Authoring\"]";
-				var qStrTemplateType = qStrBase + " [name=\"SelectTemplateType\"]";
+				qStrBase = "[title=\"Template Authoring\"]";
+				qStrTemplateType = qStrBase + " [name=\"SelectTemplateType\"]";
 				var qStr = qStrBase + " TemplateSelector";
-				var qDspInfoBase = qStrBase + " TemplateSelector [name=\"TemplateCancerDisplay\"]";
+				qDspInfoBase = qStrBase + " TemplateSelector [name=\"TemplateCancerDisplay\"]";
 
 				var qShowTemplateName = qDspInfoBase + " [name=\"SelectedTemplateName\"]";
 				var qShowTemplateDesc = qDspInfoBase + " [name=\"SelectedTemplateDesc\"]";
@@ -21639,7 +21638,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 				var qShowStage = qDspInfoBase + " [name=\"SelectedStage\"]";
 				var qShowNoStage = qDspInfoBase + " [name=\"DisplayNoCancerStageSpecified\"]";
 
-				var theObj = Ext.ComponentQuery.query(qStrTemplateType);
+				theObj = Ext.ComponentQuery.query(qStrTemplateType);
 				theObj[0].hide();
 
 				theObj = Ext.ComponentQuery.query(qStr);
@@ -21677,15 +21676,14 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 
 				this.setCancerType(Data.disease);
 
-				var Template = Data.template;
-				this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Template});
+				this.application.fireEvent("TemplateSelected", {"src" : obj, "template": Data.template});
 
 
 				break;
 		}
 	},
 
-	showAllTemplateSelector(obj) {
+	"showAllTemplateSelector" : function(obj) {
 		this.CSelectAllTemplates(obj).show();
 		var Combo = this.AllTemplateSelector(obj);
 		var Store = Combo.getStore();
@@ -21715,7 +21713,7 @@ Ext.define("COMS.controller.Common.TemplateSelectorController", {
 		Store.lastRequest = Ext.Ajax.getLatest();
 	},
 	
-	showCancerSelectorAllTypes(obj) {
+	"showCancerSelectorAllTypes" : function(obj) {
 		var Combo = this.CancerSelectorAllTypes(obj);
 		var Store = Combo.getStore();
 		this.theCancerID = Combo.getValue();
