@@ -1,7 +1,7 @@
 <?php
 
-	$serverName = "VAPHS355SQL";
-	$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"COMSpass88","Database"=>"COMS");
+	$serverName = "xxxx";
+	$connectionOptions = array("UID"=>"coms_db_user","PWD"=>"xxx","Database"=>"COMS");
 	$conn =  sqlsrv_connect( $serverName, $connectionOptions);
 	
 ?>
