@@ -14,10 +14,8 @@ var context = 'OR CPRS GUI CHART';
 
 exports.configuration = {
     context: context,
-    host: '54.83.44.110',
+    host: 'x.x.x.x',
     port: 9300,
-//    accessCode: 'CPRS1234',
-//    verifyCode: 'CPRS4321$',
     localIP: '192.168.1.28',
     localAddress: 'localhost'
 };
