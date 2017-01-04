@@ -1,6 +1,6 @@
 <?php
 /** Configuration Variables **/
-    define('DB_NAME', 'COMS_TEST_7');		/* For COMS-MWB App */
+    define('DB_NAME', 'COMS');		
     define('DB_TYPE', 'sqlsrv');
     define('DB_HOST', "xxx");
     define('DB_USER', 'coms_db_user');
