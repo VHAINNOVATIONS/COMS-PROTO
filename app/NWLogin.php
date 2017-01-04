@@ -4,14 +4,14 @@
         include "../framework/library/nodevista.class.php";
         $nodevista = new NodeVista();
 
-        if ( $AccessCode === 'COMSAdmin' AND $VerifyCode === 'COMS2015!' ) {
+        if ( $AccessCode === 'NoAccess' AND $VerifyCode === 'SeeManual' ) {
 error_log("Using special Admin Access");
-            $_SESSION[ 'role' ]              = 'All Roles';
-            $_SESSION[ 'dname' ]             = 'Admin';
-            $_SESSION[ 'rid' ]               = '999';
-            $_SESSION[ 'Email' ]             = 'sean.cassidy@va.gov';
-            $_SESSION[ 'TemplateAuthoring' ] = '1';
-            $_SESSION[ 'Role_ID' ]           = 'A418029A-2C80-40D6-B3E6-77AA7C34434C';
+            $_SESSION[ 'role' ]              = '';
+            $_SESSION[ 'dname' ]             = '';
+            $_SESSION[ 'rid' ]               = '';
+            $_SESSION[ 'Email' ]             = '';
+            $_SESSION[ 'TemplateAuthoring' ] = '';
+            $_SESSION[ 'Role_ID' ]           = '';
             $_SESSION[ 'AC' ]                = $AccessCode;
             $_SESSION[ 'VC' ]                = $VerifyCode;
             $_SESSION[ 'NWLogin' ]           = 355;
