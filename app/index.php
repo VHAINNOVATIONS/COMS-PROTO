@@ -39,7 +39,7 @@ error_log("Browser Info = " . json_encode($navigator_user_agent));
        
     require_once "NWLogin.php";
     require_once "WPN.php";
-    require_once "/ChromePhp.php";
+    require_once "./ChromePhp.php";
     $point                 = "start";
     $winauth               = $_SERVER[ 'AUTH_USER' ];
     $_SESSION[ 'winauth' ] = $winauth;
